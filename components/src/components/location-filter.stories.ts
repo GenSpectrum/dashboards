@@ -18,7 +18,7 @@ const meta: Meta<{}> = {
 
 export default meta;
 
-const Template: StoryObj<{}> = {
+const Template: StoryObj = {
     render: () => {
         return html` <gs-app lapis="https://lapis.cov-spectrum.org/open/v1/sample">
             <gs-location-filter></gs-location-filter>
