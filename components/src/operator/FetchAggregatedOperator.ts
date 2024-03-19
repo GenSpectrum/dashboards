@@ -12,7 +12,10 @@ export class FetchAggregatedOperator<Fields> implements Operator<Fields & { coun
     async evaluate(lapis: string, signal?: AbortSignal): Promise<Dataset<Fields & { count: number }>> {
         const params = mapLapisFilterToUrlParams(this.filter);
         params.set('fields', this.fields.join(','));
-        const data = (await (await fetch(`${lapis}/aggregated?${params.toString()}`, { signal })).json()).data;
+        console.log('fetching');
+        const promise = await (await fetch(`${lapis}/aggregated?${params.toString()}`, { signal })).json();
+        console.log(promise);
+        const data = promise.data;
         return {
             content: data,
         };

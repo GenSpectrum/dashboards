@@ -1,2 +1,6 @@
 # Editors
 .idea/
+.vscode/*
+!.vscode/extensions.json
+
+*storybook.log

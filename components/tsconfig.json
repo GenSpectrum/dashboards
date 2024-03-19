@@ -28,8 +28,14 @@
                 "strict": true
             }
         ],
-        "types": ["mocha"]
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact",
+//        "skipLibCheck": true,
+        "paths": {
+            "react": ["./node_modules/preact/compat/"],
+            "react-dom": ["./node_modules/preact/compat/"]
+        }
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
     "exclude": []
 }

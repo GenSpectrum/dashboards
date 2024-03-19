@@ -1,5 +1,6 @@
 /node_modules/
 /lib/
+/dist/
 /test/
 /build/
 custom-elements.json
@@ -10,3 +11,5 @@ storybook-static/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+*storybook.log

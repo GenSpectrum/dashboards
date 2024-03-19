@@ -9,6 +9,9 @@ export async function fetchAutocompletionList(fields: string[], lapis: string, s
     const fetchAggregatedOperator = new FetchAggregatedOperator<Record<string, string | null>>({}, fields);
 
     const data = (await fetchAggregatedOperator.evaluate(lapis, signal)).content;
+
+    console.log(data);
+
     const locationValues = data
         .map((entry) => fields.reduce((acc, field) => ({ ...acc, [field]: entry[field] }), {}))
         .reduce<Set<string>>((setOfAllHierarchies, entry) => {
@@ -18,6 +21,8 @@ export async function fetchAutocompletionList(fields: string[], lapis: string, s
             });
             return setOfAllHierarchies;
         }, new Set());
+
+    console.log(locationValues);
 
     return [...locationValues].map((json) => JSON.parse(json)).sort(compareLocationEntries(fields));
 }

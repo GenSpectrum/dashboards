@@ -1,7 +1,7 @@
-import type { StorybookConfig } from '@storybook/web-components-vite';
+import type { StorybookConfig } from '@storybook/preact-vite';
 
 const config: StorybookConfig = {
-    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|mjs|ts)'],
+    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(jsx|tsx)'],
     addons: [
         '@storybook/addon-links',
         '@storybook/addon-essentials',
@@ -9,17 +9,11 @@ const config: StorybookConfig = {
         'storybook-addon-fetch-mock',
     ],
     framework: {
-        name: '@storybook/web-components-vite',
+        name: '@storybook/preact-vite',
         options: {},
     },
     docs: {
         autodocs: 'tag',
-    },
-    refs: {
-        preact: {
-            title: 'Preact',
-            url: 'http://localhost:6007',
-        },
     },
 };
 export default config;
