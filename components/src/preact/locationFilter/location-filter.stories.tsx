@@ -1,4 +1,4 @@
-import { LocationFilter, LocationFilterProps } from './LocationFilter';
+import { LocationFilter, LocationFilterProps } from './location-filter';
 import { LapisUrlContext } from '../LapisUrlContext';
 import { LAPIS_URL } from '../../constants';
 

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'preact/hooks'; // import { type JSXInternal } from 'preact/jsx';
+import { useContext, useRef, useState } from 'preact/hooks';
 import { LapisUrlContext } from '../LapisUrlContext';
 import { useQuery } from '../useQuery';
 import { fetchAutocompletionList } from './fetchAutocompletionList';
@@ -21,8 +21,8 @@ export const LocationFilter = ({ value: initialValue, fields }: LocationFilterPr
     if (isLoading)
         return (
             <form class='flex'>
-                <input type='text' class='input input-bordered flex-grow' value={value} disabled />
-                <button class='btn ml-1' disabled>
+                <input type='text' class='input input-bordered grow' value={value} disabled />
+                <button class='btn ml-1' disabled type='submit'>
                     Loading...
                 </button>
             </form>
@@ -72,7 +72,7 @@ export const LocationFilter = ({ value: initialValue, fields }: LocationFilterPr
         <form class='flex' onSubmit={submit} ref={formRef}>
             <input
                 type='text'
-                class={`input input-bordered flex-grow ${unknownLocation ? 'border-2 border-error' : ''}`}
+                class={`input input-bordered grow ${unknownLocation ? 'border-2 border-error' : ''}`}
                 value={value}
                 onInput={onInput}
                 list='countries'

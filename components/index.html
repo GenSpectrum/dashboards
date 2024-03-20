@@ -4,14 +4,11 @@
     <head>
         <meta charset="utf-8" />
         <title>Components Demo</title>
-        <!--        <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>-->
+        <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
         <script src="./node_modules/lit/polyfill-support.js"></script>
         <script type="module" src="./src/components/app.ts"></script>
-        <!--        <script type="module" src="src/components/locationFilter/location-filter.ts"></script>-->
         <script type="module" src="src/components/prevalenceOverTime/prevalence-over-time.ts"></script>
-        <script type="module" src="src/preact/LocationComponent.ts"></script>
-        <script type="module" src="src/preact/LapisUrlContext.ts"></script>
-        <script type="module" src="src/preact/PreactLitAdapter.tsx"></script>
+        <script type="module" src="src/preact-components/input/location-filter.tsx"></script>
     </head>
     <body>
         <script>
@@ -40,84 +37,14 @@
         </gs-app>
         <p>End</p>
         <script>
-            (function () {
-                const originalDispatchEvent = EventTarget.prototype.dispatchEvent;
-                EventTarget.prototype.dispatchEvent = function (event) {
-                    // if (event.type === 'gs-location-changed') {
-                    console.log('gs-location-changed event dispatched', event);
-                    // }
-                    return originalDispatchEvent.call(this, event);
-                };
-                // Backup original methods
-                const originalPreventDefault = Event.prototype.preventDefault;
-                const originalStopPropagation = Event.prototype.stopPropagation;
-                const originalStopImmediatePropagation = Event.prototype.stopImmediatePropagation;
-
-                // Override preventDefault
-                Event.prototype.preventDefault = function () {
-                    this.defaultPreventedLogged = true; // Custom flag
-                    console.log('preventDefault called for', this.type);
-                    return originalPreventDefault.apply(this);
-                };
-
-                // Override stopPropagation
-                Event.prototype.stopPropagation = function () {
-                    this.isPropagationStoppedLogged = true; // Custom flag
-                    console.log('stopPropagation called for', this.type);
-                    return originalStopPropagation.apply(this);
-                };
-
-                // Override stopImmediatePropagation
-                Event.prototype.stopImmediatePropagation = function () {
-                    this.isImmediatePropagationStoppedLogged = true; // Custom flag
-                    console.log('stopImmediatePropagation called for', this.type);
-                    return originalStopImmediatePropagation.apply(this);
-                };
-
-                // Example usage
-                document.addEventListener('gs-location-changed', function (e) {
-                    // These logs will only appear if the respective methods were called
-                    if (e.defaultPreventedLogged) {
-                        console.log('preventDefault was called on gs-location-changed');
-                    }
-                    if (e.isPropagationStoppedLogged) {
-                        console.log('stopPropagation was called on gs-location-changed');
-                    }
-                    if (e.isImmediatePropagationStoppedLogged) {
-                        console.log('stopImmediatePropagation was called on gs-location-changed');
-                    }
-                });
-            })();
-
-            document.body.addEventListener('gs-location-changed', (event) => {
-                console.log(event);
-            });
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('dom loaded');
-                // let shadowRoot = document.querySelector('gs-location-filter').shadowRoot;
-                // shadowRoot?.querySelectorAll('form').forEach((form) => {
-                //     console.log('adding to ', form);
-                //     form.addEventListener('gs-location-changed', (event) => {
-                //         console.log('form event', event);
-                //     });
-                // });
-                // shadowRoot?.querySelectorAll('button').forEach((form) => {
-                //     console.log('adding to ', form);
-                //     form.addEventListener('gs-location-changed', (event) => {
-                //         console.log('form', event);
-                //     });
-                // });
                 let element = document.querySelector('gs-location-filter');
-                console.log('gs-location-filter', element);
                 element.addEventListener('gs-location-changed', (event) => {
-                    console.log('Halooooo', event);
                     const sequencesElements = document.querySelectorAll('gs-prevalence-over-time');
                     sequencesElements.forEach((el) => {
                         ['numerator', 'denominator'].forEach((attr) => {
                             const old = JSON.parse(el.getAttribute(attr));
-                            let value = JSON.stringify({ ...old, ...event.detail });
-                            console.log(old, value);
-                            el.setAttribute(attr, value);
+                            el.setAttribute(attr, JSON.stringify({ ...old, ...event.detail }));
                         });
                     });
                 });

@@ -1,4 +1,4 @@
-import { LocationFilter } from '../../preact/locationFilter/LocationFilter';
+import { LocationFilter } from '../../preact/locationFilter/location-filter';
 import { PreactLitAdapter } from '../PreactLitAdapter';
 import { customElement, property } from 'lit/decorators.js';
 
