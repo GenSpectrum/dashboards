@@ -10,36 +10,93 @@
         <!--        <script type="module" src="src/components/locationFilter/location-filter.ts"></script>-->
         <script type="module" src="src/components/prevalenceOverTime/prevalence-over-time.ts"></script>
         <script type="module" src="src/preact/LocationComponent.ts"></script>
-        <!--        <script type="module" src="src/preact/LapisUrlContext.ts"></script>-->
+        <script type="module" src="src/preact/LapisUrlContext.ts"></script>
     </head>
     <body>
-        <gs-lapis-context value="https://lapis.cov-spectrum.org/open/v1/sample">
+        <script>
+            import './src/tailwind.css';
+        </script>
+        <p>Begin</p>
+        <context-provider context="lapis" value="https://lapis.cov-spectrum.org/open/v1/sample">
             <p>Hello I'm here</p>
             <gs-location-filter2 fields='["region", "country", "division", "location"]' }></gs-location-filter2>
-        </gs-lapis-context>
-        <gs-app lapis="https://lapis.cov-spectrum.org/open/v1/sample">
-            <!--            <gs-location-filter-->
-            <!--                value="Europe / Switzerland"-->
-            <!--                fields='["region", "country", "division", "location"]'-->
-            <!--            ></gs-location-filter>-->
-            <gs-prevalence-over-time
-                numerator='{"country":"Switzerland", "pangoLineage":"B.1.1.7", "dateTo":"2022-01-01"}'
-                denominator='{"country":"Switzerland", "dateTo":"2022-01-01"}'
-                granularity="day"
-                smoothingWindow="7"
-                views='["line", "table"]'
-            ></gs-prevalence-over-time>
-            <gs-prevalence-over-time
-                numerator='{"country":"Switzerland", "pangoLineage":"B.1.1.7", "dateTo":"2022-01-01"}'
-                denominator='{"country":"Switzerland", "dateTo":"2022-01-01"}'
-                granularity="month"
-                smoothingWindow="0"
-                views='["bar", "table"]'
-            ></gs-prevalence-over-time>
-        </gs-app>
+        </context-provider>
+        <!--        <gs-lapis-context class="min-w-2" value="https://lapis.cov-spectrum.org/open/v1/sample">-->
+        <!--            <p>Hello I'm here</p>-->
+        <!--            <gs-location-filter2 fields='["region", "country", "division", "location"]' }></gs-location-filter2>-->
+        <!--        </gs-lapis-context>-->
+        <p>End</p>
         <script>
+            (function () {
+                const originalDispatchEvent = EventTarget.prototype.dispatchEvent;
+                EventTarget.prototype.dispatchEvent = function (event) {
+                    // if (event.type === 'gs-location-changed') {
+                    console.log('gs-location-changed event dispatched', event);
+                    // }
+                    return originalDispatchEvent.call(this, event);
+                };
+                // Backup original methods
+                const originalPreventDefault = Event.prototype.preventDefault;
+                const originalStopPropagation = Event.prototype.stopPropagation;
+                const originalStopImmediatePropagation = Event.prototype.stopImmediatePropagation;
+
+                // Override preventDefault
+                Event.prototype.preventDefault = function () {
+                    this.defaultPreventedLogged = true; // Custom flag
+                    console.log('preventDefault called for', this.type);
+                    return originalPreventDefault.apply(this);
+                };
+
+                // Override stopPropagation
+                Event.prototype.stopPropagation = function () {
+                    this.isPropagationStoppedLogged = true; // Custom flag
+                    console.log('stopPropagation called for', this.type);
+                    return originalStopPropagation.apply(this);
+                };
+
+                // Override stopImmediatePropagation
+                Event.prototype.stopImmediatePropagation = function () {
+                    this.isImmediatePropagationStoppedLogged = true; // Custom flag
+                    console.log('stopImmediatePropagation called for', this.type);
+                    return originalStopImmediatePropagation.apply(this);
+                };
+
+                // Example usage
+                document.addEventListener('gs-location-changed', function (e) {
+                    // These logs will only appear if the respective methods were called
+                    if (e.defaultPreventedLogged) {
+                        console.log('preventDefault was called on gs-location-changed');
+                    }
+                    if (e.isPropagationStoppedLogged) {
+                        console.log('stopPropagation was called on gs-location-changed');
+                    }
+                    if (e.isImmediatePropagationStoppedLogged) {
+                        console.log('stopImmediatePropagation was called on gs-location-changed');
+                    }
+                });
+            })();
+
+            document.body.addEventListener('gs-location-changed', (event) => {
+                console.log(event);
+            });
             document.addEventListener('DOMContentLoaded', function () {
-                document.querySelector('gs-location-filter2').addEventListener('gs-location-changed', (event) => {
+                console.log('dom loaded');
+                let shadowRoot = document.querySelector('gs-location-filter2').shadowRoot;
+                shadowRoot?.querySelectorAll('form').forEach((form) => {
+                    console.log('adding to ', form);
+                    form.addEventListener('gs-location-changed', (event) => {
+                        console.log('form event', event);
+                    });
+                });
+                shadowRoot?.querySelectorAll('button').forEach((form) => {
+                    console.log('adding to ', form);
+                    form.addEventListener('gs-location-changed', (event) => {
+                        console.log('form', event);
+                    });
+                });
+                let element = document.querySelector('gs-location-filter2');
+                console.log('gs-location-filter2', element);
+                element.addEventListener('gs-location-changed', (event) => {
                     console.log(event);
                     const sequencesElements = document.querySelectorAll('gs-prevalence-over-time');
                     sequencesElements.forEach((el) => {

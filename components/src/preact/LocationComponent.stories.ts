@@ -7,7 +7,12 @@ import { LAPIS_URL } from '../constants';
 const meta: Meta = {
     title: 'Component/Test',
     component: 'x-location-filter',
-    parameters: { fetchMock: {} },
+    parameters: {
+        fetchMock: {},
+        actions: {
+            handles: ['gs-location-changed'],
+        },
+    },
 };
 
 export default meta;

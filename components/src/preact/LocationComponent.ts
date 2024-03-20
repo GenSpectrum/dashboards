@@ -1,3 +1,4 @@
+import 'preact/debug';
 import register from 'preact-custom-element';
 import { LocationFilter } from './LocationFilter';
 
@@ -8,4 +9,4 @@ LocationFilter.propTypes = {
     value: String, // trick to define un-typed props.
 };
 
-register(LocationFilter, 'gs-location-filter2', ['fields', 'value'], { shadow: false });
+register(LocationFilter, 'gs-location-filter2', ['fields', 'value'], { shadow: true });
