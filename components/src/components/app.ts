@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { provide } from '@lit/context';
 import { lapisContext } from '../lapis-context';
-import { property, customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 @customElement('gs-app')
 class App extends LitElement {
@@ -10,7 +10,11 @@ class App extends LitElement {
     lapis: string = '';
 
     override render() {
-        return html`<slot />`;
+        return html`${this.childNodes}`;
+    }
+
+    override createRenderRoot() {
+        return this;
     }
 }
 

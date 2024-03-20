@@ -1,8 +1,3 @@
-import 'preact/debug';
-import { createContext } from './context';
+import { createContext } from 'preact';
 
-// export const LapisUrlContext = createContext('');
-//
-// register(LapisUrlContext.Provider, 'gs-lapis-context', ['value'], { shadow: false });
-
-export const lapisContext = 'lapis';
+export const LapisUrlContext = createContext('');

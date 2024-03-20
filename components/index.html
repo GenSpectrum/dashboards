@@ -11,20 +11,33 @@
         <script type="module" src="src/components/prevalenceOverTime/prevalence-over-time.ts"></script>
         <script type="module" src="src/preact/LocationComponent.ts"></script>
         <script type="module" src="src/preact/LapisUrlContext.ts"></script>
+        <script type="module" src="src/preact/PreactLitAdapter.tsx"></script>
     </head>
     <body>
         <script>
             import './src/tailwind.css';
         </script>
         <p>Begin</p>
-        <context-provider context="lapis" value="https://lapis.cov-spectrum.org/open/v1/sample">
-            <p>Hello I'm here</p>
-            <gs-location-filter2 fields='["region", "country", "division", "location"]' }></gs-location-filter2>
-        </context-provider>
-        <!--        <gs-lapis-context class="min-w-2" value="https://lapis.cov-spectrum.org/open/v1/sample">-->
-        <!--            <p>Hello I'm here</p>-->
-        <!--            <gs-location-filter2 fields='["region", "country", "division", "location"]' }></gs-location-filter2>-->
-        <!--        </gs-lapis-context>-->
+        <gs-app lapis="https://lapis.cov-spectrum.org/open/v1/sample">
+            <gs-location-filter
+                value="Europe / Switzerland"
+                fields='["region", "country", "division", "location"]'
+            ></gs-location-filter>
+            <gs-prevalence-over-time
+                numerator='{"country":"Switzerland", "pangoLineage":"B.1.1.7", "dateTo":"2022-01-01"}'
+                denominator='{"country":"Switzerland", "dateTo":"2022-01-01"}'
+                granularity="day"
+                smoothingWindow="7"
+                views='["line", "table"]'
+            ></gs-prevalence-over-time>
+            <gs-prevalence-over-time
+                numerator='{"country":"Switzerland", "pangoLineage":"B.1.1.7", "dateTo":"2022-01-01"}'
+                denominator='{"country":"Switzerland", "dateTo":"2022-01-01"}'
+                granularity="month"
+                smoothingWindow="0"
+                views='["bar", "table"]'
+            ></gs-prevalence-over-time>
+        </gs-app>
         <p>End</p>
         <script>
             (function () {
@@ -81,28 +94,30 @@
             });
             document.addEventListener('DOMContentLoaded', function () {
                 console.log('dom loaded');
-                let shadowRoot = document.querySelector('gs-location-filter2').shadowRoot;
-                shadowRoot?.querySelectorAll('form').forEach((form) => {
-                    console.log('adding to ', form);
-                    form.addEventListener('gs-location-changed', (event) => {
-                        console.log('form event', event);
-                    });
-                });
-                shadowRoot?.querySelectorAll('button').forEach((form) => {
-                    console.log('adding to ', form);
-                    form.addEventListener('gs-location-changed', (event) => {
-                        console.log('form', event);
-                    });
-                });
-                let element = document.querySelector('gs-location-filter2');
-                console.log('gs-location-filter2', element);
+                // let shadowRoot = document.querySelector('gs-location-filter').shadowRoot;
+                // shadowRoot?.querySelectorAll('form').forEach((form) => {
+                //     console.log('adding to ', form);
+                //     form.addEventListener('gs-location-changed', (event) => {
+                //         console.log('form event', event);
+                //     });
+                // });
+                // shadowRoot?.querySelectorAll('button').forEach((form) => {
+                //     console.log('adding to ', form);
+                //     form.addEventListener('gs-location-changed', (event) => {
+                //         console.log('form', event);
+                //     });
+                // });
+                let element = document.querySelector('gs-location-filter');
+                console.log('gs-location-filter', element);
                 element.addEventListener('gs-location-changed', (event) => {
-                    console.log(event);
+                    console.log('Halooooo', event);
                     const sequencesElements = document.querySelectorAll('gs-prevalence-over-time');
                     sequencesElements.forEach((el) => {
                         ['numerator', 'denominator'].forEach((attr) => {
                             const old = JSON.parse(el.getAttribute(attr));
-                            el.setAttribute(attr, JSON.stringify({ ...old, ...event.detail }));
+                            let value = JSON.stringify({ ...old, ...event.detail });
+                            console.log(old, value);
+                            el.setAttribute(attr, value);
                         });
                     });
                 });
