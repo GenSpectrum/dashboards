@@ -1,14 +1,11 @@
 import { useEffect, useRef } from 'preact/hooks';
-import { Chart, ChartConfiguration, registerables } from 'chart.js';
-import { getYAxisScale, ScaleType } from '../../components/charts/getYAxisScale';
-import { LogitScale } from '../../components/charts/LogitScale';
+import { Chart, ChartConfiguration } from 'chart.js';
 
 export interface GsChartProps {
     configuration: ChartConfiguration;
-    yAxisScaleType: ScaleType;
 }
 
-const GsChart = ({ configuration, yAxisScaleType }: GsChartProps) => {
+const GsChart = ({ configuration }: GsChartProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const chartRef = useRef<Chart | null>(null);
 
@@ -22,22 +19,12 @@ const GsChart = ({ configuration, yAxisScaleType }: GsChartProps) => {
             return;
         }
 
-        Chart.register(...registerables, LogitScale);
-
         chartRef.current = new Chart(ctx, configuration);
 
         return () => {
             chartRef.current?.destroy();
         };
     }, [canvasRef, configuration]);
-
-    useEffect(() => {
-        if (chartRef.current) {
-            // @ts-expect-error-next-line -- chart.js typings are not complete with custom scales
-            chartRef.current.options.scales!.y = getYAxisScale(yAxisScaleType);
-            chartRef.current.update();
-        }
-    }, [yAxisScaleType]);
 
     return <canvas ref={canvasRef} />;
 };
