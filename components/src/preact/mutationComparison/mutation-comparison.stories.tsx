@@ -17,7 +17,7 @@ const meta: Meta<MutationComparisonProps> = {
             control: { type: 'radio' },
         },
         views: {
-            options: ['table'],
+            options: ['table', 'venn'],
             control: { type: 'check' },
         },
     },
@@ -60,7 +60,7 @@ export const TwoVariants = {
             },
         ],
         sequenceType: 'nucleotide',
-        views: ['table'],
+        views: ['table', 'venn'],
     },
     parameters: {
         fetchMock: {

@@ -1,13 +1,16 @@
-import { ChartConfiguration } from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { PrevalenceOverTimeData } from '../../query/queryPrevalenceOverTime';
 import { getYAxisScale, ScaleType } from '../../components/charts/getYAxisScale';
 import GsChart from '../components/chart';
+import { LogitScale } from '../../components/charts/LogitScale';
 
 interface PrevalenceOverTimeLineBarChartProps {
     data: PrevalenceOverTimeData;
     type: 'line' | 'bar';
     yAxisScaleType: ScaleType;
 }
+
+Chart.register(...registerables, LogitScale);
 
 const PrevalenceOverTimeLineBarChart = ({ data, type, yAxisScaleType }: PrevalenceOverTimeLineBarChartProps) => {
     const config: ChartConfiguration = {
@@ -39,7 +42,7 @@ const PrevalenceOverTimeLineBarChart = ({ data, type, yAxisScaleType }: Prevalen
         },
     };
 
-    return <GsChart configuration={config} yAxisScaleType={yAxisScaleType} />;
+    return <GsChart configuration={config} />;
 };
 
 export default PrevalenceOverTimeLineBarChart;

@@ -1,7 +1,8 @@
-import { ChartConfiguration } from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { YearMonthDay } from '../../temporal';
 import { getYAxisScale, ScaleType } from '../../components/charts/getYAxisScale';
 import GsChart from '../components/chart';
+import { LogitScale } from '../../components/charts/LogitScale';
 
 interface RelativeGrowthAdvantageChartData {
     t: YearMonthDay[];
@@ -15,6 +16,8 @@ interface RelativeGrowthAdvantageChartProps {
     data: RelativeGrowthAdvantageChartData;
     yAxisScaleType: ScaleType;
 }
+
+Chart.register(...registerables, LogitScale);
 
 const RelativeGrowthAdvantageChart = ({ data, yAxisScaleType }: RelativeGrowthAdvantageChartProps) => {
     const config: ChartConfiguration = {
@@ -69,7 +72,7 @@ const RelativeGrowthAdvantageChart = ({ data, yAxisScaleType }: RelativeGrowthAd
         },
     };
 
-    return <GsChart configuration={config} yAxisScaleType={yAxisScaleType} />;
+    return <GsChart configuration={config} />;
 };
 
 export default RelativeGrowthAdvantageChart;

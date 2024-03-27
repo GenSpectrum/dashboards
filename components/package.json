@@ -33,6 +33,7 @@
         "@lit/context": "^1.1.0",
         "@lit/task": "^1.0.0",
         "chart.js": "^4.4.2",
+        "chartjs-chart-venn": "^4.3.0",
         "dayjs": "^1.11.10",
         "flatpickr": "^4.6.13",
         "gridjs": "^6.2.0",

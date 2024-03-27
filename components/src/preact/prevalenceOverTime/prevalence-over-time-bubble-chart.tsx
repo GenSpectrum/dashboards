@@ -1,14 +1,17 @@
-import { ChartConfiguration } from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { addUnit, minusTemporal } from '../../temporal';
 import { getMinMaxNumber } from '../../utils';
 import { PrevalenceOverTimeData } from '../../query/queryPrevalenceOverTime';
 import { getYAxisScale, ScaleType } from '../../components/charts/getYAxisScale';
 import GsChart from '../components/chart';
+import { LogitScale } from '../../components/charts/LogitScale';
 
 interface PrevalenceOverTimeBubbleChartProps {
     data: PrevalenceOverTimeData;
     yAxisScaleType: ScaleType;
 }
+
+Chart.register(...registerables, LogitScale);
 
 const PrevalenceOverTimeBubbleChart = ({ data, yAxisScaleType }: PrevalenceOverTimeBubbleChartProps) => {
     const firstDate = data[0].content[0].dateRange!;
@@ -71,7 +74,7 @@ const PrevalenceOverTimeBubbleChart = ({ data, yAxisScaleType }: PrevalenceOverT
         },
     };
 
-    return <GsChart configuration={config} yAxisScaleType={yAxisScaleType} />;
+    return <GsChart configuration={config} />;
 };
 
 export default PrevalenceOverTimeBubbleChart;

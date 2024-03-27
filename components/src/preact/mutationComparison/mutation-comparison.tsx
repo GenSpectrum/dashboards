@@ -13,8 +13,9 @@ import Info from '../components/info';
 import Tabs from '../components/tabs';
 import { CheckboxSelector } from '../components/checkbox-selector';
 import { MutationComparisonTable } from './mutation-comparison-table';
+import { MutationComparisonVenn } from './mutation-comparison-venn';
 
-export type View = 'table';
+export type View = 'table' | 'venn';
 
 export interface MutationComparisonVariant {
     lapisFilter: LapisFilter;
@@ -149,6 +150,11 @@ export const MutationComparison: FunctionComponent<MutationComparisonProps> = ({
                 return {
                     title: 'Table',
                     content: <MutationComparisonTable data={{ content: filteredData }} />,
+                };
+            case 'venn':
+                return {
+                    title: 'Venn',
+                    content: <MutationComparisonVenn data={{ content: filteredData }} />,
                 };
         }
     };
