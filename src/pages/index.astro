@@ -26,7 +26,7 @@ if (lapisLocation.country === undefined) {
         <div class='p-2' style='display: grid; grid-template-columns: 300px 1fr; grid-column-gap: 16px;'>
             <LocationTimeVariantFilter initialLocation={lapisLocation} client:only='react' />
             <div
-                style='display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100vw, 650px), 1fr)); grid-column-gap: 16px;'
+                style='display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100vw, 650px), 1fr)); grid-column-gap: 16px; grid-row-gap: 24px;'
             >
                 <gs-prevalence-over-time
                     numerator={JSON.stringify({
@@ -38,7 +38,7 @@ if (lapisLocation.country === undefined) {
                     smoothingWindow='0'
                     size={JSON.stringify({
                         width: '100%',
-                        height: '500px',
+                        height: '400px',
                     })}></gs-prevalence-over-time>
                 <gs-relative-growth-advantage
                     numerator={JSON.stringify(lapisLocation)}
@@ -46,7 +46,7 @@ if (lapisLocation.country === undefined) {
                     generationTime='7'
                     size={JSON.stringify({
                         width: '100%',
-                        height: '500px',
+                        height: '400px',
                     })}></gs-relative-growth-advantage>
                 <gs-mutations
                     variant={JSON.stringify(lapisLocation)}
@@ -54,7 +54,7 @@ if (lapisLocation.country === undefined) {
                     views='["grid", "table", "insertions"]'
                     size={JSON.stringify({
                         width: '100%',
-                        height: '500px',
+                        height: '400px',
                     })}></gs-mutations>
                 <gs-mutations
                     variant={JSON.stringify(lapisLocation)}
@@ -62,7 +62,7 @@ if (lapisLocation.country === undefined) {
                     views='["grid", "table", "insertions"]'
                     size={JSON.stringify({
                         width: '100%',
-                        height: '500px',
+                        height: '400px',
                     })}></gs-mutations>
                 <gs-aggregate
                     fields='["nextcladePangoLineage"]'
@@ -70,7 +70,7 @@ if (lapisLocation.country === undefined) {
                     headline='Lineages'
                     size={JSON.stringify({
                         width: '100%',
-                        height: '500px',
+                        height: '400px',
                     })}></gs-aggregate>
                 {
                     subDivisionField && (
@@ -80,7 +80,7 @@ if (lapisLocation.country === undefined) {
                             headline={subDivisionLabel}
                             size={JSON.stringify({
                                 width: '100%',
-                                height: '500px',
+                                height: '400px',
                             })}
                         />
                     )
@@ -91,7 +91,7 @@ if (lapisLocation.country === undefined) {
                     headline='Hosts'
                     size={JSON.stringify({
                         width: '100%',
-                        height: '500px',
+                        height: '400px',
                     })}></gs-aggregate>
             </div>
         </div>
