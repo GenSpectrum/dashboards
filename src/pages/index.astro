@@ -19,7 +19,15 @@ if (lapisLocation.country === undefined) {
     subDivisionField = 'division';
     subDivisionLabel = 'Geographic sub-divisions';
 }
+
+const sizeAttribute = JSON.stringify({ width: '100%', height: '100%' });
 ---
+
+<style>
+    .component-title {
+        @apply font-bold;
+    }
+</style>
 
 <BaseLayout title='GenSpectrum'>
     <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
@@ -28,71 +36,92 @@ if (lapisLocation.country === undefined) {
             <div
                 style='display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100vw, 650px), 1fr)); grid-column-gap: 16px; grid-row-gap: 24px;'
             >
-                <gs-prevalence-over-time
-                    numerator={JSON.stringify({
-                        displayName: '',
-                        ...lapisLocation,
-                    })}
-                    denominator='{}'
-                    granularity='month'
-                    smoothingWindow='0'
-                    size={JSON.stringify({
-                        width: '100%',
-                        height: '400px',
-                    })}></gs-prevalence-over-time>
-                <gs-relative-growth-advantage
-                    numerator={JSON.stringify(lapisLocation)}
-                    denominator='{}'
-                    generationTime='7'
-                    size={JSON.stringify({
-                        width: '100%',
-                        height: '400px',
-                    })}></gs-relative-growth-advantage>
-                <gs-mutations
-                    variant={JSON.stringify(lapisLocation)}
-                    sequenceType='nucleotide'
-                    views='["grid", "table", "insertions"]'
-                    size={JSON.stringify({
-                        width: '100%',
-                        height: '400px',
-                    })}></gs-mutations>
-                <gs-mutations
-                    variant={JSON.stringify(lapisLocation)}
-                    sequenceType='amino acid'
-                    views='["grid", "table", "insertions"]'
-                    size={JSON.stringify({
-                        width: '100%',
-                        height: '400px',
-                    })}></gs-mutations>
-                <gs-aggregate
-                    fields='["nextcladePangoLineage"]'
-                    filter={JSON.stringify(lapisLocation)}
-                    headline='Lineages'
-                    size={JSON.stringify({
-                        width: '100%',
-                        height: '400px',
-                    })}></gs-aggregate>
+                <div>
+                    <h2 class='component-title'>Prevalence over time</h2>
+                    <div class='h-[400px]'>
+                        <gs-prevalence-over-time
+                            headline=''
+                            numerator={JSON.stringify({
+                                displayName: '',
+                                ...lapisLocation,
+                            })}
+                            denominator='{}'
+                            granularity='month'
+                            smoothingWindow='0'
+                            size={sizeAttribute}></gs-prevalence-over-time>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Relative growth advantage</h2>
+                    <div class='h-[400px]'>
+                        <gs-relative-growth-advantage
+                            headline=''
+                            numerator={JSON.stringify(lapisLocation)}
+                            denominator='{}'
+                            generationTime='7'
+                            size={sizeAttribute}></gs-relative-growth-advantage>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class='component-title'>Nucleotide mutations</h2>
+                    <div class='h-[400px]'>
+                        <gs-mutations
+                            variant={JSON.stringify(lapisLocation)}
+                            headline=''
+                            sequenceType='nucleotide'
+                            views='["grid", "table", "insertions"]'
+                            size={sizeAttribute}></gs-mutations>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Amino acid mutations</h2>
+                    <div class='h-[400px]'>
+                        <gs-mutations
+                            variant={JSON.stringify(lapisLocation)}
+                            headline=''
+                            sequenceType='amino acid'
+                            views='["grid", "table", "insertions"]'
+                            size={sizeAttribute}></gs-mutations>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class='component-title'>Lineages</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields='["nextcladePangoLineage"]'
+                            filter={JSON.stringify(lapisLocation)}
+                            headline=''
+                            size={sizeAttribute}></gs-aggregate>
+                    </div>
+                </div>
                 {
                     subDivisionField && (
-                        <gs-aggregate
-                            fields={JSON.stringify([subDivisionField])}
-                            filter={JSON.stringify(lapisLocation)}
-                            headline={subDivisionLabel}
-                            size={JSON.stringify({
-                                width: '100%',
-                                height: '400px',
-                            })}
-                        />
+                        <div>
+                            <h2 class='component-title'>{subDivisionLabel}</h2>
+                            <div class='h-[400px]'>
+                                <gs-aggregate
+                                    fields={JSON.stringify([subDivisionField])}
+                                    filter={JSON.stringify(lapisLocation)}
+                                    headline=''
+                                    size={sizeAttribute}
+                                />
+                            </div>
+                        </div>
                     )
                 }
-                <gs-aggregate
-                    fields='["host"]'
-                    filter={JSON.stringify(lapisLocation)}
-                    headline='Hosts'
-                    size={JSON.stringify({
-                        width: '100%',
-                        height: '400px',
-                    })}></gs-aggregate>
+
+                <div>
+                    <h2 class='component-title'>Hosts</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields='["host"]'
+                            filter={JSON.stringify(lapisLocation)}
+                            headline=''
+                            size={sizeAttribute}></gs-aggregate>
+                    </div>
+                </div>
             </div>
         </div>
     </gs-app>
