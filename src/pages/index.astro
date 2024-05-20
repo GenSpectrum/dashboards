@@ -1,26 +1,36 @@
 ---
+import BaseLayout from '../layouts/base/BaseLayout.astro';
+import { LocationTimeVariantFilter } from '../components/LocationTimeVariantFilter';
+import { parseUrl } from '../routing';
 
+const routeData = parseUrl(Astro.url);
+const lapisLocation = {
+    region: routeData.region,
+    country: routeData.country,
+    division: routeData.division,
+};
 ---
 
-<html lang='en'>
-    <head>
-        <meta charset='utf-8' />
-        <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-        <meta name='viewport' content='width=device-width' />
-        <meta name='generator' content={Astro.generator} />
-        <script type='module' src='../../node_modules/@genspectrum/dashboard-components/dist/dashboard-components.js'
-        ></script>
-        <title>Astro</title>
-    </head>
-    <body>
-        <h1 class='font-bold'>GenSpectrum</h1>
-        <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+<BaseLayout title='GenSpectrum'>
+    <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+        <div
+            class='p-2'
+            style='display: grid; grid-template-columns: 300px 1fr; grid-template-rows: 1fr; grid-column-gap: 16px;'
+        >
+            <LocationTimeVariantFilter initialLocation={lapisLocation} client:only='react' />
             <gs-prevalence-over-time
-                numerator='{"displayName": "Switzerland","country":"Switzerland"}'
+                numerator={JSON.stringify({
+                    displayName: '',
+                    ...lapisLocation,
+                })}
                 denominator='{}'
                 granularity='month'
                 smoothingWindow='0'
-                views='["bar", "line", "table"]'></gs-prevalence-over-time>
-        </gs-app>
-    </body>
-</html>
+                views='["bar", "line", "table"]'
+                size={JSON.stringify({
+                    width: '100%',
+                    height: '500px',
+                })}></gs-prevalence-over-time>
+        </div>
+    </gs-app>
+</BaseLayout>
