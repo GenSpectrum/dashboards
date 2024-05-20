@@ -1,0 +1,26 @@
+---
+
+---
+
+<html lang='en'>
+    <head>
+        <meta charset='utf-8' />
+        <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+        <meta name='viewport' content='width=device-width' />
+        <meta name='generator' content={Astro.generator} />
+        <script type='module' src='../../node_modules/@genspectrum/dashboard-components/dist/dashboard-components.js'
+        ></script>
+        <title>Astro</title>
+    </head>
+    <body>
+        <h1 class='font-bold'>GenSpectrum</h1>
+        <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+            <gs-prevalence-over-time
+                numerator='{"displayName": "Switzerland","country":"Switzerland"}'
+                denominator='{}'
+                granularity='month'
+                smoothingWindow='0'
+                views='["bar", "line", "table"]'></gs-prevalence-over-time>
+        </gs-app>
+    </body>
+</html>
