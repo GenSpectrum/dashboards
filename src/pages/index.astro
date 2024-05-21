@@ -31,11 +31,9 @@ const sizeAttribute = JSON.stringify({ width: '100%', height: '100%' });
 
 <BaseLayout title='GenSpectrum'>
     <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
-        <div class='p-2' style='display: grid; grid-template-columns: 300px 1fr; grid-column-gap: 16px;'>
-            <LocationTimeVariantFilter initialLocation={lapisLocation} client:only='react' />
-            <div
-                style='display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100vw, 650px), 1fr)); grid-column-gap: 16px; grid-row-gap: 24px;'
-            >
+        <div class='grid-cols-[300px_1fr] gap-x-4 p-2 sm:grid'>
+            <LocationTimeVariantFilter initialLocation={lapisLocation} client:load />
+            <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
                 <div>
                     <h2 class='component-title'>Prevalence over time</h2>
                     <div class='h-[400px]'>
