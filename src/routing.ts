@@ -4,7 +4,13 @@ export type LapisLocation = {
     division?: string;
 };
 
-export type View1Route = LapisLocation & {
+export type LapisNextcladePangoLineage = {
+    nextcladePangoLineage?: string;
+};
+
+export type LapisFilter = LapisLocation & LapisNextcladePangoLineage;
+
+export type View1Route = LapisFilter & {
     route: 'view1';
 };
 
@@ -21,6 +27,7 @@ export const parseUrl = (url: URL): Route | undefined => {
         region: search.get('region') ?? undefined,
         country: search.get('country') ?? undefined,
         division: search.get('division') ?? undefined,
+        nextcladePangoLineage: search.get('nextcladePangoLineage') ?? undefined,
     };
 };
 
@@ -34,6 +41,9 @@ export const toUrl = (route: Route): string => {
     }
     if (route.division) {
         search.set('division', route.division);
+    }
+    if (route.nextcladePangoLineage) {
+        search.set('nextcladePangoLineage', route.nextcladePangoLineage);
     }
     return `/?${search}`;
 };

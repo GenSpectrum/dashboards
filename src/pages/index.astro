@@ -30,7 +30,11 @@ if (lapisLocation.country === undefined) {
 <BaseLayout title='GenSpectrum'>
     <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
         <div class='grid-cols-[300px_1fr] gap-x-4 p-2 sm:grid'>
-            <LocationTimeVariantFilter initialLocation={lapisLocation} client:load />
+            <LocationTimeVariantFilter
+                initialLocation={lapisLocation}
+                initialNextcladePangoLineage={routeData.nextcladePangoLineage}
+                client:load
+            />
             <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
                 <div>
                     <h2 class='component-title'>Prevalence over time</h2>
