@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getCurrentRouteInBrowser, type LapisLocation, navigateTo } from '../routing.ts';
+import { getCurrentRouteInBrowser, type LapisLocation, navigateTo } from '../routes/routing.ts';
 
 export type VariantFilterProps = {
     initialNextcladePangoLineage?: string;

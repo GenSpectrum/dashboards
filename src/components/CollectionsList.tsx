@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { getCurrentRouteInBrowser, navigateTo, type View1Route } from '../routing.ts';
+import { getCurrentRouteInBrowser, navigateTo, type View1Route } from '../routes/routing.ts';
 
 type CollectionVariant = {
     name: string;

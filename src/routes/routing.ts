@@ -1,3 +1,11 @@
+import {
+    getIntegerFromSearch,
+    getStringArrayFromSearch,
+    getStringFromSearch,
+    setSearchFromString,
+    setSearchFromStringArray,
+} from './helpers.ts';
+
 export type LapisLocation = {
     region?: string;
     country?: string;
@@ -41,58 +49,38 @@ export const parseUrl = (url: URL): Route | undefined => {
         variantFilter = { variantQuery: advancedVariantQuery };
     } else {
         variantFilter = {
-            nextcladePangoLineage: search.get('nextcladePangoLineage') ?? undefined,
-            nucleotideMutations: search.get('nucleotideMutations')?.split(',') ?? undefined,
-            aminoAcidMutations: search.get('aminoAcidMutations')?.split(',') ?? undefined,
-            nucleotideInsertions: search.get('nucleotideInsertions')?.split(',') ?? undefined,
-            aminoAcidInsertions: search.get('aminoAcidInsertions')?.split(',') ?? undefined,
+            nextcladePangoLineage: getStringFromSearch(search, 'nextcladePangoLineage'),
+            nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
+            aminoAcidMutations: getStringArrayFromSearch(search, 'aminoAcidMutations'),
+            nucleotideInsertions: getStringArrayFromSearch(search, 'nucleotideInsertions'),
+            aminoAcidInsertions: getStringArrayFromSearch(search, 'aminoAcidInsertions'),
         };
     }
     return {
         route: 'view1',
         baselineFilter: {
-            region: search.get('region') ?? undefined,
-            country: search.get('country') ?? undefined,
-            division: search.get('division') ?? undefined,
+            region: getStringFromSearch(search, 'region'),
+            country: getStringFromSearch(search, 'country'),
+            division: getStringFromSearch(search, 'division'),
         },
         variantFilter,
-        collectionId:
-            search.get('collectionId') !== null ? Number.parseInt(search.get('collectionId')!, 10) : undefined,
+        collectionId: getIntegerFromSearch(search, 'collectionId'),
     };
 };
 
 export const toUrl = (route: Route): string => {
     const search = new URLSearchParams();
-    if (route.baselineFilter.region) {
-        search.set('region', route.baselineFilter.region);
-    }
-    if (route.baselineFilter.country) {
-        search.set('country', route.baselineFilter.country);
-    }
-    if (route.baselineFilter.division) {
-        search.set('division', route.baselineFilter.division);
-    }
+    (['region', 'country', 'division'] as const).forEach((field) =>
+        setSearchFromString(search, field, route.baselineFilter[field]),
+    );
     const variantFilter = route.variantFilter;
     if (isAdvancedVariantQuery(variantFilter)) {
-        if (variantFilter.variantQuery) {
-            search.set('variantQuery', variantFilter.variantQuery);
-        }
+        setSearchFromString(search, 'variantQuery', variantFilter.variantQuery);
     } else if (isSimpleVariantQuery(variantFilter)) {
-        if (variantFilter.nextcladePangoLineage) {
-            search.set('nextcladePangoLineage', variantFilter.nextcladePangoLineage);
-        }
-        if (variantFilter.nucleotideMutations && variantFilter.nucleotideMutations.length > 0) {
-            search.set('nucleotideMutations', variantFilter.nucleotideMutations.join(','));
-        }
-        if (variantFilter.aminoAcidMutations && variantFilter.aminoAcidMutations.length > 0) {
-            search.set('aminoAcidMutations', variantFilter.aminoAcidMutations.join(','));
-        }
-        if (variantFilter.nucleotideInsertions && variantFilter.nucleotideInsertions.length > 0) {
-            search.set('nucleotideInsertions', variantFilter.nucleotideInsertions.join(','));
-        }
-        if (variantFilter.aminoAcidInsertions && variantFilter.aminoAcidInsertions.length > 0) {
-            search.set('aminoAcidInsertions', variantFilter.aminoAcidInsertions.join(','));
-        }
+        setSearchFromString(search, 'nextcladePangoLineage', variantFilter.nextcladePangoLineage);
+        (['nucleotideMutations', 'aminoAcidMutations', 'nucleotideInsertions', 'aminoAcidInsertions'] as const).forEach(
+            (field) => setSearchFromStringArray(search, field, variantFilter[field]),
+        );
     }
     if (route.collectionId !== undefined) {
         search.set('collectionId', route.collectionId.toString());
