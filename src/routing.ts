@@ -20,14 +20,12 @@ export type VariantQuery = LapisSimpleVariantQuery | LapisAdvancedVariantQuery;
 
 export type LapisFilter = LapisLocation & VariantQuery;
 
-export type SelectedCollection = {
+export type View1Route = {
+    route: 'view1';
     collectionId?: number;
+    baselineFilter: LapisLocation;
+    variantFilter: VariantQuery;
 };
-
-export type View1Route = LapisFilter &
-    SelectedCollection & {
-        route: 'view1';
-    };
 
 export type Route = View1Route;
 
@@ -37,12 +35,12 @@ export const getCurrentRouteInBrowser = (): Route | undefined => {
 
 export const parseUrl = (url: URL): Route | undefined => {
     const search = url.searchParams;
-    let variantQuery: LapisSimpleVariantQuery | LapisAdvancedVariantQuery = {};
+    let variantFilter: LapisSimpleVariantQuery | LapisAdvancedVariantQuery = {};
     const advancedVariantQuery = search.get('variantQuery');
     if (advancedVariantQuery) {
-        variantQuery = { variantQuery: advancedVariantQuery };
+        variantFilter = { variantQuery: advancedVariantQuery };
     } else {
-        variantQuery = {
+        variantFilter = {
             nextcladePangoLineage: search.get('nextcladePangoLineage') ?? undefined,
             nucleotideMutations: search.get('nucleotideMutations')?.split(',') ?? undefined,
             aminoAcidMutations: search.get('aminoAcidMutations')?.split(',') ?? undefined,
@@ -52,10 +50,12 @@ export const parseUrl = (url: URL): Route | undefined => {
     }
     return {
         route: 'view1',
-        region: search.get('region') ?? undefined,
-        country: search.get('country') ?? undefined,
-        division: search.get('division') ?? undefined,
-        ...variantQuery,
+        baselineFilter: {
+            region: search.get('region') ?? undefined,
+            country: search.get('country') ?? undefined,
+            division: search.get('division') ?? undefined,
+        },
+        variantFilter,
         collectionId:
             search.get('collectionId') !== null ? Number.parseInt(search.get('collectionId')!, 10) : undefined,
     };
@@ -63,34 +63,35 @@ export const parseUrl = (url: URL): Route | undefined => {
 
 export const toUrl = (route: Route): string => {
     const search = new URLSearchParams();
-    if (route.region) {
-        search.set('region', route.region);
+    if (route.baselineFilter.region) {
+        search.set('region', route.baselineFilter.region);
     }
-    if (route.country) {
-        search.set('country', route.country);
+    if (route.baselineFilter.country) {
+        search.set('country', route.baselineFilter.country);
     }
-    if (route.division) {
-        search.set('division', route.division);
+    if (route.baselineFilter.division) {
+        search.set('division', route.baselineFilter.division);
     }
-    if (isAdvancedVariantQuery(route)) {
-        if (route.variantQuery) {
-            search.set('variantQuery', route.variantQuery);
+    const variantFilter = route.variantFilter;
+    if (isAdvancedVariantQuery(variantFilter)) {
+        if (variantFilter.variantQuery) {
+            search.set('variantQuery', variantFilter.variantQuery);
         }
-    } else if (isSimpleVariantQuery(route)) {
-        if (route.nextcladePangoLineage) {
-            search.set('nextcladePangoLineage', route.nextcladePangoLineage);
+    } else if (isSimpleVariantQuery(variantFilter)) {
+        if (variantFilter.nextcladePangoLineage) {
+            search.set('nextcladePangoLineage', variantFilter.nextcladePangoLineage);
         }
-        if (route.nucleotideMutations && route.nucleotideMutations.length > 0) {
-            search.set('nucleotideMutations', route.nucleotideMutations.join(','));
+        if (variantFilter.nucleotideMutations && variantFilter.nucleotideMutations.length > 0) {
+            search.set('nucleotideMutations', variantFilter.nucleotideMutations.join(','));
         }
-        if (route.aminoAcidMutations && route.aminoAcidMutations.length > 0) {
-            search.set('aminoAcidMutations', route.aminoAcidMutations.join(','));
+        if (variantFilter.aminoAcidMutations && variantFilter.aminoAcidMutations.length > 0) {
+            search.set('aminoAcidMutations', variantFilter.aminoAcidMutations.join(','));
         }
-        if (route.nucleotideInsertions && route.nucleotideInsertions.length > 0) {
-            search.set('nucleotideInsertions', route.nucleotideInsertions.join(','));
+        if (variantFilter.nucleotideInsertions && variantFilter.nucleotideInsertions.length > 0) {
+            search.set('nucleotideInsertions', variantFilter.nucleotideInsertions.join(','));
         }
-        if (route.aminoAcidInsertions && route.aminoAcidInsertions.length > 0) {
-            search.set('aminoAcidInsertions', route.aminoAcidInsertions.join(','));
+        if (variantFilter.aminoAcidInsertions && variantFilter.aminoAcidInsertions.length > 0) {
+            search.set('aminoAcidInsertions', variantFilter.aminoAcidInsertions.join(','));
         }
     }
     if (route.collectionId !== undefined) {
@@ -101,23 +102,6 @@ export const toUrl = (route: Route): string => {
 
 export const navigateTo = (route: Route) => {
     window.location.href = toUrl(route);
-};
-
-export const changeVariantQuery = (route: Route, variantQuery: VariantQuery): Route => {
-    let newRoute = { ...route };
-    if (isSimpleVariantQuery(newRoute)) {
-        delete newRoute.nextcladePangoLineage;
-        delete newRoute.nucleotideMutations;
-        delete newRoute.aminoAcidMutations;
-        delete newRoute.nucleotideInsertions;
-        delete newRoute.aminoAcidInsertions;
-    } else if (isAdvancedVariantQuery(newRoute)) {
-        delete newRoute.variantQuery;
-    }
-    return {
-        ...newRoute,
-        ...variantQuery,
-    };
 };
 
 const isSimpleVariantQuery = (variantQuery: VariantQuery): variantQuery is LapisSimpleVariantQuery => {

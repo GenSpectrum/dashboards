@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { changeVariantQuery, getCurrentRouteInBrowser, navigateTo, type View1Route } from '../routing.ts';
+import { getCurrentRouteInBrowser, navigateTo, type View1Route } from '../routing.ts';
 
 type CollectionVariant = {
     name: string;
@@ -90,19 +90,27 @@ const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
         let newRoute: View1Route;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
-            newRoute = changeVariantQuery(currentRoute, {
-                variantQuery: query.variantQuery,
-            });
+            newRoute = {
+                ...currentRoute,
+                collectionId: collection.id,
+                variantFilter: {
+                    variantQuery: query.variantQuery,
+                },
+            };
         } else {
-            newRoute = changeVariantQuery(currentRoute, {
-                nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
-                nucleotideMutations: query.nucMutations,
-                aminoAcidMutations: query.aaMutations,
-                nucleotideInsertions: query.nucInsertions,
-                aminoAcidInsertions: query.aaInsertions,
-            });
+            newRoute = {
+                ...currentRoute,
+                collectionId: collection.id,
+                variantFilter: {
+                    nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
+                    nucleotideMutations: query.nucMutations,
+                    aminoAcidMutations: query.aaMutations,
+                    nucleotideInsertions: query.nucInsertions,
+                    aminoAcidInsertions: query.aaInsertions,
+                },
+            };
         }
-        newRoute.collectionId = collection.id;
+        console.log(JSON.stringify(currentRoute, null, 4), JSON.stringify(newRoute, null, 4));
         navigateTo(newRoute);
     };
 

@@ -33,7 +33,10 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
         const currentRoute = getCurrentRouteInBrowser()!;
         navigateTo({
             ...currentRoute,
-            ...location,
+            baselineFilter: {
+                ...currentRoute.baselineFilter,
+                ...location,
+            },
         });
     };
 

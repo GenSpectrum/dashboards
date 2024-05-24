@@ -6,21 +6,18 @@ import { CollectionsList } from '../components/CollectionsList';
 import { VariantFilter } from '../components/VariantFilter';
 
 const routeData = parseUrl(Astro.url);
-const lapisLocation = {
-    region: routeData.region,
-    country: routeData.country,
-    division: routeData.division,
+
+const variantFilter = {
+    ...routeData.variantFilter,
+    ...routeData.baselineFilter,
 };
-const lapisFilter = { ...routeData };
-delete lapisFilter.route;
-delete lapisFilter.collectionId;
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
-if (lapisLocation.country === undefined) {
+if (routeData.baselineFilter.country === undefined) {
     subDivisionField = 'country';
     subDivisionLabel = 'Countries';
-} else if (lapisLocation.division === undefined) {
+} else if (routeData.baselineFilter.division === undefined) {
     subDivisionField = 'division';
     subDivisionLabel = 'Geographic sub-divisions';
 }
@@ -38,13 +35,13 @@ if (lapisLocation.country === undefined) {
             <div>
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
-                    <LocationTimeFilter initialLocation={lapisLocation} client:load />
+                    <LocationTimeFilter initialLocation={routeData.baselineFilter} client:load />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
-                        initialNextcladePangoLineage={'nextcladePangoLineage' in routeData
-                            ? routeData.nextcladePangoLineage
+                        initialNextcladePangoLineage={'nextcladePangoLineage' in routeData.variantFilter
+                            ? routeData.variantFilter.nextcladePangoLineage
                             : undefined}
                         client:load
                     />
@@ -60,9 +57,9 @@ if (lapisLocation.country === undefined) {
                             headline=''
                             numerator={JSON.stringify({
                                 displayName: '',
-                                lapisFilter,
+                                lapisFilter: variantFilter,
                             })}
-                            denominator={JSON.stringify(lapisLocation)}
+                            denominator={JSON.stringify(routeData.baselineFilter)}
                             granularity='week'
                             smoothingWindow='0'
                             width='100%'
@@ -74,8 +71,8 @@ if (lapisLocation.country === undefined) {
                     <div class='h-[400px]'>
                         <gs-relative-growth-advantage
                             headline=''
-                            numerator={JSON.stringify(lapisFilter)}
-                            denominator={JSON.stringify(lapisLocation)}
+                            numerator={JSON.stringify(variantFilter)}
+                            denominator={JSON.stringify(routeData.baselineFilter)}
                             generationTime='7'
                             width='100%'
                             height='100%'></gs-relative-growth-advantage>
@@ -86,7 +83,7 @@ if (lapisLocation.country === undefined) {
                     <h2 class='component-title'>Nucleotide mutations</h2>
                     <div class='h-[400px]'>
                         <gs-mutations
-                            variant={JSON.stringify(lapisFilter)}
+                            variant={JSON.stringify(variantFilter)}
                             headline=''
                             sequenceType='nucleotide'
                             views='["grid", "table", "insertions"]'
@@ -98,7 +95,7 @@ if (lapisLocation.country === undefined) {
                     <h2 class='component-title'>Amino acid mutations</h2>
                     <div class='h-[400px]'>
                         <gs-mutations
-                            variant={JSON.stringify(lapisFilter)}
+                            variant={JSON.stringify(variantFilter)}
                             headline=''
                             sequenceType='amino acid'
                             views='["grid", "table", "insertions"]'
@@ -112,7 +109,7 @@ if (lapisLocation.country === undefined) {
                     <div class='h-[400px]'>
                         <gs-aggregate
                             fields='["nextcladePangoLineage"]'
-                            filter={JSON.stringify(lapisFilter)}
+                            filter={JSON.stringify(variantFilter)}
                             headline=''
                             width='100%'
                             height='100%'></gs-aggregate>
@@ -125,7 +122,7 @@ if (lapisLocation.country === undefined) {
                             <div class='h-[400px]'>
                                 <gs-aggregate
                                     fields={JSON.stringify([subDivisionField])}
-                                    filter={JSON.stringify(lapisFilter)}
+                                    filter={JSON.stringify(variantFilter)}
                                     headline=''
                                     width='100%'
                                     height='100%'
@@ -140,7 +137,7 @@ if (lapisLocation.country === undefined) {
                     <div class='h-[400px]'>
                         <gs-aggregate
                             fields='["host"]'
-                            filter={JSON.stringify(lapisLocation)}
+                            filter={JSON.stringify(variantFilter)}
                             headline=''
                             width='100%'
                             height='100%'></gs-aggregate>
