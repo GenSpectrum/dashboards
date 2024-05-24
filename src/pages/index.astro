@@ -13,6 +13,7 @@ const lapisLocation = {
 };
 const lapisFilter = { ...routeData };
 delete lapisFilter.route;
+delete lapisFilter.collectionId;
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -48,9 +49,7 @@ if (lapisLocation.country === undefined) {
                         client:load
                     />
                     <div class='my-2 font-semibold'>Or select a known variant:</div>
-                    <div class='border bg-white'>
-                        <CollectionsList client:idle />
-                    </div>
+                    <CollectionsList initialCollectionId={routeData.collectionId} client:idle />
                 </div>
             </div>
             <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>

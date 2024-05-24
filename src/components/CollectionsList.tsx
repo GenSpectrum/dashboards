@@ -14,14 +14,20 @@ type Collection = {
     variants: CollectionVariant[];
 };
 
-const CollectionsListInner = () => {
-    const [selectedCollectionIndex, setSelectedCollectionIndex] = useState(0);
+type CollectionsListProps = {
+    initialCollectionId?: number;
+};
+
+const CollectionsListInner = ({ initialCollectionId }: CollectionsListProps) => {
+    const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
     const query = useQuery({
         queryKey: [],
         queryFn: async () => {
             const response = await fetch('https://cov-spectrum.org/api/v2/resource/collection');
-            return (await response.json()) as Collection[];
+            const collections = (await response.json()) as Collection[];
+            collections.sort((c1, c2) => c1.id - c2.id);
+            return collections;
         },
     });
 
@@ -33,36 +39,38 @@ const CollectionsListInner = () => {
         <>
             <CollectionSelector
                 collections={query.data}
-                selectedIndex={selectedCollectionIndex}
-                onSelect={setSelectedCollectionIndex}
+                selectedId={selectedCollectionId}
+                onSelect={setSelectedCollectionId}
             />
-            <CollectionVariantList variants={query.data[selectedCollectionIndex].variants} />
+            <CollectionVariantList
+                collection={query.data.find((c) => c.id === selectedCollectionId) ?? query.data[0]}
+            />
         </>
     );
 };
 
 const queryClient = new QueryClient();
-export const CollectionsList = () => (
+export const CollectionsList = (props: CollectionsListProps) => (
     <QueryClientProvider client={queryClient}>
-        <CollectionsListInner />
+        <CollectionsListInner {...props} />
     </QueryClientProvider>
 );
 
 type CollectionSelectorProps = {
     collections: Collection[];
-    selectedIndex: number;
+    selectedId: number;
     onSelect: (index: number) => void;
 };
 
-const CollectionSelector = ({ collections, selectedIndex, onSelect }: CollectionSelectorProps) => {
+const CollectionSelector = ({ collections, selectedId, onSelect }: CollectionSelectorProps) => {
     return (
         <select
-            className='w-full border'
-            value={selectedIndex}
+            className='mb-2 w-full border bg-white p-2'
+            value={selectedId}
             onChange={(event) => onSelect(Number.parseInt(event.target.value, 10))}
         >
-            {collections.map((collection, index) => (
-                <option key={index} value={index}>
+            {collections.map((collection) => (
+                <option key={collection.id} value={collection.id}>
                     #{collection.id} {collection.title}
                 </option>
             ))}
@@ -71,10 +79,12 @@ const CollectionSelector = ({ collections, selectedIndex, onSelect }: Collection
 };
 
 type CollectionVariantListProps = {
-    variants: CollectionVariant[];
+    collection: Collection;
 };
 
-const CollectionVariantList = ({ variants }: CollectionVariantListProps) => {
+const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
+    const variants = collection.variants;
+
     const selectVariant = (variant: CollectionVariant) => {
         const currentRoute = getCurrentRouteInBrowser()!;
         let newRoute: View1Route;
@@ -92,16 +102,16 @@ const CollectionVariantList = ({ variants }: CollectionVariantListProps) => {
                 aminoAcidInsertions: query.aaInsertions,
             });
         }
-        console.log('newRoute', JSON.stringify(newRoute, null, 4));
+        newRoute.collectionId = collection.id;
         navigateTo(newRoute);
     };
 
     return (
         <div className='flex flex-col'>
-            {variants.map((variant) => (
+            {variants.map((variant, index) => (
                 <button
-                    key={variant.query}
-                    className='border-b px-4 py-2 hover:bg-amber-200'
+                    key={`${variant.name}_${variant.query}_${index}`}
+                    className='border bg-white px-4 py-2  hover:bg-amber-200'
                     onClick={() => selectVariant(variant)}
                 >
                     {variant.name}

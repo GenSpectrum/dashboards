@@ -20,9 +20,14 @@ export type VariantQuery = LapisSimpleVariantQuery | LapisAdvancedVariantQuery;
 
 export type LapisFilter = LapisLocation & VariantQuery;
 
-export type View1Route = LapisFilter & {
-    route: 'view1';
+export type SelectedCollection = {
+    collectionId?: number;
 };
+
+export type View1Route = LapisFilter &
+    SelectedCollection & {
+        route: 'view1';
+    };
 
 export type Route = View1Route;
 
@@ -51,6 +56,8 @@ export const parseUrl = (url: URL): Route | undefined => {
         country: search.get('country') ?? undefined,
         division: search.get('division') ?? undefined,
         ...variantQuery,
+        collectionId:
+            search.get('collectionId') !== null ? Number.parseInt(search.get('collectionId')!, 10) : undefined,
     };
 };
 
@@ -85,6 +92,9 @@ export const toUrl = (route: Route): string => {
         if (route.aminoAcidInsertions && route.aminoAcidInsertions.length > 0) {
             search.set('aminoAcidInsertions', route.aminoAcidInsertions.join(','));
         }
+    }
+    if (route.collectionId !== undefined) {
+        search.set('collectionId', route.collectionId.toString());
     }
     return `/?${search}`;
 };
