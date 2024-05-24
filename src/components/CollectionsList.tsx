@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { getCurrentRouteInBrowser, navigateTo, type View1Route } from '../routes/routing.ts';
+import { Routing } from '../routes/routing.ts';
+import { View1 } from '../routes/view1.ts';
 
 type CollectionVariant = {
     name: string;
@@ -86,8 +87,8 @@ const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
     const variants = collection.variants;
 
     const selectVariant = (variant: CollectionVariant) => {
-        const currentRoute = getCurrentRouteInBrowser()!;
-        let newRoute: View1Route;
+        const currentRoute = Routing.getCurrentRouteInBrowser() as View1.Route;
+        let newRoute: View1.Route;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
             newRoute = {
@@ -111,7 +112,7 @@ const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
             };
         }
         console.log(JSON.stringify(currentRoute, null, 4), JSON.stringify(newRoute, null, 4));
-        navigateTo(newRoute);
+        Routing.navigateTo(newRoute);
     };
 
     return (

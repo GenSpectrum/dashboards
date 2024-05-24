@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getCurrentRouteInBrowser, type LapisLocation, navigateTo } from '../routes/routing.ts';
+import { Routing } from '../routes/routing.ts';
 
 export type VariantFilterProps = {
     initialNextcladePangoLineage?: string;
@@ -25,12 +25,14 @@ export const VariantFilter = ({ initialNextcladePangoLineage }: VariantFilterPro
     }, []);
 
     const search = () => {
-        const currentRoute = getCurrentRouteInBrowser()!;
+        const currentRoute = Routing.getCurrentRouteInBrowser()!;
         const newRoute = {
             ...currentRoute,
-            variantQuery: { nextcladePangoLineage },
+            variantFilter: { nextcladePangoLineage },
         };
-        navigateTo(newRoute);
+        console.log(JSON.stringify(currentRoute))
+        console.log(JSON.stringify(newRoute))
+        Routing.navigateTo(newRoute);
     };
 
     return (

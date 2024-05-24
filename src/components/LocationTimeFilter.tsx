@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
-import { getCurrentRouteInBrowser, type LapisLocation, navigateTo } from '../routes/routing.ts';
+import { useEffect, useState } from 'react';
+import { Routing } from '../routes/routing.ts';
+import { View1 } from '../routes/view1.ts';
 
 export type LocationTimeFilterProps = {
-    initialLocation: LapisLocation;
+    initialLocation: View1.LapisLocation;
 };
 
 export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps) => {
@@ -30,8 +31,8 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
     }, []);
 
     const search = () => {
-        const currentRoute = getCurrentRouteInBrowser()!;
-        navigateTo({
+        const currentRoute = Routing.getCurrentRouteInBrowser() as View1.Route;
+        Routing.navigateTo({
             ...currentRoute,
             baselineFilter: {
                 ...currentRoute.baselineFilter,
