@@ -3,12 +3,12 @@ import { getCurrentRouteInBrowser, type LapisLocation, navigateTo } from '../rou
 
 export type LocationTimeVariantFilterProps = {
     initialLocation: LapisLocation;
-    initialNextcladePangoLineage: string;
+    initialNextcladePangoLineage?: string;
 };
 
 export const LocationTimeVariantFilter = ({
     initialLocation,
-    initialNextcladePangoLineage,
+    initialNextcladePangoLineage = '',
 }: LocationTimeVariantFilterProps) => {
     const [location, setLocation] = useState(initialLocation);
     const [nextcladePangoLineage, setNextcladePangoLineage] = useState(initialNextcladePangoLineage);
@@ -44,7 +44,6 @@ export const LocationTimeVariantFilter = ({
             }
         };
     }, []);
-    console.log(nextcladePangoLineage);
 
     const search = () => {
         const currentRoute = getCurrentRouteInBrowser()!;

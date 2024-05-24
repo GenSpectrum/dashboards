@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { LocationTimeVariantFilter } from '../components/LocationTimeVariantFilter';
-import { parseUrl } from '../routing';
+import { LapisFilter, parseUrl } from '../routing';
+import { CollectionsList } from '../components/CollectionsList';
 
 const routeData = parseUrl(Astro.url);
 const lapisLocation = {
@@ -9,6 +10,8 @@ const lapisLocation = {
     country: routeData.country,
     division: routeData.division,
 };
+const lapisFilter = { ...routeData };
+delete lapisFilter.route;
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -30,11 +33,18 @@ if (lapisLocation.country === undefined) {
 <BaseLayout title='GenSpectrum'>
     <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
         <div class='grid-cols-[300px_1fr] gap-x-4 p-2 sm:grid'>
-            <LocationTimeVariantFilter
-                initialLocation={lapisLocation}
-                initialNextcladePangoLineage={routeData.nextcladePangoLineage}
-                client:load
-            />
+            <div>
+                <LocationTimeVariantFilter
+                    initialLocation={lapisLocation}
+                    initialNextcladePangoLineage={'nextcladePangoLineage' in routeData
+                        ? routeData.nextcladePangoLineage
+                        : undefined}
+                    client:load
+                />
+                <div class='mt-4 border-t pt-4'>
+                    <CollectionsList client:idle />
+                </div>
+            </div>
             <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
                 <div>
                     <h2 class='component-title'>Prevalence over time</h2>
@@ -43,7 +53,7 @@ if (lapisLocation.country === undefined) {
                             headline=''
                             numerator={JSON.stringify({
                                 displayName: '',
-                                lapisFilter: lapisLocation,
+                                lapisFilter,
                             })}
                             denominator='{}'
                             granularity='month'
@@ -57,7 +67,7 @@ if (lapisLocation.country === undefined) {
                     <div class='h-[400px]'>
                         <gs-relative-growth-advantage
                             headline=''
-                            numerator={JSON.stringify(lapisLocation)}
+                            numerator={JSON.stringify(lapisFilter)}
                             denominator='{}'
                             generationTime='7'
                             width='100%'
@@ -69,7 +79,7 @@ if (lapisLocation.country === undefined) {
                     <h2 class='component-title'>Nucleotide mutations</h2>
                     <div class='h-[400px]'>
                         <gs-mutations
-                            variant={JSON.stringify(lapisLocation)}
+                            variant={JSON.stringify(lapisFilter)}
                             headline=''
                             sequenceType='nucleotide'
                             views='["grid", "table", "insertions"]'
@@ -81,7 +91,7 @@ if (lapisLocation.country === undefined) {
                     <h2 class='component-title'>Amino acid mutations</h2>
                     <div class='h-[400px]'>
                         <gs-mutations
-                            variant={JSON.stringify(lapisLocation)}
+                            variant={JSON.stringify(lapisFilter)}
                             headline=''
                             sequenceType='amino acid'
                             views='["grid", "table", "insertions"]'
@@ -95,7 +105,7 @@ if (lapisLocation.country === undefined) {
                     <div class='h-[400px]'>
                         <gs-aggregate
                             fields='["nextcladePangoLineage"]'
-                            filter={JSON.stringify(lapisLocation)}
+                            filter={JSON.stringify(lapisFilter)}
                             headline=''
                             width='100%'
                             height='100%'></gs-aggregate>
@@ -108,7 +118,7 @@ if (lapisLocation.country === undefined) {
                             <div class='h-[400px]'>
                                 <gs-aggregate
                                     fields={JSON.stringify([subDivisionField])}
-                                    filter={JSON.stringify(lapisLocation)}
+                                    filter={JSON.stringify(lapisFilter)}
                                     headline=''
                                     width='100%'
                                     height='100%'
