@@ -30,4 +30,29 @@ export namespace Routing {
                 return View2.toUrl(route);
         }
     };
+
+    export const views: Record<
+        string,
+        {
+            label: string;
+            route: Routing.Route;
+        }[]
+    > = {
+        covid: [
+            {
+                label: 'Singe variant',
+                route: { route: 'view1', baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'JN.1*' } },
+            },
+            {
+                label: 'Compare side-by-side',
+                route: {
+                    route: 'view2',
+                    filters: [
+                        { id: 1, baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'JN.1*' } },
+                        { id: 2, baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'XBB.1*' } },
+                    ],
+                },
+            },
+        ],
+    };
 }

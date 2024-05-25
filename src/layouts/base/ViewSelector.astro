@@ -1,0 +1,18 @@
+---
+import { Routing } from '../../routes/routing';
+---
+
+<select id='view-selector'>
+    <option value=''>Choose view</option>
+    {Routing.views['covid'].map((view) => <option value={Routing.toUrl(view.route)}>{view.label}</option>)}
+</select>
+
+<script>
+    const viewSelector = document.getElementById('view-selector') as HTMLSelectElement;
+    viewSelector.addEventListener('change', (event) => {
+        const selectedValue = event.target.value;
+        if (selectedValue !== '') {
+            window.location.href = selectedValue;
+        }
+    });
+</script>
