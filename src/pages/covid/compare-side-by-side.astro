@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { View2 } from '../../routes/view2';
+import { LocationTimeFilter } from '../../components/view1/LocationTimeFilter';
+import { VariantFilter } from '../../components/view1/VariantFilter';
+import { CollectionsList } from '../../components/view1/CollectionsList';
+import { JointFilter } from '../../components/view2/JointFilter';
 
 const routeData = View2.parseUrl(Astro.url);
 ---
@@ -15,10 +19,18 @@ const routeData = View2.parseUrl(Astro.url);
     <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
         <div class='flex overflow-x-auto'>
             {
-                routeData.filters.map(({ variantFilter, baselineFilter }) => (
+                routeData.filters.map(({ id, variantFilter, baselineFilter }) => (
                     <div class='min-w-[700px]  flex-1 border-r-2 px-2'>
-                        <div>Variant: {JSON.stringify(variantFilter)}</div>
-                        <div>Baseline: {JSON.stringify(baselineFilter)}</div>
+                        <JointFilter
+                            filterId={id}
+                            initialLocation={baselineFilter}
+                            initialNextcladePangoLineage={
+                                'nextcladePangoLineage' in variantFilter
+                                    ? variantFilter.nextcladePangoLineage
+                                    : undefined
+                            }
+                            client:load
+                        />
                         <div>
                             <h3 class='component-title'>Prevalence over time</h3>
                             <gs-prevalence-over-time

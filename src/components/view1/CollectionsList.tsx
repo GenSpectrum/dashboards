@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { Routing } from '../routes/routing.ts';
-import { View1 } from '../routes/view1.ts';
+import { Routing } from '../../routes/routing.ts';
+import { View1 } from '../../routes/view1.ts';
 
 type CollectionVariant = {
     name: string;

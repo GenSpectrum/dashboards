@@ -9,6 +9,7 @@ export namespace View2 {
     };
 
     type Filter = {
+        id: number;
         baselineFilter: View1.LapisLocation;
         variantFilter: View1.LapisVariantQuery;
     };
@@ -22,14 +23,14 @@ export namespace View2 {
                 return undefined;
             }
             const field = keySplit[0];
-            const index = Number.parseInt(keySplit[1]);
-            if (Number.isNaN(index)) {
+            const id = Number.parseInt(keySplit[1]);
+            if (Number.isNaN(id)) {
                 return undefined;
             }
-            if (!filterMap.has(index)) {
-                filterMap.set(index, { baselineFilter: {}, variantFilter: {} });
+            if (!filterMap.has(id)) {
+                filterMap.set(id, { id, baselineFilter: {}, variantFilter: {} });
             }
-            const filter = filterMap.get(index)!;
+            const filter = filterMap.get(id)!;
             switch (field) {
                 case 'region':
                 case 'country':
@@ -64,24 +65,40 @@ export namespace View2 {
 
         return {
             route: 'view2',
-            filters: [...filterMap.values()],
+            filters: [...filterMap.values()].sort((a, b) => a.id - b.id),
         };
     };
 
     export const toUrl = (route: Route): string => {
         const search = new URLSearchParams();
-        route.filters.forEach((filter, index) => {
+        for (const filter of route.filters) {
+            const id = filter.id;
             Object.entries(filter.baselineFilter).forEach(([key, value]) => {
-                search.append(`${key}$${index}`, value);
+                if (value !== undefined) {
+                    search.append(`${key}$${id}`, value);
+                }
             });
             Object.entries(filter.variantFilter).forEach(([key, value]) => {
                 if (Array.isArray(value)) {
-                    search.append(`${key}$${index}`, value.join(','));
+                    if (value.length > 0) {
+                        search.append(`${key}$${id}`, value.join(','));
+                    }
                 } else {
-                    search.append(`${key}$${index}`, value);
+                    if (value !== undefined && value.length > 0) {
+                        search.append(`${key}$${id}`, value);
+                    }
                 }
             });
-        });
+        }
         return `${pathname}?${search}`;
+    };
+
+    export const setFilter = (route: Route, newFilter: Filter): Route => {
+        const newRoute = {
+            ...route,
+            filters: route.filters.filter((route) => route.id !== newFilter.id),
+        };
+        newRoute.filters.push(newFilter);
+        return newRoute;
     };
 }

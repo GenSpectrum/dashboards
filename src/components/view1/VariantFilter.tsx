@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routing } from '../routes/routing.ts';
+import { Routing } from '../../routes/routing.ts';
 
 export type VariantFilterProps = {
     initialNextcladePangoLineage?: string;
@@ -46,7 +46,7 @@ export const VariantFilter = ({ initialNextcladePangoLineage }: VariantFilterPro
                 className='rounded-lg border bg-white p-4 hover:bg-amber-200'
                 type='submit'
             >
-                Search
+                Submit
             </button>
         </div>
     );

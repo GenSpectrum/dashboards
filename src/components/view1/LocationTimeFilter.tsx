@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Routing } from '../routes/routing.ts';
-import { View1 } from '../routes/view1.ts';
+import { Routing } from '../../routes/routing.ts';
+import { View1 } from '../../routes/view1.ts';
 
 export type LocationTimeFilterProps = {
     initialLocation: View1.LapisLocation;
