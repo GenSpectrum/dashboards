@@ -13,7 +13,7 @@ export namespace View1 {
         route: 'view1';
         collectionId?: number;
         baselineFilter: LapisLocation;
-        variantFilter: VariantQuery;
+        variantFilter: LapisVariantQuery;
     };
 
     export const parseUrl = (url: URL): Route | undefined => {
@@ -81,11 +81,11 @@ export namespace View1 {
         variantQuery?: string;
     };
 
-    export type VariantQuery = LapisSimpleVariantQuery | LapisAdvancedVariantQuery;
+    export type LapisVariantQuery = LapisSimpleVariantQuery | LapisAdvancedVariantQuery;
 
-    export type LapisFilter = LapisLocation & VariantQuery;
+    export type LapisFilter = LapisLocation & LapisVariantQuery;
 
-    const isSimpleVariantQuery = (variantQuery: VariantQuery): variantQuery is LapisSimpleVariantQuery => {
+    export const isSimpleVariantQuery = (variantQuery: LapisVariantQuery): variantQuery is LapisSimpleVariantQuery => {
         return (
             'nucleotideMutations' in variantQuery ||
             'aminoAcidMutations' in variantQuery ||
@@ -95,7 +95,9 @@ export namespace View1 {
         );
     };
 
-    const isAdvancedVariantQuery = (variantQuery: VariantQuery): variantQuery is LapisAdvancedVariantQuery => {
+    export const isAdvancedVariantQuery = (
+        variantQuery: LapisVariantQuery,
+    ): variantQuery is LapisAdvancedVariantQuery => {
         return 'variantQuery' in variantQuery;
     };
 }

@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { View2 } from '../../routes/view2';
+
+const routeData = View2.parseUrl(Astro.url);
+---
+
+<style>
+    .component-title {
+        @apply mt-4 font-bold;
+    }
+</style>
+
+<BaseLayout title='GenSpectrum'>
+    <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+        <div class='flex overflow-x-auto'>
+            {
+                routeData.filters.map(({ variantFilter, baselineFilter }) => (
+                    <div class='min-w-[700px]  flex-1 border-r-2 px-2'>
+                        <div>Variant: {JSON.stringify(variantFilter)}</div>
+                        <div>Baseline: {JSON.stringify(baselineFilter)}</div>
+                        <div>
+                            <h3 class='component-title'>Prevalence over time</h3>
+                            <gs-prevalence-over-time
+                                headline=''
+                                numerator={JSON.stringify({
+                                    displayName: '',
+                                    lapisFilter: { ...variantFilter, ...baselineFilter },
+                                })}
+                                denominator={JSON.stringify(baselineFilter)}
+                                granularity='week'
+                                smoothingWindow='0'
+                                width='100%'
+                                height='400px'
+                            />
+                        </div>
+                        <div>
+                            <h3 class='component-title'>Relative growth advantage</h3>
+                            <gs-relative-growth-advantage
+                                headline=''
+                                numerator={JSON.stringify(variantFilter)}
+                                denominator={JSON.stringify(baselineFilter)}
+                                generationTime='7'
+                                width='100%'
+                                height='400px'
+                            />
+                        </div>
+                        <div>
+                            <h3 class='component-title'>Nucleotide mutations</h3>
+                            <gs-mutations
+                                variant={JSON.stringify(variantFilter)}
+                                headline=''
+                                sequenceType='nucleotide'
+                                views='["grid", "table", "insertions"]'
+                                width='100%'
+                                height='400px'
+                            />
+                        </div>
+                        <div>
+                            <h3 class='component-title'>Amino acid mutations</h3>
+                            <gs-mutations
+                                variant={JSON.stringify(variantFilter)}
+                                headline=''
+                                sequenceType='amino acid'
+                                views='["grid", "table", "insertions"]'
+                                width='100%'
+                                height='400px'
+                            />
+                        </div>
+                        <div>
+                            <h3 class='component-title'>Sub-lineages</h3>
+                            <gs-aggregate
+                                fields='["nextcladePangoLineage"]'
+                                filter={JSON.stringify(variantFilter)}
+                                headline=''
+                                width='100%'
+                                height='400px'
+                            />
+                        </div>
+                        <div>
+                            <h2 class='component-title'>Hosts</h2>
+                            <gs-aggregate
+                                fields='["host"]'
+                                filter={JSON.stringify(variantFilter)}
+                                headline=''
+                                width='100%'
+                                height='400px'
+                            />
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+    </gs-app>
+</BaseLayout>

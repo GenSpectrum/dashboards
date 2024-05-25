@@ -30,8 +30,6 @@ export const VariantFilter = ({ initialNextcladePangoLineage }: VariantFilterPro
             ...currentRoute,
             variantFilter: { nextcladePangoLineage },
         };
-        console.log(JSON.stringify(currentRoute))
-        console.log(JSON.stringify(newRoute))
         Routing.navigateTo(newRoute);
     };
 

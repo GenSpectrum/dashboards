@@ -111,7 +111,6 @@ const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
                 },
             };
         }
-        console.log(JSON.stringify(currentRoute, null, 4), JSON.stringify(newRoute, null, 4));
         Routing.navigateTo(newRoute);
     };
 
