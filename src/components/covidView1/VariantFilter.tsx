@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Routing } from '../../routes/routing.ts';
+import { CovidView1 } from '../../routes/covidView1.ts';
 
 export type VariantFilterProps = {
     initialNextcladePangoLineage?: string;
@@ -25,7 +26,7 @@ export const VariantFilter = ({ initialNextcladePangoLineage }: VariantFilterPro
     }, []);
 
     const search = () => {
-        const currentRoute = Routing.getCurrentRouteInBrowser()!;
+        const currentRoute = Routing.getCurrentRouteInBrowser()! as CovidView1.Route;
         const newRoute = {
             ...currentRoute,
             variantFilter: { nextcladePangoLineage },

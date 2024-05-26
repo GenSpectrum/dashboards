@@ -1,6 +1,22 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { LocationTimeFilter } from '../../components/mpoxView1/LocationTimeFilter';
+import { MpoxView1 } from '../../routes/mpoxView1';
+import { VariantFilter } from '../../components/mpoxView1/VariantFilter';
+
+const routeData = MpoxView1.parseUrl(Astro.url);
+
+const variantFilter = {
+    ...routeData.variantFilter,
+    ...routeData.baselineFilter,
+};
 ---
+
+<style>
+    .component-title {
+        @apply font-bold;
+    }
+</style>
 
 <BaseLayout title='GenSpectrum'>
     <gs-app lapis='https://lapis-main.loculus.org/mpox'>
@@ -8,11 +24,76 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
             <div>
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
-                    <!--TODO-->
+                    <LocationTimeFilter initialLocation={routeData.baselineFilter} client:load />
+                </div>
+                <div class='border-t-2 bg-green-50 px-2 py-4'>
+                    <div class='mb-2 font-semibold'>Search variant:</div>
+                    <VariantFilter
+                        initialClade={routeData.variantFilter.clade}
+                        initialLineage={routeData.variantFilter.lineage}
+                        client:load
+                    />
                 </div>
             </div>
-            <div>
-                <!--TODO-->
+            <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
+                <!-- TODO Add prevalence plot -->
+                <div>
+                    <h2 class='component-title'>Nucleotide mutations</h2>
+                    <div class='h-[400px]'>
+                        <gs-mutations
+                            variant={JSON.stringify(variantFilter)}
+                            headline=''
+                            sequenceType='nucleotide'
+                            views='["grid", "table", "insertions"]'
+                            width='100%'
+                            height='100%'></gs-mutations>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Amino acid mutations</h2>
+                    <div class='h-[400px]'>
+                        <gs-mutations
+                            variant={JSON.stringify(variantFilter)}
+                            headline=''
+                            sequenceType='amino acid'
+                            views='["grid", "table", "insertions"]'
+                            width='100%'
+                            height='100%'></gs-mutations>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Geographic distribution</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields={JSON.stringify(['geo_loc_country', 'geo_loc_admin_1'])}
+                            filter={JSON.stringify(variantFilter)}
+                            headline=''
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Clades and lineages</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields={JSON.stringify(['clade', 'lineage'])}
+                            filter={JSON.stringify(variantFilter)}
+                            headline=''
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Hosts</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields='["host_name_scientific"]'
+                            filter={JSON.stringify(variantFilter)}
+                            headline=''
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </div>
+                </div>
             </div>
         </div>
     </gs-app>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Routing } from '../../routes/routing.ts';
-import { CovidView1 } from '../../routes/covidView1.ts';
+import { MpoxView1 } from '../../routes/mpoxView1.ts';
 
 export type LocationTimeFilterProps = {
-    initialLocation: CovidView1.LapisLocation;
+    initialLocation: MpoxView1.LapisLocation;
 };
 
 export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps) => {
@@ -12,9 +12,8 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
     useEffect(() => {
         const handleLocationChange = (event: CustomEvent) => {
             setLocation({
-                region: event.detail.region,
-                country: event.detail.country,
-                division: event.detail.division,
+                geo_loc_country: event.detail.geo_loc_country,
+                geo_loc_admin_1: event.detail.geo_loc_admin_1,
             });
         };
 
@@ -31,7 +30,7 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
     }, []);
 
     const search = () => {
-        const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView1.Route;
+        const currentRoute = Routing.getCurrentRouteInBrowser() as MpoxView1.Route;
         Routing.navigateTo({
             ...currentRoute,
             baselineFilter: {
@@ -41,13 +40,13 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
         });
     };
 
-    const { region, country, division } = initialLocation;
-    const initialLocationValue = [region, country, division].filter(Boolean).join(' / ');
+    const { geo_loc_country, geo_loc_admin_1 } = initialLocation;
+    const initialLocationValue = [geo_loc_country, geo_loc_admin_1].filter(Boolean).join(' / ');
 
     return (
         <div className='flex flex-col items-stretch gap-2'>
             <gs-location-filter
-                fields='["region", "country", "division"]'
+                fields='["geo_loc_country", "geo_loc_admin_1"]'
                 initialValue={initialLocationValue}
                 width='100%'
             ></gs-location-filter>
