@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { LocationTimeFilter } from '../../components/view1/LocationTimeFilter';
-import { CollectionsList } from '../../components/view1/CollectionsList';
-import { VariantFilter } from '../../components/view1/VariantFilter';
-import { View1 } from '../../routes/view1';
+import { LocationTimeFilter } from '../../components/covidView1/LocationTimeFilter';
+import { CollectionsList } from '../../components/covidView1/CollectionsList';
+import { VariantFilter } from '../../components/covidView1/VariantFilter';
+import { CovidView1 } from '../../routes/covidView1';
 
-const routeData = View1.parseUrl(Astro.url);
+const routeData = CovidView1.parseUrl(Astro.url);
 
 const variantFilter = {
     ...routeData.variantFilter,

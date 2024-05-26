@@ -1,0 +1,27 @@
+---
+import { Routing } from '../../routes/routing';
+
+const currentRoute = Routing.parseUrl(Astro.url)!;
+const currentOrganism = currentRoute.organism;
+---
+
+<label>
+    Organism:
+    <select id='organism-selector'>
+        {
+            Routing.organisms.map((organism) => (
+                <option value={organism.organism} selected={currentOrganism === organism.organism}>
+                    {organism.label}
+                </option>
+            ))
+        }
+    </select>
+</label>
+
+<script>
+    const organismSelector = document.getElementById('organism-selector') as HTMLSelectElement;
+    organismSelector.addEventListener('change', () => {
+        const organism = organismSelector.selectedOptions[0].value;
+        window.location.href = `/${organism}`;
+    });
+</script>

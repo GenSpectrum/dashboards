@@ -1,18 +1,30 @@
 ---
 import { Routing } from '../../routes/routing';
+
+const currentRoute = Routing.parseUrl(Astro.url)!;
+const organism = currentRoute.organism;
 ---
 
-<select id='view-selector'>
-    <option value=''>Choose view</option>
-    {Routing.views['covid'].map((view) => <option value={Routing.toUrl(view.route)}>{view.label}</option>)}
-</select>
+<label>
+    View:
+    <select id='view-selector'>
+        {
+            Routing.views[organism].map((view) => (
+                <option
+                    value={view.pathname}
+                    data-url={Routing.toUrl(Routing.defaultRoutes[view.pathname])}
+                    selected={currentRoute.pathname === view.pathname}
+                >
+                    {view.label}
+                </option>
+            ))
+        }
+    </select>
+</label>
 
 <script>
     const viewSelector = document.getElementById('view-selector') as HTMLSelectElement;
-    viewSelector.addEventListener('change', (event) => {
-        const selectedValue = event.target.value;
-        if (selectedValue !== '') {
-            window.location.href = selectedValue;
-        }
+    viewSelector.addEventListener('change', () => {
+        window.location.href = viewSelector.selectedOptions[0].dataset.url;
     });
 </script>

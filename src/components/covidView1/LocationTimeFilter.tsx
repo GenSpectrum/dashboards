@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Routing } from '../../routes/routing.ts';
-import { View1 } from '../../routes/view1.ts';
+import { CovidView1 } from '../../routes/covidView1.ts';
 
 export type LocationTimeFilterProps = {
-    initialLocation: View1.LapisLocation;
+    initialLocation: CovidView1.LapisLocation;
 };
 
 export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps) => {
@@ -31,7 +31,7 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
     }, []);
 
     const search = () => {
-        const currentRoute = Routing.getCurrentRouteInBrowser() as View1.Route;
+        const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView1.Route;
         Routing.navigateTo({
             ...currentRoute,
             baselineFilter: {

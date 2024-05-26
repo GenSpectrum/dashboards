@@ -1,17 +1,20 @@
-import { View1 } from './view1';
+import { CovidView1 } from './covidView1.ts';
 
-export namespace View2 {
-    export const pathname = '/covid/compare-side-by-side';
+export namespace CovidView2 {
+    export const organism = 'covid' as const;
+    export const pathname = `/${organism}/compare-side-by-side` as const;
+    export type Pathname = typeof pathname;
 
     export type Route = {
-        route: 'view2';
+        organism: typeof organism;
+        pathname: Pathname;
         filters: Filter[];
     };
 
     type Filter = {
         id: number;
-        baselineFilter: View1.LapisLocation;
-        variantFilter: View1.LapisVariantQuery;
+        baselineFilter: CovidView1.LapisLocation;
+        variantFilter: CovidView1.LapisVariantQuery;
     };
 
     export const parseUrl = (url: URL): Route | undefined => {
@@ -38,25 +41,25 @@ export namespace View2 {
                     filter.baselineFilter[field] = value;
                     break;
                 case 'variantQuery':
-                    if (View1.isSimpleVariantQuery(filter.variantFilter)) {
+                    if (CovidView1.isSimpleVariantQuery(filter.variantFilter)) {
                         return undefined;
                     }
-                    (filter.variantFilter as View1.LapisAdvancedVariantQuery)[field] = value;
+                    (filter.variantFilter as CovidView1.LapisAdvancedVariantQuery)[field] = value;
                     break;
                 case 'nextcladePangoLineage':
-                    if (View1.isAdvancedVariantQuery(filter.variantFilter)) {
+                    if (CovidView1.isAdvancedVariantQuery(filter.variantFilter)) {
                         return undefined;
                     }
-                    (filter.variantFilter as View1.LapisSimpleVariantQuery)[field] = value;
+                    (filter.variantFilter as CovidView1.LapisSimpleVariantQuery)[field] = value;
                     break;
                 case 'nucleotideMutations':
                 case 'aminoAcidMutations':
                 case 'nucleotideInsertions':
                 case 'aminoAcidInsertions':
-                    if (View1.isAdvancedVariantQuery(filter.variantFilter)) {
+                    if (CovidView1.isAdvancedVariantQuery(filter.variantFilter)) {
                         return undefined;
                     }
-                    (filter.variantFilter as View1.LapisSimpleVariantQuery)[field] = value.split(',');
+                    (filter.variantFilter as CovidView1.LapisSimpleVariantQuery)[field] = value.split(',');
                     break;
                 default:
                     return undefined;
@@ -64,7 +67,8 @@ export namespace View2 {
         }
 
         return {
-            route: 'view2',
+            organism,
+            pathname,
             filters: [...filterMap.values()].sort((a, b) => a.id - b.id),
         };
     };

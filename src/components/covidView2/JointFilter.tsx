@@ -1,11 +1,11 @@
-import { View1 } from '../../routes/view1.ts';
+import { CovidView1 } from '../../routes/covidView1.ts';
 import { Routing } from '../../routes/routing.ts';
 import { useEffect, useState } from 'react';
-import { View2 } from '../../routes/view2.ts';
+import { CovidView2 } from '../../routes/covidView2.ts';
 
 export type JointFilterProps = {
     filterId: number;
-    initialLocation: View1.LapisLocation;
+    initialLocation: CovidView1.LapisLocation;
     initialNextcladePangoLineage?: string;
 };
 
@@ -45,9 +45,9 @@ export const JointFilter = ({ filterId, initialLocation, initialNextcladePangoLi
     }, []);
 
     const search = () => {
-        const currentRoute = Routing.getCurrentRouteInBrowser() as View2.Route;
+        const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView2.Route;
         Routing.navigateTo(
-            View2.setFilter(currentRoute, {
+            CovidView2.setFilter(currentRoute, {
                 id: filterId,
                 baselineFilter: location,
                 variantFilter: { nextcladePangoLineage },

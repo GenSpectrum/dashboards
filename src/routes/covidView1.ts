@@ -6,11 +6,14 @@ import {
     setSearchFromStringArray,
 } from './helpers.ts';
 
-export namespace View1 {
-    export const pathname = '/covid/single-variant';
+export namespace CovidView1 {
+    export const organism = 'covid' as const;
+    export const pathname = `/${organism}/single-variant` as const;
+    export type Pathname = typeof pathname;
 
     export type Route = {
-        route: 'view1';
+        organism: typeof organism;
+        pathname: Pathname;
         collectionId?: number;
         baselineFilter: LapisLocation;
         variantFilter: LapisVariantQuery;
@@ -32,7 +35,8 @@ export namespace View1 {
             };
         }
         return {
-            route: 'view1',
+            organism,
+            pathname,
             baselineFilter: {
                 region: getStringFromSearch(search, 'region'),
                 country: getStringFromSearch(search, 'country'),
