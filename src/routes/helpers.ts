@@ -46,6 +46,20 @@ export const dateRangeToCustomDateRange = (dateRange: DateRange, allTimesStartDa
     };
 };
 
+export const chooseGranularityBasedOnDateRange = (dateRange: CustomDateRange): 'day' | 'week' | 'month' | 'year' => {
+    const daysBetween = (new Date(dateRange.to).getTime() - new Date(dateRange.from).getTime()) / (1000 * 60 * 60 * 24);
+    if (daysBetween > 365 * 5) {
+        return 'year';
+    }
+    if (daysBetween > 365 * 2) {
+        return 'month';
+    }
+    if (daysBetween > 90) {
+        return 'week';
+    }
+    return 'day';
+};
+
 /**
  * Sets the string to the search params if the string is not empty, not undefined and not null
  */

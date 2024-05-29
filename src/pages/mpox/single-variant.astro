@@ -3,11 +3,16 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { LocationTimeFilter } from '../../components/mpoxView1/LocationTimeFilter';
 import { MpoxView1 } from '../../routes/mpoxView1';
 import { VariantFilter } from '../../components/mpoxView1/VariantFilter';
+import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = MpoxView1.parseUrl(Astro.url);
 
 const variantFilter = MpoxView1.toLapisFilter(routeData);
 const baselineFilter = MpoxView1.toLapisFilterWithoutVariant(routeData);
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    from: baselineFilter.sample_collection_dateFrom,
+    to: baselineFilter.sample_collection_dateTo,
+});
 ---
 
 <style>
@@ -49,7 +54,7 @@ const baselineFilter = MpoxView1.toLapisFilterWithoutVariant(routeData);
                             })}
                             denominator={JSON.stringify(baselineFilter)}
                             lapisDateField='sample_collection_date'
-                            granularity='year'
+                            granularity={timeGranularity}
                             smoothingWindow='0'
                             width='100%'
                             height='100%'></gs-prevalence-over-time>

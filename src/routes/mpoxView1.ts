@@ -66,14 +66,14 @@ export namespace MpoxView1 {
         return `${pathname}?${search}`;
     };
 
-    export const toLapisFilter = (route: Route): any => {
+    export const toLapisFilter = (route: Route) => {
         return {
             ...toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
     };
 
-    export const toLapisFilterWithoutVariant = (route: Route): any => {
+    export const toLapisFilterWithoutVariant = (route: Route) => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(MpoxView1.earliestDate));
         return {
             ...route.baselineFilter.location,

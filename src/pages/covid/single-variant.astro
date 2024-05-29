@@ -4,11 +4,13 @@ import { LocationTimeFilter } from '../../components/covidView1/LocationTimeFilt
 import { CollectionsList } from '../../components/covidView1/CollectionsList';
 import { VariantFilter } from '../../components/covidView1/VariantFilter';
 import { CovidView1 } from '../../routes/covidView1';
+import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = CovidView1.parseUrl(Astro.url);
 
 const variantFilter = CovidView1.toLapisFilter(routeData);
 const baselineFilter = CovidView1.toLapisFilterWithoutVariant(routeData);
+const timeGranularity = chooseGranularityBasedOnDateRange({ from: baselineFilter.dateFrom, to: baselineFilter.dateTo });
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -62,7 +64,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                                 lapisFilter: variantFilter,
                             })}
                             denominator={JSON.stringify(baselineFilter)}
-                            granularity='week'
+                            granularity={timeGranularity}
                             smoothingWindow='0'
                             width='100%'
                             height='100%'></gs-prevalence-over-time>

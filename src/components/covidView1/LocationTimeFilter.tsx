@@ -8,6 +8,15 @@ export type LocationTimeFilterProps = {
     initialDateRange: DateRange;
 };
 
+const today = new Date().toISOString().substring(0, 10);
+const customDateRangeOptions = [
+    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
+    { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
+    { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
+    { label: '2021', dateFrom: '2024-01-04', dateTo: '2022-01-02' },
+    { label: '2020', dateFrom: CovidView1.earliestDate, dateTo: '2021-01-03' },
+];
+
 export const LocationTimeFilter = ({ initialLocation, initialDateRange }: LocationTimeFilterProps) => {
     const [location, setLocation] = useState(initialLocation);
     const [dateRange, setDateRange] = useState(initialDateRange);
@@ -74,6 +83,7 @@ export const LocationTimeFilter = ({ initialLocation, initialDateRange }: Locati
             {/* TODO This is a temporary fix to mitigate https://github.com/GenSpectrum/dashboards/issues/283 */}
             <div className='h-[9rem]'>
                 <gs-date-range-selector
+                    customSelectOptions={JSON.stringify(customDateRangeOptions)}
                     earliestDate={CovidView1.earliestDate}
                     initialValue={initialDateRangeValue}
                     initialDateFrom={initialDateRangeFrom}

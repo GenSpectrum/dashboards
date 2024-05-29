@@ -82,14 +82,14 @@ export namespace CovidView1 {
         return `${pathname}?${search}`;
     };
 
-    export const toLapisFilter = (route: Route): any => {
+    export const toLapisFilter = (route: Route) => {
         return {
             ...toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
     };
 
-    export const toLapisFilterWithoutVariant = (route: Route): any => {
+    export const toLapisFilterWithoutVariant = (route: Route) => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(CovidView1.earliestDate));
         return {
             ...route.baselineFilter.location,
