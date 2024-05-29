@@ -92,7 +92,10 @@ export namespace Routing {
         [MpoxView1.pathname]: {
             organism: MpoxView1.organism,
             pathname: MpoxView1.pathname,
-            baselineFilter: {},
+            baselineFilter: {
+                location: {},
+                dateRange: MpoxView1.defaultDateRange,
+            },
             variantFilter: {},
         },
     };

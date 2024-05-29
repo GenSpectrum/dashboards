@@ -6,10 +6,8 @@ import { VariantFilter } from '../../components/mpoxView1/VariantFilter';
 
 const routeData = MpoxView1.parseUrl(Astro.url);
 
-const variantFilter = {
-    ...routeData.variantFilter,
-    ...routeData.baselineFilter,
-};
+const variantFilter = MpoxView1.toLapisFilter(routeData);
+const baselineFilter = MpoxView1.toLapisFilterWithoutVariant(routeData);
 ---
 
 <style>
@@ -24,13 +22,17 @@ const variantFilter = {
             <div>
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
-                    <LocationTimeFilter initialLocation={routeData.baselineFilter} client:load />
+                    <LocationTimeFilter
+                        initialLocation={baselineFilter}
+                        initialDateRange={routeData.baselineFilter.dateRange}
+                        client:load
+                    />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
-                        initialClade={routeData.variantFilter.clade}
-                        initialLineage={routeData.variantFilter.lineage}
+                        initialClade={variantFilter.clade}
+                        initialLineage={variantFilter.lineage}
                         client:load
                     />
                 </div>
@@ -45,7 +47,7 @@ const variantFilter = {
                                 displayName: '',
                                 lapisFilter: variantFilter,
                             })}
-                            denominator={JSON.stringify(routeData.baselineFilter)}
+                            denominator={JSON.stringify(baselineFilter)}
                             lapisDateField='sample_collection_date'
                             granularity='year'
                             smoothingWindow='0'

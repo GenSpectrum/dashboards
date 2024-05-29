@@ -1,6 +1,10 @@
 import {
+    type DateRange,
+    dateRangeToCustomDateRange,
+    getDateRangeFromSearch,
     getStringArrayFromSearch,
     getStringFromSearch,
+    setSearchFromDateRange,
     setSearchFromString,
     setSearchFromStringArray,
 } from './helpers.ts';
@@ -9,11 +13,16 @@ export namespace MpoxView1 {
     export const organism = 'mpox' as const;
     export const pathname = `/${organism}/single-variant` as const;
     export type Pathname = typeof pathname;
+    export const defaultDateRange: DateRange = 'last6Months';
+    export const earliestDate = '1960-01-01';
 
     export type Route = {
         organism: typeof organism;
         pathname: Pathname;
-        baselineFilter: LapisLocation;
+        baselineFilter: {
+            location: LapisLocation;
+            dateRange: DateRange;
+        };
         variantFilter: LapisVariantQuery;
     };
 
@@ -23,8 +32,11 @@ export namespace MpoxView1 {
             organism,
             pathname,
             baselineFilter: {
-                geo_loc_country: getStringFromSearch(search, 'geo_loc_country'),
-                geo_loc_admin_1: getStringFromSearch(search, 'geo_loc_admin_1'),
+                location: {
+                    geo_loc_country: getStringFromSearch(search, 'geo_loc_country'),
+                    geo_loc_admin_1: getStringFromSearch(search, 'geo_loc_admin_1'),
+                },
+                dateRange: getDateRangeFromSearch(search, 'sample_collection_date') ?? defaultDateRange,
             },
             variantFilter: {
                 clade: getStringFromSearch(search, 'clade'),
@@ -40,8 +52,11 @@ export namespace MpoxView1 {
     export const toUrl = (route: Route): string => {
         const search = new URLSearchParams();
         (['geo_loc_country', 'geo_loc_admin_1'] as const).forEach((field) =>
-            setSearchFromString(search, field, route.baselineFilter[field]),
+            setSearchFromString(search, field, route.baselineFilter.location[field]),
         );
+        if (route.baselineFilter.dateRange !== defaultDateRange) {
+            setSearchFromDateRange(search, 'sample_collection_date', route.baselineFilter.dateRange);
+        }
         (['clade', 'lineage'] as const).forEach((field) =>
             setSearchFromString(search, field, route.variantFilter[field]),
         );
@@ -49,6 +64,22 @@ export namespace MpoxView1 {
             (field) => setSearchFromStringArray(search, field, route.variantFilter[field]),
         );
         return `${pathname}?${search}`;
+    };
+
+    export const toLapisFilter = (route: Route): any => {
+        return {
+            ...toLapisFilterWithoutVariant(route),
+            ...route.variantFilter,
+        };
+    };
+
+    export const toLapisFilterWithoutVariant = (route: Route): any => {
+        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(MpoxView1.earliestDate));
+        return {
+            ...route.baselineFilter.location,
+            sample_collection_dateFrom: dateRange.from,
+            sample_collection_dateTo: dateRange.to,
+        };
     };
 
     export type LapisLocation = {
