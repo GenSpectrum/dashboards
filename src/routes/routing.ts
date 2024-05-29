@@ -1,11 +1,12 @@
 import { CovidView1 } from './covidView1.ts';
 import { CovidView2 } from './covidView2.ts';
 import { MpoxView1 } from './mpoxView1.ts';
+import { WestNileView1 } from './westNileView1.ts';
 
 export namespace Routing {
-    export type Route = CovidView1.Route | CovidView2.Route | MpoxView1.Route;
-    export type Organism = 'covid' | 'mpox';
-    export type Pathname = CovidView1.Pathname | CovidView2.Pathname | MpoxView1.Pathname;
+    export type Route = CovidView1.Route | CovidView2.Route | MpoxView1.Route | WestNileView1.Route;
+    export type Organism = 'covid' | 'mpox' | 'west-nile';
+    export type Pathname = CovidView1.Pathname | CovidView2.Pathname | MpoxView1.Pathname | WestNileView1.Pathname;
 
     export const getCurrentRouteInBrowser = (): Route | undefined => {
         return parseUrl(new URL(window.location.href));
@@ -23,6 +24,8 @@ export namespace Routing {
                 return CovidView2.parseUrl(url);
             case MpoxView1.pathname:
                 return MpoxView1.parseUrl(url);
+            case WestNileView1.pathname:
+                return WestNileView1.parseUrl(url);
         }
         return undefined;
     };
@@ -35,6 +38,8 @@ export namespace Routing {
                 return CovidView2.toUrl(route);
             case MpoxView1.pathname:
                 return MpoxView1.toUrl(route);
+            case WestNileView1.pathname:
+                return WestNileView1.toUrl(route);
         }
     };
 
@@ -44,6 +49,7 @@ export namespace Routing {
     }[] = [
         { label: 'SARS-CoV-2', organism: 'covid' },
         { label: 'mpox', organism: 'mpox' },
+        { label: 'West-Nile', organism: 'west-nile' },
     ];
 
     export const views: Record<
@@ -53,7 +59,7 @@ export namespace Routing {
             pathname: Pathname;
         }[]
     > = {
-        covid: [
+        'covid': [
             {
                 label: 'Single variant',
                 pathname: CovidView1.pathname,
@@ -63,10 +69,16 @@ export namespace Routing {
                 pathname: CovidView2.pathname,
             },
         ],
-        mpox: [
+        'mpox': [
             {
                 label: 'Single variant',
                 pathname: MpoxView1.pathname,
+            },
+        ],
+        'west-nile': [
+            {
+                label: 'Single variant',
+                pathname: WestNileView1.pathname,
             },
         ],
     };
@@ -95,6 +107,15 @@ export namespace Routing {
             baselineFilter: {
                 location: {},
                 dateRange: MpoxView1.defaultDateRange,
+            },
+            variantFilter: {},
+        },
+        [WestNileView1.pathname]: {
+            organism: WestNileView1.organism,
+            pathname: WestNileView1.pathname,
+            baselineFilter: {
+                location: {},
+                dateRange: WestNileView1.defaultDateRange,
             },
             variantFilter: {},
         },

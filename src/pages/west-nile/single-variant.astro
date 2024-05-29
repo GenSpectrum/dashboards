@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { LocationTimeFilter } from '../../components/westNileView1/LocationTimeFilter';
+import { WestNileView1 } from '../../routes/westNileView1';
+import { VariantFilter } from '../../components/westNileView1/VariantFilter';
+import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+
+const routeData = WestNileView1.parseUrl(Astro.url);
+
+const variantFilter = WestNileView1.toLapisFilter(routeData);
+const baselineFilter = WestNileView1.toLapisFilterWithoutVariant(routeData);
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    from: baselineFilter.sample_collection_dateFrom,
+    to: baselineFilter.sample_collection_dateTo,
+});
+
+let subDivisionField = undefined;
+let subDivisionLabel = '';
+if (routeData.baselineFilter.location.geo_loc_country === undefined) {
+    subDivisionField = 'geo_loc_country';
+    subDivisionLabel = 'Countries';
+} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
+    subDivisionField = 'geo_loc_admin_1';
+    subDivisionLabel = 'Geographic sub-divisions';
+}
+---
+
+<style>
+    .component-title {
+        @apply font-bold;
+    }
+</style>
+
+<BaseLayout title='GenSpectrum'>
+    <gs-app lapis='https://lapis-main.loculus.org/west-nile'>
+        <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
+            <div>
+                <div class='bg-blue-50 px-2 py-4'>
+                    <div class='mb-2 font-semibold'>Filter dataset:</div>
+                    <LocationTimeFilter
+                        initialLocation={baselineFilter}
+                        initialDateRange={routeData.baselineFilter.dateRange}
+                        client:load
+                    />
+                </div>
+                <div class='border-t-2 bg-green-50 px-2 py-4'>
+                    <div class='mb-2 font-semibold'>Search variant:</div>
+                    <VariantFilter initialLineage={variantFilter.lineage} client:load />
+                </div>
+            </div>
+            <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
+                <div>
+                    <h2 class='component-title'>Prevalence over time</h2>
+                    <div class='h-[400px]'>
+                        <gs-prevalence-over-time
+                            headline=''
+                            numerator={JSON.stringify({
+                                displayName: '',
+                                lapisFilter: variantFilter,
+                            })}
+                            denominator={JSON.stringify(baselineFilter)}
+                            lapisDateField='sample_collection_date'
+                            granularity={timeGranularity}
+                            smoothingWindow='0'
+                            width='100%'
+                            height='100%'></gs-prevalence-over-time>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Nucleotide mutations</h2>
+                    <div class='h-[400px]'>
+                        <gs-mutations
+                            variant={JSON.stringify(variantFilter)}
+                            headline=''
+                            sequenceType='nucleotide'
+                            views='["grid", "table", "insertions"]'
+                            width='100%'
+                            height='100%'></gs-mutations>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Amino acid mutations</h2>
+                    <div class='h-[400px]'>
+                        <gs-mutations
+                            variant={JSON.stringify(variantFilter)}
+                            headline=''
+                            sequenceType='amino acid'
+                            views='["grid", "table", "insertions"]'
+                            width='100%'
+                            height='100%'></gs-mutations>
+                    </div>
+                </div>
+                {
+                    subDivisionField && (
+                        <div>
+                            <h2 class='component-title'>{subDivisionLabel}</h2>
+                            <div class='h-[400px]'>
+                                <gs-aggregate
+                                    fields={JSON.stringify([subDivisionField])}
+                                    filter={JSON.stringify(variantFilter)}
+                                    headline=''
+                                    width='100%'
+                                    height='100%'
+                                />
+                            </div>
+                        </div>
+                    )
+                }
+                <div>
+                    <h2 class='component-title'>Clades and lineages</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields={JSON.stringify(['lineage'])}
+                            filter={JSON.stringify(variantFilter)}
+                            headline=''
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </div>
+                </div>
+                <div>
+                    <h2 class='component-title'>Hosts</h2>
+                    <div class='h-[400px]'>
+                        <gs-aggregate
+                            fields='["host_name_scientific"]'
+                            filter={JSON.stringify(variantFilter)}
+                            headline=''
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </gs-app>
+</BaseLayout>
