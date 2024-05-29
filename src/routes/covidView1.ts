@@ -1,7 +1,11 @@
 import {
+    type DateRange,
+    dateRangeToCustomDateRange,
+    getDateRangeFromSearch,
     getIntegerFromSearch,
     getStringArrayFromSearch,
     getStringFromSearch,
+    setSearchFromDateRange,
     setSearchFromString,
     setSearchFromStringArray,
 } from './helpers.ts';
@@ -10,12 +14,17 @@ export namespace CovidView1 {
     export const organism = 'covid' as const;
     export const pathname = `/${organism}/single-variant` as const;
     export type Pathname = typeof pathname;
+    export const defaultDateRange: DateRange = 'last6Months';
+    export const earliestDate = '2020-01-06';
 
     export type Route = {
         organism: typeof organism;
         pathname: Pathname;
         collectionId?: number;
-        baselineFilter: LapisLocation;
+        baselineFilter: {
+            location: LapisLocation;
+            dateRange: DateRange;
+        };
         variantFilter: LapisVariantQuery;
     };
 
@@ -38,9 +47,12 @@ export namespace CovidView1 {
             organism,
             pathname,
             baselineFilter: {
-                region: getStringFromSearch(search, 'region'),
-                country: getStringFromSearch(search, 'country'),
-                division: getStringFromSearch(search, 'division'),
+                location: {
+                    region: getStringFromSearch(search, 'region'),
+                    country: getStringFromSearch(search, 'country'),
+                    division: getStringFromSearch(search, 'division'),
+                },
+                dateRange: getDateRangeFromSearch(search, 'date') ?? defaultDateRange,
             },
             variantFilter,
             collectionId: getIntegerFromSearch(search, 'collectionId'),
@@ -50,8 +62,11 @@ export namespace CovidView1 {
     export const toUrl = (route: Route): string => {
         const search = new URLSearchParams();
         (['region', 'country', 'division'] as const).forEach((field) =>
-            setSearchFromString(search, field, route.baselineFilter[field]),
+            setSearchFromString(search, field, route.baselineFilter.location[field]),
         );
+        if (route.baselineFilter.dateRange !== defaultDateRange) {
+            setSearchFromDateRange(search, 'date', route.baselineFilter.dateRange);
+        }
         const variantFilter = route.variantFilter;
         if (isAdvancedVariantQuery(variantFilter)) {
             setSearchFromString(search, 'variantQuery', variantFilter.variantQuery);
@@ -65,6 +80,22 @@ export namespace CovidView1 {
             search.set('collectionId', route.collectionId.toString());
         }
         return `${pathname}?${search}`;
+    };
+
+    export const toLapisFilter = (route: Route): any => {
+        return {
+            ...toLapisFilterWithoutVariant(route),
+            ...route.variantFilter,
+        };
+    };
+
+    export const toLapisFilterWithoutVariant = (route: Route): any => {
+        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(CovidView1.earliestDate));
+        return {
+            ...route.baselineFilter.location,
+            dateFrom: dateRange.from,
+            dateTo: dateRange.to,
+        };
     };
 
     export type LapisLocation = {

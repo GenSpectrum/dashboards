@@ -75,7 +75,10 @@ export namespace Routing {
         [CovidView1.pathname]: {
             organism: CovidView1.organism,
             pathname: CovidView1.pathname,
-            baselineFilter: {},
+            baselineFilter: {
+                location: {},
+                dateRange: CovidView1.defaultDateRange,
+            },
             variantFilter: { nextcladePangoLineage: 'JN.1*' },
         },
         [CovidView2.pathname]: {

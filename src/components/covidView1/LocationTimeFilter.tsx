@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Routing } from '../../routes/routing.ts';
 import { CovidView1 } from '../../routes/covidView1.ts';
+import { type DateRange, isCustomDateRange } from '../../routes/helpers.ts';
 
 export type LocationTimeFilterProps = {
     initialLocation: CovidView1.LapisLocation;
+    initialDateRange: DateRange;
 };
 
-export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps) => {
+export const LocationTimeFilter = ({ initialLocation, initialDateRange }: LocationTimeFilterProps) => {
     const [location, setLocation] = useState(initialLocation);
+    const [dateRange, setDateRange] = useState(initialDateRange);
 
     useEffect(() => {
         const handleLocationChange = (event: CustomEvent) => {
@@ -17,15 +20,28 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
                 division: event.detail.division,
             });
         };
+        const handleDateRangeChange = (event: CustomEvent) => {
+            setDateRange({
+                from: event.detail.dateFrom,
+                to: event.detail.dateTo,
+            });
+        };
 
         const locationFilter = document.querySelector('gs-location-filter');
         if (locationFilter) {
             locationFilter.addEventListener('gs-location-changed', handleLocationChange);
         }
+        const dateRangeFilter = document.querySelector('gs-date-range-selector');
+        if (dateRangeFilter) {
+            dateRangeFilter.addEventListener('gs-date-range-changed', handleDateRangeChange);
+        }
 
         return () => {
             if (locationFilter) {
                 locationFilter.removeEventListener('gs-location-changed', handleLocationChange);
+            }
+            if (dateRangeFilter) {
+                dateRangeFilter.removeEventListener('gs-date-range-changed', handleDateRangeChange);
             }
         };
     }, []);
@@ -36,13 +52,17 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
             ...currentRoute,
             baselineFilter: {
                 ...currentRoute.baselineFilter,
-                ...location,
+                location,
+                dateRange,
             },
         });
     };
 
     const { region, country, division } = initialLocation;
     const initialLocationValue = [region, country, division].filter(Boolean).join(' / ');
+    const initialDateRangeValue = isCustomDateRange(dateRange) ? 'custom' : dateRange;
+    const initialDateRangeFrom = isCustomDateRange(dateRange) ? dateRange.from : undefined;
+    const initialDateRangeTo = isCustomDateRange(dateRange) ? dateRange.to : undefined;
 
     return (
         <div className='flex flex-col items-stretch gap-2'>
@@ -51,6 +71,17 @@ export const LocationTimeFilter = ({ initialLocation }: LocationTimeFilterProps)
                 initialValue={initialLocationValue}
                 width='100%'
             ></gs-location-filter>
+            {/* TODO This is a temporary fix to mitigate https://github.com/GenSpectrum/dashboards/issues/283 */}
+            <div className='h-[9rem]'>
+                <gs-date-range-selector
+                    earliestDate={CovidView1.earliestDate}
+                    initialValue={initialDateRangeValue}
+                    initialDateFrom={initialDateRangeFrom}
+                    initialDateTo={initialDateRangeTo}
+                    width='100%'
+                    dateColumn='date'
+                ></gs-date-range-selector>
+            </div>
             <button
                 onClick={() => search()}
                 className='rounded-lg border bg-white p-4 hover:bg-amber-200'
