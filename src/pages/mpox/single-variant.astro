@@ -13,6 +13,16 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
     from: baselineFilter.sample_collection_dateFrom,
     to: baselineFilter.sample_collection_dateTo,
 });
+
+let subDivisionField = undefined;
+let subDivisionLabel = '';
+if (routeData.baselineFilter.location.geo_loc_country === undefined) {
+    subDivisionField = 'geo_loc_country';
+    subDivisionLabel = 'Countries';
+} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
+    subDivisionField = 'geo_loc_admin_1';
+    subDivisionLabel = 'Geographic sub-divisions';
+}
 ---
 
 <style>
@@ -84,17 +94,22 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
                             height='100%'></gs-mutations>
                     </div>
                 </div>
-                <div>
-                    <h2 class='component-title'>Geographic distribution</h2>
-                    <div class='h-[400px]'>
-                        <gs-aggregate
-                            fields={JSON.stringify(['geo_loc_country', 'geo_loc_admin_1'])}
-                            filter={JSON.stringify(variantFilter)}
-                            headline=''
-                            width='100%'
-                            height='100%'></gs-aggregate>
-                    </div>
-                </div>
+                {
+                    subDivisionField && (
+                        <div>
+                            <h2 class='component-title'>{subDivisionLabel}</h2>
+                            <div class='h-[400px]'>
+                                <gs-aggregate
+                                    fields={JSON.stringify([subDivisionField])}
+                                    filter={JSON.stringify(variantFilter)}
+                                    headline=''
+                                    width='100%'
+                                    height='100%'
+                                />
+                            </div>
+                        </div>
+                    )
+                }
                 <div>
                     <h2 class='component-title'>Clades and lineages</h2>
                     <div class='h-[400px]'>
