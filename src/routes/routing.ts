@@ -2,11 +2,17 @@ import { CovidView1 } from './covidView1.ts';
 import { CovidView2 } from './covidView2.ts';
 import { MpoxView1 } from './mpoxView1.ts';
 import { WestNileView1 } from './westNileView1.ts';
+import { RsvAView1 } from './rsvAView1.ts';
 
 export namespace Routing {
-    export type Route = CovidView1.Route | CovidView2.Route | MpoxView1.Route | WestNileView1.Route;
-    export type Organism = 'covid' | 'mpox' | 'west-nile';
-    export type Pathname = CovidView1.Pathname | CovidView2.Pathname | MpoxView1.Pathname | WestNileView1.Pathname;
+    export type Route = CovidView1.Route | CovidView2.Route | MpoxView1.Route | WestNileView1.Route | RsvAView1.Route;
+    export type Organism = 'covid' | 'mpox' | 'west-nile' | 'rsv-a';
+    export type Pathname =
+        | CovidView1.Pathname
+        | CovidView2.Pathname
+        | MpoxView1.Pathname
+        | WestNileView1.Pathname
+        | RsvAView1.Pathname;
 
     export const getCurrentRouteInBrowser = (): Route | undefined => {
         return parseUrl(new URL(window.location.href));
@@ -26,6 +32,8 @@ export namespace Routing {
                 return MpoxView1.parseUrl(url);
             case WestNileView1.pathname:
                 return WestNileView1.parseUrl(url);
+            case RsvAView1.pathname:
+                return RsvAView1.parseUrl(url);
         }
         return undefined;
     };
@@ -40,6 +48,8 @@ export namespace Routing {
                 return MpoxView1.toUrl(route);
             case WestNileView1.pathname:
                 return WestNileView1.toUrl(route);
+            case RsvAView1.pathname:
+                return RsvAView1.toUrl(route);
         }
     };
 
@@ -50,6 +60,7 @@ export namespace Routing {
         { label: 'SARS-CoV-2', organism: 'covid' },
         { label: 'mpox', organism: 'mpox' },
         { label: 'West-Nile', organism: 'west-nile' },
+        { label: 'RSV-A', organism: 'rsv-a' },
     ];
 
     export const views: Record<
@@ -79,6 +90,12 @@ export namespace Routing {
             {
                 label: 'Single variant',
                 pathname: WestNileView1.pathname,
+            },
+        ],
+        'rsv-a': [
+            {
+                label: 'Single variant',
+                pathname: RsvAView1.pathname,
             },
         ],
     };
@@ -116,6 +133,15 @@ export namespace Routing {
             baselineFilter: {
                 location: {},
                 dateRange: WestNileView1.defaultDateRange,
+            },
+            variantFilter: {},
+        },
+        [RsvAView1.pathname]: {
+            organism: RsvAView1.organism,
+            pathname: RsvAView1.pathname,
+            baselineFilter: {
+                location: {},
+                dateRange: RsvAView1.defaultDateRange,
             },
             variantFilter: {},
         },
