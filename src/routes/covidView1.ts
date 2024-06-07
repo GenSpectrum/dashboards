@@ -9,6 +9,7 @@ import {
     setSearchFromString,
     setSearchFromStringArray,
 } from './helpers.ts';
+import type { View } from './View.ts';
 
 export namespace CovidView1 {
     export const organism = 'covid' as const;
@@ -80,6 +81,23 @@ export namespace CovidView1 {
             search.set('collectionId', route.collectionId.toString());
         }
         return `${pathname}?${search}`;
+    };
+
+    export const view: View<Route> = {
+        organism,
+        pathname,
+        label: 'Single variant',
+        parseUrl,
+        toUrl,
+        defaultRoute: {
+            organism,
+            pathname,
+            baselineFilter: {
+                location: {},
+                dateRange: defaultDateRange,
+            },
+            variantFilter: { nextcladePangoLineage: 'JN.1*' },
+        },
     };
 
     export const toLapisFilter = (route: Route) => {

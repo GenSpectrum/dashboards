@@ -1,4 +1,5 @@
 import { CovidView1 } from './covidView1.ts';
+import type { View } from './View.ts';
 
 export namespace CovidView2 {
     export const organism = 'covid' as const;
@@ -95,6 +96,22 @@ export namespace CovidView2 {
             });
         }
         return `${pathname}?${search}`;
+    };
+
+    export const view: View<Route> = {
+        organism,
+        pathname,
+        label: 'Compare side-by-side',
+        parseUrl,
+        toUrl,
+        defaultRoute: {
+            organism,
+            pathname,
+            filters: [
+                { id: 1, baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'JN.1*' } },
+                { id: 2, baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'XBB.1*' } },
+            ],
+        },
     };
 
     export const setFilter = (route: Route, newFilter: Filter): Route => {

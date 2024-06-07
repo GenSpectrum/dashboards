@@ -8,6 +8,7 @@ import {
     setSearchFromString,
     setSearchFromStringArray,
 } from './helpers.ts';
+import type { View } from './View.ts';
 
 export namespace RsvAView1 {
     export const organism = 'rsv-a' as const;
@@ -61,6 +62,23 @@ export namespace RsvAView1 {
             (field) => setSearchFromStringArray(search, field, route.variantFilter[field]),
         );
         return `${pathname}?${search}`;
+    };
+
+    export const view: View<Route> = {
+        organism,
+        pathname,
+        label: 'Single variant',
+        parseUrl,
+        toUrl,
+        defaultRoute: {
+            organism,
+            pathname,
+            baselineFilter: {
+                location: {},
+                dateRange: defaultDateRange,
+            },
+            variantFilter: {},
+        },
     };
 
     export const toLapisFilter = (route: Route) => {

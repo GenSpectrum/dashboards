@@ -1,5 +1,5 @@
 ---
 import { Routing } from '../../routes/routing';
 
-return Astro.redirect(Routing.toUrl(Routing.defaultRoutes['/covid/single-variant']));
+return Astro.redirect(Routing.toUrl(Routing.getDefaultRoute('/covid/single-variant')!));
 ---

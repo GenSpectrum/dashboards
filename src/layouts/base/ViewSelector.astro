@@ -12,7 +12,7 @@ const organism = currentRoute.organism;
             Routing.views[organism].map((view) => (
                 <option
                     value={view.pathname}
-                    data-url={Routing.toUrl(Routing.defaultRoutes[view.pathname])}
+                    data-url={Routing.toUrl(Routing.getDefaultRoute(view.pathname)!)}
                     selected={currentRoute.pathname === view.pathname}
                 >
                     {view.label}
