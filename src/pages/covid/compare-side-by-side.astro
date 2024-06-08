@@ -50,7 +50,7 @@ const routeData = CovidView2.parseUrl(Astro.url);
                             <h3 class='component-title'>Relative growth advantage</h3>
                             <gs-relative-growth-advantage
                                 headline=''
-                                numerator={JSON.stringify(variantFilter)}
+                                numerator={JSON.stringify({ ...variantFilter, ...baselineFilter })}
                                 denominator={JSON.stringify(baselineFilter)}
                                 generationTime='7'
                                 width='100%'
