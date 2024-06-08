@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { LocationTimeFilter } from '../../components/covidView1/LocationTimeFilter';
 import { CollectionsList } from '../../components/covidView1/CollectionsList';
-import { VariantFilter } from '../../components/covidView1/VariantFilter';
 import { CovidView1 } from '../../routes/covidView1';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import LocationTimeFilter from '../../components/covidView1/LocationTimeFilter.astro';
+import VariantFilter from '../../components/covidView1/VariantFilter.astro';
 
 const routeData = CovidView1.parseUrl(Astro.url);
 
@@ -38,7 +38,6 @@ if (routeData.baselineFilter.location.country === undefined) {
                     <LocationTimeFilter
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        client:load
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -47,7 +46,6 @@ if (routeData.baselineFilter.location.country === undefined) {
                         initialNextcladePangoLineage={'nextcladePangoLineage' in variantFilter
                             ? variantFilter.nextcladePangoLineage
                             : undefined}
-                        client:load
                     />
                     <div class='my-2 font-semibold'>Or select a known variant:</div>
                     <CollectionsList initialCollectionId={routeData.collectionId} client:idle />

@@ -1,0 +1,49 @@
+---
+interface Props {
+    initialNextcladePangoLineage?: string;
+}
+const { initialNextcladePangoLineage } = Astro.props;
+---
+
+<variant-filter data-message={JSON.stringify({ nextcladePangoLineage: initialNextcladePangoLineage })}>
+    <div class='flex flex-col items-stretch gap-2'>
+        <gs-text-input
+            id='lineageFilter'
+            lapisField='nextcladePangoLineage'
+            placeholderText='Pango Lineage'
+            initialValue={initialNextcladePangoLineage}
+            width='100%'></gs-text-input>
+        <button id='variantFilterSubmitButton' class='rounded-lg border bg-white p-4 hover:bg-amber-200' type='submit'>
+            Submit
+        </button>
+    </div>
+</variant-filter>
+
+<script>
+    import { Routing } from '../../routes/routing.ts';
+    import { CovidView1 } from '../../routes/covidView1';
+
+    class VariantFilter extends HTMLElement {
+        constructor() {
+            super();
+            let { nextcladePangoLineage } = JSON.parse(this.dataset.message);
+            const lineageFilter = document.getElementById('lineageFilter');
+            const submitButton = document.getElementById('variantFilterSubmitButton');
+
+            lineageFilter.addEventListener('gs-text-input-changed', (event: CustomEvent) => {
+                nextcladePangoLineage = event.detail.nextcladePangoLineage;
+            });
+
+            submitButton.addEventListener('click', () => {
+                const currentRoute = Routing.getCurrentRouteInBrowser()! as CovidView1.Route;
+                const newRoute = {
+                    ...currentRoute,
+                    variantFilter: { nextcladePangoLineage },
+                };
+                Routing.navigateTo(newRoute);
+            });
+        }
+    }
+
+    customElements.define('variant-filter', VariantFilter);
+</script>

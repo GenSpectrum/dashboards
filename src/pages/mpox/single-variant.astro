@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { LocationTimeFilter } from '../../components/mpoxView1/LocationTimeFilter';
 import { MpoxView1 } from '../../routes/mpoxView1';
-import { VariantFilter } from '../../components/mpoxView1/VariantFilter';
+import VariantFilter from '../../components/mpoxView1/VariantFilter.astro';
+import LocationTimeFilter from '../../components/mpoxView1/LocationTimeFilter.astro';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = MpoxView1.parseUrl(Astro.url);
@@ -40,16 +40,11 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <LocationTimeFilter
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        client:load
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
-                    <VariantFilter
-                        initialClade={variantFilter.clade}
-                        initialLineage={variantFilter.lineage}
-                        client:load
-                    />
+                    <VariantFilter initialClade={variantFilter.clade} initialLineage={variantFilter.lineage} />
                 </div>
             </div>
             <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>

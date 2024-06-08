@@ -1,0 +1,87 @@
+---
+import { CovidView1 } from '../../routes/covidView1';
+
+interface Props {
+    filterId: number;
+    initialLocation: CovidView1.LapisLocation;
+    initialNextcladePangoLineage?: string;
+}
+
+const { filterId, initialLocation, initialNextcladePangoLineage } = Astro.props;
+
+const { region, country, division } = initialLocation;
+const initialLocationValue = [region, country, division].filter(Boolean).join(' / ');
+---
+
+<joint-filter
+    data-message={JSON.stringify({
+        filterId,
+        location: initialLocation,
+        nextcladePangoLineage: initialNextcladePangoLineage,
+    })}
+>
+    <div>
+        <div class='flex'>
+            <div class='flex-1 bg-blue-50 px-2 py-4'>
+                <div class='mb-2 font-semibold'>Filter dataset:</div>
+                <gs-location-filter
+                    id={`locationFilter${filterId}`}
+                    fields='["region", "country", "division"]'
+                    initialValue={initialLocationValue}
+                    width='100%'></gs-location-filter>
+            </div>
+            <div class='flex-1 border-l-2 bg-green-50 px-2 py-4'>
+                <div class='mb-2 font-semibold'>Search variant:</div>
+                <gs-text-input
+                    id={`lineageFilter${filterId}`}
+                    lapisField='nextcladePangoLineage'
+                    placeholderText='Pango Lineage'
+                    initialValue={initialNextcladePangoLineage}
+                    width='100%'></gs-text-input>
+            </div>
+        </div>
+        <button
+            id={`submitButton${filterId}`}
+            class='mt-2 w-full rounded-lg border bg-white p-4 hover:bg-amber-200'
+            type='submit'
+        >
+            Submit
+        </button>
+    </div>
+</joint-filter>
+
+<script>
+    import { Routing } from '../../routes/routing.ts';
+    import { CovidView2 } from '../../routes/covidView2';
+
+    class JointFilter extends HTMLElement {
+        constructor() {
+            super();
+            let { filterId, location, nextcladePangoLineage } = JSON.parse(this.dataset.message);
+            const locationFilter = document.getElementById(`locationFilter${filterId}`);
+            const lineageFilter = document.getElementById(`lineageFilter${filterId}`);
+            const submitButton = document.getElementById(`submitButton${filterId}`);
+
+            locationFilter.addEventListener('gs-location-changed', (event: CustomEvent) => {
+                location = event.detail;
+            });
+
+            lineageFilter.addEventListener('gs-text-input-changed', (event: CustomEvent) => {
+                nextcladePangoLineage = event.detail.nextcladePangoLineage;
+            });
+
+            submitButton.addEventListener('click', () => {
+                const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView2.Route;
+                Routing.navigateTo(
+                    CovidView2.setFilter(currentRoute, {
+                        id: filterId,
+                        baselineFilter: location,
+                        variantFilter: { nextcladePangoLineage },
+                    }),
+                );
+            });
+        }
+    }
+
+    customElements.define('joint-filter', JointFilter);
+</script>

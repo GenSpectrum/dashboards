@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CovidView2 } from '../../routes/covidView2';
-import { LocationTimeFilter } from '../../components/covidView1/LocationTimeFilter';
-import { VariantFilter } from '../../components/covidView1/VariantFilter';
 import { CollectionsList } from '../../components/covidView1/CollectionsList';
-import { JointFilter } from '../../components/covidView2/JointFilter';
+import JointFilter from '../../components/covidView2/JointFilter.astro';
 
 const routeData = CovidView2.parseUrl(Astro.url);
 ---
@@ -29,7 +27,6 @@ const routeData = CovidView2.parseUrl(Astro.url);
                                     ? variantFilter.nextcladePangoLineage
                                     : undefined
                             }
-                            client:load
                         />
                         <div>
                             <h3 class='component-title'>Prevalence over time</h3>
