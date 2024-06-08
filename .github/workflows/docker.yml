@@ -1,0 +1,34 @@
+name: Docker
+
+on:
+  push:
+    branches:
+
+env:
+  IMAGE_NAME: ghcr.io/genspectrum/astro-dashboard-playground
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set environment variable "BRANCH"
+        run: |
+          echo "BRANCH=$(eval 'echo $GITHUB_REF | sed s/refs\\/heads\\/// | sed s/\\//__/g ')" >> $GITHUB_ENV
+      - name: Build image
+        run: docker build -t new_image .
+      - name: Login to Github Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Add tags and push
+        if: ${{ !contains(env.BRANCH, 'dependabot') }}
+        run: |
+          docker tag new_image ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}
+          docker push ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}
+      - name: Add "main" tag and push
+        if: env.BRANCH == 'main'
+        run: |
+          docker tag new_image ${{ env.IMAGE_NAME }}:main
+          docker push ${{ env.IMAGE_NAME }}:main
