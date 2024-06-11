@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CollectionsList } from '../../components/covidView1/CollectionsList';
 import { CovidView1 } from '../../routes/covidView1';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
-import LocationTimeFilter from '../../components/covidView1/LocationTimeFilter.astro';
+import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/covidView1/VariantFilter.astro';
 
 const routeData = CovidView1.parseUrl(Astro.url);
@@ -21,6 +21,16 @@ if (routeData.baselineFilter.location.country === undefined) {
     subDivisionField = 'division';
     subDivisionLabel = 'Geographic sub-divisions';
 }
+
+const locationFields = ['region', 'country', 'division'];
+const today = new Date().toISOString().substring(0, 10);
+const customDateRangeOptions = [
+    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
+    { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
+    { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
+    { label: '2021', dateFrom: '2024-01-04', dateTo: '2022-01-02' },
+    { label: '2020', dateFrom: CovidView1.earliestDate, dateTo: '2021-01-03' },
+];
 ---
 
 <style>
@@ -36,8 +46,11 @@ if (routeData.baselineFilter.location.country === undefined) {
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
+                        fields={locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
+                        earliestDate={CovidView1.earliestDate}
+                        customDateRangeOptions={customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
