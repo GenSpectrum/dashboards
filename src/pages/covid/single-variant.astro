@@ -4,7 +4,7 @@ import { CollectionsList } from '../../components/covidView1/CollectionsList';
 import { CovidView1 } from '../../routes/covidView1';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import VariantFilter from '../../components/covidView1/VariantFilter.astro';
+import VariantFilter from '../../components/VariantFilter.astro';
 
 const routeData = CovidView1.parseUrl(Astro.url);
 
@@ -56,9 +56,16 @@ const customDateRangeOptions = [
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
-                        initialNextcladePangoLineage={'nextcladePangoLineage' in variantFilter
-                            ? variantFilter.nextcladePangoLineage
-                            : undefined}
+                        fields={[
+                            {
+                                name: 'nextcladePangoLineage',
+                                label: 'Pango Lineage',
+                                initialValue:
+                                    'nextcladePangoLineage' in variantFilter
+                                        ? variantFilter.nextcladePangoLineage
+                                        : undefined,
+                            },
+                        ]}
                     />
                     <div class='my-2 font-semibold'>Or select a known variant:</div>
                     <CollectionsList initialCollectionId={routeData.collectionId} client:idle />

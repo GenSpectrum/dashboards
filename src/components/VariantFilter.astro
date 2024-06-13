@@ -1,0 +1,63 @@
+---
+interface Props {
+    fields: {
+        name: string;
+        label: string;
+        initialValue: string;
+    }[];
+}
+const { fields } = Astro.props;
+---
+
+<variant-filter data-message={JSON.stringify({ fields })}>
+    <div class='flex flex-col items-stretch gap-2'>
+        {
+            fields.map((field) => (
+                <gs-text-input
+                    id={`${field.name}Filter`}
+                    lapisField={field.name}
+                    placeholderText={field.label}
+                    initialValue={field.initialValue}
+                    width='100%'
+                />
+            ))
+        }
+        <button id='variantFilterSubmitButton' class='rounded-lg border bg-white p-4 hover:bg-amber-200' type='submit'>
+            Submit
+        </button>
+    </div>
+</variant-filter>
+
+<script>
+    import { Routing } from '../routes/routing.ts';
+
+    class VariantFilter extends HTMLElement {
+        constructor() {
+            super();
+            const { fields } = JSON.parse(this.dataset.message);
+            const values = {};
+            for (const field of fields) {
+                values[field.name] = field.initialValue;
+            }
+            const submitButton = document.getElementById('variantFilterSubmitButton');
+
+            fields.map((field) => {
+                const filterElement = document.getElementById(`${field.name}Filter`);
+                filterElement.addEventListener('gs-text-input-changed', (event: CustomEvent) => {
+                    values[field.name] = event.detail[field.name];
+                });
+            });
+
+            submitButton.addEventListener('click', () => {
+                const currentRoute = Routing.getCurrentRouteInBrowser()!;
+                const newRoute = {
+                    ...currentRoute,
+                    variantFilter: values,
+                };
+                Routing.navigateTo(newRoute);
+            });
+        }
+    }
+
+    customElements.define('variant-filter', VariantFilter);
+</script>
