@@ -2,15 +2,10 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { MpoxView3 } from '../../routes/mpoxView3';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = MpoxView3.parseUrl(Astro.url);
 
 const baselineFilter = MpoxView3.toLapisFilter(routeData);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
-});
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';

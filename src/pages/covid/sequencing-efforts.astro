@@ -2,12 +2,10 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { CovidView3 } from '../../routes/covidView3';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = CovidView3.parseUrl(Astro.url);
 
 const baselineFilter = CovidView3.toLapisFilter(routeData);
-const timeGranularity = chooseGranularityBasedOnDateRange({ from: baselineFilter.dateFrom, to: baselineFilter.dateTo });
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';

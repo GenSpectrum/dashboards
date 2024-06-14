@@ -2,15 +2,10 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { WestNileView3 } from '../../routes/westNileView3';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = WestNileView3.parseUrl(Astro.url);
 
 const baselineFilter = WestNileView3.toLapisFilter(routeData);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
-});
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';

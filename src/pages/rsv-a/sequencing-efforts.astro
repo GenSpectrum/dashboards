@@ -2,15 +2,10 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { RsvAView3 } from '../../routes/rsvAView3';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
 const routeData = RsvAView3.parseUrl(Astro.url);
 
 const baselineFilter = RsvAView3.toLapisFilter(routeData);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
-});
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
