@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
+import { CovidView3 } from '../../routes/covidView3';
+import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+
+const routeData = CovidView3.parseUrl(Astro.url);
+
+const baselineFilter = CovidView3.toLapisFilter(routeData);
+const timeGranularity = chooseGranularityBasedOnDateRange({ from: baselineFilter.dateFrom, to: baselineFilter.dateTo });
+
+let subDivisionField = undefined;
+let subDivisionLabel = '';
+if (routeData.baselineFilter.location.country === undefined) {
+    subDivisionField = 'country';
+    subDivisionLabel = 'Countries';
+} else if (routeData.baselineFilter.location.division === undefined) {
+    subDivisionField = 'division';
+    subDivisionLabel = 'Geographic sub-divisions';
+}
+
+const locationFields = ['region', 'country', 'division'];
+const today = new Date().toISOString().substring(0, 10);
+const customDateRangeOptions = [
+    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
+    { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
+    { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
+    { label: '2021', dateFrom: '2024-01-04', dateTo: '2022-01-02' },
+    { label: '2020', dateFrom: CovidView3.earliestDate, dateTo: '2021-01-03' },
+];
+---
+
+<style>
+    .component-title {
+        @apply font-bold;
+    }
+</style>
+
+<BaseLayout title='Single Variant | RSV-A | GenSpectrum'>
+    <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+        <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
+            <div class='mr-2 font-semibold'>Filter dataset:</div>
+            <div class='max-w-[1000px]'>
+                <LocationTimeFilter
+                    fields={locationFields}
+                    initialLocation={baselineFilter}
+                    initialDateRange={routeData.baselineFilter.dateRange}
+                    earliestDate={CovidView3.earliestDate}
+                    customDateRangeOptions={customDateRangeOptions}
+                />
+            </div>
+        </div>
+
+        <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6 p-2'>
+            {
+                subDivisionField && (
+                    <div>
+                        <h2 class='component-title'>{subDivisionLabel}</h2>
+                        <div class='h-[600px]'>
+                            <gs-aggregate
+                                fields={JSON.stringify([subDivisionField])}
+                                filter={JSON.stringify(baselineFilter)}
+                                headline=''
+                                width='100%'
+                                height='100%'
+                            />
+                        </div>
+                    </div>
+                )
+            }
+            <div>
+                <h2 class='component-title'>Hosts</h2>
+                <div class='h-[600px]'>
+                    <gs-aggregate
+                        fields='["host"]'
+                        filter={JSON.stringify(baselineFilter)}
+                        headline=''
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </div>
+            </div>
+            <div>
+                <h2 class='component-title'>Originating lab</h2>
+                <div class='h-[600px]'>
+                    <gs-aggregate
+                        fields='["originatingLab"]'
+                        filter={JSON.stringify(baselineFilter)}
+                        headline=''
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </div>
+            </div>
+            <div>
+                <h2 class='component-title'>Submitting lab</h2>
+                <div class='h-[600px]'>
+                    <gs-aggregate
+                        fields='["submittingLab"]'
+                        filter={JSON.stringify(baselineFilter)}
+                        headline=''
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </div>
+            </div>
+        </div>
+    </gs-app>
+</BaseLayout>

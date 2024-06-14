@@ -7,11 +7,13 @@ import type { Organism, Route, View } from './View.ts';
 import { RsvAView3 } from './rsvAView3.ts';
 import { MpoxView3 } from './mpoxView3.ts';
 import { WestNileView3 } from './westNileView3.ts';
+import { CovidView3 } from './covidView3.ts';
 
 export namespace Routing {
     const allViews = [
         CovidView1.view,
         CovidView2.view,
+        CovidView3.view,
         MpoxView1.view,
         MpoxView3.view,
         RsvAView1.view,
