@@ -14,7 +14,7 @@ export namespace WestNileView1 {
     export const organism = 'west-nile' as const;
     export const pathname = `/${organism}/single-variant` as const;
     export type Pathname = typeof pathname;
-    export const defaultDateRange: DateRange = 'last6Months';
+    export const defaultDateRange: DateRange = 'allTimes';
     export const earliestDate = '1930-01-01';
 
     export type Route = {
