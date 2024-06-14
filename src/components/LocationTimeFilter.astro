@@ -26,12 +26,12 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 ---
 
 <location-time-filter data-message={JSON.stringify({ location: initialLocation, dateRange: initialDateRange })}>
-    <div class='flex flex-col items-stretch gap-2'>
+    <div class='flex flex-wrap items-stretch gap-2'>
         <gs-location-filter
             id='locationFilter'
             fields={JSON.stringify(fields)}
             initialValue={initialLocationValue}
-            width='100%'></gs-location-filter>
+            width='280px'></gs-location-filter>
         <gs-date-range-selector
             id='dateRangeSelector'
             customSelectOptions={JSON.stringify(customDateRangeOptions)}
@@ -39,11 +39,10 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             initialValue={initialDateRangeValue}
             initialDateFrom={initialDateRangeFrom}
             initialDateTo={initialDateRangeTo}
-            width='100%'
             dateColumn='date'></gs-date-range-selector>
         <button
             id='locationTimeFilterSubmitButton'
-            class='rounded-lg border bg-white p-4 hover:bg-amber-200'
+            class='flex-1 rounded-lg border bg-white p-4 hover:bg-amber-200'
             type='submit'
         >
             Submit

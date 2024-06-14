@@ -4,9 +4,17 @@ import { MpoxView1 } from './mpoxView1.ts';
 import { WestNileView1 } from './westNileView1.ts';
 import { RsvAView1 } from './rsvAView1.ts';
 import type { Organism, Route, View } from './View.ts';
+import { RsvAView3 } from './rsvAView3.ts';
 
 export namespace Routing {
-    const allViews = [CovidView1.view, CovidView2.view, MpoxView1.view, RsvAView1.view, WestNileView1.view] as const;
+    const allViews = [
+        CovidView1.view,
+        CovidView2.view,
+        MpoxView1.view,
+        RsvAView1.view,
+        RsvAView3.view,
+        WestNileView1.view,
+    ] as const;
 
     export const getCurrentRouteInBrowser = (): Route | undefined => {
         return parseUrl(new URL(window.location.href));
