@@ -9,6 +9,7 @@ export type View<R extends Route> = {
     organism: Organism;
     pathname: string;
     label: string;
+    labelLong: string;
     defaultRoute: R;
 
     parseUrl: (url: URL) => R | undefined;

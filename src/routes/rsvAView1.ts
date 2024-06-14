@@ -68,6 +68,7 @@ export namespace RsvAView1 {
         organism,
         pathname,
         label: 'Single variant',
+        labelLong: 'Analyze a single variant',
         parseUrl,
         toUrl,
         defaultRoute: {

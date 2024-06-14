@@ -40,8 +40,8 @@ export namespace Routing {
         organism: Organism;
     }[] = [
         { label: 'SARS-CoV-2', organism: 'covid' },
-        { label: 'mpox', organism: 'mpox' },
-        { label: 'West-Nile', organism: 'west-nile' },
+        { label: 'Mpox', organism: 'mpox' },
+        { label: 'West Nile virus', organism: 'west-nile' },
         { label: 'RSV-A', organism: 'rsv-a' },
     ];
 
@@ -61,10 +61,11 @@ function groupViewsByOrganism(views: readonly View<any>[]): Record<
     Organism,
     {
         label: string;
+        labelLong: string;
         pathname: string;
     }[]
 > {
-    const viewMap: Record<Organism, { label: string; pathname: string }[]> = {
+    const viewMap: Record<Organism, { label: string; labelLong: string; pathname: string }[]> = {
         'covid': [],
         'mpox': [],
         'west-nile': [],
@@ -75,6 +76,7 @@ function groupViewsByOrganism(views: readonly View<any>[]): Record<
         if (viewMap[view.organism]) {
             viewMap[view.organism].push({
                 label: view.label,
+                labelLong: view.labelLong,
                 pathname: view.pathname,
             });
         }

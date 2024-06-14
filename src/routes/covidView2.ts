@@ -102,6 +102,7 @@ export namespace CovidView2 {
         organism,
         pathname,
         label: 'Compare side-by-side',
+        labelLong: 'Compare variants side-by-side',
         parseUrl,
         toUrl,
         defaultRoute: {
