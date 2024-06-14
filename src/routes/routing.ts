@@ -48,9 +48,9 @@ export namespace Routing {
         organism: Organism;
     }[] = [
         { label: 'SARS-CoV-2', organism: 'covid' },
+        { label: 'RSV-A', organism: 'rsv-a' },
         { label: 'Mpox', organism: 'mpox' },
         { label: 'West Nile virus', organism: 'west-nile' },
-        { label: 'RSV-A', organism: 'rsv-a' },
     ];
 
     export const views = groupViewsByOrganism(allViews);
