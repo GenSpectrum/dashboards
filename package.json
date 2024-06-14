@@ -15,7 +15,7 @@
         "@astrojs/node": "^8.2.5",
         "@astrojs/react": "^3.4.0",
         "@astrojs/tailwind": "^5.1.0",
-        "@genspectrum/dashboard-components": "^0.4.2",
+        "@genspectrum/dashboard-components": "^0.4.3",
         "@tanstack/react-query": "^5.37.1",
         "@types/react": "^18.3.2",
         "@types/react-dom": "^18.3.0",

@@ -32,18 +32,15 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             fields={JSON.stringify(fields)}
             initialValue={initialLocationValue}
             width='100%'></gs-location-filter>
-        {/* TODO This is a temporary fix to mitigate https://github.com/GenSpectrum/dashboards/issues/283 */}
-        <div class='h-[9rem]'>
-            <gs-date-range-selector
-                id='dateRangeSelector'
-                customSelectOptions={JSON.stringify(customDateRangeOptions)}
-                earliestDate={earliestDate}
-                initialValue={initialDateRangeValue}
-                initialDateFrom={initialDateRangeFrom}
-                initialDateTo={initialDateRangeTo}
-                width='100%'
-                dateColumn='date'></gs-date-range-selector>
-        </div>
+        <gs-date-range-selector
+            id='dateRangeSelector'
+            customSelectOptions={JSON.stringify(customDateRangeOptions)}
+            earliestDate={earliestDate}
+            initialValue={initialDateRangeValue}
+            initialDateFrom={initialDateRangeFrom}
+            initialDateTo={initialDateRangeTo}
+            width='100%'
+            dateColumn='date'></gs-date-range-selector>
         <button
             id='locationTimeFilterSubmitButton'
             class='rounded-lg border bg-white p-4 hover:bg-amber-200'
