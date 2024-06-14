@@ -1,5 +1,4 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
 interface Props {
@@ -20,7 +19,6 @@ const { title, omitHeader = false } = Astro.props;
         ></script>
         <link rel='stylesheet' href='../../../node_modules/@genspectrum/dashboard-components/dist/style.css' />
         <title>{title}</title>
-        <ViewTransitions />
     </head>
     <body>
         {!omitHeader && <Header />}
