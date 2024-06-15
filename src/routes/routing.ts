@@ -2,6 +2,7 @@ import { CovidView1, CovidView2, CovidView3 } from './covid.ts';
 import { MpoxView1, MpoxView3 } from './mpox.ts';
 import { WestNileView1, WestNileView3 } from './westNile.ts';
 import { RsvAView1, RsvAView3 } from './rsvA.ts';
+import { RsvBView1, RsvBView3 } from './rsvB.ts';
 import type { Organism, Route, View } from './View.ts';
 
 export namespace Routing {
@@ -13,6 +14,8 @@ export namespace Routing {
         MpoxView3.view,
         RsvAView1.view,
         RsvAView3.view,
+        RsvBView1.view,
+        RsvBView3.view,
         WestNileView1.view,
         WestNileView3.view,
     ] as const;
@@ -50,6 +53,7 @@ export namespace Routing {
     }[] = [
         { label: 'SARS-CoV-2', organism: 'covid' },
         { label: 'RSV-A', organism: 'rsv-a' },
+        { label: 'RSV-B', organism: 'rsv-b' },
         { label: 'Mpox', organism: 'mpox' },
         { label: 'West Nile virus', organism: 'west-nile' },
     ];
@@ -79,6 +83,7 @@ function groupViewsByOrganism(views: readonly View<any>[]): Record<
         'mpox': [],
         'west-nile': [],
         'rsv-a': [],
+        'rsv-b': [],
     };
 
     for (const view of views) {

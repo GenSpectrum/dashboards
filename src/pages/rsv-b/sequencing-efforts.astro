@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
+import { RsvBView3 } from '../../routes/rsvB';
+
+const routeData = RsvBView3.view.parseUrl(Astro.url);
+
+const baselineFilter = RsvBView3.view.toLapisFilter(routeData);
+
+let subDivisionField = undefined;
+let subDivisionLabel = '';
+if (routeData.baselineFilter.location.geo_loc_country === undefined) {
+    subDivisionField = 'geo_loc_country';
+    subDivisionLabel = 'Countries';
+} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
+    subDivisionField = 'geo_loc_admin_1';
+    subDivisionLabel = 'Geographic sub-divisions';
+}
+---
+
+<style>
+    .component-title {
+        @apply font-bold;
+    }
+</style>
+
+<BaseLayout title='Sequencing Efforts | RSV-B | GenSpectrum'>
+    <gs-app lapis='https://lapis-rsv-for-fun.loculus.org/rsv-b'>
+        <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
+            <div class='mr-2 font-semibold'>Filter dataset:</div>
+            <div class='max-w-[1000px]'>
+                <LocationTimeFilter
+                    fields={RsvBView3.view.locationFields}
+                    initialLocation={baselineFilter}
+                    initialDateRange={routeData.baselineFilter.dateRange}
+                    earliestDate={RsvBView3.view.earliestDate}
+                    customDateRangeOptions={RsvBView3.view.customDateRangeOptions}
+                />
+            </div>
+        </div>
+
+        <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6 p-2'>
+            {
+                subDivisionField && (
+                    <div>
+                        <h2 class='component-title'>{subDivisionLabel}</h2>
+                        <div class='h-[600px]'>
+                            <gs-aggregate
+                                fields={JSON.stringify([subDivisionField])}
+                                filter={JSON.stringify(baselineFilter)}
+                                headline=''
+                                width='100%'
+                                height='100%'
+                            />
+                        </div>
+                    </div>
+                )
+            }
+            <div>
+                <h2 class='component-title'>Hosts</h2>
+                <div class='h-[600px]'>
+                    <gs-aggregate
+                        fields='["host_name_scientific"]'
+                        filter={JSON.stringify(baselineFilter)}
+                        headline=''
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </div>
+            </div>
+            <div>
+                <h2 class='component-title'>Author affiliations</h2>
+                <div class='h-[600px]'>
+                    <gs-aggregate
+                        fields='["author_affiliations"]'
+                        filter={JSON.stringify(baselineFilter)}
+                        headline=''
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </div>
+            </div>
+        </div>
+    </gs-app>
+</BaseLayout>

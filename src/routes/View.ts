@@ -1,4 +1,4 @@
-export type Organism = 'covid' | 'mpox' | 'west-nile' | 'rsv-a';
+export type Organism = 'covid' | 'mpox' | 'west-nile' | 'rsv-a' | 'rsv-b';
 
 export type Route = {
     organism: Organism;
