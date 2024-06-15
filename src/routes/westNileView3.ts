@@ -2,11 +2,10 @@ import {
     type DateRange,
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
-    getStringArrayFromSearch,
     getStringFromSearch,
+    type LapisLocation2,
     setSearchFromDateRange,
     setSearchFromString,
-    setSearchFromStringArray,
 } from './helpers.ts';
 import type { View } from './View.ts';
 
@@ -21,7 +20,7 @@ export namespace WestNileView3 {
         organism: typeof organism;
         pathname: Pathname;
         baselineFilter: {
-            location: LapisLocation;
+            location: LapisLocation2;
             dateRange: DateRange;
         };
     };
@@ -79,10 +78,5 @@ export namespace WestNileView3 {
             sample_collection_dateFrom: dateRange.from,
             sample_collection_dateTo: dateRange.to,
         };
-    };
-
-    export type LapisLocation = {
-        geo_loc_country?: string;
-        geo_loc_admin_1?: string;
     };
 }

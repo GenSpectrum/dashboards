@@ -3,19 +3,23 @@ import {
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getIntegerFromSearch,
-    getStringArrayFromSearch,
+    getLapisLocation1FromSearch,
+    getLapisMutationsQueryFromSearch,
     getStringFromSearch,
+    type LapisLocation1,
+    type LapisMutationQuery,
     setSearchFromDateRange,
+    setSearchFromLapisLocation1,
+    setSearchFromLapisMutationsQuery,
     setSearchFromString,
-    setSearchFromStringArray,
 } from './helpers.ts';
 import type { View } from './View.ts';
 
 export namespace CovidView1 {
-    export const organism = 'covid' as const;
-    export const pathname = `/${organism}/single-variant` as const;
-    export type Pathname = typeof pathname;
-    export const defaultDateRange: DateRange = 'last6Months';
+    const organism = 'covid' as const;
+    const pathname = `/${organism}/single-variant` as const;
+    type Pathname = typeof pathname;
+    const defaultDateRange: DateRange = 'last6Months';
     export const earliestDate = '2020-01-06';
 
     export type Route = {
@@ -23,7 +27,7 @@ export namespace CovidView1 {
         pathname: Pathname;
         collectionId?: number;
         baselineFilter: {
-            location: LapisLocation;
+            location: LapisLocation1;
             dateRange: DateRange;
         };
         variantFilter: LapisVariantQuery;
@@ -37,22 +41,15 @@ export namespace CovidView1 {
             variantFilter = { variantQuery: advancedVariantQuery };
         } else {
             variantFilter = {
+                ...getLapisMutationsQueryFromSearch(search),
                 nextcladePangoLineage: getStringFromSearch(search, 'nextcladePangoLineage'),
-                nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
-                aminoAcidMutations: getStringArrayFromSearch(search, 'aminoAcidMutations'),
-                nucleotideInsertions: getStringArrayFromSearch(search, 'nucleotideInsertions'),
-                aminoAcidInsertions: getStringArrayFromSearch(search, 'aminoAcidInsertions'),
             };
         }
         return {
             organism,
             pathname,
             baselineFilter: {
-                location: {
-                    region: getStringFromSearch(search, 'region'),
-                    country: getStringFromSearch(search, 'country'),
-                    division: getStringFromSearch(search, 'division'),
-                },
+                location: getLapisLocation1FromSearch(search),
                 dateRange: getDateRangeFromSearch(search, 'date') ?? defaultDateRange,
             },
             variantFilter,
@@ -60,11 +57,9 @@ export namespace CovidView1 {
         };
     };
 
-    export const toUrl = (route: Route): string => {
+    const toUrl = (route: Route): string => {
         const search = new URLSearchParams();
-        (['region', 'country', 'division'] as const).forEach((field) =>
-            setSearchFromString(search, field, route.baselineFilter.location[field]),
-        );
+        setSearchFromLapisLocation1(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== defaultDateRange) {
             setSearchFromDateRange(search, 'date', route.baselineFilter.dateRange);
         }
@@ -73,9 +68,7 @@ export namespace CovidView1 {
             setSearchFromString(search, 'variantQuery', variantFilter.variantQuery);
         } else if (isSimpleVariantQuery(variantFilter)) {
             setSearchFromString(search, 'nextcladePangoLineage', variantFilter.nextcladePangoLineage);
-            (
-                ['nucleotideMutations', 'aminoAcidMutations', 'nucleotideInsertions', 'aminoAcidInsertions'] as const
-            ).forEach((field) => setSearchFromStringArray(search, field, variantFilter[field]));
+            setSearchFromLapisMutationsQuery(search, variantFilter);
         }
         if (route.collectionId !== undefined) {
             search.set('collectionId', route.collectionId.toString());
@@ -117,18 +110,8 @@ export namespace CovidView1 {
         };
     };
 
-    export type LapisLocation = {
-        region?: string;
-        country?: string;
-        division?: string;
-    };
-
-    export type LapisSimpleVariantQuery = {
+    export type LapisSimpleVariantQuery = LapisMutationQuery & {
         nextcladePangoLineage?: string;
-        nucleotideMutations?: string[];
-        aminoAcidMutations?: string[];
-        nucleotideInsertions?: string[];
-        aminoAcidInsertions?: string[];
     };
 
     export type LapisAdvancedVariantQuery = {
@@ -136,8 +119,6 @@ export namespace CovidView1 {
     };
 
     export type LapisVariantQuery = LapisSimpleVariantQuery | LapisAdvancedVariantQuery;
-
-    export type LapisFilter = LapisLocation & LapisVariantQuery;
 
     export const isSimpleVariantQuery = (variantQuery: LapisVariantQuery): variantQuery is LapisSimpleVariantQuery => {
         return (

@@ -123,3 +123,101 @@ export const getDateRangeFromSearch = (search: URLSearchParams, name: string): D
     // TODO Properly validate the value
     return value as SpecialDateRange;
 };
+
+/**
+ * This format is commonly used by Nextstrain.
+ */
+export type LapisLocation1 = {
+    region?: string;
+    country?: string;
+    division?: string;
+};
+
+export const getLapisLocation1FromSearch = (search: URLSearchParams): LapisLocation1 => {
+    return {
+        region: getStringFromSearch(search, 'region'),
+        country: getStringFromSearch(search, 'country'),
+        division: getStringFromSearch(search, 'division'),
+    };
+};
+
+export const setSearchFromLapisLocation1 = (search: URLSearchParams, location: LapisLocation1) => {
+    (['region', 'country', 'division'] as const).forEach((field) =>
+        setSearchFromString(search, field, location[field]),
+    );
+};
+
+/**
+ * This format is supported by PHA4GE.
+ */
+export type LapisLocation2 = {
+    geo_loc_country?: string;
+    geo_loc_admin_1?: string;
+};
+
+export const getLapisLocation2FromSearch = (search: URLSearchParams): LapisLocation2 => {
+    return {
+        geo_loc_country: getStringFromSearch(search, 'geo_loc_country'),
+        geo_loc_admin_1: getStringFromSearch(search, 'geo_loc_admin_1'),
+    };
+};
+
+export const setSearchFromLapisLocation2 = (search: URLSearchParams, location: LapisLocation2) => {
+    (['geo_loc_country', 'geo_loc_admin_1'] as const).forEach((field) =>
+        setSearchFromString(search, field, location[field]),
+    );
+};
+
+export type LapisMutationQuery = {
+    nucleotideMutations?: string[];
+    aminoAcidMutations?: string[];
+    nucleotideInsertions?: string[];
+    aminoAcidInsertions?: string[];
+};
+
+export type LapisVariantQuery1 = LapisMutationQuery & {
+    lineage?: string;
+};
+
+export type LapisVariantQuery2 = LapisVariantQuery1 & {
+    clade?: string;
+};
+
+export const getLapisMutationsQueryFromSearch = (search: URLSearchParams): LapisMutationQuery => {
+    return {
+        nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
+        aminoAcidMutations: getStringArrayFromSearch(search, 'aminoAcidMutations'),
+        nucleotideInsertions: getStringArrayFromSearch(search, 'nucleotideInsertions'),
+        aminoAcidInsertions: getStringArrayFromSearch(search, 'aminoAcidInsertions'),
+    };
+};
+
+export const getLapisVariantQuery1FromSearch = (search: URLSearchParams): LapisVariantQuery1 => {
+    return {
+        ...getLapisMutationsQueryFromSearch(search),
+        lineage: getStringFromSearch(search, 'lineage'),
+    };
+};
+
+export const getLapisVariantQuery2FromSearch = (search: URLSearchParams): LapisVariantQuery2 => {
+    return {
+        ...getLapisVariantQuery1FromSearch(search),
+        clade: getStringFromSearch(search, 'clade'),
+    };
+};
+
+export const setSearchFromLapisMutationsQuery = (search: URLSearchParams, query: LapisMutationQuery) => {
+    (['nucleotideMutations', 'aminoAcidMutations', 'nucleotideInsertions', 'aminoAcidInsertions'] as const).forEach(
+        (field) => setSearchFromStringArray(search, field, query[field]),
+    );
+};
+
+export const setSearchFromLapisVariantQuery1 = (search: URLSearchParams, query: LapisVariantQuery1) => {
+    setSearchFromLapisMutationsQuery(search, query);
+    setSearchFromString(search, 'lineage', query.lineage);
+};
+
+export const setSearchFromLapisVariantQuery2 = (search: URLSearchParams, query: LapisVariantQuery2) => {
+    setSearchFromLapisVariantQuery1(search, query);
+    setSearchFromString(search, 'clade', query.clade);
+};

@@ -1,5 +1,6 @@
 import { CovidView1 } from './covidView1.ts';
 import type { View } from './View.ts';
+import type { LapisLocation1 } from './helpers.ts';
 
 export namespace CovidView2 {
     export const organism = 'covid' as const;
@@ -14,7 +15,7 @@ export namespace CovidView2 {
 
     type Filter = {
         id: number;
-        baselineFilter: CovidView1.LapisLocation;
+        baselineFilter: LapisLocation1;
         variantFilter: CovidView1.LapisVariantQuery;
     };
 

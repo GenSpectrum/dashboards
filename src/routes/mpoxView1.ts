@@ -2,11 +2,13 @@ import {
     type DateRange,
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
-    getStringArrayFromSearch,
-    getStringFromSearch,
+    getLapisLocation2FromSearch,
+    getLapisVariantQuery2FromSearch,
+    type LapisLocation2,
+    type LapisVariantQuery2,
     setSearchFromDateRange,
-    setSearchFromString,
-    setSearchFromStringArray,
+    setSearchFromLapisLocation2,
+    setSearchFromLapisVariantQuery2,
 } from './helpers.ts';
 import type { View } from './View.ts';
 
@@ -21,10 +23,10 @@ export namespace MpoxView1 {
         organism: typeof organism;
         pathname: Pathname;
         baselineFilter: {
-            location: LapisLocation;
+            location: LapisLocation2;
             dateRange: DateRange;
         };
-        variantFilter: LapisVariantQuery;
+        variantFilter: LapisVariantQuery2;
     };
 
     export const parseUrl = (url: URL): Route | undefined => {
@@ -33,37 +35,20 @@ export namespace MpoxView1 {
             organism,
             pathname,
             baselineFilter: {
-                location: {
-                    geo_loc_country: getStringFromSearch(search, 'geo_loc_country'),
-                    geo_loc_admin_1: getStringFromSearch(search, 'geo_loc_admin_1'),
-                },
+                location: getLapisLocation2FromSearch(search),
                 dateRange: getDateRangeFromSearch(search, 'sample_collection_date') ?? defaultDateRange,
             },
-            variantFilter: {
-                clade: getStringFromSearch(search, 'clade'),
-                lineage: getStringFromSearch(search, 'lineage'),
-                nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
-                aminoAcidMutations: getStringArrayFromSearch(search, 'aminoAcidMutations'),
-                nucleotideInsertions: getStringArrayFromSearch(search, 'nucleotideInsertions'),
-                aminoAcidInsertions: getStringArrayFromSearch(search, 'aminoAcidInsertions'),
-            },
+            variantFilter: getLapisVariantQuery2FromSearch(search),
         };
     };
 
     export const toUrl = (route: Route): string => {
         const search = new URLSearchParams();
-        (['geo_loc_country', 'geo_loc_admin_1'] as const).forEach((field) =>
-            setSearchFromString(search, field, route.baselineFilter.location[field]),
-        );
+        setSearchFromLapisLocation2(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== defaultDateRange) {
             setSearchFromDateRange(search, 'sample_collection_date', route.baselineFilter.dateRange);
         }
-        (['clade', 'lineage'] as const).forEach((field) =>
-            setSearchFromString(search, field, route.variantFilter[field]),
-        );
-        (['nucleotideMutations', 'aminoAcidMutations', 'nucleotideInsertions', 'aminoAcidInsertions'] as const).forEach(
-            (field) => setSearchFromStringArray(search, field, route.variantFilter[field]),
-        );
+        setSearchFromLapisVariantQuery2(search, route.variantFilter);
         return `${pathname}?${search}`;
     };
 
@@ -99,19 +84,5 @@ export namespace MpoxView1 {
             sample_collection_dateFrom: dateRange.from,
             sample_collection_dateTo: dateRange.to,
         };
-    };
-
-    export type LapisLocation = {
-        geo_loc_country?: string;
-        geo_loc_admin_1?: string;
-    };
-
-    export type LapisVariantQuery = {
-        clade?: string;
-        lineage?: string;
-        nucleotideMutations?: string[];
-        aminoAcidMutations?: string[];
-        nucleotideInsertions?: string[];
-        aminoAcidInsertions?: string[];
     };
 }

@@ -3,11 +3,10 @@ import {
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getIntegerFromSearch,
-    getStringArrayFromSearch,
     getStringFromSearch,
+    type LapisLocation1,
     setSearchFromDateRange,
     setSearchFromString,
-    setSearchFromStringArray,
 } from './helpers.ts';
 import type { View } from './View.ts';
 
@@ -23,7 +22,7 @@ export namespace CovidView3 {
         pathname: Pathname;
         collectionId?: number;
         baselineFilter: {
-            location: LapisLocation;
+            location: LapisLocation1;
             dateRange: DateRange;
         };
     };
@@ -83,11 +82,5 @@ export namespace CovidView3 {
             dateFrom: dateRange.from,
             dateTo: dateRange.to,
         };
-    };
-
-    export type LapisLocation = {
-        region?: string;
-        country?: string;
-        division?: string;
     };
 }
