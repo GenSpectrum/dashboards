@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { WestNileView1 } from '../../routes/westNileView1';
+import { WestNileView1 } from '../../routes/westNile';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
-const routeData = WestNileView1.parseUrl(Astro.url);
+const routeData = WestNileView1.view.parseUrl(Astro.url);
 
-const variantFilter = WestNileView1.toLapisFilter(routeData);
-const baselineFilter = WestNileView1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = WestNileView1.view.toLapisFilter(routeData);
+const baselineFilter = WestNileView1.view.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
     from: baselineFilter.sample_collection_dateFrom,
     to: baselineFilter.sample_collection_dateTo,
@@ -30,7 +30,7 @@ const customDateRangeOptions = [
     { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
     { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
     { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-    { label: 'Before 2000', dateFrom: WestNileView1.earliestDate, dateTo: '1999-12-31' },
+    { label: 'Before 2000', dateFrom: WestNileView1.view.earliestDate, dateTo: '1999-12-31' },
 ];
 ---
 
@@ -50,7 +50,7 @@ const customDateRangeOptions = [
                         fields={locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={WestNileView1.earliestDate}
+                        earliestDate={WestNileView1.view.earliestDate}
                         customDateRangeOptions={customDateRangeOptions}
                     />
                 </div>

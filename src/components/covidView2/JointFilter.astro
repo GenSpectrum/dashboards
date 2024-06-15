@@ -1,9 +1,10 @@
 ---
-import { CovidView1 } from '../../routes/covidView1';
+import type { LapisLocation1 } from '../../routes/helpers';
+import { CovidView1 } from '../../routes/covid';
 
 interface Props {
     filterId: number;
-    initialLocation: CovidView1.LapisLocation;
+    initialLocation: LapisLocation1;
     initialNextcladePangoLineage?: string;
 }
 
@@ -52,7 +53,7 @@ const initialLocationValue = [region, country, division].filter(Boolean).join(' 
 
 <script>
     import { Routing } from '../../routes/routing.ts';
-    import { CovidView2 } from '../../routes/covidView2';
+    import { CovidView2 } from '../../routes/covid';
 
     class JointFilter extends HTMLElement {
         constructor() {

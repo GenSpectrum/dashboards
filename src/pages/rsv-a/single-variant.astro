@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { RsvAView1 } from '../../routes/rsvAView1';
+import { RsvAView1 } from '../../routes/rsvA';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
-const routeData = RsvAView1.parseUrl(Astro.url);
+const routeData = RsvAView1.view.parseUrl(Astro.url);
 
-const variantFilter = RsvAView1.toLapisFilter(routeData);
-const baselineFilter = RsvAView1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = RsvAView1.view.toLapisFilter(routeData);
+const baselineFilter = RsvAView1.view.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
     from: baselineFilter.sample_collection_dateFrom,
     to: baselineFilter.sample_collection_dateTo,
@@ -23,15 +23,6 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
     subDivisionField = 'geo_loc_admin_1';
     subDivisionLabel = 'Geographic sub-divisions';
 }
-
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
-const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
-    { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-    { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-    { label: 'Before 2000', dateFrom: RsvAView1.earliestDate, dateTo: '1999-12-31' },
-];
 ---
 
 <style>
@@ -47,11 +38,11 @@ const customDateRangeOptions = [
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={locationFields}
+                        fields={RsvAView1.view.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={RsvAView1.earliestDate}
-                        customDateRangeOptions={customDateRangeOptions}
+                        earliestDate={RsvAView1.view.earliestDate}
+                        customDateRangeOptions={RsvAView1.view.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>

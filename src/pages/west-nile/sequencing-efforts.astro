@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { WestNileView3 } from '../../routes/westNileView3';
+import { WestNileView3 } from '../../routes/westNile';
 
-const routeData = WestNileView3.parseUrl(Astro.url);
+const routeData = WestNileView3.view.parseUrl(Astro.url);
 
-const baselineFilter = WestNileView3.toLapisFilter(routeData);
+const baselineFilter = WestNileView3.view.toLapisFilter(routeData);
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -16,15 +16,6 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
     subDivisionField = 'geo_loc_admin_1';
     subDivisionLabel = 'Geographic sub-divisions';
 }
-
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
-const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
-    { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-    { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-    { label: 'Before 2000', dateFrom: WestNileView3.earliestDate, dateTo: '1999-12-31' },
-];
 ---
 
 <style>
@@ -39,11 +30,11 @@ const customDateRangeOptions = [
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={locationFields}
+                    fields={WestNileView3.view.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={WestNileView3.earliestDate}
-                    customDateRangeOptions={customDateRangeOptions}
+                    earliestDate={WestNileView3.view.earliestDate}
+                    customDateRangeOptions={WestNileView3.view.customDateRangeOptions}
                 />
             </div>
         </div>

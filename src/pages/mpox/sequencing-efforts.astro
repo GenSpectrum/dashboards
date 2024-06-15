@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { MpoxView3 } from '../../routes/mpoxView3';
+import { MpoxView1, MpoxView3 } from '../../routes/mpox';
 
-const routeData = MpoxView3.parseUrl(Astro.url);
+const routeData = MpoxView3.view.parseUrl(Astro.url);
 
-const baselineFilter = MpoxView3.toLapisFilter(routeData);
+const baselineFilter = MpoxView3.view.toLapisFilter(routeData);
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -16,20 +16,6 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
     subDivisionField = 'geo_loc_admin_1';
     subDivisionLabel = 'Geographic sub-divisions';
 }
-
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
-const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
-    { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
-    { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
-    { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
-    { label: 'Since 2021', dateFrom: '2021-01-01', dateTo: today },
-    { label: 'Before 2021', dateFrom: MpoxView3.earliestDate, dateTo: '2020-12-31' },
-    { label: 'Since 2017', dateFrom: '2017-01-01', dateTo: today },
-    { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
-    { label: 'Before 2017', dateFrom: MpoxView3.earliestDate, dateTo: '2016-12-31' },
-];
 ---
 
 <style>
@@ -44,11 +30,11 @@ const customDateRangeOptions = [
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={locationFields}
+                    fields={MpoxView1.view.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={MpoxView3.earliestDate}
-                    customDateRangeOptions={customDateRangeOptions}
+                    earliestDate={MpoxView3.view.earliestDate}
+                    customDateRangeOptions={MpoxView1.view.customDateRangeOptions}
                 />
             </div>
         </div>

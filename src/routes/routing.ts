@@ -1,13 +1,8 @@
-import { CovidView1 } from './covidView1.ts';
-import { CovidView2 } from './covidView2.ts';
-import { MpoxView1 } from './mpoxView1.ts';
-import { WestNileView1 } from './westNileView1.ts';
-import { RsvAView1 } from './rsvAView1.ts';
+import { CovidView1, CovidView2, CovidView3 } from './covid.ts';
+import { MpoxView1, MpoxView3 } from './mpox.ts';
+import { WestNileView1, WestNileView3 } from './westNile.ts';
+import { RsvAView1, RsvAView3 } from './rsvA.ts';
 import type { Organism, Route, View } from './View.ts';
-import { RsvAView3 } from './rsvAView3.ts';
-import { MpoxView3 } from './mpoxView3.ts';
-import { WestNileView3 } from './westNileView3.ts';
-import { CovidView3 } from './covidView3.ts';
 
 export namespace Routing {
     const allViews = [

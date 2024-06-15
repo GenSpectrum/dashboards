@@ -7,6 +7,12 @@ export type CustomDateRange = {
 
 export type DateRange = SpecialDateRange | CustomDateRange;
 
+export type DateRangeOption = {
+    label: string;
+    dateFrom: string;
+    dateTo: string;
+};
+
 export const isCustomDateRange = (dateRange: DateRange): dateRange is CustomDateRange => {
     return typeof dateRange === 'object' && 'from' in dateRange;
 };
@@ -220,4 +226,9 @@ export const setSearchFromLapisVariantQuery1 = (search: URLSearchParams, query: 
 export const setSearchFromLapisVariantQuery2 = (search: URLSearchParams, query: LapisVariantQuery2) => {
     setSearchFromLapisVariantQuery1(search, query);
     setSearchFromString(search, 'clade', query.clade);
+};
+
+export type SampleCollectionDateFromTo = {
+    sample_collection_dateFrom: string;
+    sample_collection_dateTo: string;
 };

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { CovidView3 } from '../../routes/covidView3';
+import { CovidView3 } from '../../routes/covid';
 
 const routeData = CovidView3.parseUrl(Astro.url);
 
@@ -16,16 +16,6 @@ if (routeData.baselineFilter.location.country === undefined) {
     subDivisionField = 'division';
     subDivisionLabel = 'Geographic sub-divisions';
 }
-
-const locationFields = ['region', 'country', 'division'];
-const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
-    { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
-    { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
-    { label: '2021', dateFrom: '2024-01-04', dateTo: '2022-01-02' },
-    { label: '2020', dateFrom: CovidView3.earliestDate, dateTo: '2021-01-03' },
-];
 ---
 
 <style>
@@ -40,11 +30,11 @@ const customDateRangeOptions = [
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={locationFields}
+                    fields={CovidView3.view.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={CovidView3.earliestDate}
-                    customDateRangeOptions={customDateRangeOptions}
+                    earliestDate={CovidView3.view.earliestDate}
+                    customDateRangeOptions={CovidView3.view.customDateRangeOptions}
                 />
             </div>
         </div>

@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { MpoxView1 } from '../../routes/mpoxView1';
+import { MpoxView1 } from '../../routes/mpox';
 import VariantFilter from '../../components/VariantFilter.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 
-const routeData = MpoxView1.parseUrl(Astro.url);
+const routeData = MpoxView1.view.parseUrl(Astro.url);
 
-const variantFilter = MpoxView1.toLapisFilter(routeData);
-const baselineFilter = MpoxView1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = MpoxView1.view.toLapisFilter(routeData);
+const baselineFilter = MpoxView1.view.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
     from: baselineFilter.sample_collection_dateFrom,
     to: baselineFilter.sample_collection_dateTo,
@@ -23,20 +23,6 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
     subDivisionField = 'geo_loc_admin_1';
     subDivisionLabel = 'Geographic sub-divisions';
 }
-
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
-const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
-    { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
-    { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
-    { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
-    { label: 'Since 2021', dateFrom: '2021-01-01', dateTo: today },
-    { label: 'Before 2021', dateFrom: MpoxView1.earliestDate, dateTo: '2020-12-31' },
-    { label: 'Since 2017', dateFrom: '2017-01-01', dateTo: today },
-    { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
-    { label: 'Before 2017', dateFrom: MpoxView1.earliestDate, dateTo: '2016-12-31' },
-];
 ---
 
 <style>
@@ -52,11 +38,11 @@ const customDateRangeOptions = [
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={locationFields}
+                        fields={MpoxView1.view.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={MpoxView1.earliestDate}
-                        customDateRangeOptions={customDateRangeOptions}
+                        earliestDate={MpoxView1.view.earliestDate}
+                        customDateRangeOptions={MpoxView1.view.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
