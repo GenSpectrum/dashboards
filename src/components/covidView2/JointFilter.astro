@@ -29,6 +29,7 @@ const initialLocationValue = [region, country, division].filter(Boolean).join(' 
                     id={`locationFilter${filterId}`}
                     fields='["region", "country", "division"]'
                     initialValue={initialLocationValue}
+                    placeholderText='Sampling location'
                     width='100%'></gs-location-filter>
             </div>
             <div class='flex-1 border-l-2 bg-green-50 px-2 py-4'>
