@@ -12,22 +12,22 @@
     },
     "dependencies": {
         "@astrojs/check": "^0.7.0",
-        "@astrojs/node": "^8.2.5",
-        "@astrojs/react": "^3.4.0",
+        "@astrojs/node": "^8.3.2",
+        "@astrojs/react": "^3.6.0",
         "@astrojs/tailwind": "^5.1.0",
         "@genspectrum/dashboard-components": "^0.4.5",
-        "@tanstack/react-query": "^5.37.1",
-        "@types/react": "^18.3.2",
+        "@tanstack/react-query": "^5.48.0",
+        "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
-        "astro": "^4.9.0",
+        "astro": "^4.11.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "tailwindcss": "^3.4.3",
-        "typescript": "^5.4.5"
+        "tailwindcss": "^3.4.4",
+        "typescript": "^5.5.2"
     },
     "devDependencies": {
-        "prettier": "^3.2.5",
-        "prettier-plugin-astro": "^0.13.0",
-        "prettier-plugin-tailwindcss": "^0.5.14"
+        "prettier": "^3.3.2",
+        "prettier-plugin-astro": "^0.14.0",
+        "prettier-plugin-tailwindcss": "^0.6.5"
     }
 }
