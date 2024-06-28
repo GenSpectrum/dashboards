@@ -5,7 +5,7 @@ on:
     branches:
 
 env:
-  IMAGE_NAME: ghcr.io/genspectrum/astro-dashboard-playground
+  IMAGE_NAME: ghcr.io/genspectrum/dashboards
 
 jobs:
   docker:
