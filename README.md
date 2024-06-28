@@ -1,1 +1,1 @@
-# GenSpectrum Astro dashboard playground
+# Dashboards
