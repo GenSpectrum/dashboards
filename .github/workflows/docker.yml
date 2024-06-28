@@ -1,13 +1,27 @@
 name: Docker
 
-on:
-  push:
-    branches:
+on: [push]
 
 env:
   IMAGE_NAME: ghcr.io/genspectrum/dashboards
 
 jobs:
+  checks:
+    name: Check format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run check-format
+      - run: npm run check-types
+
   docker:
     runs-on: ubuntu-latest
     permissions:
