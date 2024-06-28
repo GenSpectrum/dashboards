@@ -18,7 +18,7 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
         <div class='flex overflow-x-auto'>
             {
                 routeData.filters.map(({ id, variantFilter, baselineFilter }) => (
-                    <div class='min-w-[700px]  flex-1 border-r-2 px-2'>
+                    <div class='min-w-[700px] flex-1 border-r-2 px-2'>
                         <JointFilter
                             filterId={id}
                             initialLocation={baselineFilter}

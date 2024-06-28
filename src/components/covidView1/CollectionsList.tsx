@@ -119,7 +119,7 @@ const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
             {variants.map((variant, index) => (
                 <button
                     key={`${variant.name}_${variant.query}_${index}`}
-                    className='border bg-white px-4 py-2  hover:bg-amber-200'
+                    className='border bg-white px-4 py-2 hover:bg-amber-200'
                     onClick={() => selectVariant(variant)}
                 >
                     {variant.name}
