@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(github-actions)"
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minorAndPatch:
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: "chore(root)"
