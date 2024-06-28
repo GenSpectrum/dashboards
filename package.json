@@ -8,7 +8,9 @@
         "build": "astro check && astro build",
         "preview": "astro preview",
         "astro": "astro",
-        "format": "prettier --ignore-path \"../.gitignore\" --write \"./**/*.{ts,tsx,json,astro,cjs,mjs}\""
+        "format": "prettier --ignore-path \"../.gitignore\" --write \"./**/*.{ts,tsx,json,astro,md,mdx,mjs,cjs}\"",
+        "check-format": "prettier --check \"**/*.{ts,tsx,json,astro,md,mdx,mjs,cjs}\"",
+        "check-types": "astro sync && tsc --noEmit"
     },
     "dependencies": {
         "@astrojs/check": "^0.7.0",
