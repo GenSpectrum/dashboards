@@ -50,12 +50,13 @@ export namespace Routing {
     export const organisms: {
         label: string;
         organism: Organism;
+        backgroundColor: string;
     }[] = [
-        { label: 'SARS-CoV-2', organism: 'covid' },
-        { label: 'RSV-A', organism: 'rsv-a' },
-        { label: 'RSV-B', organism: 'rsv-b' },
-        { label: 'Mpox', organism: 'mpox' },
-        { label: 'West Nile virus', organism: 'west-nile' },
+        { label: 'SARS-CoV-2', organism: 'covid', backgroundColor: 'bg-lime-200' },
+        { label: 'RSV-A', organism: 'rsv-a', backgroundColor: 'bg-violet-200' },
+        { label: 'RSV-B', organism: 'rsv-b', backgroundColor: 'bg-violet-200' },
+        { label: 'Mpox', organism: 'mpox', backgroundColor: 'bg-pink-200' },
+        { label: 'West Nile virus', organism: 'west-nile', backgroundColor: 'bg-teal-200' },
     ];
 
     export const views = groupViewsByOrganism(allViews);
