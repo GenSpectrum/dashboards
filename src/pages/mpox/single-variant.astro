@@ -61,11 +61,11 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <div class='h-[400px]'>
                         <gs-prevalence-over-time
                             headline=''
-                            numerator={JSON.stringify({
+                            numeratorFilter={JSON.stringify({
                                 displayName: '',
                                 lapisFilter: variantFilter,
                             })}
-                            denominator={JSON.stringify(baselineFilter)}
+                            denominatorFilter={JSON.stringify(baselineFilter)}
                             lapisDateField='sample_collection_date'
                             granularity={timeGranularity}
                             smoothingWindow='0'
@@ -77,7 +77,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <h2 class='component-title'>Nucleotide mutations</h2>
                     <div class='h-[400px]'>
                         <gs-mutations
-                            variant={JSON.stringify(variantFilter)}
+                            lapisFilter={JSON.stringify(variantFilter)}
                             headline=''
                             sequenceType='nucleotide'
                             views='["grid", "table", "insertions"]'
@@ -89,7 +89,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <h2 class='component-title'>Amino acid mutations</h2>
                     <div class='h-[400px]'>
                         <gs-mutations
-                            variant={JSON.stringify(variantFilter)}
+                            lapisFilter={JSON.stringify(variantFilter)}
                             headline=''
                             sequenceType='amino acid'
                             views='["grid", "table", "insertions"]'
