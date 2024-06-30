@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/base/BaseLayout.astro';
+---
+
+<style>
+    h1 {
+        @apply mb-4 text-center text-3xl;
+    }
+
+    .main a {
+        @apply underline;
+    }
+
+    p,
+    ul {
+        @apply mb-4;
+    }
+</style>
+
+<BaseLayout omitHeader='true'>
+    <div class='mb-4 flex place-content-between border-b p-2'>
+        <div class='font-bold'><a href='/'>GenSpectrum</a></div>
+    </div>
+
+    <h1>Data sources and preprocessing</h1>
+    <div class='main px-8'>
+        <p>
+            GenSpectrum uses open data from the <a href='https://www.insdc.org/'
+                >International Nucleotide Sequence Database Collaboration (INSDC)</a
+            > which consists of <a href='https://www.ncbi.nlm.nih.gov/genbank/'>GenBank</a>, <a
+                href='https://www.ebi.ac.uk/ena/browser/'>ENA</a
+            > and <a href='https://www.ddbj.nig.ac.jp/'>DDBJ</a>. For RSV, Mpox and the West Nile virus, we download the
+            data directly from GenBank using the NCBI Datasets CLI. For SARS-CoV-2, we download the data from <a
+                href='https://nextstrain.org/blog/2021-07-08-ncov-open-announcement'>Nextstrain</a
+            >
+            who gets the data from GenBank and preprocesses them. (For <a href='https://cov-spectrum.org'
+                >CoV-Spectrum</a
+            >, we have an instance which uses data from <a href='https://gisaid.org'>GISAID</a>.)
+        </p>
+        <p>
+            We use <a href='https://clades.nextstrain.org/'>Nextclade</a> as the main tool for preprocessing the sequences.
+            The following sequences are used as a reference for alignment:
+        </p>
+        <ul class='ml-6 list-disc'>
+            <li>SARS-CoV-2: <a href='https://www.ncbi.nlm.nih.gov/nuccore/NC_045512'>NC_045512</a></li>
+            <li>Mpox: <a href='https://www.ncbi.nlm.nih.gov/nuccore/NC_063383.1'>NC_063383.1</a></li>
+            <li>
+                RSV-A: EPI_ISL_412866 (available on <a href='https://gisaid.org'>GISAID</a>; an almost identical
+                sequences is <a href='https://www.ncbi.nlm.nih.gov/nuccore/LR699737'>LR699737</a>)
+            </li>
+            <li>RSV-B: <a href='https://www.ncbi.nlm.nih.gov/nuccore/OP975389.1'>OP975389.1</a></li>
+            <li>West Nile virus: <em>todo</em></li>
+        </ul>
+    </div>
+</BaseLayout>

@@ -1,8 +1,6 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { Routing } from '../routes/routing';
-
-const x = ['Analyze a variant', 'Compare variants side-by-side', 'CoV-Spectrum (external)'];
 ---
 
 <style>
@@ -33,6 +31,12 @@ const x = ['Analyze a variant', 'Compare variants side-by-side', 'CoV-Spectrum (
             <li>
                 …uses open data from the <a href='https://www.insdc.org/'
                     >International Nucleotide Sequence Database Collaboration (INSDC)</a
+                >. You can read more about the <a href='/data'>data sources and how we preprocess the data</a>.
+            </li>
+            <li>
+                …'s core team is at the <a href='https://bsse.ethz.ch/cevo'>Computational Evolution Group</a> at ETH Zurich
+                but received valuable contributions from many more. You can find a list of contributors <a
+                    href='https://github.com/GenSpectrum/cov-spectrum-website?tab=readme-ov-file#contributors-'>here</a
                 >.
             </li>
             <li>
