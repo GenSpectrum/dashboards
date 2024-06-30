@@ -62,7 +62,7 @@ import { Routing } from '../routes/routing';
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a
                                         href={Routing.toUrl(Routing.getDefaultRoute(view.pathname))}
-                                        class='hover:underline hover:decoration-blue-500 hover:decoration-4'
+                                        class={`hover:underline ${organism.hoverDecorationColor} hover:decoration-4`}
                                     >
                                         {view.labelLong}
                                     </a>
@@ -73,7 +73,7 @@ import { Routing } from '../routes/routing';
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a
                                         href='https://cov-spectrum.org'
-                                        class='hover:underline hover:decoration-blue-500 hover:decoration-4'
+                                        class='hover:underline hover:decoration-lime-200 hover:decoration-4'
                                     >
                                         CoV-Spectrum
                                     </a>
