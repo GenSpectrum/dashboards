@@ -5,20 +5,45 @@ import { Routing } from '../routes/routing';
 const x = ['Analyze a variant', 'Compare variants side-by-side', 'CoV-Spectrum (external)'];
 ---
 
+<style>
+    h2 {
+        @apply mb-4 text-center text-3xl;
+    }
+
+    .description a {
+        @apply underline;
+    }
+</style>
+
 <BaseLayout omitHeader='true'>
-    <div class='mb-2 flex place-content-between border-b p-2'>
+    <div class='mb-4 flex place-content-between border-b p-2'>
         <div class='font-bold'><a href='/'>GenSpectrum</a></div>
     </div>
 
-    <div class='m-8 flex flex-wrap justify-around gap-x-8 gap-y-12'>
+    <h2>Explore up-to-date pathogen genomic data</h2>
+    <div class='description mb-8 px-8'>
+        GenSpectrum is a fully interactive platform aiming to help scientists and public health professionals query and
+        analyze pathogen sequences. It is <em>open source</em>, the code is available on <a
+            href='https://github.com/GenSpectrum'>GitHub</a
+        >. It uses <em>open data</em> from the <a href='https://www.insdc.org/'
+            >International Nucleotide Sequence Database Collaboration (INSDC)</a
+        >. We are very <em>open for feedback</em> and would love to hear from you: you can reach us on <a
+            href='https://github.com/GenSpectrum/dashboards/issues'
+        >
+            GitHub</a
+        >.
+    </div>
+
+    <h2>Pathogens</h2>
+    <div class='mx-8 mb-8 flex flex-wrap justify-center gap-x-4 gap-y-8'>
         {
             Routing.organisms.map((organism) => (
-                <div class='w-[280px]'>
+                <div class='w-[260px]'>
                     <div class='rounded-b-md rounded-tr-md border-2 border-gray-100'>
-                        <h2 class={`rounded-tr-md p-4 text-2xl ${organism.backgroundColor}`}>{organism.label}</h2>
-                        <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black text-lg'>
+                        <h3 class={`rounded-tr-md p-4 text-xl ${organism.backgroundColor}`}>{organism.label}</h3>
+                        <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black'>
                             {Routing.views[organism.organism].map((view) => (
-                                <li class='flex items-start pt-4'>
+                                <li class='flex items-start pt-2'>
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a
                                         href={Routing.toUrl(Routing.getDefaultRoute(view.pathname))}
