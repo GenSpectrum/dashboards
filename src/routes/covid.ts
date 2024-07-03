@@ -301,6 +301,21 @@ export namespace CovidView2 {
         return newRoute;
     };
 
+    export const addEmptyFilter = (route: Route): Route => {
+        const largestId = Math.max(...route.filters.map((route) => route.id));
+        return setFilter(route, {
+            id: largestId + 1,
+            // It is necessary to have at least one (non-default) filter.
+            baselineFilter: {
+                location: {
+                    region: 'Europe',
+                },
+                dateRange: defaultDateRange,
+            },
+            variantFilter: {},
+        });
+    };
+
     export const baselineFilterToLapisFilter = (filter: Filter['baselineFilter']) => {
         const dateRange = dateRangeToCustomDateRange(filter.dateRange, new Date(earliestDate));
         return {

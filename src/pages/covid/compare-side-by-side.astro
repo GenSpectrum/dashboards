@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CovidView2 } from '../../routes/covid';
 import JointFilter from '../../components/covidView2/JointFilter.astro';
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { Routing } from '../../routes/routing';
 
 const routeData = CovidView2.view.parseUrl(Astro.url);
 ---
@@ -107,6 +108,13 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                     );
                 })
             }
+            <a
+                class='px-4 pt-8 text-left hover:bg-neutral-100'
+                href={Routing.toUrl(CovidView2.addEmptyFilter(routeData))}
+                style='writing-mode: vertical-rl;'
+            >
+                Add column
+            </a>
         </div>
     </gs-app>
 </BaseLayout>
