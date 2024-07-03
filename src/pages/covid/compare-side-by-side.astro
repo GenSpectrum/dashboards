@@ -26,6 +26,14 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                     });
                     return (
                         <div class='min-w-[700px] flex-1 border-r-2 px-2'>
+                            {routeData.filters.length > 1 && (
+                                <a
+                                    class='block w-full px-2 py-1 hover:bg-neutral-100'
+                                    href={Routing.toUrl(CovidView2.removeFilter(routeData, id))}
+                                >
+                                    Remove column
+                                </a>
+                            )}
                             <JointFilter
                                 filterId={id}
                                 initialLocation={baselineFilter.location}

@@ -302,7 +302,7 @@ export namespace CovidView2 {
     };
 
     export const addEmptyFilter = (route: Route): Route => {
-        const largestId = Math.max(...route.filters.map((route) => route.id));
+        const largestId = route.filters.length > 0 ? Math.max(...route.filters.map((route) => route.id)) : 0;
         return setFilter(route, {
             id: largestId + 1,
             // It is necessary to have at least one (non-default) filter.
@@ -314,6 +314,13 @@ export namespace CovidView2 {
             },
             variantFilter: {},
         });
+    };
+
+    export const removeFilter = (route: Route, id: number): Route => {
+        return {
+            ...route,
+            filters: route.filters.filter((route) => route.id !== id),
+        };
     };
 
     export const baselineFilterToLapisFilter = (filter: Filter['baselineFilter']) => {
