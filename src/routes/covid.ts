@@ -168,7 +168,10 @@ export namespace CovidView2 {
 
     type Filter = {
         id: number;
-        baselineFilter: LapisLocation1;
+        baselineFilter: {
+            location: LapisLocation1;
+            dateRange: DateRange;
+        };
         variantFilter: LapisVariantQuery;
     };
 
@@ -186,14 +189,21 @@ export namespace CovidView2 {
                 return undefined;
             }
             if (!filterMap.has(id)) {
-                filterMap.set(id, { id, baselineFilter: {}, variantFilter: {} });
+                filterMap.set(id, {
+                    id,
+                    baselineFilter: { location: {}, dateRange: defaultDateRange },
+                    variantFilter: {},
+                });
             }
             const filter = filterMap.get(id)!;
             switch (field) {
                 case 'region':
                 case 'country':
                 case 'division':
-                    filter.baselineFilter[field] = value;
+                    filter.baselineFilter.location[field] = value;
+                    break;
+                case 'date':
+                    filter.baselineFilter.dateRange = getDateRangeFromSearch(search, key) ?? defaultDateRange;
                     break;
                 case 'variantQuery':
                     if (isSimpleVariantQuery(filter.variantFilter)) {
@@ -232,11 +242,14 @@ export namespace CovidView2 {
         const search = new URLSearchParams();
         for (const filter of route.filters) {
             const id = filter.id;
-            Object.entries(filter.baselineFilter).forEach(([key, value]) => {
+            Object.entries(filter.baselineFilter.location).forEach(([key, value]) => {
                 if (value !== undefined) {
                     search.append(`${key}$${id}`, value);
                 }
             });
+            if (filter.baselineFilter.dateRange !== defaultDateRange) {
+                setSearchFromDateRange(search, `date$${id}`, filter.baselineFilter.dateRange);
+            }
             Object.entries(filter.variantFilter).forEach(([key, value]) => {
                 if (Array.isArray(value)) {
                     if (value.length > 0) {
@@ -265,8 +278,16 @@ export namespace CovidView2 {
             organism,
             pathname,
             filters: [
-                { id: 1, baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'JN.1*' } },
-                { id: 2, baselineFilter: {}, variantFilter: { nextcladePangoLineage: 'XBB.1*' } },
+                {
+                    id: 1,
+                    baselineFilter: { location: {}, dateRange: defaultDateRange },
+                    variantFilter: { nextcladePangoLineage: 'JN.1*' },
+                },
+                {
+                    id: 2,
+                    baselineFilter: { location: {}, dateRange: defaultDateRange },
+                    variantFilter: { nextcladePangoLineage: 'XBB.1*' },
+                },
             ],
         },
     };
@@ -278,6 +299,15 @@ export namespace CovidView2 {
         };
         newRoute.filters.push(newFilter);
         return newRoute;
+    };
+
+    export const baselineFilterToLapisFilter = (filter: Filter['baselineFilter']) => {
+        const dateRange = dateRangeToCustomDateRange(filter.dateRange, new Date(earliestDate));
+        return {
+            ...filter.location,
+            dateFrom: dateRange.from,
+            dateTo: dateRange.to,
+        };
     };
 }
 
