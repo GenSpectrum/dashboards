@@ -1,6 +1,7 @@
 ---
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+
 interface Props {
     title: string;
     omitHeader?: boolean;
@@ -15,11 +16,12 @@ const { title, omitHeader = false } = Astro.props;
         <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
         <meta name='viewport' content='width=device-width' />
         <meta name='generator' content={Astro.generator} />
-        <script type='module' src='../../../node_modules/@genspectrum/dashboard-components/dist/dashboard-components.js'
-        ></script>
-        <link rel='stylesheet' href='../../../node_modules/@genspectrum/dashboard-components/dist/style.css' />
         <title>{title}</title>
     </head>
+    <script>
+        import '@genspectrum/dashboard-components';
+        import '@genspectrum/dashboard-components/style.css';
+    </script>
     <body>
         {!omitHeader && <Header />}
         <slot />
