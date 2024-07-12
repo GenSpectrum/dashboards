@@ -1,12 +1,16 @@
 ---
+import type { LapisMutationQuery } from '../routes/helpers';
+
 interface Props {
     fields: {
         name: string;
         label: string;
         initialValue: string;
     }[];
+    initialMutations: LapisMutationQuery;
 }
-const { fields } = Astro.props;
+
+const { fields, initialMutations } = Astro.props;
 ---
 
 <variant-filter data-message={JSON.stringify({ fields })}>
@@ -22,6 +26,7 @@ const { fields } = Astro.props;
                 />
             ))
         }
+        <gs-mutation-filter id='mutationFilter' initialValue={JSON.stringify(initialMutations)}></gs-mutation-filter>
         <button id='variantFilterSubmitButton' class='rounded-lg border bg-white p-4 hover:bg-amber-200' type='submit'>
             Submit
         </button>
@@ -35,17 +40,23 @@ const { fields } = Astro.props;
         constructor() {
             super();
             const { fields } = JSON.parse(this.dataset.message);
-            const values = {};
+            let values = {};
             for (const field of fields) {
                 values[field.name] = field.initialValue;
             }
+
             const submitButton = document.getElementById('variantFilterSubmitButton');
+            const mutationFilter = document.getElementById('mutationFilter');
 
             fields.map((field) => {
                 const filterElement = document.getElementById(`${field.name}Filter`);
                 filterElement.addEventListener('gs-text-input-changed', (event: CustomEvent) => {
                     values[field.name] = event.detail[field.name];
                 });
+            });
+
+            mutationFilter.addEventListener('gs-mutation-filter-changed', (event: CustomEvent) => {
+                values = { ...values, ...event.detail };
             });
 
             submitButton.addEventListener('click', () => {

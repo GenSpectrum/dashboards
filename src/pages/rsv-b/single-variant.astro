@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { RsvBView1 } from '../../routes/rsvB';
 import VariantFilter from '../../components/VariantFilter.astro';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 
 const routeData = RsvBView1.view.parseUrl(Astro.url);
 
@@ -23,6 +23,8 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
     subDivisionField = 'geo_loc_admin_1';
     subDivisionLabel = 'Geographic sub-divisions';
 }
+
+const initialMutations = extractMutations(variantFilter);
 ---
 
 <style>
@@ -49,6 +51,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[{ name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage }]}
+                        initialMutations={initialMutations}
                     />
                 </div>
             </div>

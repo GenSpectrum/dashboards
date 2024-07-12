@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { MpoxView1 } from '../../routes/mpox';
 import VariantFilter from '../../components/VariantFilter.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 
 const routeData = MpoxView1.view.parseUrl(Astro.url);
 
@@ -23,6 +23,8 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
     subDivisionField = 'geo_loc_admin_1';
     subDivisionLabel = 'Geographic sub-divisions';
 }
+
+const initialMutations = extractMutations(variantFilter);
 ---
 
 <style>
@@ -52,6 +54,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                             { name: 'clade', label: 'Clade', initialValue: variantFilter.clade },
                             { name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage },
                         ]}
+                        initialMutations={initialMutations}
                     />
                 </div>
             </div>
