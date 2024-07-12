@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { WestNileView1 } from '../../routes/westNile';
 import VariantFilter from '../../components/VariantFilter.astro';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 
 const routeData = WestNileView1.view.parseUrl(Astro.url);
 
@@ -32,6 +32,8 @@ const customDateRangeOptions = [
     { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
     { label: 'Before 2000', dateFrom: WestNileView1.view.earliestDate, dateTo: '1999-12-31' },
 ];
+
+const initialMutations = extractMutations(variantFilter);
 ---
 
 <style>
@@ -58,6 +60,7 @@ const customDateRangeOptions = [
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[{ name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage }]}
+                        initialMutations={initialMutations}
                     />
                 </div>
             </div>

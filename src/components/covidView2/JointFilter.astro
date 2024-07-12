@@ -1,4 +1,5 @@
 ---
+import type { LapisMutationQuery } from '../../routes/helpers';
 import type { LapisLocation1 } from '../../routes/helpers';
 import type { DateRange } from '../../routes/helpers';
 import { CovidView1 } from '../../routes/covid';
@@ -9,9 +10,10 @@ interface Props {
     initialLocation: LapisLocation1;
     initialDateRange: DateRange;
     initialNextcladePangoLineage?: string;
+    initialMutations: LapisMutationQuery;
 }
 
-const { filterId, initialLocation, initialNextcladePangoLineage, initialDateRange } = Astro.props;
+const { filterId, initialLocation, initialNextcladePangoLineage, initialDateRange, initialMutations } = Astro.props;
 
 const { region, country, division } = initialLocation;
 const initialLocationValue = [region, country, division].filter(Boolean).join(' / ');
@@ -26,6 +28,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
         location: initialLocation,
         dateRange: initialDateRange,
         nextcladePangoLineage: initialNextcladePangoLineage,
+        mutations: initialMutations,
     })}
 >
     <div>
@@ -47,14 +50,22 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                     initialDateTo={initialDateRangeTo}
                     dateColumn='date'></gs-date-range-selector>
             </div>
-            <div class='flex-1 border-l-2 bg-green-50 px-2 py-4'>
+            <div class='flex flex-1 flex-col border-l-2 bg-green-50 px-2 py-4'>
                 <div class='mb-2 font-semibold'>Search variant:</div>
                 <gs-text-input
                     id={`lineageFilter${filterId}`}
                     lapisField='nextcladePangoLineage'
                     placeholderText='Pango Lineage'
                     initialValue={initialNextcladePangoLineage}
-                    width='100%'></gs-text-input>
+                    width='100%'
+                >
+                </gs-text-input>
+                <gs-mutation-filter
+                    class='mt-2'
+                    id={`mutationFilter${filterId}`}
+                    initialValue={JSON.stringify(initialMutations)}
+                >
+                </gs-mutation-filter>
             </div>
         </div>
         <button
@@ -74,10 +85,11 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
     class JointFilter extends HTMLElement {
         constructor() {
             super();
-            let { filterId, location, dateRange, nextcladePangoLineage } = JSON.parse(this.dataset.message);
+            let { filterId, location, dateRange, nextcladePangoLineage, mutations } = JSON.parse(this.dataset.message);
             const locationFilter = document.getElementById(`locationFilter${filterId}`);
             const dateRangeSelector = document.getElementById(`dateRangeSelector${filterId}`);
             const lineageFilter = document.getElementById(`lineageFilter${filterId}`);
+            const mutationFilter = document.getElementById(`mutationFilter${filterId}`);
             const submitButton = document.getElementById(`submitButton${filterId}`);
 
             locationFilter.addEventListener('gs-location-changed', (event: CustomEvent) => {
@@ -95,6 +107,10 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                 nextcladePangoLineage = event.detail.nextcladePangoLineage;
             });
 
+            mutationFilter.addEventListener('gs-mutation-filter-changed', (event: CustomEvent) => {
+                mutations = event.detail;
+            });
+
             submitButton.addEventListener('click', () => {
                 const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView2.Route;
                 Routing.navigateTo(
@@ -104,7 +120,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                             location,
                             dateRange,
                         },
-                        variantFilter: { nextcladePangoLineage },
+                        variantFilter: { nextcladePangoLineage, ...mutations },
                     }),
                 );
             });

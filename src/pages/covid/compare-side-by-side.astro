@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CovidView2 } from '../../routes/covid';
 import JointFilter from '../../components/covidView2/JointFilter.astro';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import { Routing } from '../../routes/routing';
 
 const routeData = CovidView2.view.parseUrl(Astro.url);
@@ -24,6 +24,8 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                         from: baselineLapisFilter.dateFrom,
                         to: baselineLapisFilter.dateTo,
                     });
+                    const initialMutations = extractMutations(variantFilter);
+
                     return (
                         <div class='min-w-[700px] flex-1 border-r-2 px-2'>
                             {routeData.filters.length > 1 && (
@@ -43,6 +45,7 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                                         ? variantFilter.nextcladePangoLineage
                                         : undefined
                                 }
+                                initialMutations={initialMutations}
                             />
                             <div>
                                 <h3 class='component-title'>Prevalence over time</h3>

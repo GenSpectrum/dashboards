@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CollectionsList } from '../../components/covidView1/CollectionsList';
 import { CovidView1 } from '../../routes/covid';
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 
@@ -21,6 +21,8 @@ if (routeData.baselineFilter.location.country === undefined) {
     subDivisionField = 'division';
     subDivisionLabel = 'Geographic sub-divisions';
 }
+
+const initialMutations = extractMutations(variantFilter);
 ---
 
 <style>
@@ -56,6 +58,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                                         : undefined,
                             },
                         ]}
+                        initialMutations={initialMutations}
                     />
                     <div class='my-2 font-semibold'>Or select a known variant:</div>
                     <CollectionsList initialCollectionId={routeData.collectionId} client:idle />

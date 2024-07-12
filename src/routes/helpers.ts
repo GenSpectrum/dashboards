@@ -189,6 +189,19 @@ export type LapisVariantQuery2 = LapisVariantQuery1 & {
     clade?: string;
 };
 
+export const extractMutations = (query: LapisMutationQuery | {}): LapisMutationQuery => {
+    return {
+        nucleotideMutations: getArrayPropertyOrEmpty(query, 'nucleotideMutations'),
+        aminoAcidMutations: getArrayPropertyOrEmpty(query, 'aminoAcidMutations'),
+        nucleotideInsertions: getArrayPropertyOrEmpty(query, 'nucleotideInsertions'),
+        aminoAcidInsertions: getArrayPropertyOrEmpty(query, 'aminoAcidInsertions'),
+    };
+};
+
+const getArrayPropertyOrEmpty = (query: Record<string, any>, name: string): string[] => {
+    return Array.isArray(query[name]) ? query[name] : [];
+};
+
 export const getLapisMutationsQueryFromSearch = (search: URLSearchParams): LapisMutationQuery => {
     return {
         nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
