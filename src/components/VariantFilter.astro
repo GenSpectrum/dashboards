@@ -26,7 +26,10 @@ const { fields, initialMutations } = Astro.props;
                 />
             ))
         }
-        <gs-mutation-filter id='mutationFilter' initialValue={JSON.stringify(initialMutations)}></gs-mutation-filter>
+        <div class='rounded-md bg-white'>
+            <gs-mutation-filter id='mutationFilter' initialValue={JSON.stringify(initialMutations)}
+            ></gs-mutation-filter>
+        </div>
         <button id='variantFilterSubmitButton' class='rounded-lg border bg-white p-4 hover:bg-amber-200' type='submit'>
             Submit
         </button>

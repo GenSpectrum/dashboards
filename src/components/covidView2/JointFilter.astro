@@ -60,12 +60,13 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                     width='100%'
                 >
                 </gs-text-input>
-                <gs-mutation-filter
-                    class='mt-2'
-                    id={`mutationFilter${filterId}`}
-                    initialValue={JSON.stringify(initialMutations)}
-                >
-                </gs-mutation-filter>
+                <div class='mt-2 rounded-md bg-white'>
+                    <gs-mutation-filter
+                        id={`mutationFilter${filterId}`}
+                        initialValue={JSON.stringify(initialMutations)}
+                    >
+                    </gs-mutation-filter>
+                </div>
             </div>
         </div>
         <button
