@@ -1,4 +1,5 @@
 ---
+import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { CovidView3 } from '../../routes/covid';
@@ -7,6 +8,7 @@ const routeData = CovidView3.parseUrl(Astro.url);
 
 const baselineFilter = CovidView3.toLapisFilter(routeData);
 
+const timeGranularity = chooseGranularityBasedOnDateRange({ from: baselineFilter.dateFrom, to: baselineFilter.dateTo });
 let subDivisionField = undefined;
 let subDivisionLabel = '';
 if (routeData.baselineFilter.location.country === undefined) {
@@ -40,6 +42,22 @@ if (routeData.baselineFilter.location.country === undefined) {
         </div>
 
         <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6 p-2'>
+            <div>
+                <h2 class='component-title'>Number sequences</h2>
+                <div class='h-[600px]'>
+                    <gs-number-sequences-over-time
+                        lapisFilter={JSON.stringify({
+                            displayName: '',
+                            lapisFilter: baselineFilter,
+                        })}
+                        lapisDateField='date'
+                        views='["bar", "line", "table"]'
+                        headline=''
+                        width='100%'
+                        height='100%'
+                        granularity={timeGranularity}></gs-number-sequences-over-time>
+                </div>
+            </div>
             {
                 subDivisionField && (
                     <div>
