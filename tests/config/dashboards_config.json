@@ -1,0 +1,17 @@
+{
+    "covid": {
+        "lapisUrl": "https://lapis.cov-spectrum.org/open/v2"
+    },
+    "rsv-a": {
+        "lapisUrl": "https://lapis.genspectrum.org/rsv-a"
+    },
+    "rsv-b": {
+        "lapisUrl": "https://lapis.genspectrum.org/rsv-b"
+    },
+    "mpox": {
+        "lapisUrl": "https://lapis.genspectrum.org/mpox"
+    },
+    "west-nile": {
+        "lapisUrl": "https://lapis-main.loculus.org/west-nile"
+    }
+}

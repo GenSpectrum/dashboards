@@ -8,6 +8,7 @@ RUN npm clean-install --omit=dev
 
 FROM base AS build
 RUN npm clean-install
+COPY .env.docker .env
 COPY . .
 RUN npm run build -- --host
 

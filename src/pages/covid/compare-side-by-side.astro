@@ -4,6 +4,8 @@ import { CovidView2 } from '../../routes/covid';
 import JointFilter from '../../components/covidView2/JointFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import { Routing } from '../../routes/routing';
+import { getLapisUrl } from '../../config';
+import { Organisms } from '../../routes/View';
 
 const routeData = CovidView2.view.parseUrl(Astro.url);
 ---
@@ -15,7 +17,7 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
 </style>
 
 <BaseLayout title='Compare side-by-side | SARS-CoV-2 | GenSpectrum'>
-    <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+    <gs-app lapis={getLapisUrl(Organisms.covid)}>
         <div class='flex overflow-x-auto'>
             {
                 routeData.filters.map(({ id, variantFilter, baselineFilter }) => {

@@ -4,6 +4,8 @@ import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { RsvAView1 } from '../../routes/rsvA';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
+import { getLapisUrl } from '../../config';
+import { Organisms } from '../../routes/View';
 
 const routeData = RsvAView1.view.parseUrl(Astro.url);
 
@@ -34,7 +36,7 @@ const initialMutations = extractMutations(variantFilter);
 </style>
 
 <BaseLayout title='Single Variant | RSV-A | GenSpectrum'>
-    <gs-app lapis='https://lapis-rsv-for-fun.loculus.org/rsv-a'>
+    <gs-app lapis={getLapisUrl(Organisms.rsvA)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
                 <div class='bg-blue-50 px-2 py-4'>
