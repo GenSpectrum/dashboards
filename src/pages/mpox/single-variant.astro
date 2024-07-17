@@ -4,6 +4,8 @@ import { MpoxView1 } from '../../routes/mpox';
 import VariantFilter from '../../components/VariantFilter.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
+import { getLapisUrl } from '../../config';
+import { Organisms } from '../../routes/View';
 
 const routeData = MpoxView1.view.parseUrl(Astro.url);
 
@@ -34,7 +36,7 @@ const initialMutations = extractMutations(variantFilter);
 </style>
 
 <BaseLayout title='Single Variant | Mpox | GenSpectrum'>
-    <gs-app lapis='https://lapis-full-mpox.loculus.org/mpox'>
+    <gs-app lapis={getLapisUrl(Organisms.mpox)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
                 <div class='bg-blue-50 px-2 py-4'>

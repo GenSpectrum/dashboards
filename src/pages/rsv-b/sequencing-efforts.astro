@@ -3,6 +3,8 @@ import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { RsvBView3 } from '../../routes/rsvB';
+import { getLapisUrl } from '../../config';
+import { Organisms } from '../../routes/View';
 
 const routeData = RsvBView3.view.parseUrl(Astro.url);
 
@@ -30,7 +32,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
 </style>
 
 <BaseLayout title='Sequencing Efforts | RSV-B | GenSpectrum'>
-    <gs-app lapis='https://lapis-rsv-for-fun.loculus.org/rsv-b'>
+    <gs-app lapis={getLapisUrl(Organisms.rsvB)}>
         <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>

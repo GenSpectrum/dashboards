@@ -6,3 +6,4 @@
 !astro.config.mjs
 !tailwind.config.mjs
 !tsconfig.json
+!.env.docker

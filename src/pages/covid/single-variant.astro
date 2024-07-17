@@ -5,6 +5,8 @@ import { CovidView1 } from '../../routes/covid';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
+import { getLapisUrl } from '../../config';
+import { Organisms } from '../../routes/View';
 
 const routeData = CovidView1.view.parseUrl(Astro.url);
 
@@ -32,7 +34,7 @@ const initialMutations = extractMutations(variantFilter);
 </style>
 
 <BaseLayout title='Single Variant | SARS-CoV-2 | GenSpectrum'>
-    <gs-app lapis='https://lapis.cov-spectrum.org/open/v2'>
+    <gs-app lapis={getLapisUrl(Organisms.covid)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
                 <div class='bg-blue-50 px-2 py-4'>
