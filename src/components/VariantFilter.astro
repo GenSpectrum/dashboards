@@ -6,6 +6,7 @@ interface Props {
         name: string;
         label: string;
         initialValue: string;
+        type: 'text' | 'pango-lineage';
     }[];
     initialMutations: LapisMutationQuery;
 }
@@ -16,15 +17,25 @@ const { fields, initialMutations } = Astro.props;
 <variant-filter data-message={JSON.stringify({ fields })}>
     <div class='flex flex-col items-stretch gap-2'>
         {
-            fields.map((field) => (
-                <gs-text-input
-                    id={`${field.name}Filter`}
-                    lapisField={field.name}
-                    placeholderText={field.label}
-                    initialValue={field.initialValue}
-                    width='100%'
-                />
-            ))
+            fields.map((field) =>
+                field.type === 'text' ? (
+                    <gs-text-input
+                        id={`${field.name}Filter`}
+                        lapisField={field.name}
+                        placeholderText={field.label}
+                        initialValue={field.initialValue}
+                        width='100%'
+                    />
+                ) : (
+                    <gs-lineage-filter
+                        id={`${field.name}Filter`}
+                        lapisField={field.name}
+                        placeholderText={field.label}
+                        initialValue={field.initialValue}
+                        width='100%'
+                    />
+                ),
+            )
         }
         <div class='rounded-md bg-white'>
             <gs-mutation-filter id='mutationFilter' initialValue={JSON.stringify(initialMutations)}

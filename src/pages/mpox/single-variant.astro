@@ -53,8 +53,8 @@ const initialMutations = extractMutations(variantFilter);
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[
-                            { name: 'clade', label: 'Clade', initialValue: variantFilter.clade },
-                            { name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage },
+                            { name: 'clade', label: 'Clade', initialValue: variantFilter.clade, type: 'text' },
+                            { name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage, type: 'text' },
                         ]}
                         initialMutations={initialMutations}
                     />
