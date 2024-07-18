@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { CovidView2 } from '../../routes/covid';
+import { CovidView1, CovidView2 } from '../../routes/covid';
 import JointFilter from '../../components/covidView2/JointFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import { Routing } from '../../routes/routing';
@@ -51,27 +51,42 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                             />
                             <div>
                                 <h3 class='component-title'>Prevalence over time</h3>
-                                <gs-prevalence-over-time
-                                    numeratorFilter={JSON.stringify({
-                                        displayName: '',
-                                        lapisFilter: { ...variantFilter, ...baselineLapisFilter },
-                                    })}
-                                    denominatorFilter={JSON.stringify(baselineLapisFilter)}
-                                    granularity={timeGranularity}
-                                    smoothingWindow='0'
-                                    width='100%'
-                                    height='400px'
-                                />
+                                <div class='h-[400px]'>
+                                    {!CovidView1.isEmptyVariantFilter(variantFilter) ? (
+                                        <gs-prevalence-over-time
+                                            numeratorFilter={JSON.stringify({
+                                                displayName: '',
+                                                lapisFilter: { ...variantFilter, ...baselineLapisFilter },
+                                            })}
+                                            denominatorFilter={JSON.stringify(baselineLapisFilter)}
+                                            granularity={timeGranularity}
+                                            smoothingWindow='0'
+                                            width='100%'
+                                            height='100%'
+                                        />
+                                    ) : (
+                                        <div>This plot is only available if you search for a variant.</div>
+                                    )}
+                                </div>
                             </div>
                             <div>
                                 <h3 class='component-title'>Relative growth advantage</h3>
-                                <gs-relative-growth-advantage
-                                    numeratorFilter={JSON.stringify({ ...variantFilter, ...baselineLapisFilter })}
-                                    denominatorFilter={JSON.stringify(baselineLapisFilter)}
-                                    generationTime='7'
-                                    width='100%'
-                                    height='400px'
-                                />
+                                <div class='h-[400px]'>
+                                    {!CovidView1.isEmptyVariantFilter(variantFilter) ? (
+                                        <gs-relative-growth-advantage
+                                            numeratorFilter={JSON.stringify({
+                                                ...variantFilter,
+                                                ...baselineLapisFilter,
+                                            })}
+                                            denominatorFilter={JSON.stringify(baselineLapisFilter)}
+                                            generationTime='7'
+                                            width='100%'
+                                            height='100%'
+                                        />
+                                    ) : (
+                                        <div>This plot is only available if you search for a variant.</div>
+                                    )}
+                                </div>
                             </div>
                             <div>
                                 <h3 class='component-title'>Nucleotide mutations</h3>

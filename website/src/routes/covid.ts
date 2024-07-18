@@ -140,20 +140,37 @@ export namespace CovidView1 {
         },
     };
 
-    export const toLapisFilter = (route: Route) => {
+    export const toLapisFilter = (
+        route: Route,
+    ): LapisLocation1 & { dateFrom: string; dateTo: string } & LapisVariantQuery => {
         return {
             ...toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
     };
 
-    export const toLapisFilterWithoutVariant = (route: Route) => {
+    export const toLapisFilterWithoutVariant = (
+        route: Route,
+    ): LapisLocation1 & { dateFrom: string; dateTo: string } => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(earliestDate));
         return {
             ...route.baselineFilter.location,
             dateFrom: dateRange.from,
             dateTo: dateRange.to,
         };
+    };
+
+    export const isEmptyVariantFilter = (filter: LapisVariantQuery): boolean => {
+        if (isSimpleVariantQuery(filter)) {
+            return (
+                filter.nextcladePangoLineage === undefined &&
+                (filter.nucleotideMutations?.length ?? 0) === 0 &&
+                (filter.aminoAcidMutations?.length ?? 0) === 0 &&
+                (filter.nucleotideInsertions?.length ?? 0) === 0 &&
+                (filter.aminoAcidInsertions?.length ?? 0) === 0
+            );
+        }
+        return filter.variantQuery === undefined;
     };
 }
 
