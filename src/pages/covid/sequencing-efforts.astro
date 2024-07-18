@@ -54,7 +54,6 @@ if (routeData.baselineFilter.location.country === undefined) {
                         })}
                         lapisDateField='date'
                         views='["bar", "line", "table"]'
-                        headline=''
                         width='100%'
                         height='100%'
                         granularity={timeGranularity}></gs-number-sequences-over-time>
@@ -68,7 +67,6 @@ if (routeData.baselineFilter.location.country === undefined) {
                             <gs-aggregate
                                 fields={JSON.stringify([subDivisionField])}
                                 filter={JSON.stringify(baselineFilter)}
-                                headline=''
                                 width='100%'
                                 height='100%'
                             />
@@ -79,12 +77,8 @@ if (routeData.baselineFilter.location.country === undefined) {
             <div>
                 <h2 class='component-title'>Hosts</h2>
                 <div class='h-[600px]'>
-                    <gs-aggregate
-                        fields='["host"]'
-                        filter={JSON.stringify(baselineFilter)}
-                        headline=''
-                        width='100%'
-                        height='100%'></gs-aggregate>
+                    <gs-aggregate fields='["host"]' filter={JSON.stringify(baselineFilter)} width='100%' height='100%'
+                    ></gs-aggregate>
                 </div>
             </div>
             <div>
@@ -93,7 +87,6 @@ if (routeData.baselineFilter.location.country === undefined) {
                     <gs-aggregate
                         fields='["originatingLab"]'
                         filter={JSON.stringify(baselineFilter)}
-                        headline=''
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>
@@ -104,7 +97,6 @@ if (routeData.baselineFilter.location.country === undefined) {
                     <gs-aggregate
                         fields='["submittingLab"]'
                         filter={JSON.stringify(baselineFilter)}
-                        headline=''
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>
