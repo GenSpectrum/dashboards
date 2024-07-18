@@ -87,7 +87,7 @@ export namespace Routing {
             hoverDecorationColor: 'hover:decoration-teal-200',
         },
         {
-            label: 'H5N1',
+            label: 'Influenza A/H5N1',
             organism: 'flu/h5n1',
             backgroundColor: 'bg-amber-200',
             hoverDecorationColor: 'hover:decoration-amber-200',
