@@ -2,6 +2,9 @@
     "covid": {
         "lapisUrl": "https://lapis.cov-spectrum.org/open/v2"
     },
+    "flu/h5n1": {
+        "lapisUrl": "https://lapis-add-h5n1.loculus.org/h5n1"
+    },
     "rsv-a": {
         "lapisUrl": "https://lapis.genspectrum.org/rsv-a"
     },

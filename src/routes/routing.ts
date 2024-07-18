@@ -4,12 +4,15 @@ import { WestNileView1, WestNileView3 } from './westNile.ts';
 import { RsvAView1, RsvAView3 } from './rsvA.ts';
 import { RsvBView1, RsvBView3 } from './rsvB.ts';
 import type { Organism, Route, View } from './View.ts';
+import { H5n1View1, H5n1View3 } from './h5n1.ts';
 
 export namespace Routing {
     const allViews = [
         CovidView1.view,
         CovidView2.view,
         CovidView3.view,
+        H5n1View1.view,
+        H5n1View3.view,
         MpoxView1.view,
         MpoxView3.view,
         RsvAView1.view,
@@ -83,6 +86,12 @@ export namespace Routing {
             backgroundColor: 'bg-teal-200',
             hoverDecorationColor: 'hover:decoration-teal-200',
         },
+        {
+            label: 'H5N1',
+            organism: 'flu/h5n1',
+            backgroundColor: 'bg-amber-200',
+            hoverDecorationColor: 'hover:decoration-amber-200',
+        },
     ];
 
     export const views = groupViewsByOrganism(allViews);
@@ -107,6 +116,7 @@ function groupViewsByOrganism(views: readonly View<any>[]): Record<
 > {
     const viewMap: Record<Organism, { label: string; labelLong: string; pathname: string }[]> = {
         'covid': [],
+        'flu/h5n1': [],
         'mpox': [],
         'west-nile': [],
         'rsv-a': [],

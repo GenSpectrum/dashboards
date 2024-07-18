@@ -1,5 +1,6 @@
 export namespace Organisms {
     export const covid = 'covid';
+    export const h5n1 = 'flu/h5n1';
     export const mpox = 'mpox';
     export const westNile = 'west-nile';
     export const rsvA = 'rsv-a';
@@ -8,6 +9,7 @@ export namespace Organisms {
 
 export const allOrganisms = [
     Organisms.covid,
+    Organisms.h5n1,
     Organisms.mpox,
     Organisms.westNile,
     Organisms.rsvA,
