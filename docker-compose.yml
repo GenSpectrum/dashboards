@@ -1,0 +1,35 @@
+services:
+
+  keycloak-db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "unsecure"
+      POSTGRES_DB: "keycloak"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    restart: unless-stopped
+    depends_on:
+      - keycloak-db
+    environment:
+      KC_DB: "postgres"
+      KC_DB_URL_HOST: "keycloak-db"
+      KC_DB_URL_PORT: "5432"
+      KC_DB_URL_DATABASE: "keycloak"
+      KC_DB_USERNAME: "postgres"
+      KC_DB_PASSWORD: "unsecure"
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "unsecure"
+      KC_HOSTNAME: "http://localhost:8383"
+      KC_HTTP_ENABLED: "true"
+      KC_RUN_IN_CONTAINER: "true"
+    ports:
+      - "127.0.0.1:8383:8080"
+    volumes:
+      - ./keycloak/keycloak-test-config.json:/opt/keycloak/data/import/keycloak-config.json
+    command:
+      - start-dev
+      - --import-realm
