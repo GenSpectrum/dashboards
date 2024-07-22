@@ -67,82 +67,95 @@ const initialMutations = extractMutations(variantFilter);
                     <CollectionsList initialCollectionId={routeData.collectionId} client:idle />
                 </div>
             </div>
-            <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
-                <div>
-                    <h2 class='component-title'>Prevalence over time</h2>
-                    <div class='h-[400px]'>
-                        <gs-prevalence-over-time
-                            numeratorFilter={JSON.stringify({
-                                displayName: '',
-                                lapisFilter: variantFilter,
-                            })}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
-                            granularity={timeGranularity}
-                            smoothingWindow='0'
-                            width='100%'
-                            height='100%'></gs-prevalence-over-time>
-                    </div>
-                </div>
-                <div>
-                    <h2 class='component-title'>Relative growth advantage</h2>
-                    <div class='h-[400px]'>
-                        <gs-relative-growth-advantage
-                            numeratorFilter={JSON.stringify(variantFilter)}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
-                            generationTime='7'
-                            width='100%'
-                            height='100%'></gs-relative-growth-advantage>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class='component-title'>Nucleotide mutations</h2>
-                    <div class='h-[400px]'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
-                            sequenceType='nucleotide'
-                            views='["grid", "table", "insertions"]'
-                            width='100%'
-                            height='100%'></gs-mutations>
-                    </div>
-                </div>
-                <div>
-                    <h2 class='component-title'>Amino acid mutations</h2>
-                    <div class='h-[400px]'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
-                            sequenceType='amino acid'
-                            views='["grid", "table", "insertions"]'
-                            width='100%'
-                            height='100%'></gs-mutations>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class='component-title'>Sub-lineages</h2>
-                    <div class='h-[400px]'>
-                        <gs-aggregate
-                            fields='["nextcladePangoLineage"]'
-                            filter={JSON.stringify(variantFilter)}
-                            width='100%'
-                            height='100%'></gs-aggregate>
-                    </div>
-                </div>
-                {
-                    subDivisionField && (
-                        <div>
-                            <h2 class='component-title'>{subDivisionLabel}</h2>
-                            <div class='h-[400px]'>
-                                <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
-                                    filter={JSON.stringify(variantFilter)}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </div>
+            <div>
+                <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
+                    <div>
+                        <h2 class='component-title'>Prevalence over time</h2>
+                        <div class='h-[400px]'>
+                            <gs-prevalence-over-time
+                                numeratorFilter={JSON.stringify({
+                                    displayName: '',
+                                    lapisFilter: variantFilter,
+                                })}
+                                denominatorFilter={JSON.stringify(baselineFilter)}
+                                granularity={timeGranularity}
+                                smoothingWindow='0'
+                                width='100%'
+                                height='100%'></gs-prevalence-over-time>
                         </div>
-                    )
-                }
+                    </div>
+                    <div>
+                        <h2 class='component-title'>Relative growth advantage</h2>
+                        <div class='h-[400px]'>
+                            <gs-relative-growth-advantage
+                                numeratorFilter={JSON.stringify(variantFilter)}
+                                denominatorFilter={JSON.stringify(baselineFilter)}
+                                generationTime='7'
+                                width='100%'
+                                height='100%'></gs-relative-growth-advantage>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class='component-title'>Nucleotide mutations</h2>
+                        <div class='h-[400px]'>
+                            <gs-mutations
+                                lapisFilter={JSON.stringify(variantFilter)}
+                                sequenceType='nucleotide'
+                                views='["grid", "table", "insertions"]'
+                                width='100%'
+                                height='100%'></gs-mutations>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class='component-title'>Amino acid mutations</h2>
+                        <div class='h-[400px]'>
+                            <gs-mutations
+                                lapisFilter={JSON.stringify(variantFilter)}
+                                sequenceType='amino acid'
+                                views='["grid", "table", "insertions"]'
+                                width='100%'
+                                height='100%'></gs-mutations>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class='component-title'>Sub-lineages</h2>
+                        <div class='h-[400px]'>
+                            <gs-aggregate
+                                fields='["nextcladePangoLineage"]'
+                                filter={JSON.stringify(variantFilter)}
+                                width='100%'
+                                height='100%'></gs-aggregate>
+                        </div>
+                    </div>
+                    {
+                        subDivisionField && (
+                            <div>
+                                <h2 class='component-title'>{subDivisionLabel}</h2>
+                                <div class='h-[400px]'>
+                                    <gs-aggregate
+                                        fields={JSON.stringify([subDivisionField])}
+                                        filter={JSON.stringify(variantFilter)}
+                                        width='100%'
+                                        height='100%'
+                                    />
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    <div>
+                        <h2 class='component-title'>Hosts</h2>
+                        <div class='h-[400px]'>
+                            <gs-aggregate
+                                fields='["host"]'
+                                filter={JSON.stringify(variantFilter)}
+                                width='100%'
+                                height='100%'></gs-aggregate>
+                        </div>
+                    </div>
+                </div>
 
                 <div>
                     <h2 class='component-title'>Nucleotide mutations over time</h2>
@@ -169,17 +182,6 @@ const initialMutations = extractMutations(variantFilter);
                             views='["grid"]'
                             granularity={timeGranularity}
                             lapisDateField='date'></gs-mutations-over-time>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class='component-title'>Hosts</h2>
-                    <div class='h-[400px]'>
-                        <gs-aggregate
-                            fields='["host"]'
-                            filter={JSON.stringify(variantFilter)}
-                            width='100%'
-                            height='100%'></gs-aggregate>
                     </div>
                 </div>
             </div>

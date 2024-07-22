@@ -60,78 +60,80 @@ const initialMutations = extractMutations(variantFilter);
                     />
                 </div>
             </div>
-            <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
-                <div>
-                    <h2 class='component-title'>Prevalence over time</h2>
-                    <div class='h-[400px]'>
-                        <gs-prevalence-over-time
-                            numeratorFilter={JSON.stringify({
-                                displayName: '',
-                                lapisFilter: variantFilter,
-                            })}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField='sample_collection_date'
-                            granularity={timeGranularity}
-                            smoothingWindow='0'
-                            width='100%'
-                            height='100%'></gs-prevalence-over-time>
-                    </div>
-                </div>
-                <div>
-                    <h2 class='component-title'>Nucleotide mutations</h2>
-                    <div class='h-[400px]'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
-                            sequenceType='nucleotide'
-                            views='["grid", "table", "insertions"]'
-                            width='100%'
-                            height='100%'></gs-mutations>
-                    </div>
-                </div>
-                <div>
-                    <h2 class='component-title'>Amino acid mutations</h2>
-                    <div class='h-[400px]'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
-                            sequenceType='amino acid'
-                            views='["grid", "table", "insertions"]'
-                            width='100%'
-                            height='100%'></gs-mutations>
-                    </div>
-                </div>
-                {
-                    subDivisionField && (
-                        <div>
-                            <h2 class='component-title'>{subDivisionLabel}</h2>
-                            <div class='h-[400px]'>
-                                <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
-                                    filter={JSON.stringify(variantFilter)}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </div>
+            <div>
+                <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
+                    <div>
+                        <h2 class='component-title'>Prevalence over time</h2>
+                        <div class='h-[400px]'>
+                            <gs-prevalence-over-time
+                                numeratorFilter={JSON.stringify({
+                                    displayName: '',
+                                    lapisFilter: variantFilter,
+                                })}
+                                denominatorFilter={JSON.stringify(baselineFilter)}
+                                lapisDateField='sample_collection_date'
+                                granularity={timeGranularity}
+                                smoothingWindow='0'
+                                width='100%'
+                                height='100%'></gs-prevalence-over-time>
                         </div>
-                    )
-                }
-                <div>
-                    <h2 class='component-title'>Clades and lineages</h2>
-                    <div class='h-[400px]'>
-                        <gs-aggregate
-                            fields={JSON.stringify(['clade', 'lineage'])}
-                            filter={JSON.stringify(variantFilter)}
-                            width='100%'
-                            height='100%'></gs-aggregate>
                     </div>
-                </div>
-                <div>
-                    <h2 class='component-title'>Hosts</h2>
-                    <div class='h-[400px]'>
-                        <gs-aggregate
-                            fields='["host_name_scientific"]'
-                            filter={JSON.stringify(variantFilter)}
-                            width='100%'
-                            height='100%'></gs-aggregate>
+                    <div>
+                        <h2 class='component-title'>Nucleotide mutations</h2>
+                        <div class='h-[400px]'>
+                            <gs-mutations
+                                lapisFilter={JSON.stringify(variantFilter)}
+                                sequenceType='nucleotide'
+                                views='["grid", "table", "insertions"]'
+                                width='100%'
+                                height='100%'></gs-mutations>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class='component-title'>Amino acid mutations</h2>
+                        <div class='h-[400px]'>
+                            <gs-mutations
+                                lapisFilter={JSON.stringify(variantFilter)}
+                                sequenceType='amino acid'
+                                views='["grid", "table", "insertions"]'
+                                width='100%'
+                                height='100%'></gs-mutations>
+                        </div>
+                    </div>
+                    {
+                        subDivisionField && (
+                            <div>
+                                <h2 class='component-title'>{subDivisionLabel}</h2>
+                                <div class='h-[400px]'>
+                                    <gs-aggregate
+                                        fields={JSON.stringify([subDivisionField])}
+                                        filter={JSON.stringify(variantFilter)}
+                                        width='100%'
+                                        height='100%'
+                                    />
+                                </div>
+                            </div>
+                        )
+                    }
+                    <div>
+                        <h2 class='component-title'>Clades and lineages</h2>
+                        <div class='h-[400px]'>
+                            <gs-aggregate
+                                fields={JSON.stringify(['clade', 'lineage'])}
+                                filter={JSON.stringify(variantFilter)}
+                                width='100%'
+                                height='100%'></gs-aggregate>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class='component-title'>Hosts</h2>
+                        <div class='h-[400px]'>
+                            <gs-aggregate
+                                fields='["host_name_scientific"]'
+                                filter={JSON.stringify(variantFilter)}
+                                width='100%'
+                                height='100%'></gs-aggregate>
+                        </div>
                     </div>
                 </div>
 
