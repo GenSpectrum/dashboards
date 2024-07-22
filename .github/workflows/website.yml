@@ -1,4 +1,4 @@
-name: Docker
+name: Website
 
 on: [push]
 
@@ -9,6 +9,9 @@ jobs:
   checks:
     name: Check format
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -54,7 +57,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./website
           tags: ${{ steps.dockerMetadata.outputs.tags }}
           cache-from: type=gha,scope=dashboards-${{ github.ref }}
           cache-to: type=gha,mode=max,scope=dashboards-${{ github.ref }}
