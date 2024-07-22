@@ -1,21 +1,5 @@
 # Dashboards
 
-### Getting started
-
-Set up a `.env` file, e.g. by
-
-```bash
-cp .env.example .env
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start app in development mode:
-
-```bash
-npm run dev
-```
+This is a monorepo for the GenSpectrum dashboards.
+It contains the following packages:
+- `website`: The dashboard website
