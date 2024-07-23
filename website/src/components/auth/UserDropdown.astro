@@ -1,0 +1,23 @@
+---
+import type { Session } from '@auth/core/types';
+import { getKeycloakLogoutUrl } from '../../auth/logout';
+
+interface Props {
+    session: Session;
+}
+
+const { session } = Astro.props;
+
+const keycloakLogoutUrl = await getKeycloakLogoutUrl(Astro.request);
+---
+
+<div class='dropdown dropdown-end dropdown-hover'>
+    <span role='button' tabindex='0' class='iconify text-4xl mdi--account'></span>
+    <ul tabindex='0' class='menu dropdown-content z-[1] w-52 rounded-box border-2 bg-base-100 p-2 shadow-2xl'>
+        <li class='menu-title text-black'><a>{session.user.name}</a></li>
+        <li class='divider m-1 h-0.5'></li>
+        <li>
+            <a href={keycloakLogoutUrl}>Logout</a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,20 @@
+---
+import { getSession } from 'auth-astro/server';
+import { logout } from '../auth/logout';
+import BaseLayout from '../layouts/base/BaseLayout.astro';
+
+const session = await getSession(Astro.request);
+
+const { cookies } = await logout(Astro.request);
+
+for (const cookie of cookies) {
+    Astro.cookies.delete(cookie.name);
+}
+---
+
+<BaseLayout title='Logout' forceLoggedOutState='true'>
+    <div class='text-center'>
+        <h3 class='mb-4 text-xl'>Logout</h3>
+        <p>You have been logged out.</p>
+    </div>
+</BaseLayout>

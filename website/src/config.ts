@@ -8,15 +8,32 @@ const DASHBOARDS_CONFIG_FILE = 'dashboards_config.json';
 const lapisInstanceConfigSchema = z.object({ lapisUrl: z.string() });
 export type LapisInstanceConfig = z.infer<typeof lapisInstanceConfigSchema>;
 
-const dashboardsConfigSchema = z.object(
-    allOrganisms.reduce(
-        (acc, organism) => ({
-            ...acc,
-            [organism]: lapisInstanceConfigSchema,
+const dashboardsConfigSchema = z
+    .object(
+        allOrganisms.reduce(
+            (acc, organism) => ({
+                ...acc,
+                [organism]: lapisInstanceConfigSchema,
+            }),
+            {} as { [organism in Organism]: typeof lapisInstanceConfigSchema },
+        ),
+    )
+    .extend({
+        auth: z.object({
+            /**
+             * The URL of the OIDC issuer, e.g. `https://keycloak.example.com/realms/myrealm`
+             */
+            issuer: z.string(),
+            /**
+             * The client ID for the OIDC client
+             */
+            clientId: z.string(),
+            /**
+             * The client secret for the OIDC client
+             */
+            clientSecret: z.string(),
         }),
-        {} as { [organism in Organism]: typeof lapisInstanceConfigSchema },
-    ),
-);
+    });
 export type DashboardsConfig = z.infer<typeof dashboardsConfigSchema>;
 
 let dashboardsConfig: DashboardsConfig | null = null;

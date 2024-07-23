@@ -16,5 +16,10 @@
     },
     "west-nile": {
         "lapisUrl": "https://lapis-main.loculus.org/west-nile"
+    },
+    "auth": {
+        "clientId": "public-client",
+        "issuer": "http://localhost:8383/realms/genspectrum",
+        "clientSecret": "testPublicClientSecret"
     }
 }
