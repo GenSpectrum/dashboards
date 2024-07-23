@@ -2,29 +2,32 @@
 import { Routing } from '../../routes/routing';
 
 const currentRoute = Routing.parseUrl(Astro.url)!;
-const organism = currentRoute.organism;
+const organism = currentRoute?.organism;
 ---
 
-<label>
-    View:
-    <select id='view-selector'>
-        {
-            Routing.views[organism].map((view) => (
-                <option
-                    value={view.pathname}
-                    data-url={Routing.toUrl(Routing.getDefaultRoute(view.pathname)!)}
-                    selected={currentRoute.pathname === view.pathname}
-                >
-                    {view.label}
-                </option>
-            ))
-        }
-    </select>
-</label>
-
+{
+    organism !== undefined && (
+        <>
+            <label>
+                View:
+                <select id='view-selector'>
+                    {Routing.views[organism].map((view) => (
+                        <option
+                            value={view.pathname}
+                            data-url={Routing.toUrl(Routing.getDefaultRoute(view.pathname)!)}
+                            selected={currentRoute.pathname === view.pathname}
+                        >
+                            {view.label}
+                        </option>
+                    ))}
+                </select>
+            </label>
+        </>
+    )
+}
 <script>
     const viewSelector = document.getElementById('view-selector') as HTMLSelectElement;
-    viewSelector.addEventListener('change', () => {
+    viewSelector?.addEventListener('change', () => {
         window.location.href = viewSelector.selectedOptions[0].dataset.url;
     });
 </script>

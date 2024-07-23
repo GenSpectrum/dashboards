@@ -4,10 +4,11 @@ import Footer from './Footer.astro';
 
 interface Props {
     title: string;
-    omitHeader?: boolean;
+    omitHeaderNavigation?: boolean;
+    forceLoggedOutState?: boolean;
 }
 
-const { title, omitHeader = false } = Astro.props;
+const { title, omitHeaderNavigation = false, forceLoggedOutState = false } = Astro.props;
 ---
 
 <html lang='en'>
@@ -21,9 +22,10 @@ const { title, omitHeader = false } = Astro.props;
     <script>
         import '@genspectrum/dashboard-components';
         import '@genspectrum/dashboard-components/style.css';
+        import '../../styles/tailwind.css';
     </script>
     <body>
-        {!omitHeader && <Header />}
+        <Header omitHeaderNavigation={omitHeaderNavigation} forceLoggedOutState={forceLoggedOutState} />
         <slot />
         <Footer />
     </body>

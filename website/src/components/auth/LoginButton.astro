@@ -1,0 +1,18 @@
+---
+
+---
+
+<button id='login' class='mr-2 font-bold'>Login</button>
+<script>
+    import { signIn } from 'auth-astro/client';
+
+    const callbackUrlThatDoesNotImmediatelyLogoutAgain = new URL(window.location.href).pathname.endsWith('/logout')
+        ? new URL('/', window.location.href).toString()
+        : undefined;
+
+    document
+        .getElementById('login')
+        ?.addEventListener('click', () =>
+            signIn('keycloak', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain }),
+        );
+</script>

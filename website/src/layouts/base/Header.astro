@@ -1,10 +1,25 @@
 ---
 import ViewSelector from './ViewSelector.astro';
 import OrganismSelector from './OrganismSelector.astro';
+import LoginState from '../../components/auth/LoginState.astro';
+
+interface Props {
+    omitHeaderNavigation?: boolean;
+    forceLoggedOutState?: boolean;
+}
+
+const { omitHeaderNavigation = false, forceLoggedOutState = false } = Astro.props;
 ---
 
-<div class='mb-2 flex place-content-between border-b p-2'>
+<div class='mb-2 flex place-content-between items-center border-b p-2'>
     <div class='font-bold'><a href='/'>GenSpectrum</a></div>
-    <OrganismSelector />
-    <ViewSelector />
+    {
+        !omitHeaderNavigation && (
+            <>
+                <OrganismSelector />
+                <ViewSelector />
+            </>
+        )
+    }
+    <LoginState forceLoggedOutState={forceLoggedOutState} />
 </div>
