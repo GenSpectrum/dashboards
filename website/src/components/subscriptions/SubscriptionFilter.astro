@@ -1,0 +1,29 @@
+---
+const covidFilters = 2;
+
+const rsvAFilters = 1;
+---
+
+<ul class='menu p-0'>
+    <li>
+        <h2 class='menu-title'>Filters</h2>
+        <ul>
+            <li>
+                <label class='flex'>
+                    <input type='checkbox' checked='checked' class='checkbox' />
+                    <div class='ml-2'>
+                        SARS-CoV-2 <span class='text-gray-500'>({covidFilters})</span>
+                    </div>
+                </label>
+            </li>
+            <li>
+                <label class='flex'>
+                    <input type='checkbox' checked='checked' class='checkbox' />
+                    <div class='ml-2'>
+                        RSV-A <span class='text-gray-500'>({rsvAFilters})</span>
+                    </div>
+                </label>
+            </li>
+        </ul>
+    </li>
+</ul>

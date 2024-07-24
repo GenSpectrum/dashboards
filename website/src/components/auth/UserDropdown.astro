@@ -17,6 +17,9 @@ const keycloakLogoutUrl = await getKeycloakLogoutUrl(Astro.request);
         <li class='menu-title text-black'><a>{session.user.name}</a></li>
         <li class='divider m-1 h-0.5'></li>
         <li>
+            <a href='/subscriptions'>Subscriptions</a>
+        </li>
+        <li>
             <a href={keycloakLogoutUrl}>Logout</a>
         </li>
     </ul>
