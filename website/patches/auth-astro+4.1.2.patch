@@ -1,0 +1,21 @@
+diff --git a/node_modules/auth-astro/src/integration.ts b/node_modules/auth-astro/src/integration.ts
+index 5e5fcbe..d569e44 100644
+--- a/node_modules/auth-astro/src/integration.ts
++++ b/node_modules/auth-astro/src/integration.ts
+@@ -32,7 +32,6 @@ export default (config: AstroAuthConfig = {}): AstroIntegration => ({
+ 				injectRoute({
+ 					pattern: config.prefix + '/[...auth]',
+ 					entrypoint: entrypoint,
+-					entryPoint: entrypoint
+ 				})
+ 			}
+ 
+@@ -40,7 +39,7 @@ export default (config: AstroAuthConfig = {}): AstroIntegration => ({
+ 				logger.error('No Adapter found, please make sure you provide one in your Astro config')
+ 			}
+ 			const edge = ['@astrojs/vercel/edge', '@astrojs/cloudflare'].includes(
+-				astroConfig.adapter.name
++				astroConfig.adapter!.name
+ 			)
+ 
+ 			if (

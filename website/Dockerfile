@@ -1,7 +1,7 @@
 FROM node:22.4-alpine AS base
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json patches ./
 
 FROM base AS prod-deps
 RUN npm clean-install --omit=dev

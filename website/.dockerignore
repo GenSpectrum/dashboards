@@ -7,3 +7,4 @@
 !tailwind.config.mjs
 !tsconfig.json
 !.env.docker
+!patches/

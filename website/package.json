@@ -12,7 +12,8 @@
         "check": "npm run check-format && npm run check-types && npm run check-astro",
         "check-format": "prettier --check \"**/*.{ts,tsx,json,astro,md,mdx,mjs,cjs}\"",
         "check-types": "astro sync && tsc --noEmit",
-        "check-astro": "astro check"
+        "check-astro": "astro check",
+        "postinstall": "patch-package"
     },
     "dependencies": {
         "@astrojs/node": "^8.3.2",
@@ -20,6 +21,7 @@
         "@tanstack/react-query": "^5.51.1",
         "astro": "^4.11.5",
         "auth-astro": "^4.1.2",
+        "patch-package": "^8.0.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },
