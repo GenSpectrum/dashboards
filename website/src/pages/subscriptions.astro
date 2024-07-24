@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/base/BaseLayout.astro';
+import SubscriptionTable from '../components/subscriptions/SubscriptionTable.astro';
+import SubscriptionFilter from '../components/subscriptions/SubscriptionFilter.astro';
+---
+
+<BaseLayout title='Subscriptions' omitHeaderNavigation='true'>
+    <div class='ml-2 mt-2 flex flex-row'>
+        <div class='w-1/6 min-w-48'>
+            <SubscriptionFilter />
+        </div>
+        <SubscriptionTable />
+    </div>
+</BaseLayout>
