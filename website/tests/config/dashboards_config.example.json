@@ -16,5 +16,10 @@
     },
     "west-nile": {
         "lapisUrl": "https://lapis-main.loculus.org/west-nile"
+    },
+    "auth": {
+        "github": {
+            "clientId": "Create a GitHub App and add your client ID here: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app"
+        }
     }
 }

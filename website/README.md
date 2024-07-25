@@ -8,6 +8,14 @@ Set up a `.env` file, e.g. by
 cp .env.example .env
 ```
 
+Set up your local config in `tests/config`, e.g. by
+
+```bash
+cp tests/config/dashboards_config.example.json tests/config/dashboards_config.json
+```
+
+and edit the values accordingly.
+
 Install dependencies:
 
 ```bash
