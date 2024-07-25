@@ -1,14 +1,11 @@
 ---
 import type { Session } from '@auth/core/types';
-import { getKeycloakLogoutUrl } from '../../auth/logout';
 
 interface Props {
     session: Session;
 }
 
 const { session } = Astro.props;
-
-const keycloakLogoutUrl = await getKeycloakLogoutUrl(Astro.request);
 ---
 
 <div class='dropdown dropdown-end dropdown-hover'>
@@ -20,7 +17,7 @@ const keycloakLogoutUrl = await getKeycloakLogoutUrl(Astro.request);
             <a href='/subscriptions'>Subscriptions</a>
         </li>
         <li>
-            <a href={keycloakLogoutUrl}>Logout</a>
+            <a href='/logout'>Logout</a>
         </li>
     </ul>
 </div>
