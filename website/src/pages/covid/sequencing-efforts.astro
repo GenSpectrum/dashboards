@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { CovidView3 } from '../../routes/covid';
 import { getLapisUrl } from '../../config';
-import { Organisms } from '../../routes/View';
+import { defaultTablePageSize, Organisms } from '../../routes/View';
 
 const routeData = CovidView3.parseUrl(Astro.url);
 
@@ -54,6 +54,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                         })}
                         lapisDateField='date'
                         views='["bar", "line", "table"]'
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'
                         granularity={timeGranularity}></gs-number-sequences-over-time>
@@ -67,6 +68,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                             <gs-aggregate
                                 fields={JSON.stringify([subDivisionField])}
                                 filter={JSON.stringify(baselineFilter)}
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'
                             />
@@ -77,8 +79,12 @@ if (routeData.baselineFilter.location.country === undefined) {
             <div>
                 <h2 class='component-title'>Hosts</h2>
                 <div class='h-[600px]'>
-                    <gs-aggregate fields='["host"]' filter={JSON.stringify(baselineFilter)} width='100%' height='100%'
-                    ></gs-aggregate>
+                    <gs-aggregate
+                        fields='["host"]'
+                        filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'></gs-aggregate>
                 </div>
             </div>
             <div>
@@ -87,6 +93,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                     <gs-aggregate
                         fields='["originatingLab"]'
                         filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>
@@ -97,6 +104,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                     <gs-aggregate
                         fields='["submittingLab"]'
                         filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>

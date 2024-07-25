@@ -5,7 +5,7 @@ import { RsvBView1 } from '../../routes/rsvB';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
-import { Organisms } from '../../routes/View';
+import { defaultTablePageSize, Organisms } from '../../routes/View';
 
 const routeData = RsvBView1.view.parseUrl(Astro.url);
 
@@ -73,6 +73,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisDateField='sample_collection_date'
                                 granularity={timeGranularity}
                                 smoothingWindow='0'
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'></gs-prevalence-over-time>
                         </div>
@@ -84,6 +85,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter={JSON.stringify(variantFilter)}
                                 sequenceType='nucleotide'
                                 views='["grid", "table", "insertions"]'
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'></gs-mutations>
                         </div>
@@ -95,6 +97,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter={JSON.stringify(variantFilter)}
                                 sequenceType='amino acid'
                                 views='["grid", "table", "insertions"]'
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'></gs-mutations>
                         </div>
@@ -107,6 +110,7 @@ const initialMutations = extractMutations(variantFilter);
                                     <gs-aggregate
                                         fields={JSON.stringify([subDivisionField])}
                                         filter={JSON.stringify(variantFilter)}
+                                        pageSize={defaultTablePageSize}
                                         width='100%'
                                         height='100%'
                                     />
@@ -120,6 +124,7 @@ const initialMutations = extractMutations(variantFilter);
                             <gs-aggregate
                                 fields={JSON.stringify(['lineage'])}
                                 filter={JSON.stringify(variantFilter)}
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'></gs-aggregate>
                         </div>
@@ -130,6 +135,7 @@ const initialMutations = extractMutations(variantFilter);
                             <gs-aggregate
                                 fields='["host_name_scientific"]'
                                 filter={JSON.stringify(variantFilter)}
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'></gs-aggregate>
                         </div>
@@ -138,7 +144,7 @@ const initialMutations = extractMutations(variantFilter);
 
                 <div>
                     <h2 class='component-title'>Nucleotide mutations over time</h2>
-                    <div class='h-[400px]'>
+                    <div class='h-[600px]'>
                         <gs-mutations-over-time
                             width='100%'
                             height='100%'
@@ -152,7 +158,7 @@ const initialMutations = extractMutations(variantFilter);
 
                 <div>
                     <h2 class='component-title'>Amino acid mutations over time</h2>
-                    <div class='h-[400px]'>
+                    <div class='h-[600px]'>
                         <gs-mutations-over-time
                             width='100%'
                             height='100%'

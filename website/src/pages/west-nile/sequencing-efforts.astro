@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { WestNileView3 } from '../../routes/westNile';
 import { getLapisUrl } from '../../config';
-import { Organisms } from '../../routes/View';
+import { defaultTablePageSize, Organisms } from '../../routes/View';
 
 const routeData = WestNileView3.view.parseUrl(Astro.url);
 
@@ -57,6 +57,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                         })}
                         lapisDateField='sample_collection_date'
                         views='["bar", "line", "table"]'
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'
                         granularity={timeGranularity}></gs-number-sequences-over-time>
@@ -70,6 +71,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                             <gs-aggregate
                                 fields={JSON.stringify([subDivisionField])}
                                 filter={JSON.stringify(baselineFilter)}
+                                pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'
                             />
@@ -83,6 +85,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <gs-aggregate
                         fields='["host_name_scientific"]'
                         filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>
@@ -93,6 +96,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <gs-aggregate
                         fields='["author_affiliations"]'
                         filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>
@@ -103,6 +107,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     <gs-aggregate
                         fields='["authors", "author_affiliations"]'
                         filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'></gs-aggregate>
                 </div>
