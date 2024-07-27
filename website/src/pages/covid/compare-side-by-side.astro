@@ -6,15 +6,10 @@ import { chooseGranularityBasedOnDateRange, extractMutations } from '../../route
 import { Routing } from '../../routes/routing';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
+import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 const routeData = CovidView2.view.parseUrl(Astro.url);
 ---
-
-<style>
-    .component-title {
-        @apply mt-4 font-bold;
-    }
-</style>
 
 <BaseLayout title='Compare side-by-side | SARS-CoV-2 | GenSpectrum'>
     <gs-app lapis={getLapisUrl(Organisms.covid)}>
@@ -49,8 +44,7 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                                 }
                                 initialMutations={initialMutations}
                             />
-                            <div>
-                                <h3 class='component-title'>Prevalence over time</h3>
+                            <ComponentWrapper title='Prevalence over time'>
                                 <gs-prevalence-over-time
                                     numeratorFilter={JSON.stringify({
                                         displayName: '',
@@ -61,62 +55,57 @@ const routeData = CovidView2.view.parseUrl(Astro.url);
                                     smoothingWindow='0'
                                     pageSize={defaultTablePageSize}
                                     width='100%'
-                                    height='400px'
+                                    height='100%'
                                 />
-                            </div>
-                            <div>
-                                <h3 class='component-title'>Relative growth advantage</h3>
+                            </ComponentWrapper>
+                            <ComponentWrapper title='Relative growth advantage'>
                                 <gs-relative-growth-advantage
                                     numeratorFilter={JSON.stringify({ ...variantFilter, ...baselineLapisFilter })}
                                     denominatorFilter={JSON.stringify(baselineLapisFilter)}
                                     generationTime='7'
                                     pageSize={defaultTablePageSize}
                                     width='100%'
-                                    height='400px'
+                                    height='100%'
                                 />
-                            </div>
-                            <div>
-                                <h3 class='component-title'>Nucleotide mutations</h3>
+                            </ComponentWrapper>
+                            <ComponentWrapper title='Nucleotide mutations'>
                                 <gs-mutations
                                     lapisFilter={JSON.stringify(variantFilter)}
                                     sequenceType='nucleotide'
                                     views='["grid", "table", "insertions"]'
                                     pageSize={defaultTablePageSize}
                                     width='100%'
-                                    height='400px'
+                                    height='100%'
                                 />
-                            </div>
-                            <div>
-                                <h3 class='component-title'>Amino acid mutations</h3>
+                            </ComponentWrapper>
+                            <ComponentWrapper title='Amino acid mutations'>
                                 <gs-mutations
                                     lapisFilter={JSON.stringify(variantFilter)}
                                     sequenceType='amino acid'
                                     views='["grid", "table", "insertions"]'
                                     pageSize={defaultTablePageSize}
                                     width='100%'
-                                    height='400px'
+                                    height='100%'
                                 />
-                            </div>
-                            <div>
-                                <h3 class='component-title'>Sub-lineages</h3>
+                            </ComponentWrapper>
+                            <ComponentWrapper title='Sub-lineages'>
                                 <gs-aggregate
                                     fields='["nextcladePangoLineage"]'
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
-                                    height='400px'
+                                    height='100%'
                                 />
-                            </div>
-                            <div>
-                                <h2 class='component-title'>Hosts</h2>
+                            </ComponentWrapper>
+                            <ComponentWrapper title='Hosts'>
                                 <gs-aggregate
                                     fields='["host"]'
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
-                                    height='400px'
+                                    height='100%'
                                 />
-                            </div>
+                            </ComponentWrapper>
                         </div>
                     );
                 })

@@ -1,0 +1,15 @@
+---
+interface Props {
+    title: string;
+    height?: string;
+}
+
+const { title, height = '400px' } = Astro.props;
+---
+
+<div>
+    <h2 class='font-bold'>{title}</h2>
+    <div style={{ height }}>
+        <slot />
+    </div>
+</div>

@@ -5,6 +5,8 @@ import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { RsvAView3 } from '../../routes/rsvA';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
+import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 const routeData = RsvAView3.view.parseUrl(Astro.url);
 
@@ -25,12 +27,6 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
 }
 ---
 
-<style>
-    .component-title {
-        @apply font-bold;
-    }
-</style>
-
 <BaseLayout title='Sequencing Efforts | RSV-A | GenSpectrum'>
     <gs-app lapis={getLapisUrl(Organisms.rsvA)}>
         <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
@@ -46,72 +42,57 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
             </div>
         </div>
 
-        <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6 p-2'>
-            <div>
-                <h2 class='component-title'>Number sequences</h2>
-                <div class='h-[600px]'>
-                    <gs-number-sequences-over-time
-                        lapisFilter={JSON.stringify({
-                            displayName: '',
-                            lapisFilter: baselineFilter,
-                        })}
-                        lapisDateField='sample_collection_date'
-                        views='["bar", "line", "table"]'
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'
-                        granularity={timeGranularity}></gs-number-sequences-over-time>
-                </div>
-            </div>
+        <ComponentsGrid>
+            <ComponentWrapper title='Number sequences' height='600px'>
+                <gs-number-sequences-over-time
+                    lapisFilter={JSON.stringify({
+                        displayName: '',
+                        lapisFilter: baselineFilter,
+                    })}
+                    lapisDateField='sample_collection_date'
+                    views='["bar", "line", "table"]'
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'
+                    granularity={timeGranularity}></gs-number-sequences-over-time>
+            </ComponentWrapper>
             {
                 subDivisionField && (
-                    <div>
-                        <h2 class='component-title'>{subDivisionLabel}</h2>
-                        <div class='h-[600px]'>
-                            <gs-aggregate
-                                fields={JSON.stringify([subDivisionField])}
-                                filter={JSON.stringify(baselineFilter)}
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'
-                            />
-                        </div>
-                    </div>
+                    <ComponentWrapper title={subDivisionLabel} height='600px'>
+                        <gs-aggregate
+                            fields={JSON.stringify([subDivisionField])}
+                            filter={JSON.stringify(baselineFilter)}
+                            pageSize={defaultTablePageSize}
+                            width='100%'
+                            height='100%'
+                        />
+                    </ComponentWrapper>
                 )
             }
-            <div>
-                <h2 class='component-title'>Hosts</h2>
-                <div class='h-[600px]'>
-                    <gs-aggregate
-                        fields='["host_name_scientific"]'
-                        filter={JSON.stringify(baselineFilter)}
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'></gs-aggregate>
-                </div>
-            </div>
-            <div>
-                <h2 class='component-title'>Author affiliations</h2>
-                <div class='h-[600px]'>
-                    <gs-aggregate
-                        fields='["author_affiliations"]'
-                        filter={JSON.stringify(baselineFilter)}
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'></gs-aggregate>
-                </div>
-            </div>
-            <div>
-                <h2 class='component-title'>Authors</h2>
-                <div class='h-[600px]'>
-                    <gs-aggregate
-                        fields='["authors", "author_affiliations"]'
-                        filter={JSON.stringify(baselineFilter)}
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'></gs-aggregate>
-                </div>
-            </div>
-        </div>
+            <ComponentWrapper title='Hosts' height='600px'>
+                <gs-aggregate
+                    fields='["host_name_scientific"]'
+                    filter={JSON.stringify(baselineFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
+            <ComponentWrapper title='Author affiliations' height='600px'>
+                <gs-aggregate
+                    fields='["author_affiliations"]'
+                    filter={JSON.stringify(baselineFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
+            <ComponentWrapper title='Authors' height='600px'>
+                <gs-aggregate
+                    fields='["authors", "author_affiliations"]'
+                    filter={JSON.stringify(baselineFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
+        </ComponentsGrid>
     </gs-app>
 </BaseLayout>

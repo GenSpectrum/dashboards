@@ -6,6 +6,8 @@ import VariantFilter from '../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
+import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 const routeData = WestNileView1.view.parseUrl(Astro.url);
 
@@ -38,12 +40,6 @@ const customDateRangeOptions = [
 const initialMutations = extractMutations(variantFilter);
 ---
 
-<style>
-    .component-title {
-        @apply font-bold;
-    }
-</style>
-
 <BaseLayout title='Single Variant | WNV | GenSpectrum'>
     <gs-app lapis={getLapisUrl(Organisms.westNile)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
@@ -69,115 +65,91 @@ const initialMutations = extractMutations(variantFilter);
                 </div>
             </div>
             <div>
-                <div class='grid grid-cols-[repeat(auto-fit,minmax(min(100vw,650px),1fr))] gap-x-4 gap-y-6'>
-                    <div>
-                        <h2 class='component-title'>Prevalence over time</h2>
-                        <div class='h-[400px]'>
-                            <gs-prevalence-over-time
-                                numeratorFilter={JSON.stringify({
-                                    displayName: '',
-                                    lapisFilter: variantFilter,
-                                })}
-                                denominatorFilter={JSON.stringify(baselineFilter)}
-                                lapisDateField='sample_collection_date'
-                                granularity={timeGranularity}
-                                smoothingWindow='0'
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'></gs-prevalence-over-time>
-                        </div>
-                    </div>
-                    <div>
-                        <h2 class='component-title'>Nucleotide mutations</h2>
-                        <div class='h-[400px]'>
-                            <gs-mutations
-                                lapisFilter={JSON.stringify(variantFilter)}
-                                sequenceType='nucleotide'
-                                views='["grid", "table", "insertions"]'
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'></gs-mutations>
-                        </div>
-                    </div>
-                    <div>
-                        <h2 class='component-title'>Amino acid mutations</h2>
-                        <div class='h-[400px]'>
-                            <gs-mutations
-                                lapisFilter={JSON.stringify(variantFilter)}
-                                sequenceType='amino acid'
-                                views='["grid", "table", "insertions"]'
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'></gs-mutations>
-                        </div>
-                    </div>
-                    {
-                        subDivisionField && (
-                            <div>
-                                <h2 class='component-title'>{subDivisionLabel}</h2>
-                                <div class='h-[400px]'>
-                                    <gs-aggregate
-                                        fields={JSON.stringify([subDivisionField])}
-                                        filter={JSON.stringify(variantFilter)}
-                                        pageSize={defaultTablePageSize}
-                                        width='100%'
-                                        height='100%'
-                                    />
-                                </div>
-                            </div>
-                        )
-                    }
-                    <div>
-                        <h2 class='component-title'>Clades and lineages</h2>
-                        <div class='h-[400px]'>
-                            <gs-aggregate
-                                fields={JSON.stringify(['lineage'])}
-                                filter={JSON.stringify(variantFilter)}
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'></gs-aggregate>
-                        </div>
-                    </div>
-                    <div>
-                        <h2 class='component-title'>Hosts</h2>
-                        <div class='h-[400px]'>
-                            <gs-aggregate
-                                fields='["host_name_scientific"]'
-                                filter={JSON.stringify(variantFilter)}
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'></gs-aggregate>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class='component-title'>Nucleotide mutations over time</h2>
-                    <div class='h-[600px]'>
-                        <gs-mutations-over-time
+                <ComponentsGrid>
+                    <ComponentWrapper title='Prevalence over time'>
+                        <gs-prevalence-over-time
+                            numeratorFilter={JSON.stringify({
+                                displayName: '',
+                                lapisFilter: variantFilter,
+                            })}
+                            denominatorFilter={JSON.stringify(baselineFilter)}
+                            lapisDateField='sample_collection_date'
+                            granularity={timeGranularity}
+                            smoothingWindow='0'
+                            pageSize={defaultTablePageSize}
                             width='100%'
-                            height='100%'
+                            height='100%'></gs-prevalence-over-time>
+                    </ComponentWrapper>
+                    <ComponentWrapper title='Nucleotide mutations'>
+                        <gs-mutations
                             lapisFilter={JSON.stringify(variantFilter)}
                             sequenceType='nucleotide'
-                            views='["grid"]'
-                            granularity={timeGranularity}
-                            lapisDateField='sample_collection_date'></gs-mutations-over-time>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class='component-title'>Amino acid mutations over time</h2>
-                    <div class='h-[600px]'>
-                        <gs-mutations-over-time
+                            views='["grid", "table", "insertions"]'
+                            pageSize={defaultTablePageSize}
                             width='100%'
-                            height='100%'
+                            height='100%'></gs-mutations>
+                    </ComponentWrapper>
+                    <ComponentWrapper title='Amino acid mutations'>
+                        <gs-mutations
                             lapisFilter={JSON.stringify(variantFilter)}
                             sequenceType='amino acid'
-                            views='["grid"]'
-                            granularity={timeGranularity}
-                            lapisDateField='sample_collection_date'></gs-mutations-over-time>
-                    </div>
-                </div>
+                            views='["grid", "table", "insertions"]'
+                            pageSize={defaultTablePageSize}
+                            width='100%'
+                            height='100%'></gs-mutations>
+                    </ComponentWrapper>
+                    {
+                        subDivisionField && (
+                            <ComponentWrapper title='subDivisionLabel'>
+                                <gs-aggregate
+                                    fields={JSON.stringify([subDivisionField])}
+                                    filter={JSON.stringify(variantFilter)}
+                                    pageSize={defaultTablePageSize}
+                                    width='100%'
+                                    height='100%'
+                                />
+                            </ComponentWrapper>
+                        )
+                    }
+                    <ComponentWrapper title='Clades and lineages'>
+                        <gs-aggregate
+                            fields={JSON.stringify(['lineage'])}
+                            filter={JSON.stringify(variantFilter)}
+                            pageSize={defaultTablePageSize}
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </ComponentWrapper>
+                    <ComponentWrapper title='Hosts'>
+                        <gs-aggregate
+                            fields='["host_name_scientific"]'
+                            filter={JSON.stringify(variantFilter)}
+                            pageSize={defaultTablePageSize}
+                            width='100%'
+                            height='100%'></gs-aggregate>
+                    </ComponentWrapper>
+                </ComponentsGrid>
+
+                <ComponentWrapper title='Nucleotide mutations over time' height='600px'>
+                    <gs-mutations-over-time
+                        width='100%'
+                        height='100%'
+                        lapisFilter={JSON.stringify(variantFilter)}
+                        sequenceType='nucleotide'
+                        views='["grid"]'
+                        granularity={timeGranularity}
+                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                </ComponentWrapper>
+
+                <ComponentWrapper title='Amino acid mutations over time' height='600px'>
+                    <gs-mutations-over-time
+                        width='100%'
+                        height='100%'
+                        lapisFilter={JSON.stringify(variantFilter)}
+                        sequenceType='amino acid'
+                        views='["grid"]'
+                        granularity={timeGranularity}
+                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                </ComponentWrapper>
             </div>
         </div>
     </gs-app>
