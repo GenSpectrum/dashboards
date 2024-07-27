@@ -1,0 +1,114 @@
+---
+import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import type { Organism } from '../../routes/View';
+import type { DateRange } from '../../routes/helpers';
+import { RsvAView3 } from '../../routes/rsvA';
+import { RsvBView3 } from '../../routes/rsvB';
+import type { LapisLocation2 } from '../../routes/helpers';
+import { defaultTablePageSize, Organisms, Route } from '../../routes/View';
+import { getLapisUrl } from '../../config';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
+import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import ComponentWrapper from '../../components/ComponentWrapper.astro';
+
+interface Props {
+    view: RsvAView3.RsvAView3 | RsvBView3.RsvBView3;
+    routeData: Route & {
+        baselineFilter: {
+            location: LapisLocation2;
+            dateRange: DateRange;
+        };
+    };
+    titleName: string;
+    organism: Organism;
+}
+
+const { view, routeData, titleName, organism } = Astro.props;
+
+const baselineFilter = RsvAView3.view.toLapisFilter(routeData);
+
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    from: baselineFilter.sample_collection_dateFrom,
+    to: baselineFilter.sample_collection_dateTo,
+});
+let subDivisionField = undefined;
+let subDivisionLabel = '';
+if (routeData.baselineFilter.location.geo_loc_country === undefined) {
+    subDivisionField = 'geo_loc_country';
+    subDivisionLabel = 'Countries';
+} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
+    subDivisionField = 'geo_loc_admin_1';
+    subDivisionLabel = 'Geographic sub-divisions';
+}
+---
+
+<BaseLayout title={`Sequencing Efforts | ${titleName} | GenSpectrum`}>
+    <gs-app lapis={getLapisUrl(organism)}>
+        <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
+            <div class='mr-2 font-semibold'>Filter dataset:</div>
+            <div class='max-w-[1000px]'>
+                <LocationTimeFilter
+                    fields={view.locationFields}
+                    initialLocation={baselineFilter}
+                    initialDateRange={routeData.baselineFilter.dateRange}
+                    earliestDate={view.earliestDate}
+                    customDateRangeOptions={view.customDateRangeOptions}
+                />
+            </div>
+        </div>
+
+        <ComponentsGrid>
+            <ComponentWrapper title='Number sequences' height='600px'>
+                <gs-number-sequences-over-time
+                    lapisFilter={JSON.stringify({
+                        displayName: '',
+                        lapisFilter: baselineFilter,
+                    })}
+                    lapisDateField='sample_collection_date'
+                    views='["bar", "line", "table"]'
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'
+                    granularity={timeGranularity}></gs-number-sequences-over-time>
+            </ComponentWrapper>
+            {
+                subDivisionField && (
+                    <ComponentWrapper title={subDivisionLabel} height='600px'>
+                        <gs-aggregate
+                            fields={JSON.stringify([subDivisionField])}
+                            filter={JSON.stringify(baselineFilter)}
+                            pageSize={defaultTablePageSize}
+                            width='100%'
+                            height='100%'
+                        />
+                    </ComponentWrapper>
+                )
+            }
+            <ComponentWrapper title='Hosts' height='600px'>
+                <gs-aggregate
+                    fields='["host_name_scientific"]'
+                    filter={JSON.stringify(baselineFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
+            <ComponentWrapper title='Author affiliations' height='600px'>
+                <gs-aggregate
+                    fields='["author_affiliations"]'
+                    filter={JSON.stringify(baselineFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
+            <ComponentWrapper title='Authors' height='600px'>
+                <gs-aggregate
+                    fields='["authors", "author_affiliations"]'
+                    filter={JSON.stringify(baselineFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
+        </ComponentsGrid>
+    </gs-app>
+</BaseLayout>
