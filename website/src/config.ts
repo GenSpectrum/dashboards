@@ -19,20 +19,7 @@ const dashboardsConfigSchema = z
         ),
     )
     .extend({
-        auth: z.object({
-            /**
-             * The URL of the OIDC issuer, e.g. `https://keycloak.example.com/realms/myrealm`
-             */
-            issuer: z.string(),
-            /**
-             * The client ID for the OIDC client
-             */
-            clientId: z.string(),
-            /**
-             * The client secret for the OIDC client
-             */
-            clientSecret: z.string(),
-        }),
+        auth: z.object({}),
     });
 export type DashboardsConfig = z.infer<typeof dashboardsConfigSchema>;
 
