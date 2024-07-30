@@ -15,6 +15,7 @@ updates:
       - dependency-name: "@genspectrum/dashboard-components"
     commit-message:
       prefix: "chore(website)"
+    target-branch: "main"
   - package-ecosystem: npm
     directory: website/
     schedule:
