@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "@astrojs/node": "^8.3.2",
-        "@auth/core": "^0.34.2",
+        "@auth/core": "^0.32.0",
         "@tanstack/react-query": "^5.51.15",
         "astro": "^4.12.2",
         "auth-astro": "^4.1.2",
