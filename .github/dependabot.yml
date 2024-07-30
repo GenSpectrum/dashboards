@@ -9,6 +9,15 @@ updates:
   - package-ecosystem: npm
     directory: website/
     schedule:
+      interval: daily
+      time: "15:00"
+    allow:
+      - dependency-name: "@genspectrum/dashboard-components"
+    commit-message:
+      prefix: "chore(website)"
+  - package-ecosystem: npm
+    directory: website/
+    schedule:
       interval: weekly
     groups:
       minorAndPatch:
