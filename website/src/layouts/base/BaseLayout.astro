@@ -18,12 +18,13 @@ const { title, omitHeaderNavigation = false, forceLoggedOutState = false } = Ast
         <meta name='viewport' content='width=device-width' />
         <meta name='generator' content={Astro.generator} />
         <title>{title}</title>
+        <script>
+            import '@genspectrum/dashboard-components';
+            import '@genspectrum/dashboard-components/style.css';
+            import '../../styles/tailwind.css';
+        </script>
     </head>
-    <script>
-        import '@genspectrum/dashboard-components';
-        import '@genspectrum/dashboard-components/style.css';
-        import '../../styles/tailwind.css';
-    </script>
+
     <body>
         <Header omitHeaderNavigation={omitHeaderNavigation} forceLoggedOutState={forceLoggedOutState} />
         <slot />
