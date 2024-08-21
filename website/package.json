@@ -33,7 +33,7 @@
         "@iconify-json/mdi": "^1.1.68",
         "@iconify-json/mdi-light": "^1.1.11",
         "@iconify/tailwind": "^1.1.2",
-        "@types/node": "^20.14.11",
+        "@types/node": "^22.4.2",
         "@types/react": "^18.3.4",
         "@types/react-dom": "^18.3.0",
         "daisyui": "^4.12.10",
