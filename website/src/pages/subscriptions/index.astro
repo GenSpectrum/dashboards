@@ -1,14 +1,57 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import SubscriptionTable from '../../components/subscriptions/SubscriptionTable.astro';
 import SubscriptionFilter from '../../components/subscriptions/SubscriptionFilter.astro';
+import { SubscriptionsTable } from '../../components/subscriptions/SubscriptionTable';
+import type { Subscription } from '../../components/subscriptions/SubscriptionTable';
+
+const subscriptions: Subscription[] = [
+    {
+        id: '1',
+        name: 'My search',
+        filter: {
+            country: 'Germany',
+            dateFrom: '2024-01-01',
+            dateTo: '2024-01-05',
+        },
+        interval: 'weekly',
+        trigger: 'Count: 10',
+        isActive: true,
+        conditionsMet: true,
+    },
+    {
+        id: '2',
+        name: 'My other search',
+        filter: {
+            country: 'Switzerland',
+            dateFrom: '2024-01-01',
+            dateTo: '2024-01-05',
+        },
+        interval: 'daily',
+        trigger: 'Count: 20',
+        isActive: true,
+        conditionsMet: false,
+    },
+    {
+        id: '3',
+        name: 'My third search',
+        filter: {
+            country: 'Germany',
+            dateFrom: '2024-01-01',
+            dateTo: '2024-01-05',
+        },
+        interval: 'weekly',
+        trigger: 'Count: 13',
+        isActive: true,
+        conditionsMet: true,
+    },
+];
 ---
 
-<BaseLayout title='Subscriptions' omitHeaderNavigation='true'>
+<BaseLayout title='Subscriptions' omitHeaderNavigation={true}>
     <div class='ml-2 mt-2 flex flex-row'>
         <div class='w-1/6 min-w-48'>
             <SubscriptionFilter />
         </div>
-        <SubscriptionTable />
+        <SubscriptionsTable client:load subscriptions={subscriptions} />
     </div>
 </BaseLayout>
