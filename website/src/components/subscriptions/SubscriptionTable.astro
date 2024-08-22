@@ -1,5 +1,59 @@
 ---
+interface SubscriptionFilter {
+    [key: string]: string;
+}
 
+interface Subscription {
+    id: string;
+    name: string;
+    filter: SubscriptionFilter;
+    interval: string;
+    trigger: string;
+    isActive: boolean;
+    conditionsMet: boolean;
+}
+
+const subscriptions: Subscription[] = [
+    {
+        id: '1',
+        name: 'My search',
+        filter: {
+            country: 'Germany',
+            dateFrom: '2024-01-01',
+            dateTo: '2024-01-05',
+        },
+        interval: 'weekly',
+        trigger: 'Count: 10',
+        isActive: true,
+        conditionsMet: true,
+    },
+    {
+        id: '2',
+        name: 'My other search',
+        filter: {
+            country: 'Switzerland',
+            dateFrom: '2024-01-01',
+            dateTo: '2024-01-05',
+        },
+        interval: 'daily',
+        trigger: 'Count: 20',
+        isActive: true,
+        conditionsMet: false,
+    },
+    {
+        id: '3',
+        name: 'My third search',
+        filter: {
+            country: 'Germany',
+            dateFrom: '2024-01-01',
+            dateTo: '2024-01-05',
+        },
+        interval: 'weekly',
+        trigger: 'Count: 13',
+        isActive: true,
+        conditionsMet: true,
+    },
+];
 ---
 
 <div class='w-full divide-y-2 overflow-x-auto rounded border-2'>
@@ -12,7 +66,7 @@
         </div>
 
         <div class='flex-end'>
-            <button class='btn btn-primary btn-sm'>Add</button>
+            <a class='btn btn-primary btn-sm' href='/subscriptions/create'>Add</a>
             <button class='btn btn-primary btn-sm'>Delete (2)</button>
         </div>
     </div>
@@ -35,151 +89,42 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <label>
-                        <input type='checkbox' class='checkbox' />
-                    </label>
-                </td>
-                <td>
-                    <div class='tooltip' data-tip='Trigger criteria not met'>
-                        <span class='iconify text-2xl mdi--circle-slice-8' style='color: #e01b24;'></span>
-                    </div>
-                </td>
-                <td> My search</td>
-                <td>
-                    <p>Country: Germany</p>
-                    <p>DateFrom: 2024-01-01</p>
-                    <p>DateTo: 2024-01-05</p>
-                </td>
-                <td>weekly</td>
-                <td>Count: 10</td>
-                <td>true</td>
-                <td>
-                    <button class='btn btn-ghost btn-xs'>Edit</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <label>
-                        <input type='checkbox' class='checkbox' />
-                    </label>
-                </td>
-                <td>
-                    <div class='tooltip' data-tip='Trigger criteria met'>
-                        <span class='iconify text-2xl mdi--circle-slice-8' style='color: #35e01b;'></span>
-                    </div>
-                </td>
-                <td> My other search</td>
-                <td>
-                    <p>Country: Switzerland</p>
-                    <p>DateFrom: 2024-01-01</p>
-                    <p>DateTo: 2024-01-05</p>
-                </td>
-                <td>daily</td>
-                <td>Count: 20</td>
-                <td>true</td>
-                <td>
-                    <button class='btn btn-ghost btn-xs'>Edit</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>
-                        <input type='checkbox' class='checkbox' />
-                    </label>
-                </td>
-                <td>
-                    <div class='tooltip' data-tip='Trigger criteria not met'>
-                        <span class='iconify text-2xl mdi--circle-slice-8' style='color: #e01b24;'></span>
-                    </div>
-                </td>
-                <td> My third search</td>
-                <td>
-                    <p>Country: Germany</p>
-                    <p>DateFrom: 2024-01-01</p>
-                    <p>DateTo: 2024-01-05</p>
-                </td>
-                <td>weekly</td>
-                <td>Count: 13</td>
-                <td>true</td>
-                <td>
-                    <button class='btn btn-ghost btn-xs'>Edit</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>
-                        <input type='checkbox' class='checkbox' />
-                    </label>
-                </td>
-                <td>
-                    <div class='tooltip' data-tip='Trigger criteria not met'>
-                        <span class='iconify text-2xl mdi--circle-slice-8' style='color: #e01b24;'></span>
-                    </div>
-                </td>
-                <td> My search</td>
-                <td>
-                    <p>Country: Germany</p>
-                    <p>DateFrom: 2024-01-01</p>
-                    <p>DateTo: 2024-01-05</p>
-                </td>
-                <td>weekly</td>
-                <td>Count: 10</td>
-                <td>true</td>
-                <td>
-                    <button class='btn btn-ghost btn-xs'>Edit</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>
-                        <input type='checkbox' class='checkbox' />
-                    </label>
-                </td>
-                <td>
-                    <div class='tooltip' data-tip='Trigger criteria not met'>
-                        <span class='iconify text-2xl mdi--circle-slice-8' style='color: #e01b24;'></span>
-                    </div>
-                </td>
-                <td> My search</td>
-                <td>
-                    <p>Country: Germany</p>
-                    <p>DateFrom: 2024-01-01</p>
-                    <p>DateTo: 2024-01-05</p>
-                </td>
-                <td>weekly</td>
-                <td>Count: 10</td>
-                <td>true</td>
-                <td>
-                    <button class='btn btn-ghost btn-xs'>Edit</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>
-                        <input type='checkbox' class='checkbox' />
-                    </label>
-                </td>
-                <td>
-                    <div class='tooltip' data-tip='Trigger criteria not met'>
-                        <span class='iconify text-2xl mdi--circle-slice-8' style='color: #e01b24;'></span>
-                    </div>
-                </td>
-                <td> My search</td>
-                <td>
-                    <p>Country: Germany</p>
-                    <p>DateFrom: 2024-01-01</p>
-                    <p>DateTo: 2024-01-05</p>
-                </td>
-                <td>weekly</td>
-                <td>Count: 10</td>
-                <td>true</td>
-                <td>
-                    <button class='btn btn-ghost btn-xs'>Edit</button>
-                </td>
-            </tr>
+            {
+                subscriptions.map((subscription) => (
+                    <tr>
+                        <td>
+                            <label>
+                                <input type='checkbox' class='checkbox' />
+                            </label>
+                        </td>
+                        <td>
+                            <div
+                                class='tooltip'
+                                data-tip={
+                                    subscription.conditionsMet ? 'Trigger criteria met' : 'Trigger criteria not met'
+                                }
+                            >
+                                <span
+                                    class='iconify text-2xl mdi--circle-slice-8'
+                                    style={`color: ${subscription.conditionsMet ? '#21ff00' : '#ff0000'};`}
+                                />
+                            </div>
+                        </td>
+                        <td>{subscription.name}</td>
+                        <td>
+                            <p>Country: {subscription.filter.country}</p>
+                            <p>DateFrom: {subscription.filter.dateFrom}</p>
+                            <p>DateTo: {subscription.filter.dateTo}</p>
+                        </td>
+                        <td>{subscription.interval}</td>
+                        <td>{subscription.trigger}</td>
+                        <td>{subscription.isActive.toString()}</td>
+                        <td>
+                            <button class='btn btn-ghost btn-xs'>Edit</button>
+                        </td>
+                    </tr>
+                ))
+            }
         </tbody>
     </table>
 </div>
