@@ -5,6 +5,8 @@ interface SubscriptionFilter {
     [key: string]: string;
 }
 
+type DateWindow = 'Last6Months';
+
 export interface Subscription {
     id: string;
     name: string;
@@ -14,6 +16,7 @@ export interface Subscription {
     isActive: boolean;
     conditionsMet: boolean;
     organism: Organism;
+    dateWindow: DateWindow;
 }
 
 export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscription[] }) {
@@ -98,6 +101,7 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                         <th>Name</th>
                         <th>Filter</th>
                         <th>Interval</th>
+                        <th>Time window</th>
                         <th>Trigger</th>
                         <th>Is active</th>
                         <th>Organism</th>
@@ -143,6 +147,7 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                                 <p>DateTo: {subscription.filter.dateTo}</p>
                             </td>
                             <td>{subscription.interval}</td>
+                            <td>{subscription.dateWindow}</td>
                             <td>{subscription.trigger}</td>
                             <td>{subscription.isActive.toString()}</td>
                             <td>{subscription.organism}</td>
