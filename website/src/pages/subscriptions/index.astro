@@ -1,7 +1,8 @@
 ---
+import type { SelectedFilter } from '../../components/subscriptions/SubscriptionFilter';
+import type { Filter } from '../../components/subscriptions/SubscriptionFilter';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import SubscriptionFilter from '../../components/subscriptions/SubscriptionFilter.astro';
-import { SubscriptionsTable } from '../../components/subscriptions/SubscriptionTable';
+import { Subscriptions } from '../../components/subscriptions/Subscriptions';
 import type { Subscription } from '../../components/subscriptions/SubscriptionTable';
 
 const subscriptions: Subscription[] = [
@@ -17,6 +18,7 @@ const subscriptions: Subscription[] = [
         trigger: 'Count: 10',
         isActive: true,
         conditionsMet: true,
+        organism: 'covid',
     },
     {
         id: '2',
@@ -30,6 +32,7 @@ const subscriptions: Subscription[] = [
         trigger: 'Count: 20',
         isActive: true,
         conditionsMet: false,
+        organism: 'covid',
     },
     {
         id: '3',
@@ -43,15 +46,37 @@ const subscriptions: Subscription[] = [
         trigger: 'Count: 13',
         isActive: true,
         conditionsMet: true,
+        organism: 'rsv-a',
     },
 ];
+
+const getFilters = (subscriptions: Subscription[]): Filter[] => {
+    const filters = subscriptions.map((subscription) => subscription.organism);
+    const uniqueFilters = Array.from(new Set(filters));
+
+    return uniqueFilters.map((uniqueFilter) => ({
+        name: uniqueFilter,
+        count: filters.filter((filter) => uniqueFilter === filter).length,
+    }));
+};
+
+const getSelectedFilters = (filters: Filter[]): SelectedFilter[] => {
+    const searchParams = Astro.url.searchParams.getAll('organism');
+
+    if (searchParams.length === 0) {
+        return filters.map((filter) => ({ ...filter, selected: true }));
+    }
+
+    return filters.map((filter) => ({
+        ...filter,
+        selected: searchParams.includes(filter.name),
+    }));
+};
+
+const filters = getFilters(subscriptions);
+const selectedFilters = getSelectedFilters(filters);
 ---
 
 <BaseLayout title='Subscriptions' omitHeaderNavigation={true}>
-    <div class='ml-2 mt-2 flex flex-row'>
-        <div class='w-1/6 min-w-48'>
-            <SubscriptionFilter />
-        </div>
-        <SubscriptionsTable client:load subscriptions={subscriptions} />
-    </div>
+    <Subscriptions client:load filters={selectedFilters} subscriptions={subscriptions} />
 </BaseLayout>
