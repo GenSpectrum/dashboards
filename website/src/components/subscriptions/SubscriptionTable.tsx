@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { Organism } from '../../routes/View.ts';
 
 interface SubscriptionFilter {
     [key: string]: string;
@@ -12,13 +13,12 @@ export interface Subscription {
     trigger: string;
     isActive: boolean;
     conditionsMet: boolean;
+    organism: Organism;
 }
 
 export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscription[] }) {
     const [selectedSubscriptions, setSelectedSubscriptions] = useState(
-        subscriptions.map((subscription) => {
-            return { id: subscription.id, selected: false };
-        }),
+        subscriptions.map((subscription) => ({ id: subscription.id, selected: false })),
     );
 
     const handleSelectAllSubscriptions = () => {
@@ -100,6 +100,7 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                         <th>Interval</th>
                         <th>Trigger</th>
                         <th>Is active</th>
+                        <th>Organism</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -114,7 +115,7 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                                         checked={
                                             selectedSubscriptions.find(
                                                 (selectedSubscription) => selectedSubscription.id === subscription.id,
-                                            )?.selected
+                                            )?.selected || false
                                         }
                                         onChange={() => {
                                             handleSelectSubscription(subscription.id);
@@ -144,6 +145,7 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                             <td>{subscription.interval}</td>
                             <td>{subscription.trigger}</td>
                             <td>{subscription.isActive.toString()}</td>
+                            <td>{subscription.organism}</td>
                             <td>
                                 <button className='btn btn-ghost btn-xs'>Edit</button>
                             </td>

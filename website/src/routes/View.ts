@@ -7,16 +7,28 @@ export namespace Organisms {
     export const rsvB = 'rsv-b';
 }
 
-export const allOrganisms = [
-    Organisms.covid,
-    Organisms.h5n1,
-    Organisms.mpox,
-    Organisms.westNile,
-    Organisms.rsvA,
-    Organisms.rsvB,
-] as const;
-
-export type Organism = (typeof allOrganisms)[number];
+export const organismConfig = {
+    [Organisms.covid]: {
+        label: 'SARS-CoV-2',
+    },
+    [Organisms.h5n1]: {
+        label: 'H5N1',
+    },
+    [Organisms.mpox]: {
+        label: 'MPOX',
+    },
+    [Organisms.westNile]: {
+        label: 'West Nile',
+    },
+    [Organisms.rsvA]: {
+        label: 'RSV-A',
+    },
+    [Organisms.rsvB]: {
+        label: 'RSV-B',
+    },
+};
+export const allOrganisms = Object.keys(organismConfig) as Organism[];
+export type Organism = keyof typeof organismConfig;
 
 export type Route = {
     organism: Organism;
