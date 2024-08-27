@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import {
+    NotificationChannelDisplay,
+    type NotificationChannels,
+} from '../../../components/subscriptions/notificationChannels/NotificationChannelDisplay';
+
+const notificationChannels: NotificationChannels = {
+    email: [
+        {
+            address: 'test@test.test',
+            name: 'Test',
+        },
+        {
+            address: 'other@other.other',
+            name: 'Other',
+        },
+    ],
+    slack: [
+        {
+            name: 'SomeSlackChannel',
+            hook: 'someHook',
+        },
+        {
+            name: 'SomeOtherSlackChannel',
+            hook: 'someHook',
+        },
+    ],
+};
+---
+
+<BaseLayout title='Subscriptions' omitHeaderNavigation={true}>
+    <NotificationChannelDisplay client:load notificationChannels={notificationChannels} />
+</BaseLayout>
