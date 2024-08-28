@@ -1,0 +1,15 @@
+services:
+  website:
+    image: ghcr.io/genspectrum/dashboards/website:${WEBSITE_TAG}
+    ports:
+      - "9020:4321"
+    volumes:
+      - type: bind
+        source: ./website/tests/config
+        target: /config
+        read_only: true
+  
+  backend:
+    image: ghcr.io/genspectrum/dashboards/backend:${BACKEND_TAG}
+    ports:
+      - "9021:8080"
