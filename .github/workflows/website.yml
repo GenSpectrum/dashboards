@@ -3,7 +3,7 @@ name: Website
 on: [push]
 
 env:
-  DOCKER_IMAGE_NAME: ghcr.io/genspectrum/dashboards
+  DOCKER_IMAGE_NAME: ghcr.io/genspectrum/dashboards/website
 
 jobs:
   checks:
