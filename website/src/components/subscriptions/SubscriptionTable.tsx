@@ -1,19 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Organism } from '../../routes/View.ts';
 
 interface SubscriptionFilter {
     [key: string]: string;
 }
 
-type DateWindow = 'Last6Months';
+type DateWindow = 'last6Months';
+
+type EvaluationInterval = 'daily' | 'weekly' | 'monthly';
 
 export interface Subscription {
     id: string;
     name: string;
     filter: SubscriptionFilter;
-    interval: string;
+    interval: EvaluationInterval;
     trigger: string;
-    isActive: boolean;
+    active: boolean;
     conditionsMet: boolean;
     organism: Organism;
     dateWindow: DateWindow;
@@ -149,7 +151,7 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                             <td>{subscription.interval}</td>
                             <td>{subscription.dateWindow}</td>
                             <td>{subscription.trigger}</td>
-                            <td>{subscription.isActive.toString()}</td>
+                            <td>{subscription.active.toString()}</td>
                             <td>{subscription.organism}</td>
                             <td>
                                 <button className='btn btn-ghost btn-xs'>Edit</button>
