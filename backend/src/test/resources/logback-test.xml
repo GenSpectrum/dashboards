@@ -1,0 +1,19 @@
+<configuration>
+    <property name="PATTERN" value="%date %level [%thread] [%X{RequestId}] %class: %message%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="Exposed" level="debug" />
+
+    <logger name="org.genspectrum" level="debug" />
+    <logger name="org.testcontainers" level="warn" />
+    <logger name="ch.qos.logback" level="warn" />
+</configuration>
