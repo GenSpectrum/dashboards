@@ -27,3 +27,14 @@ updates:
           - "patch"
     commit-message:
       prefix: "chore(website)"
+  - package-ecosystem: gradle
+    directory: backend/
+    schedule:
+      interval: weekly
+    groups:
+      minorAndPatch:
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: "chore(backend)"
