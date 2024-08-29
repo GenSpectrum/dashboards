@@ -13,3 +13,13 @@ services:
     image: ghcr.io/genspectrum/dashboards/backend:${BACKEND_TAG}
     ports:
       - "9021:8080"
+        
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: unsecure
+      POSTGRES_DB: subscriptions
+    ports:
+      - "9022:5432"
+      
