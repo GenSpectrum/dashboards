@@ -47,6 +47,7 @@ class SubscriptionTest {
                 "someOtherFilter": "value2"
               },
               "trigger": {
+                "type": "countTrigger",
                 "count": 10
               }
             }
