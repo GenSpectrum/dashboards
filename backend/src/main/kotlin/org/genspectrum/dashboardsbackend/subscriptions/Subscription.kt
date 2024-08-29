@@ -1,6 +1,9 @@
 package org.genspectrum.dashboardsbackend.subscriptions
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 enum class DateWindow {
     @JsonProperty("last6Months")
@@ -34,18 +37,46 @@ enum class EvaluationInterval {
     MONTHLY,
 }
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type",
+)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = CountTrigger::class, name = "countTrigger"),
+)
 sealed class Trigger
 
-data class CountTrigger(val count: Int) : Trigger()
+data class CountTrigger @JsonCreator constructor(
+    @JsonProperty("count") val count: Int,
+) : Trigger()
+
+interface BaseSubscription {
+    val name: String
+    val interval: EvaluationInterval
+    val organism: Organism
+    val dateWindow: DateWindow
+    val filter: Map<String, String>
+    val trigger: Trigger
+}
 
 data class Subscription(
     val id: String,
-    val name: String,
-    val interval: EvaluationInterval,
+    override val name: String,
+    override val interval: EvaluationInterval,
     val active: Boolean,
     val conditionsMet: Boolean,
-    val organism: Organism,
-    val dateWindow: DateWindow,
-    val filter: Map<String, String>,
-    val trigger: Trigger,
-)
+    override val organism: Organism,
+    override val dateWindow: DateWindow,
+    override val filter: Map<String, String>,
+    override val trigger: Trigger,
+) : BaseSubscription
+
+data class SubscriptionRequest(
+    override val name: String,
+    override val interval: EvaluationInterval,
+    override val organism: Organism,
+    override val dateWindow: DateWindow,
+    override val filter: Map<String, String>,
+    override val trigger: Trigger,
+) : BaseSubscription

@@ -5,3 +5,9 @@
 .idea/
 
 logs
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
