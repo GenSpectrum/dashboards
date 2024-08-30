@@ -1,10 +1,12 @@
 # Dashboards backend
 
 ## Local setup
+You have to provide config information to the backend. This can be done by providing commandline arguments.
+The necessary properties can be found in the `dev.properties.example` file.
 
-Run application:
+To run the backend locally, you can use the following command:
 ```bash
-./gradlew bootRun
+./gradlew bootRun --args='--your-arg=your-value'
 ```
 
 Run tests:

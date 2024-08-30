@@ -3,10 +3,9 @@ create table subscriptions_table (
     name text not null,
     interval VARCHAR(255) not null,
     active boolean not null,
-    conditionsMet boolean not null,
+    conditions_met boolean not null,
     organism VARCHAR(255) not null,
-    dateWindow VARCHAR(255) not null,
+    date_window VARCHAR(255) not null,
     filter JSONB not null,
-    triggerType VARCHAR(255) not null,
-    triggerValue VARCHAR(255) not null
+    trigger JSONB not null
 );

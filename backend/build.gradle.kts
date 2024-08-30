@@ -31,11 +31,14 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql:10.17.1")
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.53.0")
+    implementation("org.jetbrains.exposed:exposed-json:0.53.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.mockito")
     }
     testImplementation("com.ninja-squad:springmockk:4.0.2")
+    testImplementation("org.testcontainers:postgresql:1.20.1")
 }
 
 kotlin {
