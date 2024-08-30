@@ -2,7 +2,7 @@ services:
   website:
     image: ghcr.io/genspectrum/dashboards/website:${WEBSITE_TAG}
     ports:
-      - "9020:4321"
+      - "127.0.0.1:9020:4321"
     volumes:
       - type: bind
         source: ./website/tests/config
@@ -12,14 +12,20 @@ services:
   backend:
     image: ghcr.io/genspectrum/dashboards/backend:${BACKEND_TAG}
     ports:
-      - "9021:8080"
+      - "127.0.0.1:9021:8080"
+    depends_on:
+      - database
+    command:
+      - --spring.datasource.url=jdbc:postgresql://database:5432/subscriptions
+      - --spring.datasource.username=postgres
+      - --spring.datasource.password=unsecure
         
   database:
-    image: postgres:latest
+    image: postgres:16
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: unsecure
       POSTGRES_DB: subscriptions
     ports:
-      - "9022:5432"
+      - "127.0.0.1:9022:5432"
       
