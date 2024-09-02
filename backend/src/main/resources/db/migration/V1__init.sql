@@ -1,5 +1,5 @@
 create table subscriptions_table (
-    id VARCHAR(255) primary key,
+    id uuid primary key,
     name text not null,
     interval VARCHAR(255) not null,
     active boolean not null,
