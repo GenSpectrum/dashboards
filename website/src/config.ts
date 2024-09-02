@@ -29,7 +29,11 @@ const dashboardsConfigSchema = z
                 clientId: z.string(),
             }),
         }),
+        backend: z.object({
+            url: z.string(),
+        }),
     });
+
 export type DashboardsConfig = z.infer<typeof dashboardsConfigSchema>;
 
 const secretsConfigSchema = z.object({
