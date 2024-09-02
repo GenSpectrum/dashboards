@@ -7,6 +7,7 @@ import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -16,6 +17,15 @@ import org.springframework.web.bind.annotation.RestController
 class SubscriptionsController(
     val subscriptionModel: SubscriptionModel,
 ) {
+
+    @GetMapping("/subscriptions/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(
+        summary = "Get a subscription",
+        description = "Get a specific subscription of a user by its uuid",
+    )
+    fun getSubscription(@PathVariable id: String): Subscription {
+        return subscriptionModel.getSubscription(id)
+    }
 
     @GetMapping("/subscriptions", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
@@ -27,12 +37,12 @@ class SubscriptionsController(
     }
 
     @PostMapping("/subscriptions")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
         summary = "Create a new subscription",
         description = "Creates a new subscription for a user.",
     )
-    fun postSubscriptions(@RequestBody subscription: SubscriptionRequest) {
-        subscriptionModel.postSubscriptions(subscription)
+    fun postSubscriptions(@RequestBody subscription: SubscriptionRequest): Subscription {
+        return subscriptionModel.postSubscriptions(subscription)
     }
 }

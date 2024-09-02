@@ -1,10 +1,13 @@
 package org.genspectrum.dashboardsbackend.model
 
+import org.genspectrum.dashboardsbackend.controller.BadRequestException
+import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.subscriptions.Subscription
 import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
 import org.jetbrains.exposed.sql.Database
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 import javax.sql.DataSource
 
 @Service
@@ -16,12 +19,23 @@ class SubscriptionModel(
         Database.connect(pool)
     }
 
+    fun getSubscription(id: String): Subscription {
+        val uuid = try {
+            UUID.fromString(id)
+        } catch (e: IllegalArgumentException) {
+            throw BadRequestException("Invalid UUID $id")
+        }
+
+        return SubscriptionEntity.findById(uuid)?.toSubscription()
+            ?: throw NotFoundException("Subscription $id not found")
+    }
+
     fun getSubscriptions(): List<Subscription> {
         return SubscriptionEntity.all().map { it.toSubscription() }
     }
 
-    fun postSubscriptions(request: SubscriptionRequest) {
-        SubscriptionEntity.new {
+    fun postSubscriptions(request: SubscriptionRequest) = SubscriptionEntity
+        .new {
             name = request.name
             filter = request.filter
             interval = request.interval.name
@@ -31,5 +45,5 @@ class SubscriptionModel(
             active = true
             conditionsMet = false
         }
-    }
+        .toSubscription()
 }
