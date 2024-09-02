@@ -21,5 +21,8 @@
         "github": {
             "clientId": "Create a GitHub App and add your client ID here: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app"
         }
+    },
+    "backend": {
+        "url": "http://your-backend-url-here"
     }
 }
