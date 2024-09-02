@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.subscriptions.CountTrigger
 import org.genspectrum.dashboardsbackend.subscriptions.DateWindow
 import org.genspectrum.dashboardsbackend.subscriptions.EvaluationInterval
@@ -52,9 +53,8 @@ class SubscriptionsControllerTest(
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn()
 
-        val subscriptions: List<Subscription> = objectMapper.readValue(
+        val subscriptions: List<Subscription> = objectMapper.readValue<List<Subscription>>(
             result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(List::class.java, Subscription::class.java),
         )
 
         assertTrue(
