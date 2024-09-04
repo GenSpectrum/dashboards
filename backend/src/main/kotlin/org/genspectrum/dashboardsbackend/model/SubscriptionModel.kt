@@ -20,13 +20,8 @@ class SubscriptionModel(
     }
 
     fun getSubscription(id: String): Subscription {
-        val uuid = try {
-            UUID.fromString(id)
-        } catch (e: IllegalArgumentException) {
-            throw BadRequestException("Invalid UUID $id")
-        }
-
-        return SubscriptionEntity.findById(uuid)?.toSubscription()
+        return SubscriptionEntity.findById(convertToUuid(id))
+            ?.toSubscription()
             ?: throw NotFoundException("Subscription $id not found")
     }
 
@@ -46,4 +41,17 @@ class SubscriptionModel(
             conditionsMet = false
         }
         .toSubscription()
+
+    fun deleteSubscription(id: String) {
+        val subscription = SubscriptionEntity.findById(convertToUuid(id))
+            ?: throw NotFoundException("Subscription $id not found")
+
+        subscription.delete()
+    }
+
+    private fun convertToUuid(id: String) = try {
+        UUID.fromString(id)
+    } catch (e: IllegalArgumentException) {
+        throw BadRequestException("Invalid UUID $id")
+    }
 }

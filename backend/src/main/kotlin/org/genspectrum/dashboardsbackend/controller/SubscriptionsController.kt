@@ -6,6 +6,7 @@ import org.genspectrum.dashboardsbackend.subscriptions.Subscription
 import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,7 +22,7 @@ class SubscriptionsController(
     @GetMapping("/subscriptions/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Get a subscription",
-        description = "Get a specific subscription of a user by its uuid",
+        description = "Gets a specific subscription of a user by its uuid.",
     )
     fun getSubscription(@PathVariable id: String): Subscription {
         return subscriptionModel.getSubscription(id)
@@ -44,5 +45,15 @@ class SubscriptionsController(
     )
     fun postSubscriptions(@RequestBody subscription: SubscriptionRequest): Subscription {
         return subscriptionModel.postSubscriptions(subscription)
+    }
+
+    @DeleteMapping("/subscriptions/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+        summary = "Delete a subscription",
+        description = "Deletes a specific subscription of a user by its uuid.",
+    )
+    fun deleteSubscription(@PathVariable id: String) {
+        subscriptionModel.deleteSubscription(id)
     }
 }

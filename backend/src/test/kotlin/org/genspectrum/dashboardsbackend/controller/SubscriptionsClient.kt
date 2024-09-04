@@ -7,14 +7,15 @@ import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class SubscriptionsClient(
-    val mockMvc: MockMvc,
-    val objectMapper: ObjectMapper,
+    private val mockMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
 ) {
     fun getSubscriptionRaw(id: String) = mockMvc.perform(get("/subscriptions/$id"))
 
@@ -40,6 +41,10 @@ class SubscriptionsClient(
         postSubscriptionRaw(subscription)
             .andExpect(status().isCreated),
     )
+
+    fun deleteSubscriptionRaw(id: String) = mockMvc.perform(delete("/subscriptions/$id"))
+
+    fun deleteSubscription(id: String) = deleteSubscriptionRaw(id).andExpect(status().isNoContent)
 
     private inline fun <reified T> deserializeJsonResponse(resultActions: ResultActions): T {
         val content =
