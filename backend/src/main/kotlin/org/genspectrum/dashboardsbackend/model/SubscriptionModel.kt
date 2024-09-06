@@ -4,6 +4,7 @@ import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.subscriptions.Subscription
 import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
+import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionUpdate
 import org.jetbrains.exposed.sql.Database
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -52,6 +53,32 @@ class SubscriptionModel(
             ?: throw NotFoundException("Subscription $id not found")
 
         subscription.delete()
+    }
+
+    fun putSubscription(id: String, request: SubscriptionUpdate, userId: String): Subscription {
+        val subscription = SubscriptionEntity.findForUser(convertToUuid(id), userId)
+            ?: throw NotFoundException("Subscription $id not found")
+
+        if (request.name != null) {
+            subscription.name = request.name
+        }
+        if (request.filter != null) {
+            subscription.filter = request.filter
+        }
+        if (request.interval != null) {
+            subscription.interval = request.interval.name
+        }
+        if (request.dateWindow != null) {
+            subscription.dateWindow = request.dateWindow.name
+        }
+        if (request.trigger != null) {
+            subscription.trigger = request.trigger
+        }
+        if (request.organism != null) {
+            subscription.organism = request.organism.name
+        }
+
+        return subscription.toSubscription()
     }
 
     private fun convertToUuid(id: String) = try {

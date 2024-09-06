@@ -66,12 +66,12 @@ data class CountTrigger @JsonCreator constructor(
 typealias LapisFilter = Map<String, String>
 
 interface BaseSubscription {
-    val name: String
-    val interval: EvaluationInterval
-    val organism: Organism
-    val dateWindow: DateWindow
-    val filter: LapisFilter
-    val trigger: Trigger
+    val name: String?
+    val interval: EvaluationInterval?
+    val organism: Organism?
+    val dateWindow: DateWindow?
+    val filter: LapisFilter?
+    val trigger: Trigger?
 }
 
 @Schema(
@@ -122,4 +122,26 @@ data class SubscriptionRequest(
     override val dateWindow: DateWindow,
     override val filter: LapisFilter,
     override val trigger: Trigger,
+) : BaseSubscription
+
+@Schema(
+    description = "A subscription update request",
+    example = """
+{
+    "name": "Subscription name",
+    "interval": "daily",
+    "organism": "covid",
+    "dateWindow": "last6Months",
+    "filter": {"country": "Germany", "division": "Berlin"},
+    "trigger": {"type": "countTrigger", "count": 100}
+}   
+""",
+)
+data class SubscriptionUpdate(
+    override val name: String? = null,
+    override val interval: EvaluationInterval? = null,
+    override val organism: Organism? = null,
+    override val dateWindow: DateWindow? = null,
+    override val filter: LapisFilter? = null,
+    override val trigger: Trigger? = null,
 ) : BaseSubscription
