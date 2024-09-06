@@ -17,34 +17,37 @@ class SubscriptionsClient(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) {
-    fun getSubscriptionRaw(id: String) = mockMvc.perform(get("/subscriptions/$id"))
+    fun getSubscriptionRaw(id: String, userId: String) = mockMvc.perform(get("/subscriptions/$id?userId=$userId"))
 
-    fun getSubscription(id: String): Subscription = deserializeJsonResponse(
-        getSubscriptionRaw(id)
+    fun getSubscription(id: String, userId: String): Subscription = deserializeJsonResponse(
+        getSubscriptionRaw(id, userId)
             .andExpect(status().isOk),
     )
 
-    fun getSubscriptionsRaw() = mockMvc.perform(get("/subscriptions"))
+    fun getSubscriptionsRaw(userId: String) = mockMvc.perform(get("/subscriptions?userId=$userId"))
 
-    fun getSubscriptions(): List<Subscription> = deserializeJsonResponse(
-        getSubscriptionsRaw()
+    fun getSubscriptions(userId: String): List<Subscription> = deserializeJsonResponse(
+        getSubscriptionsRaw(userId)
             .andExpect(status().isOk),
     )
 
-    fun postSubscriptionRaw(subscription: SubscriptionRequest) = mockMvc.perform(
-        post("/subscriptions")
+    fun postSubscriptionRaw(subscription: SubscriptionRequest, userId: String) = mockMvc.perform(
+        post("/subscriptions?userId=$userId")
             .content(objectMapper.writeValueAsString(subscription))
             .contentType(MediaType.APPLICATION_JSON),
     )
 
-    fun postSubscription(subscription: SubscriptionRequest): Subscription = deserializeJsonResponse(
-        postSubscriptionRaw(subscription)
+    fun postSubscription(subscription: SubscriptionRequest, userId: String): Subscription = deserializeJsonResponse(
+        postSubscriptionRaw(subscription, userId)
             .andExpect(status().isCreated),
     )
 
-    fun deleteSubscriptionRaw(id: String) = mockMvc.perform(delete("/subscriptions/$id"))
+    fun deleteSubscriptionRaw(id: String, userId: String) = mockMvc.perform(delete("/subscriptions/$id?userId=$userId"))
 
-    fun deleteSubscription(id: String) = deleteSubscriptionRaw(id).andExpect(status().isNoContent)
+    fun deleteSubscription(id: String, userId: String) = deleteSubscriptionRaw(
+        id,
+        userId,
+    ).andExpect(status().isNoContent)
 
     private inline fun <reified T> deserializeJsonResponse(resultActions: ResultActions): T {
         val content =

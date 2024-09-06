@@ -19,10 +19,14 @@ object SubscriptionTable : UUIDTable(SUBSCRIPTION_TABLE) {
     val dateWindow = varchar("date_window", 255)
     val filter = jacksonSerializableJsonb<Map<String, String>>("filter")
     val trigger = jacksonSerializableJsonb<Trigger>("trigger")
+    val userId = varchar("user_id", 255)
 }
 
 class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<SubscriptionEntity>(SubscriptionTable)
+    companion object : UUIDEntityClass<SubscriptionEntity>(SubscriptionTable) {
+        fun findForUser(id: UUID, userId: String) = SubscriptionEntity.findById(id)
+            ?.takeIf { it.userId == userId }
+    }
 
     var name by SubscriptionTable.name
     var interval by SubscriptionTable.interval
@@ -32,6 +36,7 @@ class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var dateWindow by SubscriptionTable.dateWindow
     var filter by SubscriptionTable.filter
     var trigger by SubscriptionTable.trigger
+    var userId by SubscriptionTable.userId
 
     fun toSubscription() = Subscription(
         id = id.value.toString(),
