@@ -19,17 +19,21 @@ class SubscriptionModel(
         Database.connect(pool)
     }
 
-    fun getSubscription(id: String): Subscription {
-        return SubscriptionEntity.findById(convertToUuid(id))
+    fun getSubscription(id: String, userId: String): Subscription {
+        return SubscriptionEntity.findForUser(convertToUuid(id), userId)
             ?.toSubscription()
             ?: throw NotFoundException("Subscription $id not found")
     }
 
-    fun getSubscriptions(): List<Subscription> {
-        return SubscriptionEntity.all().map { it.toSubscription() }
+    fun getSubscriptions(userId: String): List<Subscription> {
+        return SubscriptionEntity.find {
+            SubscriptionTable.userId eq userId
+        }.map {
+            it.toSubscription()
+        }
     }
 
-    fun postSubscriptions(request: SubscriptionRequest) = SubscriptionEntity
+    fun postSubscriptions(request: SubscriptionRequest, userId: String) = SubscriptionEntity
         .new {
             name = request.name
             filter = request.filter
@@ -39,11 +43,12 @@ class SubscriptionModel(
             organism = request.organism.name
             active = true
             conditionsMet = false
+            this.userId = userId
         }
         .toSubscription()
 
-    fun deleteSubscription(id: String) {
-        val subscription = SubscriptionEntity.findById(convertToUuid(id))
+    fun deleteSubscription(id: String, userId: String) {
+        val subscription = SubscriptionEntity.findForUser(convertToUuid(id), userId)
             ?: throw NotFoundException("Subscription $id not found")
 
         subscription.delete()
