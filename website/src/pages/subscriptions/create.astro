@@ -17,151 +17,178 @@ const variantFilter = {
 };
 ---
 
-<BaseLayout title='Create new subscription' omitHeaderNavigation='true'>
-    <div class='container mx-auto'>
-        <div class='mt-4 flex h-12 w-full place-content-between items-center rounded bg-gray-200 px-2'>
-            <h2 class='font-bold'>Create new subscription</h2>
-            <div>
-                <button class='btn btn-ghost btn-sm'>Cancel</button>
-                <button class='btn btn-primary btn-sm'>Save</button>
-            </div>
+<BaseLayout title='Create new subscription' omitHeaderNavigation={true}>
+    <div class='container mx-auto min-w-72'>
+        <div class='mt-4 flex h-12 w-full place-content-between items-center rounded px-2'>
+            <h2 class='text-xl font-bold'>Create new subscription</h2>
         </div>
 
-        <div class='mt-4 flex flex-col gap-6'>
-            <div>General</div>
+        <div class='min-w- mt-4 flex flex-col gap-4'>
+            <div class='bordered flex flex-col gap-6 rounded-xl border-2 border-gray-200 p-4'>
+                <div class='font-bold'>General</div>
 
-            <div class='grid grid-cols-[150px_300px] items-center gap-4'>
-                <div class='text-right'>Name</div>
-                <label class='ml-2 w-full'>
-                    <input class='input input-bordered w-full' placeholder='Name' />
-                </label>
-
-                <div class='text-right'>Interval</div>
-                <label class='ml-2 w-full'>
-                    <select class='select select-bordered w-full'>
-                        <option>daily</option>
-                        <option>weekly</option>
-                        <option>monthly</option>
-                    </select>
-                </label>
-
-                <div class='text-right'>Pathogen</div>
-                <label class='ml-2 w-full'>
-                    <select class='select select-bordered w-full'>
-                        <option>COVID-19</option>
-                        <option>Flu</option>
-                    </select>
-                </label>
-            </div>
-
-            <div>Notification channels</div>
-            <div class='flex flex-col gap-2'>
-                <ul class='ml-2 flex gap-8'>
-                    <li>
-                        <label class='flex gap-2'>
-                            <input type='checkbox' class='checkbox' />
-                            Email
-                        </label>
-                        <ul class='ml-8 mt-2 flex flex-col space-y-2'>
-                            <li>
-                                <div class='join flex items-center'>
-                                    <label class='join-item'>
-                                        <input class='input join-item input-bordered' placeholder='test@test.test' />
-                                    </label>
-                                    <button class='btn join-item'>
-                                        <div class='iconify mdi--trash-can-outline'></div>
-                                    </button>
-                                </div>
-                            </li>
-                            <li>
-                                <div class='join flex items-center'>
-                                    <label class='join-item'>
-                                        <input class='input join-item input-bordered' placeholder='test2@test.test' />
-                                    </label>
-                                    <button class='btn join-item'>
-                                        <div class='iconify mdi--trash-can-outline'></div>
-                                    </button>
-                                </div>
-                            </li>
-                            <li>
-                                <button class='btn btn-ghost btn-sm text-gray-400'>Add</button>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <label class='flex gap-2'>
-                            <input type='checkbox' class='checkbox' />
-                            Slack
-                        </label>
-                        <div class='ml-8 mt-2 flex flex-col'>
-                            <label>
-                                <input class='input input-bordered' placeholder='Channel info' />
-                            </label>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class='divider'></div>
-
-        <div class='mt-2'>Filter</div>
-        <gs-app lapis={getLapisUrl(Organisms.covid)}>
-            <div class='mt-4 grid grid-cols-2 gap-8'>
-                <div class='grid grid-cols-[150px_1fr] gap-4'>
-                    <div class='mt-2 text-right'>Threshold</div>
-                    <div class='flex w-full'>
-                        <label class='ml-2 w-full'>
-                            <select class='select select-bordered w-full'>
-                                <option>Prevalence</option>
-                                <option>Count</option>
-                            </select>
-                        </label>
-                        <label class={`input input-bordered flex items-center gap-2`}>
-                            <input type='number' step={0.1} min={0} max={100} lang='en' class={`grow w-32`} value={0} />
-                            %
-                        </label>
-                    </div>
-
-                    <div class='mt-2 text-right'>Baseline</div>
-                    <div class='w-full'>
-                        <gs-location-filter
-                            id='locationFilter'
-                            fields={JSON.stringify(locationFilterFields)}
-                            initialValue='Europe / Switzerland'
-                            placeholderText='Sampling location'
-                            width='100%'></gs-location-filter>
-                    </div>
-
-                    <div class='mt-2 text-right'>Variant</div>
-                    <div class='flex w-full flex-col gap-2'>
-                        <gs-text-input
-                            id={`textFilter`}
-                            lapisField={'host'}
-                            placeholderText={'Some text input'}
-                            width='100%'></gs-text-input>
-                        <gs-mutation-filter id='mutationFilter' width='100%'></gs-mutation-filter>
-                    </div>
+                <div>
+                    <h3 class='mb-2'>Name</h3>
+                    <p class='mb-2 max-w-xl text-sm text-gray-400'>
+                        A name for the subscription. This will be used to identify the subscription in the list of
+                        subscriptions.
+                    </p>
+                    <label class='w-full'>
+                        <input
+                            class='input input-sm input-bordered w-full max-w-xl'
+                            placeholder='Your name for the subscription'
+                        />
+                    </label>
                 </div>
 
                 <div>
-                    <div>
-                        <h2 class='component-title'>Prevalence over time</h2>
-                        <div class='h-[400px]'>
-                            <gs-prevalence-over-time
-                                numeratorFilter={JSON.stringify({
-                                    displayName: '',
-                                    lapisFilter: variantFilter,
-                                })}
-                                denominatorFilter={JSON.stringify(baselineFilter)}
-                                granularity='month'
-                                smoothingWindow='0'
-                                width='100%'
-                                height='100%'></gs-prevalence-over-time>
-                        </div>
-                    </div>
+                    <h3 class='mb-2'>Interval</h3>
+                    <p class='mb-2 max-w-xl text-sm text-gray-400'>How often you want to receive notifications.</p>
+                    <label class='w-full'>
+                        <select class='select select-bordered select-sm w-full max-w-xl'>
+                            <option>daily</option>
+                            <option>weekly</option>
+                            <option>monthly</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div>
+                    <h3 class='mb-2'>Pathogen</h3>
+                    <p class='mb-2 max-w-xl text-sm text-gray-400'>
+                        The pathogen you want to receive notifications for.
+                    </p>
+                    <label class='w-full'>
+                        <select class='select select-bordered select-sm w-full max-w-xl'>
+                            <option>COVID-19</option>
+                            <option>Flu</option>
+                        </select>
+                    </label>
                 </div>
             </div>
-        </gs-app>
+
+            <div class='bordered flex flex-col gap-8 rounded-xl border-2 border-gray-200 p-4'>
+                <div class='flex place-content-between items-center'>
+                    <div class='font-bold'>Notification channels</div>
+                    <a class='btn btn-primary btn-sm' href='/subscriptions/channels'>Manage</a>
+                </div>
+
+                <div class='flex flex-col'>
+                    <label class='flex items-center gap-2'>
+                        <input type='checkbox' class='checkbox' />
+                        <div class='iconify mdi--slack'></div>
+                        <div class='min-w-32 flex-1 truncate'>My slack channel</div>
+                    </label>
+
+                    <hr class='my-4 border-gray-200' />
+
+                    <label class='flex items-center gap-2'>
+                        <input type='checkbox' class='checkbox' />
+                        <div class='iconify mdi--slack'></div>
+                        <div class='min-w-32 flex-1 truncate'>My other slack channel</div>
+                    </label>
+
+                    <hr class='my-4 border-gray-200' />
+
+                    <label class='flex items-center gap-2'>
+                        <input type='checkbox' class='checkbox' />
+                        <div class='iconify mdi--email'></div>
+                        <div class='min-w-32 flex-1 truncate'>An email</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class='bordered flex flex-col gap-8 rounded-xl border-2 border-gray-200 p-4'>
+                <div class='font-bold'>Filter</div>
+                <gs-app lapis={getLapisUrl(Organisms.covid)}>
+                    <div class='flex flex-col gap-8 md:flex-row'>
+                        <div class='flex flex-col gap-4'>
+                            <div>
+                                <h3 class='mb-2'>Threshold</h3>
+                                <p class='mb-2 max-w-xl text-sm text-gray-400'>
+                                    The threshold for the subscription. If the prevalence of the variant exceeds this
+                                    threshold, you will receive a notification.
+                                </p>
+                                <div class='flex w-full'>
+                                    <label class='w-full'>
+                                        <select class='select select-bordered w-full'>
+                                            <option>Prevalence</option>
+                                            <option>Count</option>
+                                        </select>
+                                    </label>
+                                    <label class={`input input-bordered flex items-center gap-2`}>
+                                        <input
+                                            type='number'
+                                            step={0.1}
+                                            min={0}
+                                            max={100}
+                                            lang='en'
+                                            class={`w-32 grow`}
+                                            value={0}
+                                        />
+                                        %
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div>
+                                    <h3 class='mb-2'>Baseline</h3>
+                                    <p class='mb-2 max-w-xl text-sm text-gray-400'>
+                                        The baseline for the subscription. The prevalence of the variant will be
+                                        compared to the prevalence in the baseline.
+                                    </p>
+                                    <div class='w-full'>
+                                        <gs-location-filter
+                                            id='locationFilter'
+                                            fields={JSON.stringify(locationFilterFields)}
+                                            initialValue='Europe / Switzerland'
+                                            placeholderText='Sampling location'
+                                            width='100%'></gs-location-filter>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div>
+                                    <h3 class='mb-2'>Variant</h3>
+                                    <p class='mb-2 max-w-xl text-sm text-gray-400'>
+                                        The variant you want to receive notifications for.
+                                    </p>
+                                    <div class='flex w-full flex-col gap-2'>
+                                        <gs-text-input
+                                            id={`textFilter`}
+                                            lapisField={'host'}
+                                            placeholderText={'Some text input'}
+                                            width='100%'></gs-text-input>
+                                        <gs-mutation-filter id='mutationFilter' width='100%'></gs-mutation-filter>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class='min-w-72 flex-1'>
+                            <div>
+                                <h2 class='component-title'>Prevalence over time</h2>
+                                <div class='h-[400px]'>
+                                    <gs-prevalence-over-time
+                                        numeratorFilter={JSON.stringify({
+                                            displayName: '',
+                                            lapisFilter: variantFilter,
+                                        })}
+                                        denominatorFilter={JSON.stringify(baselineFilter)}
+                                        granularity='month'
+                                        smoothingWindow='0'
+                                        width='100%'
+                                        height='100%'></gs-prevalence-over-time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </gs-app>
+            </div>
+
+            <button class='btn btn-primary'>Create subscription</button>
+        </div>
     </div>
 </BaseLayout>
