@@ -1,25 +1,5 @@
 import { useState } from 'react';
-import type { Organism } from '../../routes/View.ts';
-
-interface SubscriptionFilter {
-    [key: string]: string;
-}
-
-type DateWindow = 'last6Months';
-
-type EvaluationInterval = 'daily' | 'weekly' | 'monthly';
-
-export interface Subscription {
-    id: string;
-    name: string;
-    filter: SubscriptionFilter;
-    interval: EvaluationInterval;
-    trigger: string;
-    active: boolean;
-    conditionsMet: boolean;
-    organism: Organism;
-    dateWindow: DateWindow;
-}
+import type { Subscription } from '../../types/Subscription.ts';
 
 export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscription[] }) {
     const [selectedSubscriptions, setSelectedSubscriptions] = useState(
@@ -143,14 +123,15 @@ export function SubscriptionsTable({ subscriptions }: { subscriptions: Subscript
                                 </div>
                             </td>
                             <td>{subscription.name}</td>
+                            {/*TODO #147: Notification frontend: update /subscriptions to show count and proportion trigger filters*/}
                             <td>
-                                <p>Country: {subscription.filter.country}</p>
-                                <p>DateFrom: {subscription.filter.dateFrom}</p>
-                                <p>DateTo: {subscription.filter.dateTo}</p>
+                                <p>Country: Germany</p>
+                                <p>DateFrom: 2021-01-01</p>
+                                <p>DateTo: 2021-06-01</p>
                             </td>
                             <td>{subscription.interval}</td>
                             <td>{subscription.dateWindow}</td>
-                            <td>{subscription.trigger}</td>
+                            <td>{subscription.trigger.type}</td>
                             <td>{subscription.active.toString()}</td>
                             <td>{subscription.organism}</td>
                             <td>

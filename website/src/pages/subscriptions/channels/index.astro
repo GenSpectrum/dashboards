@@ -1,27 +1,29 @@
 ---
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import {
-    NotificationChannelDisplay,
-    type NotificationChannels,
-} from '../../../components/subscriptions/notificationChannels/NotificationChannelDisplay';
+import { NotificationChannelDisplay } from '../../../components/subscriptions/notificationChannels/NotificationChannelDisplay';
+import { type NotificationChannels } from '../../../types/NotificationChannels';
 
 const notificationChannels: NotificationChannels = {
     email: [
         {
+            id: '1',
             address: 'test@test.test',
             name: 'Test',
         },
         {
+            id: '2',
             address: 'other@other.other',
             name: 'Other',
         },
     ],
     slack: [
         {
+            id: '3',
             name: 'SomeSlackChannel',
             hook: 'someHook',
         },
         {
+            id: '4',
             name: 'SomeOtherSlackChannel',
             hook: 'someHook',
         },

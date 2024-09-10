@@ -37,7 +37,7 @@ const dashboardsConfigSchema = z.object({
         }),
     }),
 });
-type DashboardsConfig = z.infer<typeof dashboardsConfigSchema>;
+export type DashboardsConfig = z.infer<typeof dashboardsConfigSchema>;
 
 const environmentSchema = z.union([
     z.literal('dashboards-dev'),

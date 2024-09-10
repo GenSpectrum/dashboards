@@ -1,6 +1,7 @@
 import { type SelectedFilter, SubscriptionFilter } from './SubscriptionFilter.tsx';
-import { type Subscription, SubscriptionsTable } from './SubscriptionTable.tsx';
+import { SubscriptionsTable } from './SubscriptionTable.tsx';
 import { useState } from 'react';
+import type { Subscription } from '../../types/Subscription.ts';
 
 export const Subscriptions = ({
     filters,
