@@ -3,53 +3,69 @@ import type { SelectedFilter } from '../../components/subscriptions/Subscription
 import type { Filter } from '../../components/subscriptions/SubscriptionFilter';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { Subscriptions } from '../../components/subscriptions/Subscriptions';
-import type { Subscription } from '../../components/subscriptions/SubscriptionTable';
+import { type Subscription } from '../../types/Subscription';
 
 const subscriptions: Subscription[] = [
     {
         id: '1',
+        active: false,
         name: 'My search',
-        filter: {
-            country: 'Germany',
-            dateFrom: '2024-01-01',
-            dateTo: '2024-01-05',
-        },
         interval: 'weekly',
         dateWindow: 'last6Months',
-        trigger: 'count: 10',
-        active: true,
-        conditionsMet: true,
+        trigger: {
+            type: 'count',
+            count: 10,
+            filter: {
+                country: 'Germany',
+                ageFrom: '20',
+            },
+        },
         organism: 'covid',
+        notificationChannelIds: {
+            email: ['1'],
+            slack: ['3'],
+        },
+        conditionsMet: false,
     },
     {
         id: '2',
+        active: true,
         name: 'My other search',
-        filter: {
-            country: 'Switzerland',
-            dateFrom: '2024-01-01',
-            dateTo: '2024-01-05',
-        },
         interval: 'daily',
         dateWindow: 'last6Months',
-        trigger: 'count: 20',
-        active: true,
-        conditionsMet: false,
+        trigger: {
+            type: 'count',
+            count: 20,
+            filter: { country: 'Switzerland', ageFrom: '20', pangoLineage: 'B.1.1.7' },
+        },
         organism: 'covid',
+        notificationChannelIds: {
+            email: ['2'],
+            slack: ['4'],
+        },
+        conditionsMet: true,
     },
     {
         id: '3',
+        active: true,
         name: 'My third search',
-        filter: {
-            country: 'Germany',
-            dateFrom: '2024-01-01',
-            dateTo: '2024-01-05',
-        },
         interval: 'weekly',
         dateWindow: 'last6Months',
-        trigger: 'count: 13',
-        active: true,
-        conditionsMet: true,
+        trigger: {
+            type: 'proportion',
+            proportion: 13,
+            numeratorFilter: {
+                country: 'Germany',
+                ageFrom: '20',
+            },
+            denominatorFilter: { country: 'Germany' },
+        },
         organism: 'rsvA',
+        notificationChannelIds: {
+            email: ['1'],
+            slack: ['3'],
+        },
+        conditionsMet: false,
     },
 ];
 
