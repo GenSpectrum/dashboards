@@ -37,7 +37,6 @@ class SubscriptionModel(
     fun postSubscriptions(request: SubscriptionRequest, userId: String) = SubscriptionEntity
         .new {
             name = request.name
-            filter = request.filter
             interval = request.interval.name
             dateWindow = request.dateWindow.name
             trigger = request.trigger
@@ -62,9 +61,6 @@ class SubscriptionModel(
         if (request.name != null) {
             subscription.name = request.name
         }
-        if (request.filter != null) {
-            subscription.filter = request.filter
-        }
         if (request.interval != null) {
             subscription.interval = request.interval.name
         }
@@ -83,7 +79,7 @@ class SubscriptionModel(
 
     private fun convertToUuid(id: String) = try {
         UUID.fromString(id)
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         throw BadRequestException("Invalid UUID $id")
     }
 }
