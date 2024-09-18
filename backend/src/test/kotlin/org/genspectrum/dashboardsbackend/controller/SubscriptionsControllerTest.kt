@@ -1,12 +1,12 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import org.genspectrum.dashboardsbackend.subscriptions.CountTrigger
 import org.genspectrum.dashboardsbackend.subscriptions.DateWindow
 import org.genspectrum.dashboardsbackend.subscriptions.EvaluationInterval
 import org.genspectrum.dashboardsbackend.subscriptions.Organism
 import org.genspectrum.dashboardsbackend.subscriptions.Subscription
 import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionUpdate
+import org.genspectrum.dashboardsbackend.subscriptions.Trigger.CountTrigger
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -25,14 +25,16 @@ import java.util.UUID
 
 val dummySubscriptionRequest = SubscriptionRequest(
     name = "My search",
-    filter = mapOf(
-        "country" to "France",
-        "dateFrom" to "2024-01-01",
-        "dateTo" to "2024-01-05",
-    ),
     interval = EvaluationInterval.MONTHLY,
     dateWindow = DateWindow.LAST_6_MONTHS,
-    trigger = CountTrigger(30),
+    trigger = CountTrigger(
+        30,
+        mapOf(
+            "country" to "France",
+            "dateFrom" to "2024-01-01",
+            "dateTo" to "2024-01-05",
+        ),
+    ),
     organism = Organism.COVID,
 )
 
@@ -160,14 +162,16 @@ class SubscriptionsControllerTest(
 
         val updatedSubscriptionRequest = SubscriptionUpdate(
             name = "Updated name",
-            filter = mapOf(
-                "country" to "Germany",
-                "dateFrom" to "2024-01-01",
-                "dateTo" to "2024-01-05",
-            ),
             interval = EvaluationInterval.WEEKLY,
             dateWindow = DateWindow.LAST_6_MONTHS,
-            trigger = CountTrigger(10),
+            trigger = CountTrigger(
+                10,
+                mapOf(
+                    "country" to "Germany",
+                    "dateFrom" to "2024-01-01",
+                    "dateTo" to "2024-01-05",
+                ),
+            ),
             organism = Organism.RSV_A,
         )
 

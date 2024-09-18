@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
+import org.genspectrum.dashboardsbackend.subscriptions.Trigger.CountTrigger
+import org.genspectrum.dashboardsbackend.subscriptions.Trigger.ProportionTrigger
 
 enum class DateWindow {
     @JsonProperty("last6Months")
@@ -48,24 +50,40 @@ enum class EvaluationInterval {
     property = "type",
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = CountTrigger::class, name = "countTrigger"),
+    JsonSubTypes.Type(value = CountTrigger::class, name = "count"),
+    JsonSubTypes.Type(value = ProportionTrigger::class, name = "proportion"),
 )
 @Schema(
     description = "Base class for different types of triggers",
-    oneOf = [CountTrigger::class],
 )
-sealed class Trigger
+sealed interface Trigger {
+    enum class CountTriggerType {
+        @JsonProperty("count")
+        COUNT,
+    }
 
-@Schema(description = "A trigger that is triggered when a certain count is reached")
-data class CountTrigger @JsonCreator constructor(
-    @JsonProperty("count") val count: Int,
-    @Schema(
-        description = "The type of trigger",
-        example = "countTrigger",
-        allowableValues = ["countTrigger"],
-    )
-    @JsonProperty("type") val type: String = "countTrigger",
-) : Trigger()
+    enum class ProportionTriggerType {
+        @JsonProperty("proportion")
+        PROPORTION,
+    }
+
+    @Schema(description = "A trigger that is triggered when a certain count is reached")
+    data class CountTrigger @JsonCreator constructor(
+        val count: Int,
+        val filter: LapisFilter,
+    ) : Trigger {
+        val type: CountTriggerType = CountTriggerType.COUNT
+    }
+
+    @Schema(description = "A trigger that is triggered when a certain count is reached")
+    data class ProportionTrigger @JsonCreator constructor(
+        val proportion: Double,
+        val baselineFilter: LapisFilter,
+        val variantFilter: LapisFilter,
+    ) : Trigger {
+        val type: ProportionTriggerType = ProportionTriggerType.PROPORTION
+    }
+}
 
 typealias LapisFilter = Map<String, String>
 
@@ -74,7 +92,6 @@ interface BaseSubscription {
     val interval: EvaluationInterval?
     val organism: Organism?
     val dateWindow: DateWindow?
-    val filter: LapisFilter?
     val trigger: Trigger?
 }
 
@@ -89,8 +106,7 @@ interface BaseSubscription {
     "conditionsMet": true,
     "organism": "covid",
     "dateWindow": "last6Months",
-    "filter": {"country": "Germany", "division": "Berlin"},
-    "trigger": {"type": "countTrigger", "count": 100}
+    "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
 }   
 """,
 )
@@ -102,7 +118,6 @@ data class Subscription(
     val conditionsMet: Boolean,
     override val organism: Organism,
     override val dateWindow: DateWindow,
-    override val filter: LapisFilter,
     override val trigger: Trigger,
 ) : BaseSubscription
 
@@ -114,8 +129,7 @@ data class Subscription(
     "interval": "daily",
     "organism": "covid",
     "dateWindow": "last6Months",
-    "filter": {"country": "Germany", "division": "Berlin"},
-    "trigger": {"type": "countTrigger", "count": 100}
+    "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
 }   
 """,
 )
@@ -124,7 +138,6 @@ data class SubscriptionRequest(
     override val interval: EvaluationInterval,
     override val organism: Organism,
     override val dateWindow: DateWindow,
-    override val filter: LapisFilter,
     override val trigger: Trigger,
 ) : BaseSubscription
 
@@ -136,8 +149,7 @@ data class SubscriptionRequest(
     "interval": "daily",
     "organism": "covid",
     "dateWindow": "last6Months",
-    "filter": {"country": "Germany", "division": "Berlin"},
-    "trigger": {"type": "countTrigger", "count": 100}
+    "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
 }   
 """,
 )
@@ -146,6 +158,5 @@ data class SubscriptionUpdate(
     override val interval: EvaluationInterval? = null,
     override val organism: Organism? = null,
     override val dateWindow: DateWindow? = null,
-    override val filter: LapisFilter? = null,
     override val trigger: Trigger? = null,
 ) : BaseSubscription
