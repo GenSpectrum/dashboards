@@ -32,7 +32,10 @@ class SubscriptionsController(
         @IdParameter @PathVariable id: String,
         @UserIdParameter @RequestParam userId: String,
     ): Subscription {
-        return subscriptionModel.getSubscription(id, userId)
+        return subscriptionModel.getSubscription(
+            subscriptionId = id,
+            userId = userId,
+        )
     }
 
     @GetMapping("/subscriptions", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -54,7 +57,10 @@ class SubscriptionsController(
         @RequestBody subscription: SubscriptionRequest,
         @UserIdParameter @RequestParam userId: String,
     ): Subscription {
-        return subscriptionModel.postSubscriptions(subscription, userId)
+        return subscriptionModel.postSubscriptions(
+            request = subscription,
+            userId = userId,
+        )
     }
 
     @DeleteMapping("/subscriptions/{id}")
@@ -64,7 +70,10 @@ class SubscriptionsController(
         description = "Deletes a specific subscription of a user by its uuid.",
     )
     fun deleteSubscription(@IdParameter @PathVariable id: String, @UserIdParameter @RequestParam userId: String) {
-        subscriptionModel.deleteSubscription(id, userId)
+        subscriptionModel.deleteSubscription(
+            subscriptionId = id,
+            userId = userId,
+        )
     }
 
     @PutMapping("/subscriptions/{id}")
@@ -77,7 +86,11 @@ class SubscriptionsController(
         @IdParameter @PathVariable id: String,
         @UserIdParameter @RequestParam userId: String,
     ): Subscription {
-        return subscriptionModel.putSubscription(id, subscription, userId)
+        return subscriptionModel.putSubscription(
+            subscriptionId = id,
+            subscriptionUpdate = subscription,
+            userId = userId,
+        )
     }
 }
 

@@ -20,10 +20,10 @@ class SubscriptionModel(
         Database.connect(pool)
     }
 
-    fun getSubscription(id: String, userId: String): Subscription {
-        return SubscriptionEntity.findForUser(convertToUuid(id), userId)
+    fun getSubscription(subscriptionId: String, userId: String): Subscription {
+        return SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?.toSubscription()
-            ?: throw NotFoundException("Subscription $id not found")
+            ?: throw NotFoundException("Subscription $subscriptionId not found")
     }
 
     fun getSubscriptions(userId: String): List<Subscription> {
@@ -46,31 +46,31 @@ class SubscriptionModel(
         }
         .toSubscription()
 
-    fun deleteSubscription(id: String, userId: String) {
-        val subscription = SubscriptionEntity.findForUser(convertToUuid(id), userId)
-            ?: throw NotFoundException("Subscription $id not found")
+    fun deleteSubscription(subscriptionId: String, userId: String) {
+        val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
+            ?: throw NotFoundException("Subscription $subscriptionId not found")
 
         subscription.delete()
     }
 
-    fun putSubscription(id: String, request: SubscriptionUpdate, userId: String): Subscription {
-        val subscription = SubscriptionEntity.findForUser(convertToUuid(id), userId)
-            ?: throw NotFoundException("Subscription $id not found")
+    fun putSubscription(subscriptionId: String, subscriptionUpdate: SubscriptionUpdate, userId: String): Subscription {
+        val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
+            ?: throw NotFoundException("Subscription $subscriptionId not found")
 
-        if (request.name != null) {
-            subscription.name = request.name
+        if (subscriptionUpdate.name != null) {
+            subscription.name = subscriptionUpdate.name
         }
-        if (request.interval != null) {
-            subscription.interval = request.interval.name
+        if (subscriptionUpdate.interval != null) {
+            subscription.interval = subscriptionUpdate.interval.name
         }
-        if (request.dateWindow != null) {
-            subscription.dateWindow = request.dateWindow.name
+        if (subscriptionUpdate.dateWindow != null) {
+            subscription.dateWindow = subscriptionUpdate.dateWindow.name
         }
-        if (request.trigger != null) {
-            subscription.trigger = request.trigger
+        if (subscriptionUpdate.trigger != null) {
+            subscription.trigger = subscriptionUpdate.trigger
         }
-        if (request.organism != null) {
-            subscription.organism = request.organism.name
+        if (subscriptionUpdate.organism != null) {
+            subscription.organism = subscriptionUpdate.organism.name
         }
 
         return subscription.toSubscription()
