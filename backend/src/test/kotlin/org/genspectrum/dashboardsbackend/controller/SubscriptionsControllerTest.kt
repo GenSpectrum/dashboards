@@ -1,12 +1,12 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import org.genspectrum.dashboardsbackend.subscriptions.DateWindow
-import org.genspectrum.dashboardsbackend.subscriptions.EvaluationInterval
-import org.genspectrum.dashboardsbackend.subscriptions.Organism
-import org.genspectrum.dashboardsbackend.subscriptions.Subscription
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionUpdate
-import org.genspectrum.dashboardsbackend.subscriptions.Trigger.CountTrigger
+import org.genspectrum.dashboardsbackend.api.DateWindow
+import org.genspectrum.dashboardsbackend.api.EvaluationInterval
+import org.genspectrum.dashboardsbackend.api.Organism
+import org.genspectrum.dashboardsbackend.api.Subscription
+import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
+import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
+import org.genspectrum.dashboardsbackend.api.Trigger.CountTrigger
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem

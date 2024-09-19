@@ -2,10 +2,10 @@ package org.genspectrum.dashboardsbackend.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import org.genspectrum.dashboardsbackend.model.SubscriptionModel
-import org.genspectrum.dashboardsbackend.subscriptions.Subscription
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionUpdate
+import org.genspectrum.dashboardsbackend.api.Subscription
+import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
+import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
+import org.genspectrum.dashboardsbackend.model.subscription.SubscriptionModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping

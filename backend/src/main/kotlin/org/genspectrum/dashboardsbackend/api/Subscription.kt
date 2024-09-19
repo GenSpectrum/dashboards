@@ -1,12 +1,12 @@
-package org.genspectrum.dashboardsbackend.subscriptions
+package org.genspectrum.dashboardsbackend.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
-import org.genspectrum.dashboardsbackend.subscriptions.Trigger.CountTrigger
-import org.genspectrum.dashboardsbackend.subscriptions.Trigger.ProportionTrigger
+import org.genspectrum.dashboardsbackend.api.Trigger.CountTrigger
+import org.genspectrum.dashboardsbackend.api.Trigger.ProportionTrigger
 
 enum class DateWindow {
     @JsonProperty("last6Months")

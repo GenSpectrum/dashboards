@@ -2,9 +2,9 @@ package org.genspectrum.dashboardsbackend.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.genspectrum.dashboardsbackend.subscriptions.Subscription
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionUpdate
+import org.genspectrum.dashboardsbackend.api.Subscription
+import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
+import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions

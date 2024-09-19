@@ -1,10 +1,10 @@
-package org.genspectrum.dashboardsbackend.model
+package org.genspectrum.dashboardsbackend.model.subscription
 
+import org.genspectrum.dashboardsbackend.api.Subscription
+import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
+import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
-import org.genspectrum.dashboardsbackend.subscriptions.Subscription
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionRequest
-import org.genspectrum.dashboardsbackend.subscriptions.SubscriptionUpdate
 import org.jetbrains.exposed.sql.Database
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
