@@ -1,5 +1,6 @@
 ---
 import { Routing } from '../../routes/routing';
+import { organismConfig } from '../../routes/View';
 
 const currentRoute = Routing.parseUrl(Astro.url)!;
 const currentOrganism = currentRoute?.organism;
@@ -16,8 +17,8 @@ const currentOrganism = currentRoute?.organism;
             )
         }
         {
-            Routing.organisms.map((organism) => (
-                <option value={organism.organism} selected={currentOrganism === organism.organism}>
+            Object.values(organismConfig).map((organism) => (
+                <option value={organism.pathFragment} selected={currentOrganism === organism.organism}>
                     {organism.label}
                 </option>
             ))

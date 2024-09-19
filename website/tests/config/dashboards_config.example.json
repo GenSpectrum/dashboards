@@ -2,20 +2,20 @@
     "covid": {
         "lapisUrl": "https://lapis.cov-spectrum.org/open/v2"
     },
-    "flu/h5n1": {
-        "lapisUrl": "https://lapis-add-h5n1.loculus.org/h5n1"
+    "h5n1": {
+        "lapisUrl": "https://lapis.genspectrum.org/h5n1"
     },
-    "rsv-a": {
+    "rsvA": {
         "lapisUrl": "https://lapis.genspectrum.org/rsv-a"
     },
-    "rsv-b": {
+    "rsvB": {
         "lapisUrl": "https://lapis.genspectrum.org/rsv-b"
     },
     "mpox": {
         "lapisUrl": "https://lapis.genspectrum.org/mpox"
     },
-    "west-nile": {
-        "lapisUrl": "https://lapis-main.loculus.org/west-nile"
+    "westNile": {
+        "lapisUrl": "https://lapis.genspectrum.org/west-nile"
     },
     "auth": {
         "github": {
