@@ -3,7 +3,7 @@ import { MpoxView1, MpoxView3 } from './mpox.ts';
 import { WestNileView1, WestNileView3 } from './westNile.ts';
 import { RsvAView1, RsvAView3 } from './rsvA.ts';
 import { RsvBView1, RsvBView3 } from './rsvB.ts';
-import type { Organism, Route, View } from './View.ts';
+import { allOrganisms, type Organism, type Route, type View } from './View.ts';
 import { H5n1View1, H5n1View3 } from './h5n1.ts';
 
 export namespace Routing {
@@ -50,50 +50,6 @@ export namespace Routing {
         throw new Error('Unexpected route: ' + route.pathname);
     };
 
-    export const organisms: {
-        label: string;
-        organism: Organism;
-        backgroundColor: string;
-        hoverDecorationColor: string;
-    }[] = [
-        {
-            label: 'SARS-CoV-2',
-            organism: 'covid',
-            backgroundColor: 'bg-lime-200',
-            hoverDecorationColor: 'hover:decoration-lime-200',
-        },
-        {
-            label: 'RSV-A',
-            organism: 'rsv-a',
-            backgroundColor: 'bg-violet-200',
-            hoverDecorationColor: 'hover:decoration-violet-200',
-        },
-        {
-            label: 'RSV-B',
-            organism: 'rsv-b',
-            backgroundColor: 'bg-violet-200',
-            hoverDecorationColor: 'hover:decoration-violet-200',
-        },
-        {
-            label: 'Mpox',
-            organism: 'mpox',
-            backgroundColor: 'bg-pink-200',
-            hoverDecorationColor: 'hover:decoration-pink-200',
-        },
-        {
-            label: 'West Nile virus',
-            organism: 'west-nile',
-            backgroundColor: 'bg-teal-200',
-            hoverDecorationColor: 'hover:decoration-teal-200',
-        },
-        {
-            label: 'Influenza A/H5N1',
-            organism: 'flu/h5n1',
-            backgroundColor: 'bg-amber-200',
-            hoverDecorationColor: 'hover:decoration-amber-200',
-        },
-    ];
-
     export const views = groupViewsByOrganism(allViews);
 
     export const getDefaultRoute = (pathname: string): Route | undefined => {
@@ -114,14 +70,13 @@ function groupViewsByOrganism(views: readonly View<any>[]): Record<
         pathname: string;
     }[]
 > {
-    const viewMap: Record<Organism, { label: string; labelLong: string; pathname: string }[]> = {
-        'covid': [],
-        'flu/h5n1': [],
-        'mpox': [],
-        'west-nile': [],
-        'rsv-a': [],
-        'rsv-b': [],
-    };
+    const viewMap = allOrganisms.reduce(
+        (acc, organism) => ({
+            [organism]: [],
+            ...acc,
+        }),
+        {} as Record<Organism, { label: string; labelLong: string; pathname: string }[]>,
+    );
 
     for (const view of views) {
         if (viewMap[view.organism]) {

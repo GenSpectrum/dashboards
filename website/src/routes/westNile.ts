@@ -12,9 +12,10 @@ import {
     setSearchFromLapisLocation2,
     setSearchFromLapisVariantQuery1,
 } from './helpers.ts';
-import type { Route, View } from './View.ts';
+import { organismConfig, Organisms, type Route, type View } from './View.ts';
 
-const organism = 'west-nile' as const;
+const organism = Organisms.westNile as typeof Organisms.westNile;
+const pathFragment = organismConfig[organism].pathFragment;
 const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
 
 const defaultDateRange: DateRange = 'allTimes';
@@ -56,7 +57,7 @@ const toLapisFilterWithoutVariant = (route: RouteWithBaseline): SampleCollection
 };
 
 export namespace WestNileView1 {
-    const pathname = `/${organism}/single-variant`;
+    const pathname = `/${pathFragment}/single-variant`;
 
     type Route = { variantFilter: LapisVariantQuery1 } & RouteWithBaseline;
 
@@ -118,7 +119,7 @@ export namespace WestNileView1 {
 }
 
 export namespace WestNileView3 {
-    const pathname = `/${organism}/sequencing-efforts`;
+    const pathname = `/${pathFragment}/sequencing-efforts`;
 
     const parseUrl = (url: URL): RouteWithBaseline | undefined => {
         const search = url.searchParams;

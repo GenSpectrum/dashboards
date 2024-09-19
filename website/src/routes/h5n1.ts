@@ -12,9 +12,10 @@ import {
     setSearchFromLapisLocation2,
     setSearchFromLapisVariantQuery1,
 } from './helpers.ts';
-import type { Route, View } from './View.ts';
+import { organismConfig, Organisms, type Route, type View } from './View.ts';
 
-const organism = 'flu/h5n1' as const;
+const organism = Organisms.h5n1 as typeof Organisms.h5n1;
+const pathFragment = organismConfig[organism].pathFragment;
 const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
 
 const defaultDateRange: DateRange = 'last6Months';
@@ -53,7 +54,7 @@ const toLapisFilterWithoutVariant = (route: RouteWithBaseline): SampleCollection
 };
 
 export namespace H5n1View1 {
-    const pathname = `/${organism}/single-variant`;
+    const pathname = `/${pathFragment}/single-variant`;
 
     type Route = { variantFilter: LapisVariantQuery1 } & RouteWithBaseline;
 
@@ -115,7 +116,7 @@ export namespace H5n1View1 {
 }
 
 export namespace H5n1View3 {
-    const pathname = `/${organism}/sequencing-efforts`;
+    const pathname = `/${pathFragment}/sequencing-efforts`;
 
     const parseUrl = (url: URL): RouteWithBaseline | undefined => {
         const search = url.searchParams;

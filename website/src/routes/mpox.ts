@@ -12,9 +12,10 @@ import {
     setSearchFromLapisLocation2,
     setSearchFromLapisVariantQuery2,
 } from './helpers.ts';
-import type { Route, View } from './View.ts';
+import { organismConfig, Organisms, type Route, type View } from './View.ts';
 
-const organism = 'mpox' as const;
+const organism = Organisms.mpox as typeof Organisms.mpox;
+const pathFragment = organismConfig[organism].pathFragment;
 const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
 
 const defaultDateRange: DateRange = 'allTimes';
@@ -57,7 +58,7 @@ const toLapisFilterWithoutVariant = (route: RouteWithBaseline): SampleCollection
 };
 
 export namespace MpoxView1 {
-    const pathname = `/${organism}/single-variant`;
+    const pathname = `/${pathFragment}/single-variant`;
 
     type Route = { variantFilter: LapisVariantQuery2 } & RouteWithBaseline;
 
@@ -119,7 +120,7 @@ export namespace MpoxView1 {
 }
 
 export namespace MpoxView3 {
-    const pathname = `/${organism}/sequencing-efforts`;
+    const pathname = `/${pathFragment}/sequencing-efforts`;
 
     const parseUrl = (url: URL): RouteWithBaseline | undefined => {
         const search = url.searchParams;

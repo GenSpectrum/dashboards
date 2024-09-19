@@ -14,9 +14,10 @@ import {
     setSearchFromLapisMutationsQuery,
     setSearchFromString,
 } from './helpers.ts';
-import type { View } from './View.ts';
+import { organismConfig, Organisms, type View } from './View.ts';
 
-const organism = 'covid' as const;
+const organism = Organisms.covid as typeof Organisms.covid;
+const pathFragment = organismConfig[organism].pathFragment;
 const locationFields = ['region', 'country', 'division'];
 
 const defaultDateRange: DateRange = 'last6Months';
@@ -64,7 +65,7 @@ const isAdvancedVariantQuery = (variantQuery: LapisVariantQuery): variantQuery i
 };
 
 export namespace CovidView1 {
-    const pathname = `/${organism}/single-variant` as const;
+    const pathname = `/${pathFragment}/single-variant` as const;
 
     export type Route = {
         organism: typeof organism;
@@ -158,7 +159,7 @@ export namespace CovidView1 {
 }
 
 export namespace CovidView2 {
-    const pathname = `/${organism}/compare-side-by-side` as const;
+    const pathname = `/${pathFragment}/compare-side-by-side` as const;
 
     export type Route = {
         organism: typeof organism;
@@ -334,7 +335,7 @@ export namespace CovidView2 {
 }
 
 export namespace CovidView3 {
-    const pathname = `/${organism}/sequencing-efforts` as const;
+    const pathname = `/${pathFragment}/sequencing-efforts` as const;
 
     export type Route = {
         organism: typeof organism;
