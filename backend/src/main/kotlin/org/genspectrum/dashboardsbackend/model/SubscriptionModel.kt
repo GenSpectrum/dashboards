@@ -42,7 +42,6 @@ class SubscriptionModel(
             trigger = request.trigger
             organism = request.organism.name
             active = true
-            conditionsMet = false
             this.userId = userId
         }
         .toSubscription()

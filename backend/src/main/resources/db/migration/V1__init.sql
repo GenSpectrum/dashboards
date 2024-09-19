@@ -3,7 +3,6 @@ create table subscriptions_table (
     name text not null,
     interval VARCHAR(255) not null,
     active boolean not null,
-    conditions_met boolean not null,
     organism VARCHAR(255) not null,
     date_window VARCHAR(255) not null,
     trigger JSONB not null,

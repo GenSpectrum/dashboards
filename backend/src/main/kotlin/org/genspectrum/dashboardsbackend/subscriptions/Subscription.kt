@@ -103,7 +103,6 @@ interface BaseSubscription {
     "name": "Subscription name",
     "interval": "daily",
     "active": true,
-    "conditionsMet": true,
     "organism": "covid",
     "dateWindow": "last6Months",
     "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
@@ -115,7 +114,6 @@ data class Subscription(
     override val name: String,
     override val interval: EvaluationInterval,
     val active: Boolean,
-    val conditionsMet: Boolean,
     override val organism: Organism,
     override val dateWindow: DateWindow,
     override val trigger: Trigger,
