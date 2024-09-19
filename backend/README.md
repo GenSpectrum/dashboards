@@ -1,12 +1,17 @@
 # Dashboards backend
 
 ## Local setup
-You have to provide config information to the backend. This can be done by providing commandline arguments.
-The necessary properties can be found in the `dev.properties.example` file.
+
+You have to provide config information to the backend:
+* Dashboards configuration, e.g. the LAPIS instances of the organisms.
+  We have profiles available that only need to be activated via `spring.profiles.active`.
+* Database connection configuration: values need to be passed via [external properties](https://docs.spring.io/spring-boot/reference/features/external-config.html).
+  For local development, we have a `local-db` profile available. 
+  You can also check that for required properties.
 
 To run the backend locally, you can use the following command:
 ```bash
-./gradlew bootRun --args='--your-arg=your-value'
+./gradlew bootRun --args='--spring.profiles.active=local-db,dashboards-dev'
 ```
 
 Run tests:
