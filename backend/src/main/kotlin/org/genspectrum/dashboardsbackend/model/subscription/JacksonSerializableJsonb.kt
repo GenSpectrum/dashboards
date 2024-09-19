@@ -1,4 +1,4 @@
-package org.genspectrum.dashboardsbackend.model
+package org.genspectrum.dashboardsbackend.model.subscription
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

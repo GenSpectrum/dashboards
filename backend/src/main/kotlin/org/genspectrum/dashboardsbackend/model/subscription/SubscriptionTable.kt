@@ -1,7 +1,7 @@
-package org.genspectrum.dashboardsbackend.model
+package org.genspectrum.dashboardsbackend.model.subscription
 
-import org.genspectrum.dashboardsbackend.subscriptions.Subscription
-import org.genspectrum.dashboardsbackend.subscriptions.Trigger
+import org.genspectrum.dashboardsbackend.api.Subscription
+import org.genspectrum.dashboardsbackend.api.Trigger
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -22,7 +22,7 @@ object SubscriptionTable : UUIDTable(SUBSCRIPTION_TABLE) {
 
 class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<SubscriptionEntity>(SubscriptionTable) {
-        fun findForUser(id: UUID, userId: String) = SubscriptionEntity.findById(id)
+        fun findForUser(id: UUID, userId: String) = findById(id)
             ?.takeIf { it.userId == userId }
     }
 

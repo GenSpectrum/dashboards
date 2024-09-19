@@ -1,8 +1,8 @@
-package org.genspectrum.dashboardsbackend.subscriptions
+package org.genspectrum.dashboardsbackend.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.genspectrum.dashboardsbackend.subscriptions.Trigger.CountTrigger
-import org.genspectrum.dashboardsbackend.subscriptions.Trigger.ProportionTrigger
+import org.genspectrum.dashboardsbackend.api.Trigger.CountTrigger
+import org.genspectrum.dashboardsbackend.api.Trigger.ProportionTrigger
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
