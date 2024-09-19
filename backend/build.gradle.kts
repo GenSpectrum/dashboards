@@ -39,6 +39,8 @@ dependencies {
     }
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.testcontainers:postgresql:1.20.1")
+    testImplementation("org.mock-server:mockserver-netty:5.15.0")
+    testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
 }
 
 kotlin {

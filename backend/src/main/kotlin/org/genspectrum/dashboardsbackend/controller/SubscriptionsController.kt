@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
+import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResponse
 import org.genspectrum.dashboardsbackend.model.subscription.SubscriptionModel
+import org.genspectrum.dashboardsbackend.model.triggerevaluation.TriggerEvaluationModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -20,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SubscriptionsController(
-    val subscriptionModel: SubscriptionModel,
+    private val subscriptionModel: SubscriptionModel,
+    private val triggerEvaluationModel: TriggerEvaluationModel,
 ) {
 
     @GetMapping("/subscriptions/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -90,6 +93,25 @@ class SubscriptionsController(
             subscriptionId = id,
             subscriptionUpdate = subscription,
             userId = userId,
+        )
+    }
+
+    @GetMapping("/subscriptions/evaluateTrigger")
+    @Operation(
+        summary = "Evaluate the trigger of a subscription",
+        description = "Evaluates the trigger of a given subscription and returns the result.",
+    )
+    fun evaluateTrigger(
+        @IdParameter @RequestParam id: String,
+        @UserIdParameter @RequestParam userId: String,
+    ): TriggerEvaluationResponse {
+        val triggerEvaluationResult = triggerEvaluationModel.evaluateSubscriptionTrigger(
+            subscriptionId = id,
+            userId = userId,
+        )
+
+        return TriggerEvaluationResponse(
+            result = triggerEvaluationResult,
         )
     }
 }
