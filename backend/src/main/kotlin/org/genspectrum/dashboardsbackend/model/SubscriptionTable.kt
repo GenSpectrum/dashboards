@@ -14,7 +14,6 @@ object SubscriptionTable : UUIDTable(SUBSCRIPTION_TABLE) {
     val name = text("name")
     val interval = varchar("interval", 255)
     val active = bool("active")
-    val conditionsMet = bool("conditions_met")
     val organism = varchar("organism", 255)
     val dateWindow = varchar("date_window", 255)
     val trigger = jacksonSerializableJsonb<Trigger>("trigger")
@@ -30,7 +29,6 @@ class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by SubscriptionTable.name
     var interval by SubscriptionTable.interval
     var active by SubscriptionTable.active
-    var conditionsMet by SubscriptionTable.conditionsMet
     var organism by SubscriptionTable.organism
     var dateWindow by SubscriptionTable.dateWindow
     var trigger by SubscriptionTable.trigger
@@ -41,7 +39,6 @@ class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         name = name,
         interval = enumValueOf(interval),
         active = active,
-        conditionsMet = conditionsMet,
         organism = enumValueOf(organism),
         dateWindow = enumValueOf(dateWindow),
         trigger = trigger,

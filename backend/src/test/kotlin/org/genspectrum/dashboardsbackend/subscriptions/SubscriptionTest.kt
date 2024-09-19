@@ -20,7 +20,6 @@ class SubscriptionTest {
             id = "someId",
             name = "Test Subscription",
             active = true,
-            conditionsMet = true,
             organism = Organism.COVID,
             interval = EvaluationInterval.WEEKLY,
             dateWindow = DateWindow.LAST_6_MONTHS,
@@ -35,7 +34,6 @@ class SubscriptionTest {
                 "name": "Test Subscription",
                 "interval": "weekly",
                 "active": true,
-                "conditionsMet": true,
                 "organism": "covid",
                 "dateWindow": "last6Months",
                 "trigger": {
