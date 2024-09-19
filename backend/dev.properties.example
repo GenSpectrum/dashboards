@@ -1,3 +1,0 @@
-spring.datasource.url=jdbc:postgresql://localhost:9022/subscriptions
-spring.datasource.username=postgres
-spring.datasource.password=unsecure

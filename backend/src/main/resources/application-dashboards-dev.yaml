@@ -1,0 +1,13 @@
+dashboards:
+  covid:
+    lapisUrl: "https://lapis.cov-spectrum.org/open/v2"
+  h5n1:
+    lapisUrl: "https://lapis.genspectrum.org/h5n1"
+  mpox:
+    lapisUrl: "https://lapis.genspectrum.org/mpox"
+  westNile:
+    lapisUrl: "https://lapis-main.loculus.org/west-nile"
+  rsvA:
+    lapisUrl: "https://lapis.genspectrum.org/rsv-a"
+  rsvB:
+    lapisUrl: "https://lapis.genspectrum.org/rsv-b"

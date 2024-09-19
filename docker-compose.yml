@@ -19,7 +19,8 @@ services:
       - --spring.datasource.url=jdbc:postgresql://database:5432/subscriptions
       - --spring.datasource.username=postgres
       - --spring.datasource.password=unsecure
-        
+      - --spring.profiles.active=dashboards-dev
+
   database:
     image: postgres:16
     environment:

@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:9022/subscriptions"
+    username: "postgres"
+    password: "unsecure"
