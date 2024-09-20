@@ -6,8 +6,14 @@ import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.Matchers.instanceOf
+import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockserver.client.MockServerClient
@@ -43,7 +49,7 @@ class TriggerEvaluatorTest(
             .`when`(
                 requestingAggregatedDataWith(
                     organism = organism,
-                    body = """{"country":"Germany","division":"Berlin"}""".trimIndent(),
+                    body = """{"country":"Germany","division":"Berlin"}""",
                 ),
             )
             .respond(withSuccessResponse(count = 101))
@@ -62,6 +68,80 @@ class TriggerEvaluatorTest(
         val result = underTest.evaluate(subscription)
 
         assertThat(result, `is`(TriggerEvaluationResult.ConditionMet))
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOrganisms")
+    fun `GIVEN lapis returns count lower or equal than count trigger threshold THEN returns condition not met`(
+        organism: Organism,
+    ) {
+        mockServerClient
+            .`when`(
+                requestingAggregatedDataWith(
+                    organism = organism,
+                    body = """{"country":"Germany","division":"Berlin"}""",
+                ),
+            )
+            .respond(withSuccessResponse(count = 100))
+
+        val subscription = makeSubscription(
+            organism = organism,
+            trigger = Trigger.CountTrigger(
+                count = 100,
+                filter = mapOf(
+                    "country" to "Germany",
+                    "division" to "Berlin",
+                ),
+            ),
+        )
+
+        val result = underTest.evaluate(subscription)
+
+        assertThat(result, `is`(TriggerEvaluationResult.ConditionNotMet))
+    }
+
+    @Test
+    fun `GIVEN lapis returns empty data array THEN returns evaluation error`() {
+        mockServerClient
+            .`when`(
+                requestingAggregatedDataWith(
+                    organism = Organism.WEST_NILE,
+                    body = "{}",
+                ),
+            )
+            .respond(
+                response()
+                    .withStatusCode(200)
+                    .withBody(
+                        """
+                            {
+                                "data": [],
+                                "info": {
+                                    "dataVersion": "a data version"
+                                }
+                            }
+                        """.trimIndent(),
+                    ),
+            )
+
+        val subscription = makeSubscription(
+            organism = Organism.WEST_NILE,
+            trigger = Trigger.CountTrigger(
+                count = 100,
+                filter = emptyMap(),
+            ),
+        )
+
+        val result = underTest.evaluate(subscription)
+
+        assertThat(result, isEvaluationErrorWithMessage(containsString("empty data")))
+    }
+
+    private fun isEvaluationErrorWithMessage(messageMatcher: Matcher<String>): Matcher<TriggerEvaluationResult> {
+        return allOf(
+            instanceOf(TriggerEvaluationResult.EvaluationError::class.java),
+            hasProperty("message", messageMatcher),
+        )
     }
 
     private fun requestingAggregatedDataWith(organism: Organism, body: String): HttpRequest? = request()
