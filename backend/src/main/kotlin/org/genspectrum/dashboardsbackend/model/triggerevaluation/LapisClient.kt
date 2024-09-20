@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
+import org.genspectrum.dashboardsbackend.log
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -70,7 +71,8 @@ class LapisClient(
             )
         } catch (exception: Exception) {
             val message = "Could not connect to LAPIS: " + exception::class.toString() + " " + exception.message
-            throw RuntimeException(message, exception)
+            log.error { message }
+            return LapisNotReachableError(message)
         }
 
         if (response.statusCode() != HttpStatus.OK.value()) {
@@ -104,3 +106,7 @@ data class LapisError(
 data class LapisInfo(
     val dataVersion: String?,
 )
+
+data class LapisNotReachableError(
+    val message: String,
+) : LapisResponse

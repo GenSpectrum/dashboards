@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockserver.client.MockServerClient
+import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse
@@ -135,6 +136,25 @@ class TriggerEvaluatorTest(
         val result = underTest.evaluate(subscription)
 
         assertThat(result, isEvaluationErrorWithMessage(containsString("empty data")))
+    }
+
+    @Test
+    fun `WHEN lapis does not respond THEN returns evaluation error`() {
+        mockServerClient
+            .`when`(request())
+            .error(HttpError.error().withDropConnection(true))
+
+        val subscription = makeSubscription(
+            organism = Organism.WEST_NILE,
+            trigger = Trigger.CountTrigger(
+                count = 100,
+                filter = emptyMap(),
+            ),
+        )
+
+        val result = underTest.evaluate(subscription)
+
+        assertThat(result, isEvaluationErrorWithMessage(containsString("Could not connect to LAPIS")))
     }
 
     private fun isEvaluationErrorWithMessage(messageMatcher: Matcher<String>): Matcher<TriggerEvaluationResult> {
