@@ -23,12 +23,48 @@ class TriggerEvaluator(
 
         val dateFilter = computeDateFilter(subscription)
 
-        val lapisRequest = when (subscription.trigger) {
-            is Trigger.CountTrigger -> subscription.trigger.filter + dateFilter
+        val computation = when (subscription.trigger) {
+            is Trigger.CountTrigger -> CountComputation(
+                subscription = subscription,
+                lapisClient = lapisClient,
+                lapisFilter = subscription.trigger.filter + dateFilter,
+                threshold = subscription.trigger.count,
+            )
+
             is Trigger.ProportionTrigger -> TODO("proportion triggers are not implemented yet - #81")
         }
 
-        val lapisResponse = lapisClient.aggregated(lapisRequest)
+        return computation.evaluate()
+    }
+
+    private fun computeDateFilter(subscription: Subscription): Map<String, String> {
+        val currentDate = dateProvider.getCurrentDate()
+
+        val lowerBoundDate = when (subscription.dateWindow) {
+            DateWindow.LAST_6_MONTHS -> currentDate.minus(6, DateTimeUnit.MONTH)
+        }
+
+        val dateField = dashboardsConfig.getOrganismConfig(subscription.organism).lapis.mainDateField
+
+        return mapOf(
+            "${dateField}From" to "$lowerBoundDate",
+            "${dateField}To" to "$currentDate",
+        )
+    }
+}
+
+private interface TriggerComputation {
+    fun evaluate(): TriggerEvaluationResult
+}
+
+private class CountComputation(
+    private val subscription: Subscription,
+    private val lapisClient: LapisClient,
+    private val lapisFilter: Map<String, String>,
+    private val threshold: Int,
+) : TriggerComputation {
+    override fun evaluate(): TriggerEvaluationResult {
+        val lapisResponse = lapisClient.aggregated(lapisFilter)
 
         return when (lapisResponse) {
             is LapisAggregatedResponse -> {
@@ -42,7 +78,6 @@ class TriggerEvaluator(
                     )
                 }
                 val evaluatedValue = lapisResponse.data[0].count
-                val threshold = subscription.trigger.count
                 when (evaluatedValue > threshold) {
                     true -> TriggerEvaluationResult.ConditionMet(
                         evaluatedValue = evaluatedValue,
@@ -68,20 +103,5 @@ class TriggerEvaluator(
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
             )
         }
-    }
-
-    private fun computeDateFilter(subscription: Subscription): Map<String, String> {
-        val currentDate = dateProvider.getCurrentDate()
-
-        val lowerBoundDate = when (subscription.dateWindow) {
-            DateWindow.LAST_6_MONTHS -> currentDate.minus(6, DateTimeUnit.MONTH)
-        }
-
-        val dateField = dashboardsConfig.getOrganismConfig(subscription.organism).lapis.mainDateField
-
-        return mapOf(
-            "${dateField}From" to "$lowerBoundDate",
-            "${dateField}To" to "$currentDate",
-        )
     }
 }
