@@ -111,7 +111,7 @@ data class LapisError(
 ) : LapisResponse
 
 data class LapisInfo(
-    val dataVersion: String?,
+    val dataVersion: String? = null,
 )
 
 data class LapisNotReachableError(

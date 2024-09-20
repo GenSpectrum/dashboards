@@ -63,6 +63,12 @@ class SubscriptionsClient(
                 .andExpect(status().isOk),
         )
 
+    fun evaluateTriggerRaw(userId: String, subscriptionId: String) = mockMvc.perform(
+        get("/subscriptions/evaluateTrigger")
+            .queryParam("userId", userId)
+            .queryParam("id", subscriptionId),
+    )
+
     private inline fun <reified T> deserializeJsonResponse(resultActions: ResultActions): T {
         val content =
             resultActions
