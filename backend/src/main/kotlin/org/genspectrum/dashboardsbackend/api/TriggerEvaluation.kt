@@ -16,7 +16,11 @@ sealed interface TriggerEvaluationResult {
         }
     }
 
-    data object ConditionMet : TriggerEvaluationResult {
+    data class ConditionMet(
+        val evaluatedValue: Int,
+        val threshold: Int,
+        val lapisDataVersion: String?,
+    ) : TriggerEvaluationResult {
         val type = ConditionMetType.ConditionMet
 
         enum class ConditionMetType {
@@ -24,7 +28,11 @@ sealed interface TriggerEvaluationResult {
         }
     }
 
-    data object ConditionNotMet : TriggerEvaluationResult {
+    data class ConditionNotMet(
+        val evaluatedValue: Int,
+        val threshold: Int,
+        val lapisDataVersion: String?,
+    ) : TriggerEvaluationResult {
         val type = ConditionNotMetType.ConditionNotMet
 
         enum class ConditionNotMetType {

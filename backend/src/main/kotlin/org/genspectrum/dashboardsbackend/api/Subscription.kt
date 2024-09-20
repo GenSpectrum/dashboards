@@ -105,7 +105,7 @@ interface BaseSubscription {
     "active": true,
     "organism": "covid",
     "dateWindow": "last6Months",
-    "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
+    "trigger": {"type": "count", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
 }   
 """,
 )
@@ -127,7 +127,7 @@ data class Subscription(
     "interval": "daily",
     "organism": "covid",
     "dateWindow": "last6Months",
-    "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
+    "trigger": {"type": "count", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
 }   
 """,
 )
@@ -147,7 +147,7 @@ data class SubscriptionRequest(
     "interval": "daily",
     "organism": "covid",
     "dateWindow": "last6Months",
-    "trigger": {"type": "countTrigger", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
+    "trigger": {"type": "count", "count": 100, "filter": {"country": "Germany", "division": "Berlin"}}
 }   
 """,
 )

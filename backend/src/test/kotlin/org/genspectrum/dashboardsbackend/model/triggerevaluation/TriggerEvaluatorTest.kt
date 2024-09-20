@@ -97,7 +97,16 @@ class TriggerEvaluatorTest(
 
         val result = underTest.evaluate(subscription)
 
-        assertThat(result, `is`(TriggerEvaluationResult.ConditionMet))
+        assertThat(
+            result,
+            `is`(
+                TriggerEvaluationResult.ConditionMet(
+                    evaluatedValue = 101,
+                    threshold = 100,
+                    lapisDataVersion = "a data version",
+                ),
+            ),
+        )
     }
 
     @ParameterizedTest
@@ -134,7 +143,16 @@ class TriggerEvaluatorTest(
 
         val result = underTest.evaluate(subscription)
 
-        assertThat(result, `is`(TriggerEvaluationResult.ConditionNotMet))
+        assertThat(
+            result,
+            `is`(
+                TriggerEvaluationResult.ConditionNotMet(
+                    evaluatedValue = 100,
+                    threshold = 100,
+                    lapisDataVersion = "a data version",
+                ),
+            ),
+        )
     }
 
     @Test
