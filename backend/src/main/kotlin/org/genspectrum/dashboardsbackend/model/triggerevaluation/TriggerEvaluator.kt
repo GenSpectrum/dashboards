@@ -41,9 +41,20 @@ class TriggerEvaluator(
                         statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     )
                 }
-                when (lapisResponse.data[0].count > subscription.trigger.count) {
-                    true -> TriggerEvaluationResult.ConditionMet
-                    false -> TriggerEvaluationResult.ConditionNotMet
+                val evaluatedValue = lapisResponse.data[0].count
+                val threshold = subscription.trigger.count
+                when (evaluatedValue > threshold) {
+                    true -> TriggerEvaluationResult.ConditionMet(
+                        evaluatedValue = evaluatedValue,
+                        threshold = threshold,
+                        lapisDataVersion = lapisResponse.info.dataVersion,
+                    )
+
+                    false -> TriggerEvaluationResult.ConditionNotMet(
+                        evaluatedValue = evaluatedValue,
+                        threshold = threshold,
+                        lapisDataVersion = lapisResponse.info.dataVersion,
+                    )
                 }
             }
 
