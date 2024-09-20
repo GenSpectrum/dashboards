@@ -78,8 +78,8 @@ sealed interface Trigger {
     @Schema(description = "A trigger that is triggered when a certain count is reached")
     data class ProportionTrigger @JsonCreator constructor(
         val proportion: Double,
-        val baselineFilter: LapisFilter,
-        val variantFilter: LapisFilter,
+        val numeratorFilter: LapisFilter,
+        val denominatorFilter: LapisFilter,
     ) : Trigger {
         val type: ProportionTriggerType = ProportionTriggerType.PROPORTION
     }
