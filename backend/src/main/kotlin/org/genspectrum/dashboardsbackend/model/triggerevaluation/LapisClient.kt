@@ -2,6 +2,7 @@ package org.genspectrum.dashboardsbackend.model.triggerevaluation
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.genspectrum.dashboardsbackend.api.LapisFilter
 import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.log
@@ -40,7 +41,7 @@ class LapisClient(
     private val aggregatedUrl = URI("$baseUrl/sample/aggregated")
     private val httpClient = HttpClient.newHttpClient()
 
-    fun aggregated(filters: Map<String, String>): LapisResponse {
+    fun aggregated(filters: LapisFilter): LapisResponse {
         log.info { "Calling LAPIS $aggregatedUrl with filters $filters" }
 
         val response = try {

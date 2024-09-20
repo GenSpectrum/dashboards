@@ -17,8 +17,8 @@ sealed interface TriggerEvaluationResult {
     }
 
     data class ConditionMet(
-        val evaluatedValue: Int,
-        val threshold: Int,
+        val evaluatedValue: Number,
+        val threshold: Number,
         val lapisDataVersion: String?,
     ) : TriggerEvaluationResult {
         val type = ConditionMetType.ConditionMet
@@ -29,8 +29,8 @@ sealed interface TriggerEvaluationResult {
     }
 
     data class ConditionNotMet(
-        val evaluatedValue: Int,
-        val threshold: Int,
+        val evaluatedValue: Number,
+        val threshold: Number,
         val lapisDataVersion: String?,
     ) : TriggerEvaluationResult {
         val type = ConditionNotMetType.ConditionNotMet

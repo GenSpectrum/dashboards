@@ -31,7 +31,13 @@ class TriggerEvaluator(
                 threshold = subscription.trigger.count,
             )
 
-            is Trigger.ProportionTrigger -> TODO("proportion triggers are not implemented yet - #81")
+            is Trigger.ProportionTrigger -> ProportionComputation(
+                subscription = subscription,
+                lapisClient = lapisClient,
+                numeratorFilter = subscription.trigger.numeratorFilter + dateFilter,
+                denominatorFilter = subscription.trigger.denominatorFilter + dateFilter,
+                threshold = subscription.trigger.proportion,
+            )
         }
 
         return computation.evaluate()
@@ -101,6 +107,95 @@ private class CountComputation(
             is LapisNotReachableError -> TriggerEvaluationResult.EvaluationError(
                 message = lapisResponse.message,
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            )
+        }
+    }
+}
+
+private class ProportionComputation(
+    private val subscription: Subscription,
+    private val lapisClient: LapisClient,
+    private val numeratorFilter: Map<String, String>,
+    private val denominatorFilter: Map<String, String>,
+    private val threshold: Double,
+) : TriggerComputation {
+    override fun evaluate(): TriggerEvaluationResult {
+        val numeratorResponse = lapisClient.aggregated(numeratorFilter)
+        val denominatorResponse = lapisClient.aggregated(denominatorFilter)
+
+        val numeratorCount = when (numeratorResponse) {
+            is LapisAggregatedResponse -> {
+                if (numeratorResponse.data.isEmpty()) {
+                    log.error {
+                        "No data in numerator response $numeratorResponse for subscription $subscription. " +
+                            "This should never happen."
+                    }
+                    return TriggerEvaluationResult.EvaluationError(
+                        message = "No data in numerator response",
+                        statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    )
+                }
+                numeratorResponse.data[0].count
+            }
+
+            is LapisError -> return TriggerEvaluationResult.EvaluationError(
+                message = numeratorResponse.error.detail ?: "Unknown error",
+                statusCode = numeratorResponse.error.status,
+            )
+
+            is LapisNotReachableError -> return TriggerEvaluationResult.EvaluationError(
+                message = numeratorResponse.message,
+                statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            )
+        }
+
+        val denominatorCount = when (denominatorResponse) {
+            is LapisAggregatedResponse -> {
+                if (denominatorResponse.data.isEmpty()) {
+                    log.error {
+                        "No data in denominator response $denominatorResponse for subscription $subscription. " +
+                            "This should never happen."
+                    }
+                    return TriggerEvaluationResult.EvaluationError(
+                        message = "No data in denominator response",
+                        statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    )
+                }
+                denominatorResponse.data[0].count
+            }
+
+            is LapisError -> return TriggerEvaluationResult.EvaluationError(
+                message = denominatorResponse.error.detail ?: "Unknown error",
+                statusCode = denominatorResponse.error.status,
+            )
+
+            is LapisNotReachableError -> return TriggerEvaluationResult.EvaluationError(
+                message = denominatorResponse.message,
+                statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            )
+        }
+
+        if (denominatorCount == 0 && numeratorCount == 0) {
+            return TriggerEvaluationResult.ConditionMet(
+                evaluatedValue = 0,
+                threshold = threshold,
+                lapisDataVersion = numeratorResponse.info.dataVersion,
+            )
+        }
+
+        val evaluatedValue = numeratorCount.toDouble() / denominatorCount
+
+        return when (evaluatedValue > threshold) {
+            true -> TriggerEvaluationResult.ConditionMet(
+                evaluatedValue = evaluatedValue,
+                threshold = threshold,
+                lapisDataVersion = numeratorResponse.info.dataVersion,
+            )
+
+            false -> TriggerEvaluationResult.ConditionNotMet(
+                evaluatedValue = evaluatedValue,
+                threshold = threshold,
+                lapisDataVersion = numeratorResponse.info.dataVersion,
             )
         }
     }

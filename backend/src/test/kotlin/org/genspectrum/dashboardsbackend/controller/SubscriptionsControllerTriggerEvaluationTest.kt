@@ -3,6 +3,7 @@ package org.genspectrum.dashboardsbackend.controller
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
+import org.genspectrum.dashboardsbackend.api.LapisFilter
 import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.model.triggerevaluation.AggregatedData
@@ -39,7 +40,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
     )
 
     @Test
-    fun `GIVEN lapis returns count greater than threshold WHEN evaluating trigger THEN returns condition met`() {
+    fun `GIVEN lapis returns count greater than threshold WHEN evaluating count trigger THEN returns condition met`() {
         val userId = getNewUserId()
 
         val createdSubscription = subscriptionsClient.postSubscription(
@@ -47,7 +48,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
             userId = userId,
         )
 
-        mockLapisResponse(Organism.Covid, LapisAggregatedResponse(listOf(AggregatedData(40)), LapisInfo()))
+        mockLapisResponse(Organism.Covid, aggregatedResponseWithCount(40))
 
         subscriptionsClient
             .evaluateTriggerRaw(
@@ -62,7 +63,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
     }
 
     @Test
-    fun `GIVEN lapis returns count less than threshold WHEN evaluating trigger THEN returns condition not met`() {
+    fun `GIVEN lapis returns count less than threshold WHEN evaluating count trigger THEN returns condition not met`() {
         val userId = getNewUserId()
 
         val createdSubscription = subscriptionsClient.postSubscription(
@@ -70,7 +71,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
             userId = userId,
         )
 
-        mockLapisResponse(Organism.Covid, LapisAggregatedResponse(listOf(AggregatedData(20)), LapisInfo()))
+        mockLapisResponse(Organism.Covid, aggregatedResponseWithCount(20))
 
         subscriptionsClient
             .evaluateTriggerRaw(
@@ -85,7 +86,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
     }
 
     @Test
-    fun `GIVEN lapis returns error WHEN evaluating trigger THEN returns evaluation error`() {
+    fun `GIVEN lapis returns error WHEN evaluating count trigger THEN returns evaluation error`() {
         val userId = getNewUserId()
 
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
@@ -110,9 +111,67 @@ class SubscriptionsControllerTriggerEvaluationTest(
             .andExpect(jsonPath("\$.result.message").value("dummy LAPIS error"))
     }
 
+    @Test
+    fun `GIVEN lapis returns proportion below threshold WHEN evaluating proportion trigger THEN condition is met`() {
+        val userId = getNewUserId()
+        val createdSubscription = subscriptionsClient.postSubscription(
+            dummySubscriptionRequest.copy(
+                trigger = Trigger.ProportionTrigger(
+                    proportion = 0.1,
+                    numeratorFilter = mapOf("numeratorFilterKey" to "value1"),
+                    denominatorFilter = mapOf("denominatorFilterKey" to "value2"),
+                ),
+            ),
+            userId,
+        )
+
+        mockLapisResponse(
+            organism = Organism.Covid,
+            expectedCalls = listOf(
+                expectNumeratorRequest() to aggregatedResponseWithCount(101),
+                expectDenominatorRequest() to aggregatedResponseWithCount(1_000),
+            ),
+        )
+
+        subscriptionsClient
+            .evaluateTriggerRaw(
+                userId = userId,
+                subscriptionId = createdSubscription.id,
+            )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.result.type").value("ConditionMet"))
+            .andExpect(jsonPath("\$.result.evaluatedValue").value(0.101))
+            .andExpect(jsonPath("\$.result.threshold").value(0.1))
+    }
+
+    private fun aggregatedResponseWithCount(count: Int): LapisAggregatedResponse = LapisAggregatedResponse(
+        listOf(
+            AggregatedData(
+                count,
+            ),
+        ),
+        LapisInfo(),
+    )
+
+    private fun expectNumeratorRequest(): (LapisFilter) -> Boolean = { it["numeratorFilterKey"] == "value1" }
+
+    private fun expectDenominatorRequest(): (LapisFilter) -> Boolean = { it["denominatorFilterKey"] == "value2" }
+
     fun mockLapisResponse(organism: Organism, lapisResponse: LapisResponse) {
+        mockLapisResponse(organism, listOf({ _: LapisFilter -> true } to lapisResponse))
+    }
+
+    fun mockLapisResponse(organism: Organism, expectedCalls: List<Pair<(LapisFilter) -> Boolean, LapisResponse>>) {
         val lapisClientMock = mockk<LapisClient>()
-        every { lapisClientMock.aggregated(any()) }.returns(lapisResponse)
+        every { lapisClientMock.aggregated(any()) } answers {
+            for ((lapisFilterMatcher, lapisResponse) in expectedCalls) {
+                if (lapisFilterMatcher(firstArg())) {
+                    return@answers lapisResponse
+                }
+            }
+            throw RuntimeException("Unexpected call to LAPIS with filter $fieldValue")
+        }
 
         every { lapisClientProviderMock.provide(organism) }.returns(lapisClientMock)
     }

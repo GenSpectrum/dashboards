@@ -77,13 +77,13 @@ class SubscriptionTest {
     fun `Proportion trigger is serialized correctly to JSON`() {
         val underTest = ProportionTrigger(
             proportion = 0.75,
-            baselineFilter = mapOf(
-                "someBaselineFilter" to "value1",
-                "someOtherBaselineFilter" to "value2",
+            numeratorFilter = mapOf(
+                "numeratorFilter1" to "value1",
+                "numeratorFilter2" to "value2",
             ),
-            variantFilter = mapOf(
-                "someFilter" to "value1",
-                "someOtherFilter" to "value2",
+            denominatorFilter = mapOf(
+                "denominatorFilter1" to "value1",
+                "denominatorFilter2" to "value2",
             ),
         )
 
@@ -93,13 +93,13 @@ class SubscriptionTest {
             {
                 "type": "proportion",
                 "proportion": 0.75,
-                "baselineFilter": {
-                    "someBaselineFilter": "value1",
-                    "someOtherBaselineFilter": "value2"
+                "numeratorFilter": {
+                    "numeratorFilter1": "value1",
+                    "numeratorFilter2": "value2"
                 },
-                "variantFilter": {
-                    "someFilter": "value1",
-                    "someOtherFilter": "value2"
+                "denominatorFilter": {
+                    "denominatorFilter1": "value1",
+                    "denominatorFilter2": "value2"
                 }
             }
         """.trimIndent()
