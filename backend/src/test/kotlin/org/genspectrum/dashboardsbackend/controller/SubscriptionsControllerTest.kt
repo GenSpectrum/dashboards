@@ -38,11 +38,15 @@ val dummySubscriptionRequest = SubscriptionRequest(
     organism = Organism.COVID,
 )
 
+fun getNewUserId(): String {
+    return UUID.randomUUID().toString()
+}
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(SubscriptionsClient::class)
 class SubscriptionsControllerTest(
-    @Autowired val subscriptionsClient: SubscriptionsClient,
+    @Autowired private val subscriptionsClient: SubscriptionsClient,
 ) {
     @Test
     fun `GIVEN I created a subscription WHEN getting subscriptions THEN contains created subscription`() {
@@ -238,9 +242,5 @@ class SubscriptionsControllerTest(
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("\$.detail").value("Subscription 00000000-0000-0000-0000-000000000000 not found"))
-    }
-
-    private fun getNewUserId(): String {
-        return UUID.randomUUID().toString()
     }
 }
