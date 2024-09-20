@@ -1,11 +1,15 @@
 package org.genspectrum.dashboardsbackend.model.triggerevaluation
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
+import kotlinx.datetime.LocalDate
 import org.genspectrum.dashboardsbackend.api.DateWindow
 import org.genspectrum.dashboardsbackend.api.EvaluationInterval
 import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
+import org.genspectrum.dashboardsbackend.util.DateProvider
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
@@ -13,6 +17,7 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.hasProperty
 import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -44,6 +49,9 @@ class TriggerEvaluatorTest(
 ) {
     private lateinit var mockServerClient: MockServerClient
 
+    @MockkBean
+    private lateinit var dateProviderMock: DateProvider
+
     val someSubscription = makeSubscription(
         organism = Organism.WEST_NILE,
         trigger = Trigger.CountTrigger(
@@ -52,6 +60,11 @@ class TriggerEvaluatorTest(
         ),
     )
 
+    @BeforeEach
+    fun mockCurrentDate() {
+        every { dateProviderMock.getCurrentDate() } returns LocalDate(2021, 3, 15)
+    }
+
     @ParameterizedTest
     @MethodSource("getOrganisms")
     fun `GIVEN lapis returns count above count trigger threshold THEN returns condition met`(organism: Organism) {
@@ -59,7 +72,14 @@ class TriggerEvaluatorTest(
             .`when`(
                 requestingAggregatedDataWith(
                     organism = organism,
-                    body = """{"country":"Germany","division":"Berlin"}""",
+                    body = """
+                        {
+                            "country": "Germany",
+                            "division": "Berlin",
+                            "${organism.name.lowercase()}_dateFrom": "2020-09-15",
+                            "${organism.name.lowercase()}_dateTo": "2021-03-15"
+                        }
+                    """.replace("\\s".toRegex(), ""),
                 ),
             )
             .respond(withSuccessResponse(count = 101))
@@ -89,7 +109,14 @@ class TriggerEvaluatorTest(
             .`when`(
                 requestingAggregatedDataWith(
                     organism = organism,
-                    body = """{"country":"Germany","division":"Berlin"}""",
+                    body = """
+                        {
+                            "country": "Germany",
+                            "division": "Berlin",
+                            "${organism.name.lowercase()}_dateFrom": "2020-09-15",
+                            "${organism.name.lowercase()}_dateTo": "2021-03-15"
+                        }
+                    """.replace("\\s".toRegex(), ""),
                 ),
             )
             .respond(withSuccessResponse(count = 100))
@@ -113,12 +140,7 @@ class TriggerEvaluatorTest(
     @Test
     fun `GIVEN lapis returns empty data array THEN returns evaluation error`() {
         mockServerClient
-            .`when`(
-                requestingAggregatedDataWith(
-                    organism = Organism.WEST_NILE,
-                    body = "{}",
-                ),
-            )
+            .`when`(request())
             .respond(
                 response()
                     .withStatusCode(200)

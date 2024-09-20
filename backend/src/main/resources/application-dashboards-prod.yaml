@@ -1,13 +1,19 @@
 dashboards:
   covid:
     lapisUrl: "https://lapis.cov-spectrum.org/open/v2"
+    lapisMainDateField: "date"
   h5n1:
     lapisUrl: "https://lapis.genspectrum.org/h5n1"
+    lapisMainDateField: "sample_collection_date"
   mpox:
     lapisUrl: "https://lapis.genspectrum.org/mpox"
+    lapisMainDateField: "sample_collection_date"
   westNile:
     lapisUrl: "https://lapis-main.loculus.org/west-nile"
+    lapisMainDateField: "sample_collection_date"
   rsvA:
     lapisUrl: "https://lapis.genspectrum.org/rsv-a"
+    lapisMainDateField: "sample_collection_date"
   rsvB:
     lapisUrl: "https://lapis.genspectrum.org/rsv-b"
+    lapisMainDateField: "sample_collection_date"

@@ -32,6 +32,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.4")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.54.0")
     implementation("org.jetbrains.exposed:exposed-json:0.54.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

@@ -8,13 +8,19 @@ spring:
 dashboards:
   covid:
     lapisUrl: "https://covid.lapis.dummy"
+    lapisMainDateField: "covid_date"
   h5n1:
     lapisUrl: "https://h5n1.lapis.dummy"
+    lapisMainDateField: "h5n1_date"
   mpox:
     lapisUrl: "https://mpox.lapis.dummy"
+    lapisMainDateField: "mpox_date"
   westNile:
     lapisUrl: "https://westNile.lapis.dummy"
+    lapisMainDateField: "west_nile_date"
   rsvA:
     lapisUrl: "https://rsvA.lapis.dummy"
+    lapisMainDateField: "rsv_a_date"
   rsvB:
     lapisUrl: "https://rsvB.lapis.dummy"
+    lapisMainDateField: "rsv_b_date"

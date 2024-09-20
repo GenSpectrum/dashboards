@@ -22,32 +22,12 @@ class LapisClientProvider(
     dashboardsConfig: DashboardsConfig,
     objectMapper: ObjectMapper,
 ) {
-    private val clients = mapOf(
-        Organism.COVID to LapisClient(
-            baseUrl = dashboardsConfig.covid.lapisUrl,
+    private val clients = Organism.entries.associateWith {
+        LapisClient(
+            baseUrl = dashboardsConfig.getOrganismConfig(it).lapisUrl,
             objectMapper = objectMapper,
-        ),
-        Organism.H5N1 to LapisClient(
-            baseUrl = dashboardsConfig.h5n1.lapisUrl,
-            objectMapper = objectMapper,
-        ),
-        Organism.MPOX to LapisClient(
-            baseUrl = dashboardsConfig.mpox.lapisUrl,
-            objectMapper = objectMapper,
-        ),
-        Organism.WEST_NILE to LapisClient(
-            baseUrl = dashboardsConfig.westNile.lapisUrl,
-            objectMapper = objectMapper,
-        ),
-        Organism.RSV_A to LapisClient(
-            baseUrl = dashboardsConfig.rsvA.lapisUrl,
-            objectMapper = objectMapper,
-        ),
-        Organism.RSV_B to LapisClient(
-            baseUrl = dashboardsConfig.rsvB.lapisUrl,
-            objectMapper = objectMapper,
-        ),
-    )
+        )
+    }
 
     fun provide(organism: Organism) = clients[organism]
         ?: throw IllegalArgumentException("No LAPIS client for organism $organism registered")
