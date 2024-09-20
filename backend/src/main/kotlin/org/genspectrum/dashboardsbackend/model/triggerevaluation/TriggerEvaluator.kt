@@ -40,7 +40,10 @@ class TriggerEvaluator(
                 }
             }
 
-            is LapisError -> TODO()
+            is LapisError -> TriggerEvaluationResult.EvaluationError(
+                message = lapisResponse.error.detail ?: "Unknown error",
+                statusCode = lapisResponse.error.status,
+            )
             is LapisNotReachableError -> TriggerEvaluationResult.EvaluationError(
                 message = lapisResponse.message,
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),

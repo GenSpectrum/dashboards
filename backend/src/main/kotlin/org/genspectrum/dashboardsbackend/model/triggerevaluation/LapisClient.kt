@@ -61,6 +61,8 @@ class LapisClient(
     private val httpClient = HttpClient.newHttpClient()
 
     fun aggregated(filters: Map<String, String>): LapisResponse {
+        log.info { "Calling LAPIS $aggregatedUrl with filters $filters" }
+
         val response = try {
             httpClient.send(
                 HttpRequest.newBuilder(aggregatedUrl)
@@ -75,15 +77,40 @@ class LapisClient(
             return LapisNotReachableError(message)
         }
 
+        log.info { "Response from LAPIS: ${response.statusCode()}" }
+
         if (response.statusCode() != HttpStatus.OK.value()) {
             return handleError(response)
         }
 
-        return objectMapper.readValue<LapisAggregatedResponse>(response.body())
+        try {
+            return objectMapper.readValue<LapisAggregatedResponse>(response.body())
+        } catch (e: Exception) {
+            throw RuntimeException(
+                "Failed to deserialize response from LAPIS: ${response.body().truncateAfter(1000)}",
+                e,
+            )
+        }
     }
 
-    private fun handleError(response: HttpResponse<String>): LapisError {
-        TODO("Not yet implemented")
+    private fun handleError(response: HttpResponse<String>): LapisResponse {
+        try {
+            return objectMapper.readValue<LapisError>(response.body())
+                .also { log.warn { "Got LAPIS error: $it" } }
+        } catch (e: Exception) {
+            throw RuntimeException(
+                "Failed to deserialize error response from LAPIS: ${response.body().truncateAfter(1000)}",
+                e,
+            )
+        }
+    }
+
+    private fun String.truncateAfter(maxLength: Int): String {
+        return if (length > maxLength) {
+            substring(0, maxLength) + "..."
+        } else {
+            this
+        }
     }
 }
 
