@@ -14,6 +14,7 @@ import org.hamcrest.Matchers.hasProperty
 import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockserver.client.MockServerClient
@@ -42,6 +43,14 @@ class TriggerEvaluatorTest(
     @Autowired private val underTest: TriggerEvaluator,
 ) {
     private lateinit var mockServerClient: MockServerClient
+
+    val someSubscription = makeSubscription(
+        organism = Organism.WEST_NILE,
+        trigger = Trigger.CountTrigger(
+            count = 100,
+            filter = emptyMap(),
+        ),
+    )
 
     @ParameterizedTest
     @MethodSource("getOrganisms")
@@ -125,17 +134,9 @@ class TriggerEvaluatorTest(
                     ),
             )
 
-        val subscription = makeSubscription(
-            organism = Organism.WEST_NILE,
-            trigger = Trigger.CountTrigger(
-                count = 100,
-                filter = emptyMap(),
-            ),
-        )
+        val result = underTest.evaluate(someSubscription)
 
-        val result = underTest.evaluate(subscription)
-
-        assertThat(result, isEvaluationErrorWithMessage(containsString("empty data")))
+        assertThat(result, isEvaluationErrorWith(message = containsString("empty data"), statusCode = 500))
     }
 
     @Test
@@ -144,23 +145,88 @@ class TriggerEvaluatorTest(
             .`when`(request())
             .error(HttpError.error().withDropConnection(true))
 
-        val subscription = makeSubscription(
-            organism = Organism.WEST_NILE,
-            trigger = Trigger.CountTrigger(
-                count = 100,
-                filter = emptyMap(),
-            ),
+        val result = underTest.evaluate(someSubscription)
+
+        assertThat(
+            result,
+            isEvaluationErrorWith(message = containsString("Could not connect to LAPIS"), statusCode = 500),
         )
-
-        val result = underTest.evaluate(subscription)
-
-        assertThat(result, isEvaluationErrorWithMessage(containsString("Could not connect to LAPIS")))
     }
 
-    private fun isEvaluationErrorWithMessage(messageMatcher: Matcher<String>): Matcher<TriggerEvaluationResult> {
+    @Test
+    fun `WHEN lapis returns malformed response THEN throws`() {
+        mockServerClient
+            .`when`(request())
+            .respond(
+                response()
+                    .withStatusCode(200)
+                    .withBody(
+                        """
+                            {
+                                "unexpectedKey": "I should not be deserializable"
+                            }
+                        """.trimIndent(),
+                    ),
+            )
+
+        val exception = assertThrows<RuntimeException> { underTest.evaluate(someSubscription) }
+
+        assertThat(exception.message, containsString("Failed to deserialize response from LAPIS"))
+    }
+
+    @Test
+    fun `WHEN lapis returns HTTP error THEN returns evaluation error`() {
+        mockServerClient
+            .`when`(request())
+            .respond(
+                response()
+                    .withStatusCode(432)
+                    .withBody(
+                        """
+                            {
+                                "error": {
+                                    "status": 432,
+                                    "detail": "an error message"
+                                },
+                                "info": {
+                                    "dataVersion": "a data version"
+                                }
+                            }
+                        """.trimIndent(),
+                    ),
+            )
+
+        val result = underTest.evaluate(someSubscription)
+
+        assertThat(result, isEvaluationErrorWith(message = `is`("an error message"), statusCode = 432))
+    }
+
+    @Test
+    fun `WHEN lapis returns malformed error response THEN throws`() {
+        mockServerClient
+            .`when`(request())
+            .respond(
+                response()
+                    .withStatusCode(432)
+                    .withBody(
+                        """
+                            {
+                                "unexpectedKey": "I should not be deserializable"
+                            }
+                        """.trimIndent(),
+                    ),
+            )
+
+        val exception = assertThrows<RuntimeException> { underTest.evaluate(someSubscription) }
+
+        assertThat(exception.message, containsString("Failed to deserialize error response from LAPIS"))
+    }
+
+    private fun isEvaluationErrorWith(message: Matcher<String>, statusCode: Int): Matcher<TriggerEvaluationResult> {
         return allOf(
             instanceOf(TriggerEvaluationResult.EvaluationError::class.java),
-            hasProperty("message", messageMatcher),
+            hasProperty("message", message),
+            hasProperty("statusCode", `is`(statusCode)),
         )
     }
 
