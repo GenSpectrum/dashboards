@@ -7,6 +7,7 @@ data class TriggerEvaluationResponse(
 sealed interface TriggerEvaluationResult {
     data class EvaluationError(
         val message: String,
+        val statusCode: Int,
     ) : TriggerEvaluationResult {
         val type = EvaluationErrorType.EvaluationError
 

@@ -4,6 +4,7 @@ import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
 import org.genspectrum.dashboardsbackend.log
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -29,7 +30,8 @@ class TriggerEvaluator(
                         "No data in response $lapisResponse for subscription $subscription. This should never happen."
                     }
                     return TriggerEvaluationResult.EvaluationError(
-                        "Could not read LAPIS aggregated response: empty data"
+                        message = "Could not read LAPIS aggregated response: empty data",
+                        statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     )
                 }
                 when (lapisResponse.data[0].count > subscription.trigger.count) {
@@ -39,6 +41,10 @@ class TriggerEvaluator(
             }
 
             is LapisError -> TODO()
+            is LapisNotReachableError -> TriggerEvaluationResult.EvaluationError(
+                message = lapisResponse.message,
+                statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            )
         }
     }
 }
