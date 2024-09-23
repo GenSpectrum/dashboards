@@ -77,7 +77,7 @@ class TriggerEvaluator(
             DateWindow.LAST_6_MONTHS -> currentDate.minus(6, DateTimeUnit.MONTH)
         }
 
-        val dateField = dashboardsConfig.getOrganismConfig(subscription.organism).lapisMainDateField
+        val dateField = dashboardsConfig.getOrganismConfig(subscription.organism).lapis.mainDateField
 
         return mapOf(
             "${dateField}From" to "$lowerBoundDate",

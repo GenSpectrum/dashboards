@@ -15,22 +15,22 @@ enum class DateWindow {
 
 enum class Organism {
     @JsonProperty("covid")
-    COVID,
+    Covid,
 
     @JsonProperty("h5n1")
     H5N1,
 
     @JsonProperty("mpox")
-    MPOX,
+    Mpox,
 
     @JsonProperty("westNile")
-    WEST_NILE,
+    WestNile,
 
     @JsonProperty("rsvA")
-    RSV_A,
+    RsvA,
 
     @JsonProperty("rsvB")
-    RSV_B,
+    RsvB,
 }
 
 enum class EvaluationInterval {

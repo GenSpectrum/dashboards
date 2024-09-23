@@ -24,7 +24,7 @@ class LapisClientProvider(
 ) {
     private val clients = Organism.entries.associateWith {
         LapisClient(
-            baseUrl = dashboardsConfig.getOrganismConfig(it).lapisUrl,
+            baseUrl = dashboardsConfig.getOrganismConfig(it).lapis.url,
             objectMapper = objectMapper,
         )
     }
