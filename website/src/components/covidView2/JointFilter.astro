@@ -86,33 +86,33 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
     class JointFilter extends HTMLElement {
         constructor() {
             super();
-            let { filterId, location, dateRange, nextcladePangoLineage, mutations } = JSON.parse(this.dataset.message);
+            let { filterId, location, dateRange, nextcladePangoLineage, mutations } = JSON.parse(this.dataset.message!);
             const locationFilter = document.getElementById(`locationFilter${filterId}`);
             const dateRangeSelector = document.getElementById(`dateRangeSelector${filterId}`);
             const lineageFilter = document.getElementById(`lineageFilter${filterId}`);
             const mutationFilter = document.getElementById(`mutationFilter${filterId}`);
             const submitButton = document.getElementById(`submitButton${filterId}`);
 
-            locationFilter.addEventListener('gs-location-changed', (event: CustomEvent) => {
+            locationFilter?.addEventListener('gs-location-changed', (event: CustomEvent) => {
                 location = event.detail;
             });
 
-            dateRangeSelector.addEventListener('gs-date-range-changed', (event: CustomEvent) => {
+            dateRangeSelector?.addEventListener('gs-date-range-changed', (event: CustomEvent) => {
                 dateRange = {
                     from: event.detail.dateFrom,
                     to: event.detail.dateTo,
                 };
             });
 
-            lineageFilter.addEventListener('gs-lineage-filter-changed', (event: CustomEvent) => {
+            lineageFilter?.addEventListener('gs-lineage-filter-changed', (event: CustomEvent) => {
                 nextcladePangoLineage = event.detail.nextcladePangoLineage;
             });
 
-            mutationFilter.addEventListener('gs-mutation-filter-changed', (event: CustomEvent) => {
+            mutationFilter?.addEventListener('gs-mutation-filter-changed', (event: CustomEvent) => {
                 mutations = event.detail;
             });
 
-            submitButton.addEventListener('click', () => {
+            submitButton?.addEventListener('click', () => {
                 const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView2.Route;
                 Routing.navigateTo(
                     CovidView2.setFilter(currentRoute, {

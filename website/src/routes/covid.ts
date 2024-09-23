@@ -78,7 +78,7 @@ export namespace CovidView1 {
         variantFilter: LapisVariantQuery;
     };
 
-    const parseUrl = (url: URL): Route | undefined => {
+    const parseUrl = (url: URL): Route => {
         const search = url.searchParams;
         let variantFilter: LapisSimpleVariantQuery | LapisAdvancedVariantQuery = {};
         const advancedVariantQuery = search.get('variantQuery');
@@ -266,7 +266,7 @@ export namespace CovidView2 {
         return `${pathname}?${search}`;
     };
 
-    export type CovidView2 = View<Route> & Constants & {};
+    export type CovidView2 = View<Route, Route | undefined> & Constants & {};
 
     export const view: CovidView2 = {
         ...constants,
@@ -347,7 +347,7 @@ export namespace CovidView3 {
         };
     };
 
-    export const parseUrl = (url: URL): Route | undefined => {
+    export const parseUrl = (url: URL): Route => {
         const search = url.searchParams;
         return {
             organism,

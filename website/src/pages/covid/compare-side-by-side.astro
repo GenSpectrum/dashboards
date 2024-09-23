@@ -9,6 +9,9 @@ import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 const routeData = CovidView2.view.parseUrl(Astro.url);
+if (routeData === undefined) {
+    throw Error('Failed to parse URL for side-by-side comparison page');
+}
 ---
 
 <BaseLayout title='Compare side-by-side | SARS-CoV-2 | GenSpectrum'>

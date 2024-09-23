@@ -59,14 +59,14 @@ export type Route = {
     pathname: string;
 };
 
-export type View<R extends Route> = {
+export type View<R extends Route, ParseResult extends R | undefined = R> = {
     organism: Organism;
     pathname: string;
     label: string;
     labelLong: string;
     defaultRoute: R;
 
-    parseUrl: (url: URL) => R | undefined;
+    parseUrl: (url: URL) => ParseResult;
     toUrl: (route: R) => string;
 };
 

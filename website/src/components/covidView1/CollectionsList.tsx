@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Routing } from '../../routes/routing.ts';
 import { CovidView1 } from '../../routes/covid.ts';

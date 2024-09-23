@@ -24,7 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run check-format
       - run: npm run check-types
-#      - run: npm run check-astro   TODO(#11): Uncomment this line after fixing the issues
+      - run: npm run check-astro
 
   dockerImage:
     name: Build Docker Image
