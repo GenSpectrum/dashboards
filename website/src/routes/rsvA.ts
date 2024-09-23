@@ -58,7 +58,7 @@ export namespace RsvAView1 {
 
     type Route = { variantFilter: LapisVariantQuery1 } & RouteWithBaseline;
 
-    const parseUrl = (url: URL): Route | undefined => {
+    const parseUrl = (url: URL): Route => {
         const search = url.searchParams;
         return {
             organism,
@@ -118,7 +118,7 @@ export namespace RsvAView1 {
 export namespace RsvAView3 {
     const pathname = `/${pathFragment}/sequencing-efforts`;
 
-    const parseUrl = (url: URL): RouteWithBaseline | undefined => {
+    const parseUrl = (url: URL): RouteWithBaseline => {
         const search = url.searchParams;
         return {
             organism,

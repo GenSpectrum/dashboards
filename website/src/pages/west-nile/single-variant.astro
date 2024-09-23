@@ -100,7 +100,7 @@ const initialMutations = extractMutations(variantFilter);
                     </ComponentWrapper>
                     {
                         subDivisionField && (
-                            <ComponentWrapper title='subDivisionLabel'>
+                            <ComponentWrapper title={subDivisionLabel}>
                                 <gs-aggregate
                                     fields={JSON.stringify([subDivisionField])}
                                     filter={JSON.stringify(variantFilter)}

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { Routing } from '../routes/routing';
-import { organismConfig } from '../routes/View';
+import { type Organism, organismConfig } from '../routes/View';
 ---
 
 <style>
@@ -61,11 +61,11 @@ import { organismConfig } from '../routes/View';
                     <div class='rounded-b-md rounded-tr-md border-2 border-gray-100'>
                         <h3 class={`rounded-tr-md p-4 text-xl ${organism.backgroundColor}`}>{organism.label}</h3>
                         <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black'>
-                            {Routing.views[organism.organism].map((view) => (
+                            {Routing.views[organism.organism as Organism].map((view) => (
                                 <li class='flex items-start pt-2'>
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a
-                                        href={Routing.toUrl(Routing.getDefaultRoute(view.pathname))}
+                                        href={Routing.toUrl(Routing.getDefaultRoute(view.pathname)!)}
                                         class={`hover:underline ${organism.hoverDecorationColor} hover:decoration-4`}
                                     >
                                         {view.labelLong}

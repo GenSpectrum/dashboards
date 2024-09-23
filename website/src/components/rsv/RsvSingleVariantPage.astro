@@ -6,7 +6,7 @@ import type { Route } from '../../routes/View';
 import { RsvAView1 } from '../../routes/rsvA';
 import { RsvBView1 } from '../../routes/rsvB';
 import { getLapisUrl } from '../../config';
-import { defaultTablePageSize, Organisms } from '../../routes/View';
+import { defaultTablePageSize } from '../../routes/View';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
@@ -107,7 +107,7 @@ const initialMutations = extractMutations(variantFilter);
                     </ComponentWrapper>
                     {
                         subDivisionField && (
-                            <ComponentWrapper title='subDivisionLabel'>
+                            <ComponentWrapper title={subDivisionLabel}>
                                 <gs-aggregate
                                     fields={JSON.stringify([subDivisionField])}
                                     filter={JSON.stringify(variantFilter)}

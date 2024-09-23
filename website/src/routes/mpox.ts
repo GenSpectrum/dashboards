@@ -62,7 +62,7 @@ export namespace MpoxView1 {
 
     type Route = { variantFilter: LapisVariantQuery2 } & RouteWithBaseline;
 
-    const parseUrl = (url: URL): Route | undefined => {
+    const parseUrl = (url: URL): Route => {
         const search = url.searchParams;
         return {
             organism,
@@ -122,7 +122,7 @@ export namespace MpoxView1 {
 export namespace MpoxView3 {
     const pathname = `/${pathFragment}/sequencing-efforts`;
 
-    const parseUrl = (url: URL): RouteWithBaseline | undefined => {
+    const parseUrl = (url: URL): RouteWithBaseline => {
         const search = url.searchParams;
         return {
             organism,

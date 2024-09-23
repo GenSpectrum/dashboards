@@ -1,9 +1,6 @@
 ---
-import { getSession } from 'auth-astro/server';
 import { logout } from '../auth/logout';
 import BaseLayout from '../layouts/base/BaseLayout.astro';
-
-const session = await getSession(Astro.request);
 
 const { cookies } = await logout(Astro.request);
 
