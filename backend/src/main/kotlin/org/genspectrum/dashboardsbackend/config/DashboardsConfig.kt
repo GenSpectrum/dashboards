@@ -5,24 +5,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "dashboards")
 data class DashboardsConfig(
-    val covid: OrganismConfig,
-    val h5n1: OrganismConfig,
-    val mpox: OrganismConfig,
-    val westNile: OrganismConfig,
-    val rsvA: OrganismConfig,
-    val rsvB: OrganismConfig,
+    val organisms: Map<Organism, OrganismConfig>,
 ) {
-    fun getOrganismConfig(organism: Organism) = when (organism) {
-        Organism.COVID -> covid
-        Organism.H5N1 -> h5n1
-        Organism.MPOX -> mpox
-        Organism.WEST_NILE -> westNile
-        Organism.RSV_A -> rsvA
-        Organism.RSV_B -> rsvB
-    }
+    fun getOrganismConfig(organism: Organism) = organisms[organism]
+        ?: throw IllegalArgumentException("No configuration found for organism $organism")
 }
 
 data class OrganismConfig(
-    val lapisUrl: String,
-    val lapisMainDateField: String,
+    val lapis: LapisConfig,
+)
+
+data class LapisConfig(
+    val url: String,
+    val mainDateField: String,
 )

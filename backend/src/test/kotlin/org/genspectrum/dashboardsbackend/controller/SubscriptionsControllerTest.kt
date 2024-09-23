@@ -35,7 +35,7 @@ val dummySubscriptionRequest = SubscriptionRequest(
             "dateTo" to "2024-01-05",
         ),
     ),
-    organism = Organism.COVID,
+    organism = Organism.Covid,
 )
 
 fun getNewUserId(): String {
@@ -176,7 +176,7 @@ class SubscriptionsControllerTest(
                     "dateTo" to "2024-01-05",
                 ),
             ),
-            organism = Organism.RSV_A,
+            organism = Organism.RsvA,
         )
 
         val updatedSubscription =

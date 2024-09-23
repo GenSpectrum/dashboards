@@ -44,10 +44,10 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
         val createdSubscription = subscriptionsClient.postSubscription(
             subscription = dummySubscriptionRequest.copy(trigger = countTrigger),
-            userId = userId
+            userId = userId,
         )
 
-        mockLapisResponse(Organism.COVID, LapisAggregatedResponse(listOf(AggregatedData(40)), LapisInfo()))
+        mockLapisResponse(Organism.Covid, LapisAggregatedResponse(listOf(AggregatedData(40)), LapisInfo()))
 
         subscriptionsClient
             .evaluateTriggerRaw(
@@ -67,10 +67,10 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
         val createdSubscription = subscriptionsClient.postSubscription(
             subscription = dummySubscriptionRequest.copy(trigger = countTrigger),
-            userId = userId
+            userId = userId,
         )
 
-        mockLapisResponse(Organism.COVID, LapisAggregatedResponse(listOf(AggregatedData(20)), LapisInfo()))
+        mockLapisResponse(Organism.Covid, LapisAggregatedResponse(listOf(AggregatedData(20)), LapisInfo()))
 
         subscriptionsClient
             .evaluateTriggerRaw(
@@ -91,7 +91,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         mockLapisResponse(
-            Organism.COVID,
+            Organism.Covid,
             LapisError(
                 ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(456), "dummy LAPIS error"),
                 LapisInfo(),

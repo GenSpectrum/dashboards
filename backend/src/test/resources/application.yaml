@@ -6,21 +6,28 @@ spring:
     password: test
 
 dashboards:
-  covid:
-    lapisUrl: "https://covid.lapis.dummy"
-    lapisMainDateField: "covid_date"
-  h5n1:
-    lapisUrl: "https://h5n1.lapis.dummy"
-    lapisMainDateField: "h5n1_date"
-  mpox:
-    lapisUrl: "https://mpox.lapis.dummy"
-    lapisMainDateField: "mpox_date"
-  westNile:
-    lapisUrl: "https://westNile.lapis.dummy"
-    lapisMainDateField: "west_nile_date"
-  rsvA:
-    lapisUrl: "https://rsvA.lapis.dummy"
-    lapisMainDateField: "rsv_a_date"
-  rsvB:
-    lapisUrl: "https://rsvB.lapis.dummy"
-    lapisMainDateField: "rsv_b_date"
+  organisms:
+    covid:
+      lapis:
+        url: "https://covid.lapis.dummy"
+        mainDateField: "covid_date"
+    h5n1:
+      lapis:
+        url: "https://h5n1.lapis.dummy"
+        mainDateField: "h5n1_date"
+    mpox:
+      lapis:
+        url: "https://mpox.lapis.dummy"
+        mainDateField: "mpox_date"
+    westNile:
+      lapis:
+        url: "https://westNile.lapis.dummy"
+        mainDateField: "westnile_date"
+    rsvA:
+      lapis:
+        url: "https://rsvA.lapis.dummy"
+        mainDateField: "rsva_date"
+    rsvB:
+      lapis:
+        url: "https://rsvB.lapis.dummy"
+        mainDateField: "rsvb_date"

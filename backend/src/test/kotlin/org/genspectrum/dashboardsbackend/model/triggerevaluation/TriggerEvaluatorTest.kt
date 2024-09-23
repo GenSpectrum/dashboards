@@ -35,12 +35,12 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     properties = [
-        "dashboards.covid.lapisUrl=http://localhost:\${mockServerPort}/covid",
-        "dashboards.h5n1.lapisUrl=http://localhost:\${mockServerPort}/h5n1",
-        "dashboards.mpox.lapisUrl=http://localhost:\${mockServerPort}/mpox",
-        "dashboards.westNile.lapisUrl=http://localhost:\${mockServerPort}/west_nile",
-        "dashboards.rsvA.lapisUrl=http://localhost:\${mockServerPort}/rsv_a",
-        "dashboards.rsvB.lapisUrl=http://localhost:\${mockServerPort}/rsv_b",
+        "dashboards.organisms.covid.lapis.url=http://localhost:\${mockServerPort}/covid",
+        "dashboards.organisms.h5n1.lapis.url=http://localhost:\${mockServerPort}/h5n1",
+        "dashboards.organisms.mpox.lapis.url=http://localhost:\${mockServerPort}/mpox",
+        "dashboards.organisms.westNile.lapis.url=http://localhost:\${mockServerPort}/westnile",
+        "dashboards.organisms.rsvA.lapis.url=http://localhost:\${mockServerPort}/rsva",
+        "dashboards.organisms.rsvB.lapis.url=http://localhost:\${mockServerPort}/rsvb",
     ],
 )
 @MockServerTest
@@ -53,7 +53,7 @@ class TriggerEvaluatorTest(
     private lateinit var dateProviderMock: DateProvider
 
     val someSubscription = makeSubscription(
-        organism = Organism.WEST_NILE,
+        organism = Organism.WestNile,
         trigger = Trigger.CountTrigger(
             count = 100,
             filter = emptyMap(),
