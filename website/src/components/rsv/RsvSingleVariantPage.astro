@@ -1,8 +1,7 @@
 ---
-import type { Organism } from '../../routes/View';
+import { organismConfig } from '../../routes/View';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import type { DateRange, LapisLocation2, LapisVariantQuery1 } from '../../routes/helpers';
-import type { Route } from '../../routes/View';
 import { RsvAView1 } from '../../routes/rsvA';
 import { RsvBView1 } from '../../routes/rsvB';
 import { getLapisUrl } from '../../config';
@@ -14,24 +13,18 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 interface Props {
-    view: RsvAView1.RsvAView1 | RsvBView1.RsvBView1;
-    routeData: { variantFilter: LapisVariantQuery1 } & Route & {
-            baselineFilter: {
-                location: LapisLocation2;
-                dateRange: DateRange;
-            };
-        };
-    titleName: string;
-    organism: Organism;
+    view: RsvAView1 | RsvBView1;
 }
 
-const { view, routeData, titleName, organism } = Astro.props;
+const { view } = Astro.props;
 
-const variantFilter = RsvBView1.view.toLapisFilter(routeData);
-const baselineFilter = RsvBView1.view.toLapisFilterWithoutVariant(routeData);
+const routeData = view.parseUrl(Astro.url);
+
+const variantFilter = view.toLapisFilter(routeData);
+const baselineFilter = view.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
+    from: baselineFilter[`${view.mainDateField}From`] as string,
+    to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 
 let subDivisionField = undefined;
@@ -47,8 +40,8 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
 const initialMutations = extractMutations(variantFilter);
 ---
 
-<BaseLayout title={`Single Variant | ${titleName} | GenSpectrum`}>
-    <gs-app lapis={getLapisUrl(organism)}>
+<BaseLayout title={`Single Variant | ${organismConfig[view.organism].label} | GenSpectrum`}>
+    <gs-app lapis={getLapisUrl(view.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
                 <div class='bg-blue-50 px-2 py-4'>
@@ -80,7 +73,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField='sample_collection_date'
+                            lapisDateField={view.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -144,7 +137,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                        lapisDateField={view.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -155,7 +148,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                        lapisDateField={view.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

@@ -10,8 +10,9 @@ const lapisConfigSchema = z.object({
 });
 
 const organismConfigSchema = z.object({ lapis: lapisConfigSchema });
+export type OrganismConfig = z.infer<typeof organismConfigSchema>;
 
-const organismsSchema = z.object(
+const organismsConfigSchema = z.object(
     allOrganisms.reduce(
         (acc, organism) => ({
             ...acc,
@@ -20,10 +21,11 @@ const organismsSchema = z.object(
         {} as { [organism in Organism]: typeof organismConfigSchema },
     ),
 );
+export type OrganismsConfig = z.infer<typeof organismsConfigSchema>;
 
 const dashboardsConfigSchema = z.object({
     dashboards: z.object({
-        organisms: organismsSchema,
+        organisms: organismsConfigSchema,
         auth: z.object({
             github: z.object({
                 /**
@@ -53,8 +55,12 @@ export function getDashboardsConfig(): DashboardsConfig {
     return dashboardsConfig;
 }
 
+export function getOrganismConfig(organism: Organism): OrganismConfig {
+    return getDashboardsConfig().dashboards.organisms[organism];
+}
+
 export function getLapisUrl(organism: Organism): string {
-    return getDashboardsConfig().dashboards.organisms[organism].lapis.url;
+    return getOrganismConfig(organism).lapis.url;
 }
 
 let backendHost: string | null = null;

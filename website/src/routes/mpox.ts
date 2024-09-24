@@ -1,45 +1,55 @@
 import {
     type DateRange,
-    type DateRangeOption,
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getLapisLocation2FromSearch,
     getLapisVariantQuery2FromSearch,
+    type LapisFilter,
     type LapisLocation2,
     type LapisVariantQuery2,
-    type SampleCollectionDateFromTo,
     setSearchFromDateRange,
     setSearchFromLapisLocation2,
     setSearchFromLapisVariantQuery2,
 } from './helpers.ts';
 import { organismConfig, Organisms, type Route, type View } from './View.ts';
+import { type OrganismsConfig } from '../config.ts';
 
-const organism = Organisms.mpox as typeof Organisms.mpox;
-const pathFragment = organismConfig[organism].pathFragment;
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
+const pathFragment = organismConfig[Organisms.mpox].pathFragment;
 
-const defaultDateRange: DateRange = 'allTimes';
 const earliestDate = '1960-01-01';
 const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: '2024', dateFrom: '2024-01-01', dateTo: today },
-    { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
-    { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
-    { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
-    { label: 'Since 2021', dateFrom: '2021-01-01', dateTo: today },
-    { label: 'Before 2021', dateFrom: earliestDate, dateTo: '2020-12-31' },
-    { label: 'Since 2017', dateFrom: '2017-01-01', dateTo: today },
-    { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
-    { label: 'Before 2017', dateFrom: earliestDate, dateTo: '2016-12-31' },
-];
 
-type Constants = {
-    earliestDate: string;
-    locationFields: string[];
-    customDateRangeOptions: DateRangeOption[];
-};
+class MpoxConstants {
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
+    }
 
-const constants = { organism, earliestDate, locationFields, customDateRangeOptions };
+    public readonly organism = Organisms.mpox as typeof Organisms.mpox;
+    public readonly earliestDate = '1960-01-01';
+    public readonly locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
+    public readonly defaultDateRange: DateRange = 'allTimes';
+    public readonly customDateRangeOptions = [
+        { label: '2024', dateFrom: '2024-01-01', dateTo: today },
+        { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
+        { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
+        { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
+        { label: 'Since 2021', dateFrom: '2021-01-01', dateTo: today },
+        { label: 'Before 2021', dateFrom: earliestDate, dateTo: '2020-12-31' },
+        { label: 'Since 2017', dateFrom: '2017-01-01', dateTo: today },
+        { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
+        { label: 'Before 2017', dateFrom: earliestDate, dateTo: '2016-12-31' },
+    ];
+    public readonly mainDateField: string;
+
+    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation2 => {
+        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
+        return {
+            ...route.baselineFilter.location,
+            [`${this.mainDateField}From`]: dateRange.from,
+            [`${this.mainDateField}To`]: dateRange.to,
+        };
+    };
+}
 
 type RouteWithBaseline = Route & {
     baselineFilter: {
@@ -48,121 +58,88 @@ type RouteWithBaseline = Route & {
     };
 };
 
-const toLapisFilterWithoutVariant = (route: RouteWithBaseline): SampleCollectionDateFromTo & LapisLocation2 => {
-    const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(MpoxView1.view.earliestDate));
-    return {
-        ...route.baselineFilter.location,
-        sample_collection_dateFrom: dateRange.from,
-        sample_collection_dateTo: dateRange.to,
+type MpoxView1Route = { variantFilter: LapisVariantQuery2 } & RouteWithBaseline;
+
+export class MpoxView1 extends MpoxConstants implements View<MpoxView1Route> {
+    public readonly pathname = `/${pathFragment}/single-variant`;
+    public readonly label = 'Single variant';
+    public readonly labelLong = 'Analyze a single variant';
+    public readonly defaultRoute = {
+        organism: this.organism,
+        pathname: this.pathname,
+        baselineFilter: {
+            location: {},
+            dateRange: this.defaultDateRange,
+        },
+        variantFilter: {},
     };
-};
 
-export namespace MpoxView1 {
-    const pathname = `/${pathFragment}/single-variant`;
-
-    type Route = { variantFilter: LapisVariantQuery2 } & RouteWithBaseline;
-
-    const parseUrl = (url: URL): Route => {
+    public parseUrl = (url: URL): MpoxView1Route => {
         const search = url.searchParams;
         return {
-            organism,
-            pathname,
+            organism: this.organism,
+            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocation2FromSearch(search),
-                dateRange: getDateRangeFromSearch(search, 'sample_collection_date') ?? defaultDateRange,
+                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
             variantFilter: getLapisVariantQuery2FromSearch(search),
         };
     };
 
-    const toUrl = (route: Route): string => {
+    public toUrl = (route: MpoxView1Route): string => {
         const search = new URLSearchParams();
         setSearchFromLapisLocation2(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== defaultDateRange) {
-            setSearchFromDateRange(search, 'sample_collection_date', route.baselineFilter.dateRange);
+        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
         setSearchFromLapisVariantQuery2(search, route.variantFilter);
-        return `${pathname}?${search}`;
+        return `${this.pathname}?${search}`;
     };
 
-    const toLapisFilter = (route: Route) => {
+    public toLapisFilter = (route: MpoxView1Route) => {
         return {
-            ...toLapisFilterWithoutVariant(route),
+            ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
     };
-
-    export type MpoxView1 = View<Route> &
-        Constants & {
-            toLapisFilter: (route: Route) => SampleCollectionDateFromTo & LapisLocation2 & LapisVariantQuery2;
-            toLapisFilterWithoutVariant: (route: Route) => SampleCollectionDateFromTo & LapisLocation2;
-        };
-
-    export const view: MpoxView1 = {
-        ...constants,
-        pathname,
-        label: 'Single variant',
-        labelLong: 'Analyze a single variant',
-        parseUrl,
-        toUrl,
-        defaultRoute: {
-            organism,
-            pathname,
-            baselineFilter: {
-                location: {},
-                dateRange: defaultDateRange,
-            },
-            variantFilter: {},
-        },
-        toLapisFilter,
-        toLapisFilterWithoutVariant,
-    };
 }
 
-export namespace MpoxView3 {
-    const pathname = `/${pathFragment}/sequencing-efforts`;
+export class MpoxView3 extends MpoxConstants implements View<RouteWithBaseline> {
+    public readonly pathname = `/${pathFragment}/sequencing-efforts`;
+    public readonly label = 'Sequencing efforts';
+    public readonly labelLong = 'Sequencing efforts';
+    public readonly defaultRoute = {
+        organism: this.organism,
+        pathname: this.pathname,
+        baselineFilter: {
+            location: {},
+            dateRange: this.defaultDateRange,
+        },
+    };
 
-    const parseUrl = (url: URL): RouteWithBaseline => {
+    public parseUrl = (url: URL): RouteWithBaseline => {
         const search = url.searchParams;
         return {
-            organism,
-            pathname,
+            organism: this.organism,
+            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocation2FromSearch(search),
-                dateRange: getDateRangeFromSearch(search, 'sample_collection_date') ?? defaultDateRange,
+                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
         };
     };
 
-    const toUrl = (route: RouteWithBaseline): string => {
+    public toUrl = (route: RouteWithBaseline): string => {
         const search = new URLSearchParams();
         setSearchFromLapisLocation2(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== defaultDateRange) {
-            setSearchFromDateRange(search, 'sample_collection_date', route.baselineFilter.dateRange);
+        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
-        return `${pathname}?${search}`;
+        return `${this.pathname}?${search}`;
     };
 
-    export type MpoxView3 = View<RouteWithBaseline> &
-        Constants & {
-            toLapisFilter: (route: RouteWithBaseline) => SampleCollectionDateFromTo & LapisLocation2;
-        };
-
-    export const view: MpoxView3 = {
-        ...constants,
-        pathname,
-        label: 'Sequencing efforts',
-        labelLong: 'Sequencing efforts',
-        parseUrl,
-        toUrl,
-        defaultRoute: {
-            organism,
-            pathname,
-            baselineFilter: {
-                location: {},
-                dateRange: defaultDateRange,
-            },
-        },
-        toLapisFilter: toLapisFilterWithoutVariant,
+    public toLapisFilter = (route: RouteWithBaseline): LapisFilter => {
+        return this.toLapisFilterWithoutVariant(route);
     };
 }

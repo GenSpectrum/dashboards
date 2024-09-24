@@ -2,8 +2,9 @@
 import type { LapisMutationQuery } from '../../routes/helpers';
 import type { LapisLocation1 } from '../../routes/helpers';
 import type { DateRange } from '../../routes/helpers';
-import { CovidView1 } from '../../routes/covid';
 import { isCustomDateRange } from '../../routes/helpers';
+import { ServerSide } from '../../routes/serverSideRouting';
+import { getDashboardsConfig } from '../../config';
 
 interface Props {
     filterId: number;
@@ -30,6 +31,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
         nextcladePangoLineage: initialNextcladePangoLineage,
         mutations: initialMutations,
     })}
+    data-organisms-config={JSON.stringify(getDashboardsConfig().dashboards.organisms)}
 >
     <div>
         <div class='flex'>
@@ -43,8 +45,8 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                     width='100%'></gs-location-filter>
                 <gs-date-range-selector
                     id={`dateRangeSelector${filterId}`}
-                    customSelectOptions={JSON.stringify(CovidView1.view.customDateRangeOptions)}
-                    earliestDate={CovidView1.view.earliestDate}
+                    customSelectOptions={JSON.stringify(ServerSide.covidView1.customDateRangeOptions)}
+                    earliestDate={ServerSide.covidView1.earliestDate}
                     initialValue={initialDateRangeValue}
                     initialDateFrom={initialDateRangeFrom}
                     initialDateTo={initialDateRangeTo}
@@ -81,12 +83,13 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
 <script>
     import { Routing } from '../../routes/routing.ts';
-    import { CovidView2 } from '../../routes/covid';
+    import { CovidView2, type CovidView2Route } from '../../routes/covid';
 
     class JointFilter extends HTMLElement {
         constructor() {
             super();
             let { filterId, location, dateRange, nextcladePangoLineage, mutations } = JSON.parse(this.dataset.message!);
+            const config = JSON.parse(this.dataset.organismsConfig!);
             const locationFilter = document.getElementById(`locationFilter${filterId}`);
             const dateRangeSelector = document.getElementById(`dateRangeSelector${filterId}`);
             const lineageFilter = document.getElementById(`lineageFilter${filterId}`);
@@ -113,9 +116,10 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             });
 
             submitButton?.addEventListener('click', () => {
-                const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView2.Route;
-                Routing.navigateTo(
-                    CovidView2.setFilter(currentRoute, {
+                const routing = new Routing(config);
+                const currentRoute = routing.getCurrentRouteInBrowser() as CovidView2Route;
+                routing.navigateTo(
+                    new CovidView2(config).setFilter(currentRoute, {
                         id: filterId,
                         baselineFilter: {
                             location,

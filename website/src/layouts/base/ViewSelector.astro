@@ -1,7 +1,7 @@
 ---
-import { Routing } from '../../routes/routing';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const currentRoute = Routing.parseUrl(Astro.url)!;
+const currentRoute = ServerSide.routing.parseUrl(Astro.url)!;
 const organism = currentRoute?.organism;
 ---
 
@@ -11,10 +11,10 @@ const organism = currentRoute?.organism;
             <label>
                 View:
                 <select id='view-selector'>
-                    {Routing.views[organism].map((view) => (
+                    {ServerSide.routing.views[organism].map((view) => (
                         <option
                             value={view.pathname}
-                            data-url={Routing.toUrl(Routing.getDefaultRoute(view.pathname)!)}
+                            data-url={ServerSide.routing.toUrl(ServerSide.routing.getDefaultRoute(view.pathname)!)}
                             selected={currentRoute.pathname === view.pathname}
                         >
                             {view.label}

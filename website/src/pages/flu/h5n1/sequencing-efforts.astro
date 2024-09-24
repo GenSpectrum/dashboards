@@ -2,18 +2,18 @@
 import { chooseGranularityBasedOnDateRange } from '../../../routes/helpers';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../../components/LocationTimeFilter.astro';
-import { H5n1View3 } from '../../../routes/h5n1';
 import { getLapisUrl } from '../../../config';
 import { defaultTablePageSize, Organisms } from '../../../routes/View';
 import ComponentsGrid from '../../../components/ComponentsGrid.astro';
+import { ServerSide } from '../../../routes/serverSideRouting';
 
-const routeData = H5n1View3.view.parseUrl(Astro.url);
+const routeData = ServerSide.h5n1View3.parseUrl(Astro.url);
 
-const baselineFilter = H5n1View3.view.toLapisFilter(routeData);
+const baselineFilter = ServerSide.h5n1View3.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
+    from: baselineFilter[`${ServerSide.h5n1View3.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.h5n1View3.mainDateField}To`] as string,
 });
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -32,11 +32,11 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={H5n1View3.view.locationFields}
+                    fields={ServerSide.h5n1View3.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={H5n1View3.view.earliestDate}
-                    customDateRangeOptions={H5n1View3.view.customDateRangeOptions}
+                    earliestDate={ServerSide.h5n1View3.earliestDate}
+                    customDateRangeOptions={ServerSide.h5n1View3.customDateRangeOptions}
                 />
             </div>
         </div>
@@ -48,7 +48,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField='sample_collection_date'
+                    lapisDateField={ServerSide.h5n1View3.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'

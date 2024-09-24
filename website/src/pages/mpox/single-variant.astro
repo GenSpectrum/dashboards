@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { MpoxView1 } from '../../routes/mpox';
 import VariantFilter from '../../components/VariantFilter.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
@@ -8,14 +7,15 @@ import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = MpoxView1.view.parseUrl(Astro.url);
+const routeData = ServerSide.mpoxView1.parseUrl(Astro.url);
 
-const variantFilter = MpoxView1.view.toLapisFilter(routeData);
-const baselineFilter = MpoxView1.view.toLapisFilterWithoutVariant(routeData);
+const variantFilter = ServerSide.mpoxView1.toLapisFilter(routeData);
+const baselineFilter = ServerSide.mpoxView1.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
+    from: baselineFilter[`${ServerSide.mpoxView1.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.mpoxView1.mainDateField}To`] as string,
 });
 
 let subDivisionField = undefined;
@@ -38,11 +38,11 @@ const initialMutations = extractMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={MpoxView1.view.locationFields}
+                        fields={ServerSide.mpoxView1.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={MpoxView1.view.earliestDate}
-                        customDateRangeOptions={MpoxView1.view.customDateRangeOptions}
+                        earliestDate={ServerSide.mpoxView1.earliestDate}
+                        customDateRangeOptions={ServerSide.mpoxView1.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -65,7 +65,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField='sample_collection_date'
+                            lapisDateField={ServerSide.mpoxView1.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -129,7 +129,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                        lapisDateField={ServerSide.mpoxView1.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -140,7 +140,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                        lapisDateField={ServerSide.mpoxView1.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

@@ -1,9 +1,6 @@
 ---
-import { RsvAView3 } from '../../routes/rsvA';
-import { Organisms } from '../../routes/View';
 import RsvSequencingEffortsPage from '../../components/rsv/RsvSequencingEffortsPage.astro';
-
-const routeData = RsvAView3.view.parseUrl(Astro.url);
+import { ServerSide } from '../../routes/serverSideRouting';
 ---
 
-<RsvSequencingEffortsPage view={RsvAView3.view} routeData={routeData} titleName='RSV-A' organism={Organisms.rsvA} />
+<RsvSequencingEffortsPage view={ServerSide.rsvAView3} />

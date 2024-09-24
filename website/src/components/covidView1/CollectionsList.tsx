@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Routing } from '../../routes/routing.ts';
-import { CovidView1 } from '../../routes/covid.ts';
+import { type CovidView1Route } from '../../routes/covid.ts';
+import type { OrganismsConfig } from '../../config.ts';
 
 type CollectionVariant = {
     name: string;
@@ -17,9 +18,10 @@ type Collection = {
 
 type CollectionsListProps = {
     initialCollectionId?: number;
+    organismsConfig: OrganismsConfig;
 };
 
-const CollectionsListInner = ({ initialCollectionId }: CollectionsListProps) => {
+const CollectionsListInner = ({ initialCollectionId, organismsConfig }: CollectionsListProps) => {
     const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
     const query = useQuery({
@@ -45,6 +47,7 @@ const CollectionsListInner = ({ initialCollectionId }: CollectionsListProps) => 
             />
             <CollectionVariantList
                 collection={query.data.find((c) => c.id === selectedCollectionId) ?? query.data[0]}
+                organismsConfig={organismsConfig}
             />
         </>
     );
@@ -81,14 +84,17 @@ const CollectionSelector = ({ collections, selectedId, onSelect }: CollectionSel
 
 type CollectionVariantListProps = {
     collection: Collection;
+    organismsConfig: OrganismsConfig;
 };
 
-const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
+const CollectionVariantList = ({ collection, organismsConfig }: CollectionVariantListProps) => {
     const variants = collection.variants;
 
+    const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
+
     const selectVariant = (variant: CollectionVariant) => {
-        const currentRoute = Routing.getCurrentRouteInBrowser() as CovidView1.Route;
-        let newRoute: CovidView1.Route;
+        const currentRoute = routing.getCurrentRouteInBrowser() as CovidView1Route;
+        let newRoute: CovidView1Route;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
             newRoute = {
@@ -111,7 +117,7 @@ const CollectionVariantList = ({ collection }: CollectionVariantListProps) => {
                 },
             };
         }
-        Routing.navigateTo(newRoute);
+        routing.navigateTo(newRoute);
     };
 
     return (

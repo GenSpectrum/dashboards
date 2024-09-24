@@ -2,19 +2,19 @@
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { WestNileView3 } from '../../routes/westNile';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = WestNileView3.view.parseUrl(Astro.url);
+const routeData = ServerSide.westNileView3.parseUrl(Astro.url);
 
-const baselineFilter = WestNileView3.view.toLapisFilter(routeData);
+const baselineFilter = ServerSide.westNileView3.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
+    from: baselineFilter[`${ServerSide.westNileView3.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.westNileView3.mainDateField}To`] as string,
 });
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -33,11 +33,11 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={WestNileView3.view.locationFields}
+                    fields={ServerSide.westNileView3.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={WestNileView3.view.earliestDate}
-                    customDateRangeOptions={WestNileView3.view.customDateRangeOptions}
+                    earliestDate={ServerSide.westNileView3.earliestDate}
+                    customDateRangeOptions={ServerSide.westNileView3.customDateRangeOptions}
                 />
             </div>
         </div>
@@ -49,7 +49,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField='sample_collection_date'
+                    lapisDateField={ServerSide.westNileView3.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'
