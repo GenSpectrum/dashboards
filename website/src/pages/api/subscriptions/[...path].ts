@@ -1,5 +1,5 @@
 import { getSession } from 'auth-astro/server';
-import { getDashboardsConfig } from '../../../config.ts';
+import { getBackendHost } from '../../../config.ts';
 
 const API_PATHNAME_LENGTH = '/api'.length;
 
@@ -27,7 +27,7 @@ export async function ALL({ request }: { request: Request }) {
 
 function getBackendUrl(request: Request, userId: string) {
     const backendEndpoint = new URL(request.url).pathname.slice(API_PATHNAME_LENGTH);
-    const backendUrl = new URL(backendEndpoint, getDashboardsConfig().backend.url);
+    const backendUrl = new URL(backendEndpoint, getBackendHost());
 
     new URL(request.url).searchParams.forEach((value, key) => {
         backendUrl.searchParams.set(key, value);

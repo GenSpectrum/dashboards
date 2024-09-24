@@ -24,3 +24,6 @@ dashboards:
       lapis:
         url: "https://lapis.genspectrum.org/rsv-b"
         mainDateField: "sample_collection_date"
+  auth:
+    github:
+      clientId: "Iv23liLcTmoYOEje50sW"

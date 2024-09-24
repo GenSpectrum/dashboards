@@ -1,9 +1,6 @@
 import { defineConfig } from 'auth-astro';
-import { getDashboardsConfig, getSecretsConfig } from './config';
+import { getGitHubClientId, getGitHubClientSecret } from './config';
 import GitHub from '@auth/core/providers/github';
-
-const authConfig = getDashboardsConfig().auth;
-const secretsConfig = getSecretsConfig();
 
 export default defineConfig({
     callbacks: {
@@ -17,8 +14,8 @@ export default defineConfig({
     },
     providers: [
         GitHub({
-            clientId: authConfig.github.clientId,
-            clientSecret: secretsConfig.github.clientSecret,
+            clientId: getGitHubClientId(),
+            clientSecret: getGitHubClientSecret(),
         }),
     ],
     secret: crypto.randomUUID(),

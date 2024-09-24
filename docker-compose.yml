@@ -3,12 +3,11 @@ services:
     image: ghcr.io/genspectrum/dashboards/website:${WEBSITE_TAG}
     ports:
       - "127.0.0.1:9020:4321"
-    volumes:
-      - type: bind
-        source: ./website/tests/config
-        target: /config
-        read_only: true
-  
+    env_file: "website/.env"
+    environment:
+      BACKEND_URL: http://backend:8080
+      DASHBOARDS_ENVIRONMENT: dashboards-dev
+
   backend:
     image: ghcr.io/genspectrum/dashboards/backend:${BACKEND_TAG}
     ports:
