@@ -1,14 +1,13 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { CovidView2 } from '../../routes/covid';
 import JointFilter from '../../components/covidView2/JointFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
-import { Routing } from '../../routes/routing';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = CovidView2.view.parseUrl(Astro.url);
+const routeData = ServerSide.covidView2.parseUrl(Astro.url);
 if (routeData === undefined) {
     throw Error('Failed to parse URL for side-by-side comparison page');
 }
@@ -19,10 +18,10 @@ if (routeData === undefined) {
         <div class='flex overflow-x-auto'>
             {
                 routeData.filters.map(({ id, variantFilter, baselineFilter }) => {
-                    const baselineLapisFilter = CovidView2.baselineFilterToLapisFilter(baselineFilter);
+                    const baselineLapisFilter = ServerSide.covidView2.baselineFilterToLapisFilter(baselineFilter);
                     const timeGranularity = chooseGranularityBasedOnDateRange({
-                        from: baselineLapisFilter.dateFrom,
-                        to: baselineLapisFilter.dateTo,
+                        from: baselineLapisFilter[`${ServerSide.covidView2.mainDateField}From`] as string,
+                        to: baselineLapisFilter[`${ServerSide.covidView2.mainDateField}To`] as string,
                     });
                     const initialMutations = extractMutations(variantFilter);
 
@@ -31,7 +30,7 @@ if (routeData === undefined) {
                             {routeData.filters.length > 1 && (
                                 <a
                                     class='block w-full px-2 py-1 hover:bg-neutral-100'
-                                    href={Routing.toUrl(CovidView2.removeFilter(routeData, id))}
+                                    href={ServerSide.routing.toUrl(ServerSide.covidView2.removeFilter(routeData, id))}
                                 >
                                     Remove column
                                 </a>
@@ -115,7 +114,7 @@ if (routeData === undefined) {
             }
             <a
                 class='px-4 pt-8 text-left hover:bg-neutral-100'
-                href={Routing.toUrl(CovidView2.addEmptyFilter(routeData))}
+                href={ServerSide.routing.toUrl(ServerSide.covidView2.addEmptyFilter(routeData))}
                 style='writing-mode: vertical-rl;'
             >
                 Add column

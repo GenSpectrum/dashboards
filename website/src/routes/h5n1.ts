@@ -1,41 +1,51 @@
 import {
     type DateRange,
-    type DateRangeOption,
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getLapisLocation2FromSearch,
     getLapisVariantQuery1FromSearch,
+    type LapisFilter,
     type LapisLocation2,
     type LapisVariantQuery1,
-    type SampleCollectionDateFromTo,
     setSearchFromDateRange,
     setSearchFromLapisLocation2,
     setSearchFromLapisVariantQuery1,
 } from './helpers.ts';
 import { organismConfig, Organisms, type Route, type View } from './View.ts';
+import type { OrganismsConfig } from '../config.ts';
 
-const organism = Organisms.h5n1 as typeof Organisms.h5n1;
-const pathFragment = organismConfig[organism].pathFragment;
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
+const pathFragment = organismConfig[Organisms.h5n1].pathFragment;
 
-const defaultDateRange: DateRange = 'last6Months';
 const earliestDate = '1905-01-01';
 const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
-    { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-    { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-    { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: today },
-    { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
-];
 
-type Constants = {
-    earliestDate: string;
-    locationFields: string[];
-    customDateRangeOptions: DateRangeOption[];
-};
+class H5n1Constants {
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;
+    }
 
-const constants = { organism, earliestDate, locationFields, customDateRangeOptions };
+    public readonly organism = Organisms.h5n1 as typeof Organisms.h5n1;
+    public readonly earliestDate = '1905-01-01';
+    public readonly locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
+    public readonly defaultDateRange: DateRange = 'last6Months';
+    public readonly customDateRangeOptions = [
+        { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
+        { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
+        { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
+        { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: today },
+        { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
+    ];
+    public readonly mainDateField: string;
+
+    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter => {
+        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
+        return {
+            ...route.baselineFilter.location,
+            [`${this.mainDateField}From`]: dateRange.from,
+            [`${this.mainDateField}To`]: dateRange.to,
+        };
+    };
+}
 
 type RouteWithBaseline = Route & {
     baselineFilter: {
@@ -44,121 +54,88 @@ type RouteWithBaseline = Route & {
     };
 };
 
-const toLapisFilterWithoutVariant = (route: RouteWithBaseline): SampleCollectionDateFromTo & LapisLocation2 => {
-    const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(H5n1View1.view.earliestDate));
-    return {
-        ...route.baselineFilter.location,
-        sample_collection_dateFrom: dateRange.from,
-        sample_collection_dateTo: dateRange.to,
+type H5n1View1Route = { variantFilter: LapisVariantQuery1 } & RouteWithBaseline;
+
+export class H5n1View1 extends H5n1Constants implements View<H5n1View1Route> {
+    public readonly pathname = `/${pathFragment}/single-variant`;
+    public readonly label = 'Single variant';
+    public readonly labelLong = 'Analyze a single variant';
+    public readonly defaultRoute = {
+        organism: this.organism,
+        pathname: this.pathname,
+        baselineFilter: {
+            location: {},
+            dateRange: this.defaultDateRange,
+        },
+        variantFilter: {},
     };
-};
 
-export namespace H5n1View1 {
-    const pathname = `/${pathFragment}/single-variant`;
-
-    type Route = { variantFilter: LapisVariantQuery1 } & RouteWithBaseline;
-
-    const parseUrl = (url: URL): Route => {
+    public parseUrl = (url: URL): H5n1View1Route => {
         const search = url.searchParams;
         return {
-            organism,
-            pathname,
+            organism: this.organism,
+            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocation2FromSearch(search),
-                dateRange: getDateRangeFromSearch(search, 'sample_collection_date') ?? defaultDateRange,
+                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
             variantFilter: getLapisVariantQuery1FromSearch(search),
         };
     };
 
-    const toUrl = (route: Route): string => {
+    public toUrl = (route: H5n1View1Route): string => {
         const search = new URLSearchParams();
         setSearchFromLapisLocation2(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== defaultDateRange) {
-            setSearchFromDateRange(search, 'sample_collection_date', route.baselineFilter.dateRange);
+        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
         setSearchFromLapisVariantQuery1(search, route.variantFilter);
-        return `${pathname}?${search}`;
+        return `${this.pathname}?${search}`;
     };
 
-    const toLapisFilter = (route: Route) => {
+    public toLapisFilter = (route: H5n1View1Route): LapisFilter => {
         return {
-            ...toLapisFilterWithoutVariant(route),
+            ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
     };
-
-    export type H5n1View1 = View<Route> &
-        Constants & {
-            toLapisFilter: (route: Route) => SampleCollectionDateFromTo & LapisLocation2 & LapisVariantQuery1;
-            toLapisFilterWithoutVariant: (route: Route) => SampleCollectionDateFromTo & LapisLocation2;
-        };
-
-    export const view: H5n1View1 = {
-        ...constants,
-        pathname,
-        label: 'Single variant',
-        labelLong: 'Analyze a single variant',
-        parseUrl,
-        toUrl,
-        defaultRoute: {
-            organism,
-            pathname,
-            baselineFilter: {
-                location: {},
-                dateRange: defaultDateRange,
-            },
-            variantFilter: {},
-        },
-        toLapisFilter,
-        toLapisFilterWithoutVariant,
-    };
 }
 
-export namespace H5n1View3 {
-    const pathname = `/${pathFragment}/sequencing-efforts`;
+export class H5n1View3 extends H5n1Constants implements View<RouteWithBaseline> {
+    public readonly pathname = `/${pathFragment}/sequencing-efforts`;
+    public readonly label = 'Sequencing efforts';
+    public readonly labelLong = 'Sequencing efforts';
+    public readonly defaultRoute = {
+        organism: this.organism,
+        pathname: this.pathname,
+        baselineFilter: {
+            location: {},
+            dateRange: this.defaultDateRange,
+        },
+    };
 
-    const parseUrl = (url: URL): RouteWithBaseline => {
+    public parseUrl = (url: URL): RouteWithBaseline => {
         const search = url.searchParams;
         return {
-            organism,
-            pathname,
+            organism: this.organism,
+            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocation2FromSearch(search),
-                dateRange: getDateRangeFromSearch(search, 'sample_collection_date') ?? defaultDateRange,
+                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
         };
     };
 
-    const toUrl = (route: RouteWithBaseline): string => {
+    public toUrl = (route: RouteWithBaseline): string => {
         const search = new URLSearchParams();
         setSearchFromLapisLocation2(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== defaultDateRange) {
-            setSearchFromDateRange(search, 'sample_collection_date', route.baselineFilter.dateRange);
+        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
-        return `${pathname}?${search}`;
+        return `${this.pathname}?${search}`;
     };
 
-    export type H5n1View3 = View<RouteWithBaseline> &
-        Constants & {
-            toLapisFilter: (route: RouteWithBaseline) => SampleCollectionDateFromTo & LapisLocation2;
-        };
-
-    export const view: H5n1View3 = {
-        ...constants,
-        pathname,
-        label: 'Sequencing efforts',
-        labelLong: 'Sequencing efforts',
-        parseUrl,
-        toUrl,
-        defaultRoute: {
-            organism,
-            pathname,
-            baselineFilter: {
-                location: {},
-                dateRange: defaultDateRange,
-            },
-        },
-        toLapisFilter: toLapisFilterWithoutVariant,
+    public toLapisFilter = (route: RouteWithBaseline): LapisFilter => {
+        return this.toLapisFilterWithoutVariant(route);
     };
 }

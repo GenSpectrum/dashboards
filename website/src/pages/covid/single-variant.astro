@@ -1,20 +1,23 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CollectionsList } from '../../components/covidView1/CollectionsList';
-import { CovidView1 } from '../../routes/covid';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
-import { getLapisUrl } from '../../config';
+import { getDashboardsConfig, getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = CovidView1.view.parseUrl(Astro.url);
+const routeData = ServerSide.covidView1.parseUrl(Astro.url);
 
-const variantFilter = CovidView1.toLapisFilter(routeData);
-const baselineFilter = CovidView1.toLapisFilterWithoutVariant(routeData);
-const timeGranularity = chooseGranularityBasedOnDateRange({ from: baselineFilter.dateFrom, to: baselineFilter.dateTo });
+const variantFilter = ServerSide.covidView1.toLapisFilter(routeData);
+const baselineFilter = ServerSide.covidView1.toLapisFilterWithoutVariant(routeData);
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    from: baselineFilter[`${ServerSide.covidView1.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.covidView1.mainDateField}To`] as string,
+});
 
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -36,11 +39,11 @@ const initialMutations = extractMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={CovidView1.view.locationFields}
+                        fields={ServerSide.covidView1.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={CovidView1.view.earliestDate}
-                        customDateRangeOptions={CovidView1.view.customDateRangeOptions}
+                        earliestDate={ServerSide.covidView1.earliestDate}
+                        customDateRangeOptions={ServerSide.covidView1.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -60,7 +63,11 @@ const initialMutations = extractMutations(variantFilter);
                         initialMutations={initialMutations}
                     />
                     <div class='my-2 font-semibold'>Or select a known variant:</div>
-                    <CollectionsList initialCollectionId={routeData.collectionId} client:idle />
+                    <CollectionsList
+                        initialCollectionId={routeData.collectionId}
+                        organismsConfig={getDashboardsConfig().dashboards.organisms}
+                        client:idle
+                    />
                 </div>
             </div>
             <div>
@@ -147,7 +154,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='date'></gs-mutations-over-time>
+                        lapisDateField={ServerSide.covidView1.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -158,7 +165,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='date'></gs-mutations-over-time>
+                        lapisDateField={ServerSide.covidView1.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

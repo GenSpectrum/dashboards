@@ -1,9 +1,6 @@
 ---
-import { RsvBView1 } from '../../routes/rsvB';
 import RsvSingleVariantPage from '../../components/rsv/RsvSingleVariantPage.astro';
-import { Organisms } from '../../routes/View';
-
-const routeData = RsvBView1.view.parseUrl(Astro.url);
+import { ServerSide } from '../../routes/serverSideRouting';
 ---
 
-<RsvSingleVariantPage view={RsvBView1.view} routeData={routeData} titleName='RSV-B' organism={Organisms.rsvB} />
+<RsvSingleVariantPage view={ServerSide.rsvBView1} />

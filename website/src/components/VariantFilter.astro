@@ -1,6 +1,7 @@
 ---
 import type { LapisMutationQuery } from '../routes/helpers';
 import { type Field } from './VariantFilterTypes';
+import { getDashboardsConfig } from '../config';
 
 interface Props {
     fields: Field[];
@@ -10,7 +11,10 @@ interface Props {
 const { fields, initialMutations } = Astro.props;
 ---
 
-<variant-filter data-message={JSON.stringify({ fields })}>
+<variant-filter
+    data-message={JSON.stringify({ fields })}
+    data-organisms-config={JSON.stringify(getDashboardsConfig().dashboards.organisms)}
+>
     <div class='flex flex-col items-stretch gap-2'>
         {
             fields.map((field) =>
@@ -51,6 +55,7 @@ const { fields, initialMutations } = Astro.props;
         constructor() {
             super();
             const { fields } = JSON.parse(this.dataset.message!) as { fields: Field[] };
+            const config = JSON.parse(this.dataset.organismsConfig!);
             let values: Record<string, string | undefined> = {};
             for (const field of fields) {
                 values[field.name] = field.initialValue;
@@ -72,12 +77,13 @@ const { fields, initialMutations } = Astro.props;
             });
 
             submitButton?.addEventListener('click', () => {
-                const currentRoute = Routing.getCurrentRouteInBrowser()!;
+                const routing = new Routing(config);
+                const currentRoute = routing.getCurrentRouteInBrowser()!;
                 const newRoute = {
                     ...currentRoute,
                     variantFilter: values,
                 };
-                Routing.navigateTo(newRoute);
+                routing.navigateTo(newRoute);
             });
         }
     }

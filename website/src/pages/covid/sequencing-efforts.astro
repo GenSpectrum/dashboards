@@ -2,17 +2,20 @@
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { CovidView3 } from '../../routes/covid';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = CovidView3.parseUrl(Astro.url);
+const routeData = ServerSide.covidView3.parseUrl(Astro.url);
 
-const baselineFilter = CovidView3.toLapisFilter(routeData);
+const baselineFilter = ServerSide.covidView3.toLapisFilter(routeData);
 
-const timeGranularity = chooseGranularityBasedOnDateRange({ from: baselineFilter.dateFrom, to: baselineFilter.dateTo });
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    from: baselineFilter[`${ServerSide.covidView3.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.covidView3.mainDateField}To`] as string,
+});
 let subDivisionField = undefined;
 let subDivisionLabel = '';
 if (routeData.baselineFilter.location.country === undefined) {
@@ -30,11 +33,11 @@ if (routeData.baselineFilter.location.country === undefined) {
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={CovidView3.view.locationFields}
+                    fields={ServerSide.covidView3.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={CovidView3.view.earliestDate}
-                    customDateRangeOptions={CovidView3.view.customDateRangeOptions}
+                    earliestDate={ServerSide.covidView3.earliestDate}
+                    customDateRangeOptions={ServerSide.covidView3.customDateRangeOptions}
                 />
             </div>
         </div>
@@ -46,7 +49,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField='date'
+                    lapisDateField={ServerSide.covidView3.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'

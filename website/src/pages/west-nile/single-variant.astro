@@ -1,21 +1,21 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { WestNileView1 } from '../../routes/westNile';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = WestNileView1.view.parseUrl(Astro.url);
+const routeData = ServerSide.westNileView1.parseUrl(Astro.url);
 
-const variantFilter = WestNileView1.view.toLapisFilter(routeData);
-const baselineFilter = WestNileView1.view.toLapisFilterWithoutVariant(routeData);
+const variantFilter = ServerSide.westNileView1.toLapisFilter(routeData);
+const baselineFilter = ServerSide.westNileView1.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
+    from: baselineFilter[`${ServerSide.westNileView1.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.westNileView1.mainDateField}To`] as string,
 });
 
 let subDivisionField = undefined;
@@ -34,7 +34,7 @@ const customDateRangeOptions = [
     { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
     { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
     { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-    { label: 'Before 2000', dateFrom: WestNileView1.view.earliestDate, dateTo: '1999-12-31' },
+    { label: 'Before 2000', dateFrom: ServerSide.westNileView1.earliestDate, dateTo: '1999-12-31' },
 ];
 
 const initialMutations = extractMutations(variantFilter);
@@ -50,7 +50,7 @@ const initialMutations = extractMutations(variantFilter);
                         fields={locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={WestNileView1.view.earliestDate}
+                        earliestDate={ServerSide.westNileView1.earliestDate}
                         customDateRangeOptions={customDateRangeOptions}
                     />
                 </div>
@@ -73,7 +73,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField='sample_collection_date'
+                            lapisDateField={ServerSide.westNileView1.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -137,7 +137,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                        lapisDateField={ServerSide.westNileView1.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -148,7 +148,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField='sample_collection_date'></gs-mutations-over-time>
+                        lapisDateField={ServerSide.westNileView1.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

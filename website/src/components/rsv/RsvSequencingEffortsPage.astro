@@ -1,10 +1,8 @@
 ---
 import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
-import type { Organism } from '../../routes/View';
-import type { DateRange } from '../../routes/helpers';
+import { organismConfig } from '../../routes/View';
 import { RsvAView3 } from '../../routes/rsvA';
 import { RsvBView3 } from '../../routes/rsvB';
-import type { LapisLocation2 } from '../../routes/helpers';
 import { defaultTablePageSize, type Route } from '../../routes/View';
 import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
@@ -13,24 +11,18 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 interface Props {
-    view: RsvAView3.RsvAView3 | RsvBView3.RsvBView3;
-    routeData: Route & {
-        baselineFilter: {
-            location: LapisLocation2;
-            dateRange: DateRange;
-        };
-    };
-    titleName: string;
-    organism: Organism;
+    view: RsvAView3 | RsvBView3;
 }
 
-const { view, routeData, titleName, organism } = Astro.props;
+const { view } = Astro.props;
 
-const baselineFilter = RsvAView3.view.toLapisFilter(routeData);
+const routeData = view.parseUrl(Astro.url);
+
+const baselineFilter = view.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter.sample_collection_dateFrom,
-    to: baselineFilter.sample_collection_dateTo,
+    from: baselineFilter[`${view.mainDateField}From`] as string,
+    to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 let subDivisionField = undefined;
 let subDivisionLabel = '';
@@ -43,8 +35,8 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
 }
 ---
 
-<BaseLayout title={`Sequencing Efforts | ${titleName} | GenSpectrum`}>
-    <gs-app lapis={getLapisUrl(organism)}>
+<BaseLayout title={`Sequencing Efforts | ${organismConfig[view.organism].label} | GenSpectrum`}>
+    <gs-app lapis={getLapisUrl(view.organism)}>
         <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
@@ -65,7 +57,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField='sample_collection_date'
+                    lapisDateField={view.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'

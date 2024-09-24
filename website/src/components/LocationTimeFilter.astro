@@ -1,6 +1,7 @@
 ---
 import { isCustomDateRange } from '../routes/helpers';
 import type { DateRange } from '../routes/helpers';
+import { getDashboardsConfig } from '../config';
 
 interface Props {
     fields: string[];
@@ -25,7 +26,10 @@ const initialDateRangeFrom = isCustomDateRange(initialDateRange) ? initialDateRa
 const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRange.to : undefined;
 ---
 
-<location-time-filter data-message={JSON.stringify({ location: initialLocation, dateRange: initialDateRange })}>
+<location-time-filter
+    data-message={JSON.stringify({ location: initialLocation, dateRange: initialDateRange })}
+    data-organisms-config={JSON.stringify(getDashboardsConfig().dashboards.organisms)}
+>
     <div class='flex flex-wrap items-stretch gap-2'>
         <gs-location-filter
             id='locationFilter'
@@ -58,6 +62,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
         constructor() {
             super();
             let { location, dateRange } = JSON.parse(this.dataset.message!);
+            const config = JSON.parse(this.dataset.organismsConfig!);
             const locationFilter = document.getElementById('locationFilter');
             const dateRangeSelector = document.getElementById('dateRangeSelector');
             const submitButton = document.getElementById('locationTimeFilterSubmitButton');
@@ -74,9 +79,11 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             });
 
             submitButton?.addEventListener('click', () => {
+                const routing = new Routing(config);
+
                 // TODO This component currently assumes that it is used under a route that has a baseline filter.
                 //  We should either make it more flexible or document the behavior
-                const currentRoute = Routing.getCurrentRouteInBrowser() as any;
+                const currentRoute = routing.getCurrentRouteInBrowser() as any;
                 const newRoute = {
                     ...currentRoute,
                     baselineFilter: {
@@ -85,7 +92,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                         dateRange,
                     },
                 };
-                Routing.navigateTo(newRoute);
+                routing.navigateTo(newRoute);
             });
         }
     }
