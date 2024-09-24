@@ -1,0 +1,11 @@
+*
+!website/src/
+!website/public/
+!website/package.json
+!website/package-lock.json
+!website/astro.config.mjs
+!website/tailwind.config.mjs
+!website/tsconfig.json
+!website/.env.docker
+!website/patches/
+!backend/src/main/resources/application-dashboards-*.yaml

@@ -57,7 +57,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: ./website
+          context: .
+          file: Dockerfile_website
           tags: ${{ steps.dockerMetadata.outputs.tags }}
           cache-from: type=gha,scope=dashboards-${{ github.ref }}
           cache-to: type=gha,mode=max,scope=dashboards-${{ github.ref }}
