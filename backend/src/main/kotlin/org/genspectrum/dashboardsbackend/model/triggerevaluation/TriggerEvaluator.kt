@@ -175,9 +175,10 @@ private class ProportionComputation(
             )
         }
 
-        if (denominatorCount == 0 && numeratorCount == 0) {
-            return TriggerEvaluationResult.ConditionMet(
-                evaluatedValue = 0,
+        // TODO(#156): reevaluate this condition after we understand the use cases better
+        if (denominatorCount == 0) {
+            return TriggerEvaluationResult.ConditionNotMet(
+                evaluatedValue = null,
                 threshold = threshold,
                 lapisDataVersion = numeratorResponse.info.dataVersion,
             )

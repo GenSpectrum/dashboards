@@ -29,7 +29,7 @@ sealed interface TriggerEvaluationResult {
     }
 
     data class ConditionNotMet(
-        val evaluatedValue: Number,
+        val evaluatedValue: Number?,
         val threshold: Number,
         val lapisDataVersion: String?,
     ) : TriggerEvaluationResult {

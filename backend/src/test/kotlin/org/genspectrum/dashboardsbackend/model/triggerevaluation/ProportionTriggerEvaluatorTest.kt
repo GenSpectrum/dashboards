@@ -141,8 +141,8 @@ class ProportionTriggerEvaluatorTest(
         assertThat(
             result,
             `is`(
-                TriggerEvaluationResult.ConditionMet(
-                    evaluatedValue = Double.POSITIVE_INFINITY,
+                TriggerEvaluationResult.ConditionNotMet(
+                    evaluatedValue = null,
                     threshold = 0.5,
                     lapisDataVersion = "a data version",
                 ),
@@ -171,8 +171,8 @@ class ProportionTriggerEvaluatorTest(
         assertThat(
             result,
             `is`(
-                TriggerEvaluationResult.ConditionMet(
-                    evaluatedValue = 0,
+                TriggerEvaluationResult.ConditionNotMet(
+                    evaluatedValue = null,
                     threshold = 0.5,
                     lapisDataVersion = "a data version",
                 ),
