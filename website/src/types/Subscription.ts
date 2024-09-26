@@ -1,5 +1,6 @@
 import type { Organism } from '../routes/View.ts';
 import type { DateWindow } from './DateWindow.ts';
+import type { NotificationChannels } from './NotificationChannels.ts';
 
 export type LapisFilter = Record<string, string | number | null | boolean | undefined | string[]>;
 
@@ -20,8 +21,28 @@ export type ProportionTrigger = {
 
 export type Trigger = CountTrigger | ProportionTrigger;
 
+export type TriggerEvaluationResponse = {
+    result: TriggerEvaluationResult;
+};
+
+export type TriggerEvaluationResult =
+    | {
+          evaluatedValue: number;
+          threshold: number;
+          lapisDataVersion?: string;
+          type: 'ConditionMet' | 'ConditionNotMet';
+      }
+    | EvaluationError;
+
+export type EvaluationError = {
+    type: 'EvaluationError';
+    message: string;
+    statusCode: number;
+};
+
 export interface Subscription extends SubscriptionResponse {
-    conditionsMet: boolean;
+    triggerEvaluationResult: TriggerEvaluationResult;
+    notificationChannels: NotificationChannels;
 }
 
 export interface SubscriptionResponse extends SubscriptionRequest {

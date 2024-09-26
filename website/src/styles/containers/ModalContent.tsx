@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
-export function ModalContent({ children }: { children: ReactNode }) {
+export function ModalContent({ children }: PropsWithChildren) {
     return <div className='p-6'>{children}</div>;
 }

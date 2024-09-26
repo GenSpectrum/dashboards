@@ -1,11 +1,12 @@
-import { type ReactNode } from 'react';
+import { type PropsWithChildren } from 'react';
+import type { WithClassName } from '../../types/WithClassName.ts';
 
-interface InputLabelProps {
-    title: string;
-    description: string;
-    children: ReactNode;
-    className?: string;
-}
+type InputLabelProps = PropsWithChildren<
+    WithClassName<{
+        title: string;
+        description: string;
+    }>
+>;
 
 export function InputLabel({ children, className, title, description }: InputLabelProps) {
     return (

@@ -20,34 +20,13 @@ import { TriggerInput } from './TriggerInput.tsx';
 import { type DateWindow, DateWindows } from '../../../types/DateWindow.ts';
 import type { DashboardsConfig } from '../../../config.ts';
 
-const notificationChannels: NotificationChannels = {
-    email: [
-        {
-            id: '1',
-            address: 'test@test.test',
-            name: 'A test email',
-        },
-        {
-            id: '2',
-            address: 'other@other.other',
-            name: 'Another test email',
-        },
-    ],
-    slack: [
-        {
-            id: '3',
-            name: 'My slack channel',
-            hook: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-        },
-        {
-            id: '4',
-            name: 'My other slack channel',
-            hook: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-        },
-    ],
-};
-
-export function SubscriptionsCreate({ config }: { config: DashboardsConfig }) {
+export function SubscriptionsCreate({
+    config,
+    notificationChannels,
+}: {
+    config: DashboardsConfig;
+    notificationChannels: NotificationChannels;
+}) {
     const [trigger, setTrigger] = useState<Trigger>({
         type: 'count',
         count: 0,

@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react';
+import { type PropsWithChildren } from 'react';
 
-export function PageContainer({ children }: { children: ReactNode }) {
+export function PageContainer({ children }: PropsWithChildren) {
     return <div className='container mx-auto min-w-72'>{children}</div>;
 }
