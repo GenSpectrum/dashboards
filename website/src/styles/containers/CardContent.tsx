@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
-export function CardContent({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function CardContent({ children }: PropsWithChildren) {
     return <div className='mb-2'>{children}</div>;
 }

@@ -4,8 +4,11 @@ import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
 
 const config = getDashboardsConfig();
+import { fetchNotificationChannels } from '../../components/subscriptions/backendApi';
+
+const notificationChannels = fetchNotificationChannels();
 ---
 
 <BaseLayout title='Create new subscription' omitHeaderNavigation={true}>
-    <SubscriptionsCreate config={config} client:only='react' />
+    <SubscriptionsCreate config={config} client:only='react' notificationChannels={notificationChannels} />
 </BaseLayout>

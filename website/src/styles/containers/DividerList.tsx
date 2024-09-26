@@ -1,6 +1,6 @@
-import { Children, Fragment, type ReactNode } from 'react';
+import { Children, Fragment, type PropsWithChildren } from 'react';
 
-export function DividerList({ children }: { children: ReactNode }) {
+export function DividerList({ children }: PropsWithChildren) {
     const childrenArray = Children.toArray(children);
 
     return (

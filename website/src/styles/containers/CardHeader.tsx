@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
+import type { WithClassName } from '../../types/WithClassName.ts';
 
-export function CardHeader({ children }: { children: ReactNode }) {
-    return <div className='mb-4 flex place-content-between items-center'>{children}</div>;
+export function CardHeader({ children, className = '' }: PropsWithChildren<WithClassName>) {
+    return <div className={`mb-4 flex items-center justify-between ${className}`}>{children}</div>;
 }
