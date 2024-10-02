@@ -20,4 +20,9 @@ data class LapisConfig(
     val mainDateField: String,
     val locationFields: List<String>,
     val lineageField: String,
+    val hostField: String,
+    val authorsField: String?,
+    val authorAffiliationsField: String?,
+    val originatingLabField: String?,
+    val submittingLabField: String?,
 )

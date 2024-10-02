@@ -46,7 +46,7 @@ if (routeData === undefined) {
                                 filterId={id}
                                 initialLocation={baselineFilter.location}
                                 initialDateRange={baselineFilter.dateRange}
-                                initialLineage={'lineage' in variantFilter ? variantFilter.lineage : undefined}
+                                initialLineage={variantFilter.lineage ?? undefined}
                                 initialMutations={initialMutations}
                             />
                             <ComponentWrapper title='Prevalence over time'>
@@ -104,7 +104,7 @@ if (routeData === undefined) {
                             </ComponentWrapper>
                             <ComponentWrapper title='Hosts'>
                                 <gs-aggregate
-                                    fields='["host"]'
+                                    fields={JSON.stringify([ServerSide.covidSequencingEffortsView.hostField])}
                                     filter={JSON.stringify(numeratorFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'

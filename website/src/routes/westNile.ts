@@ -29,6 +29,9 @@ class WestNileConstants {
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
         this.locationFields = organismsConfig.westNile.lapis.locationFields;
         this.lineageField = organismsConfig.westNile.lapis.lineageField;
+        this.hostField = organismsConfig.westNile.lapis.hostField;
+        this.authorsField = organismsConfig.westNile.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
     }
 
     public readonly organism = Organisms.westNile as typeof Organisms.westNile;
@@ -44,6 +47,9 @@ class WestNileConstants {
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageField: string;
+    public readonly hostField: string;
+    public readonly authorsField: string | undefined;
+    public readonly authorAffiliationsField: string | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));

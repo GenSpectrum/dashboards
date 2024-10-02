@@ -65,7 +65,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             }
             <ComponentsGrid title='Hosts' height='600px'>
                 <gs-aggregate
-                    fields='["host_name_scientific"]'
+                    fields={JSON.stringify([ServerSide.h5n1AnalyzeSingleVariantView.hostField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -73,7 +73,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentsGrid>
             <ComponentsGrid title='Author affiliations' height='600px'>
                 <gs-aggregate
-                    fields='["author_affiliations"]'
+                    fields={JSON.stringify([ServerSide.h5n1AnalyzeSingleVariantView.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -81,7 +81,10 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentsGrid>
             <ComponentsGrid title='Authors' height='600px'>
                 <gs-aggregate
-                    fields='["authors", "author_affiliations"]'
+                    fields={JSON.stringify([
+                        ServerSide.h5n1AnalyzeSingleVariantView.authorsField,
+                        ServerSide.h5n1AnalyzeSingleVariantView.authorAffiliationsField,
+                    ])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'

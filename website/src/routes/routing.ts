@@ -2,7 +2,7 @@ import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencin
 import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
 import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
 import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
-import { RsvBAnalyzeSingleVariantView, RsvBView3 } from './rsvB.ts';
+import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.ts';
 import { Organisms, type Route } from './View.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import type { OrganismsConfig } from '../config.ts';
@@ -30,7 +30,10 @@ export class Routing {
                 new RsvAAnalyzeSingleVariantView(organismsConfig),
                 new RsvASequencingEffortsView(organismsConfig),
             ],
-            [Organisms.rsvB]: [new RsvBAnalyzeSingleVariantView(organismsConfig), new RsvBView3(organismsConfig)],
+            [Organisms.rsvB]: [
+                new RsvBAnalyzeSingleVariantView(organismsConfig),
+                new RsvBSequencingEffortsView(organismsConfig),
+            ],
             [Organisms.westNile]: [
                 new WestNileAnalyzeSingleVariantView(organismsConfig),
                 new WestNileSequencingEffortsView(organismsConfig),

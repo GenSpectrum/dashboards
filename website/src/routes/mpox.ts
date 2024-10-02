@@ -24,6 +24,9 @@ class MpoxConstants {
         this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
         this.locationFields = organismsConfig.mpox.lapis.locationFields;
         this.lineageField = organismsConfig.mpox.lapis.lineageField;
+        this.hostField = organismsConfig.mpox.lapis.hostField;
+        this.authorsField = organismsConfig.mpox.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
     }
 
     public readonly organism = Organisms.mpox as typeof Organisms.mpox;
@@ -44,6 +47,9 @@ class MpoxConstants {
     public readonly locationFields: string[];
     public readonly lineageField: string;
     public readonly cladeField = 'clade';
+    public readonly hostField: string;
+    public readonly authorsField: string | undefined;
+    public readonly authorAffiliationsField: string | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));

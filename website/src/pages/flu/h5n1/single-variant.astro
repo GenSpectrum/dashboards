@@ -95,7 +95,7 @@ const initialMutations = getLapisMutations(variantFilter);
 
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields='["host_name_scientific"]'
+                            fields={JSON.stringify([ServerSide.h5n1AnalyzeSingleVariantView.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

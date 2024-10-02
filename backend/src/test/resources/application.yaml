@@ -11,23 +11,66 @@ dashboards:
       lapis:
         url: "https://covid.lapis.dummy"
         mainDateField: "covid_date"
+        locationFields:
+          - "covid_region"
+          - "covid_country"
+          - "covid_division"
+        lineageField: "covid_lineage"
+        hostField: "covid_host"
+        originatingLabField: "covid_originating_lab"
+        submittingLabField: "covid_submitting_lab"
     h5n1:
       lapis:
         url: "https://h5n1.lapis.dummy"
         mainDateField: "h5n1_date"
+        locationFields:
+          - "h5n1_geo_loc_country"
+          - "h5n1_geo_loc_admin_1"
+        lineageField: "h5n1_lineage"
+        hostField: "h5n1_host_name_scientific"
+        authorAffiliationsField: "h5n1_author_affiliations"
+        authorsField: "h5n1_authors"
     mpox:
       lapis:
         url: "https://mpox.lapis.dummy"
         mainDateField: "mpox_date"
+        locationFields:
+          - "mpox_geo_loc_country"
+          - "mpox_geo_loc_admin_1"
+        lineageField: "mpox_lineage"
+        hostField: "mpox_host_name_scientific"
+        authorAffiliationsField: "mpox_author_affiliations"
+        authorsField: "mpox_authors"
     westNile:
       lapis:
         url: "https://westNile.lapis.dummy"
         mainDateField: "westnile_date"
+        locationFields:
+          - "westNile_geo_loc_country"
+          - "westNile_geo_loc_admin_1"
+        lineageField: "westNile_lineage"
+        hostField: "westNile_host_name_scientific"
+        authorAffiliationsField: "westNile_author_affiliations"
+        authorsField: "westNile_authors"
     rsvA:
       lapis:
         url: "https://rsvA.lapis.dummy"
         mainDateField: "rsva_date"
+        locationFields:
+          - "rsvA_geo_loc_country"
+          - "rsvA_geo_loc_admin_1"
+        lineageField: "rsvA_lineage"
+        hostField: "rsvA_host_name_scientific"
+        authorAffiliationsField: "rsvA_author_affiliations"
+        authorsField: "rsvA_authors"
     rsvB:
       lapis:
         url: "https://rsvB.lapis.dummy"
         mainDateField: "rsvb_date"
+        locationFields:
+          - "rsvB_geo_loc_country"
+          - "rsvB_geo_loc_admin_1"
+        lineageField: "rsvB_lineage"
+        hostField: "rsvB_host_name_scientific"
+        authorAffiliationsField: "rsvB_author_affiliations"
+        authorsField: "rsvB_authors"
