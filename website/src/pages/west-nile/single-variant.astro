@@ -2,42 +2,33 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
-import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
+import {
+    chooseGranularityBasedOnDateRange,
+    getLapisMutations,
+    getLocationSubdivision,
+    getTodayString,
+} from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = ServerSide.westNileView1.parseUrl(Astro.url);
+const routeData = ServerSide.westNileAnalyzeSingleVariantView.parseUrl(Astro.url);
 
-const variantFilter = ServerSide.westNileView1.toLapisFilter(routeData);
-const baselineFilter = ServerSide.westNileView1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = ServerSide.westNileAnalyzeSingleVariantView.toLapisFilter(routeData);
+const baselineFilter = ServerSide.westNileAnalyzeSingleVariantView.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.westNileView1.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.westNileView1.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.westNileAnalyzeSingleVariantView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.westNileAnalyzeSingleVariantView.mainDateField}To`] as string,
 });
 
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.geo_loc_country === undefined) {
-    subDivisionField = 'geo_loc_country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
-    subDivisionField = 'geo_loc_admin_1';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.westNileAnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 
-const locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
-const today = new Date().toISOString().substring(0, 10);
-const customDateRangeOptions = [
-    { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
-    { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-    { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-    { label: 'Before 2000', dateFrom: ServerSide.westNileView1.earliestDate, dateTo: '1999-12-31' },
-];
-
-const initialMutations = extractMutations(variantFilter);
+const initialMutations = getLapisMutations(variantFilter);
 ---
 
 <BaseLayout title='Single Variant | WNV | GenSpectrum'>
@@ -47,18 +38,24 @@ const initialMutations = extractMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={locationFields}
+                        fields={ServerSide.westNileAnalyzeSingleVariantView.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={ServerSide.westNileView1.earliestDate}
-                        customDateRangeOptions={customDateRangeOptions}
+                        earliestDate={ServerSide.westNileAnalyzeSingleVariantView.earliestDate}
+                        customDateRangeOptions={ServerSide.westNileAnalyzeSingleVariantView.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[
-                            { name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage, type: 'text' },
+                            {
+                                name: ServerSide.westNileAnalyzeSingleVariantView.lineageField,
+                                label: 'Lineage',
+                                initialValue: variantFilter.lineage,
+                                type: 'text',
+                                rename: 'lineage',
+                            },
                         ]}
                         initialMutations={initialMutations}
                     />
@@ -73,7 +70,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField={ServerSide.westNileView1.mainDateField}
+                            lapisDateField={ServerSide.westNileAnalyzeSingleVariantView.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -99,10 +96,10 @@ const initialMutations = extractMutations(variantFilter);
                             height='100%'></gs-mutations>
                     </ComponentWrapper>
                     {
-                        subDivisionField && (
-                            <ComponentWrapper title={subDivisionLabel}>
+                        subdivisionField && (
+                            <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
+                                    fields={JSON.stringify([subdivisionField])}
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -113,7 +110,7 @@ const initialMutations = extractMutations(variantFilter);
                     }
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
-                            fields={JSON.stringify(['lineage'])}
+                            fields={JSON.stringify([ServerSide.westNileAnalyzeSingleVariantView.lineageField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -121,7 +118,7 @@ const initialMutations = extractMutations(variantFilter);
                     </ComponentWrapper>
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields='["host_name_scientific"]'
+                            fields='["hostNameScientific"]'
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -137,7 +134,8 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.westNileView1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.westNileAnalyzeSingleVariantView.mainDateField}
+                    ></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -148,7 +146,8 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.westNileView1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.westNileAnalyzeSingleVariantView.mainDateField}
+                    ></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

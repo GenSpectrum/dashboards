@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Routing } from '../../routes/routing.ts';
-import { type CovidView1Route } from '../../routes/covid.ts';
+import { type CovidAnalyzeSingleVariantRoute } from '../../routes/covid.ts';
 import type { OrganismsConfig } from '../../config.ts';
 
 type CollectionVariant = {
@@ -93,8 +93,8 @@ const CollectionVariantList = ({ collection, organismsConfig }: CollectionVarian
     const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
 
     const selectVariant = (variant: CollectionVariant) => {
-        const currentRoute = routing.getCurrentRouteInBrowser() as CovidView1Route;
-        let newRoute: CovidView1Route;
+        const currentRoute = routing.getCurrentRouteInBrowser() as CovidAnalyzeSingleVariantRoute;
+        let newRoute: CovidAnalyzeSingleVariantRoute;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
             newRoute = {
@@ -109,7 +109,7 @@ const CollectionVariantList = ({ collection, organismsConfig }: CollectionVarian
                 ...currentRoute,
                 collectionId: collection.id,
                 variantFilter: {
-                    nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
+                    lineage: query.pangoLineage ?? query.nextcladePangoLineage,
                     nucleotideMutations: query.nucMutations,
                     aminoAcidMutations: query.aaMutations,
                     nucleotideInsertions: query.nucInsertions,

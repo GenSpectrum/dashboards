@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { CollectionsList } from '../../components/covidView1/CollectionsList';
-import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
+import { CollectionsList } from '../../components/covidAnalyzeSingleVariantView/CollectionsList';
+import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
@@ -10,26 +10,24 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = ServerSide.covidView1.parseUrl(Astro.url);
+const routeData = ServerSide.covidAnalyzeSingleVariantView.parseUrl(Astro.url);
 
-const variantFilter = ServerSide.covidView1.toLapisFilter(routeData);
-const baselineFilter = ServerSide.covidView1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = ServerSide.covidAnalyzeSingleVariantView.toLapisFilter(routeData);
+const baselineFilter = ServerSide.covidAnalyzeSingleVariantView.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.covidView1.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.covidView1.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.covidAnalyzeSingleVariantView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.covidAnalyzeSingleVariantView.mainDateField}To`] as string,
 });
 
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.country === undefined) {
-    subDivisionField = 'country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.division === undefined) {
-    subDivisionField = 'division';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.covidAnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 
-const initialMutations = extractMutations(variantFilter);
+const initialMutations = getLapisMutations(variantFilter);
+
+console.log('variantFilter', variantFilter);
+console.log('routeData.variantFilter', routeData.variantFilter);
 ---
 
 <BaseLayout title='Single Variant | SARS-CoV-2 | GenSpectrum'>
@@ -39,11 +37,11 @@ const initialMutations = extractMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={ServerSide.covidView1.locationFields}
+                        fields={ServerSide.covidAnalyzeSingleVariantView.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={ServerSide.covidView1.earliestDate}
-                        customDateRangeOptions={ServerSide.covidView1.customDateRangeOptions}
+                        earliestDate={ServerSide.covidAnalyzeSingleVariantView.earliestDate}
+                        customDateRangeOptions={ServerSide.covidAnalyzeSingleVariantView.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -51,13 +49,12 @@ const initialMutations = extractMutations(variantFilter);
                     <VariantFilter
                         fields={[
                             {
-                                name: 'nextcladePangoLineage',
+                                name: ServerSide.covidAnalyzeSingleVariantView.lineageField,
                                 label: 'Pango Lineage',
                                 initialValue:
-                                    'nextcladePangoLineage' in variantFilter
-                                        ? variantFilter.nextcladePangoLineage
-                                        : undefined,
+                                    'lineage' in routeData.variantFilter ? routeData.variantFilter.lineage : undefined,
                                 type: 'pango-lineage',
+                                rename: 'lineage',
                             },
                         ]}
                         initialMutations={initialMutations}
@@ -116,17 +113,17 @@ const initialMutations = extractMutations(variantFilter);
 
                     <ComponentWrapper title='Sub-lineages'>
                         <gs-aggregate
-                            fields='["nextcladePangoLineage"]'
+                            fields={JSON.stringify([ServerSide.covidAnalyzeSingleVariantView.lineageField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
                             height='100%'></gs-aggregate>
                     </ComponentWrapper>
                     {
-                        subDivisionField && (
-                            <ComponentWrapper title={subDivisionLabel}>
+                        subdivisionField && (
+                            <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
+                                    fields={JSON.stringify([subdivisionField])}
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -154,7 +151,8 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.covidView1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.covidAnalyzeSingleVariantView.mainDateField}
+                    ></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -165,7 +163,8 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.covidView1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.covidAnalyzeSingleVariantView.mainDateField}
+                    ></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

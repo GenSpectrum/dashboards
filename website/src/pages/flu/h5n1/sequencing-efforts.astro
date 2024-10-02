@@ -1,5 +1,5 @@
 ---
-import { chooseGranularityBasedOnDateRange } from '../../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../../routes/helpers';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../../components/LocationTimeFilter.astro';
 import { getLapisUrl } from '../../../config';
@@ -7,23 +7,18 @@ import { defaultTablePageSize, Organisms } from '../../../routes/View';
 import ComponentsGrid from '../../../components/ComponentsGrid.astro';
 import { ServerSide } from '../../../routes/serverSideRouting';
 
-const routeData = ServerSide.h5n1View3.parseUrl(Astro.url);
+const routeData = ServerSide.h5n1SequencingEffortsView.parseUrl(Astro.url);
 
-const baselineFilter = ServerSide.h5n1View3.toLapisFilter(routeData);
+const baselineFilter = ServerSide.h5n1SequencingEffortsView.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.h5n1View3.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.h5n1View3.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.h5n1SequencingEffortsView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.h5n1SequencingEffortsView.mainDateField}To`] as string,
 });
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.geo_loc_country === undefined) {
-    subDivisionField = 'geo_loc_country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
-    subDivisionField = 'geo_loc_admin_1';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.h5n1AnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 ---
 
 <BaseLayout title='Sequencing Efforts | H5N1 | GenSpectrum'>
@@ -32,11 +27,11 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={ServerSide.h5n1View3.locationFields}
+                    fields={ServerSide.h5n1SequencingEffortsView.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={ServerSide.h5n1View3.earliestDate}
-                    customDateRangeOptions={ServerSide.h5n1View3.customDateRangeOptions}
+                    earliestDate={ServerSide.h5n1SequencingEffortsView.earliestDate}
+                    customDateRangeOptions={ServerSide.h5n1SequencingEffortsView.customDateRangeOptions}
                 />
             </div>
         </div>
@@ -48,7 +43,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField={ServerSide.h5n1View3.mainDateField}
+                    lapisDateField={ServerSide.h5n1SequencingEffortsView.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -56,10 +51,10 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     granularity={timeGranularity}></gs-number-sequences-over-time>
             </ComponentsGrid>
             {
-                subDivisionField && (
-                    <ComponentsGrid title={subDivisionLabel} height='600px'>
+                subdivisionField && (
+                    <ComponentsGrid title={subdivisionLabel} height='600px'>
                         <gs-aggregate
-                            fields={JSON.stringify([subDivisionField])}
+                            fields={JSON.stringify([subdivisionField])}
                             filter={JSON.stringify(baselineFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

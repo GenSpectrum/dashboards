@@ -7,6 +7,8 @@ import YAML from 'yaml';
 const lapisConfigSchema = z.object({
     url: z.string(),
     mainDateField: z.string(),
+    locationFields: z.array(z.string()),
+    lineageField: z.string(),
 });
 
 const organismConfigSchema = z.object({ lapis: lapisConfigSchema });

@@ -3,4 +3,5 @@ export type Field = {
     label: string;
     initialValue: string | undefined;
     type: 'text' | 'pango-lineage';
+    rename?: string;
 };

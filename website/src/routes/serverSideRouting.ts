@@ -10,17 +10,17 @@ export namespace ServerSide {
 
     export const routing = new Routing(organismsConfig);
 
-    export const covidView1 = routing.views.covid[0];
-    export const covidView2 = routing.views.covid[1];
-    export const covidView3 = routing.views.covid[2];
-    export const h5n1View1 = routing.views.h5n1[0];
-    export const h5n1View3 = routing.views.h5n1[1];
-    export const mpoxView1 = routing.views.mpox[0];
-    export const mpoxView3 = routing.views.mpox[1];
-    export const rsvAView1 = routing.views.rsvA[0];
-    export const rsvAView3 = routing.views.rsvA[1];
-    export const rsvBView1 = routing.views.rsvB[0];
-    export const rsvBView3 = routing.views.rsvB[1];
-    export const westNileView1 = routing.views.westNile[0];
-    export const westNileView3 = routing.views.westNile[1];
+    export const covidAnalyzeSingleVariantView = routing.views.covid[0];
+    export const covidCompareVariantsView = routing.views.covid[1];
+    export const covidSequencingEffortsView = routing.views.covid[2];
+    export const h5n1AnalyzeSingleVariantView = routing.views.h5n1[0];
+    export const h5n1SequencingEffortsView = routing.views.h5n1[1];
+    export const mpoxAnalyzeSingleVariantView = routing.views.mpox[0];
+    export const mpoxSequencingEffortsView = routing.views.mpox[1];
+    export const rsvAAnalyzeSingleVariantView = routing.views.rsvA[0];
+    export const rsvASequencingEffortsView = routing.views.rsvA[1];
+    export const rsvBAnalyzeSingleVariantView = routing.views.rsvB[0];
+    export const rsvBSequencingEffortsView = routing.views.rsvB[1];
+    export const westNileAnalyzeSingleVariantView = routing.views.westNile[0];
+    export const westNileSequencingEffortsView = routing.views.westNile[1];
 }

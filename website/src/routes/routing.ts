@@ -1,10 +1,10 @@
-import { CovidView1, CovidView2, CovidView3 } from './covid.ts';
-import { MpoxView1, MpoxView3 } from './mpox.ts';
-import { WestNileView1, WestNileView3 } from './westNile.ts';
-import { RsvAView1, RsvAView3 } from './rsvA.ts';
-import { RsvBView1, RsvBView3 } from './rsvB.ts';
+import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
+import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
+import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
+import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
+import { RsvBAnalyzeSingleVariantView, RsvBView3 } from './rsvB.ts';
 import { Organisms, type Route } from './View.ts';
-import { H5n1View1, H5n1View3 } from './h5n1.ts';
+import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import type { OrganismsConfig } from '../config.ts';
 
 export class Routing {
@@ -14,15 +14,27 @@ export class Routing {
     constructor(organismsConfig: OrganismsConfig) {
         this.views = {
             [Organisms.covid]: [
-                new CovidView1(organismsConfig),
-                new CovidView2(organismsConfig),
-                new CovidView3(organismsConfig),
+                new CovidAnalyzeSingleVariantView(organismsConfig),
+                new CovidCompareVariantsView(organismsConfig),
+                new CovidSequencingEffortsView(organismsConfig),
             ],
-            [Organisms.h5n1]: [new H5n1View1(organismsConfig), new H5n1View3(organismsConfig)],
-            [Organisms.mpox]: [new MpoxView1(organismsConfig), new MpoxView3(organismsConfig)],
-            [Organisms.rsvA]: [new RsvAView1(organismsConfig), new RsvAView3(organismsConfig)],
-            [Organisms.rsvB]: [new RsvBView1(organismsConfig), new RsvBView3(organismsConfig)],
-            [Organisms.westNile]: [new WestNileView1(organismsConfig), new WestNileView3(organismsConfig)],
+            [Organisms.h5n1]: [
+                new H5n1AnalyzeSingleVariantView(organismsConfig),
+                new H5n1SequencingEffortsView(organismsConfig),
+            ],
+            [Organisms.mpox]: [
+                new MpoxAnalyzeSingleVariantView(organismsConfig),
+                new MpoxSequencingEffortsView(organismsConfig),
+            ],
+            [Organisms.rsvA]: [
+                new RsvAAnalyzeSingleVariantView(organismsConfig),
+                new RsvASequencingEffortsView(organismsConfig),
+            ],
+            [Organisms.rsvB]: [new RsvBAnalyzeSingleVariantView(organismsConfig), new RsvBView3(organismsConfig)],
+            [Organisms.westNile]: [
+                new WestNileAnalyzeSingleVariantView(organismsConfig),
+                new WestNileSequencingEffortsView(organismsConfig),
+            ],
         } as const;
         this.allViews = Object.values(this.views).flat();
     }

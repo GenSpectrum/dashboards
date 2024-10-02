@@ -2,33 +2,28 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = ServerSide.mpoxView1.parseUrl(Astro.url);
+const routeData = ServerSide.mpoxAnalyzeSingleVariantView.parseUrl(Astro.url);
 
-const variantFilter = ServerSide.mpoxView1.toLapisFilter(routeData);
-const baselineFilter = ServerSide.mpoxView1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = ServerSide.mpoxAnalyzeSingleVariantView.toLapisFilter(routeData);
+const baselineFilter = ServerSide.mpoxAnalyzeSingleVariantView.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.mpoxView1.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.mpoxView1.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.mpoxAnalyzeSingleVariantView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.mpoxAnalyzeSingleVariantView.mainDateField}To`] as string,
 });
 
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.geo_loc_country === undefined) {
-    subDivisionField = 'geo_loc_country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
-    subDivisionField = 'geo_loc_admin_1';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.mpoxAnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 
-const initialMutations = extractMutations(variantFilter);
+const initialMutations = getLapisMutations(variantFilter);
 ---
 
 <BaseLayout title='Single Variant | Mpox | GenSpectrum'>
@@ -38,19 +33,31 @@ const initialMutations = extractMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={ServerSide.mpoxView1.locationFields}
+                        fields={ServerSide.mpoxAnalyzeSingleVariantView.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={ServerSide.mpoxView1.earliestDate}
-                        customDateRangeOptions={ServerSide.mpoxView1.customDateRangeOptions}
+                        earliestDate={ServerSide.mpoxAnalyzeSingleVariantView.earliestDate}
+                        customDateRangeOptions={ServerSide.mpoxAnalyzeSingleVariantView.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[
-                            { name: 'clade', label: 'Clade', initialValue: variantFilter.clade, type: 'text' },
-                            { name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage, type: 'text' },
+                            {
+                                name: ServerSide.mpoxAnalyzeSingleVariantView.cladeField,
+                                label: 'Clade',
+                                initialValue: variantFilter.clade,
+                                type: 'text',
+                                rename: 'clade',
+                            },
+                            {
+                                name: ServerSide.mpoxAnalyzeSingleVariantView.lineageField,
+                                label: 'Lineage',
+                                initialValue: variantFilter.lineage,
+                                type: 'text',
+                                rename: 'lineage',
+                            },
                         ]}
                         initialMutations={initialMutations}
                     />
@@ -65,7 +72,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField={ServerSide.mpoxView1.mainDateField}
+                            lapisDateField={ServerSide.mpoxAnalyzeSingleVariantView.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -91,10 +98,10 @@ const initialMutations = extractMutations(variantFilter);
                             height='100%'></gs-mutations>
                     </ComponentWrapper>
                     {
-                        subDivisionField && (
-                            <ComponentWrapper title={subDivisionLabel}>
+                        subdivisionField && (
+                            <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
+                                    fields={JSON.stringify([subdivisionField])}
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -105,7 +112,10 @@ const initialMutations = extractMutations(variantFilter);
                     }
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
-                            fields={JSON.stringify(['clade', 'lineage'])}
+                            fields={JSON.stringify([
+                                ServerSide.mpoxAnalyzeSingleVariantView.cladeField,
+                                ServerSide.mpoxAnalyzeSingleVariantView.lineageField,
+                            ])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -129,7 +139,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.mpoxView1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.mpoxAnalyzeSingleVariantView.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -140,7 +150,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.mpoxView1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.mpoxAnalyzeSingleVariantView.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

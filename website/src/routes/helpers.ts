@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export type SpecialDateRange = 'allTimes' | 'last2Weeks' | 'lastMonth' | 'last2Months' | 'last3Months' | 'last6Months';
 
 export type CustomDateRange = {
@@ -12,6 +14,10 @@ export type DateRangeOption = {
     dateFrom: string;
     dateTo: string;
 };
+
+export function getTodayString(): string {
+    return dayjs().format('YYYY-MM-DD');
+}
 
 export type LapisFilter = Record<string, string | number | null | boolean | string[]>;
 
@@ -49,8 +55,8 @@ export const dateRangeToCustomDateRange = (dateRange: DateRange, allTimesStartDa
     }
 
     return {
-        from: fromDate.toISOString().substring(0, 10),
-        to: toDate.toISOString().substring(0, 10),
+        from: dayjs(fromDate).format('YYYY-MM-DD'),
+        to: dayjs(toDate).format('YYYY-MM-DD'),
     };
 };
 
@@ -102,11 +108,17 @@ export const setSearchFromDateRange = (
     }
 };
 
-export const getStringFromSearch = (search: URLSearchParams, name: string): string | undefined => {
+export const getStringFromSearch = (
+    search: URLSearchParams | Map<string, string>,
+    name: string,
+): string | undefined => {
     return search.get(name) ?? undefined;
 };
 
-export const getStringArrayFromSearch = (search: URLSearchParams, name: string): string[] | undefined => {
+export const getStringArrayFromSearch = (
+    search: URLSearchParams | Map<string, string>,
+    name: string,
+): string[] | undefined => {
     return search.get(name)?.split(',') ?? undefined;
 };
 
@@ -115,9 +127,12 @@ export const getIntegerFromSearch = (search: URLSearchParams, name: string): num
     return value !== null ? Number.parseInt(value, 10) : undefined;
 };
 
-export const getDateRangeFromSearch = (search: URLSearchParams, name: string): DateRange | undefined => {
+export const getDateRangeFromSearch = (
+    search: URLSearchParams | Map<string, string>,
+    name: string,
+): DateRange | undefined => {
     const value = search.get(name);
-    if (value === null) {
+    if (value === null || value === undefined) {
         return undefined;
     }
     if (value.includes('--')) {
@@ -132,48 +147,24 @@ export const getDateRangeFromSearch = (search: URLSearchParams, name: string): D
     return value as SpecialDateRange;
 };
 
-/**
- * This format is commonly used by Nextstrain.
- */
-export type LapisLocation1 = {
-    region?: string;
-    country?: string;
-    division?: string;
+export type LapisLocation = Record<string, string>;
+
+export const getLapisLocationFromSearch = (
+    search: URLSearchParams | Map<string, string>,
+    locationFields: string[],
+): LapisLocation => {
+    const location: Record<string, string> = {};
+    locationFields.forEach((field) => {
+        const value = getStringFromSearch(search, field);
+        if (value) {
+            location[field] = value;
+        }
+    });
+    return location;
 };
 
-export const getLapisLocation1FromSearch = (search: URLSearchParams): LapisLocation1 => {
-    return {
-        region: getStringFromSearch(search, 'region'),
-        country: getStringFromSearch(search, 'country'),
-        division: getStringFromSearch(search, 'division'),
-    };
-};
-
-export const setSearchFromLapisLocation1 = (search: URLSearchParams, location: LapisLocation1) => {
-    (['region', 'country', 'division'] as const).forEach((field) =>
-        setSearchFromString(search, field, location[field]),
-    );
-};
-
-/**
- * This format is supported by PHA4GE.
- */
-export type LapisLocation2 = {
-    geo_loc_country?: string;
-    geo_loc_admin_1?: string;
-};
-
-export const getLapisLocation2FromSearch = (search: URLSearchParams): LapisLocation2 => {
-    return {
-        geo_loc_country: getStringFromSearch(search, 'geo_loc_country'),
-        geo_loc_admin_1: getStringFromSearch(search, 'geo_loc_admin_1'),
-    };
-};
-
-export const setSearchFromLapisLocation2 = (search: URLSearchParams, location: LapisLocation2) => {
-    (['geo_loc_country', 'geo_loc_admin_1'] as const).forEach((field) =>
-        setSearchFromString(search, field, location[field]),
-    );
+export const setSearchFromLocation = (search: URLSearchParams, location: LapisLocation) => {
+    Object.entries(location).forEach(([field, value]) => setSearchFromString(search, field, value));
 };
 
 export type LapisMutationQuery = {
@@ -183,15 +174,16 @@ export type LapisMutationQuery = {
     aminoAcidInsertions?: string[];
 };
 
-export type LapisVariantQuery1 = LapisMutationQuery & {
+export type LapisVariantQuery = LapisMutationQuery & {
     lineage?: string;
-};
-
-export type LapisVariantQuery2 = LapisVariantQuery1 & {
     clade?: string;
 };
 
-export const extractMutations = (query: LapisMutationQuery | {}): LapisMutationQuery => {
+export type LapisCovidVariantQuery = LapisVariantQuery & {
+    variantQuery?: string;
+};
+
+export const getLapisMutations = (query: LapisMutationQuery | {}): LapisMutationQuery => {
     return {
         nucleotideMutations: getArrayPropertyOrEmpty(query, 'nucleotideMutations'),
         aminoAcidMutations: getArrayPropertyOrEmpty(query, 'aminoAcidMutations'),
@@ -204,7 +196,7 @@ const getArrayPropertyOrEmpty = (query: Record<string, any>, name: string): stri
     return Array.isArray(query[name]) ? query[name] : [];
 };
 
-export const getLapisMutationsQueryFromSearch = (search: URLSearchParams): LapisMutationQuery => {
+export const getLapisMutationsQueryFromSearch = (search: URLSearchParams | Map<string, string>): LapisMutationQuery => {
     return {
         nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
         aminoAcidMutations: getStringArrayFromSearch(search, 'aminoAcidMutations'),
@@ -213,17 +205,15 @@ export const getLapisMutationsQueryFromSearch = (search: URLSearchParams): Lapis
     };
 };
 
-export const getLapisVariantQuery1FromSearch = (search: URLSearchParams): LapisVariantQuery1 => {
+export const getLapisVariantQuery = (
+    search: URLSearchParams | Map<string, string>,
+    lineageIdentifier: string,
+    cladeIdentifier?: string,
+): LapisVariantQuery => {
     return {
         ...getLapisMutationsQueryFromSearch(search),
-        lineage: getStringFromSearch(search, 'lineage'),
-    };
-};
-
-export const getLapisVariantQuery2FromSearch = (search: URLSearchParams): LapisVariantQuery2 => {
-    return {
-        ...getLapisVariantQuery1FromSearch(search),
-        clade: getStringFromSearch(search, 'clade'),
+        lineage: getStringFromSearch(search, lineageIdentifier),
+        clade: cladeIdentifier ? getStringFromSearch(search, cladeIdentifier) : undefined,
     };
 };
 
@@ -233,12 +223,75 @@ export const setSearchFromLapisMutationsQuery = (search: URLSearchParams, query:
     );
 };
 
-export const setSearchFromLapisVariantQuery1 = (search: URLSearchParams, query: LapisVariantQuery1) => {
+export const setSearchFromLapisVariantQuery = (
+    search: URLSearchParams,
+    query: LapisCovidVariantQuery,
+    lineageIdentifier: string,
+    cladeIdentifier?: string,
+) => {
     setSearchFromLapisMutationsQuery(search, query);
-    setSearchFromString(search, 'lineage', query.lineage);
+    setSearchFromString(search, lineageIdentifier, query.lineage);
+    if (cladeIdentifier) {
+        setSearchFromString(search, cladeIdentifier, query.clade);
+    }
 };
 
-export const setSearchFromLapisVariantQuery2 = (search: URLSearchParams, query: LapisVariantQuery2) => {
-    setSearchFromLapisVariantQuery1(search, query);
-    setSearchFromString(search, 'clade', query.clade);
+export const getLapisCovidVariantQuery = (
+    search: URLSearchParams | Map<string, string>,
+    lineageIdentifier: string,
+    cladeIdentifier?: string,
+): LapisCovidVariantQuery => {
+    const query = getLapisVariantQuery(search, lineageIdentifier, cladeIdentifier);
+    const variantQuery = getStringFromSearch(search, 'variantQuery');
+    if (variantQuery) {
+        return {
+            ...query,
+            variantQuery,
+        };
+    }
+
+    return {
+        ...query,
+    };
 };
+
+export const setSearchFromLapisCovidVariantQuery = (
+    search: URLSearchParams,
+    query: LapisCovidVariantQuery,
+    lineageIdentifier: string,
+    cladeIdentifier?: string,
+) => {
+    setSearchFromLapisVariantQuery(search, query, lineageIdentifier, cladeIdentifier);
+    setSearchFromString(search, 'variantQuery', query.variantQuery);
+};
+
+export function getLocationSubdivision(locationFields: string[], locationFilter: Record<string, string>) {
+    if (locationFields.length <= 1) {
+        return { label: '', field: undefined };
+    }
+
+    for (let i = locationFields.length - 1; i >= 0; i--) {
+        const field = locationFields[i];
+
+        if (locationFilter[field] !== undefined) {
+            const locationOneLevelUp = locationFields[i + 1];
+            if (locationOneLevelUp) {
+                return { label: getLocationLabel(locationOneLevelUp), field: locationOneLevelUp };
+            }
+
+            return { label: '', field: undefined };
+        }
+    }
+
+    return {
+        label: getLocationLabel(locationFields[0]),
+        field: locationFields[0],
+    };
+}
+
+function getLocationLabel(field: string) {
+    if (field.toLowerCase().includes('country')) {
+        return 'Country';
+    }
+    return 'Geographic sub-divisions';
+}

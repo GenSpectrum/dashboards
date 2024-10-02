@@ -1,31 +1,27 @@
 ---
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { MpoxView1, MpoxView3 } from '../../routes/mpox';
+import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from '../../routes/mpox';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = ServerSide.mpoxView3.parseUrl(Astro.url);
+const routeData = ServerSide.mpoxSequencingEffortsView.parseUrl(Astro.url);
 
-const baselineFilter = ServerSide.mpoxView3.toLapisFilter(routeData);
+const baselineFilter = ServerSide.mpoxSequencingEffortsView.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.mpoxView3.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.mpoxView3.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.mpoxSequencingEffortsView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.mpoxSequencingEffortsView.mainDateField}To`] as string,
 });
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.geo_loc_country === undefined) {
-    subDivisionField = 'geo_loc_country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
-    subDivisionField = 'geo_loc_admin_1';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.mpoxAnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 ---
 
 <BaseLayout title='Sequencing Efforts | Mpox | GenSpectrum'>
@@ -34,11 +30,11 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={ServerSide.mpoxView3.locationFields}
+                    fields={ServerSide.mpoxSequencingEffortsView.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={ServerSide.mpoxView3.earliestDate}
-                    customDateRangeOptions={ServerSide.mpoxView3.customDateRangeOptions}
+                    earliestDate={ServerSide.mpoxSequencingEffortsView.earliestDate}
+                    customDateRangeOptions={ServerSide.mpoxSequencingEffortsView.customDateRangeOptions}
                 />
             </div>
         </div>
@@ -50,7 +46,7 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField={ServerSide.mpoxView3.mainDateField}
+                    lapisDateField={ServerSide.mpoxSequencingEffortsView.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -58,10 +54,10 @@ if (routeData.baselineFilter.location.geo_loc_country === undefined) {
                     granularity={timeGranularity}></gs-number-sequences-over-time>
             </ComponentWrapper>
             {
-                subDivisionField && (
-                    <ComponentWrapper title={subDivisionLabel} height='600px'>
+                subdivisionField && (
+                    <ComponentWrapper title={subdivisionLabel} height='600px'>
                         <gs-aggregate
-                            fields={JSON.stringify([subDivisionField])}
+                            fields={JSON.stringify([subdivisionField])}
                             filter={JSON.stringify(baselineFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

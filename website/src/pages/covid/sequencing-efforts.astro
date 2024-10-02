@@ -1,5 +1,5 @@
 ---
-import { chooseGranularityBasedOnDateRange } from '../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { getLapisUrl } from '../../config';
@@ -8,23 +8,18 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
 
-const routeData = ServerSide.covidView3.parseUrl(Astro.url);
+const routeData = ServerSide.covidSequencingEffortsView.parseUrl(Astro.url);
 
-const baselineFilter = ServerSide.covidView3.toLapisFilter(routeData);
+const baselineFilter = ServerSide.covidSequencingEffortsView.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.covidView3.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.covidView3.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.covidSequencingEffortsView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.covidSequencingEffortsView.mainDateField}To`] as string,
 });
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.country === undefined) {
-    subDivisionField = 'country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.division === undefined) {
-    subDivisionField = 'division';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.covidAnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 ---
 
 <BaseLayout title='Sequencing Efforts | SARS-CoV-2 | GenSpectrum'>
@@ -33,11 +28,11 @@ if (routeData.baselineFilter.location.country === undefined) {
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={ServerSide.covidView3.locationFields}
+                    fields={ServerSide.covidSequencingEffortsView.locationFields}
                     initialLocation={baselineFilter}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={ServerSide.covidView3.earliestDate}
-                    customDateRangeOptions={ServerSide.covidView3.customDateRangeOptions}
+                    earliestDate={ServerSide.covidSequencingEffortsView.earliestDate}
+                    customDateRangeOptions={ServerSide.covidSequencingEffortsView.customDateRangeOptions}
                 />
             </div>
         </div>
@@ -49,7 +44,7 @@ if (routeData.baselineFilter.location.country === undefined) {
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField={ServerSide.covidView3.mainDateField}
+                    lapisDateField={ServerSide.covidSequencingEffortsView.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -57,10 +52,10 @@ if (routeData.baselineFilter.location.country === undefined) {
                     granularity={timeGranularity}></gs-number-sequences-over-time>
             </ComponentWrapper>
             {
-                subDivisionField && (
-                    <ComponentWrapper title={subDivisionLabel} height='600px'>
+                subdivisionField && (
+                    <ComponentWrapper title={subdivisionLabel} height='600px'>
                         <gs-aggregate
-                            fields={JSON.stringify([subDivisionField])}
+                            fields={JSON.stringify([subdivisionField])}
                             filter={JSON.stringify(baselineFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

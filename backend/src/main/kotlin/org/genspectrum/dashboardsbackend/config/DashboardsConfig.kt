@@ -18,4 +18,6 @@ data class OrganismConfig(
 data class LapisConfig(
     val url: String,
     val mainDateField: String,
+    val locationFields: List<String>,
+    val lineageField: String,
 )
