@@ -6,11 +6,14 @@ import org.genspectrum.dashboardsbackend.api.LapisFilter
 import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.log
+import org.genspectrum.dashboardsbackend.logging.REQUEST_ID_HEADER
+import org.genspectrum.dashboardsbackend.logging.RequestIdContext
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.stereotype.Component
+import org.springframework.web.context.request.RequestContextHolder
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -22,11 +25,13 @@ import java.net.http.HttpResponse.BodyHandlers
 class LapisClientProvider(
     dashboardsConfig: DashboardsConfig,
     objectMapper: ObjectMapper,
+    requestIdContext: RequestIdContext,
 ) {
     private val clients = Organism.entries.associateWith {
         LapisClient(
             baseUrl = dashboardsConfig.getOrganismConfig(it).lapis.url,
             objectMapper = objectMapper,
+            requestIdContext = requestIdContext,
         )
     }
 
@@ -37,6 +42,7 @@ class LapisClientProvider(
 class LapisClient(
     baseUrl: String,
     private val objectMapper: ObjectMapper,
+    private val requestIdContext: RequestIdContext,
 ) {
     private val aggregatedUrl = URI("$baseUrl/sample/aggregated")
     private val httpClient = HttpClient.newHttpClient()
@@ -49,6 +55,11 @@ class LapisClient(
                 HttpRequest.newBuilder(aggregatedUrl)
                     .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(filters)))
                     .header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .apply {
+                        if (RequestContextHolder.getRequestAttributes() != null && requestIdContext.requestId != null) {
+                            header(REQUEST_ID_HEADER, requestIdContext.requestId)
+                        }
+                    }
                     .build(),
                 BodyHandlers.ofString(),
             )
@@ -58,7 +69,10 @@ class LapisClient(
             return LapisNotReachableError(message)
         }
 
-        log.info { "Response from LAPIS: ${response.statusCode()}" }
+        log.info {
+            val requestId = response.headers().firstValue(REQUEST_ID_HEADER).orElse("<none>")
+            "Response from LAPIS: ${response.statusCode()}, request id: $requestId"
+        }
 
         if (response.statusCode() != HttpStatus.OK.value()) {
             return handleError(response)
