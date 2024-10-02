@@ -6,7 +6,7 @@ import {
     chooseGranularityBasedOnDateRange,
     getLapisMutations,
     getLocationSubdivision,
-    getTodayString,
+    lineageKey,
 } from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
@@ -54,7 +54,7 @@ const initialMutations = getLapisMutations(variantFilter);
                                 label: 'Lineage',
                                 initialValue: variantFilter.lineage,
                                 type: 'text',
-                                rename: 'lineage',
+                                rename: lineageKey,
                             },
                         ]}
                         initialMutations={initialMutations}
@@ -118,7 +118,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     </ComponentWrapper>
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields='["hostNameScientific"]'
+                            fields={JSON.stringify([ServerSide.westNileAnalyzeSingleVariantView.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

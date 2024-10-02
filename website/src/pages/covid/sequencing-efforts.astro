@@ -66,7 +66,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             }
             <ComponentWrapper title='Hosts' height='600px'>
                 <gs-aggregate
-                    fields='["host"]'
+                    fields={JSON.stringify([ServerSide.covidSequencingEffortsView.hostField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -74,7 +74,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Originating lab' height='600px'>
                 <gs-aggregate
-                    fields='["originatingLab"]'
+                    fields={JSON.stringify([ServerSide.covidSequencingEffortsView.originatingLabField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -82,7 +82,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Submitting lab' height='600px'>
                 <gs-aggregate
-                    fields='["submittingLab"]'
+                    fields={JSON.stringify([ServerSide.covidSequencingEffortsView.submittingLabField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'

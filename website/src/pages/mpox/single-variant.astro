@@ -2,7 +2,13 @@
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
+import {
+    chooseGranularityBasedOnDateRange,
+    cladeKey,
+    getLapisMutations,
+    getLocationSubdivision,
+    lineageKey,
+} from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize, Organisms } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
@@ -49,14 +55,14 @@ const initialMutations = getLapisMutations(variantFilter);
                                 label: 'Clade',
                                 initialValue: variantFilter.clade,
                                 type: 'text',
-                                rename: 'clade',
+                                rename: cladeKey,
                             },
                             {
                                 name: ServerSide.mpoxAnalyzeSingleVariantView.lineageField,
                                 label: 'Lineage',
                                 initialValue: variantFilter.lineage,
                                 type: 'text',
-                                rename: 'lineage',
+                                rename: lineageKey,
                             },
                         ]}
                         initialMutations={initialMutations}
@@ -123,7 +129,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     </ComponentWrapper>
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields='["host_name_scientific"]'
+                            fields={JSON.stringify([ServerSide.mpoxAnalyzeSingleVariantView.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

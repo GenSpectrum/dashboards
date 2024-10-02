@@ -28,6 +28,9 @@ class CovidConstants {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
         this.locationFields = organismsConfig.covid.lapis.locationFields;
         this.lineageField = organismsConfig.covid.lapis.lineageField;
+        this.hostField = organismsConfig.covid.lapis.hostField;
+        this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
+        this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
     }
 
     public readonly organism = Organisms.covid as typeof Organisms.covid;
@@ -43,6 +46,9 @@ class CovidConstants {
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageField: string;
+    public readonly hostField: string;
+    public readonly originatingLabField: string | undefined;
+    public readonly submittingLabField: string | undefined;
 
     public variantFilterToLapisFilter = (filter: LapisCovidVariantQuery): LapisFilter => {
         const lapisFilter: LapisFilter = {};

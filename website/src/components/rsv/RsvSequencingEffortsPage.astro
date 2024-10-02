@@ -2,7 +2,7 @@
 import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
 import { organismConfig } from '../../routes/View';
 import { RsvASequencingEffortsView } from '../../routes/rsvA';
-import { RsvBView3 } from '../../routes/rsvB';
+import { RsvBSequencingEffortsView } from '../../routes/rsvB';
 import { defaultTablePageSize, type Route } from '../../routes/View';
 import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
@@ -11,7 +11,7 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 
 interface Props {
-    view: RsvASequencingEffortsView | RsvBView3;
+    view: RsvASequencingEffortsView | RsvBSequencingEffortsView;
 }
 
 const { view } = Astro.props;
@@ -74,7 +74,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             }
             <ComponentWrapper title='Hosts' height='600px'>
                 <gs-aggregate
-                    fields='["host_name_scientific"]'
+                    fields={JSON.stringify([view.hostField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -82,7 +82,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Author affiliations' height='600px'>
                 <gs-aggregate
-                    fields='["author_affiliations"]'
+                    fields={JSON.stringify([view.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -90,7 +90,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Authors' height='600px'>
                 <gs-aggregate
-                    fields='["authors", "author_affiliations"]'
+                    fields={JSON.stringify([view.authorsField, view.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'

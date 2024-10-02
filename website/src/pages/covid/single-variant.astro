@@ -1,7 +1,12 @@
 ---
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CollectionsList } from '../../components/covidAnalyzeSingleVariantView/CollectionsList';
-import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
+import {
+    chooseGranularityBasedOnDateRange,
+    getLapisMutations,
+    getLocationSubdivision,
+    lineageKey,
+} from '../../routes/helpers';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
@@ -25,9 +30,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 );
 
 const initialMutations = getLapisMutations(variantFilter);
-
-console.log('variantFilter', variantFilter);
-console.log('routeData.variantFilter', routeData.variantFilter);
 ---
 
 <BaseLayout title='Single Variant | SARS-CoV-2 | GenSpectrum'>
@@ -51,10 +53,9 @@ console.log('routeData.variantFilter', routeData.variantFilter);
                             {
                                 name: ServerSide.covidAnalyzeSingleVariantView.lineageField,
                                 label: 'Pango Lineage',
-                                initialValue:
-                                    'lineage' in routeData.variantFilter ? routeData.variantFilter.lineage : undefined,
+                                initialValue: routeData.variantFilter.lineage ?? undefined,
                                 type: 'pango-lineage',
-                                rename: 'lineage',
+                                rename: lineageKey,
                             },
                         ]}
                         initialMutations={initialMutations}
@@ -135,7 +136,7 @@ console.log('routeData.variantFilter', routeData.variantFilter);
 
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields='["host"]'
+                            fields={JSON.stringify([ServerSide.covidSequencingEffortsView.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

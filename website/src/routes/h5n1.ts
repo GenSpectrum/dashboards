@@ -29,6 +29,9 @@ class H5n1Constants {
         this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;
         this.locationFields = organismsConfig.h5n1.lapis.locationFields;
         this.lineageField = organismsConfig.h5n1.lapis.lineageField;
+        this.hostField = organismsConfig.h5n1.lapis.hostField;
+        this.authorsField = organismsConfig.h5n1.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
     }
 
     public readonly organism = Organisms.h5n1 as typeof Organisms.h5n1;
@@ -44,6 +47,9 @@ class H5n1Constants {
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageField: string;
+    public readonly hostField: string;
+    public readonly authorsField: string | undefined;
+    public readonly authorAffiliationsField: string | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));

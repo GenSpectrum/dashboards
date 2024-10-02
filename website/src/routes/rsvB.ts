@@ -29,6 +29,9 @@ class RsvBConstants {
         this.mainDateField = organismsConfig.rsvB.lapis.mainDateField;
         this.locationFields = organismsConfig.rsvB.lapis.locationFields;
         this.lineageField = organismsConfig.rsvB.lapis.lineageField;
+        this.hostField = organismsConfig.rsvB.lapis.hostField;
+        this.authorsField = organismsConfig.rsvB.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.rsvB.lapis.authorAffiliationsField;
     }
 
     public readonly organism = Organisms.rsvB as typeof Organisms.rsvB;
@@ -44,6 +47,9 @@ class RsvBConstants {
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageField: string;
+    public readonly hostField: string;
+    public readonly authorsField: string | undefined;
+    public readonly authorAffiliationsField: string | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
@@ -100,7 +106,7 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
     };
 }
 
-export class RsvBView3 extends RsvBConstants implements View<RouteWithBaseline> {
+export class RsvBSequencingEffortsView extends RsvBConstants implements View<RouteWithBaseline> {
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';

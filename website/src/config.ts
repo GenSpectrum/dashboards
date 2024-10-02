@@ -9,6 +9,11 @@ const lapisConfigSchema = z.object({
     mainDateField: z.string(),
     locationFields: z.array(z.string()),
     lineageField: z.string(),
+    hostField: z.string(),
+    authorsField: z.optional(z.string()),
+    authorAffiliationsField: z.optional(z.string()),
+    originatingLabField: z.optional(z.string()),
+    submittingLabField: z.optional(z.string()),
 });
 
 const organismConfigSchema = z.object({ lapis: lapisConfigSchema });

@@ -34,11 +34,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 );
 
 const initialMutations = getLapisMutations(variantFilter);
-
-const lineageField =
-    view.organism === Organisms.rsvA
-        ? ServerSide.rsvAAnalyzeSingleVariantView.lineageField
-        : ServerSide.rsvBAnalyzeSingleVariantView.lineageField;
 ---
 
 <BaseLayout title={`Single Variant | ${organismConfig[view.organism].label} | GenSpectrum`}>
@@ -60,7 +55,7 @@ const lineageField =
                     <VariantFilter
                         fields={[
                             {
-                                name: lineageField,
+                                name: view.lineageField,
                                 label: 'Lineage',
                                 initialValue: variantFilter.lineage,
                                 type: 'text',
@@ -120,7 +115,7 @@ const lineageField =
                     }
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
-                            fields={JSON.stringify([lineageField])}
+                            fields={JSON.stringify([view.lineageField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -128,7 +123,7 @@ const lineageField =
                     </ComponentWrapper>
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields='["host_name_scientific"]'
+                            fields={JSON.stringify([view.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

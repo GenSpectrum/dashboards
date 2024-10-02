@@ -174,9 +174,12 @@ export type LapisMutationQuery = {
     aminoAcidInsertions?: string[];
 };
 
+export const lineageKey = 'lineage';
+export const cladeKey = 'clade';
+
 export type LapisVariantQuery = LapisMutationQuery & {
-    lineage?: string;
-    clade?: string;
+    [lineageKey]?: string;
+    [cladeKey]?: string;
 };
 
 export type LapisCovidVariantQuery = LapisVariantQuery & {
@@ -212,8 +215,8 @@ export const getLapisVariantQuery = (
 ): LapisVariantQuery => {
     return {
         ...getLapisMutationsQueryFromSearch(search),
-        lineage: getStringFromSearch(search, lineageIdentifier),
-        clade: cladeIdentifier ? getStringFromSearch(search, cladeIdentifier) : undefined,
+        [lineageKey]: getStringFromSearch(search, lineageIdentifier),
+        [cladeKey]: cladeIdentifier ? getStringFromSearch(search, cladeIdentifier) : undefined,
     };
 };
 

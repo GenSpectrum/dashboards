@@ -29,6 +29,9 @@ class RsvAConstants {
         this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;
         this.locationFields = organismsConfig.rsvA.lapis.locationFields;
         this.lineageField = organismsConfig.rsvA.lapis.lineageField;
+        this.hostField = organismsConfig.rsvA.lapis.hostField;
+        this.authorsField = organismsConfig.rsvA.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
     }
 
     public readonly organism = Organisms.rsvA as typeof Organisms.rsvA;
@@ -44,6 +47,9 @@ class RsvAConstants {
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageField: string;
+    public readonly hostField: string;
+    public readonly authorsField: string | undefined;
+    public readonly authorAffiliationsField: string | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
