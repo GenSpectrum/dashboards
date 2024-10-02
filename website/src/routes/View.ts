@@ -1,3 +1,5 @@
+import type { DateRange, LapisLocation, LapisVariantQuery } from './helpers.ts';
+
 export namespace Organisms {
     export const covid = 'covid';
     export const h5n1 = 'h5n1';
@@ -58,6 +60,21 @@ export type Route = {
     organism: Organism;
     pathname: string;
 };
+
+export type BaselineFilter = {
+    baselineFilter: {
+        location: LapisLocation;
+        dateRange: DateRange;
+    };
+};
+
+export type VariantFilter = {
+    variantFilter: LapisVariantQuery;
+};
+
+export type RouteWithBaseline = Route & BaselineFilter;
+
+export type AnalyzeSingleVariantRoute = Route & BaselineFilter & VariantFilter;
 
 export type View<R extends Route, ParseResult extends R | undefined = R> = {
     organism: Organism;

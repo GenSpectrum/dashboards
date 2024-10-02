@@ -2,33 +2,28 @@
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../../components/VariantFilter.astro';
-import { chooseGranularityBasedOnDateRange, extractMutations } from '../../../routes/helpers';
+import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../../routes/helpers';
 import { getLapisUrl } from '../../../config';
 import { defaultTablePageSize, Organisms } from '../../../routes/View';
 import ComponentsGrid from '../../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../../routes/serverSideRouting';
 
-const routeData = ServerSide.h5n1View1.parseUrl(Astro.url);
+const routeData = ServerSide.h5n1AnalyzeSingleVariantView.parseUrl(Astro.url);
 
-const variantFilter = ServerSide.h5n1View1.toLapisFilter(routeData);
-const baselineFilter = ServerSide.h5n1View1.toLapisFilterWithoutVariant(routeData);
+const variantFilter = ServerSide.h5n1AnalyzeSingleVariantView.toLapisFilter(routeData);
+const baselineFilter = ServerSide.h5n1AnalyzeSingleVariantView.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.h5n1View1.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.h5n1View1.mainDateField}To`] as string,
+    from: baselineFilter[`${ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}From`] as string,
+    to: baselineFilter[`${ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}To`] as string,
 });
 
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.geo_loc_country === undefined) {
-    subDivisionField = 'geo_loc_country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
-    subDivisionField = 'geo_loc_admin_1';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    ServerSide.h5n1AnalyzeSingleVariantView.locationFields,
+    routeData.baselineFilter.location,
+);
 
-const initialMutations = extractMutations(variantFilter);
+const initialMutations = getLapisMutations(variantFilter);
 ---
 
 <BaseLayout title='Single Variant | H5N1 | GenSpectrum'>
@@ -38,11 +33,11 @@ const initialMutations = extractMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={ServerSide.h5n1View1.locationFields}
+                        fields={ServerSide.h5n1AnalyzeSingleVariantView.locationFields}
                         initialLocation={baselineFilter}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={ServerSide.h5n1View1.earliestDate}
-                        customDateRangeOptions={ServerSide.h5n1View1.customDateRangeOptions}
+                        earliestDate={ServerSide.h5n1AnalyzeSingleVariantView.earliestDate}
+                        customDateRangeOptions={ServerSide.h5n1AnalyzeSingleVariantView.customDateRangeOptions}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -59,7 +54,7 @@ const initialMutations = extractMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField={ServerSide.h5n1View1.mainDateField}
+                            lapisDateField={ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -85,10 +80,10 @@ const initialMutations = extractMutations(variantFilter);
                             height='100%'></gs-mutations>
                     </ComponentWrapper>
                     {
-                        subDivisionField && (
-                            <ComponentWrapper title={subDivisionLabel}>
+                        subdivisionField && (
+                            <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
+                                    fields={JSON.stringify([subdivisionField])}
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -115,7 +110,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.h5n1View1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -126,7 +121,7 @@ const initialMutations = extractMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.h5n1View1.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

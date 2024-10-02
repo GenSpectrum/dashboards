@@ -68,7 +68,7 @@ const { fields, initialMutations } = Astro.props;
                 const filterElement = document.getElementById(`${field.name}Filter`);
                 const eventName = field.type === 'text' ? 'gs-text-input-changed' : 'gs-lineage-filter-changed';
                 filterElement?.addEventListener(eventName, (event: CustomEvent) => {
-                    values[field.name] = event.detail[field.name];
+                    values[field.rename ?? field.name] = event.detail[field.name];
                 });
             });
 
@@ -83,6 +83,7 @@ const { fields, initialMutations } = Astro.props;
                     ...currentRoute,
                     variantFilter: values,
                 };
+
                 routing.navigateTo(newRoute);
             });
         }

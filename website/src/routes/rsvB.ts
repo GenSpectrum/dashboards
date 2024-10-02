@@ -2,29 +2,36 @@ import {
     type DateRange,
     dateRangeToCustomDateRange,
     getDateRangeFromSearch,
-    getLapisLocation2FromSearch,
-    getLapisVariantQuery1FromSearch,
+    getLapisLocationFromSearch,
+    getLapisVariantQuery,
+    getTodayString,
     type LapisFilter,
-    type LapisLocation2,
-    type LapisVariantQuery1,
+    type LapisLocation,
     setSearchFromDateRange,
-    setSearchFromLapisLocation2,
-    setSearchFromLapisVariantQuery1,
+    setSearchFromLapisVariantQuery,
+    setSearchFromLocation,
 } from './helpers.ts';
-import { organismConfig, Organisms, type Route, type View } from './View.ts';
+import {
+    type AnalyzeSingleVariantRoute,
+    organismConfig,
+    Organisms,
+    type RouteWithBaseline,
+    type View,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 
 const pathFragment = organismConfig[Organisms.rsvB].pathFragment;
 
-const today = new Date().toISOString().substring(0, 10);
+const today = getTodayString();
 
 class RsvBConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvB.lapis.mainDateField;
+        this.locationFields = organismsConfig.rsvB.lapis.locationFields;
+        this.lineageField = organismsConfig.rsvB.lapis.lineageField;
     }
 
     public readonly organism = Organisms.rsvB as typeof Organisms.rsvB;
-    public readonly locationFields = ['geo_loc_country', 'geo_loc_admin_1'];
     public readonly defaultDateRange: DateRange = 'allTimes';
     public readonly earliestDate = '1956-01-01';
     public readonly customDateRangeOptions = [
@@ -35,8 +42,10 @@ class RsvBConstants {
         { label: 'Before 2000', dateFrom: this.earliestDate, dateTo: '1999-12-31' },
     ];
     public readonly mainDateField: string;
+    public readonly locationFields: string[];
+    public readonly lineageField: string;
 
-    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation2 => {
+    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
@@ -46,16 +55,7 @@ class RsvBConstants {
     };
 }
 
-type RouteWithBaseline = Route & {
-    baselineFilter: {
-        location: LapisLocation2;
-        dateRange: DateRange;
-    };
-};
-
-type RsvBView1Route = { variantFilter: LapisVariantQuery1 } & RouteWithBaseline;
-
-export class RsvBView1 extends RsvBConstants implements View<RsvBView1Route> {
+export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<AnalyzeSingleVariantRoute> {
     public pathname = `/${pathFragment}/single-variant`;
     public label = 'Single variant';
     public labelLong = 'Analyze a single variant';
@@ -69,30 +69,30 @@ export class RsvBView1 extends RsvBConstants implements View<RsvBView1Route> {
         variantFilter: {},
     };
 
-    public parseUrl = (url: URL): RsvBView1Route => {
+    public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
         const search = url.searchParams;
         return {
             organism: this.organism,
             pathname: this.pathname,
             baselineFilter: {
-                location: getLapisLocation2FromSearch(search),
+                location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
-            variantFilter: getLapisVariantQuery1FromSearch(search),
+            variantFilter: getLapisVariantQuery(search, this.lineageField),
         };
     };
 
-    public toUrl = (route: RsvBView1Route): string => {
+    public toUrl = (route: AnalyzeSingleVariantRoute): string => {
         const search = new URLSearchParams();
-        setSearchFromLapisLocation2(search, route.baselineFilter.location);
+        setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
-        setSearchFromLapisVariantQuery1(search, route.variantFilter);
+        setSearchFromLapisVariantQuery(search, route.variantFilter, this.lineageField);
         return `${this.pathname}?${search}`;
     };
 
-    public toLapisFilter = (route: RsvBView1Route) => {
+    public toLapisFilter = (route: AnalyzeSingleVariantRoute) => {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
@@ -119,7 +119,7 @@ export class RsvBView3 extends RsvBConstants implements View<RouteWithBaseline> 
             organism: this.organism,
             pathname: this.pathname,
             baselineFilter: {
-                location: getLapisLocation2FromSearch(search),
+                location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
         };
@@ -127,7 +127,7 @@ export class RsvBView3 extends RsvBConstants implements View<RouteWithBaseline> 
 
     public toUrl = (route: RouteWithBaseline): string => {
         const search = new URLSearchParams();
-        setSearchFromLapisLocation2(search, route.baselineFilter.location);
+        setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }

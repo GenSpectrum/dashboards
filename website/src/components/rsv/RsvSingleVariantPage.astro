@@ -1,9 +1,9 @@
 ---
-import { organismConfig } from '../../routes/View';
-import { chooseGranularityBasedOnDateRange, extractMutations } from '../../routes/helpers';
-import type { DateRange, LapisLocation2, LapisVariantQuery1 } from '../../routes/helpers';
-import { RsvAView1 } from '../../routes/rsvA';
-import { RsvBView1 } from '../../routes/rsvB';
+import { organismConfig, Organisms } from '../../routes/View';
+import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
+import type { DateRange } from '../../routes/helpers';
+import { RsvAAnalyzeSingleVariantView } from '../../routes/rsvA';
+import { RsvBAnalyzeSingleVariantView } from '../../routes/rsvB';
 import { getLapisUrl } from '../../config';
 import { defaultTablePageSize } from '../../routes/View';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
@@ -11,9 +11,10 @@ import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { ServerSide } from '../../routes/serverSideRouting';
 
 interface Props {
-    view: RsvAView1 | RsvBView1;
+    view: RsvAAnalyzeSingleVariantView | RsvBAnalyzeSingleVariantView;
 }
 
 const { view } = Astro.props;
@@ -27,17 +28,17 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
     to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 
-let subDivisionField = undefined;
-let subDivisionLabel = '';
-if (routeData.baselineFilter.location.geo_loc_country === undefined) {
-    subDivisionField = 'geo_loc_country';
-    subDivisionLabel = 'Countries';
-} else if (routeData.baselineFilter.location.geo_loc_admin_1 === undefined) {
-    subDivisionField = 'geo_loc_admin_1';
-    subDivisionLabel = 'Geographic sub-divisions';
-}
+const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
+    view.locationFields,
+    routeData.baselineFilter.location,
+);
 
-const initialMutations = extractMutations(variantFilter);
+const initialMutations = getLapisMutations(variantFilter);
+
+const lineageField =
+    view.organism === Organisms.rsvA
+        ? ServerSide.rsvAAnalyzeSingleVariantView.lineageField
+        : ServerSide.rsvBAnalyzeSingleVariantView.lineageField;
 ---
 
 <BaseLayout title={`Single Variant | ${organismConfig[view.organism].label} | GenSpectrum`}>
@@ -58,7 +59,13 @@ const initialMutations = extractMutations(variantFilter);
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[
-                            { name: 'lineage', label: 'Lineage', initialValue: variantFilter.lineage, type: 'text' },
+                            {
+                                name: lineageField,
+                                label: 'Lineage',
+                                initialValue: variantFilter.lineage,
+                                type: 'text',
+                                rename: 'lineage',
+                            },
                         ]}
                         initialMutations={initialMutations}
                     />
@@ -99,10 +106,10 @@ const initialMutations = extractMutations(variantFilter);
                             height='100%'></gs-mutations>
                     </ComponentWrapper>
                     {
-                        subDivisionField && (
-                            <ComponentWrapper title={subDivisionLabel}>
+                        subdivisionField && (
+                            <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
-                                    fields={JSON.stringify([subDivisionField])}
+                                    fields={JSON.stringify([subdivisionField])}
                                     filter={JSON.stringify(variantFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -113,7 +120,7 @@ const initialMutations = extractMutations(variantFilter);
                     }
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
-                            fields={JSON.stringify(['lineage'])}
+                            fields={JSON.stringify([lineageField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

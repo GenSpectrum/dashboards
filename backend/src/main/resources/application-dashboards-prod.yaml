@@ -4,26 +4,45 @@ dashboards:
       lapis:
         url: "https://lapis.cov-spectrum.org/open/v2"
         mainDateField: "date"
+        locationFields:
+          - "region"
+          - "country"
+          - "division"
     h5n1:
       lapis:
         url: "https://lapis.genspectrum.org/h5n1"
         mainDateField: "sample_collection_date"
+        locationFields:
+          - "geo_loc_country"
+          - "geo_loc_admin_1"
     mpox:
       lapis:
         url: "https://lapis.genspectrum.org/mpox"
         mainDateField: "sample_collection_date"
+        locationFields:
+          - "geo_loc_country"
+          - "geo_loc_admin_1"
     westNile:
       lapis:
         url: "https://lapis-main.loculus.org/west-nile"
         mainDateField: "sample_collection_date"
+        locationFields:
+          - "geo_loc_country"
+          - "geo_loc_admin_1"
     rsvA:
       lapis:
         url: "https://lapis.genspectrum.org/rsv-a"
         mainDateField: "sample_collection_date"
+        locationFields:
+          - "geo_loc_country"
+          - "geo_loc_admin_1"
     rsvB:
       lapis:
         url: "https://lapis.genspectrum.org/rsv-b"
         mainDateField: "sample_collection_date"
+        locationFields:
+          - "geo_loc_country"
+          - "geo_loc_admin_1"
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"
