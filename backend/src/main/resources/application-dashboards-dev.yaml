@@ -37,13 +37,13 @@ dashboards:
         authorsField: "authors"
     westNile:
       lapis:
-        url: "https://lapis-main.loculus.org/west-nile"
+        url: "https://lapis.pathoplexus.org/west-nile"
         mainDateField: "sampleCollectionDate"
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
         lineageField: "lineage"
-        hostField: "host_name_scientific"
+        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
     rsvA:
