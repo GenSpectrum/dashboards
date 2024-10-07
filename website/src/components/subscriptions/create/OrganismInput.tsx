@@ -1,5 +1,5 @@
-import { allOrganisms, type Organism, organismConfig } from '../../../routes/View.ts';
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
+import { type Organism, organismConfig } from '../../../types/Organism.ts';
 
 export function OrganismInput({ onOrganismChange }: { onOrganismChange: (value: Organism) => void }) {
     return (

@@ -1,8 +1,8 @@
 import { z, ZodError } from 'zod';
 import fs from 'fs';
 import path from 'path';
-import { allOrganisms, type Organism } from './routes/View.ts';
 import YAML from 'yaml';
+import { allOrganisms, type Organism } from './types/Organism.ts';
 
 const lapisConfigSchema = z.object({
     url: z.string(),

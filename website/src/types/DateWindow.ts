@@ -1,4 +1,5 @@
 import dayjs, { type Dayjs } from 'dayjs';
+import { z } from 'zod';
 
 export namespace DateWindows {
     export const last6Months = 'last6Months';
@@ -17,6 +18,8 @@ export const dateWindowConfig = {
 export type DateWindow = keyof typeof dateWindowConfig;
 
 export const allDateWindows = Object.keys(dateWindowConfig) as DateWindow[];
+
+export const dateWindowSchema = z.enum(Object.keys(dateWindowConfig) as [keyof typeof dateWindowConfig]);
 
 export function getStartDate(dateWindow: DateWindow): Dayjs {
     const startDate = dayjs();

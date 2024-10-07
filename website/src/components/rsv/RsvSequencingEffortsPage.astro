@@ -1,14 +1,14 @@
 ---
 import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
-import { organismConfig } from '../../routes/View';
 import { RsvASequencingEffortsView } from '../../routes/rsvA';
 import { RsvBSequencingEffortsView } from '../../routes/rsvB';
-import { defaultTablePageSize, type Route } from '../../routes/View';
+import { defaultTablePageSize } from '../../routes/View';
 import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { organismConfig } from '../../types/Organism';
 
 interface Props {
     view: RsvASequencingEffortsView | RsvBSequencingEffortsView;

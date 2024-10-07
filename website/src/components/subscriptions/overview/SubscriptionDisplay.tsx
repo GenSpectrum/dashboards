@@ -7,7 +7,7 @@ import type {
     Subscription,
 } from '../../../types/Subscription.ts';
 import { type DateWindow, dateWindowConfig } from '../../../types/DateWindow.ts';
-import type { NotificationChannels } from '../../../types/NotificationChannels.ts';
+// import type { NotificationChannels } from '../../../types/NotificationChannels.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
 
 export function SubscriptionContent({ children, className = '' }: PropsWithChildren<WithClassName>) {
@@ -24,7 +24,8 @@ export function SubscriptionDisplay({ subscription }: { subscription: Subscripti
             <EvaluationIntervalDisplay interval={subscription.interval} />
             <DateWindowDisplay dateWindow={subscription.dateWindow} />
             <TriggerDisplay trigger={subscription.trigger} />
-            <NotificationChannelDisplay notificationChannels={subscription.notificationChannels} />
+            {/* TODO: Enable notificationChannels in #82, #128 */}
+            {/*<NotificationChannelDisplay notificationChannels={subscription.notificationChannels} />*/}
         </div>
     );
 }
@@ -156,49 +157,50 @@ function FilterTable({ filter }: { filter: LapisFilter }) {
     );
 }
 
-function NotificationChannelDisplay({ notificationChannels }: { notificationChannels: NotificationChannels }) {
-    return (
-        <SubscriptionContent className={'col-span-1 sm:col-span-2 md:col-span-3'}>
-            <div className={'flex flex-wrap gap-2'}>
-                <div className={'min-w-64 flex-1'}>
-                    <SlackChannelsDisplay slackChannels={notificationChannels.slack} />
-                </div>
-                <div className={'min-w-64 flex-1'}>
-                    <EmailChannelsDisplay emailChannels={notificationChannels.email} />
-                </div>
-            </div>
-        </SubscriptionContent>
-    );
-}
-
-function SlackChannelsDisplay({ slackChannels }: { slackChannels: NotificationChannels['slack'] }) {
-    return (
-        <div className={'flex flex-col gap-2'}>
-            <div className={'font-bold text-gray-500'}>Slack</div>
-            <div className={'flex flex-col gap-2'}>
-                {slackChannels.map((channel) => (
-                    <div className={'flex items-center gap-2 text-gray-400'} key={channel.id}>
-                        <div className={'iconify mdi--slack'}></div>
-                        <div>{channel.name}</div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function EmailChannelsDisplay({ emailChannels }: { emailChannels: NotificationChannels['email'] }) {
-    return (
-        <div className={'flex flex-col gap-2'}>
-            <div className={'font-bold text-gray-500'}>Email</div>
-            <div className={'flex flex-col gap-2'}>
-                {emailChannels.map((channel) => (
-                    <div className={'flex items-center gap-2 text-gray-400'} key={channel.id}>
-                        <div className={'iconify mdi--email'}></div>
-                        <div>{channel.name}</div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
+// TODO: Enable notificationChannels in #82, #128
+// function NotificationChannelDisplay({ notificationChannels }: { notificationChannels: NotificationChannels }) {
+//     return (
+//         <SubscriptionContent className={'col-span-1 sm:col-span-2 md:col-span-3'}>
+//             <div className={'flex flex-wrap gap-2'}>
+//                 <div className={'min-w-64 flex-1'}>
+//                     <SlackChannelsDisplay slackChannels={notificationChannels.slack} />
+//                 </div>
+//                 <div className={'min-w-64 flex-1'}>
+//                     <EmailChannelsDisplay emailChannels={notificationChannels.email} />
+//                 </div>
+//             </div>
+//         </SubscriptionContent>
+//     );
+// }
+//
+// function SlackChannelsDisplay({ slackChannels }: { slackChannels: NotificationChannels['slack'] }) {
+//     return (
+//         <div className={'flex flex-col gap-2'}>
+//             <div className={'font-bold text-gray-500'}>Slack</div>
+//             <div className={'flex flex-col gap-2'}>
+//                 {slackChannels.map((channel) => (
+//                     <div className={'flex items-center gap-2 text-gray-400'} key={channel.id}>
+//                         <div className={'iconify mdi--slack'}></div>
+//                         <div>{channel.name}</div>
+//                     </div>
+//                 ))}
+//             </div>
+//         </div>
+//     );
+// }
+//
+// function EmailChannelsDisplay({ emailChannels }: { emailChannels: NotificationChannels['email'] }) {
+//     return (
+//         <div className={'flex flex-col gap-2'}>
+//             <div className={'font-bold text-gray-500'}>Email</div>
+//             <div className={'flex flex-col gap-2'}>
+//                 {emailChannels.map((channel) => (
+//                     <div className={'flex items-center gap-2 text-gray-400'} key={channel.id}>
+//                         <div className={'iconify mdi--email'}></div>
+//                         <div>{channel.name}</div>
+//                     </div>
+//                 ))}
+//             </div>
+//         </div>
+//     );
+// }

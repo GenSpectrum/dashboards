@@ -1,7 +1,5 @@
 ---
-import { organismConfig, Organisms } from '../../routes/View';
 import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
-import type { DateRange } from '../../routes/helpers';
 import { RsvAAnalyzeSingleVariantView } from '../../routes/rsvA';
 import { RsvBAnalyzeSingleVariantView } from '../../routes/rsvB';
 import { getLapisUrl } from '../../config';
@@ -11,7 +9,7 @@ import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
-import { ServerSide } from '../../routes/serverSideRouting';
+import { organismConfig } from '../../types/Organism';
 
 interface Props {
     view: RsvAAnalyzeSingleVariantView | RsvBAnalyzeSingleVariantView;

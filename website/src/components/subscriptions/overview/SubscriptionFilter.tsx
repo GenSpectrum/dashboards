@@ -1,5 +1,5 @@
-import { type Organism, organismConfig } from '../../../routes/View.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
+import { type Organism, organismConfig } from '../../../types/Organism.ts';
 
 export interface Filter {
     name: Organism;

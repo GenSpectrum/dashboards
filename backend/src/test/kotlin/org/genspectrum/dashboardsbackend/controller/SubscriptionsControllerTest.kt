@@ -36,6 +36,7 @@ val dummySubscriptionRequest = SubscriptionRequest(
         ),
     ),
     organism = Organism.Covid,
+    active = true,
 )
 
 fun getNewUserId(): String {
@@ -177,6 +178,7 @@ class SubscriptionsControllerTest(
                 ),
             ),
             organism = Organism.RsvA,
+            active = false,
         )
 
         val updatedSubscription =
