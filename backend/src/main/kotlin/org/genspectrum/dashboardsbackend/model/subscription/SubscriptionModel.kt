@@ -41,7 +41,7 @@ class SubscriptionModel(
             dateWindow = request.dateWindow.name
             trigger = request.trigger
             organism = request.organism.name
-            active = true
+            active = request.active
             this.userId = userId
         }
         .toSubscription()
@@ -71,6 +71,9 @@ class SubscriptionModel(
         }
         if (subscriptionUpdate.organism != null) {
             subscription.organism = subscriptionUpdate.organism.name
+        }
+        if (subscriptionUpdate.active != null) {
+            subscription.active = subscriptionUpdate.active
         }
 
         return subscription.toSubscription()

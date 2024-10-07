@@ -3,9 +3,10 @@ import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.
 import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
 import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
 import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.ts';
-import { Organisms, type Route } from './View.ts';
+import { type Route } from './View.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import type { OrganismsConfig } from '../config.ts';
+import { Organisms } from '../types/Organism.ts';
 
 export class Routing {
     private readonly allViews;

@@ -9,14 +9,13 @@ import {
     getTodayString,
     type LapisCovidVariantQuery,
     type LapisFilter,
-    type LapisLocation,
-    type LapisVariantQuery,
     setSearchFromDateRange,
     setSearchFromLapisCovidVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { type BaselineFilter, organismConfig, Organisms, type Route, type VariantFilter, type View } from './View.ts';
+import { type BaselineFilter, type Route, type VariantFilter, type View } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
+import { organismConfig, Organisms } from '../types/Organism.ts';
 
 const pathFragment = organismConfig[Organisms.covid].pathFragment;
 

@@ -1,15 +1,22 @@
 ---
-import { buildSubscriptions } from '../../components/subscriptions/backendApi';
-import { getFilters, getSelectedFilters } from '../../components/subscriptions/overview/SubscriptionFilter';
+import { z } from 'zod';
+import { organismSchema } from '../../types/Organism';
+import { getSession } from 'auth-astro/server';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { Subscriptions } from '../../components/subscriptions/overview/Subscriptions';
+import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 
-const subscriptions = buildSubscriptions();
+const session = await getSession(Astro.request);
 
-const filters = getFilters(subscriptions);
-const selectedFilters = getSelectedFilters(filters, Astro.url.searchParams.getAll('organism'));
+const organisms = z.array(organismSchema).parse(Astro.url.searchParams.getAll('organism'));
 ---
 
 <BaseLayout title='Subscriptions' omitHeaderNavigation={true}>
-    <Subscriptions client:load filters={selectedFilters} subscriptions={subscriptions} />
+    {
+        session?.user?.id ? (
+            <Subscriptions client:load organismsFromUrl={organisms} userId={session?.user?.id} />
+        ) : (
+            <NotLoggedIn />
+        )
+    }
 </BaseLayout>

@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Routing } from '../../routes/routing.ts';
 import { type CovidAnalyzeSingleVariantRoute } from '../../routes/covid.ts';
 import type { OrganismsConfig } from '../../config.ts';
+import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
 
 type CollectionVariant = {
     name: string;
@@ -21,7 +22,9 @@ type CollectionsListProps = {
     organismsConfig: OrganismsConfig;
 };
 
-const CollectionsListInner = ({ initialCollectionId, organismsConfig }: CollectionsListProps) => {
+export const CollectionsList = withQueryProvider(CollectionsListInner);
+
+function CollectionsListInner({ initialCollectionId, organismsConfig }: CollectionsListProps) {
     const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
     const query = useQuery({
@@ -51,14 +54,7 @@ const CollectionsListInner = ({ initialCollectionId, organismsConfig }: Collecti
             />
         </>
     );
-};
-
-const queryClient = new QueryClient();
-export const CollectionsList = (props: CollectionsListProps) => (
-    <QueryClientProvider client={queryClient}>
-        <CollectionsListInner {...props} />
-    </QueryClientProvider>
-);
+}
 
 type CollectionSelectorProps = {
     collections: Collection[];

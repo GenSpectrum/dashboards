@@ -2,9 +2,20 @@ import type { Subscription } from '../../../types/Subscription.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
 import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
-import { organismConfig } from '../../../routes/View.ts';
+import { organismConfig } from '../../../types/Organism.ts';
+import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
+import { useMutation } from '@tanstack/react-query';
+import { type JSX } from 'react';
 
-export function SubscriptionEntry({ subscription }: { subscription: Subscription }) {
+export function SubscriptionEntry({
+    subscription,
+    userId,
+    refetchSubscriptions,
+}: {
+    subscription: Subscription;
+    userId: string;
+    refetchSubscriptions: () => void;
+}) {
     const getIcon = () => {
         if (!subscription.active) {
             return 'mdi--bell-off-outline text-gray-500';
@@ -34,67 +45,107 @@ export function SubscriptionEntry({ subscription }: { subscription: Subscription
                         <SubscriptionDisplay subscription={subscription} />
                     </div>
                 </details>
-                <MoreDropdown subscription={subscription} />
+                <MoreDropdown subscription={subscription} userId={userId} refetchSubscriptions={refetchSubscriptions} />
             </div>
         </BorderedCard>
     );
 }
 
-function MoreDropdown({ subscription }: { subscription: Subscription }) {
+function MoreDropdown({
+    subscription,
+    userId,
+    refetchSubscriptions,
+}: {
+    subscription: Subscription;
+    userId: string;
+    refetchSubscriptions: () => void;
+}) {
+    const deleteSubscription = useMutation({
+        mutationFn: () => getBackendServiceForClientside().deleteSubscription(subscription.id, userId),
+        onSuccess: () => {
+            refetchSubscriptions();
+        },
+        onError: (error) => {
+            console.error(error);
+            // TODO: #205 Show error as banner
+            window.location.href = '/500';
+        },
+    });
+
+    const activateSubscription = useMutation({
+        mutationFn: () =>
+            getBackendServiceForClientside().putSubscription({ active: !subscription.active }, userId, subscription.id),
+        onSuccess: () => {
+            refetchSubscriptions();
+        },
+        onError: (error) => {
+            console.error(error);
+            // TODO: #205 Show error as banner
+            window.location.href = '/500';
+        },
+    });
+
+    const handleDelete = async () => {
+        deleteSubscription.mutate();
+    };
+
+    const handleActivate = async () => {
+        activateSubscription.mutate();
+    };
+
     return (
         <div className='dropdown dropdown-end'>
             <div tabIndex={0} role='button' className='btn btn-xs'>
                 ...
             </div>
             <ul tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>
+                {/*TODO: #170 Page to edit subscription*/}
+                {/*<li>*/}
+                {/*    <EditButton />*/}
+                {/*</li>*/}
                 <li>
-                    <EditButton />
+                    <ActivateButton isActive={subscription.active} onClick={handleActivate} />
                 </li>
                 <li>
-                    <ActivateButton isActive={subscription.active} />
-                </li>
-                <li>
-                    <DeleteButton />
+                    <DeleteButton onClick={handleDelete} />
                 </li>
             </ul>
         </div>
     );
 }
 
-function EditButton() {
-    return (
-        <button
-            className={'flex items-center gap-2'}
-            // TODO: #170 Page to edit subscription
-            onClick={() => console.error('Not implemented. Will be done by #170')}
-        >
-            <div className={'iconify mdi--pencil'}></div>
-            Edit
-        </button>
-    );
-}
+// TODO: #170 Page to edit subscription
+// function EditButton() {
+//     return (
+//         <button
+//             className={'flex items-center gap-2'}
+//
+//             onClick={() => console.error('Not implemented. Will be done by #170')}
+//         >
+//             <div className={'iconify mdi--pencil'}></div>
+//             Edit
+//         </button>
+//     );
+// }
 
-function ActivateButton({ isActive }: { isActive: boolean }) {
+function ActivateButton({
+    isActive,
+    onClick,
+}: {
+    isActive: boolean;
+    onClick: JSX.IntrinsicElements['button']['onClick'];
+}) {
     return (
-        <button
-            className={'flex items-center gap-2'}
-            onClick={() =>
-                // TODO: #171 Activate/Deactivate subscription
-                console.error('Not implemented. Will be done by #171')
-            }
-        >
+        <button className={'flex items-center gap-2'} onClick={onClick}>
             <div className={`iconify ${isActive ? 'mdi--pause' : 'mdi--play'}`}></div>
             {isActive ? 'Deactivate' : 'Activate'}
         </button>
     );
 }
 
-function DeleteButton() {
+function DeleteButton({ onClick }: { onClick: JSX.IntrinsicElements['button']['onClick'] }) {
     return (
-        <button
-            className={'flex items-center gap-2'}
-            onClick={() => console.error('Not implemented. Will be done by #163')}
-        >
+        <button className={'flex items-center gap-2'} onClick={onClick}>
             <div className={'iconify mdi--delete'}></div>
             Delete
         </button>

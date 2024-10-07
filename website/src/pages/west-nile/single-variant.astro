@@ -9,10 +9,11 @@ import {
     lineageKey,
 } from '../../routes/helpers';
 import { getLapisUrl } from '../../config';
-import { defaultTablePageSize, Organisms } from '../../routes/View';
+import { defaultTablePageSize } from '../../routes/View';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
+import { Organisms } from '../../types/Organism';
 
 const routeData = ServerSide.westNileAnalyzeSingleVariantView.parseUrl(Astro.url);
 

@@ -93,6 +93,7 @@ interface BaseSubscription {
     val organism: Organism?
     val dateWindow: DateWindow?
     val trigger: Trigger?
+    val active: Boolean?
 }
 
 @Schema(
@@ -113,7 +114,7 @@ data class Subscription(
     val id: String,
     override val name: String,
     override val interval: EvaluationInterval,
-    val active: Boolean,
+    override val active: Boolean,
     override val organism: Organism,
     override val dateWindow: DateWindow,
     override val trigger: Trigger,
@@ -137,6 +138,7 @@ data class SubscriptionRequest(
     override val organism: Organism,
     override val dateWindow: DateWindow,
     override val trigger: Trigger,
+    override val active: Boolean,
 ) : BaseSubscription
 
 @Schema(
@@ -157,4 +159,5 @@ data class SubscriptionUpdate(
     override val organism: Organism? = null,
     override val dateWindow: DateWindow? = null,
     override val trigger: Trigger? = null,
+    override val active: Boolean? = null,
 ) : BaseSubscription

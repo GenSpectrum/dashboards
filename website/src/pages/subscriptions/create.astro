@@ -1,14 +1,21 @@
 ---
+import { getSession } from 'auth-astro/server';
 import { getDashboardsConfig } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
+import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
+
+const session = await getSession(Astro.request);
 
 const config = getDashboardsConfig();
-import { fetchNotificationChannels } from '../../components/subscriptions/backendApi';
-
-const notificationChannels = fetchNotificationChannels();
 ---
 
 <BaseLayout title='Create new subscription' omitHeaderNavigation={true}>
-    <SubscriptionsCreate config={config} client:only='react' notificationChannels={notificationChannels} />
+    {
+        session?.user?.id ? (
+            <SubscriptionsCreate config={config} client:only='react' userId={session.user.id} />
+        ) : (
+            <NotLoggedIn />
+        )
+    }
 </BaseLayout>

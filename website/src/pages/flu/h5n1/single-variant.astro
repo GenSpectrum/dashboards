@@ -4,10 +4,11 @@ import LocationTimeFilter from '../../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../../components/VariantFilter.astro';
 import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../../routes/helpers';
 import { getLapisUrl } from '../../../config';
-import { defaultTablePageSize, Organisms } from '../../../routes/View';
+import { defaultTablePageSize } from '../../../routes/View';
 import ComponentsGrid from '../../../components/ComponentsGrid.astro';
 import ComponentWrapper from '../../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../../routes/serverSideRouting';
+import { Organisms } from '../../../types/Organism';
 
 const routeData = ServerSide.h5n1AnalyzeSingleVariantView.parseUrl(Astro.url);
 

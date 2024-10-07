@@ -11,14 +11,9 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import {
-    type AnalyzeSingleVariantRoute,
-    organismConfig,
-    Organisms,
-    type RouteWithBaseline,
-    type View,
-} from './View.ts';
+import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
+import { organismConfig, Organisms } from '../types/Organism.ts';
 
 const pathFragment = organismConfig[Organisms.rsvB].pathFragment;
 
