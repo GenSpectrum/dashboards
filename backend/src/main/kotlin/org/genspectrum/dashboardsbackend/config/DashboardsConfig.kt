@@ -25,4 +25,5 @@ data class LapisConfig(
     val authorAffiliationsField: String?,
     val originatingLabField: String?,
     val submittingLabField: String?,
+    val additionalFilters: Map<String, String>?,
 )

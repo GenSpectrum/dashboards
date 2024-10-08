@@ -77,7 +77,8 @@ class CountTriggerEvaluatorTest(
                             "country": "Germany",
                             "division": "Berlin",
                             "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                            "${organism.name.lowercase()}_dateTo": "2021-03-15"
+                            "${organism.name.lowercase()}_dateTo": "2021-03-15",
+                            "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
                         }
                     """.replace("\\s".toRegex(), ""),
                 ),
@@ -123,7 +124,8 @@ class CountTriggerEvaluatorTest(
                             "country": "Germany",
                             "division": "Berlin",
                             "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                            "${organism.name.lowercase()}_dateTo": "2021-03-15"
+                            "${organism.name.lowercase()}_dateTo": "2021-03-15",
+                            "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
                         }
                     """.replace("\\s".toRegex(), ""),
                 ),
