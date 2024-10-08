@@ -36,6 +36,7 @@ class RsvAConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly additionalFilters: Record<string, string> | undefined;
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;
@@ -44,6 +45,7 @@ class RsvAConstants {
         this.hostField = organismsConfig.rsvA.lapis.hostField;
         this.authorsField = organismsConfig.rsvA.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.rsvA.lapis.additionalFilters;
     }
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
@@ -52,6 +54,7 @@ class RsvAConstants {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
     };
 }
@@ -60,14 +63,17 @@ export class RsvAAnalyzeSingleVariantView extends RsvAConstants implements View<
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: AnalyzeSingleVariantRoute = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
-        variantFilter: {},
+        variantFilter: {
+            ...this.additionalFilters,
+        },
     };
 
     public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
@@ -78,8 +84,12 @@ export class RsvAAnalyzeSingleVariantView extends RsvAConstants implements View<
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField),
+            variantFilter: {
+                ...getLapisVariantQuery(search, this.lineageField),
+                ...this.additionalFilters,
+            },
         };
     };
 
@@ -105,12 +115,13 @@ export class RsvASequencingEffortsView extends RsvAConstants implements View<Rou
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: RouteWithBaseline = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
     };
 
@@ -122,6 +133,7 @@ export class RsvASequencingEffortsView extends RsvAConstants implements View<Rou
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
         };
     };

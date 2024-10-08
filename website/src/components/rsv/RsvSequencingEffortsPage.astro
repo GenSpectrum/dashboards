@@ -37,7 +37,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
                     fields={view.locationFields}
-                    initialLocation={baselineFilter}
+                    initialLocation={routeData.baselineFilter.location}
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={view.earliestDate}
                     customDateRangeOptions={view.customDateRangeOptions}

@@ -8,13 +8,14 @@ export type Route = {
 
 export type BaselineFilter = {
     baselineFilter: {
+        [additionalFilter: string]: string | LapisLocation | DateRange;
         location: LapisLocation;
         dateRange: DateRange;
     };
 };
 
 export type VariantFilter = {
-    variantFilter: LapisVariantQuery;
+    variantFilter: LapisVariantQuery & { [additionalFilter: string]: string | string[] };
 };
 
 export type RouteWithBaseline = Route & BaselineFilter;

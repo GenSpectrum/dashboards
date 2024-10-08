@@ -20,14 +20,13 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 const pathFragment = organismConfig[Organisms.covid].pathFragment;
 
 const earliestDate = '2020-01-06';
-const today = getTodayString();
 
 class CovidConstants {
     public readonly organism = Organisms.covid;
     public readonly defaultDateRange: DateRange = 'last6Months';
     public readonly earliestDate = '2020-01-06';
     public readonly customDateRangeOptions: DateRangeOption[] = [
-        { label: '2024', dateFrom: '2024-01-01', dateTo: today },
+        { label: '2024', dateFrom: '2024-01-01', dateTo: getTodayString() },
         { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
         { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
         { label: '2021', dateFrom: '2024-01-04', dateTo: '2022-01-02' },
@@ -39,6 +38,7 @@ class CovidConstants {
     public readonly hostField: string;
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
+    public readonly additionalFilters: Record<string, string> | undefined;
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
@@ -47,6 +47,7 @@ class CovidConstants {
         this.hostField = organismsConfig.covid.lapis.hostField;
         this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
+        this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
     }
 
     public variantFilterToLapisFilter(filter: LapisCovidVariantQuery): LapisFilter {
@@ -65,7 +66,9 @@ class CovidConstants {
 
 export type CovidAnalyzeSingleVariantRoute = Route &
     BaselineFilter & {
-        variantFilter: LapisCovidVariantQuery;
+        variantFilter: LapisCovidVariantQuery & {
+            [additionalFilter: string]: string | string[];
+        };
         collectionId?: number;
     };
 
@@ -73,14 +76,18 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
     public readonly pathname = `/${pathFragment}/single-variant` as const;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: CovidAnalyzeSingleVariantRoute = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
-        variantFilter: { lineage: 'JN.1*' },
+        variantFilter: {
+            lineage: 'JN.1*',
+            ...this.additionalFilters,
+        },
     };
 
     public parseUrl(url: URL): CovidAnalyzeSingleVariantRoute {
@@ -91,8 +98,12 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
-            variantFilter: getLapisCovidVariantQuery(search, this.lineageField),
+            variantFilter: {
+                ...getLapisCovidVariantQuery(search, this.lineageField),
+                ...this.additionalFilters,
+            },
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
     }
@@ -126,6 +137,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
     }
 }
@@ -191,9 +203,11 @@ export class CovidCompareVariantsView
                     baselineFilter: {
                         location: {},
                         dateRange: this.defaultDateRange,
+                        ...this.additionalFilters,
                     },
                     variantFilter: {
                         lineage: 'JN.1*',
+                        ...this.additionalFilters,
                     },
                 },
             ],
@@ -203,9 +217,11 @@ export class CovidCompareVariantsView
                     baselineFilter: {
                         location: {},
                         dateRange: this.defaultDateRange,
+                        ...this.additionalFilters,
                     },
                     variantFilter: {
                         lineage: 'XBB.1*',
+                        ...this.additionalFilters,
                     },
                 },
             ],
@@ -276,8 +292,11 @@ export class CovidCompareVariantsView
                         region: 'Europe',
                     },
                     dateRange: this.defaultDateRange,
+                    ...this.additionalFilters,
                 },
-                variantFilter: {},
+                variantFilter: {
+                    ...this.additionalFilters,
+                },
             },
             lastId + 1,
         );
@@ -298,22 +317,25 @@ export class CovidCompareVariantsView
             ...filter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
     }
 
-    private getFilter(filterParams: Map<string, string>) {
+    private readonly getFilter = (filterParams: Map<string, string>) => {
         const filter: BaselineFilter & VariantFilter = {
-            baselineFilter: { location: {}, dateRange: this.defaultDateRange },
-            variantFilter: {},
+            baselineFilter: {
+                location: getLapisLocationFromSearch(filterParams, this.locationFields),
+                dateRange: getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
+            },
+            variantFilter: {
+                ...getLapisCovidVariantQuery(filterParams, this.lineageField),
+                ...this.additionalFilters,
+            },
         };
-
-        filter.baselineFilter.location = getLapisLocationFromSearch(filterParams, this.locationFields);
-        filter.baselineFilter.dateRange =
-            getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange;
-        filter.variantFilter = getLapisCovidVariantQuery(filterParams, this.lineageField);
 
         return filter;
-    }
+    };
 }
 
 export type CovidSequencingEffortsRoute = Route &
@@ -325,12 +347,13 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
     public readonly pathname = `/${pathFragment}/sequencing-efforts` as const;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: CovidSequencingEffortsRoute = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
     };
 
@@ -342,6 +365,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
@@ -366,6 +390,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
     }
 }
