@@ -3,6 +3,7 @@ package org.genspectrum.dashboardsbackend.model.triggerevaluation
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import org.genspectrum.dashboardsbackend.api.DateWindow
+import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
@@ -22,20 +23,21 @@ class TriggerEvaluator(
         val lapisClient = lapisClientProvider.provide(subscription.organism)
 
         val dateFilter = computeDateFilter(subscription)
+        val additionalFilters = additionalFilters(subscription.organism)
 
         val computation = when (subscription.trigger) {
             is Trigger.CountTrigger -> CountComputation(
                 subscription = subscription,
                 lapisClient = lapisClient,
-                lapisFilter = subscription.trigger.filter + dateFilter,
+                lapisFilter = subscription.trigger.filter + dateFilter + additionalFilters,
                 threshold = subscription.trigger.count,
             )
 
             is Trigger.ProportionTrigger -> ProportionComputation(
                 subscription = subscription,
                 lapisClient = lapisClient,
-                numeratorFilter = subscription.trigger.numeratorFilter + dateFilter,
-                denominatorFilter = subscription.trigger.denominatorFilter + dateFilter,
+                numeratorFilter = subscription.trigger.numeratorFilter + dateFilter + additionalFilters,
+                denominatorFilter = subscription.trigger.denominatorFilter + dateFilter + additionalFilters,
                 threshold = subscription.trigger.proportion,
             )
         }
@@ -56,6 +58,10 @@ class TriggerEvaluator(
             "${dateField}From" to "$lowerBoundDate",
             "${dateField}To" to "$currentDate",
         )
+    }
+
+    private fun additionalFilters(organism: Organism): Map<String, String> {
+        return dashboardsConfig.getOrganismConfig(organism).lapis.additionalFilters ?: emptyMap()
     }
 }
 
