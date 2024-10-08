@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/base/BaseLayout.astro';
+import { PageContainer } from '../styles/containers/PageContainer';
+import { PageHeadline } from '../styles/containers/PageHeadline';
+---
+
+<BaseLayout title='GenSpectrum Dashboards' omitHeaderNavigation={true}>
+    <PageContainer>
+        <PageHeadline>Oops! An error occurred...</PageHeadline>
+        <div class='mb-2'>We are sorry for the inconvenience. Please try again.</div>
+        <div>
+            If the problem persists, please create an issue on <a
+                class='text-primary underline'
+                href='https://github.com/GenSpectrum/dashboards'>GitHub</a
+            >, describing the error.
+        </div>
+    </PageContainer>
+</BaseLayout>
