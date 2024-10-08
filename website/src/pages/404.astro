@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/base/BaseLayout.astro';
+import { PageContainer } from '../styles/containers/PageContainer';
+import { PageHeadline } from '../styles/containers/PageHeadline';
+---
+
+<BaseLayout title='GenSpectrum Dashboards' omitHeaderNavigation={true}>
+    <PageContainer>
+        <PageHeadline>Sorry</PageHeadline>
+        We could not find the page you were looking for. Please check the URL or go back to the <a
+            class='text-primary underline'
+            href='/'>home page</a
+        >.
+    </PageContainer>
+</BaseLayout>
