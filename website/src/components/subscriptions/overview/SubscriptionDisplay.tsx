@@ -1,7 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import type { CountTrigger, LapisFilter, ProportionTrigger, Subscription } from '../../../types/Subscription.ts';
 import { type DateWindow, dateWindowConfig } from '../../../types/DateWindow.ts';
-// import type { NotificationChannels } from '../../../types/NotificationChannels.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
 import { EvaluationInterval } from '../../../types/EvaluationInterval.ts';
 
@@ -12,34 +11,28 @@ export function SubscriptionContent({ children, className = '' }: PropsWithChild
 export function SubscriptionDisplay({ subscription }: { subscription: Subscription }) {
     return (
         <div className={'grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'}>
-            <StatusDisplay
-                active={subscription.active}
-                triggerEvaluationResult={subscription.triggerEvaluationResult}
-            />
+            <StatusDisplay triggerEvaluationResult={subscription.triggerEvaluationResult} />
             <EvaluationIntervalDisplay interval={subscription.interval} />
             <DateWindowDisplay dateWindow={subscription.dateWindow} />
             <TriggerDisplay trigger={subscription.trigger} />
             {/* TODO: Enable notificationChannels in #82, #128 */}
-            {/*<NotificationChannelDisplay notificationChannels={subscription.notificationChannels} />*/}
+            {/*<NotificationChannelDisplay
+                notificationChannels={subscription.notificationChannels}
+                active={subscription.active}
+            />*/}
         </div>
     );
 }
 
 function StatusDisplay({
-    active,
     triggerEvaluationResult,
 }: {
-    active: boolean;
     triggerEvaluationResult: Subscription['triggerEvaluationResult'];
 }) {
     return (
         <SubscriptionContent className={'flex flex-col gap-2'}>
             <div className={'font-bold text-gray-500'}>Status</div>
-            {active ? (
-                <TriggerEvaluationResult result={triggerEvaluationResult} />
-            ) : (
-                <div className={'text-gray-500'}>Subscription inactive. Activate to get notifications.</div>
-            )}
+            <TriggerEvaluationResult result={triggerEvaluationResult} />
         </SubscriptionContent>
     );
 }
@@ -153,9 +146,18 @@ function FilterTable({ filter }: { filter: LapisFilter }) {
 }
 
 // TODO: Enable notificationChannels in #82, #128
-// function NotificationChannelDisplay({ notificationChannels }: { notificationChannels: NotificationChannels }) {
+// function NotificationChannelDisplay({
+//     notificationChannels,
+//     active,
+// }: {
+//     notificationChannels: NotificationChannels;
+//     active: boolean;
+// }) {
 //     return (
 //         <SubscriptionContent className={'col-span-1 sm:col-span-2 md:col-span-3'}>
+//             <div className={'mb-6'}>
+//                 <NotificationsDescription active={active} />
+//             </div>
 //             <div className={'flex flex-wrap gap-2'}>
 //                 <div className={'min-w-64 flex-1'}>
 //                     <SlackChannelsDisplay slackChannels={notificationChannels.slack} />
@@ -165,6 +167,22 @@ function FilterTable({ filter }: { filter: LapisFilter }) {
 //                 </div>
 //             </div>
 //         </SubscriptionContent>
+//     );
+// }
+//
+// function NotificationsDescription({ active }: { active: boolean }) {
+//     return (
+//         <>
+//             <div className={'flex items-center gap-2'}>
+//                 <div className={`iconify ${getIsActiveIcon(active)}`}></div>
+//                 <div className={'font-bold text-gray-500'}>Notifications {active ? 'enabled' : 'disabled'}</div>
+//             </div>
+//             <div className={'text-gray-500'}>
+//                 {active
+//                     ? 'You receive notifications from this subscription. Disable it to stop receiving notifications.'
+//                     : 'You do not receive any notifications from this subscription. Enable it to receive notifications.'}
+//             </div>
+//         </>
 //     );
 // }
 //
