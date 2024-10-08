@@ -319,6 +319,7 @@ class ProportionTriggerEvaluatorTest(
                 "numeratorFilterKey": "numeratorFilterValue",
                 "${organism.name.lowercase()}_dateFrom": "2020-09-15",
                 "${organism.name.lowercase()}_dateTo": "2021-03-15"
+                ${getLatestVersionNonRevocationFilter(organism)}
             }
         """.replace("\\s".toRegex(), ""),
     )
@@ -330,6 +331,7 @@ class ProportionTriggerEvaluatorTest(
                 "denominatorFilterKey": "denominatorFilterValue",
                 "${organism.name.lowercase()}_dateFrom": "2020-09-15",
                 "${organism.name.lowercase()}_dateTo": "2021-03-15"
+                ${getLatestVersionNonRevocationFilter(organism)}
             }
         """.replace("\\s".toRegex(), ""),
     )
@@ -382,6 +384,11 @@ class ProportionTriggerEvaluatorTest(
             ),
         ),
     )
+
+    private fun getLatestVersionNonRevocationFilter(organism: Organism): String = when (organism) {
+        Organism.WestNile -> ""","versionStatus": "LATEST_VERSION", "isRevocation": "false" """
+        else -> ""
+    }
 
     fun getAggregatedRoute(organism: Organism) = "/${organism.name.lowercase()}/sample/aggregated"
 

@@ -49,12 +49,13 @@ class WestNileConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
 
-    public toLapisFilterWithoutVariant = (route: RouteWithBaselineWithLatestVersion): LapisFilter & LapisLocation => {
+    public toLapisFilterWithoutVariant = (route: RouteWithBaselineWithLatestVersion): LapisFilter => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            isRevocation: route.baselineFilter.isRevocation,
             versionStatus: route.baselineFilter.versionStatus,
         };
     };
@@ -74,9 +75,11 @@ export class WestNileAnalyzeSingleVariantView
             location: {},
             dateRange: this.defaultDateRange,
             versionStatus: 'LATEST_VERSION' as const,
+            isRevocation: false as const,
         },
         variantFilter: {
             versionStatus: 'LATEST_VERSION' as const,
+            isRevocation: false as const,
         },
     };
 
@@ -89,10 +92,12 @@ export class WestNileAnalyzeSingleVariantView
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
                 versionStatus: 'LATEST_VERSION' as const,
+                isRevocation: false as const,
             },
             variantFilter: {
                 ...getLapisVariantQuery(search, this.lineageField),
                 versionStatus: 'LATEST_VERSION' as const,
+                isRevocation: false as const,
             },
         };
     };
@@ -129,6 +134,7 @@ export class WestNileSequencingEffortsView
             location: {},
             dateRange: this.defaultDateRange,
             versionStatus: 'LATEST_VERSION' as const,
+            isRevocation: false as const,
         },
     };
 
@@ -141,6 +147,7 @@ export class WestNileSequencingEffortsView
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
                 versionStatus: 'LATEST_VERSION' as const,
+                isRevocation: false as const,
             },
         };
     };

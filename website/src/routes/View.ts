@@ -71,6 +71,7 @@ export type BaselineFilter = {
 export type LatestVersionBaselineFilter = {
     baselineFilter: BaselineFilter['baselineFilter'] & {
         versionStatus: 'LATEST_VERSION';
+        isRevocation: false;
     };
 };
 
@@ -81,6 +82,7 @@ export type VariantFilter = {
 export type VariantFilterWithLatestVersion = {
     variantFilter: LapisVariantQuery & {
         versionStatus: 'LATEST_VERSION';
+        isRevocation: false;
     };
 };
 
