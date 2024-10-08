@@ -4,6 +4,7 @@ import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
+    getTodayString,
     type LapisFilter,
     type LapisLocation,
     setSearchFromDateRange,
@@ -11,18 +12,15 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import {
-    type AnalyzeSingleVariantRoute,
+    type AnalyzeSingleVariantRouteWithLatestVersion,
     organismConfig,
     Organisms,
-    type RouteWithBaseline,
+    type RouteWithBaselineWithLatestVersion,
     type View,
 } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
-import dayjs from 'dayjs';
 
 const pathFragment = organismConfig[Organisms.westNile].pathFragment;
-
-const today = dayjs().format('YYYY-MM-DD');
 
 class WestNileConstants {
     constructor(organismsConfig: OrganismsConfig) {
@@ -38,10 +36,10 @@ class WestNileConstants {
     public readonly defaultDateRange: DateRange = 'allTimes';
     public readonly earliestDate = '1930-01-01';
     public readonly customDateRangeOptions = [
-        { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
+        { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: getTodayString() },
         { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
         { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-        { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: today },
+        { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: getTodayString() },
         { label: 'Before 2000', dateFrom: this.earliestDate, dateTo: '1999-12-31' },
     ];
     public readonly mainDateField: string;
@@ -51,17 +49,21 @@ class WestNileConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
 
-    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
+    public toLapisFilterWithoutVariant = (route: RouteWithBaselineWithLatestVersion): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            versionStatus: route.baselineFilter.versionStatus,
         };
     };
 }
 
-export class WestNileAnalyzeSingleVariantView extends WestNileConstants implements View<AnalyzeSingleVariantRoute> {
+export class WestNileAnalyzeSingleVariantView
+    extends WestNileConstants
+    implements View<AnalyzeSingleVariantRouteWithLatestVersion>
+{
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
@@ -71,11 +73,14 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            versionStatus: 'LATEST_VERSION' as const,
         },
-        variantFilter: {},
+        variantFilter: {
+            versionStatus: 'LATEST_VERSION' as const,
+        },
     };
 
-    public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
+    public parseUrl = (url: URL): AnalyzeSingleVariantRouteWithLatestVersion => {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -83,12 +88,16 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                versionStatus: 'LATEST_VERSION' as const,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField),
+            variantFilter: {
+                ...getLapisVariantQuery(search, this.lineageField),
+                versionStatus: 'LATEST_VERSION' as const,
+            },
         };
     };
 
-    public toUrl = (route: AnalyzeSingleVariantRoute): string => {
+    public toUrl = (route: AnalyzeSingleVariantRouteWithLatestVersion): string => {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -98,7 +107,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         return `${this.pathname}?${search}`;
     };
 
-    public toLapisFilter = (route: AnalyzeSingleVariantRoute) => {
+    public toLapisFilter = (route: AnalyzeSingleVariantRouteWithLatestVersion) => {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
@@ -106,7 +115,10 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
     };
 }
 
-export class WestNileSequencingEffortsView extends WestNileConstants implements View<RouteWithBaseline> {
+export class WestNileSequencingEffortsView
+    extends WestNileConstants
+    implements View<RouteWithBaselineWithLatestVersion>
+{
     public pathname = `/${pathFragment}/sequencing-efforts`;
     public label = 'Sequencing efforts';
     public labelLong = 'Sequencing efforts';
@@ -116,10 +128,11 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            versionStatus: 'LATEST_VERSION' as const,
         },
     };
 
-    public parseUrl = (url: URL): RouteWithBaseline => {
+    public parseUrl = (url: URL): RouteWithBaselineWithLatestVersion => {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -127,11 +140,12 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                versionStatus: 'LATEST_VERSION' as const,
             },
         };
     };
 
-    public toUrl = (route: RouteWithBaseline): string => {
+    public toUrl = (route: RouteWithBaselineWithLatestVersion): string => {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -140,7 +154,7 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
         return `${this.pathname}?${search}`;
     };
 
-    public toLapisFilter = (route: RouteWithBaseline): LapisFilter => {
+    public toLapisFilter = (route: RouteWithBaselineWithLatestVersion): LapisFilter => {
         return this.toLapisFilterWithoutVariant(route);
     };
 }

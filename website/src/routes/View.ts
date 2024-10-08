@@ -68,13 +68,30 @@ export type BaselineFilter = {
     };
 };
 
+export type LatestVersionBaselineFilter = {
+    baselineFilter: BaselineFilter['baselineFilter'] & {
+        versionStatus: 'LATEST_VERSION';
+    };
+};
+
 export type VariantFilter = {
     variantFilter: LapisVariantQuery;
 };
 
+export type VariantFilterWithLatestVersion = {
+    variantFilter: LapisVariantQuery & {
+        versionStatus: 'LATEST_VERSION';
+    };
+};
+
 export type RouteWithBaseline = Route & BaselineFilter;
+export type RouteWithBaselineWithLatestVersion = Route & LatestVersionBaselineFilter;
 
 export type AnalyzeSingleVariantRoute = Route & BaselineFilter & VariantFilter;
+
+export type AnalyzeSingleVariantRouteWithLatestVersion = Route &
+    LatestVersionBaselineFilter &
+    VariantFilterWithLatestVersion;
 
 export type View<R extends Route, ParseResult extends R | undefined = R> = {
     organism: Organism;

@@ -7,6 +7,7 @@ import { BaselineInput } from './BaselineInput.tsx';
 import { VariantInput } from './VariantInput.tsx';
 import type { DateWindow } from '../../../types/DateWindow.ts';
 
+// TODO: Add latest version filter for WestNile #194
 export function TriggerInput({
     onTriggerChange,
     onDateWindowChange,
