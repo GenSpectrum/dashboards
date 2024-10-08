@@ -42,7 +42,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
                         fields={view.locationFields}
-                        initialLocation={baselineFilter}
+                        initialLocation={routeData.baselineFilter.location}
                         initialDateRange={routeData.baselineFilter.dateRange}
                         earliestDate={view.earliestDate}
                         customDateRangeOptions={view.customDateRangeOptions}

@@ -42,6 +42,7 @@ class MpoxConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly additionalFilters: Record<string, string> | undefined;
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
@@ -50,16 +51,18 @@ class MpoxConstants {
         this.hostField = organismsConfig.mpox.lapis.hostField;
         this.authorsField = organismsConfig.mpox.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
+    public toLapisFilterWithoutVariant(route: RouteWithBaseline): LapisFilter & LapisLocation {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
-    };
+    }
 }
 
 type RouteWithBaseline = Route & {
@@ -73,7 +76,7 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: AnalyzeSingleVariantRoute = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
@@ -83,7 +86,7 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
         variantFilter: {},
     };
 
-    public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
+    public parseUrl(url: URL): AnalyzeSingleVariantRoute {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -94,9 +97,9 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
             },
             variantFilter: getLapisVariantQuery(search, this.lineageField, this.cladeField),
         };
-    };
+    }
 
-    public toUrl = (route: AnalyzeSingleVariantRoute): string => {
+    public toUrl(route: AnalyzeSingleVariantRoute): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -104,21 +107,21 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
         }
         setSearchFromLapisVariantQuery(search, route.variantFilter, this.lineageField, this.cladeField);
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: AnalyzeSingleVariantRoute) => {
+    public toLapisFilter(route: AnalyzeSingleVariantRoute) {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
-    };
+    }
 }
 
 export class MpoxSequencingEffortsView extends MpoxConstants implements View<RouteWithBaseline> {
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: RouteWithBaseline = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
@@ -127,7 +130,7 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
         },
     };
 
-    public parseUrl = (url: URL): RouteWithBaseline => {
+    public parseUrl(url: URL): RouteWithBaseline {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -137,18 +140,18 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
             },
         };
-    };
+    }
 
-    public toUrl = (route: RouteWithBaseline): string => {
+    public toUrl(route: RouteWithBaseline): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: RouteWithBaseline): LapisFilter => {
+    public toLapisFilter(route: RouteWithBaseline): LapisFilter {
         return this.toLapisFilterWithoutVariant(route);
-    };
+    }
 }

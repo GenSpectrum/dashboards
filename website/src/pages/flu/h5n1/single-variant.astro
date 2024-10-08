@@ -35,7 +35,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
                         fields={ServerSide.h5n1AnalyzeSingleVariantView.locationFields}
-                        initialLocation={baselineFilter}
+                        initialLocation={routeData.baselineFilter.location}
                         initialDateRange={routeData.baselineFilter.dateRange}
                         earliestDate={ServerSide.h5n1AnalyzeSingleVariantView.earliestDate}
                         customDateRangeOptions={ServerSide.h5n1AnalyzeSingleVariantView.customDateRangeOptions}
