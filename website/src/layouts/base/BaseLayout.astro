@@ -1,14 +1,13 @@
 ---
 import Footer from './Footer.astro';
-import Header from './Header.astro';
+import Header from './header/Header.astro';
 
 interface Props {
     title: string;
-    omitHeaderNavigation?: boolean;
     forceLoggedOutState?: boolean;
 }
 
-const { title, omitHeaderNavigation = false, forceLoggedOutState = false } = Astro.props;
+const { title, forceLoggedOutState = false } = Astro.props;
 ---
 
 <html lang='en'>
@@ -26,7 +25,7 @@ const { title, omitHeaderNavigation = false, forceLoggedOutState = false } = Ast
     </head>
 
     <body>
-        <Header omitHeaderNavigation={omitHeaderNavigation} forceLoggedOutState={forceLoggedOutState} />
+        <Header forceLoggedOutState={forceLoggedOutState} />
         <slot />
         <Footer />
     </body>
