@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+
+import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import {
     type DateRange,
     dateRangeToCustomDateRange,
@@ -10,9 +13,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
-import dayjs from 'dayjs';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 
 const pathFragment = organismConfig[Organisms.westNile].pathFragment;
@@ -20,16 +21,7 @@ const pathFragment = organismConfig[Organisms.westNile].pathFragment;
 const today = dayjs().format('YYYY-MM-DD');
 
 class WestNileConstants {
-    constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
-        this.locationFields = organismsConfig.westNile.lapis.locationFields;
-        this.lineageField = organismsConfig.westNile.lapis.lineageField;
-        this.hostField = organismsConfig.westNile.lapis.hostField;
-        this.authorsField = organismsConfig.westNile.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
-    }
-
-    public readonly organism = Organisms.westNile as typeof Organisms.westNile;
+    public readonly organism = Organisms.westNile;
     public readonly defaultDateRange: DateRange = 'allTimes';
     public readonly earliestDate = '1930-01-01';
     public readonly customDateRangeOptions = [
@@ -46,6 +38,15 @@ class WestNileConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
 
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
+        this.locationFields = organismsConfig.westNile.lapis.locationFields;
+        this.lineageField = organismsConfig.westNile.lapis.lineageField;
+        this.hostField = organismsConfig.westNile.lapis.hostField;
+        this.authorsField = organismsConfig.westNile.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
+    }
+
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
@@ -61,7 +62,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
     public readonly defaultRoute = {
-        organism: Organisms.westNile as typeof Organisms.westNile,
+        organism: Organisms.westNile,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
@@ -106,7 +107,7 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
     public label = 'Sequencing efforts';
     public labelLong = 'Sequencing efforts';
     public readonly defaultRoute = {
-        organism: Organisms.westNile as typeof Organisms.westNile,
+        organism: Organisms.westNile,
         pathname: this.pathname,
         baselineFilter: {
             location: {},

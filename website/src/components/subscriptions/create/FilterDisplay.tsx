@@ -1,7 +1,7 @@
+import { type DateWindow, getStartDate } from '../../../types/DateWindow.ts';
 import type { LapisFilter, SubscriptionRequest } from '../../../types/Subscription.ts';
 import { GsNumberSequencesOverTime } from '../../genspectrum/GsNumberSequencesOverTime.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
-import { type DateWindow, getStartDate } from '../../../types/DateWindow.ts';
 
 export function FilterDisplay({
     subscription,

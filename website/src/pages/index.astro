@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { ServerSide } from '../routes/serverSideRouting';
-import { type Organism, organismConfig } from '../types/Organism';
+import { organismConfig } from '../types/Organism';
 ---
 
 <style>
@@ -14,7 +14,7 @@ import { type Organism, organismConfig } from '../types/Organism';
     }
 </style>
 
-<BaseLayout title='GenSpectrum Dashboards' omitHeaderNavigation={true}>
+<BaseLayout title='GenSpectrum Dashboards' omitHeaderNavigation>
     <h2>Explore up-to-date pathogen genomic data</h2>
     <div class='description mx-auto mb-8 max-w-[1400px] px-8'>
         GenSpectrum…
@@ -63,7 +63,7 @@ import { type Organism, organismConfig } from '../types/Organism';
                     <div class='rounded-b-md rounded-tr-md border-2 border-gray-100'>
                         <h3 class={`rounded-tr-md p-4 text-xl ${organism.backgroundColor}`}>{organism.label}</h3>
                         <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black'>
-                            {ServerSide.routing.views[organism.organism as Organism].map((view) => (
+                            {ServerSide.routing.views[organism.organism].map((view) => (
                                 <li class='flex items-start pt-2'>
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a

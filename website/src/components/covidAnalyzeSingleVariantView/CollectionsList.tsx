@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Routing } from '../../routes/routing.ts';
-import { type CovidAnalyzeSingleVariantRoute } from '../../routes/covid.ts';
+import { useMemo, useState } from 'react';
+
 import type { OrganismsConfig } from '../../config.ts';
+import { type CovidAnalyzeSingleVariantRoute } from '../../routes/covid.ts';
+import { Routing } from '../../routes/routing.ts';
 import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
 
 type CollectionVariant = {
@@ -38,7 +39,7 @@ function CollectionsListInner({ initialCollectionId, organismsConfig }: Collecti
     });
 
     if (!query.data) {
-        return <></>;
+        return null;
     }
 
     return (
@@ -62,7 +63,7 @@ type CollectionSelectorProps = {
     onSelect: (index: number) => void;
 };
 
-const CollectionSelector = ({ collections, selectedId, onSelect }: CollectionSelectorProps) => {
+function CollectionSelector({ collections, selectedId, onSelect }: CollectionSelectorProps) {
     return (
         <select
             className='mb-2 w-full border bg-white p-2'
@@ -76,14 +77,14 @@ const CollectionSelector = ({ collections, selectedId, onSelect }: CollectionSel
             ))}
         </select>
     );
-};
+}
 
 type CollectionVariantListProps = {
     collection: Collection;
     organismsConfig: OrganismsConfig;
 };
 
-const CollectionVariantList = ({ collection, organismsConfig }: CollectionVariantListProps) => {
+function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
     const variants = collection.variants;
 
     const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
@@ -129,4 +130,4 @@ const CollectionVariantList = ({ collection, organismsConfig }: CollectionVarian
             ))}
         </div>
     );
-};
+}

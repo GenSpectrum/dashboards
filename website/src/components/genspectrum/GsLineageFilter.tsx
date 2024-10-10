@@ -22,16 +22,17 @@ export function GsLineageFilter<Lineage extends string>({
             onLineageChange(event.detail);
         };
 
-        if (lineageFilterRef.current) {
-            lineageFilterRef.current.addEventListener('gs-lineage-filter-changed', handleLineageChange);
+        const currentLineageFilterRef = lineageFilterRef.current;
+        if (currentLineageFilterRef) {
+            currentLineageFilterRef.addEventListener('gs-lineage-filter-changed', handleLineageChange);
         }
 
         return () => {
-            if (lineageFilterRef.current) {
-                lineageFilterRef.current.removeEventListener('gs-lineage-filter-changed', handleLineageChange);
+            if (currentLineageFilterRef) {
+                currentLineageFilterRef.removeEventListener('gs-lineage-filter-changed', handleLineageChange);
             }
         };
-    }, []);
+    }, [onLineageChange]);
 
     return (
         <gs-lineage-filter

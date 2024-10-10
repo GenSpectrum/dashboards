@@ -1,4 +1,4 @@
-export namespace Page {
-    export const createSubscription = '/subscriptions/create';
-    export const subscriptionsOverview = '/subscriptions';
-}
+export const Page = {
+    createSubscription: '/subscriptions/create' as const,
+    subscriptionsOverview: '/subscriptions' as const,
+};

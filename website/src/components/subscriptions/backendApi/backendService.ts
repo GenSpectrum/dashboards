@@ -1,15 +1,16 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import { z, ZodSchema } from 'zod';
+import { z, type ZodSchema } from 'zod';
+
+import { type ProblemDetail, problemDetailSchema } from '../../../types/ProblemDetail.ts';
 import {
     type SubscriptionPutRequest,
     type SubscriptionRequest,
     subscriptionResponseSchema,
     triggerEvaluationResponseSchema,
 } from '../../../types/Subscription.ts';
-import { type ProblemDetail, problemDetailSchema } from '../../../types/ProblemDetail.ts';
 
 class ApiService {
-    private axiosInstance: AxiosInstance;
+    private readonly axiosInstance: AxiosInstance;
 
     constructor(baseURL: string) {
         this.axiosInstance = axios.create({ baseURL });
@@ -53,11 +54,11 @@ class ApiService {
                     response.statusText,
                     response.status,
                     backendError.data,
-                    response.config.url || '',
+                    response.config.url ?? '',
                 );
             }
 
-            throw new UnknownBackendError(response.statusText, response.status, response.config.url || '');
+            throw new UnknownBackendError(response.statusText, response.status, response.config.url ?? '');
         }
     }
 }

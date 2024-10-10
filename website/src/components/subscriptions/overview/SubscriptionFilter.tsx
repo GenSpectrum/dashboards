@@ -1,5 +1,5 @@
-import type { Subscription } from '../../../types/Subscription.ts';
 import { type Organism, organismConfig } from '../../../types/Organism.ts';
+import type { Subscription } from '../../../types/Subscription.ts';
 
 export interface Filter {
     name: Organism;
@@ -20,7 +20,7 @@ export function FilterDropdown({
     return (
         <div className='dropdown dropdown-end'>
             <div tabIndex={0} role='button' className='btn btn-sm'>
-                <div className={'iconify mdi--filter'}></div>
+                <div className='iconify mdi--filter'></div>
                 Filter
             </div>
             <div tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>

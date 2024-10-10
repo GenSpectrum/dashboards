@@ -1,10 +1,10 @@
 import dayjs, { type Dayjs } from 'dayjs';
 import { z } from 'zod';
 
-export namespace DateWindows {
-    export const last6Months = 'last6Months';
-    export const last2Weeks = 'last2Weeks';
-}
+export const DateWindows = {
+    last6Months: 'last6Months' as const,
+    last2Weeks: 'last2Weeks' as const,
+};
 
 export const dateWindowConfig = {
     [DateWindows.last6Months]: {

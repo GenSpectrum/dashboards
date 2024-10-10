@@ -20,16 +20,17 @@ export function GsLocationFilter<Field extends string>({
             onLocationChange(event.detail);
         };
 
-        if (locationFilterRef.current) {
-            locationFilterRef.current.addEventListener('gs-location-changed', handleLocationChange);
+        const currentLocationFilterRef = locationFilterRef.current;
+        if (currentLocationFilterRef) {
+            currentLocationFilterRef.addEventListener('gs-location-changed', handleLocationChange);
         }
 
         return () => {
-            if (locationFilterRef.current) {
-                locationFilterRef.current.removeEventListener('gs-location-changed', handleLocationChange);
+            if (currentLocationFilterRef) {
+                currentLocationFilterRef.removeEventListener('gs-location-changed', handleLocationChange);
             }
         };
-    }, []);
+    }, [onLocationChange]);
 
     return (
         <gs-location-filter

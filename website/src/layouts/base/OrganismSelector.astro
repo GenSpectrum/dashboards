@@ -2,7 +2,7 @@
 import { ServerSide } from '../../routes/serverSideRouting';
 import { organismConfig } from '../../types/Organism';
 
-const currentRoute = ServerSide.routing.parseUrl(Astro.url)!;
+const currentRoute = ServerSide.routing.parseUrl(Astro.url);
 const currentOrganism = currentRoute?.organism;
 ---
 

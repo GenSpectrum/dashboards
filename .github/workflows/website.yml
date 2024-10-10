@@ -25,6 +25,7 @@ jobs:
       - run: npm run check-format
       - run: npm run check-types
       - run: npm run check-astro
+      - run: npm run check-lint
 
   dockerImage:
     name: Build Docker Image

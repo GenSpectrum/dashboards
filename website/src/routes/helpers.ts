@@ -75,11 +75,11 @@ export const chooseGranularityBasedOnDateRange = (dateRange: CustomDateRange): '
 };
 
 /**
- * Sets the string to the search params if the string is not empty, not undefined and not null
+ * Sets the value to the search params if the value is not empty, not undefined and not null
  */
-export const setSearchFromString = (search: URLSearchParams, name: string, string: string | undefined | null) => {
-    if (string) {
-        search.set(name, string);
+export const setSearchFromString = (search: URLSearchParams, name: string, value: string | undefined | null) => {
+    if (value !== null && value !== undefined && value !== '') {
+        search.set(name, value);
     }
 };
 
@@ -97,7 +97,7 @@ export const setSearchFromDateRange = (
     name: string,
     dateRange: DateRange | undefined | null,
 ) => {
-    if (dateRange) {
+    if (dateRange !== null && dateRange !== undefined) {
         let serializedValue: string;
         if (isCustomDateRange(dateRange)) {
             serializedValue = `${dateRange.from}--${dateRange.to}`;
@@ -156,7 +156,7 @@ export const getLapisLocationFromSearch = (
     const location: Record<string, string> = {};
     locationFields.forEach((field) => {
         const value = getStringFromSearch(search, field);
-        if (value) {
+        if (value !== undefined) {
             location[field] = value;
         }
     });
@@ -186,7 +186,7 @@ export type LapisCovidVariantQuery = LapisVariantQuery & {
     variantQuery?: string;
 };
 
-export const getLapisMutations = (query: LapisMutationQuery | {}): LapisMutationQuery => {
+export const getLapisMutations = (query: LapisMutationQuery | object): LapisMutationQuery => {
     return {
         nucleotideMutations: getArrayPropertyOrEmpty(query, 'nucleotideMutations'),
         aminoAcidMutations: getArrayPropertyOrEmpty(query, 'aminoAcidMutations'),
@@ -216,7 +216,7 @@ export const getLapisVariantQuery = (
     return {
         ...getLapisMutationsQueryFromSearch(search),
         [lineageKey]: getStringFromSearch(search, lineageIdentifier),
-        [cladeKey]: cladeIdentifier ? getStringFromSearch(search, cladeIdentifier) : undefined,
+        [cladeKey]: cladeIdentifier !== undefined ? getStringFromSearch(search, cladeIdentifier) : undefined,
     };
 };
 
@@ -234,7 +234,7 @@ export const setSearchFromLapisVariantQuery = (
 ) => {
     setSearchFromLapisMutationsQuery(search, query);
     setSearchFromString(search, lineageIdentifier, query.lineage);
-    if (cladeIdentifier) {
+    if (cladeIdentifier !== undefined) {
         setSearchFromString(search, cladeIdentifier, query.clade);
     }
 };
@@ -246,7 +246,7 @@ export const getLapisCovidVariantQuery = (
 ): LapisCovidVariantQuery => {
     const query = getLapisVariantQuery(search, lineageIdentifier, cladeIdentifier);
     const variantQuery = getStringFromSearch(search, 'variantQuery');
-    if (variantQuery) {
+    if (variantQuery !== undefined) {
         return {
             ...query,
             variantQuery,
@@ -276,6 +276,7 @@ export function getLocationSubdivision(locationFields: string[], locationFilter:
     for (let i = locationFields.length - 1; i >= 0; i--) {
         const field = locationFields[i];
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- We need to check for undefined
         if (locationFilter[field] !== undefined) {
             const locationOneLevelUp = locationFields[i + 1];
             if (locationOneLevelUp) {

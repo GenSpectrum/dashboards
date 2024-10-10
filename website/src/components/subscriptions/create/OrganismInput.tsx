@@ -8,7 +8,7 @@ export function OrganismInput({ onOrganismChange }: { onOrganismChange: (value: 
                 className='select select-bordered select-sm w-full max-w-xl'
                 onChange={(pathogen) => onOrganismChange(pathogen.currentTarget.value as Organism)}
             >
-                {/*TODO: #167 Allow users to create subscriptions for other organisms */}
+                {/* TODO: #167 Allow users to create subscriptions for other organisms */}
                 {['covid' as const].map((organism) => (
                     <option key={organism} value={organism}>
                         {organismConfig[organism].label}

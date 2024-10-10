@@ -1,3 +1,4 @@
+import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import {
     type DateRange,
     dateRangeToCustomDateRange,
@@ -10,7 +11,6 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 
@@ -20,16 +20,7 @@ const earliestDate = '1905-01-01';
 const today = getTodayString();
 
 class H5n1Constants {
-    constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;
-        this.locationFields = organismsConfig.h5n1.lapis.locationFields;
-        this.lineageField = organismsConfig.h5n1.lapis.lineageField;
-        this.hostField = organismsConfig.h5n1.lapis.hostField;
-        this.authorsField = organismsConfig.h5n1.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
-    }
-
-    public readonly organism = Organisms.h5n1 as typeof Organisms.h5n1;
+    public readonly organism = Organisms.h5n1;
     public readonly earliestDate = '1905-01-01';
     public readonly defaultDateRange: DateRange = 'last6Months';
     public readonly customDateRangeOptions = [
@@ -45,6 +36,15 @@ class H5n1Constants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;
+        this.locationFields = organismsConfig.h5n1.lapis.locationFields;
+        this.lineageField = organismsConfig.h5n1.lapis.lineageField;
+        this.hostField = organismsConfig.h5n1.lapis.hostField;
+        this.authorsField = organismsConfig.h5n1.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
+    }
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));

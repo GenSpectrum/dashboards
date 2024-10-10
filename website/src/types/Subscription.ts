@@ -1,7 +1,8 @@
-import { dateWindowSchema } from './DateWindow.ts';
 import { z } from 'zod';
-import { organismSchema } from './Organism.ts';
+
+import { dateWindowSchema } from './DateWindow.ts';
 import { evaluationIntervalSchema } from './EvaluationInterval.ts';
+import { organismSchema } from './Organism.ts';
 
 export const lapisFilterSchema = z.record(
     z.union([z.string(), z.number(), z.null(), z.undefined(), z.boolean(), z.array(z.string())]),

@@ -1,6 +1,7 @@
-import type { Channel } from '../../../types/NotificationChannels.ts';
 import { useEffect, useState } from 'react';
+
 import { DividerList } from '../../../styles/containers/DividerList.tsx';
+import type { Channel } from '../../../types/NotificationChannels.ts';
 
 export function ChannelsInput({
     label,
@@ -15,7 +16,7 @@ export function ChannelsInput({
 
     useEffect(() => {
         onChannelsSelect(selectedChannels);
-    }, [selectedChannels]);
+    }, [selectedChannels, onChannelsSelect]);
 
     return (
         <div className='flex flex-col gap-4'>
