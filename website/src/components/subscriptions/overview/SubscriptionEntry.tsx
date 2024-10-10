@@ -35,7 +35,8 @@ export function SubscriptionEntry({
                                 subtitle={organismConfig[subscription.organism].label}
                                 icon={`size-8 ${getConditionIcon()}`}
                             />
-                            <NotificationStatus active={subscription.active} />
+                            {/*TODO: Enable notificationChannels in #82, #128*/}
+                            {/*<NotificationStatus active={subscription.active} />*/}
                         </div>
                     </summary>
                     <div className='collapse-content'>
@@ -48,22 +49,23 @@ export function SubscriptionEntry({
     );
 }
 
-export const getIsActiveIcon = (active: boolean) => {
-    if (active) {
-        return 'mdi--bell-outline text-gray-500';
-    }
-
-    return 'mdi--bell-off-outline text-gray-500';
-};
-
-function NotificationStatus({ active }: { active: boolean }) {
-    return (
-        <div className={'flex items-center gap-2'}>
-            <div className={`iconify size-4 ${getIsActiveIcon(active)}`}></div>
-            <div className={'text-sm text-gray-500'}>Notifications {active ? 'enabled' : 'disabled'}</div>
-        </div>
-    );
-}
+// TODO: Enable notificationChannels in #82, #128
+// export const getIsActiveIcon = (active: boolean) => {
+//     if (active) {
+//         return 'mdi--bell-outline text-gray-500';
+//     }
+//
+//     return 'mdi--bell-off-outline text-gray-500';
+// };
+//
+// function NotificationStatus({ active }: { active: boolean }) {
+//     return (
+//         <div className={'flex items-center gap-2'}>
+//             <div className={`iconify size-4 ${getIsActiveIcon(active)}`}></div>
+//             <div className={'text-sm text-gray-500'}>Notifications {active ? 'enabled' : 'disabled'}</div>
+//         </div>
+//     );
+// }
 
 function MoreDropdown({
     subscription,
