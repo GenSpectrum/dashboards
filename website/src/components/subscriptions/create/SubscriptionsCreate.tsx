@@ -8,7 +8,7 @@ import { CardHeader } from '../../../styles/containers/CardHeader.tsx';
 import { CardContent } from '../../../styles/containers/CardContent.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
 import { GsApp } from '../../genspectrum/GsApp.tsx';
-import type { EvaluationInterval, SubscriptionRequest, Trigger } from '../../../types/Subscription.ts';
+import type { SubscriptionRequest, Trigger } from '../../../types/Subscription.ts';
 import { NameInput } from './NameInput.tsx';
 import { IntervalInput } from './IntervalInput.tsx';
 import { OrganismInput } from './OrganismInput.tsx';
@@ -20,6 +20,7 @@ import { type Organism, Organisms } from '../../../types/Organism.ts';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 import { useMutation } from '@tanstack/react-query';
 import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
+import { EvaluationInterval } from '../../../types/EvaluationInterval.ts';
 
 export const SubscriptionsCreate = withQueryProvider(SubscriptionsCreateInner);
 
@@ -54,7 +55,7 @@ export function SubscriptionsCreateInner({
     const [dateWindow, setDateWindow] = useState<DateWindow>(DateWindows.last6Months);
     const [name, setName] = useState<string>('');
     const [organism, setOrganism] = useState<Organism>(Organisms.covid);
-    const [interval, setInterval] = useState<EvaluationInterval>('daily');
+    const [interval, setInterval] = useState<EvaluationInterval>(EvaluationInterval.daily);
     // TODO: Enable notificationChannels in #82, #128
     // const [notificationChannelIds, setNotificationChannelIds] = useState<{ slack: string[]; email: string[] }>({
     //     slack: [],

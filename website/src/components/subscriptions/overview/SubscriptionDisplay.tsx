@@ -1,14 +1,9 @@
 import type { PropsWithChildren } from 'react';
-import type {
-    CountTrigger,
-    EvaluationInterval,
-    LapisFilter,
-    ProportionTrigger,
-    Subscription,
-} from '../../../types/Subscription.ts';
+import type { CountTrigger, LapisFilter, ProportionTrigger, Subscription } from '../../../types/Subscription.ts';
 import { type DateWindow, dateWindowConfig } from '../../../types/DateWindow.ts';
 // import type { NotificationChannels } from '../../../types/NotificationChannels.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
+import { EvaluationInterval } from '../../../types/EvaluationInterval.ts';
 
 export function SubscriptionContent({ children, className = '' }: PropsWithChildren<WithClassName>) {
     return <div className={`rounded-xl border-2 border-gray-100 p-6 ${className}`}>{children}</div>;

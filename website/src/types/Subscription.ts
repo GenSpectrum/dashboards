@@ -1,14 +1,12 @@
 import { dateWindowSchema } from './DateWindow.ts';
 import { z } from 'zod';
 import { organismSchema } from './Organism.ts';
+import { evaluationIntervalSchema } from './EvaluationInterval.ts';
 
 export const lapisFilterSchema = z.record(
     z.union([z.string(), z.number(), z.null(), z.undefined(), z.boolean(), z.array(z.string())]),
 );
 export type LapisFilter = z.infer<typeof lapisFilterSchema>;
-
-const evaluationIntervalSchema = z.enum(['daily', 'weekly', 'monthly']);
-export type EvaluationInterval = z.infer<typeof evaluationIntervalSchema>;
 
 const triggerEvaluationConditionMetSchema = z.object({
     evaluatedValue: z.number(),
