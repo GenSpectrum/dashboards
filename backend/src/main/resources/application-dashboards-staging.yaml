@@ -45,6 +45,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
     rsvA:
       lapis:
         url: "https://lapis.genspectrum.org/rsv-a"

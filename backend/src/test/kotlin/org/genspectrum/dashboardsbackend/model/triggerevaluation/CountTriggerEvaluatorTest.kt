@@ -77,8 +77,8 @@ class CountTriggerEvaluatorTest(
                             "country": "Germany",
                             "division": "Berlin",
                             "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                            "${organism.name.lowercase()}_dateTo": "2021-03-15"
-                            ${getLatestVersionNonRevocationFilter(organism)}
+                            "${organism.name.lowercase()}_dateTo": "2021-03-15",
+                            "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
                         }
                     """.replace("\\s".toRegex(), ""),
                 ),
@@ -124,8 +124,8 @@ class CountTriggerEvaluatorTest(
                             "country": "Germany",
                             "division": "Berlin",
                             "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                            "${organism.name.lowercase()}_dateTo": "2021-03-15"
-                             ${getLatestVersionNonRevocationFilter(organism)}
+                            "${organism.name.lowercase()}_dateTo": "2021-03-15",
+                            "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
                         }
                     """.replace("\\s".toRegex(), ""),
                 ),
@@ -306,11 +306,6 @@ class CountTriggerEvaluatorTest(
     )
 
     fun getAggregatedRoute(organism: Organism) = "/${organism.name.lowercase()}/sample/aggregated"
-
-    private fun getLatestVersionNonRevocationFilter(organism: Organism): String = when (organism) {
-        Organism.WestNile -> ""","versionStatus": "LATEST_VERSION", "isRevocation": "false" """
-        else -> ""
-    }
 
     companion object {
         @JvmStatic

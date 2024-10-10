@@ -23,21 +23,21 @@ class TriggerEvaluator(
         val lapisClient = lapisClientProvider.provide(subscription.organism)
 
         val dateFilter = computeDateFilter(subscription)
-        val latestVersionNonRevocationFilter = getLatestVersionNonRevocationFilter(subscription.organism)
+        val additionalFilters = additionalFilters(subscription.organism)
 
         val computation = when (subscription.trigger) {
             is Trigger.CountTrigger -> CountComputation(
                 subscription = subscription,
                 lapisClient = lapisClient,
-                lapisFilter = subscription.trigger.filter + dateFilter + latestVersionNonRevocationFilter,
+                lapisFilter = subscription.trigger.filter + dateFilter + additionalFilters,
                 threshold = subscription.trigger.count,
             )
 
             is Trigger.ProportionTrigger -> ProportionComputation(
                 subscription = subscription,
                 lapisClient = lapisClient,
-                numeratorFilter = subscription.trigger.numeratorFilter + dateFilter + latestVersionNonRevocationFilter,
-                denominatorFilter = subscription.trigger.denominatorFilter + dateFilter + latestVersionNonRevocationFilter,
+                numeratorFilter = subscription.trigger.numeratorFilter + dateFilter + additionalFilters,
+                denominatorFilter = subscription.trigger.denominatorFilter + dateFilter + additionalFilters,
                 threshold = subscription.trigger.proportion,
             )
         }
@@ -60,11 +60,8 @@ class TriggerEvaluator(
         )
     }
 
-    private fun getLatestVersionNonRevocationFilter(organism: Organism): Map<String, String> {
-        if (organism != Organism.WestNile) {
-            return emptyMap()
-        }
-        return mapOf("versionStatus" to "LATEST_VERSION", "isRevocation" to "false")
+    private fun additionalFilters(organism: Organism): Map<String, String> {
+        return dashboardsConfig.getOrganismConfig(organism).lapis.additionalFilters ?: emptyMap()
     }
 }
 

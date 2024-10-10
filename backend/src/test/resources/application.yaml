@@ -19,6 +19,8 @@ dashboards:
         hostField: "covid_host"
         originatingLabField: "covid_originating_lab"
         submittingLabField: "covid_submitting_lab"
+        additionalFilters:
+          someAdditionalFilter: "covid_additional_filter"
     h5n1:
       lapis:
         url: "https://h5n1.lapis.dummy"
@@ -30,6 +32,8 @@ dashboards:
         hostField: "h5n1_host_name_scientific"
         authorAffiliationsField: "h5n1_author_affiliations"
         authorsField: "h5n1_authors"
+        additionalFilters:
+          someAdditionalFilter: "h5n1_additional_filter"
     mpox:
       lapis:
         url: "https://mpox.lapis.dummy"
@@ -41,6 +45,8 @@ dashboards:
         hostField: "mpox_host_name_scientific"
         authorAffiliationsField: "mpox_author_affiliations"
         authorsField: "mpox_authors"
+        additionalFilters:
+          someAdditionalFilter: "mpox_additional_filter"
     westNile:
       lapis:
         url: "https://westNile.lapis.dummy"
@@ -52,6 +58,8 @@ dashboards:
         hostField: "westNile_host_name_scientific"
         authorAffiliationsField: "westNile_author_affiliations"
         authorsField: "westNile_authors"
+        additionalFilters:
+          someAdditionalFilter: "westnile_additional_filter"
     rsvA:
       lapis:
         url: "https://rsvA.lapis.dummy"
@@ -63,6 +71,8 @@ dashboards:
         hostField: "rsvA_host_name_scientific"
         authorAffiliationsField: "rsvA_author_affiliations"
         authorsField: "rsvA_authors"
+        additionalFilters:
+          someAdditionalFilter: "rsva_additional_filter"
     rsvB:
       lapis:
         url: "https://rsvB.lapis.dummy"
@@ -74,3 +84,5 @@ dashboards:
         hostField: "rsvB_host_name_scientific"
         authorAffiliationsField: "rsvB_author_affiliations"
         authorsField: "rsvB_authors"
+        additionalFilters:
+          someAdditionalFilter: "rsvb_additional_filter"
