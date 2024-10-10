@@ -1,14 +1,15 @@
-import { FilterDropdown, getFilters, getSelectedFilters } from './SubscriptionFilter.tsx';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import type { Subscription } from '../../../types/Subscription.ts';
+
+import { SubscriptionEntry } from './SubscriptionEntry.tsx';
+import { FilterDropdown, getFilters, getSelectedFilters } from './SubscriptionFilter.tsx';
 import { PageContainer } from '../../../styles/containers/PageContainer.tsx';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
-import { SubscriptionEntry } from './SubscriptionEntry.tsx';
-import { useQuery } from '@tanstack/react-query';
-import { querySubscriptions } from '../backendApi/querySubscriptions.ts';
-import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
-import { Page } from '../../../types/pages.ts';
 import type { Organism } from '../../../types/Organism.ts';
+import type { Subscription } from '../../../types/Subscription.ts';
+import { Page } from '../../../types/pages.ts';
+import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
+import { querySubscriptions } from '../backendApi/querySubscriptions.ts';
 import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
 
 type SubscriptionsProps = {
@@ -36,6 +37,7 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
         return <LoadingSubscriptions />;
     }
     if (isError) {
+        // eslint-disable-next-line no-console -- TODO #203 properly log this
         console.error(error);
         return <ErrorSubscriptions />;
     }
@@ -53,16 +55,16 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
     );
 }
 
-const LoadingSubscriptions = () => {
+function LoadingSubscriptions() {
     return (
         <PageContainer>
             <PageHeadline>Subscriptions</PageHeadline>
             <div>Loading...</div>
         </PageContainer>
     );
-};
+}
 
-const ErrorSubscriptions = () => {
+function ErrorSubscriptions() {
     return (
         <PageContainer>
             <PageHeadline>Subscriptions</PageHeadline>
@@ -72,24 +74,24 @@ const ErrorSubscriptions = () => {
             </div>
         </PageContainer>
     );
-};
+}
 
-const NoSubscriptions = () => {
+function NoSubscriptions() {
     return (
         <PageContainer>
-            <div className={'flex items-baseline justify-between'}>
+            <div className='flex items-baseline justify-between'>
                 <PageHeadline>Subscriptions</PageHeadline>
                 <AddSubscriptionButton />
             </div>
-            <div className={'mb-4'}>Subscriptions let you keep an eye on variants.</div>
+            <div className='mb-4'>Subscriptions let you keep an eye on variants.</div>
             <a className='btn btn-primary btn-sm' href={Page.createSubscription}>
                 Add your first subscription
             </a>
         </PageContainer>
     );
-};
+}
 
-export const SubscriptionsDisplay = ({
+export function SubscriptionsDisplay({
     userId,
     subscriptions,
     organismsFromUrl,
@@ -99,7 +101,7 @@ export const SubscriptionsDisplay = ({
     subscriptions: Subscription[];
     organismsFromUrl: Organism[];
     refetchSubscriptions: () => void;
-}) => {
+}) {
     const filters = getFilters(subscriptions);
     const [selectedFilters, setSelectedFilters] = useState(getSelectedFilters(filters, organismsFromUrl));
 
@@ -113,9 +115,9 @@ export const SubscriptionsDisplay = ({
 
     return (
         <PageContainer>
-            <div className={'flex items-baseline justify-between'}>
+            <div className='flex items-baseline justify-between'>
                 <PageHeadline>Subscriptions</PageHeadline>
-                <div className={'flex gap-1'}>
+                <div className='flex gap-1'>
                     <FilterDropdown selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
                     <AddSubscriptionButton />
                 </div>
@@ -127,7 +129,7 @@ export const SubscriptionsDisplay = ({
             />
         </PageContainer>
     );
-};
+}
 
 function AddSubscriptionButton() {
     return (
@@ -147,7 +149,7 @@ function SubscriptionsList({
     refetchSubscriptions: () => void;
 }) {
     return (
-        <div className={'flex flex-col gap-2'}>
+        <div className='flex flex-col gap-2'>
             {subscriptions.map((subscription) => (
                 <SubscriptionEntry
                     key={subscription.id}

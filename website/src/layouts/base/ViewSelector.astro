@@ -1,28 +1,26 @@
 ---
 import { ServerSide } from '../../routes/serverSideRouting';
 
-const currentRoute = ServerSide.routing.parseUrl(Astro.url)!;
+const currentRoute = ServerSide.routing.parseUrl(Astro.url);
 const organism = currentRoute?.organism;
 ---
 
 {
     organism !== undefined && (
-        <>
-            <label>
-                View:
-                <select id='view-selector'>
-                    {ServerSide.routing.views[organism].map((view) => (
-                        <option
-                            value={view.pathname}
-                            data-url={ServerSide.routing.toUrl(ServerSide.routing.getDefaultRoute(view.pathname)!)}
-                            selected={currentRoute.pathname === view.pathname}
-                        >
-                            {view.label}
-                        </option>
-                    ))}
-                </select>
-            </label>
-        </>
+        <label>
+            View:
+            <select id='view-selector'>
+                {ServerSide.routing.views[organism].map((view) => (
+                    <option
+                        value={view.pathname}
+                        data-url={ServerSide.routing.toUrl(ServerSide.routing.getDefaultRoute(view.pathname)!)}
+                        selected={currentRoute?.pathname === view.pathname}
+                    >
+                        {view.label}
+                    </option>
+                ))}
+            </select>
+        </label>
     )
 }
 <script>

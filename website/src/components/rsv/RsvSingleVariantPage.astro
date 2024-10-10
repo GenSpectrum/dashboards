@@ -1,14 +1,14 @@
 ---
-import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
-import { RsvAAnalyzeSingleVariantView } from '../../routes/rsvA';
-import { RsvBAnalyzeSingleVariantView } from '../../routes/rsvB';
-import { getLapisUrl } from '../../config';
-import { defaultTablePageSize } from '../../routes/View';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
-import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import { getLapisUrl } from '../../config';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { defaultTablePageSize } from '../../routes/View';
+import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
+import { type RsvAAnalyzeSingleVariantView } from '../../routes/rsvA';
+import { type RsvBAnalyzeSingleVariantView } from '../../routes/rsvB';
 import { organismConfig } from '../../types/Organism';
 
 interface Props {
@@ -99,7 +99,7 @@ const initialMutations = getLapisMutations(variantFilter);
                             height='100%'></gs-mutations>
                     </ComponentWrapper>
                     {
-                        subdivisionField && (
+                        subdivisionField !== undefined && (
                             <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
                                     fields={JSON.stringify([subdivisionField])}

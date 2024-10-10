@@ -1,10 +1,10 @@
 ---
-import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../../routes/helpers';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import ComponentsGrid from '../../../components/ComponentsGrid.astro';
 import LocationTimeFilter from '../../../components/LocationTimeFilter.astro';
 import { getLapisUrl } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { defaultTablePageSize } from '../../../routes/View';
-import ComponentsGrid from '../../../components/ComponentsGrid.astro';
+import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../../routes/helpers';
 import { ServerSide } from '../../../routes/serverSideRouting';
 import { Organisms } from '../../../types/Organism';
 
@@ -52,7 +52,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                     granularity={timeGranularity}></gs-number-sequences-over-time>
             </ComponentsGrid>
             {
-                subdivisionField && (
+                subdivisionField !== undefined && (
                     <ComponentsGrid title={subdivisionLabel} height='600px'>
                         <gs-aggregate
                             fields={JSON.stringify([subdivisionField])}

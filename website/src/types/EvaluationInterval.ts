@@ -1,19 +1,19 @@
 import { z } from 'zod';
 
-export namespace EvaluationInterval {
-    export const daily = 'daily';
-    export const weekly = 'weekly';
-    export const monthly = 'monthly';
-}
+export const EvaluationIntervals = {
+    daily: 'daily' as const,
+    weekly: 'weekly' as const,
+    monthly: 'monthly' as const,
+};
 
 export const evaluationIntervalConfig = {
-    [EvaluationInterval.daily]: {
+    [EvaluationIntervals.daily]: {
         label: 'Daily',
     },
-    [EvaluationInterval.weekly]: {
+    [EvaluationIntervals.weekly]: {
         label: 'Weekly',
     },
-    [EvaluationInterval.monthly]: {
+    [EvaluationIntervals.monthly]: {
         label: 'Monthly',
     },
 };

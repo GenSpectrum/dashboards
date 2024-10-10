@@ -1,5 +1,6 @@
 ---
 import { getSession } from 'auth-astro/server';
+
 import LoginButton from './LoginButton.astro';
 import UserDropdown from './UserDropdown.astro';
 
@@ -10,7 +11,7 @@ interface Props {
 const { forceLoggedOutState = false } = Astro.props;
 
 const session = await getSession(Astro.request);
-const showLoggedInState = !forceLoggedOutState && session?.user;
+const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
 ---
 
 {showLoggedInState ? <UserDropdown session={session} /> : <LoginButton />}

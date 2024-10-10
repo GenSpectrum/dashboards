@@ -1,20 +1,20 @@
 ---
-import { z } from 'zod';
-import { organismSchema } from '../../types/Organism';
 import { getSession } from 'auth-astro/server';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { Subscriptions } from '../../components/subscriptions/overview/Subscriptions';
+
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
+import { Subscriptions } from '../../components/subscriptions/overview/Subscriptions';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { organismsSchema } from '../../types/Organism';
 
 const session = await getSession(Astro.request);
 
-const organisms = z.array(organismSchema).parse(Astro.url.searchParams.getAll('organism'));
+const organisms = organismsSchema.parse(Astro.url.searchParams.getAll('organism'));
 ---
 
-<BaseLayout title='Subscriptions' omitHeaderNavigation={true}>
+<BaseLayout title='Subscriptions' omitHeaderNavigation>
     {
-        session?.user?.id ? (
-            <Subscriptions client:load organismsFromUrl={organisms} userId={session?.user?.id} />
+        session?.user?.id !== undefined ? (
+            <Subscriptions client:load organismsFromUrl={organisms} userId={session.user.id} />
         ) : (
             <NotLoggedIn />
         )

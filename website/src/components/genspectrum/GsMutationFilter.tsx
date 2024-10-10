@@ -30,18 +30,19 @@ export function GsMutationFilter({
             onBlur(event.detail);
         };
 
-        if (mutationFilterRef.current) {
-            mutationFilterRef.current.addEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
-            mutationFilterRef.current.addEventListener('gs-mutation-filter-on-blur', handleMutationFilterBlur);
+        const currentMutationFilterRef = mutationFilterRef.current;
+        if (currentMutationFilterRef) {
+            currentMutationFilterRef.addEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
+            currentMutationFilterRef.addEventListener('gs-mutation-filter-on-blur', handleMutationFilterBlur);
         }
 
         return () => {
-            if (mutationFilterRef.current) {
-                mutationFilterRef.current.removeEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
-                mutationFilterRef.current.removeEventListener('gs-mutation-filter-on-blur', handleMutationFilterBlur);
+            if (currentMutationFilterRef) {
+                currentMutationFilterRef.removeEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
+                currentMutationFilterRef.removeEventListener('gs-mutation-filter-on-blur', handleMutationFilterBlur);
             }
         };
-    }, []);
+    }, [onMutationChange, onBlur]);
 
     return <gs-mutation-filter width={width} initialValue={initialValue} ref={mutationFilterRef}></gs-mutation-filter>;
 }

@@ -1,4 +1,5 @@
-const { addIconSelectors } = require('@iconify/tailwind');
+import { addIconSelectors } from '@iconify/tailwind';
+import daisyui from 'daisyui';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -6,7 +7,7 @@ export default {
     theme: {
         extend: {},
     },
-    plugins: [require('daisyui'), addIconSelectors(['mdi', 'mdi-light'])],
+    plugins: [daisyui, addIconSelectors(['mdi', 'mdi-light'])],
     daisyui: {
         themes: ['light'],
     },

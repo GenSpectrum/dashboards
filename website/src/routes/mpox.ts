@@ -1,3 +1,4 @@
+import { type AnalyzeSingleVariantRoute, type Route, type View } from './View.ts';
 import {
     type DateRange,
     dateRangeToCustomDateRange,
@@ -11,7 +12,6 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { type AnalyzeSingleVariantRoute, type Route, type View } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 
@@ -21,16 +21,7 @@ const earliestDate = '1960-01-01';
 const today = getTodayString();
 
 class MpoxConstants {
-    constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
-        this.locationFields = organismsConfig.mpox.lapis.locationFields;
-        this.lineageField = organismsConfig.mpox.lapis.lineageField;
-        this.hostField = organismsConfig.mpox.lapis.hostField;
-        this.authorsField = organismsConfig.mpox.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
-    }
-
-    public readonly organism = Organisms.mpox as typeof Organisms.mpox;
+    public readonly organism = Organisms.mpox;
     public readonly earliestDate = '1960-01-01';
     public readonly defaultDateRange: DateRange = 'allTimes';
     public readonly customDateRangeOptions = [
@@ -51,6 +42,15 @@ class MpoxConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
+        this.locationFields = organismsConfig.mpox.lapis.locationFields;
+        this.lineageField = organismsConfig.mpox.lapis.lineageField;
+        this.hostField = organismsConfig.mpox.lapis.hostField;
+        this.authorsField = organismsConfig.mpox.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
+    }
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));

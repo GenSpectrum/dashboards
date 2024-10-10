@@ -1,18 +1,19 @@
 ---
 import { getSession } from 'auth-astro/server';
+
+import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
+import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
 import { getDashboardsConfig } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
-import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 
 const session = await getSession(Astro.request);
 
 const config = getDashboardsConfig();
 ---
 
-<BaseLayout title='Create new subscription' omitHeaderNavigation={true}>
+<BaseLayout title='Create new subscription' omitHeaderNavigation>
     {
-        session?.user?.id ? (
+        session?.user?.id !== undefined ? (
             <SubscriptionsCreate config={config} client:only='react' userId={session.user.id} />
         ) : (
             <NotLoggedIn />

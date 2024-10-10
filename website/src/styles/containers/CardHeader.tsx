@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react';
+
 import type { WithClassName } from '../../types/WithClassName.ts';
 
 export function CardHeader({ children, className = '' }: PropsWithChildren<WithClassName>) {

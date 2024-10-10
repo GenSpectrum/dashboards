@@ -1,7 +1,7 @@
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
 import {
     allEvaluationIntervals,
-    EvaluationInterval,
+    type EvaluationInterval,
     evaluationIntervalConfig,
 } from '../../../types/EvaluationInterval.ts';
 

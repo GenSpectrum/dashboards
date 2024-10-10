@@ -3,14 +3,14 @@ export function CardDescription({ title, subtitle, icon }: { title: string; subt
 
     return (
         <div className='flex items-center gap-2'>
-            {icon && <div className={`iconify size-12 ${icon}`}></div>}
+            {icon !== undefined && <div className={`iconify size-12 ${icon}`}></div>}
             {headline}
         </div>
     );
 }
 
 function Headline({ title, subtitle }: { title: string; subtitle?: string }) {
-    if (!subtitle) {
+    if (subtitle === undefined) {
         return <Title title={title} />;
     }
 

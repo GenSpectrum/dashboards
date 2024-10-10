@@ -3,10 +3,7 @@ import { allDateWindows, type DateWindow, dateWindowConfig } from '../../../type
 
 export function DateWindowInput({ onDateWindowChange }: { onDateWindowChange: (value: DateWindow) => void }) {
     return (
-        <InputLabel
-            title={'Date window'}
-            description={'The threshold condition will be calculated over this time window.'}
-        >
+        <InputLabel title='Date window' description='The threshold condition will be calculated over this time window.'>
             <select
                 className='select select-bordered select-sm w-full max-w-xl'
                 onInput={(event) => {

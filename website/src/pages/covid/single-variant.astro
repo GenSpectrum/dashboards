@@ -1,18 +1,18 @@
 ---
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
+import VariantFilter from '../../components/VariantFilter.astro';
 import { CollectionsList } from '../../components/covidAnalyzeSingleVariantView/CollectionsList';
+import { getDashboardsConfig, getLapisUrl } from '../../config';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { defaultTablePageSize } from '../../routes/View';
 import {
     chooseGranularityBasedOnDateRange,
     getLapisMutations,
     getLocationSubdivision,
     lineageKey,
 } from '../../routes/helpers';
-import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import VariantFilter from '../../components/VariantFilter.astro';
-import { getDashboardsConfig, getLapisUrl } from '../../config';
-import { defaultTablePageSize } from '../../routes/View';
-import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
@@ -122,7 +122,7 @@ const initialMutations = getLapisMutations(variantFilter);
                             height='100%'></gs-aggregate>
                     </ComponentWrapper>
                     {
-                        subdivisionField && (
+                        subdivisionField !== undefined && (
                             <ComponentWrapper title={subdivisionLabel}>
                                 <gs-aggregate
                                     fields={JSON.stringify([subdivisionField])}

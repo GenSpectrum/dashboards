@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import JointFilter from '../../components/covidCompareVariantsView/JointFilter.astro';
-import { chooseGranularityBasedOnDateRange, getLapisMutations } from '../../routes/helpers';
-import { getLapisUrl } from '../../config';
-import { defaultTablePageSize } from '../../routes/View';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
+import JointFilter from '../../components/covidCompareVariantsView/JointFilter.astro';
+import { getLapisUrl } from '../../config';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { defaultTablePageSize } from '../../routes/View';
+import { chooseGranularityBasedOnDateRange, getLapisMutations } from '../../routes/helpers';
 import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 

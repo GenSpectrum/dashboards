@@ -1,11 +1,12 @@
-import type { Subscription } from '../../../types/Subscription.ts';
-import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
-import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
-import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
-import { organismConfig } from '../../../types/Organism.ts';
-import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 import { useMutation } from '@tanstack/react-query';
 import { type JSX } from 'react';
+
+import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
+import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
+import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
+import { organismConfig } from '../../../types/Organism.ts';
+import type { Subscription } from '../../../types/Subscription.ts';
+import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 
 export function SubscriptionEntry({
     subscription,
@@ -33,7 +34,7 @@ export function SubscriptionEntry({
             <div className='flex flex-row'>
                 <details className='collapse collapse-arrow mr-4 overflow-visible'>
                     <summary className='collapse-title'>
-                        <div className={`flex items-center justify-between`}>
+                        <div className='flex items-center justify-between'>
                             <CardDescription
                                 title={subscription.name}
                                 subtitle={organismConfig[subscription.organism].label}
@@ -66,6 +67,7 @@ function MoreDropdown({
             refetchSubscriptions();
         },
         onError: (error) => {
+            // eslint-disable-next-line no-console -- TODO #203 properly log this
             console.error(error);
             // TODO: #205 Show error as banner
             window.location.href = '/500';
@@ -79,6 +81,7 @@ function MoreDropdown({
             refetchSubscriptions();
         },
         onError: (error) => {
+            // eslint-disable-next-line no-console -- TODO #203 properly log this
             console.error(error);
             // TODO: #205 Show error as banner
             window.location.href = '/500';
@@ -99,10 +102,10 @@ function MoreDropdown({
                 ...
             </div>
             <ul tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>
-                {/*TODO: #170 Page to edit subscription*/}
-                {/*<li>*/}
+                {/* TODO: #170 Page to edit subscription*/}
+                {/* <li>*/}
                 {/*    <EditButton />*/}
-                {/*</li>*/}
+                {/* </li>*/}
                 <li>
                     <ActivateButton isActive={subscription.active} onClick={handleActivate} />
                 </li>
@@ -118,11 +121,10 @@ function MoreDropdown({
 // function EditButton() {
 //     return (
 //         <button
-//             className={'flex items-center gap-2'}
-//
+//             className='flex items-center gap-2'
 //             onClick={() => console.error('Not implemented. Will be done by #170')}
 //         >
-//             <div className={'iconify mdi--pencil'}></div>
+//             <div className='iconify mdi--pencil'></div>
 //             Edit
 //         </button>
 //     );
@@ -136,7 +138,7 @@ function ActivateButton({
     onClick: JSX.IntrinsicElements['button']['onClick'];
 }) {
     return (
-        <button className={'flex items-center gap-2'} onClick={onClick}>
+        <button className='flex items-center gap-2' onClick={onClick}>
             <div className={`iconify ${isActive ? 'mdi--pause' : 'mdi--play'}`}></div>
             {isActive ? 'Deactivate' : 'Activate'}
         </button>
@@ -145,8 +147,8 @@ function ActivateButton({
 
 function DeleteButton({ onClick }: { onClick: JSX.IntrinsicElements['button']['onClick'] }) {
     return (
-        <button className={'flex items-center gap-2'} onClick={onClick}>
-            <div className={'iconify mdi--delete'}></div>
+        <button className='flex items-center gap-2' onClick={onClick}>
+            <div className='iconify mdi--delete'></div>
             Delete
         </button>
     );

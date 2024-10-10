@@ -1,7 +1,9 @@
-import { z, ZodError } from 'zod';
 import fs from 'fs';
 import path from 'path';
+
 import YAML from 'yaml';
+import { z, type ZodError } from 'zod';
+
 import { allOrganisms, type Organism } from './types/Organism.ts';
 
 const lapisConfigSchema = z.object({
@@ -81,7 +83,7 @@ export function getBackendHost(): string {
 
 export function getGitHubClientId(): string {
     return (
-        processEnvOrMetaEnv('GITHUB_CLIENT_ID', z.string().optional()) ||
+        processEnvOrMetaEnv('GITHUB_CLIENT_ID', z.string().optional()) ??
         getDashboardsConfig().dashboards.auth.github.clientId
     );
 }
@@ -103,7 +105,7 @@ function getEnvironment() {
 }
 
 function processEnvOrMetaEnv<T>(key: string, schema: z.ZodType<T>) {
-    const envValue = process.env[key] || import.meta.env[key];
+    const envValue = process.env[key] ?? import.meta.env[key];
     const parsedValue = schema.safeParse(envValue);
     if (parsedValue.success) {
         return parsedValue.data;

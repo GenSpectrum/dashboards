@@ -1,3 +1,4 @@
+import { type BaselineFilter, type Route, type VariantFilter, type View } from './View.ts';
 import {
     type DateRange,
     type DateRangeOption,
@@ -13,7 +14,6 @@ import {
     setSearchFromLapisCovidVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { type BaselineFilter, type Route, type VariantFilter, type View } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 
@@ -23,16 +23,7 @@ const earliestDate = '2020-01-06';
 const today = getTodayString();
 
 class CovidConstants {
-    constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.covid.lapis.mainDateField;
-        this.locationFields = organismsConfig.covid.lapis.locationFields;
-        this.lineageField = organismsConfig.covid.lapis.lineageField;
-        this.hostField = organismsConfig.covid.lapis.hostField;
-        this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
-        this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
-    }
-
-    public readonly organism = Organisms.covid as typeof Organisms.covid;
+    public readonly organism = Organisms.covid;
     public readonly defaultDateRange: DateRange = 'last6Months';
     public readonly earliestDate = '2020-01-06';
     public readonly customDateRangeOptions: DateRangeOption[] = [
@@ -49,7 +40,16 @@ class CovidConstants {
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
 
-    public variantFilterToLapisFilter = (filter: LapisCovidVariantQuery): LapisFilter => {
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.covid.lapis.mainDateField;
+        this.locationFields = organismsConfig.covid.lapis.locationFields;
+        this.lineageField = organismsConfig.covid.lapis.lineageField;
+        this.hostField = organismsConfig.covid.lapis.hostField;
+        this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
+        this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
+    }
+
+    public variantFilterToLapisFilter(filter: LapisCovidVariantQuery): LapisFilter {
         const lapisFilter: LapisFilter = {};
         for (const [key, value] of Object.entries(filter)) {
             if (key === 'lineage') {
@@ -60,7 +60,7 @@ class CovidConstants {
         }
 
         return lapisFilter;
-    };
+    }
 }
 
 export type CovidAnalyzeSingleVariantRoute = Route &
@@ -83,7 +83,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         variantFilter: { lineage: 'JN.1*' },
     };
 
-    parseUrl = (url: URL): CovidAnalyzeSingleVariantRoute => {
+    public parseUrl(url: URL): CovidAnalyzeSingleVariantRoute {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -95,9 +95,9 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             variantFilter: getLapisCovidVariantQuery(search, this.lineageField),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
-    };
+    }
 
-    toUrl = (route: CovidAnalyzeSingleVariantRoute): string => {
+    public toUrl(route: CovidAnalyzeSingleVariantRoute): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
 
@@ -111,23 +111,23 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             search.set('collectionId', route.collectionId.toString());
         }
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: CovidAnalyzeSingleVariantRoute) => {
+    public toLapisFilter(route: CovidAnalyzeSingleVariantRoute) {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...this.variantFilterToLapisFilter(route.variantFilter),
         };
-    };
+    }
 
-    public toLapisFilterWithoutVariant = (route: CovidAnalyzeSingleVariantRoute): LapisFilter => {
+    public toLapisFilterWithoutVariant(route: CovidAnalyzeSingleVariantRoute): LapisFilter {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(earliestDate));
         return {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
         };
-    };
+    }
 }
 
 export type CovidCompareVariantsRoute = {
@@ -146,10 +146,11 @@ function decodeMultipleFiltersFromSearch(search: URLSearchParams) {
     for (const [key, value] of search) {
         const keySplit = key.split('$');
         if (keySplit.length !== 2) {
+            // eslint-disable-next-line no-console -- TODO #203 properly log this
             console.error(`Invalid key in URLSearchParam: ${key}`);
             return undefined;
         }
-        const id = Number.parseInt(keySplit[1]);
+        const id = Number.parseInt(keySplit[1], 10);
         if (Number.isNaN(id)) {
             continue;
         }
@@ -211,21 +212,7 @@ export class CovidCompareVariantsView
         ]),
     };
 
-    private getFilter = (filterParams: Map<string, string>) => {
-        const filter: BaselineFilter & VariantFilter = {
-            baselineFilter: { location: {}, dateRange: this.defaultDateRange },
-            variantFilter: {},
-        };
-
-        filter.baselineFilter.location = getLapisLocationFromSearch(filterParams, this.locationFields);
-        filter.baselineFilter.dateRange =
-            getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange;
-        filter.variantFilter = getLapisCovidVariantQuery(filterParams, this.lineageField);
-
-        return filter;
-    };
-
-    public parseUrl = (url: URL): CovidCompareVariantsRoute | undefined => {
+    public parseUrl(url: URL): CovidCompareVariantsRoute | undefined {
         const filterPerColumn = decodeMultipleFiltersFromSearch(url.searchParams);
         if (filterPerColumn === undefined) {
             return undefined;
@@ -239,11 +226,11 @@ export class CovidCompareVariantsView
         return {
             organism: this.organism,
             pathname: this.pathname,
-            filters: filters,
+            filters,
         };
-    };
+    }
 
-    public toUrl = (route: CovidCompareVariantsRoute): string => {
+    public toUrl(route: CovidCompareVariantsRoute): string {
         const searchParameterMap = new Map<Id, Map<string, string>>();
 
         for (const [columnId, filter] of route.filters) {
@@ -262,13 +249,13 @@ export class CovidCompareVariantsView
         const search = encodeMultipleFiltersToUrlSearchParam(searchParameterMap);
 
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public setFilter = (
+    public setFilter(
         route: CovidCompareVariantsRoute,
         newFilter: CovidCompareVariantsFilter,
         columnId: Id,
-    ): CovidCompareVariantsRoute => {
+    ): CovidCompareVariantsRoute {
         const filtersPerColumn = new Map(route.filters);
 
         filtersPerColumn.set(columnId, newFilter);
@@ -276,9 +263,9 @@ export class CovidCompareVariantsView
             ...route,
             filters: filtersPerColumn,
         };
-    };
+    }
 
-    public addEmptyFilter = (route: CovidCompareVariantsRoute): CovidCompareVariantsRoute => {
+    public addEmptyFilter(route: CovidCompareVariantsRoute): CovidCompareVariantsRoute {
         const lastId = Math.max(...Array.from(route.filters.keys()));
 
         return this.setFilter(
@@ -294,7 +281,7 @@ export class CovidCompareVariantsView
             },
             lastId + 1,
         );
-    };
+    }
 
     public removeFilter(route: CovidCompareVariantsRoute, columnId: number): CovidCompareVariantsRoute {
         const filters = new Map(route.filters);
@@ -305,14 +292,28 @@ export class CovidCompareVariantsView
         };
     }
 
-    public baselineFilterToLapisFilter = (filter: CovidCompareVariantsFilter['baselineFilter']): LapisFilter => {
+    public baselineFilterToLapisFilter(filter: CovidCompareVariantsFilter['baselineFilter']): LapisFilter {
         const dateRange = dateRangeToCustomDateRange(filter.dateRange, new Date(earliestDate));
         return {
             ...filter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
         };
-    };
+    }
+
+    private getFilter(filterParams: Map<string, string>) {
+        const filter: BaselineFilter & VariantFilter = {
+            baselineFilter: { location: {}, dateRange: this.defaultDateRange },
+            variantFilter: {},
+        };
+
+        filter.baselineFilter.location = getLapisLocationFromSearch(filterParams, this.locationFields);
+        filter.baselineFilter.dateRange =
+            getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange;
+        filter.variantFilter = getLapisCovidVariantQuery(filterParams, this.lineageField);
+
+        return filter;
+    }
 }
 
 export type CovidSequencingEffortsRoute = Route &
@@ -333,7 +334,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
         },
     };
 
-    public parseUrl = (url: URL): CovidSequencingEffortsRoute => {
+    public parseUrl(url: URL): CovidSequencingEffortsRoute {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -344,9 +345,9 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             },
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
-    };
+    }
 
-    toUrl = (route: CovidSequencingEffortsRoute): string => {
+    public toUrl(route: CovidSequencingEffortsRoute): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
 
@@ -357,14 +358,14 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             search.set('collectionId', route.collectionId.toString());
         }
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    toLapisFilter = (route: CovidSequencingEffortsRoute): LapisFilter => {
+    public toLapisFilter(route: CovidSequencingEffortsRoute): LapisFilter {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(earliestDate));
         return {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
         };
-    };
+    }
 }

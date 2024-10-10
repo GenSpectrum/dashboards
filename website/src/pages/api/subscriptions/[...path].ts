@@ -1,4 +1,5 @@
 import { getSession } from 'auth-astro/server';
+
 import { getBackendHost } from '../../../config.ts';
 
 const API_PATHNAME_LENGTH = '/api'.length;
@@ -6,7 +7,7 @@ const API_PATHNAME_LENGTH = '/api'.length;
 export async function ALL({ request }: { request: Request }) {
     const session = await getSession(request);
 
-    if (!session || !session.user?.id) {
+    if (!session || session.user?.id === undefined) {
         return getUnauthorizedResponse(request.url);
     }
 
@@ -20,6 +21,7 @@ export async function ALL({ request }: { request: Request }) {
             headers: response.headers,
         });
     } catch (error) {
+        // eslint-disable-next-line no-console -- TODO #203 properly log this
         console.error(error);
         return getInternalErrorResponse(request.url);
     }
@@ -56,6 +58,7 @@ const getUnauthorizedResponse = (requestUrl: string) => {
     return new Response(JSON.stringify({ response }), {
         status: 401,
         headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'Content-Type': 'application/json',
         },
     });
@@ -72,6 +75,7 @@ const getInternalErrorResponse = (requestUrl: string) => {
     return new Response(JSON.stringify({ response }), {
         status: 500,
         headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'Content-Type': 'application/json',
         },
     });

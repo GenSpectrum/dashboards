@@ -1,16 +1,17 @@
+import { type Route } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
+import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
-import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
 import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
 import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.ts';
-import { type Route } from './View.ts';
-import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import type { OrganismsConfig } from '../config.ts';
+import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
 import { Organisms } from '../types/Organism.ts';
 
 export class Routing {
-    private readonly allViews;
     public readonly views;
+
+    private readonly allViews;
 
     constructor(organismsConfig: OrganismsConfig) {
         this.views = {
@@ -43,15 +44,15 @@ export class Routing {
         this.allViews = Object.values(this.views).flat();
     }
 
-    getCurrentRouteInBrowser = (): Route | undefined => {
+    public getCurrentRouteInBrowser = (): Route | undefined => {
         return this.parseUrl(new URL(window.location.href));
     };
 
-    navigateTo = (route: Route) => {
+    public navigateTo = (route: Route) => {
         window.location.href = this.toUrl(route);
     };
 
-    parseUrl = (url: URL): Route | undefined => {
+    public parseUrl = (url: URL): Route | undefined => {
         for (const view of this.allViews) {
             if (view.pathname === url.pathname) {
                 return view.parseUrl(url);
@@ -60,17 +61,17 @@ export class Routing {
         return undefined;
     };
 
-    toUrl = (route: Route): string => {
+    public toUrl = (route: Route): string => {
         for (const view of this.allViews) {
             if (route.pathname === view.pathname) {
-                // @ts-ignore
+                // @ts-expect-error -- TODO #209 properly type this
                 return view.toUrl(route);
             }
         }
         throw new Error('Unexpected route: ' + route.pathname);
     };
 
-    getDefaultRoute = (pathname: string): Route | undefined => {
+    public getDefaultRoute = (pathname: string): Route | undefined => {
         for (const view of this.allViews) {
             if (view.pathname === pathname) {
                 return view.defaultRoute;

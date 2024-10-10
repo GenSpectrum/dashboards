@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
 
 export type TriggerType =
@@ -38,11 +39,11 @@ export function TriggerTypeInput({ onTriggerTypeChange }: { onTriggerTypeChange:
 
     useEffect(() => {
         onTriggerTypeChange(triggerType);
-    }, [triggerType]);
+    }, [triggerType, onTriggerTypeChange]);
 
     return (
         <InputLabel
-            title={'Threshold'}
+            title='Threshold'
             description={
                 'The threshold for the subscription. ' +
                 `If the ${triggerType.type === 'count' ? 'count' : 'prevalence'} of the variant exceeds this threshold, ` +
@@ -64,18 +65,18 @@ export function TriggerTypeInput({ onTriggerTypeChange }: { onTriggerTypeChange:
                         }}
                         value={triggerType.type}
                     >
-                        <option value={'proportion'}>Prevalence</option>
-                        <option value={'count'}>Count</option>
+                        <option value='proportion'>Prevalence</option>
+                        <option value='count'>Count</option>
                     </select>
                 </label>
                 {triggerType.type === 'count' && (
-                    <label className={`input input-bordered flex items-center gap-2`}>
+                    <label className='input input-bordered flex items-center gap-2'>
                         <input
                             type='number'
                             step={1}
                             min={0}
                             lang='en'
-                            className={`w-32 grow`}
+                            className='w-32 grow'
                             value={countTrigger.count}
                             onChange={(event) => {
                                 const newCountTrigger = {
@@ -88,14 +89,14 @@ export function TriggerTypeInput({ onTriggerTypeChange }: { onTriggerTypeChange:
                     </label>
                 )}
                 {triggerType.type === 'proportion' && (
-                    <label className={`input input-bordered flex items-center gap-2`}>
+                    <label className='input input-bordered flex items-center gap-2'>
                         <input
                             type='number'
                             step={0.1}
                             min={0}
                             max={100}
                             lang='en'
-                            className={`w-32 grow`}
+                            className='w-32 grow'
                             value={jsWorkaroundForFloatingPointConversionOfStrings(proportionTrigger.proportion)}
                             onChange={(event) => {
                                 const newProportionTrigger = {

@@ -1,6 +1,6 @@
 import { Auth, raw, skipCSRFCheck } from '@auth/core';
-import authConfig from 'auth:config';
 import type { ResponseInternal } from '@auth/core/types';
+import authConfig from 'auth:config';
 
 export type LogoutResponse = Required<Pick<ResponseInternal, 'redirect' | 'cookies'>>;
 

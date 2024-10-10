@@ -1,9 +1,7 @@
 ---
-import type { LapisLocation, LapisMutationQuery } from '../../routes/helpers';
-import type { DateRange } from '../../routes/helpers';
-import { isCustomDateRange } from '../../routes/helpers';
-import { ServerSide } from '../../routes/serverSideRouting';
 import { getDashboardsConfig } from '../../config';
+import { type LapisLocation, type LapisMutationQuery, isCustomDateRange, type DateRange } from '../../routes/helpers';
+import { ServerSide } from '../../routes/serverSideRouting';
 
 interface Props {
     filterId: number;

@@ -1,3 +1,4 @@
+import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import {
     type DateRange,
     dateRangeToCustomDateRange,
@@ -11,7 +12,6 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 
@@ -20,16 +20,7 @@ const pathFragment = organismConfig[Organisms.rsvA].pathFragment;
 const today = getTodayString();
 
 class RsvAConstants {
-    constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;
-        this.locationFields = organismsConfig.rsvA.lapis.locationFields;
-        this.lineageField = organismsConfig.rsvA.lapis.lineageField;
-        this.hostField = organismsConfig.rsvA.lapis.hostField;
-        this.authorsField = organismsConfig.rsvA.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
-    }
-
-    public readonly organism = Organisms.rsvA as typeof Organisms.rsvA;
+    public readonly organism = Organisms.rsvA;
     public readonly defaultDateRange: DateRange = 'allTimes';
     public readonly earliestDate = '1956-01-01';
     public readonly customDateRangeOptions = [
@@ -45,6 +36,15 @@ class RsvAConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+
+    constructor(organismsConfig: OrganismsConfig) {
+        this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;
+        this.locationFields = organismsConfig.rsvA.lapis.locationFields;
+        this.lineageField = organismsConfig.rsvA.lapis.lineageField;
+        this.hostField = organismsConfig.rsvA.lapis.hostField;
+        this.authorsField = organismsConfig.rsvA.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
+    }
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
