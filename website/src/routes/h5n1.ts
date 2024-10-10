@@ -17,7 +17,7 @@ import {
     type RouteWithBaseline,
     type View,
 } from './View.ts';
-import type { OrganismsConfig } from '../config.ts';
+import { type OrganismsConfig } from '../config.ts';
 
 const pathFragment = organismConfig[Organisms.h5n1].pathFragment;
 
@@ -32,6 +32,7 @@ class H5n1Constants {
         this.hostField = organismsConfig.h5n1.lapis.hostField;
         this.authorsField = organismsConfig.h5n1.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.h5n1.lapis.additionalFilters;
     }
 
     public readonly organism = Organisms.h5n1 as typeof Organisms.h5n1;
@@ -50,6 +51,7 @@ class H5n1Constants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly additionalFilters: Record<string, string> | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
@@ -57,6 +59,7 @@ class H5n1Constants {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
     };
 }
@@ -65,14 +68,17 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: AnalyzeSingleVariantRoute = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
-        variantFilter: {},
+        variantFilter: {
+            ...this.additionalFilters,
+        },
     };
 
     public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
@@ -83,8 +89,12 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField),
+            variantFilter: {
+                ...getLapisVariantQuery(search, this.lineageField),
+                ...this.additionalFilters,
+            },
         };
     };
 
@@ -110,12 +120,13 @@ export class H5n1SequencingEffortsView extends H5n1Constants implements View<Rou
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: RouteWithBaseline = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
     };
 
@@ -127,6 +138,7 @@ export class H5n1SequencingEffortsView extends H5n1Constants implements View<Rou
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
         };
     };

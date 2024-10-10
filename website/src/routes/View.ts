@@ -65,35 +65,19 @@ export type BaselineFilter = {
     baselineFilter: {
         location: LapisLocation;
         dateRange: DateRange;
-    };
-};
-
-export type LatestVersionBaselineFilter = {
-    baselineFilter: BaselineFilter['baselineFilter'] & {
-        versionStatus: 'LATEST_VERSION';
-        isRevocation: false;
+        [additionalFilter: string]: string | LapisLocation | DateRange;
     };
 };
 
 export type VariantFilter = {
-    variantFilter: LapisVariantQuery;
-};
-
-export type VariantFilterWithLatestVersion = {
     variantFilter: LapisVariantQuery & {
-        versionStatus: 'LATEST_VERSION';
-        isRevocation: false;
+        [additionalFilter: string]: string | string[];
     };
 };
 
 export type RouteWithBaseline = Route & BaselineFilter;
-export type RouteWithBaselineWithLatestVersion = Route & LatestVersionBaselineFilter;
 
 export type AnalyzeSingleVariantRoute = Route & BaselineFilter & VariantFilter;
-
-export type AnalyzeSingleVariantRouteWithLatestVersion = Route &
-    LatestVersionBaselineFilter &
-    VariantFilterWithLatestVersion;
 
 export type View<R extends Route, ParseResult extends R | undefined = R> = {
     organism: Organism;

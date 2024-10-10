@@ -14,6 +14,7 @@ const lapisConfigSchema = z.object({
     authorAffiliationsField: z.optional(z.string()),
     originatingLabField: z.optional(z.string()),
     submittingLabField: z.optional(z.string()),
+    additionalFilters: z.optional(z.record(z.string())),
 });
 
 const organismConfigSchema = z.object({ lapis: lapisConfigSchema });

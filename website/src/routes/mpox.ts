@@ -27,6 +27,7 @@ class MpoxConstants {
         this.hostField = organismsConfig.mpox.lapis.hostField;
         this.authorsField = organismsConfig.mpox.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;
     }
 
     public readonly organism = Organisms.mpox as typeof Organisms.mpox;
@@ -50,6 +51,7 @@ class MpoxConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly additionalFilters: Record<string, string> | undefined;
 
     public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
@@ -57,6 +59,7 @@ class MpoxConstants {
             ...route.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
+            ...this.additionalFilters,
         };
     };
 }
@@ -72,14 +75,17 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: AnalyzeSingleVariantRoute = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
-        variantFilter: {},
+        variantFilter: {
+            ...this.additionalFilters,
+        },
     };
 
     public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
@@ -90,8 +96,12 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField, this.cladeField),
+            variantFilter: {
+                ...getLapisVariantQuery(search, this.lineageField, this.cladeField),
+                ...this.additionalFilters,
+            },
         };
     };
 
@@ -117,12 +127,13 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute = {
+    public readonly defaultRoute: RouteWithBaseline = {
         organism: this.organism,
         pathname: this.pathname,
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
+            ...this.additionalFilters,
         },
     };
 
@@ -134,6 +145,7 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                ...this.additionalFilters,
             },
         };
     };

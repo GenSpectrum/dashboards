@@ -30,6 +30,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
         mutations: initialMutations,
     })}
     data-organisms-config={JSON.stringify(getDashboardsConfig().dashboards.organisms)}
+    data-additional-filters={JSON.stringify(getDashboardsConfig().dashboards.organisms.covid.lapis.additionalFilters)}
 >
     <div>
         <div class='flex'>
@@ -90,6 +91,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             super();
             let { filterId, location, dateRange, lineage, mutations } = JSON.parse(this.dataset.message!);
             const config = JSON.parse(this.dataset.organismsConfig!);
+            const additionalFilters = JSON.parse(this.dataset.additionalFilters!);
             const locationFilter = document.getElementById(`locationFilter${filterId}`);
             const dateRangeSelector = document.getElementById(`dateRangeSelector${filterId}`);
             const lineageFilter = document.getElementById(`lineageFilter${filterId}`);
@@ -125,8 +127,13 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                             baselineFilter: {
                                 location,
                                 dateRange,
+                                ...additionalFilters,
                             },
-                            variantFilter: { lineage, ...mutations },
+                            variantFilter: {
+                                lineage,
+                                ...mutations,
+                                ...additionalFilters,
+                            },
                         },
                         filterId,
                     ),
