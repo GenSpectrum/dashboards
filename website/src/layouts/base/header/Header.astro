@@ -1,0 +1,20 @@
+---
+import { Brand } from './Brand';
+import CallToAction from './CallToAction.astro';
+import { Navigation } from './Navigation';
+import { headerHeight } from './headerConstants';
+
+interface Props {
+    forceLoggedOutState?: boolean;
+}
+
+const { forceLoggedOutState = false } = Astro.props;
+---
+
+<header class='sticky top-0 z-10 mb-2 border-b bg-white'>
+    <div class={`flex ${headerHeight} items-center justify-between`}>
+        <Brand name='GenSpectrum' />
+        <Navigation />
+        <CallToAction forceLoggedOutState={forceLoggedOutState} />
+    </div>
+</header>

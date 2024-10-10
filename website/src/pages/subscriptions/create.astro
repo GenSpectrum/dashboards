@@ -11,7 +11,7 @@ const session = await getSession(Astro.request);
 const config = getDashboardsConfig();
 ---
 
-<BaseLayout title='Create new subscription' omitHeaderNavigation>
+<BaseLayout title='Create new subscription'>
     {
         session?.user?.id !== undefined ? (
             <SubscriptionsCreate config={config} client:only='react' userId={session.user.id} />
