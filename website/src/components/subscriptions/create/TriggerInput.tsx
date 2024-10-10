@@ -1,11 +1,12 @@
-import type { LapisFilter, Trigger } from '../../../types/Subscription.ts';
 import { useEffect, useState } from 'react';
-import { type TriggerType, TriggerTypeInput } from './TriggerTypeInput.tsx';
-import { DateWindowInput } from './DateWindowInput.tsx';
-import { CountFilterInput } from './CountFilterInput.tsx';
+
 import { BaselineInput } from './BaselineInput.tsx';
+import { CountFilterInput } from './CountFilterInput.tsx';
+import { DateWindowInput } from './DateWindowInput.tsx';
+import { type TriggerType, TriggerTypeInput } from './TriggerTypeInput.tsx';
 import { VariantInput } from './VariantInput.tsx';
 import type { DateWindow } from '../../../types/DateWindow.ts';
+import type { LapisFilter, Trigger } from '../../../types/Subscription.ts';
 
 export function TriggerInput({
     onTriggerChange,
@@ -38,7 +39,7 @@ export function TriggerInput({
         if (triggerType.type === 'proportion') {
             onTriggerChange({ ...triggerType, ...proportionTriggerFilter });
         }
-    }, [triggerType, countTriggerFilter, proportionTriggerFilter]);
+    }, [triggerType, countTriggerFilter, proportionTriggerFilter, onTriggerChange]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -85,7 +86,7 @@ export function ProportionTriggerFilterInput({
 
     useEffect(() => {
         onProportionTriggerFilterChange(filter);
-    }, [filter]);
+    }, [filter, onProportionTriggerFilterChange]);
 
     return (
         <>

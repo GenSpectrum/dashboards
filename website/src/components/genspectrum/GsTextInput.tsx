@@ -20,16 +20,17 @@ export function GsTextInput<LapisField extends string>({
             onInputChange(event.detail);
         };
 
-        if (textInputRef.current) {
-            textInputRef.current.addEventListener('gs-text-input-changed', handleTextInputChange);
+        const currentInputRef = textInputRef.current;
+        if (currentInputRef !== undefined) {
+            currentInputRef.addEventListener('gs-text-input-changed', handleTextInputChange);
         }
 
         return () => {
-            if (textInputRef.current) {
-                textInputRef.current.removeEventListener('gs-text-input-changed', handleTextInputChange);
+            if (currentInputRef !== undefined) {
+                currentInputRef.removeEventListener('gs-text-input-changed', handleTextInputChange);
             }
         };
-    }, []);
+    }, [onInputChange]);
 
     return (
         <gs-text-input

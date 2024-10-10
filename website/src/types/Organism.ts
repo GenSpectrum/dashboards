@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-export namespace Organisms {
-    export const covid = 'covid';
-    export const h5n1 = 'h5n1';
-    export const mpox = 'mpox';
-    export const westNile = 'westNile';
-    export const rsvA = 'rsvA';
-    export const rsvB = 'rsvB';
-}
+export const Organisms = {
+    covid: 'covid' as const,
+    h5n1: 'h5n1' as const,
+    mpox: 'mpox' as const,
+    westNile: 'westNile' as const,
+    rsvA: 'rsvA' as const,
+    rsvB: 'rsvB' as const,
+};
 
 export const organismConfig = {
     [Organisms.covid]: {
@@ -57,3 +57,4 @@ export const allOrganisms = Object.keys(organismConfig) as Organism[];
 export type Organism = keyof typeof organismConfig;
 
 export const organismSchema = z.enum(Object.keys(organismConfig) as [keyof typeof organismConfig]);
+export const organismsSchema = z.array(organismSchema);

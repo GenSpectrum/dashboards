@@ -1,5 +1,5 @@
+import { type BackendService } from './backendService.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
-import { BackendService } from './backendService.ts';
 
 // export function fetchNotificationChannels(): NotificationChannels {
 //     return {
@@ -12,7 +12,7 @@ export async function querySubscriptions(userId: string, backendService: Backend
     const subscriptionResponses = await backendService.getSubscriptions(userId);
     // const allNotificationChannels = fetchNotificationChannels();
 
-    return await Promise.all(
+    return Promise.all(
         subscriptionResponses.map(async (subscriptionResponse) => {
             const triggerEvaluationResult = await backendService.getEvaluateTrigger(subscriptionResponse.id, userId);
             // const notificationChannels = {

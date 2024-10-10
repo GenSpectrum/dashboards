@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { NotificationChannelDisplay } from '../../../components/subscriptions/notificationChannels/NotificationChannelDisplay';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { type NotificationChannels } from '../../../types/NotificationChannels';
 
 const notificationChannels: NotificationChannels = {
@@ -33,6 +33,6 @@ const notificationChannels: NotificationChannels = {
 return Astro.redirect('/404');
 ---
 
-<BaseLayout title='Subscriptions' omitHeaderNavigation={true}>
+<BaseLayout title='Subscriptions' omitHeaderNavigation>
     <NotificationChannelDisplay client:load notificationChannels={notificationChannels} />
 </BaseLayout>
