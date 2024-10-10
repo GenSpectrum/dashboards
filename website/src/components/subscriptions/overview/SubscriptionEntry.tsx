@@ -16,16 +16,12 @@ export function SubscriptionEntry({
     userId: string;
     refetchSubscriptions: () => void;
 }) {
-    const getIcon = () => {
-        if (!subscription.active) {
-            return 'mdi--bell-off-outline text-gray-500';
-        }
-
+    const getConditionIcon = () => {
         if (subscription.triggerEvaluationResult.type === 'ConditionMet') {
-            return 'mdi--bell-ring text-red-500';
+            return 'mdi--circle-slice-8 text-red-500';
         }
 
-        return `mdi--bell-outline text-gray-500`;
+        return `mdi--circle-outline text-gray-500`;
     };
 
     return (
@@ -37,8 +33,10 @@ export function SubscriptionEntry({
                             <CardDescription
                                 title={subscription.name}
                                 subtitle={organismConfig[subscription.organism].label}
-                                icon={`size-6 ${getIcon()}`}
+                                icon={`size-8 ${getConditionIcon()}`}
                             />
+                            {/*TODO: Enable notificationChannels in #82, #128*/}
+                            {/*<NotificationStatus active={subscription.active} />*/}
                         </div>
                     </summary>
                     <div className='collapse-content'>
@@ -50,6 +48,24 @@ export function SubscriptionEntry({
         </BorderedCard>
     );
 }
+
+// TODO: Enable notificationChannels in #82, #128
+// export const getIsActiveIcon = (active: boolean) => {
+//     if (active) {
+//         return 'mdi--bell-outline text-gray-500';
+//     }
+//
+//     return 'mdi--bell-off-outline text-gray-500';
+// };
+//
+// function NotificationStatus({ active }: { active: boolean }) {
+//     return (
+//         <div className={'flex items-center gap-2'}>
+//             <div className={`iconify size-4 ${getIsActiveIcon(active)}`}></div>
+//             <div className={'text-sm text-gray-500'}>Notifications {active ? 'enabled' : 'disabled'}</div>
+//         </div>
+//     );
+// }
 
 function MoreDropdown({
     subscription,
@@ -92,7 +108,6 @@ function MoreDropdown({
     const handleActivate = async () => {
         activateSubscription.mutate();
     };
-
     return (
         <div className='dropdown dropdown-end'>
             <div tabIndex={0} role='button' className='btn btn-xs'>
@@ -138,7 +153,7 @@ function ActivateButton({
     return (
         <button className={'flex items-center gap-2'} onClick={onClick}>
             <div className={`iconify ${isActive ? 'mdi--pause' : 'mdi--play'}`}></div>
-            {isActive ? 'Deactivate' : 'Activate'}
+            {isActive ? 'Disable notifications' : 'Enable notifications'}
         </button>
     );
 }
