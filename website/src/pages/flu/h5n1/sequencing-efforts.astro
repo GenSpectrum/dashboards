@@ -29,7 +29,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
                     fields={ServerSide.h5n1SequencingEffortsView.locationFields}
-                    initialLocation={baselineFilter}
+                    initialLocation={routeData.baselineFilter.location}
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={ServerSide.h5n1SequencingEffortsView.earliestDate}
                     customDateRangeOptions={ServerSide.h5n1SequencingEffortsView.customDateRangeOptions}

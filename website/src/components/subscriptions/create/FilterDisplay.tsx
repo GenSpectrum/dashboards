@@ -3,6 +3,7 @@ import type { LapisFilter, SubscriptionRequest } from '../../../types/Subscripti
 import { GsNumberSequencesOverTime } from '../../genspectrum/GsNumberSequencesOverTime.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 
+// TODO: Add latest version filter for WestNile #194
 export function FilterDisplay({
     subscription,
     lapisDateField,

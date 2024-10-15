@@ -41,7 +41,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
                         fields={ServerSide.mpoxAnalyzeSingleVariantView.locationFields}
-                        initialLocation={baselineFilter}
+                        initialLocation={routeData.baselineFilter.location}
                         initialDateRange={routeData.baselineFilter.dateRange}
                         earliestDate={ServerSide.mpoxAnalyzeSingleVariantView.earliestDate}
                         customDateRangeOptions={ServerSide.mpoxAnalyzeSingleVariantView.customDateRangeOptions}

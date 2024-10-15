@@ -1,10 +1,10 @@
 ---
 import { getDashboardsConfig } from '../config';
-import { isCustomDateRange, type DateRange } from '../routes/helpers';
+import { isCustomDateRange, type DateRange, type LapisLocation } from '../routes/helpers';
 
 interface Props {
     fields: string[];
-    initialLocation: any;
+    initialLocation: LapisLocation;
     initialDateRange: DateRange;
     earliestDate: string;
     customDateRangeOptions: {

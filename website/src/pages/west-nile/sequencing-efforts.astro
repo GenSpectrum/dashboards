@@ -30,7 +30,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
                     fields={ServerSide.westNileSequencingEffortsView.locationFields}
-                    initialLocation={baselineFilter}
+                    initialLocation={routeData.baselineFilter.location}
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={ServerSide.westNileSequencingEffortsView.earliestDate}
                     customDateRangeOptions={ServerSide.westNileSequencingEffortsView.customDateRangeOptions}

@@ -31,7 +31,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
                     fields={ServerSide.mpoxSequencingEffortsView.locationFields}
-                    initialLocation={baselineFilter}
+                    initialLocation={routeData.baselineFilter.location}
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={ServerSide.mpoxSequencingEffortsView.earliestDate}
                     customDateRangeOptions={ServerSide.mpoxSequencingEffortsView.customDateRangeOptions}
