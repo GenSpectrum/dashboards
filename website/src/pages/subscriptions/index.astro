@@ -11,7 +11,7 @@ const session = await getSession(Astro.request);
 const organisms = organismsSchema.parse(Astro.url.searchParams.getAll('organism'));
 ---
 
-<BaseLayout title='Subscriptions' omitHeaderNavigation>
+<BaseLayout title='Subscriptions'>
     {
         session?.user?.id !== undefined ? (
             <Subscriptions client:load organismsFromUrl={organisms} userId={session.user.id} />

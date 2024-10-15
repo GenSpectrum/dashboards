@@ -33,6 +33,6 @@ const notificationChannels: NotificationChannels = {
 return Astro.redirect('/404');
 ---
 
-<BaseLayout title='Subscriptions' omitHeaderNavigation>
+<BaseLayout title='Subscriptions'>
     <NotificationChannelDisplay client:load notificationChannels={notificationChannels} />
 </BaseLayout>

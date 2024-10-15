@@ -1,0 +1,13 @@
+---
+import LoginState from '../../../components/auth/LoginState.astro';
+
+interface Props {
+    forceLoggedOutState?: boolean;
+}
+
+const { forceLoggedOutState = false } = Astro.props;
+---
+
+<div class='mr-2 flex w-32 justify-end'>
+    <LoginState forceLoggedOutState={forceLoggedOutState} />
+</div>
