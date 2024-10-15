@@ -66,9 +66,7 @@ class CovidConstants {
 
 export type CovidAnalyzeSingleVariantRoute = Route &
     BaselineFilter & {
-        variantFilter: LapisCovidVariantQuery & {
-            [additionalFilter: string]: string | string[];
-        };
+        variantFilter: LapisCovidVariantQuery;
         collectionId?: number;
     };
 
@@ -82,11 +80,9 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
-            ...this.additionalFilters,
         },
         variantFilter: {
             lineage: 'JN.1*',
-            ...this.additionalFilters,
         },
     };
 
@@ -98,11 +94,9 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
             variantFilter: {
                 ...getLapisCovidVariantQuery(search, this.lineageField),
-                ...this.additionalFilters,
             },
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
@@ -203,11 +197,9 @@ export class CovidCompareVariantsView
                     baselineFilter: {
                         location: {},
                         dateRange: this.defaultDateRange,
-                        ...this.additionalFilters,
                     },
                     variantFilter: {
                         lineage: 'JN.1*',
-                        ...this.additionalFilters,
                     },
                 },
             ],
@@ -217,11 +209,9 @@ export class CovidCompareVariantsView
                     baselineFilter: {
                         location: {},
                         dateRange: this.defaultDateRange,
-                        ...this.additionalFilters,
                     },
                     variantFilter: {
                         lineage: 'XBB.1*',
-                        ...this.additionalFilters,
                     },
                 },
             ],
@@ -292,11 +282,8 @@ export class CovidCompareVariantsView
                         region: 'Europe',
                     },
                     dateRange: this.defaultDateRange,
-                    ...this.additionalFilters,
                 },
-                variantFilter: {
-                    ...this.additionalFilters,
-                },
+                variantFilter: {},
             },
             lastId + 1,
         );
@@ -321,21 +308,19 @@ export class CovidCompareVariantsView
         };
     }
 
-    private readonly getFilter = (filterParams: Map<string, string>) => {
+    private getFilter(filterParams: Map<string, string>) {
         const filter: BaselineFilter & VariantFilter = {
             baselineFilter: {
                 location: getLapisLocationFromSearch(filterParams, this.locationFields),
                 dateRange: getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
             variantFilter: {
                 ...getLapisCovidVariantQuery(filterParams, this.lineageField),
-                ...this.additionalFilters,
             },
         };
 
         return filter;
-    };
+    }
 }
 
 export type CovidSequencingEffortsRoute = Route &
@@ -353,7 +338,6 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
-            ...this.additionalFilters,
         },
     };
 
@@ -365,7 +349,6 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };

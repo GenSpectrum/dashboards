@@ -54,7 +54,7 @@ class MpoxConstants {
         this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
+    public toLapisFilterWithoutVariant(route: RouteWithBaseline): LapisFilter & LapisLocation {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
@@ -62,7 +62,7 @@ class MpoxConstants {
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
         };
-    };
+    }
 }
 
 type RouteWithBaseline = Route & {
@@ -82,14 +82,11 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
-            ...this.additionalFilters,
         },
-        variantFilter: {
-            ...this.additionalFilters,
-        },
+        variantFilter: {},
     };
 
-    public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
+    public parseUrl(url: URL): AnalyzeSingleVariantRoute {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -97,16 +94,14 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
             variantFilter: {
                 ...getLapisVariantQuery(search, this.lineageField, this.cladeField),
-                ...this.additionalFilters,
             },
         };
-    };
+    }
 
-    public toUrl = (route: AnalyzeSingleVariantRoute): string => {
+    public toUrl(route: AnalyzeSingleVariantRoute): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -114,14 +109,14 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
         }
         setSearchFromLapisVariantQuery(search, route.variantFilter, this.lineageField, this.cladeField);
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: AnalyzeSingleVariantRoute) => {
+    public toLapisFilter(route: AnalyzeSingleVariantRoute) {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
-    };
+    }
 }
 
 export class MpoxSequencingEffortsView extends MpoxConstants implements View<RouteWithBaseline> {
@@ -134,11 +129,10 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
-            ...this.additionalFilters,
         },
     };
 
-    public parseUrl = (url: URL): RouteWithBaseline => {
+    public parseUrl(url: URL): RouteWithBaseline {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -146,21 +140,20 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
         };
-    };
+    }
 
-    public toUrl = (route: RouteWithBaseline): string => {
+    public toUrl(route: RouteWithBaseline): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: RouteWithBaseline): LapisFilter => {
+    public toLapisFilter(route: RouteWithBaseline): LapisFilter {
         return this.toLapisFilterWithoutVariant(route);
-    };
+    }
 }

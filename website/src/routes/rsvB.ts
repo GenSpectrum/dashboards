@@ -48,7 +48,7 @@ class RsvBConstants {
         this.additionalFilters = organismsConfig.rsvB.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant = (route: RouteWithBaseline): LapisFilter & LapisLocation => {
+    public toLapisFilterWithoutVariant(route: RouteWithBaseline): LapisFilter & LapisLocation {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
@@ -56,7 +56,7 @@ class RsvBConstants {
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
         };
-    };
+    }
 }
 
 export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<AnalyzeSingleVariantRoute> {
@@ -69,12 +69,11 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
-            ...this.additionalFilters,
         },
-        variantFilter: { ...this.additionalFilters },
+        variantFilter: {},
     };
 
-    public parseUrl = (url: URL): AnalyzeSingleVariantRoute => {
+    public parseUrl(url: URL): AnalyzeSingleVariantRoute {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -82,16 +81,14 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
             variantFilter: {
                 ...getLapisVariantQuery(search, this.lineageField),
-                ...this.additionalFilters,
             },
         };
-    };
+    }
 
-    public toUrl = (route: AnalyzeSingleVariantRoute): string => {
+    public toUrl(route: AnalyzeSingleVariantRoute): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -99,14 +96,14 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         }
         setSearchFromLapisVariantQuery(search, route.variantFilter, this.lineageField);
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: AnalyzeSingleVariantRoute) => {
+    public toLapisFilter(route: AnalyzeSingleVariantRoute) {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
-    };
+    }
 }
 
 export class RsvBSequencingEffortsView extends RsvBConstants implements View<RouteWithBaseline> {
@@ -122,7 +119,7 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Rou
         },
     };
 
-    public parseUrl = (url: URL): RouteWithBaseline => {
+    public parseUrl(url: URL): RouteWithBaseline {
         const search = url.searchParams;
         return {
             organism: this.organism,
@@ -130,21 +127,20 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Rou
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
-                ...this.additionalFilters,
             },
         };
-    };
+    }
 
-    public toUrl = (route: RouteWithBaseline): string => {
+    public toUrl(route: RouteWithBaseline): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
         }
         return `${this.pathname}?${search}`;
-    };
+    }
 
-    public toLapisFilter = (route: RouteWithBaseline) => {
+    public toLapisFilter(route: RouteWithBaseline) {
         return this.toLapisFilterWithoutVariant(route);
-    };
+    }
 }
