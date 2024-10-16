@@ -16,30 +16,52 @@ class ApiService {
         this.axiosInstance = axios.create({ baseURL });
     }
 
-    public async get<Response>(url: string, schema: ZodSchema<Response>): Promise<Response> {
-        return this.handleRequest({ url, method: 'get' }, schema);
+    public async get<Response>(
+        url: string,
+        requestParams: Record<string, string>,
+        schema: ZodSchema<Response>,
+    ): Promise<Response> {
+        return this.handleRequest({ url, method: 'get', params: requestParams }, schema);
     }
 
-    public async post<Request, Response>(url: string, data: Request, schema: ZodSchema<Response>): Promise<Response> {
-        return this.handleRequest({ url, method: 'post', data }, schema);
+    public async post<Request, Response>(
+        url: string,
+        data: Request,
+        requestParams: Record<string, string>,
+        schema: ZodSchema<Response>,
+    ): Promise<Response> {
+        return this.handleRequest({ url, method: 'post', params: requestParams, data }, schema);
     }
 
-    public async put<Request, Response>(url: string, data: Request, schema: ZodSchema<Response>): Promise<Response> {
-        return this.handleRequest({ url, method: 'put', data }, schema);
+    public async put<Request, Response>(
+        url: string,
+        data: Request,
+        requestParams: Record<string, string>,
+        schema: ZodSchema<Response>,
+    ): Promise<Response> {
+        return this.handleRequest({ url, method: 'put', params: requestParams, data }, schema);
     }
-    public async delete<Response>(url: string, schema: ZodSchema<Response>): Promise<Response> {
-        return this.handleRequest({ url, method: 'delete' }, schema);
+
+    public async delete<Response>(
+        url: string,
+        requestParams: Record<string, string>,
+        schema: ZodSchema<Response>,
+    ): Promise<Response> {
+        return this.handleRequest({ url, method: 'delete', params: requestParams }, schema);
     }
 
     private async handleRequest<Request, Response>(request: AxiosRequestConfig<Request>, schema: ZodSchema<Response>) {
         try {
             const response = await this.axiosInstance.request(request);
-            await this.handleErrors(response);
             return schema.parse(response.data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response) {
                     await this.handleErrors(error.response);
+                }
+
+                if (error.code === axiosNotFoundError) {
+                    throw new BackendNotAvailable(error.config?.baseURL ?? '');
                 }
             }
             throw error;
@@ -63,7 +85,9 @@ class ApiService {
     }
 }
 
-class BackendError extends Error {
+const axiosNotFoundError = 'ENOTFOUND';
+
+export class BackendError extends Error {
     constructor(
         message: string,
         public readonly status: number,
@@ -75,7 +99,7 @@ class BackendError extends Error {
     }
 }
 
-class UnknownBackendError extends Error {
+export class UnknownBackendError extends Error {
     constructor(
         message: string,
         public readonly status: number,
@@ -86,35 +110,43 @@ class UnknownBackendError extends Error {
     }
 }
 
+export class BackendNotAvailable extends Error {
+    constructor(url: string) {
+        super(`Backend not available under ${url}`);
+        this.name = 'BackendNotAvailable';
+    }
+}
+
 export class BackendService extends ApiService {
     constructor(backendUrl: string) {
         super(backendUrl);
     }
 
     public async getSubscriptions(userId: string) {
-        const url = `/subscriptions?userId=${userId}`;
-        return this.get(url, z.array(subscriptionResponseSchema));
+        const url = `/subscriptions`;
+        return this.get(url, { userId }, z.array(subscriptionResponseSchema));
     }
 
     public async getEvaluateTrigger(subscriptionId: string, userId: string) {
-        const url = `/subscriptions/evaluateTrigger?userId=${userId}&id=${subscriptionId}`;
-        return this.get(url.toString(), triggerEvaluationResponseSchema);
+        const url = `/subscriptions/evaluateTrigger`;
+        return this.get(url.toString(), { userId, id: subscriptionId }, triggerEvaluationResponseSchema);
     }
 
     public async postSubscription(subscription: SubscriptionRequest, userId: string) {
-        const url = `/subscriptions?userId=${userId}`;
-        return this.post(url, subscription, subscriptionResponseSchema);
+        const url = `/subscriptions`;
+        return this.post(url, subscription, { userId }, subscriptionResponseSchema);
     }
 
     public async putSubscription(subscription: SubscriptionPutRequest, userId: string, subscriptionId: string) {
-        const url = `/subscriptions/${subscriptionId}?userId=${userId}`;
-        return this.put(url, subscription, subscriptionResponseSchema);
+        const url = `/subscriptions/${subscriptionId}`;
+        return this.put(url, subscription, { userId }, subscriptionResponseSchema);
     }
 
     public async deleteSubscription(subscriptionId: string, userId: string) {
-        const url = `/subscriptions/${subscriptionId}?userId=${userId}`;
+        const url = `/subscriptions/${subscriptionId}`;
         return this.delete(
             url,
+            { userId },
             z.literal('').refine((input): input is never => true),
         );
     }
