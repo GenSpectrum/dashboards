@@ -39,6 +39,7 @@ type TriggerEvaluationResult = z.infer<typeof triggerEvaluationResultSchema>;
 export const triggerEvaluationResponseSchema = z.object({
     result: triggerEvaluationResultSchema,
 });
+export type TriggerEvaluationResponse = z.infer<typeof triggerEvaluationResponseSchema>;
 
 export const countTriggerSchema = z.object({
     type: z.literal('count'),
