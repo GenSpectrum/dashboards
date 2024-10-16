@@ -9,6 +9,14 @@ import {
     triggerEvaluationResponseSchema,
 } from '../../../types/Subscription.ts';
 
+type EndpointParameters<Response> = {
+    url: string;
+    requestParams: Record<string, string>;
+    schema: ZodSchema<Response>;
+};
+
+type EndpointParametersWithBody<Request, Response> = EndpointParameters<Response> & { data: Request };
+
 class ApiService {
     private readonly axiosInstance: AxiosInstance;
 
@@ -16,37 +24,29 @@ class ApiService {
         this.axiosInstance = axios.create({ baseURL });
     }
 
-    public async get<Response>(
-        url: string,
-        requestParams: Record<string, string>,
-        schema: ZodSchema<Response>,
-    ): Promise<Response> {
+    public async get<Response>({ url, requestParams, schema }: EndpointParameters<Response>): Promise<Response> {
         return this.handleRequest({ url, method: 'get', params: requestParams }, schema);
     }
 
-    public async post<Request, Response>(
-        url: string,
-        data: Request,
-        requestParams: Record<string, string>,
-        schema: ZodSchema<Response>,
-    ): Promise<Response> {
+    public async post<Request, Response>({
+        url,
+        data,
+        requestParams,
+        schema,
+    }: EndpointParametersWithBody<Request, Response>): Promise<Response> {
         return this.handleRequest({ url, method: 'post', params: requestParams, data }, schema);
     }
 
-    public async put<Request, Response>(
-        url: string,
-        data: Request,
-        requestParams: Record<string, string>,
-        schema: ZodSchema<Response>,
-    ): Promise<Response> {
+    public async put<Request, Response>({
+        url,
+        data,
+        requestParams,
+        schema,
+    }: EndpointParametersWithBody<Request, Response>): Promise<Response> {
         return this.handleRequest({ url, method: 'put', params: requestParams, data }, schema);
     }
 
-    public async delete<Response>(
-        url: string,
-        requestParams: Record<string, string>,
-        schema: ZodSchema<Response>,
-    ): Promise<Response> {
+    public async delete<Response>({ url, requestParams, schema }: EndpointParameters<Response>): Promise<Response> {
         return this.handleRequest({ url, method: 'delete', params: requestParams }, schema);
     }
 
@@ -122,33 +122,50 @@ export class BackendService extends ApiService {
         super(backendUrl);
     }
 
-    public async getSubscriptions(userId: string) {
+    public async getSubscriptions({ userId }: { userId: string }) {
         const url = `/subscriptions`;
-        return this.get(url, { userId }, z.array(subscriptionResponseSchema));
+        return this.get({ url, requestParams: { userId }, schema: z.array(subscriptionResponseSchema) });
     }
 
-    public async getEvaluateTrigger(subscriptionId: string, userId: string) {
+    public async getEvaluateTrigger({ subscriptionId, userId }: { subscriptionId: string; userId: string }) {
         const url = `/subscriptions/evaluateTrigger`;
-        return this.get(url.toString(), { userId, id: subscriptionId }, triggerEvaluationResponseSchema);
+        return this.get({
+            url: url.toString(),
+            requestParams: { userId, id: subscriptionId },
+            schema: triggerEvaluationResponseSchema,
+        });
     }
 
-    public async postSubscription(subscription: SubscriptionRequest, userId: string) {
+    public async postSubscription({ subscription, userId }: { subscription: SubscriptionRequest; userId: string }) {
         const url = `/subscriptions`;
-        return this.post(url, subscription, { userId }, subscriptionResponseSchema);
+        return this.post({ url, data: subscription, requestParams: { userId }, schema: subscriptionResponseSchema });
     }
 
-    public async putSubscription(subscription: SubscriptionPutRequest, userId: string, subscriptionId: string) {
+    public async putSubscription({
+        subscription,
+        userId,
+        subscriptionId,
+    }: {
+        subscription: SubscriptionPutRequest;
+        userId: string;
+        subscriptionId: string;
+    }) {
         const url = `/subscriptions/${subscriptionId}`;
-        return this.put(url, subscription, { userId }, subscriptionResponseSchema);
-    }
-
-    public async deleteSubscription(subscriptionId: string, userId: string) {
-        const url = `/subscriptions/${subscriptionId}`;
-        return this.delete(
+        return this.put({
             url,
-            { userId },
-            z.literal('').refine((input): input is never => true),
-        );
+            data: subscription,
+            requestParams: { userId },
+            schema: subscriptionResponseSchema,
+        });
+    }
+
+    public async deleteSubscription({ subscriptionId, userId }: { subscriptionId: string; userId: string }) {
+        const url = `/subscriptions/${subscriptionId}`;
+        return this.delete({
+            url,
+            requestParams: { userId },
+            schema: z.literal('').refine((input): input is never => true),
+        });
     }
 }
 
