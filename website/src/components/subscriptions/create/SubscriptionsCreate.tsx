@@ -37,7 +37,11 @@ export function SubscriptionsCreateInner({
     // notificationChannels: NotificationChannels;
 }) {
     const createSubscription = useMutation({
-        mutationFn: () => getBackendServiceForClientside().postSubscription(getSubscription(), userId),
+        mutationFn: () =>
+            getBackendServiceForClientside().postSubscription({
+                subscription: getSubscription(),
+                userId,
+            }),
         onSuccess: () => {
             window.location.href = '/subscriptions';
         },
