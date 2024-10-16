@@ -89,7 +89,11 @@ function MoreDropdown({
     refetchSubscriptions: () => void;
 }) {
     const deleteSubscription = useMutation({
-        mutationFn: () => getBackendServiceForClientside().deleteSubscription(subscription.id, userId),
+        mutationFn: () =>
+            getBackendServiceForClientside().deleteSubscription({
+                subscriptionId: subscription.id,
+                userId,
+            }),
         onSuccess: () => {
             refetchSubscriptions();
         },
@@ -103,7 +107,11 @@ function MoreDropdown({
 
     const activateSubscription = useMutation({
         mutationFn: () =>
-            getBackendServiceForClientside().putSubscription({ active: !subscription.active }, userId, subscription.id),
+            getBackendServiceForClientside().putSubscription({
+                subscription: { active: !subscription.active },
+                userId,
+                subscriptionId: subscription.id,
+            }),
         onSuccess: () => {
             refetchSubscriptions();
         },
