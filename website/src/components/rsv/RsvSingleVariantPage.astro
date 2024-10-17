@@ -1,15 +1,15 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import VariantFilter from '../../components/VariantFilter.astro';
-import { getLapisUrl } from '../../config';
+import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { type Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
-import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../views/helpers';
+import { getLapisMutations, getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey, singleVariantViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
+import { SingleVariantPageStateSelector } from '../pageStateSelectors/SingleVariantPageStateSelector';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 interface Props {
     organismViewKey: Extract<
@@ -40,36 +40,30 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
 <OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(view.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
-            <div>
-                <div class='bg-blue-50 px-2 py-4'>
-                    <div class='mb-2 font-semibold'>Filter dataset:</div>
-                    <LocationTimeFilter
-                        fields={view.locationFields}
-                        initialLocation={pageState.baselineFilter.location}
-                        initialDateRange={pageState.baselineFilter.dateRange}
-                        earliestDate={view.earliestDate}
-                        customDateRangeOptions={view.customDateRangeOptions}
-                        organismViewKey={organismViewKey}
-                    />
-                </div>
-                <div class='border-t-2 bg-green-50 px-2 py-4'>
-                    <div class='mb-2 font-semibold'>Search variant:</div>
-                    <VariantFilter
-                        fields={[
-                            {
-                                name: view.lineageField,
-                                label: 'Lineage',
-                                initialValue: variantFilter.lineage,
-                                type: 'text',
-                                rename: 'lineage',
-                            },
-                        ]}
-                        initialMutations={initialMutations}
-                        organismViewKey={organismViewKey}
-                    />
-                </div>
-            </div>
-            <div>
+            <SingleVariantPageStateSelector
+                locationFilterConfig={{
+                    locationFields: view.locationFields,
+                    initialLocation: pageState.baselineFilter.location,
+                    placeholderText: 'Sampling location',
+                }}
+                daterRangeFilterConfig={{
+                    initialDateRange: pageState.baselineFilter.dateRange,
+                    dateRangeOptions: view.dateRangeOptions,
+                    earliestDate: view.earliestDate,
+                    dateColumn: view.mainDateField,
+                }}
+                mutationFilterConfig={{ initialMutations }}
+                lineageFilterConfig={{
+                    initialValue: pageState.variantFilter.lineage,
+                    lapisField: view.lineageField,
+                    placeholderText: 'Lineage',
+                }}
+                pageState={pageState}
+                organismViewKey={organismViewKey}
+                organismsConfig={getDashboardsConfig().dashboards.organisms}
+                client:only='react'
+            />
+            <div class='flex flex-col gap-y-6'>
                 <ComponentsGrid>
                     <ComponentWrapper title='Prevalence over time'>
                         <gs-prevalence-over-time

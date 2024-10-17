@@ -1,14 +1,15 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import { getLapisUrl } from '../../config';
+import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { type Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
-import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../views/helpers';
+import { getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey, sequencingEffortsViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
+import { SequencingEffortsPageStateSelector } from '../pageStateSelectors/SequencingEffortsPageStateSelector';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 interface Props {
     organismViewKey: Extract<
@@ -36,71 +37,77 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 
 <OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(view.organism)}>
-        <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
-            <div class='mr-2 font-semibold'>Filter dataset:</div>
-            <div class='max-w-[1000px]'>
-                <LocationTimeFilter
-                    fields={view.locationFields}
-                    initialLocation={pageState.baselineFilter.location}
-                    initialDateRange={pageState.baselineFilter.dateRange}
-                    earliestDate={view.earliestDate}
-                    customDateRangeOptions={view.customDateRangeOptions}
-                    organismViewKey={organismViewKey}
-                />
-            </div>
-        </div>
+        <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
+            <SequencingEffortsPageStateSelector
+                locationFilterConfig={{
+                    locationFields: view.locationFields,
+                    initialLocation: pageState.baselineFilter.location,
+                    placeholderText: 'Sampling location',
+                }}
+                daterRangeFilterConfig={{
+                    initialDateRange: pageState.baselineFilter.dateRange,
+                    dateRangeOptions: view.dateRangeOptions,
+                    earliestDate: view.earliestDate,
+                    dateColumn: view.mainDateField,
+                }}
+                pageState={pageState}
+                organismViewKey={organismViewKey}
+                organismsConfig={getDashboardsConfig().dashboards.organisms}
+                client:only='react'
+            />
 
-        <ComponentsGrid>
-            <ComponentWrapper title='Number sequences' height='600px'>
-                <gs-number-sequences-over-time
-                    lapisFilter={JSON.stringify({
-                        displayName: '',
-                        lapisFilter: baselineFilter,
-                    })}
-                    lapisDateField={view.mainDateField}
-                    views='["bar", "line", "table"]'
-                    pageSize={defaultTablePageSize}
-                    width='100%'
-                    height='100%'
-                    granularity={timeGranularity}></gs-number-sequences-over-time>
-            </ComponentWrapper>
-            {
-                subdivisionField !== undefined && (
-                    <ComponentWrapper title={subdivisionLabel} height='600px'>
-                        <gs-aggregate
-                            fields={JSON.stringify([subdivisionField])}
-                            filter={JSON.stringify(baselineFilter)}
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-                )
-            }
-            <ComponentWrapper title='Hosts' height='600px'>
-                <gs-aggregate
-                    fields={JSON.stringify([view.hostField])}
-                    filter={JSON.stringify(baselineFilter)}
-                    pageSize={defaultTablePageSize}
-                    width='100%'
-                    height='100%'></gs-aggregate>
-            </ComponentWrapper>
-            <ComponentWrapper title='Author affiliations' height='600px'>
-                <gs-aggregate
-                    fields={JSON.stringify([view.authorAffiliationsField])}
-                    filter={JSON.stringify(baselineFilter)}
-                    pageSize={defaultTablePageSize}
-                    width='100%'
-                    height='100%'></gs-aggregate>
-            </ComponentWrapper>
-            <ComponentWrapper title='Authors' height='600px'>
-                <gs-aggregate
-                    fields={JSON.stringify([view.authorsField, view.authorAffiliationsField])}
-                    filter={JSON.stringify(baselineFilter)}
-                    pageSize={defaultTablePageSize}
-                    width='100%'
-                    height='100%'></gs-aggregate>
-            </ComponentWrapper>
-        </ComponentsGrid>
+            <ComponentsGrid>
+                <ComponentWrapper title='Number sequences' height='600px'>
+                    <gs-number-sequences-over-time
+                        lapisFilter={JSON.stringify({
+                            displayName: '',
+                            lapisFilter: baselineFilter,
+                        })}
+                        lapisDateField={view.mainDateField}
+                        views='["bar", "line", "table"]'
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'
+                        granularity={timeGranularity}></gs-number-sequences-over-time>
+                </ComponentWrapper>
+                {
+                    subdivisionField !== undefined && (
+                        <ComponentWrapper title={subdivisionLabel} height='600px'>
+                            <gs-aggregate
+                                fields={JSON.stringify([subdivisionField])}
+                                filter={JSON.stringify(baselineFilter)}
+                                pageSize={defaultTablePageSize}
+                                width='100%'
+                                height='100%'
+                            />
+                        </ComponentWrapper>
+                    )
+                }
+                <ComponentWrapper title='Hosts' height='600px'>
+                    <gs-aggregate
+                        fields={JSON.stringify([view.hostField])}
+                        filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </ComponentWrapper>
+                <ComponentWrapper title='Author affiliations' height='600px'>
+                    <gs-aggregate
+                        fields={JSON.stringify([view.authorAffiliationsField])}
+                        filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </ComponentWrapper>
+                <ComponentWrapper title='Authors' height='600px'>
+                    <gs-aggregate
+                        fields={JSON.stringify([view.authorsField, view.authorAffiliationsField])}
+                        filter={JSON.stringify(baselineFilter)}
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'></gs-aggregate>
+                </ComponentWrapper>
+            </ComponentsGrid>
+        </div>
     </gs-app>
 </OrganismPageLayout>

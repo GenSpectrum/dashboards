@@ -15,6 +15,8 @@ export const dateWindowConfig = {
     },
 };
 
+export const CustomDateRangeLabel = 'Custom';
+
 export type DateWindow = keyof typeof dateWindowConfig;
 
 export const allDateWindows = Object.keys(dateWindowConfig) as DateWindow[];

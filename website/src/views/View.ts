@@ -1,11 +1,13 @@
-import type { DateRange, LapisLocation, LapisVariantQuery } from './helpers.ts';
+import type { DateRangeOption } from '@genspectrum/dashboard-components';
+
+import type { LapisLocation, LapisVariantQuery } from './helpers.ts';
 import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
 import { type Organism, organismConfig } from '../types/Organism.ts';
 
 export type BaselineData = {
     baselineFilter: {
         location: LapisLocation;
-        dateRange: DateRange;
+        dateRange: DateRangeOption;
     };
 };
 

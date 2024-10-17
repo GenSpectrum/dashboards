@@ -7,11 +7,13 @@ export function GsLocationFilter<Field extends string>({
     fields,
     placeholderText,
     width,
+    initialValue,
 }: {
     width?: string;
     placeholderText?: string;
     fields: Field[];
     onLocationChange?: (location: { [key in Field]: string | undefined }) => void;
+    initialValue?: string;
 }) {
     const locationFilterRef = useRef<HTMLElement>();
 
@@ -38,6 +40,7 @@ export function GsLocationFilter<Field extends string>({
             placeholderText={placeholderText}
             width={width}
             ref={locationFilterRef}
+            initialValue={initialValue}
         ></gs-location-filter>
     );
 }

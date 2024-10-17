@@ -1,13 +1,14 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
-import JointFilter from '../../components/covidCompareVariantsView/JointFilter.astro';
-import { getLapisUrl } from '../../config';
+import { CompareSideBySidePageStateSelector } from '../../components/pageStateSelectors/CompareSideBySidePageStateSelector';
+import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
-import { chooseGranularityBasedOnDateRange, getLapisMutations } from '../../views/helpers';
+import {  getLapisMutations } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
@@ -32,22 +33,44 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                     };
 
                     return (
-                        <div class='min-w-[700px] flex-1 border-r-2 px-2'>
-                            {pageState.filters.size > 1 && (
-                                <a
-                                    class='block w-full px-2 py-1 hover:bg-neutral-100'
-                                    href={view.toUrl(view.removeFilter(pageState, id))}
-                                >
-                                    Remove column
-                                </a>
-                            )}
-                            <JointFilter
-                                filterId={id}
-                                initialLocation={baselineFilter.location}
-                                initialDateRange={baselineFilter.dateRange}
-                                initialLineage={variantFilter.lineage ?? undefined}
-                                initialMutations={initialMutations}
-                            />
+                        <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 px-2'>
+                            <div class='mb-4'>
+                                {pageState.filters.size > 1 && (
+                                    <a
+                                        class='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
+                                        href={view.toUrl(view.removeFilter(pageState, id))}
+                                    >
+                                        Remove column
+                                    </a>
+                                )}
+                                <CompareSideBySidePageStateSelector
+                                    locationFilterConfig={{
+                                        locationFields: view.locationFields,
+                                        initialLocation: baselineFilter.location,
+                                        placeholderText: 'Sampling location',
+                                    }}
+                                    daterRangeFilterConfig={{
+                                        initialDateRange: baselineFilter.dateRange,
+                                        dateRangeOptions: view.dateRangeOptions,
+                                        earliestDate: view.earliestDate,
+                                        dateColumn: view.mainDateField,
+                                    }}
+                                    mutationFilterConfig={{
+                                        initialMutations,
+                                    }}
+                                    lineageFilterConfig={{
+                                        lapisField: view.lineageField,
+                                        initialValue: variantFilter.lineage,
+                                        placeholderText: 'Pango Lineage',
+                                    }}
+                                    filterId={id}
+                                    pageState={pageState}
+                                    organismsConfig={getDashboardsConfig().dashboards.organisms}
+                                    organismViewKey={organismViewKey}
+                                    client:only='react'
+                                />
+                            </div>
+
                             <ComponentWrapper title='Prevalence over time'>
                                 <gs-prevalence-over-time
                                     numeratorFilter={JSON.stringify({
@@ -115,7 +138,7 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                 })
             }
             <a
-                class='px-4 pt-8 text-left hover:bg-neutral-100'
+                class='px-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
                 href={view.toUrl(view.addEmptyFilter(pageState))}
                 style='writing-mode: vertical-rl;'
             >
