@@ -1,21 +1,15 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
-import VariantFilter from '../../components/VariantFilter.astro';
-import { getLapisUrl } from '../../config';
+import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
+import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
-import {
-    chooseGranularityBasedOnDateRange,
-    cladeKey,
-    getLapisMutations,
-    getLocationSubdivision,
-    lineageKey,
-} from '../../views/helpers';
+import { getLapisMutations, getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 const organismViewKey: OrganismViewKey = 'mpox.singleVariantView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
@@ -23,10 +17,7 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
 
 const variantFilter = view.toLapisFilter(pageState);
 const baselineFilter = view.toLapisFilterWithoutVariant(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.baselineFilter.dateRange,
-    new Date(view.earliestDate),
-);
+const timeGranularity = chooseGranularityBasedOnDateRange(pageState.baselineFilter.dateRange, new Date(view.earliestDate),);
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.locationFields,
@@ -39,43 +30,35 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
 <OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(Organisms.mpox)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
-            <div>
-                <div class='bg-blue-50 px-2 py-4'>
-                    <div class='mb-2 font-semibold'>Filter dataset:</div>
-                    <LocationTimeFilter
-                        fields={view.locationFields}
-                        initialLocation={pageState.baselineFilter.location}
-                        initialDateRange={pageState.baselineFilter.dateRange}
-                        earliestDate={view.earliestDate}
-                        customDateRangeOptions={view.customDateRangeOptions}
-                        organismViewKey={organismViewKey}
-                    />
-                </div>
-                <div class='border-t-2 bg-green-50 px-2 py-4'>
-                    <div class='mb-2 font-semibold'>Search variant:</div>
-                    <VariantFilter
-                        fields={[
-                            {
-                                name: view.cladeField,
-                                label: 'Clade',
-                                initialValue: variantFilter.clade,
-                                type: 'text',
-                                rename: cladeKey,
-                            },
-                            {
-                                name: view.lineageField,
-                                label: 'Lineage',
-                                initialValue: variantFilter.lineage,
-                                type: 'text',
-                                rename: lineageKey,
-                            },
-                        ]}
-                        initialMutations={initialMutations}
-                        organismViewKey={organismViewKey}
-                    />
-                </div>
-            </div>
-            <div>
+            <SingleVariantPageStateSelector
+                locationFilterConfig={{
+                    locationFields: view.locationFields,
+                    initialLocation: pageState.baselineFilter.location,
+                    placeholderText: 'Sampling location',
+                }}
+                daterRangeFilterConfig={{
+                    initialDateRange: pageState.baselineFilter.dateRange,
+                    dateRangeOptions: view.dateRangeOptions,
+                    earliestDate: view.earliestDate,
+                    dateColumn: view.mainDateField,
+                }}
+                mutationFilterConfig={{ initialMutations }}
+                cladeFilterConfig={{
+                    initialValue: pageState.variantFilter.clade,
+                    lapisField: view.cladeField,
+                    placeholderText: 'Clade',
+                }}
+                lineageFilterConfig={{
+                    initialValue: pageState.variantFilter.lineage,
+                    lapisField: view.lineageField,
+                    placeholderText: 'Lineage',
+                }}
+                pageState={pageState}
+                organismViewKey={organismViewKey}
+                organismsConfig={getDashboardsConfig().dashboards.organisms}
+                client:only='react'
+            />
+            <div class='flex flex-col gap-y-6'>
                 <ComponentsGrid>
                     <ComponentWrapper title='Prevalence over time'>
                         <gs-prevalence-over-time

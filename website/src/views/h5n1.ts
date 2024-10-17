@@ -1,12 +1,12 @@
+import type { DateRangeOption } from '@genspectrum/dashboard-components';
+
 import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
 import {
-    type DateRange,
-    dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    getTodayString,
     type LapisFilter,
+    type LapisLocation,
     setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
@@ -18,17 +18,16 @@ import type { DataOrigin } from '../types/dataOrigins.ts';
 const pathFragment = organismConfig[Organisms.h5n1].pathFragment;
 
 const earliestDate = '1905-01-01';
-const today = getTodayString();
 
 class H5n1Constants {
     public readonly organism = Organisms.h5n1;
     public readonly earliestDate = '1905-01-01';
-    public readonly defaultDateRange: DateRange = 'last6Months';
-    public readonly customDateRangeOptions = [
-        { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
+    public readonly defaultDateRange: DateRangeOption = { label: 'Since 2000', dateFrom: '2000-01-01' };
+    public readonly dateRangeOptions = [
+        { label: 'Since 2020', dateFrom: '2020-01-01' },
         { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
         { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-        { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: today },
+        { label: 'Since 2000', dateFrom: '2000-01-01' },
         { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
     ];
     public readonly mainDateField: string;
@@ -50,12 +49,11 @@ class H5n1Constants {
         this.additionalFilters = organismsConfig.h5n1.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(this.earliestDate));
+    public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter & LapisLocation {
         return {
             ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: dateRange.from,
-            [`${this.mainDateField}To`]: dateRange.to,
+            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
+            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
             ...this.additionalFilters,
         };
     }
@@ -78,7 +76,8 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
             variantFilter: getLapisVariantQuery(search, this.lineageField),
         };
@@ -122,7 +121,8 @@ export class H5n1SequencingEffortsView extends H5n1Constants implements View<Bas
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
         };
     }

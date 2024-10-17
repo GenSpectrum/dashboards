@@ -1,11 +1,10 @@
+import type { DateRangeOption } from '@genspectrum/dashboard-components';
+
 import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
 import {
-    type DateRange,
-    dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    getTodayString,
     type LapisFilter,
     setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
@@ -19,13 +18,16 @@ const pathFragment = organismConfig[Organisms.westNile].pathFragment;
 
 class WestNileConstants {
     public readonly organism = Organisms.westNile;
-    public readonly defaultDateRange: DateRange = 'allTimes';
     public readonly earliestDate = '1930-01-01';
-    public readonly customDateRangeOptions = [
-        { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: getTodayString() },
+    public readonly defaultDateRange: DateRangeOption = {
+        label: 'Since 2020',
+        dateFrom: '2020-01-01',
+    };
+    public readonly dateRangeOptions = [
+        { label: 'Since 2020', dateFrom: '2020-01-01' },
         { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
         { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-        { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: getTodayString() },
+        { label: 'Since 2000', dateFrom: '2000-01-01' },
         { label: 'Before 2000', dateFrom: this.earliestDate, dateTo: '1999-12-31' },
     ];
     public readonly mainDateField: string;
@@ -48,11 +50,10 @@ class WestNileConstants {
     }
 
     public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: dateRange.from,
-            [`${this.mainDateField}To`]: dateRange.to,
+            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
+            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
             ...this.additionalFilters,
         };
     }
@@ -75,7 +76,8 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
             variantFilter: getLapisVariantQuery(search, this.lineageField),
         };
@@ -120,7 +122,8 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
         };
     }

@@ -1,13 +1,11 @@
+import type { DateRangeOption } from '@genspectrum/dashboard-components';
+
 import { type BaselineData, type VariantData, type View } from './View.ts';
 import {
-    type DateRange,
-    type DateRangeOption,
-    dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getIntegerFromSearch,
     getLapisCovidVariantQuery,
     getLapisLocationFromSearch,
-    getTodayString,
     type LapisCovidVariantQuery,
     type LapisFilter,
     setSearchFromDateRange,
@@ -26,10 +24,13 @@ const earliestDate = '2020-01-06';
 
 class CovidConstants {
     public readonly organism = Organisms.covid;
-    public readonly defaultDateRange: DateRange = 'last6Months';
+    public readonly defaultDateRange: DateRangeOption = {
+        label: '2024',
+        dateFrom: '2024-01-01',
+    };
     public readonly earliestDate = '2020-01-06';
-    public readonly customDateRangeOptions: DateRangeOption[] = [
-        { label: '2024', dateFrom: '2024-01-01', dateTo: getTodayString() },
+    public readonly dateRangeOptions: DateRangeOption[] = [
+        { label: '2024', dateFrom: '2024-01-01' },
         { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
         { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
         { label: '2021', dateFrom: '2021-01-04', dateTo: '2022-01-02' },
@@ -93,7 +94,8 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
             variantFilter: getLapisCovidVariantQuery(search, this.lineageField),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
@@ -109,7 +111,6 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         }
 
         setSearchFromLapisCovidVariantQuery(search, pageState.variantFilter, this.lineageField);
-
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
         }
@@ -124,11 +125,10 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
     }
 
     public toLapisFilterWithoutVariant(pageState: CovidAnalyzeSingleVariantData): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(earliestDate));
         return {
             ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: dateRange.from,
-            [`${this.mainDateField}To`]: dateRange.to,
+            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
+            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
             ...this.additionalFilters,
         };
     }
@@ -269,11 +269,10 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     }
 
     public baselineFilterToLapisFilter(filter: CovidCompareVariantsFilter['baselineFilter']): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(filter.dateRange, new Date(earliestDate));
         return {
             ...filter.location,
-            [`${this.mainDateField}From`]: dateRange.from,
-            [`${this.mainDateField}To`]: dateRange.to,
+            [`${this.mainDateField}From`]: filter.dateRange.dateFrom,
+            [`${this.mainDateField}To`]: filter.dateRange.dateTo,
             ...this.additionalFilters,
         };
     }
@@ -315,7 +314,9 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
         const filter: BaselineData & VariantData = {
             baselineFilter: {
                 location: getLapisLocationFromSearch(filterParams, this.locationFields),
-                dateRange: getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(filterParams, this.mainDateField, this.dateRangeOptions) ??
+                    this.defaultDateRange,
             },
             variantFilter: getLapisCovidVariantQuery(filterParams, this.lineageField),
         };
@@ -345,7 +346,8 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
@@ -365,11 +367,10 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
     }
 
     public toLapisFilter(pageState: CovidSequencingEffortsData): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(earliestDate));
         return {
             ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: dateRange.from,
-            [`${this.mainDateField}To`]: dateRange.to,
+            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
+            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
             ...this.additionalFilters,
         };
     }

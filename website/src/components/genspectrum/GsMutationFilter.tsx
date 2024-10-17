@@ -16,7 +16,7 @@ export function GsMutationFilter({
 }: {
     width?: string;
     initialValue?: MutationFilter | string[] | undefined;
-    onMutationChange: (mutationFilter: MutationFilter) => void;
+    onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
     onBlur?: (mutationFilter: MutationFilter | undefined) => void;
 }) {
     const mutationFilterRef = useRef<HTMLElement>();
@@ -44,5 +44,11 @@ export function GsMutationFilter({
         };
     }, [onMutationChange, onBlur]);
 
-    return <gs-mutation-filter width={width} initialValue={initialValue} ref={mutationFilterRef}></gs-mutation-filter>;
+    return (
+        <gs-mutation-filter
+            width={width}
+            initialValue={JSON.stringify(initialValue)}
+            ref={mutationFilterRef}
+        ></gs-mutation-filter>
+    );
 }

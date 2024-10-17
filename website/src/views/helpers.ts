@@ -1,85 +1,8 @@
-import dayjs from 'dayjs';
+import type { DateRangeOption } from '@genspectrum/dashboard-components';
 
-export type SpecialDateRange = 'allTimes' | 'last2Weeks' | 'lastMonth' | 'last2Months' | 'last3Months' | 'last6Months';
+import { CustomDateRangeLabel } from '../types/DateWindow.ts';
 
-export type CustomDateRange = {
-    from: string;
-    to: string;
-};
-
-export type DateRange = SpecialDateRange | CustomDateRange;
-
-export type DateRangeOption = {
-    label: string;
-    dateFrom: string;
-    dateTo: string;
-};
-
-export function getTodayString(): string {
-    return dayjs().format('YYYY-MM-DD');
-}
-
-export type LapisFilter = Record<string, string | number | null | boolean | string[]>;
-
-export const isCustomDateRange = (dateRange: DateRange): dateRange is CustomDateRange => {
-    return typeof dateRange === 'object' && 'from' in dateRange;
-};
-
-export const dateRangeToCustomDateRange = (dateRange: DateRange, allTimesStartDate: Date): CustomDateRange => {
-    if (isCustomDateRange(dateRange)) {
-        return dateRange;
-    }
-
-    const toDate = new Date();
-    let fromDate = new Date();
-
-    switch (dateRange) {
-        case 'allTimes':
-            fromDate = allTimesStartDate;
-            break;
-        case 'last2Weeks':
-            fromDate.setDate(toDate.getDate() - 14);
-            break;
-        case 'lastMonth':
-            fromDate.setMonth(toDate.getMonth() - 1);
-            break;
-        case 'last2Months':
-            fromDate.setMonth(toDate.getMonth() - 2);
-            break;
-        case 'last3Months':
-            fromDate.setMonth(toDate.getMonth() - 3);
-            break;
-        case 'last6Months':
-            fromDate.setMonth(toDate.getMonth() - 6);
-            break;
-    }
-
-    return {
-        from: dayjs(fromDate).format('YYYY-MM-DD'),
-        to: dayjs(toDate).format('YYYY-MM-DD'),
-    };
-};
-
-export const chooseGranularityBasedOnDateRange = (
-    dateRange: DateRange,
-    allTimesStartDate: Date,
-): 'day' | 'week' | 'month' | 'year' => {
-    if (!isCustomDateRange(dateRange)) {
-        dateRange = dateRangeToCustomDateRange(dateRange, allTimesStartDate);
-    }
-
-    const daysBetween = (new Date(dateRange.to).getTime() - new Date(dateRange.from).getTime()) / (1000 * 60 * 60 * 24);
-    if (daysBetween > 365 * 5) {
-        return 'year';
-    }
-    if (daysBetween > 365 * 2) {
-        return 'month';
-    }
-    if (daysBetween > 90) {
-        return 'week';
-    }
-    return 'day';
-};
+export type LapisFilter = Record<string, string | number | null | boolean | string[] | undefined>;
 
 /**
  * Sets the value to the search params if the value is not empty, not undefined and not null
@@ -102,14 +25,14 @@ export const setSearchFromStringArray = (search: URLSearchParams, name: string, 
 export const setSearchFromDateRange = (
     search: URLSearchParams,
     name: string,
-    dateRange: DateRange | undefined | null,
+    dateRange: DateRangeOption | undefined | null,
 ) => {
     if (dateRange !== null && dateRange !== undefined) {
         let serializedValue: string;
-        if (isCustomDateRange(dateRange)) {
-            serializedValue = `${dateRange.from}--${dateRange.to}`;
+        if (dateRange.label === CustomDateRangeLabel) {
+            serializedValue = `${dateRange.dateFrom}--${dateRange.dateTo}`;
         } else {
-            serializedValue = dateRange;
+            serializedValue = dateRange.label;
         }
         search.set(name, serializedValue);
     }
@@ -137,24 +60,29 @@ export const getIntegerFromSearch = (search: URLSearchParams, name: string): num
 export const getDateRangeFromSearch = (
     search: URLSearchParams | Map<string, string>,
     name: string,
-): DateRange | undefined => {
+    dateRangeOptions: DateRangeOption[],
+): DateRangeOption | undefined => {
     const value = search.get(name);
     if (value === null || value === undefined) {
         return undefined;
     }
+    const customDateRange = dateRangeOptions.find((option) => option.label === value);
+    if (customDateRange !== undefined) {
+        return customDateRange;
+    }
+
     if (value.includes('--')) {
-        // TODO Properly validate the value
         const split = value.split('--');
         return {
-            from: split[0],
-            to: split[1],
+            label: CustomDateRangeLabel,
+            dateFrom: split[0],
+            dateTo: split[1],
         };
     }
-    // TODO Properly validate the value
-    return value as SpecialDateRange;
+    return undefined;
 };
 
-export type LapisLocation = Record<string, string>;
+export type LapisLocation = Record<string, string | undefined>;
 
 export const getLapisLocationFromSearch = (
     search: URLSearchParams | Map<string, string>,
@@ -275,7 +203,7 @@ export const setSearchFromLapisCovidVariantQuery = (
     setSearchFromString(search, 'variantQuery', query.variantQuery);
 };
 
-export function getLocationSubdivision(locationFields: string[], locationFilter: Record<string, string>) {
+export function getLocationSubdivision(locationFields: string[], locationFilter: LapisLocation) {
     if (locationFields.length <= 1) {
         return { label: '', field: undefined };
     }

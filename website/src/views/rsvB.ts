@@ -1,11 +1,8 @@
 import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
 import {
-    type DateRange,
-    dateRangeToCustomDateRange,
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    getTodayString,
     type LapisFilter,
     type LapisLocation,
     setSearchFromDateRange,
@@ -18,17 +15,15 @@ import type { DataOrigin } from '../types/dataOrigins.ts';
 
 const pathFragment = organismConfig[Organisms.rsvB].pathFragment;
 
-const today = getTodayString();
-
 class RsvBConstants {
     public readonly organism = Organisms.rsvB;
-    public readonly defaultDateRange: DateRange = 'allTimes';
+    public readonly defaultDateRange = { label: 'Since 2020', dateFrom: '2020-01-01' };
     public readonly earliestDate = '1956-01-01';
-    public readonly customDateRangeOptions = [
-        { label: 'Since 2020', dateFrom: '2020-01-01', dateTo: today },
+    public readonly dateRangeOptions = [
+        { label: 'Since 2020', dateFrom: '2020-01-01' },
         { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
         { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-        { label: 'Since 2000', dateFrom: '2000-01-01', dateTo: today },
+        { label: 'Since 2000', dateFrom: '2000-01-01' },
         { label: 'Before 2000', dateFrom: this.earliestDate, dateTo: '1999-12-31' },
     ];
     public readonly mainDateField: string;
@@ -51,11 +46,10 @@ class RsvBConstants {
     }
 
     public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter & LapisLocation {
-        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: dateRange.from,
-            [`${this.mainDateField}To`]: dateRange.to,
+            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
+            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
             ...this.additionalFilters,
         };
     }
@@ -78,7 +72,8 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
             variantFilter: getLapisVariantQuery(search, this.lineageField),
         };
@@ -122,7 +117,8 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Bas
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
+                dateRange:
+                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
         };
     }

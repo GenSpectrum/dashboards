@@ -13,7 +13,7 @@ export function GsLineageFilter<Lineage extends string>({
     initialValue?: string;
     placeholderText?: string;
     width?: string;
-    onLineageChange?: (location: { [key in Lineage]: string | undefined }) => void;
+    onLineageChange?: (lineage: { [key in Lineage]: string | undefined }) => void;
 }) {
     const lineageFilterRef = useRef<HTMLElement>();
 
