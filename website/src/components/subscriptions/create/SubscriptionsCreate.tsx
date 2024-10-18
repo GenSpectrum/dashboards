@@ -2,6 +2,7 @@ import '@genspectrum/dashboard-components';
 import '@genspectrum/dashboard-components/style.css';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { FilterDisplay } from './FilterDisplay.tsx';
 import { IntervalInput } from './IntervalInput.tsx';
@@ -42,14 +43,14 @@ export function SubscriptionsCreateInner({
                 subscription: getSubscription(),
                 userId,
             }),
-        onSuccess: () => {
-            window.location.href = '/subscriptions';
-        },
         onError: (error) => {
             // eslint-disable-next-line no-console -- TODO #203 properly log this
             console.error(error);
-            // TODO: #205 Show error as banner
-            window.location.href = '/500';
+            // TODO: Add tracable error info on 500 error page #201
+            toast.error('Failed to create subscription', {
+                position: 'bottom-left',
+                autoClose: false,
+            });
         },
     });
 
@@ -150,10 +151,28 @@ export function SubscriptionsCreateInner({
                         </GsApp>
                     </CardContent>
                 </BorderedCard>
-                <button className='btn btn-primary' onClick={() => createSubscription.mutate()}>
-                    Create subscription
-                </button>
+                <CreateSubscriptionButton
+                    isSuccess={createSubscription.isSuccess}
+                    onClick={createSubscription.mutate}
+                />
             </div>
         </PageContainer>
+    );
+}
+
+function CreateSubscriptionButton({ isSuccess, onClick }: { isSuccess: boolean; onClick: () => void }) {
+    if (isSuccess) {
+        return (
+            <div className='flex h-12 items-center justify-center rounded-lg bg-success'>
+                Successfully created
+                <div className='iconify ml-2 size-4 mdi--check' />
+            </div>
+        );
+    }
+
+    return (
+        <button className='btn btn-primary' onClick={onClick}>
+            Create subscription
+        </button>
     );
 }
