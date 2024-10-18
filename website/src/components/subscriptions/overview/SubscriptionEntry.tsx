@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { type JSX } from 'react';
+import { toast } from 'react-toastify';
 
 import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
@@ -96,40 +97,45 @@ function MoreDropdown({
             }),
         onSuccess: () => {
             refetchSubscriptions();
+            toast.success(`Subscription ${subscription.name} deleted`, {
+                position: 'bottom-left',
+                autoClose: 4000,
+            });
         },
         onError: (error) => {
             // eslint-disable-next-line no-console -- TODO #203 properly log this
             console.error(error);
-            // TODO: #205 Show error as banner
-            window.location.href = '/500';
+            // TODO: Add tracable error info on 500 error page #201
+            toast.error('Failed to delete subscription', {
+                position: 'bottom-left',
+                autoClose: false,
+            });
         },
     });
 
-    const activateSubscription = useMutation({
-        mutationFn: () =>
-            getBackendServiceForClientside().putSubscription({
-                subscription: { active: !subscription.active },
-                userId,
-                subscriptionId: subscription.id,
-            }),
-        onSuccess: () => {
-            refetchSubscriptions();
-        },
-        onError: (error) => {
-            // eslint-disable-next-line no-console -- TODO #203 properly log this
-            console.error(error);
-            // TODO: #205 Show error as banner
-            window.location.href = '/500';
-        },
-    });
+    // TODO: #171 Activate/Deactivate subscription
+    // const activateSubscription = useMutation({
+    //     mutationFn: () =>
+    //         getBackendServiceForClientside().putSubscription({ active: !subscription.active }, userId, subscription.id),
+    //     onSuccess: () => {
+    //         refetchSubscriptions();
+    //     },
+    //     onError: (error) => {
+    //         // eslint-disable-next-line no-console -- TODO #203 properly log this
+    //         console.error(error);
+    //         // TODO: #205 Show error as banner
+    //         window.location.href = '/500';
+    //     },
+    // });
 
     const handleDelete = async () => {
         deleteSubscription.mutate();
     };
 
-    const handleActivate = async () => {
-        activateSubscription.mutate();
-    };
+    // TODO: #171 Activate/Deactivate subscription
+    // const handleActivate = async () => {
+    //     activateSubscription.mutate();
+    // };
     return (
         <div className='dropdown dropdown-end'>
             <div tabIndex={0} role='button' className='btn btn-xs'>
@@ -140,9 +146,10 @@ function MoreDropdown({
                 {/* <li>*/}
                 {/*    <EditButton />*/}
                 {/* </li>*/}
-                <li>
-                    <ActivateButton isActive={subscription.active} onClick={handleActivate} />
-                </li>
+                {/* TODO: #171 Activate/Deactivate subscription*/}
+                {/* <li>*/}
+                {/*    <ActivateButton isActive={subscription.active} onClick={handleActivate} />*/}
+                {/* </li>*/}
                 <li>
                     <DeleteButton onClick={handleDelete} />
                 </li>
@@ -164,20 +171,21 @@ function MoreDropdown({
 //     );
 // }
 
-function ActivateButton({
-    isActive,
-    onClick,
-}: {
-    isActive: boolean;
-    onClick: JSX.IntrinsicElements['button']['onClick'];
-}) {
-    return (
-        <button className='flex items-center gap-2' onClick={onClick}>
-            <div className={`iconify ${isActive ? 'mdi--pause' : 'mdi--play'}`}></div>
-            {isActive ? 'Disable notifications' : 'Enable notifications'}
-        </button>
-    );
-}
+// TODO: #171 Activate/Deactivate subscription
+// function ActivateButton({
+//     isActive,
+//     onClick,
+// }: {
+//     isActive: boolean;
+//     onClick: JSX.IntrinsicElements['button']['onClick'];
+// }) {
+//     return (
+//         <button className='flex items-center gap-2' onClick={onClick}>
+//             <div className={`iconify ${isActive ? 'mdi--pause' : 'mdi--play'}`}></div>
+//             {isActive ? 'Disable notifications' : 'Enable notifications'}
+//         </button>
+//     );
+// }
 
 function DeleteButton({ onClick }: { onClick: JSX.IntrinsicElements['button']['onClick'] }) {
     return (
