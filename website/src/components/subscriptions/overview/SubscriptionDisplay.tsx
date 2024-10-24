@@ -56,6 +56,26 @@ function DateWindowDisplay({ dateWindow }: { dateWindow: DateWindow }) {
     );
 }
 
+function roundToPrecision({
+    val,
+    precision = 3,
+    lowerBound = 0.001,
+}: {
+    val: number;
+    precision?: number;
+    lowerBound?: number;
+}): string {
+    if (val < lowerBound) {
+        return `<${lowerBound}`;
+    }
+
+    if (Number.isInteger(val)) {
+        return val.toString();
+    }
+
+    return val.toFixed(precision);
+}
+
 function TriggerEvaluationResult({ result }: { result: Subscription['triggerEvaluationResult'] }) {
     if (result.type === 'EvaluationError') {
         return (
@@ -73,7 +93,7 @@ function TriggerEvaluationResult({ result }: { result: Subscription['triggerEval
                     {result.type === 'ConditionMet' ? 'met' : 'not met'}
                 </span>
             </div>
-            <div className='text-gray-500'>Evaluated value: {result.evaluatedValue}</div>
+            <div className='text-gray-500'>Evaluated value: {roundToPrecision({ val: result.evaluatedValue })}</div>
             <div className='text-gray-500'>Threshold: {result.threshold}</div>
         </div>
     );
