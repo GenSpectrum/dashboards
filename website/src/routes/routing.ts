@@ -75,13 +75,4 @@ export class Routing {
         }
         throw new Error('Unexpected route: ' + route.pathname);
     };
-
-    public getDefaultRoute = (pathname: string): Route | undefined => {
-        for (const view of this.allViews) {
-            if (view.pathname === pathname) {
-                return view.defaultRoute;
-            }
-        }
-        return undefined;
-    };
 }

@@ -67,9 +67,7 @@ import { organismConfig } from '../types/Organism';
                                 <li class='flex items-start pt-2'>
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a
-                                        href={ServerSide.routing.toUrl(
-                                            ServerSide.routing.getDefaultRoute(view.pathname)!,
-                                        )}
+                                        href={ServerSide.routing.toUrl(view.defaultRoute)}
                                         class={`hover:underline ${organism.menuListEntryDecoration} hover:decoration-4`}
                                     >
                                         {view.labelLong}
