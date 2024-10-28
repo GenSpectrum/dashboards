@@ -57,6 +57,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 <script>
     import { Routing } from '../routes/routing.ts';
     import { getClientLogger } from '../clientLogger';
+    import { type BaselineFilter } from '../routes/View';
 
     class LocationTimeFilter extends HTMLElement {
         constructor() {
@@ -83,16 +84,16 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
                 // TODO This component currently assumes that it is used under a route that has a baseline filter.
                 //  We should either make it more flexible or document the behavior
-                const currentRoute = routing.getCurrentRouteInBrowser() as any;
+                const { route: currentRoute, view: currentView } = routing.getCurrentRouteInBrowser()!;
                 const newRoute = {
                     ...currentRoute,
                     baselineFilter: {
-                        ...currentRoute.baselineFilter,
+                        ...(currentRoute as unknown as BaselineFilter).baselineFilter,
                         location,
                         dateRange,
                     },
                 };
-                routing.navigateTo(newRoute);
+                window.location.href = currentView.toUrl(newRoute);
             });
         }
     }

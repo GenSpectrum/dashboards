@@ -91,7 +91,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
     const routing = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]);
 
     const selectVariant = (variant: CollectionVariant) => {
-        const currentRoute = routing.getCurrentRouteInBrowser() as CovidAnalyzeSingleVariantRoute;
+        const currentRoute = routing.covidAnalyzeSingleVariantView.parseUrl(new URL(window.location.href));
         let newRoute: CovidAnalyzeSingleVariantRoute;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
@@ -115,7 +115,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
                 },
             };
         }
-        routing.navigateTo(newRoute);
+        window.location.href = routing.covidAnalyzeSingleVariantView.toUrl(newRoute);
     };
 
     return (

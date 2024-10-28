@@ -11,7 +11,7 @@ const routing = new Routing(organismsConfig, getInstanceLogger);
  */
 export const ServerSide = {
     routing,
-    covidAnalyzeSingleVariantView: routing.views.covid[0],
+    covidAnalyzeSingleVariantView: routing.covidAnalyzeSingleVariantView,
     covidCompareVariantsView: routing.covidCompareVariantsView,
     covidSequencingEffortsView: routing.views.covid[2],
     h5n1AnalyzeSingleVariantView: routing.views.h5n1[0],

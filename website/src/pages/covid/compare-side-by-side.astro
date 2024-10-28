@@ -36,7 +36,7 @@ if (routeData === undefined) {
                             {routeData.filters.size > 1 && (
                                 <a
                                     class='block w-full px-2 py-1 hover:bg-neutral-100'
-                                    href={ServerSide.routing.toUrl(
+                                    href={ServerSide.covidCompareVariantsView.toUrl(
                                         ServerSide.covidCompareVariantsView.removeFilter(routeData, id),
                                     )}
                                 >
@@ -118,7 +118,9 @@ if (routeData === undefined) {
             }
             <a
                 class='px-4 pt-8 text-left hover:bg-neutral-100'
-                href={ServerSide.routing.toUrl(ServerSide.covidCompareVariantsView.addEmptyFilter(routeData))}
+                href={ServerSide.covidCompareVariantsView.toUrl(
+                    ServerSide.covidCompareVariantsView.addEmptyFilter(routeData),
+                )}
                 style='writing-mode: vertical-rl;'
             >
                 Add column
