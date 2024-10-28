@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
-    id("org.springframework.boot") version "3.3.4"
+    id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
@@ -28,7 +28,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    implementation("org.flywaydb:flyway-database-postgresql:10.20.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.20.1")
     implementation("org.postgresql:postgresql:42.7.4")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.55.0")
     implementation("org.jetbrains.exposed:exposed-json:0.55.0")
@@ -39,7 +39,7 @@ dependencies {
         exclude(group = "org.mockito")
     }
     testImplementation("com.ninja-squad:springmockk:4.0.2")
-    testImplementation("org.testcontainers:postgresql:1.20.2")
+    testImplementation("org.testcontainers:postgresql:1.20.3")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
 }
