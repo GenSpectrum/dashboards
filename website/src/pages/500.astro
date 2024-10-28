@@ -1,7 +1,17 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
+import { getInstanceLogger } from '../logger';
 import { PageContainer } from '../styles/containers/PageContainer';
 import { PageHeadline } from '../styles/containers/PageHeadline';
+import { getErrorLogMessage } from '../util/getErrorLogMessage';
+
+interface Props {
+    error: unknown;
+}
+
+const { error } = Astro.props;
+
+getInstanceLogger('500ErrorPage').error(`An error occurred: ${getErrorLogMessage(error)}`);
 ---
 
 <BaseLayout title='GenSpectrum Dashboards'>

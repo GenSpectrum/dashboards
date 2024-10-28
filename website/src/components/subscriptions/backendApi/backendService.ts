@@ -9,6 +9,8 @@ import {
     triggerEvaluationResponseSchema,
 } from '../../../types/Subscription.ts';
 
+const X_REQUEST_ID_HEADER = 'x-request-id';
+
 type EndpointParameters<Response> = {
     url: string;
     requestParams: Record<string, string>;
@@ -77,6 +79,7 @@ class ApiService {
                     response.status,
                     backendError.data,
                     response.config.url ?? '',
+                    response.headers[X_REQUEST_ID_HEADER],
                 );
             }
 
@@ -93,6 +96,7 @@ export class BackendError extends Error {
         public readonly status: number,
         public readonly problemDetail: ProblemDetail,
         public readonly requestedData: string,
+        public readonly requestId: string | undefined,
     ) {
         super(message);
         this.name = 'BackendError';

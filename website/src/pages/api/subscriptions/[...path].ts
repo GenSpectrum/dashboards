@@ -1,8 +1,12 @@
 import { getSession } from 'auth-astro/server';
 
 import { getBackendHost } from '../../../config.ts';
+import { getInstanceLogger } from '../../../logger.ts';
+import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 const API_PATHNAME_LENGTH = '/api'.length;
+
+const logger = getInstanceLogger('SubscriptionsProxy');
 
 export async function ALL({ request }: { request: Request }) {
     const session = await getSession(request);
@@ -21,8 +25,7 @@ export async function ALL({ request }: { request: Request }) {
             headers: response.headers,
         });
     } catch (error) {
-        // eslint-disable-next-line no-console -- TODO #203 properly log this
-        console.error(error);
+        logger.error(getErrorLogMessage(error));
         return getInternalErrorResponse(request.url);
     }
 }

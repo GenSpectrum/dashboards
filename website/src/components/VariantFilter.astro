@@ -50,6 +50,7 @@ const { fields, initialMutations } = Astro.props;
 <script>
     import { Routing } from '../routes/routing.ts';
     import { type Field } from './VariantFilterTypes';
+    import { getClientLogger } from '../clientLogger';
 
     class VariantFilter extends HTMLElement {
         constructor() {
@@ -77,7 +78,7 @@ const { fields, initialMutations } = Astro.props;
             });
 
             submitButton?.addEventListener('click', () => {
-                const routing = new Routing(config);
+                const routing = new Routing(config, getClientLogger);
                 const currentRoute = routing.getCurrentRouteInBrowser()!;
                 const newRoute = {
                     ...currentRoute,

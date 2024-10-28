@@ -3,11 +3,13 @@ import { useState } from 'react';
 
 import { SubscriptionEntry } from './SubscriptionEntry.tsx';
 import { FilterDropdown, getFilters, getSelectedFilters } from './SubscriptionFilter.tsx';
+import { getClientLogger } from '../../../clientLogger.ts';
 import { PageContainer } from '../../../styles/containers/PageContainer.tsx';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Organism } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
 import { Page } from '../../../types/pages.ts';
+import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 import { querySubscriptions } from '../backendApi/querySubscriptions.ts';
 import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
@@ -16,6 +18,8 @@ type SubscriptionsProps = {
     organismsFromUrl: Organism[];
     userId: string;
 };
+
+const logger = getClientLogger('Subscriptions');
 
 export const Subscriptions = withQueryProvider(SubscriptionsInner);
 
@@ -37,8 +41,7 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
         return <LoadingSubscriptions />;
     }
     if (isError) {
-        // eslint-disable-next-line no-console -- TODO #203 properly log this
-        console.error(error);
+        logger.error(`Failed to fetch subscriptions: ${getErrorLogMessage(error)}`);
         return <ErrorSubscriptions />;
     }
     if (subscriptions === undefined || subscriptions.length === 0) {

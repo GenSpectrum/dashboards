@@ -81,7 +81,8 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
 <script>
     import { Routing } from '../../routes/routing.ts';
-    import { CovidCompareVariantsView, type CovidCompareVariantsRoute } from '../../routes/covid';
+    import { type CovidCompareVariantsRoute } from '../../routes/covid';
+    import { getClientLogger } from '../../clientLogger';
 
     class JointFilter extends HTMLElement {
         constructor() {
@@ -114,10 +115,10 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             });
 
             submitButton?.addEventListener('click', () => {
-                const routing = new Routing(config);
+                const routing = new Routing(config, getClientLogger);
                 const currentRoute = routing.getCurrentRouteInBrowser() as CovidCompareVariantsRoute;
                 routing.navigateTo(
-                    new CovidCompareVariantsView(config).setFilter(
+                    routing.covidCompareVariantsView.setFilter(
                         currentRoute,
                         {
                             baselineFilter: {

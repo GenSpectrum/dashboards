@@ -1,8 +1,9 @@
 import { getDashboardsConfig } from '../config.ts';
 import { Routing } from './routing.ts';
+import { getInstanceLogger } from '../logger.ts';
 
 const organismsConfig = getDashboardsConfig().dashboards.organisms;
-const routing = new Routing(organismsConfig);
+const routing = new Routing(organismsConfig, getInstanceLogger);
 
 /**
  * Constants for use in server-side code - for convenience.
@@ -11,7 +12,7 @@ const routing = new Routing(organismsConfig);
 export const ServerSide = {
     routing,
     covidAnalyzeSingleVariantView: routing.views.covid[0],
-    covidCompareVariantsView: routing.views.covid[1],
+    covidCompareVariantsView: routing.covidCompareVariantsView,
     covidSequencingEffortsView: routing.views.covid[2],
     h5n1AnalyzeSingleVariantView: routing.views.h5n1[0],
     h5n1SequencingEffortsView: routing.views.h5n1[1],
