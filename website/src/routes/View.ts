@@ -30,6 +30,7 @@ export type View<R extends Route, ParseResult extends R | undefined = R> = {
 
     parseUrl: (url: URL) => ParseResult;
     toUrl: (route: R) => string;
+    getDefaultRouteUrl: () => string;
 };
 
 export const defaultTablePageSize = 200;

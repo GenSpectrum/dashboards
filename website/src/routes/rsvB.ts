@@ -102,6 +102,10 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
             ...route.variantFilter,
         };
     }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
+    }
 }
 
 export class RsvBSequencingEffortsView extends RsvBConstants implements View<RouteWithBaseline> {
@@ -140,5 +144,9 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Rou
 
     public toLapisFilter(route: RouteWithBaseline) {
         return this.toLapisFilterWithoutVariant(route);
+    }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
     }
 }
