@@ -38,9 +38,10 @@ export function Navigation() {
                     />
                     <MegaMenu className='hidden group-hover:block'>
                         {pathogenMegaMenuSections.map((section) => (
-                            <MegaMenuSection {...section}>
+                            <MegaMenuSection key={section.headline} {...section}>
                                 {section.navigationEntries.map((entry) => (
                                     <MegaMenuListEntry
+                                        key={entry.label}
                                         label={entry.label}
                                         href={entry.href}
                                         className={entry.underlineColor}
