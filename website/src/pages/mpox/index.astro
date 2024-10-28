@@ -1,3 +1,5 @@
 ---
-return Astro.redirect('/mpox/single-variant');
+import { ServerSide } from '../../routes/serverSideRouting';
+
+return Astro.redirect(ServerSide.mpoxAnalyzeSingleVariantView.getDefaultRouteUrl());
 ---

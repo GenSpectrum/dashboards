@@ -102,6 +102,10 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
             ...route.variantFilter,
         };
     }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
+    }
 }
 
 export class H5n1SequencingEffortsView extends H5n1Constants implements View<RouteWithBaseline> {
@@ -140,5 +144,9 @@ export class H5n1SequencingEffortsView extends H5n1Constants implements View<Rou
 
     public toLapisFilter(route: RouteWithBaseline): LapisFilter {
         return this.toLapisFilterWithoutVariant(route);
+    }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
     }
 }

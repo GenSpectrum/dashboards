@@ -1,3 +1,5 @@
 ---
-return Astro.redirect('/west-nile/single-variant');
+import { ServerSide } from '../../routes/serverSideRouting';
+
+return Astro.redirect(ServerSide.westNileAnalyzeSingleVariantView.getDefaultRouteUrl());
 ---

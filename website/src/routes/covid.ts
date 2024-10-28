@@ -133,6 +133,10 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             ...this.additionalFilters,
         };
     }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
+    }
 }
 
 export type CovidCompareVariantsRoute = {
@@ -199,6 +203,10 @@ export class CovidCompareVariantsView
         private readonly logger: InstanceLogger,
     ) {
         super(organismsConfig);
+    }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
     }
 
     public parseUrl(url: URL): CovidCompareVariantsRoute | undefined {
@@ -378,5 +386,9 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
         };
+    }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
     }
 }

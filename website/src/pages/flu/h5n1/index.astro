@@ -1,3 +1,5 @@
 ---
-return Astro.redirect('/flu/h5n1/single-variant');
+import { ServerSide } from '../../../routes/serverSideRouting';
+
+return Astro.redirect(ServerSide.h5n1AnalyzeSingleVariantView.getDefaultRouteUrl());
 ---

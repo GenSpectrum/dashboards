@@ -115,6 +115,10 @@ export class MpoxAnalyzeSingleVariantView extends MpoxConstants implements View<
             ...route.variantFilter,
         };
     }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
+    }
 }
 
 export class MpoxSequencingEffortsView extends MpoxConstants implements View<RouteWithBaseline> {
@@ -153,5 +157,9 @@ export class MpoxSequencingEffortsView extends MpoxConstants implements View<Rou
 
     public toLapisFilter(route: RouteWithBaseline): LapisFilter {
         return this.toLapisFilterWithoutVariant(route);
+    }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
     }
 }

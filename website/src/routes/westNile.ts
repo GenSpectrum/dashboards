@@ -99,6 +99,10 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
             ...route.variantFilter,
         };
     }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
+    }
 }
 
 export class WestNileSequencingEffortsView extends WestNileConstants implements View<RouteWithBaseline> {
@@ -138,5 +142,9 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
 
     public toLapisFilter(route: RouteWithBaseline): LapisFilter {
         return this.toLapisFilterWithoutVariant(route);
+    }
+
+    public getDefaultRouteUrl() {
+        return this.toUrl(this.defaultRoute);
     }
 }
