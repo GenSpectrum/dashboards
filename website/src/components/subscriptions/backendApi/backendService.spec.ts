@@ -173,7 +173,7 @@ describe('backendService', () => {
         backendRequestMocks.getSubscriptionsBackendError(errorResponse, 400);
 
         await expect(backendService.getSubscriptions({ userId: '123' })).rejects.to.deep.equal(
-            new BackendError('Bad Request', 400, errorResponse, '/subscriptions'),
+            new BackendError('Bad Request', 400, errorResponse, '/subscriptions', undefined),
         );
     });
 

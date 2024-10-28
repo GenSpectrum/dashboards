@@ -3,11 +3,15 @@ import { type JSX } from 'react';
 import { toast } from 'react-toastify';
 
 import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
+import { getClientLogger } from '../../../clientLogger.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
 import { organismConfig } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
+import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
+
+const logger = getClientLogger('SubscriptionEntry');
 
 export function SubscriptionEntry({
     subscription,
@@ -103,10 +107,9 @@ function MoreDropdown({
             });
         },
         onError: (error) => {
-            // eslint-disable-next-line no-console -- TODO #203 properly log this
-            console.error(error);
+            logger.error(`Failed to delete subscription "${subscription.name}": ${getErrorLogMessage(error)}`);
             // TODO: Add tracable error info on 500 error page #201
-            toast.error('Failed to delete subscription', {
+            toast.error(`Failed to delete subscription "${subscription.name}"`, {
                 position: 'bottom-left',
                 autoClose: false,
             });
@@ -121,8 +124,7 @@ function MoreDropdown({
     //         refetchSubscriptions();
     //     },
     //     onError: (error) => {
-    //         // eslint-disable-next-line no-console -- TODO #203 properly log this
-    //         console.error(error);
+    //         logger.error(`Failed to activate subscription "${subscription.name}": ${getErrorLogMessage(error)}`);
     //         // TODO: #205 Show error as banner
     //         window.location.href = '/500';
     //     },

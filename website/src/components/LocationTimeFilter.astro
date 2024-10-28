@@ -56,6 +56,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
 <script>
     import { Routing } from '../routes/routing.ts';
+    import { getClientLogger } from '../clientLogger';
 
     class LocationTimeFilter extends HTMLElement {
         constructor() {
@@ -78,7 +79,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             });
 
             submitButton?.addEventListener('click', () => {
-                const routing = new Routing(config);
+                const routing = new Routing(config, getClientLogger);
 
                 // TODO This component currently assumes that it is used under a route that has a baseline filter.
                 //  We should either make it more flexible or document the behavior

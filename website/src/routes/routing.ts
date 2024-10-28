@@ -7,17 +7,18 @@ import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.
 import type { OrganismsConfig } from '../config.ts';
 import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
 import { Organisms } from '../types/Organism.ts';
+import type { InstanceLogger } from '../types/logMessage.ts';
 
 export class Routing {
     public readonly views;
 
     private readonly allViews;
 
-    constructor(organismsConfig: OrganismsConfig) {
+    constructor(organismsConfig: OrganismsConfig, loggerProvider: (instance: string) => InstanceLogger) {
         this.views = {
             [Organisms.covid]: [
                 new CovidAnalyzeSingleVariantView(organismsConfig),
-                new CovidCompareVariantsView(organismsConfig),
+                new CovidCompareVariantsView(organismsConfig, loggerProvider('CovidCompareVariantsView')),
                 new CovidSequencingEffortsView(organismsConfig),
             ],
             [Organisms.h5n1]: [
@@ -42,6 +43,10 @@ export class Routing {
             ],
         } as const;
         this.allViews = Object.values(this.views).flat();
+    }
+
+    public get covidCompareVariantsView() {
+        return this.views.covid[1];
     }
 
     public getCurrentRouteInBrowser = (): Route | undefined => {

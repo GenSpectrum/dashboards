@@ -9,6 +9,7 @@ import { IntervalInput } from './IntervalInput.tsx';
 import { NameInput } from './NameInput.tsx';
 import { OrganismInput } from './OrganismInput.tsx';
 import { TriggerInput } from './TriggerInput.tsx';
+import { getClientLogger } from '../../../clientLogger.ts';
 import type { DashboardsConfig } from '../../../config.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardContent } from '../../../styles/containers/CardContent.tsx';
@@ -20,11 +21,14 @@ import { type DateWindow, DateWindows } from '../../../types/DateWindow.ts';
 import { type EvaluationInterval, EvaluationIntervals } from '../../../types/EvaluationInterval.ts';
 import { type Organism, Organisms } from '../../../types/Organism.ts';
 import type { SubscriptionRequest, Trigger } from '../../../types/Subscription.ts';
+import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { GsApp } from '../../genspectrum/GsApp.tsx';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
 
 export const SubscriptionsCreate = withQueryProvider(SubscriptionsCreateInner);
+
+const logger = getClientLogger('SubscriptionsCreate');
 
 export function SubscriptionsCreateInner({
     config,
@@ -44,8 +48,7 @@ export function SubscriptionsCreateInner({
                 userId,
             }),
         onError: (error) => {
-            // eslint-disable-next-line no-console -- TODO #203 properly log this
-            console.error(error);
+            logger.error(`Failed to create a new subscription: ${getErrorLogMessage(error)}`);
             // TODO: Add tracable error info on 500 error page #201
             toast.error('Failed to create subscription', {
                 position: 'bottom-left',

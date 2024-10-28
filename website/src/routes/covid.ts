@@ -16,6 +16,7 @@ import {
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
+import type { InstanceLogger } from '../types/logMessage.ts';
 
 const pathFragment = organismConfig[Organisms.covid].pathFragment;
 
@@ -144,29 +145,6 @@ type CovidCompareVariantsFilter = BaselineFilter & VariantFilter;
 
 type Id = number;
 
-function decodeMultipleFiltersFromSearch(search: URLSearchParams) {
-    const filterMap = new Map<Id, Map<string, string>>();
-
-    for (const [key, value] of search) {
-        const keySplit = key.split('$');
-        if (keySplit.length !== 2) {
-            // eslint-disable-next-line no-console -- TODO #203 properly log this
-            console.error(`Invalid key in URLSearchParam: ${key}`);
-            return undefined;
-        }
-        const id = Number.parseInt(keySplit[1], 10);
-        if (Number.isNaN(id)) {
-            continue;
-        }
-        if (!filterMap.has(id)) {
-            filterMap.set(id, new Map<string, string>());
-        }
-        const filter = filterMap.get(id)!;
-        filter.set(keySplit[0], value);
-    }
-    return filterMap;
-}
-
 function encodeMultipleFiltersToUrlSearchParam(filters: Map<Id, Map<string, string>>) {
     const search = new URLSearchParams();
     for (const [id, filter] of filters) {
@@ -216,8 +194,15 @@ export class CovidCompareVariantsView
         ]),
     };
 
+    constructor(
+        organismsConfig: OrganismsConfig,
+        private readonly logger: InstanceLogger,
+    ) {
+        super(organismsConfig);
+    }
+
     public parseUrl(url: URL): CovidCompareVariantsRoute | undefined {
-        const filterPerColumn = decodeMultipleFiltersFromSearch(url.searchParams);
+        const filterPerColumn = this.decodeMultipleFiltersFromSearch(url.searchParams);
         if (filterPerColumn === undefined) {
             return undefined;
         }
@@ -304,6 +289,28 @@ export class CovidCompareVariantsView
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
         };
+    }
+
+    private decodeMultipleFiltersFromSearch(search: URLSearchParams) {
+        const filterMap = new Map<Id, Map<string, string>>();
+
+        for (const [key, value] of search) {
+            const keySplit = key.split('$');
+            if (keySplit.length !== 2) {
+                this.logger.error(`Invalid key in URLSearchParam: ${key}`);
+                return undefined;
+            }
+            const id = Number.parseInt(keySplit[1], 10);
+            if (Number.isNaN(id)) {
+                continue;
+            }
+            if (!filterMap.has(id)) {
+                filterMap.set(id, new Map<string, string>());
+            }
+            const filter = filterMap.get(id)!;
+            filter.set(keySplit[0], value);
+        }
+        return filterMap;
     }
 
     private getFilter(filterParams: Map<string, string>) {

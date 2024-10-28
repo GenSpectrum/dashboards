@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
+import { getClientLogger } from '../../clientLogger.ts';
 import type { OrganismsConfig } from '../../config.ts';
 import { type CovidAnalyzeSingleVariantRoute } from '../../routes/covid.ts';
 import { Routing } from '../../routes/routing.ts';
@@ -87,7 +88,7 @@ type CollectionVariantListProps = {
 function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
     const variants = collection.variants;
 
-    const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
+    const routing = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]);
 
     const selectVariant = (variant: CollectionVariant) => {
         const currentRoute = routing.getCurrentRouteInBrowser() as CovidAnalyzeSingleVariantRoute;
