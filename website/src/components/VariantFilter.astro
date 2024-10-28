@@ -79,13 +79,13 @@ const { fields, initialMutations } = Astro.props;
 
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
-                const currentRoute = routing.getCurrentRouteInBrowser()!;
+                const { route: currentRoute, view: currentView } = routing.getCurrentRouteInBrowser()!;
                 const newRoute = {
                     ...currentRoute,
                     variantFilter: values,
                 };
 
-                routing.navigateTo(newRoute);
+                window.location.href = currentView.toUrl(newRoute);
             });
         }
     }

@@ -1,4 +1,4 @@
-import { type Route } from './View.ts';
+import { type Route, type View } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
@@ -45,34 +45,25 @@ export class Routing {
         this.allViews = Object.values(this.views).flat();
     }
 
+    public get covidAnalyzeSingleVariantView() {
+        return this.views.covid[0];
+    }
+
     public get covidCompareVariantsView() {
         return this.views.covid[1];
     }
 
-    public getCurrentRouteInBrowser = (): Route | undefined => {
+    public getCurrentRouteInBrowser = () => {
         return this.parseUrl(new URL(window.location.href));
     };
 
-    public navigateTo = (route: Route) => {
-        window.location.href = this.toUrl(route);
-    };
-
-    public parseUrl = (url: URL): Route | undefined => {
+    public parseUrl = (url: URL) => {
         for (const view of this.allViews) {
             if (view.pathname === url.pathname) {
-                return view.parseUrl(url);
+                const route = view.parseUrl(url)! as Route;
+                return { view: view as unknown as View<Route>, route };
             }
         }
         return undefined;
-    };
-
-    public toUrl = (route: Route): string => {
-        for (const view of this.allViews) {
-            if (route.pathname === view.pathname) {
-                // @ts-expect-error -- TODO #209 properly type this
-                return view.toUrl(route);
-            }
-        }
-        throw new Error('Unexpected route: ' + route.pathname);
     };
 }
