@@ -1,5 +1,5 @@
 ---
 import { ServerSide } from '../../routes/serverSideRouting';
 
-return Astro.redirect(ServerSide.westNileAnalyzeSingleVariantView.getDefaultRouteUrl());
+return Astro.redirect(ServerSide.routing.getOrganismView('westNile.singleVariantView').getDefaultRouteUrl());
 ---

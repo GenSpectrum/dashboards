@@ -1,5 +1,5 @@
 ---
 import { ServerSide } from '../../../routes/serverSideRouting';
 
-return Astro.redirect(ServerSide.h5n1AnalyzeSingleVariantView.getDefaultRouteUrl());
+return Astro.redirect(ServerSide.routing.getOrganismView('h5n1.singleVariantView').getDefaultRouteUrl());
 ---

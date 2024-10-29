@@ -1,4 +1,4 @@
 ---
 import { ServerSide } from '../../routes/serverSideRouting';
-return Astro.redirect(ServerSide.rsvBAnalyzeSingleVariantView.getDefaultRouteUrl());
+return Astro.redirect(ServerSide.routing.getOrganismView('rsvB.singleVariantView').getDefaultRouteUrl());
 ---
