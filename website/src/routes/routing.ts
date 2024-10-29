@@ -62,10 +62,6 @@ export class Routing {
         } as const;
     }
 
-    public get covidCompareVariantsView() {
-        return this.views.covid[compareVariantsViewKey];
-    }
-
     public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
         key: `${Organism}${KeySeparator}${Key}`,
     ): ViewsMap[Organism][Key];

@@ -11,17 +11,4 @@ const routing = new Routing(organismsConfig, getInstanceLogger);
  */
 export const ServerSide = {
     routing,
-    covidAnalyzeSingleVariantView: routing.getOrganismView("covid.singleVariantView"),
-    covidCompareVariantsView: routing.getOrganismView("covid.compareVariantsView"),
-    covidSequencingEffortsView: routing.getOrganismView("covid.sequencingEffortsView"),
-    h5n1AnalyzeSingleVariantView: routing.getOrganismView("h5n1.singleVariantView"),
-    h5n1SequencingEffortsView: routing.getOrganismView("h5n1.sequencingEffortsView"),
-    mpoxAnalyzeSingleVariantView: routing.getOrganismView("mpox.singleVariantView"),
-    mpoxSequencingEffortsView: routing.getOrganismView("mpox.sequencingEffortsView"),
-    rsvAAnalyzeSingleVariantView: routing.getOrganismView("rsvA.singleVariantView"),
-    rsvASequencingEffortsView: routing.getOrganismView("rsvA.sequencingEffortsView"),
-    rsvBAnalyzeSingleVariantView: routing.getOrganismView("rsvB.singleVariantView"),
-    rsvBSequencingEffortsView: routing.getOrganismView("rsvB.sequencingEffortsView"),
-    westNileAnalyzeSingleVariantView: routing.getOrganismView("westNile.singleVariantView"),
-    westNileSequencingEffortsView: routing.getOrganismView("westNile.sequencingEffortsView"),
 };

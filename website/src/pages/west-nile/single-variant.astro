@@ -17,17 +17,18 @@ import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'westNile.singleVariantView';
-const routeData = ServerSide.westNileAnalyzeSingleVariantView.parseUrl(Astro.url);
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+const routeData = view.parseUrl(Astro.url);
 
-const variantFilter = ServerSide.westNileAnalyzeSingleVariantView.toLapisFilter(routeData);
-const baselineFilter = ServerSide.westNileAnalyzeSingleVariantView.toLapisFilterWithoutVariant(routeData);
+const variantFilter = view.toLapisFilter(routeData);
+const baselineFilter = view.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.westNileAnalyzeSingleVariantView.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.westNileAnalyzeSingleVariantView.mainDateField}To`] as string,
+    from: baselineFilter[`${view.mainDateField}From`] as string,
+    to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    ServerSide.westNileAnalyzeSingleVariantView.locationFields,
+    view.locationFields,
     routeData.baselineFilter.location,
 );
 
@@ -41,11 +42,11 @@ const initialMutations = getLapisMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={ServerSide.westNileAnalyzeSingleVariantView.locationFields}
+                        fields={view.locationFields}
                         initialLocation={routeData.baselineFilter.location}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={ServerSide.westNileAnalyzeSingleVariantView.earliestDate}
-                        customDateRangeOptions={ServerSide.westNileAnalyzeSingleVariantView.customDateRangeOptions}
+                        earliestDate={view.earliestDate}
+                        customDateRangeOptions={view.customDateRangeOptions}
                         organismViewKey={organismViewKey}
                     />
                 </div>
@@ -54,7 +55,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     <VariantFilter
                         fields={[
                             {
-                                name: ServerSide.westNileAnalyzeSingleVariantView.lineageField,
+                                name: view.lineageField,
                                 label: 'Lineage',
                                 initialValue: variantFilter.lineage,
                                 type: 'text',
@@ -75,7 +76,7 @@ const initialMutations = getLapisMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField={ServerSide.westNileAnalyzeSingleVariantView.mainDateField}
+                            lapisDateField={view.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -115,7 +116,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     }
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
-                            fields={JSON.stringify([ServerSide.westNileAnalyzeSingleVariantView.lineageField])}
+                            fields={JSON.stringify([view.lineageField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -123,7 +124,7 @@ const initialMutations = getLapisMutations(variantFilter);
                     </ComponentWrapper>
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields={JSON.stringify([ServerSide.westNileAnalyzeSingleVariantView.hostField])}
+                            fields={JSON.stringify([view.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -139,8 +140,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.westNileAnalyzeSingleVariantView.mainDateField}
-                    ></gs-mutations-over-time>
+                        lapisDateField={view.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -151,8 +151,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.westNileAnalyzeSingleVariantView.mainDateField}
-                    ></gs-mutations-over-time>
+                        lapisDateField={view.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

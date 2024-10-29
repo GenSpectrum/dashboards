@@ -12,17 +12,18 @@ import { ServerSide } from '../../../routes/serverSideRouting';
 import { Organisms } from '../../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'h5n1.singleVariantView';
-const routeData = ServerSide.h5n1AnalyzeSingleVariantView.parseUrl(Astro.url);
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+const routeData = view.parseUrl(Astro.url);
 
-const variantFilter = ServerSide.h5n1AnalyzeSingleVariantView.toLapisFilter(routeData);
-const baselineFilter = ServerSide.h5n1AnalyzeSingleVariantView.toLapisFilterWithoutVariant(routeData);
+const variantFilter = view.toLapisFilter(routeData);
+const baselineFilter = view.toLapisFilterWithoutVariant(routeData);
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}To`] as string,
+    from: baselineFilter[`${view.mainDateField}From`] as string,
+    to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    ServerSide.h5n1AnalyzeSingleVariantView.locationFields,
+    view.locationFields,
     routeData.baselineFilter.location,
 );
 
@@ -36,11 +37,11 @@ const initialMutations = getLapisMutations(variantFilter);
                 <div class='bg-blue-50 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
-                        fields={ServerSide.h5n1AnalyzeSingleVariantView.locationFields}
+                        fields={view.locationFields}
                         initialLocation={routeData.baselineFilter.location}
                         initialDateRange={routeData.baselineFilter.dateRange}
-                        earliestDate={ServerSide.h5n1AnalyzeSingleVariantView.earliestDate}
-                        customDateRangeOptions={ServerSide.h5n1AnalyzeSingleVariantView.customDateRangeOptions}
+                        earliestDate={view.earliestDate}
+                        customDateRangeOptions={view.customDateRangeOptions}
                         organismViewKey={organismViewKey}
                     />
                 </div>
@@ -58,7 +59,7 @@ const initialMutations = getLapisMutations(variantFilter);
                                 lapisFilter: variantFilter,
                             })}
                             denominatorFilter={JSON.stringify(baselineFilter)}
-                            lapisDateField={ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}
+                            lapisDateField={view.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
                             pageSize={defaultTablePageSize}
@@ -99,7 +100,7 @@ const initialMutations = getLapisMutations(variantFilter);
 
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
-                            fields={JSON.stringify([ServerSide.h5n1AnalyzeSingleVariantView.hostField])}
+                            fields={JSON.stringify([view.hostField])}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
@@ -114,7 +115,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={view.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
 
                 <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -125,7 +126,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}
-                        lapisDateField={ServerSide.h5n1AnalyzeSingleVariantView.mainDateField}></gs-mutations-over-time>
+                        lapisDateField={view.mainDateField}></gs-mutations-over-time>
                 </ComponentWrapper>
             </div>
         </div>

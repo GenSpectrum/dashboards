@@ -11,17 +11,18 @@ import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'mpox.sequencingEffortsView';
-const routeData = ServerSide.mpoxSequencingEffortsView.parseUrl(Astro.url);
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+const routeData = view.parseUrl(Astro.url);
 
-const baselineFilter = ServerSide.mpoxSequencingEffortsView.toLapisFilter(routeData);
+const baselineFilter = view.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.mpoxSequencingEffortsView.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.mpoxSequencingEffortsView.mainDateField}To`] as string,
+    from: baselineFilter[`${view.mainDateField}From`] as string,
+    to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    ServerSide.mpoxAnalyzeSingleVariantView.locationFields,
+    view.locationFields,
     routeData.baselineFilter.location,
 );
 ---
@@ -32,11 +33,11 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={ServerSide.mpoxSequencingEffortsView.locationFields}
+                    fields={view.locationFields}
                     initialLocation={routeData.baselineFilter.location}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={ServerSide.mpoxSequencingEffortsView.earliestDate}
-                    customDateRangeOptions={ServerSide.mpoxSequencingEffortsView.customDateRangeOptions}
+                    earliestDate={view.earliestDate}
+                    customDateRangeOptions={view.customDateRangeOptions}
                     organismViewKey={organismViewKey}
                 />
             </div>
@@ -49,7 +50,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField={ServerSide.mpoxSequencingEffortsView.mainDateField}
+                    lapisDateField={view.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -71,7 +72,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             }
             <ComponentWrapper title='Hosts' height='600px'>
                 <gs-aggregate
-                    fields={JSON.stringify([ServerSide.mpoxAnalyzeSingleVariantView.hostField])}
+                    fields={JSON.stringify([view.hostField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -79,7 +80,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Author affiliations' height='600px'>
                 <gs-aggregate
-                    fields={JSON.stringify([ServerSide.mpoxAnalyzeSingleVariantView.authorAffiliationsField])}
+                    fields={JSON.stringify([view.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -87,10 +88,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Authors' height='600px'>
                 <gs-aggregate
-                    fields={JSON.stringify([
-                        ServerSide.mpoxAnalyzeSingleVariantView.authorsField,
-                        ServerSide.mpoxAnalyzeSingleVariantView.authorAffiliationsField,
-                    ])}
+                    fields={JSON.stringify([view.authorsField, view.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'

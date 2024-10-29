@@ -11,16 +11,17 @@ import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'westNile.sequencingEffortsView';
-const routeData = ServerSide.westNileSequencingEffortsView.parseUrl(Astro.url);
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+const routeData = view.parseUrl(Astro.url);
 
-const baselineFilter = ServerSide.westNileSequencingEffortsView.toLapisFilter(routeData);
+const baselineFilter = view.toLapisFilter(routeData);
 
 const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${ServerSide.westNileSequencingEffortsView.mainDateField}From`] as string,
-    to: baselineFilter[`${ServerSide.westNileSequencingEffortsView.mainDateField}To`] as string,
+    from: baselineFilter[`${view.mainDateField}From`] as string,
+    to: baselineFilter[`${view.mainDateField}To`] as string,
 });
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    ServerSide.westNileAnalyzeSingleVariantView.locationFields,
+    view.locationFields,
     routeData.baselineFilter.location,
 );
 ---
@@ -31,11 +32,11 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='mr-2 font-semibold'>Filter dataset:</div>
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
-                    fields={ServerSide.westNileSequencingEffortsView.locationFields}
+                    fields={view.locationFields}
                     initialLocation={routeData.baselineFilter.location}
                     initialDateRange={routeData.baselineFilter.dateRange}
-                    earliestDate={ServerSide.westNileSequencingEffortsView.earliestDate}
-                    customDateRangeOptions={ServerSide.westNileSequencingEffortsView.customDateRangeOptions}
+                    earliestDate={view.earliestDate}
+                    customDateRangeOptions={view.customDateRangeOptions}
                     organismViewKey={organismViewKey}
                 />
             </div>
@@ -48,7 +49,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                         displayName: '',
                         lapisFilter: baselineFilter,
                     })}
-                    lapisDateField={ServerSide.westNileSequencingEffortsView.mainDateField}
+                    lapisDateField={view.mainDateField}
                     views='["bar", "line", "table"]'
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -70,7 +71,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             }
             <ComponentWrapper title='Hosts' height='600px'>
                 <gs-aggregate
-                    fields={JSON.stringify([ServerSide.westNileAnalyzeSingleVariantView.lineageField])}
+                    fields={JSON.stringify([view.lineageField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -78,7 +79,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Author affiliations' height='600px'>
                 <gs-aggregate
-                    fields={JSON.stringify([ServerSide.westNileAnalyzeSingleVariantView.authorAffiliationsField])}
+                    fields={JSON.stringify([view.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -86,10 +87,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
             <ComponentWrapper title='Authors' height='600px'>
                 <gs-aggregate
-                    fields={JSON.stringify([
-                        ServerSide.westNileAnalyzeSingleVariantView.authorsField,
-                        ServerSide.westNileAnalyzeSingleVariantView.authorAffiliationsField,
-                    ])}
+                    fields={JSON.stringify([view.authorsField, view.authorAffiliationsField])}
                     filter={JSON.stringify(baselineFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'

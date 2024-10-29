@@ -5,10 +5,14 @@ import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { defaultTablePageSize } from '../../routes/View';
 import { chooseGranularityBasedOnDateRange, getLapisMutations } from '../../routes/helpers';
+import type { OrganismViewKey } from '../../routes/routing';
 import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
-const routeData = ServerSide.covidCompareVariantsView.parseUrl(Astro.url);
+const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+
+const routeData = view.parseUrl(Astro.url);
 if (routeData === undefined) {
     throw Error('Failed to parse URL for side-by-side comparison page');
 }
@@ -19,15 +23,14 @@ if (routeData === undefined) {
         <div class='flex overflow-x-auto'>
             {
                 Array.from(routeData.filters).map(([id, { variantFilter, baselineFilter }]) => {
-                    const baselineLapisFilter =
-                        ServerSide.covidCompareVariantsView.baselineFilterToLapisFilter(baselineFilter);
+                    const baselineLapisFilter = view.baselineFilterToLapisFilter(baselineFilter);
                     const timeGranularity = chooseGranularityBasedOnDateRange({
-                        from: baselineLapisFilter[`${ServerSide.covidCompareVariantsView.mainDateField}From`] as string,
-                        to: baselineLapisFilter[`${ServerSide.covidCompareVariantsView.mainDateField}To`] as string,
+                        from: baselineLapisFilter[`${view.mainDateField}From`] as string,
+                        to: baselineLapisFilter[`${view.mainDateField}To`] as string,
                     });
                     const initialMutations = getLapisMutations(variantFilter);
                     const numeratorFilter = {
-                        ...ServerSide.covidCompareVariantsView.variantFilterToLapisFilter(variantFilter),
+                        ...view.variantFilterToLapisFilter(variantFilter),
                         ...baselineLapisFilter,
                     };
 
@@ -36,9 +39,7 @@ if (routeData === undefined) {
                             {routeData.filters.size > 1 && (
                                 <a
                                     class='block w-full px-2 py-1 hover:bg-neutral-100'
-                                    href={ServerSide.covidCompareVariantsView.toUrl(
-                                        ServerSide.covidCompareVariantsView.removeFilter(routeData, id),
-                                    )}
+                                    href={view.toUrl(view.removeFilter(routeData, id))}
                                 >
                                     Remove column
                                 </a>
@@ -96,7 +97,7 @@ if (routeData === undefined) {
                             </ComponentWrapper>
                             <ComponentWrapper title='Sub-lineages'>
                                 <gs-aggregate
-                                    fields={JSON.stringify([ServerSide.covidCompareVariantsView.lineageField])}
+                                    fields={JSON.stringify([view.lineageField])}
                                     filter={JSON.stringify(numeratorFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -105,7 +106,7 @@ if (routeData === undefined) {
                             </ComponentWrapper>
                             <ComponentWrapper title='Hosts'>
                                 <gs-aggregate
-                                    fields={JSON.stringify([ServerSide.covidSequencingEffortsView.hostField])}
+                                    fields={JSON.stringify([view.hostField])}
                                     filter={JSON.stringify(numeratorFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -118,9 +119,7 @@ if (routeData === undefined) {
             }
             <a
                 class='px-4 pt-8 text-left hover:bg-neutral-100'
-                href={ServerSide.covidCompareVariantsView.toUrl(
-                    ServerSide.covidCompareVariantsView.addEmptyFilter(routeData),
-                )}
+                href={view.toUrl(view.addEmptyFilter(routeData))}
                 style='writing-mode: vertical-rl;'
             >
                 Add column
