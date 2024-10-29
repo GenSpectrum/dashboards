@@ -6,15 +6,19 @@ import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { defaultTablePageSize } from '../../routes/View';
 import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
-import { type RsvASequencingEffortsView } from '../../routes/rsvA';
-import { type RsvBSequencingEffortsView } from '../../routes/rsvB';
-import { organismConfig } from '../../types/Organism';
+import type { OrganismViewKey, sequencingEffortsViewKey } from '../../routes/routing';
+import { ServerSide } from '../../routes/serverSideRouting';
+import { organismConfig, type Organisms } from '../../types/Organism';
 
 interface Props {
-    view: RsvASequencingEffortsView | RsvBSequencingEffortsView;
+    organismViewKey: Extract<
+        OrganismViewKey,
+        `${typeof Organisms.rsvA | typeof Organisms.rsvB}.${typeof sequencingEffortsViewKey}`
+    >;
 }
 
-const { view } = Astro.props;
+const { organismViewKey } = Astro.props;
+const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const routeData = view.parseUrl(Astro.url);
 
@@ -41,6 +45,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={view.earliestDate}
                     customDateRangeOptions={view.customDateRangeOptions}
+                    organismViewKey={organismViewKey}
                 />
             </div>
         </div>

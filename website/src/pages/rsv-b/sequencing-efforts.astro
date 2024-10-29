@@ -1,6 +1,7 @@
 ---
 import RsvSequencingEffortsPage from '../../components/rsv/RsvSequencingEffortsPage.astro';
-import { ServerSide } from '../../routes/serverSideRouting';
+import { sequencingEffortsViewKey } from '../../routes/routing';
+import { Organisms } from '../../types/Organism';
 ---
 
-<RsvSequencingEffortsPage view={ServerSide.rsvBSequencingEffortsView} />
+<RsvSequencingEffortsPage organismViewKey={`${Organisms.rsvB}.${sequencingEffortsViewKey}`} />

@@ -13,9 +13,11 @@ import {
     getLocationSubdivision,
     lineageKey,
 } from '../../routes/helpers';
+import type { OrganismViewKey } from '../../routes/routing';
 import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
+const organismViewKey: OrganismViewKey = 'mpox.singleVariantView';
 const routeData = ServerSide.mpoxAnalyzeSingleVariantView.parseUrl(Astro.url);
 
 const variantFilter = ServerSide.mpoxAnalyzeSingleVariantView.toLapisFilter(routeData);
@@ -45,6 +47,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         initialDateRange={routeData.baselineFilter.dateRange}
                         earliestDate={ServerSide.mpoxAnalyzeSingleVariantView.earliestDate}
                         customDateRangeOptions={ServerSide.mpoxAnalyzeSingleVariantView.customDateRangeOptions}
+                        organismViewKey={organismViewKey}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -67,6 +70,7 @@ const initialMutations = getLapisMutations(variantFilter);
                             },
                         ]}
                         initialMutations={initialMutations}
+                        organismViewKey={organismViewKey}
                     />
                 </div>
             </div>

@@ -13,9 +13,11 @@ import {
     getLocationSubdivision,
     lineageKey,
 } from '../../routes/helpers';
+import { type OrganismViewKey } from '../../routes/routing';
 import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
+const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
 const routeData = ServerSide.covidAnalyzeSingleVariantView.parseUrl(Astro.url);
 
 const variantFilter = ServerSide.covidAnalyzeSingleVariantView.toLapisFilter(routeData);
@@ -45,6 +47,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         initialDateRange={routeData.baselineFilter.dateRange}
                         earliestDate={ServerSide.covidAnalyzeSingleVariantView.earliestDate}
                         customDateRangeOptions={ServerSide.covidAnalyzeSingleVariantView.customDateRangeOptions}
+                        organismViewKey={organismViewKey}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -60,6 +63,7 @@ const initialMutations = getLapisMutations(variantFilter);
                             },
                         ]}
                         initialMutations={initialMutations}
+                        organismViewKey={organismViewKey}
                     />
                     <div class='my-2 font-semibold'>Or select a known variant:</div>
                     <CollectionsList

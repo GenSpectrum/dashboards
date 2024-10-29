@@ -7,16 +7,19 @@ import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { defaultTablePageSize } from '../../routes/View';
 import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../routes/helpers';
-import { type RsvAAnalyzeSingleVariantView } from '../../routes/rsvA';
-import { type RsvBAnalyzeSingleVariantView } from '../../routes/rsvB';
-import { organismConfig } from '../../types/Organism';
+import type { OrganismViewKey, singleVariantViewKey } from '../../routes/routing';
+import { ServerSide } from '../../routes/serverSideRouting';
+import { organismConfig, type Organisms } from '../../types/Organism';
 
 interface Props {
-    view: RsvAAnalyzeSingleVariantView | RsvBAnalyzeSingleVariantView;
+    organismViewKey: Extract<
+        OrganismViewKey,
+        `${typeof Organisms.rsvA | typeof Organisms.rsvB}.${typeof singleVariantViewKey}`
+    >;
 }
 
-const { view } = Astro.props;
-
+const { organismViewKey } = Astro.props;
+const view = ServerSide.routing.getOrganismView(organismViewKey);
 const routeData = view.parseUrl(Astro.url);
 
 const variantFilter = view.toLapisFilter(routeData);
@@ -46,6 +49,7 @@ const initialMutations = getLapisMutations(variantFilter);
                         initialDateRange={routeData.baselineFilter.dateRange}
                         earliestDate={view.earliestDate}
                         customDateRangeOptions={view.customDateRangeOptions}
+                        organismViewKey={organismViewKey}
                     />
                 </div>
                 <div class='border-t-2 bg-green-50 px-2 py-4'>
@@ -61,6 +65,7 @@ const initialMutations = getLapisMutations(variantFilter);
                             },
                         ]}
                         initialMutations={initialMutations}
+                        organismViewKey={organismViewKey}
                     />
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { type Route, type View } from './View.ts';
+import type { Route, View } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
@@ -9,61 +9,73 @@ import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from 
 import { Organisms } from '../types/Organism.ts';
 import type { InstanceLogger } from '../types/logMessage.ts';
 
+export const singleVariantViewKey = 'singleVariantView';
+export const compareVariantsViewKey = 'compareVariantsView';
+export const sequencingEffortsViewKey = 'sequencingEffortsView';
+
+type ViewsMap = typeof Routing.prototype.views;
+
+const keySeparator = '.';
+type KeySeparator = typeof keySeparator;
+
+type ViewKey<Organism extends keyof ViewsMap> = Extract<keyof ViewsMap[Organism], string>;
+
+export type OrganismViewKey = {
+    [Organism in keyof ViewsMap]: {
+        [Key in ViewKey<Organism>]: `${Organism}${KeySeparator}${Key}`;
+    }[ViewKey<Organism>];
+}[keyof ViewsMap];
+
 export class Routing {
     public readonly views;
 
-    private readonly allViews;
-
     constructor(organismsConfig: OrganismsConfig, loggerProvider: (instance: string) => InstanceLogger) {
         this.views = {
-            [Organisms.covid]: [
-                new CovidAnalyzeSingleVariantView(organismsConfig),
-                new CovidCompareVariantsView(organismsConfig, loggerProvider('CovidCompareVariantsView')),
-                new CovidSequencingEffortsView(organismsConfig),
-            ],
-            [Organisms.h5n1]: [
-                new H5n1AnalyzeSingleVariantView(organismsConfig),
-                new H5n1SequencingEffortsView(organismsConfig),
-            ],
-            [Organisms.mpox]: [
-                new MpoxAnalyzeSingleVariantView(organismsConfig),
-                new MpoxSequencingEffortsView(organismsConfig),
-            ],
-            [Organisms.rsvA]: [
-                new RsvAAnalyzeSingleVariantView(organismsConfig),
-                new RsvASequencingEffortsView(organismsConfig),
-            ],
-            [Organisms.rsvB]: [
-                new RsvBAnalyzeSingleVariantView(organismsConfig),
-                new RsvBSequencingEffortsView(organismsConfig),
-            ],
-            [Organisms.westNile]: [
-                new WestNileAnalyzeSingleVariantView(organismsConfig),
-                new WestNileSequencingEffortsView(organismsConfig),
-            ],
+            [Organisms.covid]: {
+                [singleVariantViewKey]: new CovidAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new CovidCompareVariantsView(
+                    organismsConfig,
+                    loggerProvider('CovidCompareVariantsView'),
+                ),
+                [sequencingEffortsViewKey]: new CovidSequencingEffortsView(organismsConfig),
+            },
+            [Organisms.h5n1]: {
+                [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
+                [sequencingEffortsViewKey]: new H5n1SequencingEffortsView(organismsConfig),
+            },
+            [Organisms.mpox]: {
+                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
+                [sequencingEffortsViewKey]: new MpoxSequencingEffortsView(organismsConfig),
+            },
+            [Organisms.rsvA]: {
+                [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
+                [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
+            },
+            [Organisms.rsvB]: {
+                [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
+                [sequencingEffortsViewKey]: new RsvBSequencingEffortsView(organismsConfig),
+            },
+            [Organisms.westNile]: {
+                [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
+                [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
+            },
         } as const;
-        this.allViews = Object.values(this.views).flat();
-    }
-
-    public get covidAnalyzeSingleVariantView() {
-        return this.views.covid[0];
     }
 
     public get covidCompareVariantsView() {
-        return this.views.covid[1];
+        return this.views.covid[compareVariantsViewKey];
     }
 
-    public getCurrentRouteInBrowser = () => {
-        return this.parseUrl(new URL(window.location.href));
-    };
+    public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
+        key: `${Organism}${KeySeparator}${Key}`,
+    ): ViewsMap[Organism][Key];
 
-    public parseUrl = (url: URL) => {
-        for (const view of this.allViews) {
-            if (view.pathname === url.pathname) {
-                const route = view.parseUrl(url)! as Route;
-                return { view: view as unknown as View<Route>, route };
-            }
-        }
-        return undefined;
-    };
+    public getOrganismView(key: OrganismViewKey): View<Route>;
+
+    public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
+        key: `${Organism}${KeySeparator}${Key}`,
+    ): ViewsMap[Organism][Key] {
+        const [organism, viewKey] = key.split(keySeparator) as [Organism, Key];
+        return this.views[organism][viewKey];
+    }
 }
