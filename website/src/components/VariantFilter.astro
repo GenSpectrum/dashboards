@@ -2,18 +2,21 @@
 import { type Field } from './VariantFilterTypes';
 import { getDashboardsConfig } from '../config';
 import type { LapisMutationQuery } from '../routes/helpers';
+import { type OrganismViewKey } from '../routes/routing';
 
 interface Props {
     fields: Field[];
     initialMutations: LapisMutationQuery;
+    organismViewKey: OrganismViewKey;
 }
 
-const { fields, initialMutations } = Astro.props;
+const { fields, initialMutations, organismViewKey } = Astro.props;
 ---
 
 <variant-filter
     data-message={JSON.stringify({ fields })}
     data-organisms-config={JSON.stringify(getDashboardsConfig().dashboards.organisms)}
+    data-organism-view-key={organismViewKey}
 >
     <div class='flex flex-col items-stretch gap-2'>
         {
@@ -48,7 +51,7 @@ const { fields, initialMutations } = Astro.props;
 </variant-filter>
 
 <script>
-    import { Routing } from '../routes/routing.ts';
+    import { Routing, type OrganismViewKey } from '../routes/routing.ts';
     import { type Field } from './VariantFilterTypes';
     import { getClientLogger } from '../clientLogger';
 
@@ -57,6 +60,7 @@ const { fields, initialMutations } = Astro.props;
             super();
             const { fields } = JSON.parse(this.dataset.message!) as { fields: Field[] };
             const config = JSON.parse(this.dataset.organismsConfig!);
+            const organismViewKey = this.dataset.organismViewKey! as OrganismViewKey;
             let values: Record<string, string | undefined> = {};
             for (const field of fields) {
                 values[field.name] = field.initialValue;
@@ -79,7 +83,8 @@ const { fields, initialMutations } = Astro.props;
 
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
-                const { route: currentRoute, view: currentView } = routing.getCurrentRouteInBrowser()!;
+                const currentView = routing.getOrganismView(organismViewKey);
+                const currentRoute = currentView.parseUrl(new URL(window.location.href));
                 const newRoute = {
                     ...currentRoute,
                     variantFilter: values,

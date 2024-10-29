@@ -1,6 +1,7 @@
 ---
 import RsvSingleVariantPage from '../../components/rsv/RsvSingleVariantPage.astro';
-import { ServerSide } from '../../routes/serverSideRouting';
+import { singleVariantViewKey } from '../../routes/routing';
+import { Organisms } from '../../types/Organism';
 ---
 
-<RsvSingleVariantPage view={ServerSide.rsvBAnalyzeSingleVariantView} />
+<RsvSingleVariantPage organismViewKey={`${Organisms.rsvB}.${singleVariantViewKey}`} />

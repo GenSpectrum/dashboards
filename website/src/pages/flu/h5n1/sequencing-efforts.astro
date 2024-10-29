@@ -5,9 +5,11 @@ import { getLapisUrl } from '../../../config';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { defaultTablePageSize } from '../../../routes/View';
 import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../../routes/helpers';
+import type { OrganismViewKey } from '../../../routes/routing';
 import { ServerSide } from '../../../routes/serverSideRouting';
 import { Organisms } from '../../../types/Organism';
 
+const organismViewKey: OrganismViewKey = 'h5n1.sequencingEffortsView';
 const routeData = ServerSide.h5n1SequencingEffortsView.parseUrl(Astro.url);
 
 const baselineFilter = ServerSide.h5n1SequencingEffortsView.toLapisFilter(routeData);
@@ -33,6 +35,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={ServerSide.h5n1SequencingEffortsView.earliestDate}
                     customDateRangeOptions={ServerSide.h5n1SequencingEffortsView.customDateRangeOptions}
+                    organismViewKey={organismViewKey}
                 />
             </div>
         </div>

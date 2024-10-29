@@ -6,9 +6,11 @@ import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { defaultTablePageSize } from '../../routes/View';
 import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
+import { type OrganismViewKey } from '../../routes/routing';
 import { ServerSide } from '../../routes/serverSideRouting';
 import { Organisms } from '../../types/Organism';
 
+const organismViewKey: OrganismViewKey = 'mpox.sequencingEffortsView';
 const routeData = ServerSide.mpoxSequencingEffortsView.parseUrl(Astro.url);
 
 const baselineFilter = ServerSide.mpoxSequencingEffortsView.toLapisFilter(routeData);
@@ -35,6 +37,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                     initialDateRange={routeData.baselineFilter.dateRange}
                     earliestDate={ServerSide.mpoxSequencingEffortsView.earliestDate}
                     customDateRangeOptions={ServerSide.mpoxSequencingEffortsView.customDateRangeOptions}
+                    organismViewKey={organismViewKey}
                 />
             </div>
         </div>

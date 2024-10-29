@@ -1,6 +1,7 @@
 ---
 import { getDashboardsConfig } from '../config';
 import { isCustomDateRange, type DateRange, type LapisLocation } from '../routes/helpers';
+import type { OrganismViewKey } from '../routes/routing';
 
 interface Props {
     fields: string[];
@@ -12,9 +13,11 @@ interface Props {
         dateFrom: string;
         dateTo: string;
     }[];
+    organismViewKey: OrganismViewKey;
 }
 
-const { fields, initialLocation, initialDateRange, earliestDate, customDateRangeOptions } = Astro.props;
+const { fields, initialLocation, initialDateRange, earliestDate, customDateRangeOptions, organismViewKey } =
+    Astro.props;
 
 const initialLocationValue = fields
     .map((field) => initialLocation[field])
@@ -28,6 +31,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 <location-time-filter
     data-message={JSON.stringify({ location: initialLocation, dateRange: initialDateRange })}
     data-organisms-config={JSON.stringify(getDashboardsConfig().dashboards.organisms)}
+    data-organism-view-key={organismViewKey}
 >
     <div class='flex flex-wrap items-stretch gap-2'>
         <gs-location-filter
@@ -55,15 +59,17 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 </location-time-filter>
 
 <script>
-    import { Routing } from '../routes/routing.ts';
     import { getClientLogger } from '../clientLogger';
     import { type BaselineFilter } from '../routes/View';
+    import { Routing, type OrganismViewKey } from '../routes/routing.ts';
 
     class LocationTimeFilter extends HTMLElement {
         constructor() {
             super();
             let { location, dateRange } = JSON.parse(this.dataset.message!);
             const config = JSON.parse(this.dataset.organismsConfig!);
+            const organismViewKey = this.dataset.organismViewKey! as OrganismViewKey;
+
             const locationFilter = document.getElementById('locationFilter');
             const dateRangeSelector = document.getElementById('dateRangeSelector');
             const submitButton = document.getElementById('locationTimeFilterSubmitButton');
@@ -81,10 +87,11 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
+                const currentView = routing.getOrganismView(organismViewKey);
+                const currentRoute = currentView.parseUrl(new URL(window.location.href));
 
                 // TODO This component currently assumes that it is used under a route that has a baseline filter.
                 //  We should either make it more flexible or document the behavior
-                const { route: currentRoute, view: currentView } = routing.getCurrentRouteInBrowser()!;
                 const newRoute = {
                     ...currentRoute,
                     baselineFilter: {
