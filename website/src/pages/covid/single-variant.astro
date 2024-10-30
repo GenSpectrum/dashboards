@@ -19,7 +19,7 @@ import { Organisms } from '../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-const routeData = view.parseUrl(Astro.url);
+const routeData = view.parsePageDataFromUrl(Astro.url);
 
 const variantFilter = view.toLapisFilter(routeData);
 const baselineFilter = view.toLapisFilterWithoutVariant(routeData);

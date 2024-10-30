@@ -11,7 +11,7 @@ import { Organisms } from '../../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'h5n1.sequencingEffortsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-const routeData = view.parseUrl(Astro.url);
+const routeData = view.parsePageDataFromUrl(Astro.url);
 
 const baselineFilter = view.toLapisFilter(routeData);
 

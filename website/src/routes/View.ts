@@ -1,36 +1,36 @@
 import type { DateRange, LapisLocation, LapisVariantQuery } from './helpers.ts';
 import type { Organism } from '../types/Organism.ts';
 
-export type Route = {
-    organism: Organism;
-    pathname: string;
-};
-
-export type BaselineFilter = {
+export type BaselineData = {
     baselineFilter: {
         location: LapisLocation;
         dateRange: DateRange;
     };
 };
 
-export type VariantFilter = {
+export type VariantData = {
     variantFilter: LapisVariantQuery;
 };
 
-export type RouteWithBaseline = Route & BaselineFilter;
+export type BaselineAndVariantData = BaselineData & VariantData;
 
-export type AnalyzeSingleVariantRoute = Route & BaselineFilter & VariantFilter;
-
-export type View<R extends Route, ParseResult extends R | undefined = R> = {
+/**
+ * PageData is the state of the organism pages. It:
+ * - can be set by users via input components
+ * - is used to compute LAPIS filters for the visualization components
+ * - is stored in the URL as query parameters
+ * - must be parsable from the URL query parameters
+ */
+export type View<PageData extends object> = {
     organism: Organism;
     pathname: string;
     label: string;
     labelLong: string;
-    defaultRoute: R;
+    defaultPageData: PageData;
 
-    parseUrl: (url: URL) => ParseResult;
-    toUrl: (route: R) => string;
-    getDefaultRouteUrl: () => string;
+    parsePageDataFromUrl: (url: URL) => PageData;
+    toUrl: (route: PageData) => string;
+    getDefaultPageData: () => string;
 };
 
 export const defaultTablePageSize = 200;

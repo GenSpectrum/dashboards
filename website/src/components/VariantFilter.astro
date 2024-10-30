@@ -84,7 +84,7 @@ const { fields, initialMutations, organismViewKey } = Astro.props;
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
                 const currentView = routing.getOrganismView(organismViewKey);
-                const currentRoute = currentView.parseUrl(new URL(window.location.href));
+                const currentRoute = currentView.parsePageDataFromUrl(new URL(window.location.href));
                 const newRoute = {
                     ...currentRoute,
                     variantFilter: values,

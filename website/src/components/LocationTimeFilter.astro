@@ -60,7 +60,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
 <script>
     import { getClientLogger } from '../clientLogger';
-    import { type BaselineFilter } from '../routes/View';
+    import { type BaselineData } from '../routes/View';
     import { Routing, type OrganismViewKey } from '../routes/routing.ts';
 
     class LocationTimeFilter extends HTMLElement {
@@ -88,14 +88,14 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
                 const currentView = routing.getOrganismView(organismViewKey);
-                const currentRoute = currentView.parseUrl(new URL(window.location.href));
+                const currentRoute = currentView.parsePageDataFromUrl(new URL(window.location.href));
 
                 // TODO This component currently assumes that it is used under a route that has a baseline filter.
                 //  We should either make it more flexible or document the behavior
                 const newRoute = {
                     ...currentRoute,
                     baselineFilter: {
-                        ...(currentRoute as unknown as BaselineFilter).baselineFilter,
+                        ...(currentRoute as unknown as BaselineData).baselineFilter,
                         location,
                         dateRange,
                     },
