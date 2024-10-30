@@ -21,10 +21,10 @@ const routeData = view.parsePageDataFromUrl(Astro.url);
             {
                 Array.from(routeData.filters).map(([id, { variantFilter, baselineFilter }]) => {
                     const baselineLapisFilter = view.baselineFilterToLapisFilter(baselineFilter);
-                    const timeGranularity = chooseGranularityBasedOnDateRange({
-                        from: baselineLapisFilter[`${view.mainDateField}From`] as string,
-                        to: baselineLapisFilter[`${view.mainDateField}To`] as string,
-                    });
+                    const timeGranularity = chooseGranularityBasedOnDateRange(
+                        baselineFilter.dateRange,
+                        new Date(view.earliestDate),
+                    );
                     const initialMutations = getLapisMutations(variantFilter);
                     const numeratorFilter = {
                         ...view.variantFilterToLapisFilter(variantFilter),

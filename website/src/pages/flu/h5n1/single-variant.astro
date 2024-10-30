@@ -17,17 +17,17 @@ const routeData = view.parsePageDataFromUrl(Astro.url);
 
 const variantFilter = view.toLapisFilter(routeData);
 const baselineFilter = view.toLapisFilterWithoutVariant(routeData);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${view.mainDateField}From`] as string,
-    to: baselineFilter[`${view.mainDateField}To`] as string,
-});
+const timeGranularity = chooseGranularityBasedOnDateRange(
+    routeData.baselineFilter.dateRange,
+    new Date(view.earliestDate),
+);
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.locationFields,
     routeData.baselineFilter.location,
 );
 
-const initialMutations = getLapisMutations(variantFilter);
+const initialMutations = getLapisMutations(routeData.variantFilter);
 ---
 
 <BaseLayout title='Single Variant | H5N1 | GenSpectrum'>
