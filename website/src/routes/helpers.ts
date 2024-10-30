@@ -60,7 +60,14 @@ export const dateRangeToCustomDateRange = (dateRange: DateRange, allTimesStartDa
     };
 };
 
-export const chooseGranularityBasedOnDateRange = (dateRange: CustomDateRange): 'day' | 'week' | 'month' | 'year' => {
+export const chooseGranularityBasedOnDateRange = (
+    dateRange: DateRange,
+    allTimesStartDate: Date,
+): 'day' | 'week' | 'month' | 'year' => {
+    if (!isCustomDateRange(dateRange)) {
+        dateRange = dateRangeToCustomDateRange(dateRange, allTimesStartDate);
+    }
+
     const daysBetween = (new Date(dateRange.to).getTime() - new Date(dateRange.from).getTime()) / (1000 * 60 * 60 * 24);
     if (daysBetween > 365 * 5) {
         return 'year';
@@ -186,7 +193,7 @@ export type LapisCovidVariantQuery = LapisVariantQuery & {
     variantQuery?: string;
 };
 
-export const getLapisMutations = (query: LapisMutationQuery | object): LapisMutationQuery => {
+export const getLapisMutations = (query: LapisMutationQuery): LapisMutationQuery => {
     return {
         nucleotideMutations: getArrayPropertyOrEmpty(query, 'nucleotideMutations'),
         aminoAcidMutations: getArrayPropertyOrEmpty(query, 'aminoAcidMutations'),
@@ -195,7 +202,7 @@ export const getLapisMutations = (query: LapisMutationQuery | object): LapisMuta
     };
 };
 
-const getArrayPropertyOrEmpty = (query: Record<string, any>, name: string): string[] => {
+const getArrayPropertyOrEmpty = (query: LapisMutationQuery, name: keyof LapisMutationQuery): string[] => {
     return Array.isArray(query[name]) ? query[name] : [];
 };
 

@@ -16,10 +16,10 @@ const routeData = view.parsePageDataFromUrl(Astro.url);
 
 const baselineFilter = view.toLapisFilter(routeData);
 
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    from: baselineFilter[`${view.mainDateField}From`] as string,
-    to: baselineFilter[`${view.mainDateField}To`] as string,
-});
+const timeGranularity = chooseGranularityBasedOnDateRange(
+    routeData.baselineFilter.dateRange,
+    new Date(view.earliestDate),
+);
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.locationFields,
     routeData.baselineFilter.location,
