@@ -1,4 +1,4 @@
-import type { Route, View } from './View.ts';
+import type { View } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
 import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
@@ -66,7 +66,7 @@ export class Routing {
         key: `${Organism}${KeySeparator}${Key}`,
     ): ViewsMap[Organism][Key];
 
-    public getOrganismView(key: OrganismViewKey): View<Route>;
+    public getOrganismView(key: OrganismViewKey): View<object>;
 
     public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
         key: `${Organism}${KeySeparator}${Key}`,

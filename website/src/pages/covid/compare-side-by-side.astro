@@ -12,10 +12,7 @@ import { Organisms } from '../../types/Organism';
 const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const routeData = view.parseUrl(Astro.url);
-if (routeData === undefined) {
-    throw Error('Failed to parse URL for side-by-side comparison page');
-}
+const routeData = view.parsePageDataFromUrl(Astro.url);
 ---
 
 <BaseLayout title='Compare side-by-side | SARS-CoV-2 | GenSpectrum'>

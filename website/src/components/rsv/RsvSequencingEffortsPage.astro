@@ -20,7 +20,7 @@ interface Props {
 const { organismViewKey } = Astro.props;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const routeData = view.parseUrl(Astro.url);
+const routeData = view.parsePageDataFromUrl(Astro.url);
 
 const baselineFilter = view.toLapisFilter(routeData);
 

@@ -116,7 +116,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
                 const compareVariantsView = routing.getOrganismView('covid.compareVariantsView');
-                const currentRoute = compareVariantsView.parseUrl(new URL(window.location.href));
+                const currentRoute = compareVariantsView.parsePageDataFromUrl(new URL(window.location.href));
                 if (currentRoute === undefined) {
                     getClientLogger('JointFilter').error(`Failed to parse URL for joint filter, got ${currentRoute}`);
                     return;

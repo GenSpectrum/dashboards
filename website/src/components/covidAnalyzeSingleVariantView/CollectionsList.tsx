@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { getClientLogger } from '../../clientLogger.ts';
 import type { OrganismsConfig } from '../../config.ts';
-import { type CovidAnalyzeSingleVariantRoute } from '../../routes/covid.ts';
+import { type CovidAnalyzeSingleVariantData } from '../../routes/covid.ts';
 import { Routing } from '../../routes/routing.ts';
 import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
 
@@ -91,8 +91,10 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
     const routing = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]);
 
     const selectVariant = (variant: CollectionVariant) => {
-        const currentRoute = routing.getOrganismView('covid.singleVariantView').parseUrl(new URL(window.location.href));
-        let newRoute: CovidAnalyzeSingleVariantRoute;
+        const currentRoute = routing
+            .getOrganismView('covid.singleVariantView')
+            .parsePageDataFromUrl(new URL(window.location.href));
+        let newRoute: CovidAnalyzeSingleVariantData;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
             newRoute = {

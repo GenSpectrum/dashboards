@@ -1,4 +1,4 @@
-import { type BaselineFilter, type Route, type VariantFilter, type View } from './View.ts';
+import { type BaselineData, type VariantData, type View } from './View.ts';
 import {
     type DateRange,
     type DateRangeOption,
@@ -15,6 +15,7 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
+import { compareVariantsViewKey } from './routing.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { InstanceLogger } from '../types/logMessage.ts';
 
@@ -65,19 +66,16 @@ class CovidConstants {
     }
 }
 
-export type CovidAnalyzeSingleVariantRoute = Route &
-    BaselineFilter & {
-        variantFilter: LapisCovidVariantQuery;
-        collectionId?: number;
-    };
+export type CovidAnalyzeSingleVariantData = BaselineData & {
+    variantFilter: LapisCovidVariantQuery;
+    collectionId?: number;
+};
 
-export class CovidAnalyzeSingleVariantView extends CovidConstants implements View<CovidAnalyzeSingleVariantRoute> {
+export class CovidAnalyzeSingleVariantView extends CovidConstants implements View<CovidAnalyzeSingleVariantData> {
     public readonly pathname = `/${pathFragment}/single-variant` as const;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultRoute: CovidAnalyzeSingleVariantRoute = {
-        organism: this.organism,
-        pathname: this.pathname,
+    public readonly defaultPageData: CovidAnalyzeSingleVariantData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
@@ -87,11 +85,9 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         },
     };
 
-    public parseUrl(url: URL): CovidAnalyzeSingleVariantRoute {
+    public parsePageDataFromUrl(url: URL): CovidAnalyzeSingleVariantData {
         const search = url.searchParams;
         return {
-            organism: this.organism,
-            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
@@ -101,7 +97,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         };
     }
 
-    public toUrl(route: CovidAnalyzeSingleVariantRoute): string {
+    public toUrl(route: CovidAnalyzeSingleVariantData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
 
@@ -117,14 +113,14 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: CovidAnalyzeSingleVariantRoute) {
+    public toLapisFilter(route: CovidAnalyzeSingleVariantData) {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...this.variantFilterToLapisFilter(route.variantFilter),
         };
     }
 
-    public toLapisFilterWithoutVariant(route: CovidAnalyzeSingleVariantRoute): LapisFilter {
+    public toLapisFilterWithoutVariant(route: CovidAnalyzeSingleVariantData): LapisFilter {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(earliestDate));
         return {
             ...route.baselineFilter.location,
@@ -134,40 +130,25 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         };
     }
 
-    public getDefaultRouteUrl() {
-        return this.toUrl(this.defaultRoute);
+    public getDefaultPageData() {
+        return this.toUrl(this.defaultPageData);
     }
 }
 
-export type CovidCompareVariantsRoute = {
-    organism: typeof Organisms.covid;
-    pathname: string;
+export type CovidCompareVariantsData = {
     filters: Map<Id, CovidCompareVariantsFilter>;
 };
 
-type CovidCompareVariantsFilter = BaselineFilter & VariantFilter;
+type CovidCompareVariantsFilter = BaselineData & VariantData;
 
 type Id = number;
 
-function encodeMultipleFiltersToUrlSearchParam(filters: Map<Id, Map<string, string>>) {
-    const search = new URLSearchParams();
-    for (const [id, filter] of filters) {
-        for (const [key, value] of filter) {
-            search.append(`${key}$${id}`, value);
-        }
-    }
-    return search;
-}
-
-export class CovidCompareVariantsView
-    extends CovidConstants
-    implements View<CovidCompareVariantsRoute, CovidCompareVariantsRoute | undefined>
-{
+export class CovidCompareVariantsView extends CovidConstants implements View<CovidCompareVariantsData> {
     public readonly pathname = `/${pathFragment}/compare-side-by-side` as const;
     public readonly label = 'Compare side-by-side';
     public readonly labelLong = 'Compare variants side-by-side';
 
-    public readonly defaultRoute = {
+    public readonly defaultPageData = {
         organism: this.organism,
         pathname: this.pathname,
         filters: new Map<Id, CovidCompareVariantsFilter>([
@@ -205,15 +186,12 @@ export class CovidCompareVariantsView
         super(organismsConfig);
     }
 
-    public getDefaultRouteUrl() {
-        return this.toUrl(this.defaultRoute);
+    public getDefaultPageData() {
+        return this.toUrl(this.defaultPageData);
     }
 
-    public parseUrl(url: URL): CovidCompareVariantsRoute | undefined {
+    public parsePageDataFromUrl(url: URL): CovidCompareVariantsData {
         const filterPerColumn = this.decodeMultipleFiltersFromSearch(url.searchParams);
-        if (filterPerColumn === undefined) {
-            return undefined;
-        }
 
         const filters = new Map<number, CovidCompareVariantsFilter>();
         for (const [columnId, filterParams] of filterPerColumn) {
@@ -221,13 +199,11 @@ export class CovidCompareVariantsView
         }
 
         return {
-            organism: this.organism,
-            pathname: this.pathname,
             filters,
         };
     }
 
-    public toUrl(route: CovidCompareVariantsRoute): string {
+    public toUrl(route: CovidCompareVariantsData): string {
         const searchParameterMap = new Map<Id, Map<string, string>>();
 
         for (const [columnId, filter] of route.filters) {
@@ -243,16 +219,16 @@ export class CovidCompareVariantsView
             });
         }
 
-        const search = encodeMultipleFiltersToUrlSearchParam(searchParameterMap);
+        const search = this.encodeMultipleFiltersToUrlSearchParam(searchParameterMap);
 
         return `${this.pathname}?${search}`;
     }
 
     public setFilter(
-        route: CovidCompareVariantsRoute,
+        route: CovidCompareVariantsData,
         newFilter: CovidCompareVariantsFilter,
         columnId: Id,
-    ): CovidCompareVariantsRoute {
+    ): CovidCompareVariantsData {
         const filtersPerColumn = new Map(route.filters);
 
         filtersPerColumn.set(columnId, newFilter);
@@ -262,7 +238,7 @@ export class CovidCompareVariantsView
         };
     }
 
-    public addEmptyFilter(route: CovidCompareVariantsRoute): CovidCompareVariantsRoute {
+    public addEmptyFilter(route: CovidCompareVariantsData): CovidCompareVariantsData {
         const lastId = Math.max(...Array.from(route.filters.keys()));
 
         return this.setFilter(
@@ -280,7 +256,7 @@ export class CovidCompareVariantsView
         );
     }
 
-    public removeFilter(route: CovidCompareVariantsRoute, columnId: number): CovidCompareVariantsRoute {
+    public removeFilter(route: CovidCompareVariantsData, columnId: number): CovidCompareVariantsData {
         const filters = new Map(route.filters);
         filters.delete(columnId);
         return {
@@ -305,8 +281,9 @@ export class CovidCompareVariantsView
         for (const [key, value] of search) {
             const keySplit = key.split('$');
             if (keySplit.length !== 2) {
-                this.logger.error(`Invalid key in URLSearchParam: ${key}`);
-                return undefined;
+                throw Error(
+                    `Failed parsing query parameters on ${Organisms.covid} ${compareVariantsViewKey}: Invalid key in URLSearchParam: ${key}`,
+                );
             }
             const id = Number.parseInt(keySplit[1], 10);
             if (Number.isNaN(id)) {
@@ -321,8 +298,18 @@ export class CovidCompareVariantsView
         return filterMap;
     }
 
+    private encodeMultipleFiltersToUrlSearchParam(filters: Map<Id, Map<string, string>>) {
+        const search = new URLSearchParams();
+        for (const [id, filter] of filters) {
+            for (const [key, value] of filter) {
+                search.append(`${key}$${id}`, value);
+            }
+        }
+        return search;
+    }
+
     private getFilter(filterParams: Map<string, string>) {
-        const filter: BaselineFilter & VariantFilter = {
+        const filter: BaselineData & VariantData = {
             baselineFilter: {
                 location: getLapisLocationFromSearch(filterParams, this.locationFields),
                 dateRange: getDateRangeFromSearch(filterParams, this.mainDateField) ?? this.defaultDateRange,
@@ -334,29 +321,24 @@ export class CovidCompareVariantsView
     }
 }
 
-export type CovidSequencingEffortsRoute = Route &
-    BaselineFilter & {
-        collectionId?: number;
-    };
+export type CovidSequencingEffortsRoute = BaselineData & {
+    collectionId?: number;
+};
 
 export class CovidSequencingEffortsView extends CovidConstants implements View<CovidSequencingEffortsRoute> {
     public readonly pathname = `/${pathFragment}/sequencing-efforts` as const;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute: CovidSequencingEffortsRoute = {
-        organism: this.organism,
-        pathname: this.pathname,
+    public readonly defaultPageData: CovidSequencingEffortsRoute = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
         },
     };
 
-    public parseUrl(url: URL): CovidSequencingEffortsRoute {
+    public parsePageDataFromUrl(url: URL): CovidSequencingEffortsRoute {
         const search = url.searchParams;
         return {
-            organism: this.organism,
-            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
@@ -388,7 +370,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
         };
     }
 
-    public getDefaultRouteUrl() {
-        return this.toUrl(this.defaultRoute);
+    public getDefaultPageData() {
+        return this.toUrl(this.defaultPageData);
     }
 }

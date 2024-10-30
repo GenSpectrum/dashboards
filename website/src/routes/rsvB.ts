@@ -1,4 +1,4 @@
-import { type AnalyzeSingleVariantRoute, type RouteWithBaseline, type View } from './View.ts';
+import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
 import {
     type DateRange,
     dateRangeToCustomDateRange,
@@ -48,7 +48,7 @@ class RsvBConstants {
         this.additionalFilters = organismsConfig.rsvB.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant(route: RouteWithBaseline): LapisFilter & LapisLocation {
+    public toLapisFilterWithoutVariant(route: BaselineData): LapisFilter & LapisLocation {
         const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
             ...route.baselineFilter.location,
@@ -59,13 +59,11 @@ class RsvBConstants {
     }
 }
 
-export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<AnalyzeSingleVariantRoute> {
+export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<BaselineAndVariantData> {
     public pathname = `/${pathFragment}/single-variant`;
     public label = 'Single variant';
     public labelLong = 'Analyze a single variant';
-    public defaultRoute: AnalyzeSingleVariantRoute = {
-        organism: this.organism,
-        pathname: this.pathname,
+    public defaultPageData: BaselineAndVariantData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
@@ -73,11 +71,9 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         variantFilter: {},
     };
 
-    public parseUrl(url: URL): AnalyzeSingleVariantRoute {
+    public parsePageDataFromUrl(url: URL): BaselineAndVariantData {
         const search = url.searchParams;
         return {
-            organism: this.organism,
-            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
@@ -86,7 +82,7 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         };
     }
 
-    public toUrl(route: AnalyzeSingleVariantRoute): string {
+    public toUrl(route: BaselineAndVariantData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -96,36 +92,32 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: AnalyzeSingleVariantRoute) {
+    public toLapisFilter(route: BaselineAndVariantData) {
         return {
             ...this.toLapisFilterWithoutVariant(route),
             ...route.variantFilter,
         };
     }
 
-    public getDefaultRouteUrl() {
-        return this.toUrl(this.defaultRoute);
+    public getDefaultPageData() {
+        return this.toUrl(this.defaultPageData);
     }
 }
 
-export class RsvBSequencingEffortsView extends RsvBConstants implements View<RouteWithBaseline> {
+export class RsvBSequencingEffortsView extends RsvBConstants implements View<BaselineData> {
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultRoute: RouteWithBaseline = {
-        organism: this.organism,
-        pathname: this.pathname,
+    public readonly defaultPageData: BaselineData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
         },
     };
 
-    public parseUrl(url: URL): RouteWithBaseline {
+    public parsePageDataFromUrl(url: URL): BaselineData {
         const search = url.searchParams;
         return {
-            organism: this.organism,
-            pathname: this.pathname,
             baselineFilter: {
                 location: getLapisLocationFromSearch(search, this.locationFields),
                 dateRange: getDateRangeFromSearch(search, this.mainDateField) ?? this.defaultDateRange,
@@ -133,7 +125,7 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Rou
         };
     }
 
-    public toUrl(route: RouteWithBaseline): string {
+    public toUrl(route: BaselineData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, route.baselineFilter.location);
         if (route.baselineFilter.dateRange !== this.defaultDateRange) {
@@ -142,11 +134,11 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Rou
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: RouteWithBaseline) {
+    public toLapisFilter(route: BaselineData) {
         return this.toLapisFilterWithoutVariant(route);
     }
 
-    public getDefaultRouteUrl() {
-        return this.toUrl(this.defaultRoute);
+    public getDefaultPageData() {
+        return this.toUrl(this.defaultPageData);
     }
 }
