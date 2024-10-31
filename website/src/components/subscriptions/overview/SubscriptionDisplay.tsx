@@ -101,7 +101,7 @@ function ProportionTriggerDisplay({ trigger }: { trigger: ProportionTrigger }) {
     return (
         <div className='flex flex-col gap-2'>
             <div className='font-bold text-gray-500'>
-                Proportion {'>'} {trigger.proportion}%
+                Proportion {'>'} {trigger.proportion * 100}%
             </div>
             <div className='flex flex-1 flex-wrap gap-4'>
                 <div className='flex-1'>
