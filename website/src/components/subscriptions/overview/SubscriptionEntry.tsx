@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { type JSX } from 'react';
 import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
@@ -9,6 +10,7 @@ import { CardDescription } from '../../../styles/containers/CardDescription.tsx'
 import { organismConfig } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
+import { ErrorReportToastModal } from '../../ErrorReportInstruction.tsx';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 
 const logger = getClientLogger('SubscriptionEntry');
@@ -107,12 +109,22 @@ function MoreDropdown({
             });
         },
         onError: (error) => {
-            logger.error(`Failed to delete subscription "${subscription.name}": ${getErrorLogMessage(error)}`);
-            // TODO: Add tracable error info on 500 error page #201
-            toast.error(`Failed to delete subscription "${subscription.name}"`, {
-                position: 'bottom-left',
-                autoClose: false,
+            const errorId = uuidv4();
+            logger.error(`Failed to delete subscription with id '${subscription.id}': ${getErrorLogMessage(error)}`, {
+                errorId,
             });
+            toast.error(
+                <>
+                    <p className='mb-2'>
+                        We could not delete your subscription "{subscription.name}". Please try again later.
+                    </p>
+                    <ErrorReportToastModal errorId={errorId} />
+                </>,
+                {
+                    position: 'bottom-left',
+                    autoClose: false,
+                },
+            );
         },
     });
 

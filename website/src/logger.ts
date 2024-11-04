@@ -1,7 +1,7 @@
 import winston, { type Logger } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
-import { type InstanceLogger } from './types/logMessage.ts';
+import { type AdditionalLogContext, type InstanceLogger } from './types/logMessage.ts';
 
 let _logger: Logger | undefined;
 
@@ -24,7 +24,7 @@ const getLogger = (): Logger => {
 
         _logger = winston.createLogger({
             level: import.meta.env.LOG_LEVEL ?? 'info',
-            format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+            format: winston.format.combine(winston.format.timestamp(), winston.format.json({})),
             transports,
         });
     }
@@ -37,9 +37,11 @@ const getLogger = (): Logger => {
  */
 export const getInstanceLogger = (instance: string): InstanceLogger => {
     return {
-        error: (message: string) => getLogger().error(message, { instance }),
-        warn: (message: string) => getLogger().warn(message, { instance }),
-        info: (message: string) => getLogger().info(message, { instance }),
-        debug: (message: string) => getLogger().debug(message, { instance }),
+        error: (message: string, context?: AdditionalLogContext) =>
+            getLogger().error(message, { instance, ...context }),
+        warn: (message: string, context?: AdditionalLogContext) => getLogger().warn(message, { instance, ...context }),
+        info: (message: string, context?: AdditionalLogContext) => getLogger().info(message, { instance, ...context }),
+        debug: (message: string, context?: AdditionalLogContext) =>
+            getLogger().debug(message, { instance, ...context }),
     };
 };

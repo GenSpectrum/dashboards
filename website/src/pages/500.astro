@@ -1,4 +1,8 @@
 ---
+// eslint-disable-next-line import/no-deprecated -- "Parse errors in imported module 'uuid': parser.parse is not a function (undefined:undefined)"
+import { v4 as uuidv4 } from 'uuid';
+
+import { ErrorReportInstruction } from '../components/ErrorReportInstruction';
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { getInstanceLogger } from '../logger';
 import { PageContainer } from '../styles/containers/PageContainer';
@@ -11,18 +15,20 @@ interface Props {
 
 const { error } = Astro.props;
 
-getInstanceLogger('500ErrorPage').error(`An error occurred: ${getErrorLogMessage(error)}`);
+const errorId = uuidv4();
+getInstanceLogger('500ErrorPage').error(`An error occurred: ${getErrorLogMessage(error)}`, { errorId });
 ---
 
 <BaseLayout title='GenSpectrum Dashboards'>
     <PageContainer>
-        <PageHeadline>Oops! An error occurred...</PageHeadline>
-        <div class='mb-2'>We are sorry for the inconvenience. Please try again.</div>
-        <div>
-            If the problem persists, please create an issue on <a
-                class='text-primary underline'
-                href='https://github.com/GenSpectrum/dashboards'>GitHub</a
-            >, describing the error.
-        </div>
+        <PageHeadline>Oops! Something went wrong...</PageHeadline>
+        <div class='mb-2'>We are sorry for the inconvenience. Please try again later.</div>
+
+        <details class='collapse'>
+            <summary class='collapse-title link'> The problem persists? Learn how to report an issue.</summary>
+            <div class='collapse-content'>
+                <ErrorReportInstruction errorId={errorId} currentUrl={Astro.url.toString()} />
+            </div>
+        </details>
     </PageContainer>
 </BaseLayout>
