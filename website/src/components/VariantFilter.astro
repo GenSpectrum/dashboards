@@ -1,8 +1,8 @@
 ---
 import { type Field } from './VariantFilterTypes';
 import { getDashboardsConfig } from '../config';
-import type { LapisMutationQuery } from '../routes/helpers';
-import { type OrganismViewKey } from '../routes/routing';
+import type { LapisMutationQuery } from '../views/helpers';
+import { type OrganismViewKey } from '../views/routing';
 
 interface Props {
     fields: Field[];
@@ -51,7 +51,7 @@ const { fields, initialMutations, organismViewKey } = Astro.props;
 </variant-filter>
 
 <script>
-    import { Routing, type OrganismViewKey } from '../routes/routing.ts';
+    import { Routing, type OrganismViewKey } from '../views/routing.ts';
     import { type Field } from './VariantFilterTypes';
     import { getClientLogger } from '../clientLogger';
 

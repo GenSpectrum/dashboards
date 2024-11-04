@@ -4,11 +4,11 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { defaultTablePageSize } from '../../routes/View';
-import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../routes/helpers';
-import type { OrganismViewKey, sequencingEffortsViewKey } from '../../routes/routing';
-import { ServerSide } from '../../routes/serverSideRouting';
 import { organismConfig, type Organisms } from '../../types/Organism';
+import { defaultTablePageSize } from '../../views/View';
+import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../views/helpers';
+import type { OrganismViewKey, sequencingEffortsViewKey } from '../../views/routing';
+import { ServerSide } from '../../views/serverSideRouting';
 
 interface Props {
     organismViewKey: Extract<

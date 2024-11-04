@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react';
 
 import { getClientLogger } from '../../clientLogger.ts';
 import type { OrganismsConfig } from '../../config.ts';
-import { type CovidAnalyzeSingleVariantData } from '../../routes/covid.ts';
-import { Routing } from '../../routes/routing.ts';
+import { type CovidAnalyzeSingleVariantData } from '../../views/covid.ts';
+import { Routing } from '../../views/routing.ts';
 import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
 
 type CollectionVariant = {

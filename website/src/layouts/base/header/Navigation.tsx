@@ -1,8 +1,8 @@
 import { MegaMenu, MegaMenuListEntry, MegaMenuSection } from './MegaMenu.tsx';
 import { headerHeight } from './headerConstants.ts';
-import { ServerSide } from '../../../routes/serverSideRouting.ts';
 import { organismConfig } from '../../../types/Organism.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
+import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function Navigation() {
     const pathogenMegaMenuSections = Object.values(organismConfig).map((organism) => {
