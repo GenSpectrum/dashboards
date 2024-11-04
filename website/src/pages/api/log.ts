@@ -8,8 +8,8 @@ export const POST: APIRoute = async ({ request }) => {
     const maybeLogMessage = logMessageSchema.safeParse(body);
 
     if (maybeLogMessage.success) {
-        const { instance, level, message } = maybeLogMessage.data;
-        getLogger(instance)[level](message);
+        const { instance, level, message, errorId } = maybeLogMessage.data;
+        getLogger(instance)[level](message, { errorId });
         return new Response(null, { status: 204 });
     }
 
