@@ -15,22 +15,22 @@ export type VariantData = {
 export type BaselineAndVariantData = BaselineData & VariantData;
 
 /**
- * PageData is the state of the organism pages. It:
+ * PageState is the state of the organism pages. It:
  * - can be set by users via input components
  * - is used to compute LAPIS filters for the visualization components
  * - is stored in the URL as query parameters
  * - must be parsable from the URL query parameters
  */
-export type View<PageData extends object> = {
+export type View<PageState extends object> = {
     organism: Organism;
     pathname: string;
     label: string;
     labelLong: string;
-    defaultPageData: PageData;
+    defaultPageState: PageState;
 
-    parsePageDataFromUrl: (url: URL) => PageData;
-    toUrl: (route: PageData) => string;
-    getDefaultPageData: () => string;
+    parsePageStateFromUrl: (url: URL) => PageState;
+    toUrl: (pageState: PageState) => string;
+    getDefaultPageState: () => string;
 };
 
 export const defaultTablePageSize = 200;

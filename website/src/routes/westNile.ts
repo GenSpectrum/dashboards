@@ -45,10 +45,10 @@ class WestNileConstants {
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant(route: BaselineData): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
+    public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter {
+        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
-            ...route.baselineFilter.location,
+            ...pageState.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
@@ -60,7 +60,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultPageData: BaselineAndVariantData = {
+    public readonly defaultPageState: BaselineAndVariantData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
@@ -68,7 +68,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         variantFilter: {},
     };
 
-    public parsePageDataFromUrl(url: URL): BaselineAndVariantData {
+    public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
         const search = url.searchParams;
         return {
             baselineFilter: {
@@ -79,25 +79,25 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         };
     }
 
-    public toUrl(route: BaselineAndVariantData): string {
+    public toUrl(pageState: BaselineAndVariantData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
+        setSearchFromLocation(search, pageState.baselineFilter.location);
+        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
-        setSearchFromLapisVariantQuery(search, route.variantFilter, this.lineageField);
+        setSearchFromLapisVariantQuery(search, pageState.variantFilter, this.lineageField);
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: BaselineAndVariantData) {
+    public toLapisFilter(pageState: BaselineAndVariantData) {
         return {
-            ...this.toLapisFilterWithoutVariant(route),
-            ...route.variantFilter,
+            ...this.toLapisFilterWithoutVariant(pageState),
+            ...pageState.variantFilter,
         };
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 }
 
@@ -105,14 +105,14 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
     public pathname = `/${pathFragment}/sequencing-efforts`;
     public label = 'Sequencing efforts';
     public labelLong = 'Sequencing efforts';
-    public readonly defaultPageData: BaselineData = {
+    public readonly defaultPageState: BaselineData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
         },
     };
 
-    public parsePageDataFromUrl(url: URL): BaselineData {
+    public parsePageStateFromUrl(url: URL): BaselineData {
         const search = url.searchParams;
 
         return {
@@ -123,20 +123,20 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
         };
     }
 
-    public toUrl(route: BaselineData): string {
+    public toUrl(pageState: BaselineData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
+        setSearchFromLocation(search, pageState.baselineFilter.location);
+        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: BaselineData): LapisFilter {
-        return this.toLapisFilterWithoutVariant(route);
+    public toLapisFilter(pageState: BaselineData): LapisFilter {
+        return this.toLapisFilterWithoutVariant(pageState);
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 }

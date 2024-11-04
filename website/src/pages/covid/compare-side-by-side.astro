@@ -12,14 +12,14 @@ import { Organisms } from '../../types/Organism';
 const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const routeData = view.parsePageDataFromUrl(Astro.url);
+const pageState = view.parsePageStateFromUrl(Astro.url);
 ---
 
 <BaseLayout title='Compare side-by-side | SARS-CoV-2 | GenSpectrum'>
     <gs-app lapis={getLapisUrl(Organisms.covid)}>
         <div class='flex overflow-x-auto'>
             {
-                Array.from(routeData.filters).map(([id, { variantFilter, baselineFilter }]) => {
+                Array.from(pageState.filters).map(([id, { variantFilter, baselineFilter }]) => {
                     const baselineLapisFilter = view.baselineFilterToLapisFilter(baselineFilter);
                     const timeGranularity = chooseGranularityBasedOnDateRange(
                         baselineFilter.dateRange,
@@ -33,10 +33,10 @@ const routeData = view.parsePageDataFromUrl(Astro.url);
 
                     return (
                         <div class='min-w-[700px] flex-1 border-r-2 px-2'>
-                            {routeData.filters.size > 1 && (
+                            {pageState.filters.size > 1 && (
                                 <a
                                     class='block w-full px-2 py-1 hover:bg-neutral-100'
-                                    href={view.toUrl(view.removeFilter(routeData, id))}
+                                    href={view.toUrl(view.removeFilter(pageState, id))}
                                 >
                                     Remove column
                                 </a>
@@ -116,7 +116,7 @@ const routeData = view.parsePageDataFromUrl(Astro.url);
             }
             <a
                 class='px-4 pt-8 text-left hover:bg-neutral-100'
-                href={view.toUrl(view.addEmptyFilter(routeData))}
+                href={view.toUrl(view.addEmptyFilter(pageState))}
                 style='writing-mode: vertical-rl;'
             >
                 Add column

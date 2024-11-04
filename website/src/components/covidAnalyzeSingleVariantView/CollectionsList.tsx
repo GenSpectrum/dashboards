@@ -91,22 +91,22 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
     const routing = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]);
 
     const selectVariant = (variant: CollectionVariant) => {
-        const currentRoute = routing
+        const currentPageState = routing
             .getOrganismView('covid.singleVariantView')
-            .parsePageDataFromUrl(new URL(window.location.href));
-        let newRoute: CovidAnalyzeSingleVariantData;
+            .parsePageStateFromUrl(new URL(window.location.href));
+        let newPageState: CovidAnalyzeSingleVariantData;
         const query = JSON.parse(variant.query);
         if ('variantQuery' in query) {
-            newRoute = {
-                ...currentRoute,
+            newPageState = {
+                ...currentPageState,
                 collectionId: collection.id,
                 variantFilter: {
                     variantQuery: query.variantQuery,
                 },
             };
         } else {
-            newRoute = {
-                ...currentRoute,
+            newPageState = {
+                ...currentPageState,
                 collectionId: collection.id,
                 variantFilter: {
                     lineage: query.pangoLineage ?? query.nextcladePangoLineage,
@@ -117,7 +117,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
                 },
             };
         }
-        window.location.href = routing.getOrganismView('covid.singleVariantView').toUrl(newRoute);
+        window.location.href = routing.getOrganismView('covid.singleVariantView').toUrl(newPageState);
     };
 
     return (

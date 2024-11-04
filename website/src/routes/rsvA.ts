@@ -48,10 +48,10 @@ class RsvAConstants {
         this.additionalFilters = organismsConfig.rsvA.lapis.additionalFilters;
     }
 
-    public toLapisFilterWithoutVariant(route: BaselineData): LapisFilter & LapisLocation {
-        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(this.earliestDate));
+    public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter & LapisLocation {
+        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(this.earliestDate));
         return {
-            ...route.baselineFilter.location,
+            ...pageState.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
@@ -63,7 +63,7 @@ export class RsvAAnalyzeSingleVariantView extends RsvAConstants implements View<
     public readonly pathname = `/${pathFragment}/single-variant`;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultPageData: BaselineAndVariantData = {
+    public readonly defaultPageState: BaselineAndVariantData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
@@ -71,7 +71,7 @@ export class RsvAAnalyzeSingleVariantView extends RsvAConstants implements View<
         variantFilter: {},
     };
 
-    public parsePageDataFromUrl(url: URL): BaselineAndVariantData {
+    public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
         const search = url.searchParams;
         return {
             baselineFilter: {
@@ -82,25 +82,25 @@ export class RsvAAnalyzeSingleVariantView extends RsvAConstants implements View<
         };
     }
 
-    public toUrl(route: BaselineAndVariantData): string {
+    public toUrl(pageState: BaselineAndVariantData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
+        setSearchFromLocation(search, pageState.baselineFilter.location);
+        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
-        setSearchFromLapisVariantQuery(search, route.variantFilter, this.lineageField);
+        setSearchFromLapisVariantQuery(search, pageState.variantFilter, this.lineageField);
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: BaselineAndVariantData) {
+    public toLapisFilter(pageState: BaselineAndVariantData) {
         return {
-            ...this.toLapisFilterWithoutVariant(route),
-            ...route.variantFilter,
+            ...this.toLapisFilterWithoutVariant(pageState),
+            ...pageState.variantFilter,
         };
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 }
 
@@ -108,14 +108,14 @@ export class RsvASequencingEffortsView extends RsvAConstants implements View<Bas
     public readonly pathname = `/${pathFragment}/sequencing-efforts`;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultPageData: BaselineData = {
+    public readonly defaultPageState: BaselineData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
         },
     };
 
-    public parsePageDataFromUrl(url: URL): BaselineData {
+    public parsePageStateFromUrl(url: URL): BaselineData {
         const search = url.searchParams;
         return {
             baselineFilter: {
@@ -125,20 +125,20 @@ export class RsvASequencingEffortsView extends RsvAConstants implements View<Bas
         };
     }
 
-    public toUrl(route: BaselineData): string {
+    public toUrl(pageState: BaselineData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, route.baselineFilter.location);
-        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
+        setSearchFromLocation(search, pageState.baselineFilter.location);
+        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: BaselineData) {
-        return this.toLapisFilterWithoutVariant(route);
+    public toLapisFilter(pageState: BaselineData) {
+        return this.toLapisFilterWithoutVariant(pageState);
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 }
