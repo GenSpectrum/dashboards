@@ -2,7 +2,7 @@
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import JointFilter from '../../components/covidCompareVariantsView/JointFilter.astro';
 import { getLapisUrl } from '../../config';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
 import { chooseGranularityBasedOnDateRange, getLapisMutations } from '../../views/helpers';
@@ -15,7 +15,7 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 const pageState = view.parsePageStateFromUrl(Astro.url);
 ---
 
-<BaseLayout title='Compare side-by-side | SARS-CoV-2 | GenSpectrum'>
+<OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(Organisms.covid)}>
         <div class='flex overflow-x-auto'>
             {
@@ -123,4 +123,4 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
             </a>
         </div>
     </gs-app>
-</BaseLayout>
+</OrganismPageLayout>

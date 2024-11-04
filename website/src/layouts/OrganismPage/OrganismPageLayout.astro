@@ -1,0 +1,18 @@
+---
+import { getViewBreadcrumbEntries, getViewTitle, type View } from '../../views/View';
+import { Breadcrumbs } from '../Breadcrumbs';
+import BaseLayout from '../base/BaseLayout.astro';
+
+interface Props<PageState extends object> {
+    view: View<PageState>;
+}
+
+const { view } = Astro.props;
+---
+
+<BaseLayout title={getViewTitle(view)}>
+    <div class='ml-2'>
+        <Breadcrumbs breadcrumbs={getViewBreadcrumbEntries(view)} />
+    </div>
+    <slot />
+</BaseLayout>

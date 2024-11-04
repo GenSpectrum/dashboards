@@ -4,8 +4,8 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { getLapisUrl } from '../../config';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { organismConfig, type Organisms } from '../../types/Organism';
+import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
+import { type Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
 import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey, singleVariantViewKey } from '../../views/routing';
@@ -37,7 +37,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 const initialMutations = getLapisMutations(pageState.variantFilter);
 ---
 
-<BaseLayout title={`Single Variant | ${organismConfig[view.organism].label} | GenSpectrum`}>
+<OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(view.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
@@ -158,4 +158,4 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
             </div>
         </div>
     </gs-app>
-</BaseLayout>
+</OrganismPageLayout>

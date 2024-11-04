@@ -1,0 +1,18 @@
+---
+import { PageContainer } from '../../styles/containers/PageContainer';
+import { Breadcrumbs, type BreadcrumbElement } from '../Breadcrumbs';
+import BaseLayout from '../base/BaseLayout.astro';
+interface Props {
+    title: string;
+    breadcrumbs: BreadcrumbElement[];
+}
+
+const { title, breadcrumbs } = Astro.props;
+---
+
+<BaseLayout title={title}>
+    <PageContainer>
+        <Breadcrumbs breadcrumbs={breadcrumbs} />
+        <slot />
+    </PageContainer>
+</BaseLayout>
