@@ -7,7 +7,7 @@ import type { WithClassName } from '../../../types/WithClassName.ts';
 export function Navigation() {
     const pathogenMegaMenuSections = Object.values(organismConfig).map((organism) => {
         const megaMenuSections = Object.values(ServerSide.routing.views[organism.organism]).map((view) => {
-            const href = view.getDefaultPageData();
+            const href = view.getDefaultPageState();
             return {
                 label: view.labelLong,
                 href,

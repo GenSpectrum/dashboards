@@ -11,17 +11,17 @@ import { Organisms } from '../../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'h5n1.sequencingEffortsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-const routeData = view.parsePageDataFromUrl(Astro.url);
+const pageState = view.parsePageStateFromUrl(Astro.url);
 
-const baselineFilter = view.toLapisFilter(routeData);
+const baselineFilter = view.toLapisFilter(pageState);
 
 const timeGranularity = chooseGranularityBasedOnDateRange(
-    routeData.baselineFilter.dateRange,
+    pageState.baselineFilter.dateRange,
     new Date(view.earliestDate),
 );
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.locationFields,
-    routeData.baselineFilter.location,
+    pageState.baselineFilter.location,
 );
 ---
 
@@ -32,8 +32,8 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             <div class='max-w-[1000px]'>
                 <LocationTimeFilter
                     fields={view.locationFields}
-                    initialLocation={routeData.baselineFilter.location}
-                    initialDateRange={routeData.baselineFilter.dateRange}
+                    initialLocation={pageState.baselineFilter.location}
+                    initialDateRange={pageState.baselineFilter.dateRange}
                     earliestDate={view.earliestDate}
                     customDateRangeOptions={view.customDateRangeOptions}
                     organismViewKey={organismViewKey}

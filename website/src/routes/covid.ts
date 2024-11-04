@@ -75,7 +75,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
     public readonly pathname = `/${pathFragment}/single-variant` as const;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultPageData: CovidAnalyzeSingleVariantData = {
+    public readonly defaultPageState: CovidAnalyzeSingleVariantData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
@@ -85,7 +85,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         },
     };
 
-    public parsePageDataFromUrl(url: URL): CovidAnalyzeSingleVariantData {
+    public parsePageStateFromUrl(url: URL): CovidAnalyzeSingleVariantData {
         const search = url.searchParams;
         return {
             baselineFilter: {
@@ -97,41 +97,41 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         };
     }
 
-    public toUrl(route: CovidAnalyzeSingleVariantData): string {
+    public toUrl(pageState: CovidAnalyzeSingleVariantData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, route.baselineFilter.location);
+        setSearchFromLocation(search, pageState.baselineFilter.location);
 
-        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
+        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
 
-        setSearchFromLapisCovidVariantQuery(search, route.variantFilter, this.lineageField);
+        setSearchFromLapisCovidVariantQuery(search, pageState.variantFilter, this.lineageField);
 
-        if (route.collectionId !== undefined) {
-            search.set('collectionId', route.collectionId.toString());
+        if (pageState.collectionId !== undefined) {
+            search.set('collectionId', pageState.collectionId.toString());
         }
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: CovidAnalyzeSingleVariantData) {
+    public toLapisFilter(pageState: CovidAnalyzeSingleVariantData) {
         return {
-            ...this.toLapisFilterWithoutVariant(route),
-            ...this.variantFilterToLapisFilter(route.variantFilter),
+            ...this.toLapisFilterWithoutVariant(pageState),
+            ...this.variantFilterToLapisFilter(pageState.variantFilter),
         };
     }
 
-    public toLapisFilterWithoutVariant(route: CovidAnalyzeSingleVariantData): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(earliestDate));
+    public toLapisFilterWithoutVariant(pageState: CovidAnalyzeSingleVariantData): LapisFilter {
+        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(earliestDate));
         return {
-            ...route.baselineFilter.location,
+            ...pageState.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
         };
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 }
 
@@ -148,7 +148,7 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     public readonly label = 'Compare side-by-side';
     public readonly labelLong = 'Compare variants side-by-side';
 
-    public readonly defaultPageData = {
+    public readonly defaultPageState = {
         organism: this.organism,
         pathname: this.pathname,
         filters: new Map<Id, CovidCompareVariantsFilter>([
@@ -186,11 +186,11 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
         super(organismsConfig);
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 
-    public parsePageDataFromUrl(url: URL): CovidCompareVariantsData {
+    public parsePageStateFromUrl(url: URL): CovidCompareVariantsData {
         const filterPerColumn = this.decodeMultipleFiltersFromSearch(url.searchParams);
 
         const filters = new Map<number, CovidCompareVariantsFilter>();
@@ -203,10 +203,10 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
         };
     }
 
-    public toUrl(route: CovidCompareVariantsData): string {
+    public toUrl(pageState: CovidCompareVariantsData): string {
         const searchParameterMap = new Map<Id, Map<string, string>>();
 
-        for (const [columnId, filter] of route.filters) {
+        for (const [columnId, filter] of pageState.filters) {
             searchParameterMap.set(columnId, new Map<string, string>());
 
             const searchOfFilter = new URLSearchParams();
@@ -225,24 +225,24 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     }
 
     public setFilter(
-        route: CovidCompareVariantsData,
+        pageState: CovidCompareVariantsData,
         newFilter: CovidCompareVariantsFilter,
         columnId: Id,
     ): CovidCompareVariantsData {
-        const filtersPerColumn = new Map(route.filters);
+        const filtersPerColumn = new Map(pageState.filters);
 
         filtersPerColumn.set(columnId, newFilter);
         return {
-            ...route,
+            ...pageState,
             filters: filtersPerColumn,
         };
     }
 
-    public addEmptyFilter(route: CovidCompareVariantsData): CovidCompareVariantsData {
-        const lastId = Math.max(...Array.from(route.filters.keys()));
+    public addEmptyFilter(pageState: CovidCompareVariantsData): CovidCompareVariantsData {
+        const lastId = Math.max(...Array.from(pageState.filters.keys()));
 
         return this.setFilter(
-            route,
+            pageState,
             {
                 baselineFilter: {
                     location: {
@@ -256,11 +256,11 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
         );
     }
 
-    public removeFilter(route: CovidCompareVariantsData, columnId: number): CovidCompareVariantsData {
-        const filters = new Map(route.filters);
+    public removeFilter(pageState: CovidCompareVariantsData, columnId: number): CovidCompareVariantsData {
+        const filters = new Map(pageState.filters);
         filters.delete(columnId);
         return {
-            ...route,
+            ...pageState,
             filters,
         };
     }
@@ -321,22 +321,22 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     }
 }
 
-export type CovidSequencingEffortsRoute = BaselineData & {
+export type CovidSequencingEffortsData = BaselineData & {
     collectionId?: number;
 };
 
-export class CovidSequencingEffortsView extends CovidConstants implements View<CovidSequencingEffortsRoute> {
+export class CovidSequencingEffortsView extends CovidConstants implements View<CovidSequencingEffortsData> {
     public readonly pathname = `/${pathFragment}/sequencing-efforts` as const;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultPageData: CovidSequencingEffortsRoute = {
+    public readonly defaultPageState: CovidSequencingEffortsData = {
         baselineFilter: {
             location: {},
             dateRange: this.defaultDateRange,
         },
     };
 
-    public parsePageDataFromUrl(url: URL): CovidSequencingEffortsRoute {
+    public parsePageStateFromUrl(url: URL): CovidSequencingEffortsData {
         const search = url.searchParams;
         return {
             baselineFilter: {
@@ -347,30 +347,30 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
         };
     }
 
-    public toUrl(route: CovidSequencingEffortsRoute): string {
+    public toUrl(pageState: CovidSequencingEffortsData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, route.baselineFilter.location);
+        setSearchFromLocation(search, pageState.baselineFilter.location);
 
-        if (route.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, route.baselineFilter.dateRange);
+        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
+            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
-        if (route.collectionId !== undefined) {
-            search.set('collectionId', route.collectionId.toString());
+        if (pageState.collectionId !== undefined) {
+            search.set('collectionId', pageState.collectionId.toString());
         }
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(route: CovidSequencingEffortsRoute): LapisFilter {
-        const dateRange = dateRangeToCustomDateRange(route.baselineFilter.dateRange, new Date(earliestDate));
+    public toLapisFilter(pageState: CovidSequencingEffortsData): LapisFilter {
+        const dateRange = dateRangeToCustomDateRange(pageState.baselineFilter.dateRange, new Date(earliestDate));
         return {
-            ...route.baselineFilter.location,
+            ...pageState.baselineFilter.location,
             [`${this.mainDateField}From`]: dateRange.from,
             [`${this.mainDateField}To`]: dateRange.to,
             ...this.additionalFilters,
         };
     }
 
-    public getDefaultPageData() {
-        return this.toUrl(this.defaultPageData);
+    public getDefaultPageState() {
+        return this.toUrl(this.defaultPageState);
     }
 }

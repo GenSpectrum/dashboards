@@ -88,19 +88,19 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
             submitButton?.addEventListener('click', () => {
                 const routing = new Routing(config, getClientLogger);
                 const currentView = routing.getOrganismView(organismViewKey);
-                const currentRoute = currentView.parsePageDataFromUrl(new URL(window.location.href));
+                const currentPageState = currentView.parsePageStateFromUrl(new URL(window.location.href));
 
                 // TODO This component currently assumes that it is used under a route that has a baseline filter.
                 //  We should either make it more flexible or document the behavior
-                const newRoute = {
-                    ...currentRoute,
+                const newPageState = {
+                    ...currentPageState,
                     baselineFilter: {
-                        ...(currentRoute as unknown as BaselineData).baselineFilter,
+                        ...(currentPageState as unknown as BaselineData).baselineFilter,
                         location,
                         dateRange,
                     },
                 };
-                window.location.href = currentView.toUrl(newRoute);
+                window.location.href = currentView.toUrl(newPageState);
             });
         }
     }

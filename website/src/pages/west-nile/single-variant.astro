@@ -18,21 +18,21 @@ import { Organisms } from '../../types/Organism';
 
 const organismViewKey: OrganismViewKey = 'westNile.singleVariantView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-const routeData = view.parsePageDataFromUrl(Astro.url);
+const pageState = view.parsePageStateFromUrl(Astro.url);
 
-const variantFilter = view.toLapisFilter(routeData);
-const baselineFilter = view.toLapisFilterWithoutVariant(routeData);
+const variantFilter = view.toLapisFilter(pageState);
+const baselineFilter = view.toLapisFilterWithoutVariant(pageState);
 const timeGranularity = chooseGranularityBasedOnDateRange(
-    routeData.baselineFilter.dateRange,
+    pageState.baselineFilter.dateRange,
     new Date(view.earliestDate),
 );
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.locationFields,
-    routeData.baselineFilter.location,
+    pageState.baselineFilter.location,
 );
 
-const initialMutations = getLapisMutations(routeData.variantFilter);
+const initialMutations = getLapisMutations(pageState.variantFilter);
 ---
 
 <BaseLayout title='Single Variant | WNV | GenSpectrum'>
@@ -43,8 +43,8 @@ const initialMutations = getLapisMutations(routeData.variantFilter);
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
                         fields={view.locationFields}
-                        initialLocation={routeData.baselineFilter.location}
-                        initialDateRange={routeData.baselineFilter.dateRange}
+                        initialLocation={pageState.baselineFilter.location}
+                        initialDateRange={pageState.baselineFilter.dateRange}
                         earliestDate={view.earliestDate}
                         customDateRangeOptions={view.customDateRangeOptions}
                         organismViewKey={organismViewKey}
