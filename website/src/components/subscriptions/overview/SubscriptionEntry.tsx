@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { type JSX } from 'react';
+import { type JSX, type RefObject, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -7,6 +7,9 @@ import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
+import { ModalBox } from '../../../styles/containers/ModalBox.tsx';
+import { ModalContent } from '../../../styles/containers/ModalContent.tsx';
+import { ModalHeader } from '../../../styles/containers/ModalHeader.tsx';
 import { organismConfig } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
@@ -128,6 +131,17 @@ function MoreDropdown({
         },
     });
 
+    const deleteSubscriptionDialog = useRef<HTMLDialogElement>(null);
+
+    const toggleConfirmDeletionDialog = () => {
+        deleteSubscriptionDialog.current?.showModal();
+        deleteSubscriptionDialog.current?.focus();
+    };
+
+    const handleDelete = async () => {
+        deleteSubscription.mutate();
+    };
+
     // TODO: #171 Activate/Deactivate subscription
     // const activateSubscription = useMutation({
     //     mutationFn: () =>
@@ -142,33 +156,32 @@ function MoreDropdown({
     //     },
     // });
 
-    const handleDelete = async () => {
-        deleteSubscription.mutate();
-    };
-
     // TODO: #171 Activate/Deactivate subscription
     // const handleActivate = async () => {
     //     activateSubscription.mutate();
     // };
     return (
-        <div className='dropdown dropdown-end'>
-            <div tabIndex={0} role='button' className='btn btn-xs'>
-                ...
+        <>
+            <div className='dropdown dropdown-end'>
+                <div tabIndex={0} role='button' className='btn btn-xs'>
+                    ...
+                </div>
+                <ul tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>
+                    {/* TODO: #170 Page to edit subscription*/}
+                    {/* <li>*/}
+                    {/*    <EditButton />*/}
+                    {/* </li>*/}
+                    {/* TODO: #171 Activate/Deactivate subscription*/}
+                    {/* <li>*/}
+                    {/*    <ActivateButton isActive={subscription.active} onClick={handleActivate} />*/}
+                    {/* </li>*/}
+                    <li>
+                        <DeleteButton onClick={toggleConfirmDeletionDialog} />
+                    </li>
+                </ul>
             </div>
-            <ul tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>
-                {/* TODO: #170 Page to edit subscription*/}
-                {/* <li>*/}
-                {/*    <EditButton />*/}
-                {/* </li>*/}
-                {/* TODO: #171 Activate/Deactivate subscription*/}
-                {/* <li>*/}
-                {/*    <ActivateButton isActive={subscription.active} onClick={handleActivate} />*/}
-                {/* </li>*/}
-                <li>
-                    <DeleteButton onClick={handleDelete} />
-                </li>
-            </ul>
-        </div>
+            <ConfirmDeletionModal modalRef={deleteSubscriptionDialog} onDelete={handleDelete} />
+        </>
     );
 }
 
@@ -207,5 +220,44 @@ function DeleteButton({ onClick }: { onClick: JSX.IntrinsicElements['button']['o
             <div className='iconify mdi--delete'></div>
             Delete
         </button>
+    );
+}
+
+function ConfirmDeletionModal({
+    onDelete,
+    modalRef,
+}: {
+    onDelete: JSX.IntrinsicElements['button']['onClick'];
+    modalRef: RefObject<HTMLDialogElement>;
+}) {
+    return (
+        <dialog className='modal' ref={modalRef}>
+            <ModalBox>
+                <ModalHeader title='Delete subscription' icon='mdi--delete' />
+                <ModalContent>
+                    <p>Are you sure you want to delete this subscription?</p>
+                    <div className='divider' />
+                    <div className='modal-action'>
+                        <form method='dialog'>
+                            <button
+                                type='submit'
+                                className='btn btn-outline float-right w-24'
+                                onClick={() => modalRef.current?.close()}
+                            >
+                                Cancel
+                            </button>
+                        </form>
+                        <form method='dialog'>
+                            <button type='submit' className='btn btn-error float-right w-24' onClick={onDelete}>
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </ModalContent>
+            </ModalBox>
+            <form method='dialog' className='modal-backdrop'>
+                <button>close on clicking outside of modal</button>
+            </form>
+        </dialog>
     );
 }
