@@ -1,7 +1,7 @@
 ---
 import { getDashboardsConfig } from '../../config';
-import { type LapisLocation, type LapisMutationQuery, isCustomDateRange, type DateRange } from '../../routes/helpers';
-import { ServerSide } from '../../routes/serverSideRouting';
+import { type LapisLocation, type LapisMutationQuery, isCustomDateRange, type DateRange } from '../../views/helpers';
+import { ServerSide } from '../../views/serverSideRouting';
 
 interface Props {
     filterId: number;
@@ -80,7 +80,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 </joint-filter>
 
 <script>
-    import { Routing } from '../../routes/routing.ts';
+    import { Routing } from '../../views/routing.ts';
     import { getClientLogger } from '../../clientLogger';
 
     class JointFilter extends HTMLElement {

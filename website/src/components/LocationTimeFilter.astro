@@ -1,7 +1,7 @@
 ---
 import { getDashboardsConfig } from '../config';
-import { isCustomDateRange, type DateRange, type LapisLocation } from '../routes/helpers';
-import type { OrganismViewKey } from '../routes/routing';
+import { isCustomDateRange, type DateRange, type LapisLocation } from '../views/helpers';
+import type { OrganismViewKey } from '../views/routing';
 
 interface Props {
     fields: string[];
@@ -60,8 +60,8 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 
 <script>
     import { getClientLogger } from '../clientLogger';
-    import { type BaselineData } from '../routes/View';
-    import { Routing, type OrganismViewKey } from '../routes/routing.ts';
+    import { type BaselineData } from '../views/View';
+    import { Routing, type OrganismViewKey } from '../views/routing.ts';
 
     class LocationTimeFilter extends HTMLElement {
         constructor() {

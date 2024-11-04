@@ -5,16 +5,16 @@ import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../components/VariantFilter.astro';
 import { getLapisUrl } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { defaultTablePageSize } from '../../routes/View';
+import { Organisms } from '../../types/Organism';
+import { defaultTablePageSize } from '../../views/View';
 import {
     chooseGranularityBasedOnDateRange,
     getLapisMutations,
     getLocationSubdivision,
     lineageKey,
-} from '../../routes/helpers';
-import type { OrganismViewKey } from '../../routes/routing';
-import { ServerSide } from '../../routes/serverSideRouting';
-import { Organisms } from '../../types/Organism';
+} from '../../views/helpers';
+import type { OrganismViewKey } from '../../views/routing';
+import { ServerSide } from '../../views/serverSideRouting';
 
 const organismViewKey: OrganismViewKey = 'westNile.singleVariantView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
