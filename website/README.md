@@ -73,3 +73,25 @@ You can use the icons in the code via
 ```html
 <span class="iconify text-4xl mdi--account"></span>
 ```
+
+### Using Your Local Components Copy
+
+For development, it might be useful to use your local version of the
+[dashboard-components](https://github.com/GenSpectrum/dashboard-components):
+
+0. Stop the current `npm run dev` process.
+1. Install the local components
+   (assuming that you have cloned the dashboards and the dashboard-components into the same directory):
+
+```bash
+npm i ../../dashboard-components/components
+```
+
+2. Run `npm run dev`.
+3. Make your changes in the dashboard-components.
+4. Build the components.
+
+> Note: You need to rebuild the components every time you make changes to them.
+> Otherwise the changes will not be visible in the dashboards.
+
+This makes use of https://docs.npmjs.com/cli/v9/configuring-npm/package-json#local-paths.
