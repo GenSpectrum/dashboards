@@ -3,8 +3,8 @@ import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import LocationTimeFilter from '../../components/LocationTimeFilter.astro';
 import { getLapisUrl } from '../../config';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { organismConfig, type Organisms } from '../../types/Organism';
+import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
+import { type Organisms } from '../../types/Organism';
 import { defaultTablePageSize } from '../../views/View';
 import { chooseGranularityBasedOnDateRange, getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey, sequencingEffortsViewKey } from '../../views/routing';
@@ -34,7 +34,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 );
 ---
 
-<BaseLayout title={`Sequencing Efforts | ${organismConfig[view.organism].label} | GenSpectrum`}>
+<OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(view.organism)}>
         <div class='mb-4 flex items-center justify-center bg-blue-50 px-2 py-1'>
             <div class='mr-2 font-semibold'>Filter dataset:</div>
@@ -103,4 +103,4 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             </ComponentWrapper>
         </ComponentsGrid>
     </gs-app>
-</BaseLayout>
+</OrganismPageLayout>

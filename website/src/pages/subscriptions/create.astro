@@ -4,14 +4,29 @@ import { getSession } from 'auth-astro/server';
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
 import { getDashboardsConfig } from '../../config';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import SubscriptionPageLayout from '../../layouts/SubscriptionPage/SubscriptionPageLayout.astro';
+import { Page } from '../../types/pages';
 
 const session = await getSession(Astro.request);
 
 const config = getDashboardsConfig();
 ---
 
-<BaseLayout title='Create new subscription'>
+<SubscriptionPageLayout
+    title='New subscription'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        {
+            name: 'Subscriptions',
+            href: Page.subscriptionsOverview,
+        },
+        {
+            name: 'Create new subscription',
+            href: Page.createSubscription,
+        },
+    ]}
+>
     {
         session?.user?.id !== undefined ? (
             <SubscriptionsCreate config={config} client:only='react' userId={session.user.id} />
@@ -19,4 +34,4 @@ const config = getDashboardsConfig();
             <NotLoggedIn />
         )
     }
-</BaseLayout>
+</SubscriptionPageLayout>

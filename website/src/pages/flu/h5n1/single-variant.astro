@@ -4,7 +4,7 @@ import ComponentsGrid from '../../../components/ComponentsGrid.astro';
 import LocationTimeFilter from '../../../components/LocationTimeFilter.astro';
 import VariantFilter from '../../../components/VariantFilter.astro';
 import { getLapisUrl } from '../../../config';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import OrganismPageLayout from '../../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { Organisms } from '../../../types/Organism';
 import { defaultTablePageSize } from '../../../views/View';
 import { chooseGranularityBasedOnDateRange, getLapisMutations, getLocationSubdivision } from '../../../views/helpers';
@@ -30,7 +30,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 const initialMutations = getLapisMutations(pageState.variantFilter);
 ---
 
-<BaseLayout title='Single Variant | H5N1 | GenSpectrum'>
+<OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(Organisms.h5n1)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
@@ -131,4 +131,4 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
             </div>
         </div>
     </gs-app>
-</BaseLayout>
+</OrganismPageLayout>

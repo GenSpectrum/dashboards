@@ -1,5 +1,6 @@
 import type { DateRange, LapisLocation, LapisVariantQuery } from './helpers.ts';
-import type { Organism } from '../types/Organism.ts';
+import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
+import { type Organism, organismConfig } from '../types/Organism.ts';
 
 export type BaselineData = {
     baselineFilter: {
@@ -34,3 +35,18 @@ export type View<PageState extends object> = {
 };
 
 export const defaultTablePageSize = 200;
+
+export function getViewBreadcrumbEntries<PageState extends object>(view: View<PageState>) {
+    return [
+        ...defaultBreadcrumbs,
+        { name: organismConfig[view.organism].label },
+        {
+            name: view.label,
+            href: view.pathname,
+        },
+    ];
+}
+
+export function getViewTitle<PageState extends object>(view: View<PageState>) {
+    return `${view.label} | ${organismConfig[view.organism].label} | GenSpectrum`;
+}

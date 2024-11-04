@@ -5,7 +5,7 @@ import { ServerSide } from '../views/serverSideRouting';
 ---
 
 <style>
-    h2 {
+    h1 {
         @apply mb-4 text-center text-3xl;
     }
 
@@ -15,7 +15,7 @@ import { ServerSide } from '../views/serverSideRouting';
 </style>
 
 <BaseLayout title='GenSpectrum Dashboards'>
-    <h2>Explore up-to-date pathogen genomic data</h2>
+    <h1 class='mt-8'>Explore up-to-date pathogen genomic data</h1>
     <div class='description mx-auto mb-8 max-w-[1400px] px-8'>
         GenSpectrum…
 
@@ -55,7 +55,7 @@ import { ServerSide } from '../views/serverSideRouting';
         </ul>
     </div>
 
-    <h2>Pathogens</h2>
+    <h1>Pathogens</h1>
     <div class='mx-8 mb-8 flex flex-wrap justify-center gap-x-4 gap-y-8'>
         {
             Object.values(organismConfig).map((organism) => (

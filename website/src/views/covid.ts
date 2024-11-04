@@ -75,6 +75,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
     public readonly pathname = `/${pathFragment}/single-variant` as const;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
+
     public readonly defaultPageState: CovidAnalyzeSingleVariantData = {
         baselineFilter: {
             location: {},
@@ -329,6 +330,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
     public readonly pathname = `/${pathFragment}/sequencing-efforts` as const;
     public readonly label = 'Sequencing efforts';
     public readonly labelLong = 'Sequencing efforts';
+
     public readonly defaultPageState: CovidSequencingEffortsData = {
         baselineFilter: {
             location: {},

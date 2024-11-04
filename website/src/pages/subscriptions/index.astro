@@ -3,15 +3,25 @@ import { getSession } from 'auth-astro/server';
 
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { Subscriptions } from '../../components/subscriptions/overview/Subscriptions';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import SubscriptionPageLayout from '../../layouts/SubscriptionPage/SubscriptionPageLayout.astro';
 import { organismsSchema } from '../../types/Organism';
+import { Page } from '../../types/pages';
 
 const session = await getSession(Astro.request);
 
 const organisms = organismsSchema.parse(Astro.url.searchParams.getAll('organism'));
+
+const breadcrumbs = [
+    ...defaultBreadcrumbs,
+    {
+        name: 'Subscriptions',
+        href: Page.subscriptionsOverview,
+    },
+];
 ---
 
-<BaseLayout title='Subscriptions'>
+<SubscriptionPageLayout title='Subscriptions overview' breadcrumbs={breadcrumbs}>
     {
         session?.user?.id !== undefined ? (
             <Subscriptions client:load organismsFromUrl={organisms} userId={session.user.id} />
@@ -19,4 +29,4 @@ const organisms = organismsSchema.parse(Astro.url.searchParams.getAll('organism'
             <NotLoggedIn />
         )
     }
-</BaseLayout>
+</SubscriptionPageLayout>
