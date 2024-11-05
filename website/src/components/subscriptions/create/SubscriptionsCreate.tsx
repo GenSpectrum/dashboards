@@ -16,7 +16,6 @@ import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardContent } from '../../../styles/containers/CardContent.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
 import { CardHeader } from '../../../styles/containers/CardHeader.tsx';
-import { PageContainer } from '../../../styles/containers/PageContainer.tsx';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import { type DateWindow, DateWindows } from '../../../types/DateWindow.ts';
 import { type EvaluationInterval, EvaluationIntervals } from '../../../types/EvaluationInterval.ts';
@@ -96,9 +95,8 @@ export function SubscriptionsCreateInner({
     }
 
     return (
-        <PageContainer>
+        <>
             <PageHeadline>Create new subscription</PageHeadline>
-
             <div className='flex flex-col gap-4'>
                 <BorderedCard>
                     <CardHeader>
@@ -169,7 +167,7 @@ export function SubscriptionsCreateInner({
                     onClick={createSubscription.mutate}
                 />
             </div>
-        </PageContainer>
+        </>
     );
 }
 

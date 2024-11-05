@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { SubscriptionEntry } from './SubscriptionEntry.tsx';
 import { FilterDropdown, getFilters, getSelectedFilters } from './SubscriptionFilter.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
-import { PageContainer } from '../../../styles/containers/PageContainer.tsx';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Organism } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
@@ -60,28 +59,28 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
 
 function LoadingSubscriptions() {
     return (
-        <PageContainer>
+        <>
             <PageHeadline>Subscriptions</PageHeadline>
             <div>Loading...</div>
-        </PageContainer>
+        </>
     );
 }
 
 function ErrorSubscriptions() {
     return (
-        <PageContainer>
+        <>
             <PageHeadline>Subscriptions</PageHeadline>
             <div>
                 Oops! Something went wrong. Please try to reload this page. If the error still persists, please contact
                 an admin.
             </div>
-        </PageContainer>
+        </>
     );
 }
 
 function NoSubscriptions() {
     return (
-        <PageContainer>
+        <>
             <div className='flex items-baseline justify-between'>
                 <PageHeadline>Subscriptions</PageHeadline>
                 <AddSubscriptionButton />
@@ -90,7 +89,7 @@ function NoSubscriptions() {
             <a className='btn btn-primary btn-sm' href={Page.createSubscription}>
                 Add your first subscription
             </a>
-        </PageContainer>
+        </>
     );
 }
 
@@ -117,9 +116,9 @@ export function SubscriptionsDisplay({
     });
 
     return (
-        <PageContainer>
+        <>
             <div className='flex items-baseline justify-between'>
-                <PageHeadline>Subscriptions</PageHeadline>
+                <PageHeadline>Your subscriptions</PageHeadline>
                 <div className='flex gap-1'>
                     <FilterDropdown selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
                     <AddSubscriptionButton />
@@ -130,7 +129,7 @@ export function SubscriptionsDisplay({
                 userId={userId}
                 refetchSubscriptions={refetchSubscriptions}
             />
-        </PageContainer>
+        </>
     );
 }
 

@@ -5,8 +5,7 @@ import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
 import { getDashboardsConfig } from '../../config';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
-import SubscriptionPageLayout from '../../layouts/SubscriptionPage/SubscriptionPageLayout.astro';
-import { Page } from '../../types/pages';
+import SubscriptionPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 
 const session = await getSession(Astro.request);
 
@@ -19,11 +18,11 @@ const config = getDashboardsConfig();
         ...defaultBreadcrumbs,
         {
             name: 'Subscriptions',
-            href: Page.subscriptionsOverview,
+            href: '/subscriptions',
         },
         {
             name: 'Create new subscription',
-            href: Page.createSubscription,
+            href: '/subscriptions/create',
         },
     ]}
 >
