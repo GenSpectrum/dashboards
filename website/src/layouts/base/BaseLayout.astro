@@ -29,10 +29,12 @@ const { title, forceLoggedOutState = false } = Astro.props;
         </script>
     </head>
 
-    <body>
+    <body class='flex min-h-screen flex-col'>
         <ToastContainer client:load />
-        <Header forceLoggedOutState={forceLoggedOutState} />
-        <slot />
+        <div class='flex-grow'>
+            <Header forceLoggedOutState={forceLoggedOutState} />
+            <slot />
+        </div>
         <Footer />
     </body>
 </html>
