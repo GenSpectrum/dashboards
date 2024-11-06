@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
+import DataInfo from '../layouts/base/footer/DataInfo.astro';
 import { organismConfig } from '../types/Organism';
+import { dataOrigins } from '../types/dataOrigins';
 import { Page } from '../types/pages';
 import { ServerSide } from '../views/serverSideRouting';
 ---
@@ -92,4 +94,5 @@ import { ServerSide } from '../views/serverSideRouting';
             ))
         }
     </div>
+    <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus]} />
 </BaseLayout>

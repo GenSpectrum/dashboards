@@ -1,0 +1,13 @@
+---
+import PrimaryFooter from './PrimaryFooter.astro';
+import SecondaryFooter from './SecondaryFooter.astro';
+---
+
+<footer class='mt-auto'>
+    <SecondaryFooter>
+        <slot name='secondary-footer' />
+    </SecondaryFooter>
+    <PrimaryFooter>
+        <slot name='primary-footer' />
+    </PrimaryFooter>
+</footer>

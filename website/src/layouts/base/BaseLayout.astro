@@ -2,12 +2,12 @@
 // eslint-disable-next-line import/no-deprecated -- "Parse errors in imported module '@auth/core/types': parser.parse is not a function (undefined:undefined)"
 import { ToastContainer } from 'react-toastify';
 
-import Footer from './Footer.astro';
-import Header from './header/Header.astro';
-
 import 'react-toastify/dist/ReactToastify.css';
 import '@genspectrum/dashboard-components/style.css';
 import '../../styles/tailwind.css';
+import Footer from './footer/Footer.astro';
+import FooterNavigation from './footer/FooterNavigation.astro';
+import Header from './header/Header.astro';
 
 interface Props {
     title: string;
@@ -35,6 +35,9 @@ const { title, forceLoggedOutState = false } = Astro.props;
             <Header forceLoggedOutState={forceLoggedOutState} />
             <slot />
         </div>
-        <Footer />
+        <Footer>
+            <slot slot='secondary-footer' name='secondary-footer' />
+            <FooterNavigation slot='primary-footer' />
+        </Footer>
     </body>
 </html>

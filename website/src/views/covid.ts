@@ -17,6 +17,7 @@ import {
 import { type OrganismsConfig } from '../config.ts';
 import { compareVariantsViewKey } from './routing.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
+import type { DataOrigin } from '../types/dataOrigins.ts';
 import type { InstanceLogger } from '../types/logMessage.ts';
 
 const pathFragment = organismConfig[Organisms.covid].pathFragment;
@@ -41,6 +42,7 @@ class CovidConstants {
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly dataOrigins: DataOrigin[] = ['nextstrain'];
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;

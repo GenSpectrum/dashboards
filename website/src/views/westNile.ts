@@ -13,6 +13,7 @@ import {
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
+import type { DataOrigin } from '../types/dataOrigins.ts';
 
 const pathFragment = organismConfig[Organisms.westNile].pathFragment;
 
@@ -34,6 +35,7 @@ class WestNileConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly dataOrigins: DataOrigin[] = ['pathoplexus'];
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;

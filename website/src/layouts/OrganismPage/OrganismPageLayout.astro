@@ -2,6 +2,7 @@
 import { getViewBreadcrumbEntries, getViewTitle, type View } from '../../views/View';
 import { Breadcrumbs } from '../Breadcrumbs';
 import BaseLayout from '../base/BaseLayout.astro';
+import DataInfo from '../base/footer/DataInfo.astro';
 
 interface Props<PageState extends object> {
     view: View<PageState>;
@@ -15,4 +16,5 @@ const { view } = Astro.props;
         <Breadcrumbs breadcrumbs={getViewBreadcrumbEntries(view)} />
     </div>
     <slot />
+    <DataInfo slot='secondary-footer' dataOrigins={view.dataOrigins} />
 </BaseLayout>
