@@ -14,6 +14,7 @@ import {
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
+import type { DataOrigin } from '../types/dataOrigins.ts';
 
 const pathFragment = organismConfig[Organisms.rsvB].pathFragment;
 
@@ -37,6 +38,7 @@ class RsvBConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly dataOrigins: DataOrigin[] = ['insdc'];
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvB.lapis.mainDateField;

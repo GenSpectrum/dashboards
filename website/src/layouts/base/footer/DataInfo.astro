@@ -1,0 +1,26 @@
+---
+import DataOriginLink from './DataOriginLink.astro';
+import { type DataOrigin, dataOriginConfig } from '../../../types/dataOrigins';
+
+interface Props {
+    dataOrigins: DataOrigin[];
+}
+
+const { dataOrigins } = Astro.props;
+---
+
+<div class='flex justify-center'>
+    <div class='p-2 text-xs'>
+        Enabled by data from:
+        {
+            dataOrigins.map((dataOrigin, index) => (
+                <span>
+                    {index > 0 && (index === dataOrigins.length - 1 ? ' and ' : ', ')}
+                    <DataOriginLink href={dataOriginConfig[dataOrigin].href}>
+                        {dataOriginConfig[dataOrigin].name}
+                    </DataOriginLink>
+                </span>
+            ))
+        }
+    </div>
+</div>
