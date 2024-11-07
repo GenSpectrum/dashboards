@@ -1,12 +1,11 @@
 ---
-import BaseLayout from '../layouts/base/BaseLayout.astro';
+import { defaultBreadcrumbs } from '../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { PageHeadline } from '../styles/containers/PageHeadline';
+import { Page } from '../types/pages';
 ---
 
 <style>
-    h1 {
-        @apply mb-4 text-center text-3xl;
-    }
-
     .main a {
         @apply underline;
     }
@@ -17,23 +16,35 @@ import BaseLayout from '../layouts/base/BaseLayout.astro';
     }
 </style>
 
-<BaseLayout title='Data Sources'>
-    <h1>Data sources and preprocessing</h1>
-    <div class='main px-8'>
+<ContaineredPageLayout
+    title='Data Sources'
+    breadcrumbs={[...defaultBreadcrumbs, { name: 'Data sources', href: Page.dataSources }]}
+>
+    <PageHeadline>Data sources and preprocessing</PageHeadline>
+    <div class='main'>
         <p>
             GenSpectrum uses mostly open data from the <a href='https://www.insdc.org/'
                 >International Nucleotide Sequence Database Collaboration (INSDC)</a
             > which consists of <a href='https://www.ncbi.nlm.nih.gov/genbank/'>GenBank</a>, <a
                 href='https://www.ebi.ac.uk/ena/browser/'>ENA</a
-            > and <a href='https://www.ddbj.nig.ac.jp/'>DDBJ</a>. For influenza, RSV and Mpox, we download the data
-            directly from GenBank using the NCBI Datasets CLI. For SARS-CoV-2, we download the data from <a
-                href='https://nextstrain.org/blog/2021-07-08-ncov-open-announcement'>Nextstrain</a
-            >
-            who gets the data from GenBank and processes them. For the West Nile virus, we use data from <a
-                href='https://pathoplexus.org'>Pathoplexus</a
-            >, which also includes data from INSDC. (For <a href='https://cov-spectrum.org'>CoV-Spectrum</a>, we have an
-            instance which uses data from <a href='https://gisaid.org'>GISAID</a>.)
+            > and <a href='https://www.ddbj.nig.ac.jp/'>DDBJ</a>.
         </p>
+        <ul class='ml-6 list-disc'>
+            <li>
+                For influenza, RSV and Mpox, we download the data directly from GenBank using the NCBI Datasets CLI.
+            </li>
+            <li>
+                For SARS-CoV-2, we download the data from <a
+                    href='https://nextstrain.org/blog/2021-07-08-ncov-open-announcement'>Nextstrain</a
+                >
+                who gets the data from GenBank and processes them.
+            </li>
+            <li>
+                For the West Nile virus, we use data from <a href='https://pathoplexus.org'>Pathoplexus</a>, which also
+                includes data from INSDC. (For <a href='https://cov-spectrum.org'>CoV-Spectrum</a>, we have an instance
+                which uses data from <a href='https://gisaid.org'>GISAID</a>.)
+            </li>
+        </ul>
         <p>
             We use <a href='https://clades.nextstrain.org/'>Nextclade</a> as the main tool for preprocessing the sequences.
             The following sequences are used as a reference for alignment:
@@ -54,4 +65,4 @@ import BaseLayout from '../layouts/base/BaseLayout.astro';
             </li>
         </ul>
     </div>
-</BaseLayout>
+</ContaineredPageLayout>
