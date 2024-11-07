@@ -4,6 +4,7 @@ import { type DateWindow, dateWindowConfig } from '../../../types/DateWindow.ts'
 import { type EvaluationInterval } from '../../../types/EvaluationInterval.ts';
 import type { CountTrigger, LapisFilter, ProportionTrigger, Subscription } from '../../../types/Subscription.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
+import { proportionAsPercent } from '../../../util/proportionAsPercent.ts';
 
 export function SubscriptionContent({ children, className = '' }: PropsWithChildren<WithClassName>) {
     return <div className={`rounded-xl border-2 border-gray-100 p-6 ${className}`}>{children}</div>;
@@ -12,7 +13,10 @@ export function SubscriptionContent({ children, className = '' }: PropsWithChild
 export function SubscriptionDisplay({ subscription }: { subscription: Subscription }) {
     return (
         <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
-            <StatusDisplay triggerEvaluationResult={subscription.triggerEvaluationResult} />
+            <StatusDisplay
+                triggerEvaluationResult={subscription.triggerEvaluationResult}
+                triggerType={subscription.trigger.type}
+            />
             <EvaluationIntervalDisplay interval={subscription.interval} />
             <DateWindowDisplay dateWindow={subscription.dateWindow} />
             <TriggerDisplay trigger={subscription.trigger} />
@@ -27,13 +31,15 @@ export function SubscriptionDisplay({ subscription }: { subscription: Subscripti
 
 function StatusDisplay({
     triggerEvaluationResult,
+    triggerType,
 }: {
+    triggerType: Subscription['trigger']['type'];
     triggerEvaluationResult: Subscription['triggerEvaluationResult'];
 }) {
     return (
         <SubscriptionContent className='flex flex-col gap-2'>
             <div className='font-bold text-gray-500'>Status</div>
-            <TriggerEvaluationResult result={triggerEvaluationResult} />
+            <TriggerEvaluationResult result={triggerEvaluationResult} triggerType={triggerType} />
         </SubscriptionContent>
     );
 }
@@ -56,27 +62,13 @@ function DateWindowDisplay({ dateWindow }: { dateWindow: DateWindow }) {
     );
 }
 
-function roundToPrecision({
-    val,
-    precision = 3,
-    lowerBound = 0.001,
+function TriggerEvaluationResult({
+    result,
+    triggerType,
 }: {
-    val: number;
-    precision?: number;
-    lowerBound?: number;
-}): string {
-    if (val < lowerBound) {
-        return `<${lowerBound}`;
-    }
-
-    if (Number.isInteger(val)) {
-        return val.toString();
-    }
-
-    return val.toFixed(precision);
-}
-
-function TriggerEvaluationResult({ result }: { result: Subscription['triggerEvaluationResult'] }) {
+    result: Subscription['triggerEvaluationResult'];
+    triggerType: Subscription['trigger']['type'];
+}) {
     if (result.type === 'EvaluationError') {
         return (
             <div className='text-red-500'>
@@ -93,10 +85,34 @@ function TriggerEvaluationResult({ result }: { result: Subscription['triggerEval
                     {result.type === 'ConditionMet' ? 'met' : 'not met'}
                 </span>
             </div>
-            <div className='text-gray-500'>Evaluated value: {roundToPrecision({ val: result.evaluatedValue })}</div>
-            <div className='text-gray-500'>Threshold: {result.threshold}</div>
+            <div className='text-gray-500'>
+                Evaluated value: {evaluatedValueDisplay(result.evaluatedValue, triggerType)}
+            </div>
+            <div className='text-gray-500'>Threshold: {thresholdDisplay(result.threshold, triggerType)}</div>
         </div>
     );
+}
+
+function thresholdDisplay(threshold: number, triggerType: Subscription['trigger']['type']) {
+    if (triggerType === 'count') {
+        return threshold;
+    }
+
+    return proportionAsPercent(threshold);
+}
+
+function evaluatedValueDisplay(evaluatedValue: number, triggerType: Subscription['trigger']['type']) {
+    if (triggerType === 'count') {
+        return evaluatedValue;
+    }
+
+    const lowerBound = 0.001;
+    if (evaluatedValue < lowerBound) {
+        return `<${proportionAsPercent(lowerBound)}`;
+    }
+
+    const precision = 3;
+    return `${(evaluatedValue * 100).toFixed(precision)}%`;
 }
 
 function TriggerDisplay({ trigger }: { trigger: Subscription['trigger'] }) {
@@ -121,7 +137,7 @@ function ProportionTriggerDisplay({ trigger }: { trigger: ProportionTrigger }) {
     return (
         <div className='flex flex-col gap-2'>
             <div className='font-bold text-gray-500'>
-                Proportion {'>'} {trigger.proportion * 100}%
+                Proportion {'>'} {proportionAsPercent(trigger.proportion)}
             </div>
             <div className='flex flex-1 flex-wrap gap-4'>
                 <div className='flex-1'>
