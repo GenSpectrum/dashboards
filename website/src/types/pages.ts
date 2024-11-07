@@ -1,5 +1,5 @@
 export const Page = {
-    createSubscription: '/subscriptions/create' as const,
-    subscriptionsOverview: '/subscriptions' as const,
-    dataSources: '/data' as const,
-};
+    createSubscription: '/subscriptions/create',
+    subscriptionsOverview: '/subscriptions',
+    dataSources: '/data',
+} as const;
