@@ -12,6 +12,7 @@ export function Navigation() {
                 label: view.labelLong,
                 href,
                 underlineColor: organism.menuListEntryDecoration,
+                externalLink: false,
             };
         });
         if (organism.organism === 'covid') {
@@ -19,6 +20,7 @@ export function Navigation() {
                 label: 'CoV-Spectrum',
                 href: 'https://cov-spectrum.org',
                 underlineColor: organism.menuListEntryDecoration,
+                externalLink: true,
             });
         }
         return {
@@ -43,6 +45,7 @@ export function Navigation() {
                                     <MegaMenuListEntry
                                         key={entry.label}
                                         label={entry.label}
+                                        externalLink={entry.externalLink}
                                         href={entry.href}
                                         className={entry.underlineColor}
                                     />
