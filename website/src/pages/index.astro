@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { organismConfig } from '../types/Organism';
+import { Page } from '../types/pages';
 import { ServerSide } from '../views/serverSideRouting';
 ---
 
@@ -28,8 +29,8 @@ import { ServerSide } from '../views/serverSideRouting';
             <li>
                 …uses data from the <a href='https://www.insdc.org/'
                     >International Nucleotide Sequence Database Collaboration (INSDC)</a
-                > and <a href='https://pathoplexus.org/'>Pathoplexus</a>. You can read more about the <a href='/data'
-                    >data sources and how we preprocess the data</a
+                > and <a href='https://pathoplexus.org/'>Pathoplexus</a>. You can read more about the <a
+                    href={Page.dataSources}>data sources and how we preprocess the data</a
                 >.
             </li>
             <li>

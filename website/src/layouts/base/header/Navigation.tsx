@@ -2,6 +2,7 @@ import { MegaMenu, MegaMenuListEntry, MegaMenuSection } from './MegaMenu.tsx';
 import { headerHeight } from './headerConstants.ts';
 import { organismConfig } from '../../../types/Organism.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
+import { Page } from '../../../types/pages.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function Navigation() {
@@ -52,7 +53,7 @@ export function Navigation() {
                     </MegaMenu>
                 </li>
                 <li className='h-full'>
-                    <NavigationEntry href='/data' label='Data sources' />
+                    <NavigationEntry href={Page.dataSources} label='Data sources' />
                 </li>
             </ul>
         </nav>
