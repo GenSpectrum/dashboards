@@ -1,4 +1,6 @@
 ---
+import { getLapisUrl } from '../../config';
+import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
 import { getViewBreadcrumbEntries, getViewTitle, type View } from '../../views/View';
 import { Breadcrumbs } from '../Breadcrumbs';
 import BaseLayout from '../base/BaseLayout.astro';
@@ -9,6 +11,8 @@ interface Props<PageState extends object> {
 }
 
 const { view } = Astro.props;
+
+const lastUpdatedDate = await getLastUpdatedDate(getLapisUrl(view.organism));
 ---
 
 <BaseLayout title={getViewTitle(view)}>
@@ -16,5 +20,8 @@ const { view } = Astro.props;
         <Breadcrumbs breadcrumbs={getViewBreadcrumbEntries(view)} />
     </div>
     <slot />
-    <DataInfo slot='secondary-footer' dataOrigins={view.dataOrigins} />
+    <div class='flex justify-center' slot='secondary-footer'>
+        <span class='mr-4 p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
+        <DataInfo dataOrigins={view.dataOrigins} />
+    </div>
 </BaseLayout>
