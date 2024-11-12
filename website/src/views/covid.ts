@@ -32,7 +32,7 @@ class CovidConstants {
         { label: '2024', dateFrom: '2024-01-01', dateTo: getTodayString() },
         { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
         { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
-        { label: '2021', dateFrom: '2024-01-04', dateTo: '2022-01-02' },
+        { label: '2021', dateFrom: '2021-01-04', dateTo: '2022-01-02' },
         { label: '2020', dateFrom: earliestDate, dateTo: '2021-01-03' },
     ];
     public readonly mainDateField: string;
