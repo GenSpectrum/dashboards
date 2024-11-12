@@ -4,6 +4,7 @@ import { type DefaultBodyType, http, type StrictRequest } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, expect } from 'vitest';
 
+import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -11,14 +12,24 @@ import type {
     SubscriptionResponse,
     TriggerEvaluationResponse,
 } from './src/types/Subscription.ts';
+import setupDayjs from './src/util/setupDayjs.ts';
+
+setupDayjs();
 
 export const DUMMY_BACKEND_URL = 'http://backend.dummy';
+export const DUMMY_LAPIS_URL = 'http://lapis.dummy';
 
 export const testServer = setupServer();
 
 function getError(assertionError: AssertionError) {
     return `${assertionError.message} - expected: ${JSON.stringify(assertionError.expected)} - actual ${JSON.stringify(assertionError.actual)}`;
 }
+
+export const lapisRequestMocks = {
+    info: (response: LapisInfo, statusCode: number = 200) => {
+        testServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver({ statusCode, response })));
+    },
+};
 
 export const backendRequestMocks = {
     getSubscriptions: (
