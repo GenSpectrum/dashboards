@@ -27,7 +27,7 @@ export const organismConfig = {
     [Organisms.mpox]: {
         organism: Organisms.mpox,
         pathFragment: 'mpox',
-        label: 'MPOX',
+        label: 'Mpox',
         backgroundColor: 'bg-pink-200',
         menuListEntryDecoration: 'hover:decoration-pink-200',
     },
