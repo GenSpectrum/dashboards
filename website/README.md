@@ -80,7 +80,7 @@ For development, it might be useful to use your local version of the
 [dashboard-components](https://github.com/GenSpectrum/dashboard-components):
 
 0. Stop the current `npm run dev` process.
-1. Install the local components
+1. Install the local components (run `npm run build` in the components directory)
    (assuming that you have cloned the dashboards and the dashboard-components into the same directory):
 
 ```bash

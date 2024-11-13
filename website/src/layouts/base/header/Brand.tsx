@@ -1,7 +1,12 @@
 export function Brand({ name }: { name: string }) {
     return (
-        <a className='ml-2 font-bold' href='/'>
-            {name}
-        </a>
+        <div className='my-8 flex items-center'>
+            <a href='/'>
+                <img className='ml-4 mr-2' src='/favicon.png' alt='icon' />
+            </a>
+            <a href='/' className='ml-2 font-bold'>
+                {name}
+            </a>
+        </div>
     );
 }
