@@ -39,8 +39,8 @@ dashboards:
         url: "https://lapis.pathoplexus.org/west-nile"
         mainDateField: "sampleCollectionDate"
         locationFields:
-          - "country"
-          - "division"
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         lineageField: "lineage"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
