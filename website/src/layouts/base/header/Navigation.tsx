@@ -26,7 +26,7 @@ export function Navigation() {
         }
         return {
             headline: organism.label,
-            headlineBackgroundColor: organism.backgroundColor,
+            headlineBackgroundColor: 'bg-orange-400',
             navigationEntries: megaMenuSections,
         };
     });

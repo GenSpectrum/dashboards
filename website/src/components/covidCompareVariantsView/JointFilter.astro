@@ -33,7 +33,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
 >
     <div>
         <div class='flex'>
-            <div class='flex flex-1 flex-col gap-2 bg-blue-50 px-2 py-4'>
+            <div class='flex flex-1 flex-col gap-2 bg-slate-200 px-2 py-4'>
                 <div class='font-semibold'>Filter dataset:</div>
                 <gs-location-filter
                     id={`locationFilter${filterId}`}
@@ -50,7 +50,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
                     initialDateTo={initialDateRangeTo}
                     dateColumn={view.mainDateField}></gs-date-range-selector>
             </div>
-            <div class='flex flex-1 flex-col border-l-2 bg-green-50 px-2 py-4'>
+            <div class='flex flex-1 flex-col border-l-2 bg-slate-200 px-2 py-4'>
                 <div class='mb-2 font-semibold'>Search variant:</div>
                 <gs-lineage-filter
                     id={`lineageFilter${filterId}`}
@@ -71,7 +71,7 @@ const initialDateRangeTo = isCustomDateRange(initialDateRange) ? initialDateRang
         </div>
         <button
             id={`submitButton${filterId}`}
-            class='mt-2 w-full rounded-lg border bg-white p-4 hover:bg-amber-200'
+            class='mt-2 w-full rounded-lg border bg-white p-4 hover:bg-orange-300'
             type='submit'
         >
             Submit

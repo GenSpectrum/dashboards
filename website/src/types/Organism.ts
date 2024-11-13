@@ -21,7 +21,7 @@ export const organismConfig = {
         organism: Organisms.h5n1,
         pathFragment: 'flu/h5n1',
         label: 'Influenza A/H5N1',
-        backgroundColor: 'bg-amber-200',
+        backgroundColor: 'bg-orange-300',
         menuListEntryDecoration: 'hover:decoration-amber-200',
     },
     [Organisms.mpox]: {

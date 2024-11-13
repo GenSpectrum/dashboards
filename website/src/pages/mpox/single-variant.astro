@@ -40,7 +40,7 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
     <gs-app lapis={getLapisUrl(Organisms.mpox)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 sm:grid'>
             <div>
-                <div class='bg-blue-50 px-2 py-4'>
+                <div class='bg-slate-200 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Filter dataset:</div>
                     <LocationTimeFilter
                         fields={view.locationFields}
@@ -51,7 +51,7 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
                         organismViewKey={organismViewKey}
                     />
                 </div>
-                <div class='border-t-2 bg-green-50 px-2 py-4'>
+                <div class='border-t-2 bg-slate-200 px-2 py-4'>
                     <div class='mb-2 font-semibold'>Search variant:</div>
                     <VariantFilter
                         fields={[
