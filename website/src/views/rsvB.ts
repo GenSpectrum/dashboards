@@ -1,4 +1,4 @@
-import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
+import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
 import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
@@ -9,6 +9,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
@@ -28,7 +29,14 @@ class RsvBConstants {
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
-    public readonly lineageField: string;
+    public readonly lineageFilters: LineageFilterConfig[] = [
+        {
+            lapisField: 'lineage',
+            placeholderText: 'Lineage',
+            filterType: 'text' as const,
+            initialValue: undefined,
+        },
+    ];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
@@ -38,7 +46,6 @@ class RsvBConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvB.lapis.mainDateField;
         this.locationFields = organismsConfig.rsvB.lapis.locationFields;
-        this.lineageField = organismsConfig.rsvB.lapis.lineageField;
         this.hostField = organismsConfig.rsvB.lapis.hostField;
         this.authorsField = organismsConfig.rsvB.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.rsvB.lapis.authorAffiliationsField;
@@ -64,7 +71,10 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
             location: {},
             dateRange: this.defaultDateRange,
         },
-        variantFilter: {},
+        variantFilter: {
+            mutations: {},
+            lineages: {},
+        },
     };
 
     public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
@@ -75,7 +85,7 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
                 dateRange:
                     getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField),
+            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
         };
     }
 
@@ -85,14 +95,15 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
         if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
-        setSearchFromLapisVariantQuery(search, pageState.variantFilter, this.lineageField);
+        setSearchFromLapisVariantQuery(search, pageState.variantFilter, getLineageFilterFields(this.lineageFilters));
         return `${this.pathname}?${search}`;
     }
 
     public toLapisFilter(pageState: BaselineAndVariantData) {
         return {
             ...this.toLapisFilterWithoutVariant(pageState),
-            ...pageState.variantFilter,
+            ...pageState.variantFilter.lineages,
+            ...pageState.variantFilter.mutations,
         };
     }
 

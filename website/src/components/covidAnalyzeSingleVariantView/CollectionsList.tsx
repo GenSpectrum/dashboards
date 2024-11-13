@@ -101,6 +101,8 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
                 ...currentPageState,
                 collectionId: collection.id,
                 variantFilter: {
+                    lineages: {},
+                    mutations: {},
                     variantQuery: query.variantQuery,
                 },
             };
@@ -109,11 +111,15 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
                 ...currentPageState,
                 collectionId: collection.id,
                 variantFilter: {
-                    lineage: query.pangoLineage ?? query.nextcladePangoLineage,
-                    nucleotideMutations: query.nucMutations,
-                    aminoAcidMutations: query.aaMutations,
-                    nucleotideInsertions: query.nucInsertions,
-                    aminoAcidInsertions: query.aaInsertions,
+                    lineages: {
+                        nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
+                    },
+                    mutations: {
+                        nucleotideMutations: query.nucMutations,
+                        aminoAcidMutations: query.aaMutations,
+                        nucleotideInsertions: query.nucInsertions,
+                        aminoAcidInsertions: query.aaInsertions,
+                    },
                 },
             };
         }

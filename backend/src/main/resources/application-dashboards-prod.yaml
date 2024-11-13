@@ -8,7 +8,6 @@ dashboards:
           - "region"
           - "country"
           - "division"
-        lineageField: "nextcladePangoLineage"
         hostField: "host"
         originatingLabField: "originatingLab"
         submittingLabField: "submittingLab"
@@ -19,7 +18,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        lineageField: "lineage"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
@@ -30,7 +28,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        lineageField: "lineage"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
@@ -41,7 +38,6 @@ dashboards:
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
-        lineageField: "lineage"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
@@ -55,7 +51,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        lineageField: "lineage"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
@@ -66,7 +61,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        lineageField: "lineage"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"

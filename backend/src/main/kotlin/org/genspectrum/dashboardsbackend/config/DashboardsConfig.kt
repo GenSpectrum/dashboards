@@ -19,7 +19,6 @@ data class LapisConfig(
     val url: String,
     val mainDateField: String,
     val locationFields: List<String>,
-    val lineageField: String,
     val hostField: String,
     val authorsField: String?,
     val authorAffiliationsField: String?,

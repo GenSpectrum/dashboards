@@ -1,18 +1,26 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components';
 
-import type { LapisLocation, LapisVariantQuery } from './helpers.ts';
+import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
 import { type Organism, organismConfig } from '../types/Organism.ts';
 
-export type BaselineData = {
-    baselineFilter: {
-        location: LapisLocation;
-        dateRange: DateRangeOption;
-    };
+export type BaselineFilter = {
+    location: LapisLocation;
+    dateRange: DateRangeOption;
 };
 
-export type VariantData = {
-    variantFilter: LapisVariantQuery;
+export type BaselineData = {
+    baselineFilter: BaselineFilter;
+};
+
+export type VariantFilter = {
+    mutations: LapisMutationQuery;
+    lineages: LapisLineageQuery;
+};
+
+export type VariantData<VariantFilterType = VariantFilter> = {
+    variantFilter: VariantFilterType;
 };
 
 export type BaselineAndVariantData = BaselineData & VariantData;
@@ -51,4 +59,20 @@ export function getViewBreadcrumbEntries<PageState extends object>(view: View<Pa
 
 export function getViewTitle<PageState extends object>(view: View<PageState>) {
     return `${view.label} | ${organismConfig[view.organism].label} | GenSpectrum`;
+}
+
+export function getLineageFilterFields(lineageFilters: LineageFilterConfig[]) {
+    return lineageFilters.map((filter) => filter.lapisField);
+}
+
+export function getLineageFilterConfigs(
+    lineageFilterConfigs: LineageFilterConfig[],
+    lineages: LapisLineageQuery,
+): LineageFilterConfig[] {
+    return lineageFilterConfigs.map((config) => {
+        return {
+            ...config,
+            initialValue: lineages[config.lapisField] ?? config.initialValue,
+        };
+    });
 }

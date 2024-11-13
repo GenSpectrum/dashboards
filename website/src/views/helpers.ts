@@ -1,5 +1,6 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components';
 
+import type { VariantFilter } from './View.ts';
 import { CustomDateRangeLabel } from '../types/DateWindow.ts';
 
 export type LapisFilter = Record<string, string | number | null | boolean | string[] | undefined>;
@@ -7,8 +8,12 @@ export type LapisFilter = Record<string, string | number | null | boolean | stri
 /**
  * Sets the value to the search params if the value is not empty, not undefined and not null
  */
-export const setSearchFromString = (search: URLSearchParams, name: string, value: string | undefined | null) => {
-    if (value !== null && value !== undefined && value !== '') {
+export const setSearchFromString = (
+    search: URLSearchParams,
+    name: string,
+    value: string | undefined | null | string[],
+) => {
+    if (value !== null && value !== undefined && value !== '' && Array.isArray(value) === false) {
         search.set(name, value);
     }
 };
@@ -109,15 +114,11 @@ export type LapisMutationQuery = {
     aminoAcidInsertions?: string[];
 };
 
-export const lineageKey = 'lineage';
-export const cladeKey = 'clade';
-
-export type LapisVariantQuery = LapisMutationQuery & {
-    [lineageKey]?: string;
-    [cladeKey]?: string;
+export type LapisLineageQuery = {
+    [lineage: string]: string | undefined;
 };
 
-export type LapisCovidVariantQuery = LapisVariantQuery & {
+export type LapisCovidVariantFilter = VariantFilter & {
     variantQuery?: string;
 };
 
@@ -145,13 +146,18 @@ export const getLapisMutationsQueryFromSearch = (search: URLSearchParams | Map<s
 
 export const getLapisVariantQuery = (
     search: URLSearchParams | Map<string, string>,
-    lineageIdentifier: string,
-    cladeIdentifier?: string,
-): LapisVariantQuery => {
+    lineageFilters: string[],
+): VariantFilter => {
+    const lineageQuery = lineageFilters
+        .map((filter) => {
+            const value = getStringFromSearch(search, filter);
+            return { [filter]: value };
+        })
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
     return {
-        ...getLapisMutationsQueryFromSearch(search),
-        [lineageKey]: getStringFromSearch(search, lineageIdentifier),
-        [cladeKey]: cladeIdentifier !== undefined ? getStringFromSearch(search, cladeIdentifier) : undefined,
+        mutations: { ...getLapisMutationsQueryFromSearch(search) },
+        lineages: { ...lineageQuery },
     };
 };
 
@@ -163,23 +169,21 @@ export const setSearchFromLapisMutationsQuery = (search: URLSearchParams, query:
 
 export const setSearchFromLapisVariantQuery = (
     search: URLSearchParams,
-    query: LapisCovidVariantQuery,
-    lineageIdentifier: string,
-    cladeIdentifier?: string,
+    query: LapisCovidVariantFilter,
+    lineageFilters: string[],
 ) => {
-    setSearchFromLapisMutationsQuery(search, query);
-    setSearchFromString(search, lineageIdentifier, query.lineage);
-    if (cladeIdentifier !== undefined) {
-        setSearchFromString(search, cladeIdentifier, query.clade);
-    }
+    setSearchFromLapisMutationsQuery(search, query.mutations);
+
+    lineageFilters.forEach((filter) => {
+        setSearchFromString(search, filter, query.lineages[filter]);
+    });
 };
 
 export const getLapisCovidVariantQuery = (
     search: URLSearchParams | Map<string, string>,
-    lineageIdentifier: string,
-    cladeIdentifier?: string,
-): LapisCovidVariantQuery => {
-    const query = getLapisVariantQuery(search, lineageIdentifier, cladeIdentifier);
+    lineageFilters: string[],
+): LapisCovidVariantFilter => {
+    const query = getLapisVariantQuery(search, lineageFilters);
     const variantQuery = getStringFromSearch(search, 'variantQuery');
     if (variantQuery !== undefined) {
         return {
@@ -195,11 +199,10 @@ export const getLapisCovidVariantQuery = (
 
 export const setSearchFromLapisCovidVariantQuery = (
     search: URLSearchParams,
-    query: LapisCovidVariantQuery,
-    lineageIdentifier: string,
-    cladeIdentifier?: string,
+    query: LapisCovidVariantFilter,
+    lineageFilters: string[],
 ) => {
-    setSearchFromLapisVariantQuery(search, query, lineageIdentifier, cladeIdentifier);
+    setSearchFromLapisVariantQuery(search, query, lineageFilters);
     setSearchFromString(search, 'variantQuery', query.variantQuery);
 };
 

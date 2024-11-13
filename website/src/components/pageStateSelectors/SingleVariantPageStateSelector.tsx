@@ -3,24 +3,18 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
-import {
-    type LineageFilterConfig,
-    type MutationFilterConfig,
-    type TextFilterConfig,
-    VariantSelector,
-} from './VariantSelector.tsx';
+import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { getClientLogger } from '../../clientLogger.ts';
 import { type OrganismsConfig } from '../../config.ts';
 import type { BaselineAndVariantData } from '../../views/View.ts';
-import { cladeKey, type LapisLocation, type LapisMutationQuery, lineageKey } from '../../views/helpers.ts';
+import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function SingleVariantPageStateSelector({
     locationFilterConfig,
     daterRangeFilterConfig,
     mutationFilterConfig,
-    lineageFilterConfig,
-    cladeFilterConfig,
+    lineageFilterConfigs,
     organismViewKey,
     organismsConfig,
     pageState,
@@ -28,8 +22,7 @@ export function SingleVariantPageStateSelector({
     locationFilterConfig: LocationFilterConfig;
     daterRangeFilterConfig: DateRangeFilterConfig;
     mutationFilterConfig: MutationFilterConfig;
-    lineageFilterConfig?: LineageFilterConfig;
-    cladeFilterConfig?: TextFilterConfig;
+    lineageFilterConfigs: LineageFilterConfig[];
     organismViewKey: OrganismViewKey;
     organismsConfig: OrganismsConfig;
     pageState: BaselineAndVariantData;
@@ -37,16 +30,19 @@ export function SingleVariantPageStateSelector({
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(daterRangeFilterConfig.initialDateRange);
     const [mutation, setMutation] = useState<LapisMutationQuery | undefined>(mutationFilterConfig.initialMutations);
-    const [lineage, setLineage] = useState<string | undefined>(lineageFilterConfig?.initialValue);
-    const [clade, setClade] = useState<string | undefined>(cladeFilterConfig?.initialValue);
+
+    const [lineages, setLineages] = useState<Record<string, string | undefined>>(
+        lineageFilterConfigs.reduce((acc: Record<string, string | undefined>, config) => {
+            acc[config.lapisField] = config.initialValue;
+            return acc;
+        }, {}),
+    );
 
     const view = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]).getOrganismView(
         organismViewKey,
     );
 
     const routeToNewPage = () => {
-        const lineageVariantFilter = lineageFilterConfig ? { [lineageKey]: lineage } : {};
-        const cladeVariantFilter = cladeFilterConfig ? { [cladeKey]: clade } : {};
         const newPageState: BaselineAndVariantData = {
             ...pageState,
             baselineFilter: {
@@ -54,9 +50,8 @@ export function SingleVariantPageStateSelector({
                 dateRange,
             },
             variantFilter: {
-                ...mutation,
-                ...lineageVariantFilter,
-                ...cladeVariantFilter,
+                mutations: { ...mutation },
+                lineages: { ...lineages },
             },
         };
         window.location.href = view.toUrl(newPageState);
@@ -73,10 +68,15 @@ export function SingleVariantPageStateSelector({
             <VariantSelector
                 onMutationChange={setMutation}
                 mutationFilterConfig={mutationFilterConfig}
-                lineageFilterConfig={lineageFilterConfig}
-                onLineageChange={setLineage}
-                cladeFilterConfig={cladeFilterConfig}
-                onCladeChange={setClade}
+                lineageFilterConfigs={lineageFilterConfigs.map((lineageFilterConfig) => ({
+                    lineageFilterConfig,
+                    onLineageChange: (lineage) => {
+                        setLineages((lineages) => ({
+                            ...lineages,
+                            [lineageFilterConfig.lapisField]: lineage,
+                        }));
+                    },
+                }))}
             />
             <ApplyFilterButton onClick={routeToNewPage} />
         </div>
