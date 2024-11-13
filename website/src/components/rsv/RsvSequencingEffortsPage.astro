@@ -4,12 +4,12 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { type Organisms } from '../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { defaultTablePageSize } from '../../views/View';
 import { getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey, sequencingEffortsViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 import { SequencingEffortsPageStateSelector } from '../pageStateSelectors/SequencingEffortsPageStateSelector';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 interface Props {
     organismViewKey: Extract<

@@ -5,11 +5,11 @@ import { SequencingEffortsPageStateSelector } from '../../components/pageStateSe
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { Organisms } from '../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { defaultTablePageSize } from '../../views/View';
 import { getLocationSubdivision } from '../../views/helpers';
 import { type OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 const organismViewKey: OrganismViewKey = 'mpox.sequencingEffortsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);

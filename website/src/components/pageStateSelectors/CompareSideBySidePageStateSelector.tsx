@@ -7,24 +7,23 @@ import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } 
 import { getClientLogger } from '../../clientLogger.ts';
 import type { OrganismsConfig } from '../../config.ts';
 import type { CovidCompareVariantsData } from '../../views/covid.ts';
-import { type LapisLocation, type LapisMutationQuery, lineageKey } from '../../views/helpers.ts';
+import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,
     daterRangeFilterConfig,
     mutationFilterConfig,
-    lineageFilterConfig,
+    lineageFilterConfigs,
     filterId,
     pageState,
     organismViewKey,
     organismsConfig,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    organismConfig: OrganismsConfig;
     daterRangeFilterConfig: DateRangeFilterConfig;
     mutationFilterConfig: MutationFilterConfig;
-    lineageFilterConfig?: LineageFilterConfig;
+    lineageFilterConfigs: LineageFilterConfig[];
     filterId: number;
     pageState: CovidCompareVariantsData;
     organismViewKey: OrganismViewKey;
@@ -33,22 +32,25 @@ export function CompareSideBySidePageStateSelector({
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(daterRangeFilterConfig.initialDateRange);
     const [mutation, setMutation] = useState<LapisMutationQuery | undefined>(mutationFilterConfig.initialMutations);
-    const [lineage, setLineage] = useState<string | undefined>(lineageFilterConfig?.initialValue);
+    const [lineages, setLineages] = useState<Record<string, string | undefined>>(
+        lineageFilterConfigs.reduce((acc: Record<string, string | undefined>, config) => {
+            acc[config.lapisField] = config.initialValue;
+            return acc;
+        }, {}),
+    );
     const view = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]).getOrganismView(
         organismViewKey,
     );
 
     const routeToNewPage = () => {
-        const lineageVariantFilter = lineageFilterConfig ? { [lineageKey]: lineage } : {};
-
         pageState.filters.set(filterId, {
             baselineFilter: {
                 location,
                 dateRange,
             },
             variantFilter: {
-                ...mutation,
-                ...lineageVariantFilter,
+                mutations: { ...mutation },
+                lineages: { ...lineages },
             },
         });
 
@@ -70,9 +72,15 @@ export function CompareSideBySidePageStateSelector({
                     <VariantSelector
                         onMutationChange={setMutation}
                         mutationFilterConfig={mutationFilterConfig}
-                        lineageFilterConfig={lineageFilterConfig}
-                        onLineageChange={setLineage}
-                        onCladeChange={() => {}}
+                        lineageFilterConfigs={lineageFilterConfigs.map((lineageFilterConfig) => ({
+                            lineageFilterConfig,
+                            onLineageChange: (lineage) => {
+                                setLineages((lineages) => ({
+                                    ...lineages,
+                                    [lineageFilterConfig.lapisField]: lineage,
+                                }));
+                            },
+                        }))}
                     />
                 </div>
             </div>

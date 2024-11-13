@@ -1,6 +1,6 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components';
 
-import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
+import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
 import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
@@ -11,6 +11,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import type { OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
@@ -32,7 +33,7 @@ class H5n1Constants {
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
-    public readonly lineageField: string;
+    public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
@@ -42,7 +43,6 @@ class H5n1Constants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;
         this.locationFields = organismsConfig.h5n1.lapis.locationFields;
-        this.lineageField = organismsConfig.h5n1.lapis.lineageField;
         this.hostField = organismsConfig.h5n1.lapis.hostField;
         this.authorsField = organismsConfig.h5n1.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
@@ -68,7 +68,10 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
             location: {},
             dateRange: this.defaultDateRange,
         },
-        variantFilter: {},
+        variantFilter: {
+            mutations: {},
+            lineages: {},
+        },
     };
 
     public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
@@ -79,7 +82,7 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
                 dateRange:
                     getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField),
+            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
         };
     }
 
@@ -89,14 +92,15 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
         if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
-        setSearchFromLapisVariantQuery(search, pageState.variantFilter, this.lineageField);
+        setSearchFromLapisVariantQuery(search, pageState.variantFilter, getLineageFilterFields(this.lineageFilters));
         return `${this.pathname}?${search}`;
     }
 
     public toLapisFilter(pageState: BaselineAndVariantData): LapisFilter {
         return {
             ...this.toLapisFilterWithoutVariant(pageState),
-            ...pageState.variantFilter,
+            ...pageState.variantFilter.lineages,
+            ...pageState.variantFilter.mutations,
         };
     }
 

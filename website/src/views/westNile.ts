@@ -1,6 +1,6 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components';
 
-import { type BaselineAndVariantData, type BaselineData, type View } from './View.ts';
+import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
 import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
@@ -10,6 +10,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
@@ -32,7 +33,14 @@ class WestNileConstants {
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
-    public readonly lineageField: string;
+    public readonly lineageFilters: LineageFilterConfig[] = [
+        {
+            lapisField: 'lineage',
+            placeholderText: 'Lineage',
+            filterType: 'text' as const,
+            initialValue: undefined,
+        },
+    ];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
@@ -42,7 +50,6 @@ class WestNileConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
         this.locationFields = organismsConfig.westNile.lapis.locationFields;
-        this.lineageField = organismsConfig.westNile.lapis.lineageField;
         this.hostField = organismsConfig.westNile.lapis.hostField;
         this.authorsField = organismsConfig.westNile.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
@@ -68,7 +75,10 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
             location: {},
             dateRange: this.defaultDateRange,
         },
-        variantFilter: {},
+        variantFilter: {
+            mutations: {},
+            lineages: {},
+        },
     };
 
     public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
@@ -79,7 +89,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
                 dateRange:
                     getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
-            variantFilter: getLapisVariantQuery(search, this.lineageField),
+            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
         };
     }
 
@@ -89,14 +99,15 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
             setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
-        setSearchFromLapisVariantQuery(search, pageState.variantFilter, this.lineageField);
+        setSearchFromLapisVariantQuery(search, pageState.variantFilter, getLineageFilterFields(this.lineageFilters));
         return `${this.pathname}?${search}`;
     }
 
     public toLapisFilter(pageState: BaselineAndVariantData) {
         return {
             ...this.toLapisFilterWithoutVariant(pageState),
-            ...pageState.variantFilter,
+            ...pageState.variantFilter.mutations,
+            ...pageState.variantFilter.lineages,
         };
     }
 

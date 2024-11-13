@@ -1,12 +1,12 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components';
 
-import { type BaselineData, type VariantData, type View } from './View.ts';
+import { type BaselineData, getLineageFilterFields, type VariantData, type View } from './View.ts';
 import {
     getDateRangeFromSearch,
     getIntegerFromSearch,
     getLapisCovidVariantQuery,
     getLapisLocationFromSearch,
-    type LapisCovidVariantQuery,
+    type LapisCovidVariantFilter,
     type LapisFilter,
     setSearchFromDateRange,
     setSearchFromLapisCovidVariantQuery,
@@ -14,6 +14,7 @@ import {
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { compareVariantsViewKey } from './routing.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 import type { InstanceLogger } from '../types/logMessage.ts';
@@ -38,7 +39,14 @@ class CovidConstants {
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
-    public readonly lineageField: string;
+    public readonly lineageFilters: LineageFilterConfig[] = [
+        {
+            lapisField: 'nextcladePangoLineage',
+            placeholderText: 'Nextclade pango lineage',
+            filterType: 'lineage' as const,
+            initialValue: undefined,
+        },
+    ];
     public readonly hostField: string;
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
@@ -48,31 +56,25 @@ class CovidConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
         this.locationFields = organismsConfig.covid.lapis.locationFields;
-        this.lineageField = organismsConfig.covid.lapis.lineageField;
         this.hostField = organismsConfig.covid.lapis.hostField;
         this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
     }
 
-    public variantFilterToLapisFilter(filter: LapisCovidVariantQuery): LapisFilter {
-        const lapisFilter: LapisFilter = {};
-        for (const [key, value] of Object.entries(filter)) {
-            if (key === 'lineage') {
-                lapisFilter[this.lineageField] = value;
-            } else {
-                lapisFilter[key] = value;
-            }
-        }
-
-        return lapisFilter;
+    public variantFilterToLapisFilter(filter: LapisCovidVariantFilter): LapisFilter {
+        return {
+            ...filter.lineages,
+            ...filter.mutations,
+            variantQuery: filter.variantQuery,
+        };
     }
 }
 
-export type CovidAnalyzeSingleVariantData = BaselineData & {
-    variantFilter: LapisCovidVariantQuery;
-    collectionId?: number;
-};
+export type CovidAnalyzeSingleVariantData = BaselineData &
+    VariantData<LapisCovidVariantFilter> & {
+        collectionId?: number;
+    };
 
 export class CovidAnalyzeSingleVariantView extends CovidConstants implements View<CovidAnalyzeSingleVariantData> {
     public readonly pathname = `/${pathFragment}/single-variant` as const;
@@ -85,7 +87,11 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             dateRange: this.defaultDateRange,
         },
         variantFilter: {
-            lineage: 'JN.1*',
+            lineages: {
+                nextcladePangoLineage: 'JN.1*',
+            },
+            mutations: {},
+            variantQuery: undefined,
         },
     };
 
@@ -97,7 +103,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
                 dateRange:
                     getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
             },
-            variantFilter: getLapisCovidVariantQuery(search, this.lineageField),
+            variantFilter: getLapisCovidVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
     }
@@ -110,7 +116,11 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
         }
 
-        setSearchFromLapisCovidVariantQuery(search, pageState.variantFilter, this.lineageField);
+        setSearchFromLapisCovidVariantQuery(
+            search,
+            pageState.variantFilter,
+            getLineageFilterFields(this.lineageFilters),
+        );
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
         }
@@ -142,7 +152,7 @@ export type CovidCompareVariantsData = {
     filters: Map<Id, CovidCompareVariantsFilter>;
 };
 
-type CovidCompareVariantsFilter = BaselineData & VariantData;
+type CovidCompareVariantsFilter = BaselineData & VariantData<LapisCovidVariantFilter>;
 
 type Id = number;
 
@@ -163,7 +173,11 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
                         dateRange: this.defaultDateRange,
                     },
                     variantFilter: {
-                        lineage: 'JN.1*',
+                        lineages: {
+                            nextcladePangoLineage: 'JN.1*',
+                        },
+                        mutations: {},
+                        variantQuery: undefined,
                     },
                 },
             ],
@@ -175,7 +189,11 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
                         dateRange: this.defaultDateRange,
                     },
                     variantFilter: {
-                        lineage: 'XBB.1*',
+                        lineages: {
+                            nextcladePangoLineage: 'XBB.1*',
+                        },
+                        mutations: {},
+                        variantQuery: undefined,
                     },
                 },
             ],
@@ -213,7 +231,11 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
             searchParameterMap.set(columnId, new Map<string, string>());
 
             const searchOfFilter = new URLSearchParams();
-            setSearchFromLapisCovidVariantQuery(searchOfFilter, filter.variantFilter, this.lineageField);
+            setSearchFromLapisCovidVariantQuery(
+                searchOfFilter,
+                filter.variantFilter,
+                getLineageFilterFields(this.lineageFilters),
+            );
             setSearchFromLocation(searchOfFilter, filter.baselineFilter.location);
             setSearchFromDateRange(searchOfFilter, this.mainDateField, filter.baselineFilter.dateRange);
 
@@ -253,7 +275,10 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
                     },
                     dateRange: this.defaultDateRange,
                 },
-                variantFilter: {},
+                variantFilter: {
+                    lineages: {},
+                    mutations: {},
+                },
             },
             lastId + 1,
         );
@@ -318,7 +343,7 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
                     getDateRangeFromSearch(filterParams, this.mainDateField, this.dateRangeOptions) ??
                     this.defaultDateRange,
             },
-            variantFilter: getLapisCovidVariantQuery(filterParams, this.lineageField),
+            variantFilter: getLapisCovidVariantQuery(filterParams, getLineageFilterFields(this.lineageFilters)),
         };
 
         return filter;

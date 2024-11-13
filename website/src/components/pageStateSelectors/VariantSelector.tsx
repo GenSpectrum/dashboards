@@ -12,28 +12,20 @@ export type LineageFilterConfig = {
     initialValue: string | undefined;
     placeholderText: string;
     lapisField: string;
-};
-
-export type TextFilterConfig = {
-    initialValue: string | undefined;
-    placeholderText: string;
-    lapisField: string;
+    filterType: 'lineage' | 'text';
 };
 
 export function VariantSelector({
     mutationFilterConfig,
     onMutationChange,
-    lineageFilterConfig,
-    onLineageChange,
-    cladeFilterConfig,
-    onCladeChange,
+    lineageFilterConfigs,
 }: {
     mutationFilterConfig: MutationFilterConfig;
     onMutationChange: (mutations: LapisMutationQuery | undefined) => void;
-    lineageFilterConfig?: LineageFilterConfig;
-    onLineageChange: (lineage: string | undefined) => void;
-    cladeFilterConfig?: TextFilterConfig;
-    onCladeChange: (clade: string | undefined) => void;
+    lineageFilterConfigs: {
+        lineageFilterConfig: LineageFilterConfig;
+        onLineageChange: (lineage: string | undefined) => void;
+    }[];
 }) {
     const mutationFilter = {
         nucleotideMutations: mutationFilterConfig.initialMutations.nucleotideMutations || [],
@@ -46,24 +38,45 @@ export function VariantSelector({
         <div>
             <SelectorHeadline>Variant Filter</SelectorHeadline>
             <div className='flex flex-col gap-2'>
-                {lineageFilterConfig && (
-                    <GsLineageFilter
-                        lapisField={lineageFilterConfig.lapisField}
-                        placeholderText={lineageFilterConfig.placeholderText}
-                        onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                        initialValue={lineageFilterConfig.initialValue}
+                {lineageFilterConfigs.map(({ lineageFilterConfig, onLineageChange }) => (
+                    <LineageFilterInput
+                        lineageFilterConfig={lineageFilterConfig}
+                        onLineageChange={onLineageChange}
+                        key={lineageFilterConfig.lapisField}
                     />
-                )}
-                {cladeFilterConfig && (
-                    <GsTextInput
-                        lapisField={cladeFilterConfig.lapisField}
-                        placeholderText={cladeFilterConfig.placeholderText}
-                        onInputChange={(clade) => onCladeChange(clade[cladeFilterConfig.lapisField])}
-                        initialValue={cladeFilterConfig.initialValue}
-                    />
-                )}
+                ))}
                 <GsMutationFilter initialValue={mutationFilter} onMutationChange={onMutationChange} />
             </div>
         </div>
     );
+}
+
+function LineageFilterInput({
+    lineageFilterConfig,
+    onLineageChange,
+}: {
+    lineageFilterConfig: LineageFilterConfig;
+    onLineageChange: (lineage: string | undefined) => void;
+}) {
+    switch (lineageFilterConfig.filterType) {
+        case 'lineage':
+            return (
+                <GsLineageFilter
+                    lapisField={lineageFilterConfig.lapisField}
+                    placeholderText={lineageFilterConfig.placeholderText}
+                    onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
+                    initialValue={lineageFilterConfig.initialValue}
+                />
+            );
+
+        case 'text':
+            return (
+                <GsTextInput
+                    lapisField={lineageFilterConfig.lapisField}
+                    placeholderText={lineageFilterConfig.placeholderText}
+                    onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
+                    initialValue={lineageFilterConfig.initialValue}
+                />
+            );
+    }
 }

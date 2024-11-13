@@ -4,12 +4,12 @@ import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { type Organisms } from '../../types/Organism';
-import { defaultTablePageSize } from '../../views/View';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
+import { getLineageFilterConfigs, defaultTablePageSize, getLineageFilterFields } from '../../views/View';
 import { getLapisMutations, getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey, singleVariantViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 import { SingleVariantPageStateSelector } from '../pageStateSelectors/SingleVariantPageStateSelector';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 interface Props {
     organismViewKey: Extract<
@@ -34,7 +34,8 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     pageState.baselineFilter.location,
 );
 
-const initialMutations = getLapisMutations(pageState.variantFilter);
+const initialMutations = getLapisMutations(pageState.variantFilter.mutations);
+const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageState.variantFilter.lineages);
 ---
 
 <OrganismPageLayout view={view}>
@@ -53,11 +54,7 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
                     dateColumn: view.mainDateField,
                 }}
                 mutationFilterConfig={{ initialMutations }}
-                lineageFilterConfig={{
-                    initialValue: pageState.variantFilter.lineage,
-                    lapisField: view.lineageField,
-                    placeholderText: 'Lineage',
-                }}
+                lineageFilterConfigs={lineageFilterConfigs}
                 pageState={pageState}
                 organismViewKey={organismViewKey}
                 organismsConfig={getDashboardsConfig().dashboards.organisms}
@@ -112,7 +109,7 @@ const initialMutations = getLapisMutations(pageState.variantFilter);
                     }
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
-                            fields={JSON.stringify([view.lineageField])}
+                            fields={JSON.stringify(getLineageFilterFields(view.lineageFilters))}
                             filter={JSON.stringify(variantFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'

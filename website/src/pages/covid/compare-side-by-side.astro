@@ -4,11 +4,11 @@ import { CompareSideBySidePageStateSelector } from '../../components/pageStateSe
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { Organisms } from '../../types/Organism';
-import { defaultTablePageSize } from '../../views/View';
-import {  getLapisMutations } from '../../views/helpers';
+import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
+import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
+import { getLapisMutations } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 
 const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
@@ -26,11 +26,12 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                         baselineFilter.dateRange,
                         new Date(view.earliestDate),
                     );
-                    const initialMutations = getLapisMutations(variantFilter);
+                    const initialMutations = getLapisMutations(variantFilter.mutations);
                     const numeratorFilter = {
                         ...view.variantFilterToLapisFilter(variantFilter),
                         ...baselineLapisFilter,
                     };
+                    const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, variantFilter.lineages);
 
                     return (
                         <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 px-2'>
@@ -58,11 +59,7 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                                     mutationFilterConfig={{
                                         initialMutations,
                                     }}
-                                    lineageFilterConfig={{
-                                        lapisField: view.lineageField,
-                                        initialValue: variantFilter.lineage,
-                                        placeholderText: 'Pango Lineage',
-                                    }}
+                                    lineageFilterConfigs={lineageFilterConfigs}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
@@ -117,7 +114,7 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                             </ComponentWrapper>
                             <ComponentWrapper title='Sub-lineages'>
                                 <gs-aggregate
-                                    fields={JSON.stringify([view.lineageField])}
+                                    fields={JSON.stringify(getLineageFilterFields(view.lineageFilters))}
                                     filter={JSON.stringify(numeratorFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
