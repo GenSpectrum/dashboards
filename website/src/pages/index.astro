@@ -5,76 +5,89 @@ import { organismConfig } from '../types/Organism';
 import { dataOrigins } from '../types/dataOrigins';
 import { Page } from '../types/pages';
 import { ServerSide } from '../views/serverSideRouting';
+
+/* eslint-disable @typescript-eslint/naming-convention */
+const iconMapping: { [key: string]: string } = {
+    'Sequencing efforts': 'mdi--test-tube',
+    'Single variant': 'mdi--magnify',
+    'Compare side-by-side': 'mdi--compare-horizontal',
+};
+/* eslint-enable */
 ---
 
 <style>
-    h1 {
-        @apply mb-4 text-center text-3xl;
+    a {
+        @apply text-slate-500 hover:underline;
     }
 
-    .description a {
-        @apply underline;
+    .items a {
+        @apply text-black hover:underline hover:decoration-orange-400 hover:decoration-4;
+    }
+    h1 {
+        @apply text-center font-light;
     }
 </style>
 
 <BaseLayout title='GenSpectrum Dashboards'>
-    <h1 class='mt-8'>Explore up-to-date pathogen genomic data</h1>
-    <div class='description mx-auto mb-8 max-w-[1400px] px-8'>
-        GenSpectrum…
+    <h1 class='mx-auto my-12 max-w-[1000px] text-8xl text-slate-600'>
+        In<span class='font-medium text-orange-300'>spect</span> pathogen <span class='font-medium text-slate-300'
+            >Gen</span
+        >omic data
+    </h1>
 
-        <ul class='ml-6 mt-2 list-disc'>
-            <li>
-                …is a fully interactive platform aiming to help scientists and public health professionals query and
-                analyze pathogen sequences.
-            </li>
-            <li>…is open source, the code is available on <a href='https://github.com/GenSpectrum'>GitHub</a>.</li>
-            <li>
-                …uses data from the <a href='https://www.insdc.org/'
-                    >International Nucleotide Sequence Database Collaboration (INSDC)</a
-                > and <a href='https://pathoplexus.org/'>Pathoplexus</a>. You can read more about the <a
-                    href={Page.dataSources}>data sources and how we preprocess the data</a
-                >.
-            </li>
-            <li>
-                …'s core team is at the <a href='https://bsse.ethz.ch/cevo'>Computational Evolution Group</a> at ETH Zurich
-                but received valuable contributions from many more. You can find a list of contributors <a
-                    href='https://github.com/GenSpectrum/cov-spectrum-website?tab=readme-ov-file#contributors-'>here</a
-                >.
-            </li>
-            <li>
-                …is supported by funding from <a href='https://ethz.ch/en.html'>ETH Zurich</a>, the <a
-                    href='https://www.cdc.gov/'>U.S. Centers for Disease Control and Prevention</a
-                > and the <a href='https://www.cdc.gov/advanced-molecular-detection/index.html'
-                    >Office of Advanced Molecular Detection</a
-                >.
-            </li>
-            <li>
-                …'s team is very open for feedback and would love to hear from you: you can reach us on <a
-                    href='https://github.com/GenSpectrum/dashboards/issues'
+    <div class='mx-auto my-12 flex max-w-[1200px] px-8'>
+        <div class='ml-8 basis-1/2 text-balance'>
+            <div class='items-left my-8 flex'>
+                <div class='iconify size-7 mdi--information-outline'></div>
+                <h1 class='ml-2 text-3xl text-slate-600'>About Us</h1>
+            </div>
+            <span
+                >An interactive platform to help scientists and public health professionals query and analyze pathogen
+                sequences. The core team is at the <a href='https://bsse.ethz.ch/cevo'>cEVO group </a> at ETH Zurich, but
+                we are grateful for our many <a
+                    href='https://github.com/GenSpectrum/cov-spectrum-website?tab=readme-ov-file#contributors-'
                 >
-                    GitHub</a
+                    contributors
+                </a> from around the globe. We are funded by the <a href='https://ethz.ch/en.html'>ETH Zurich</a> and the
+                <a href='https://www.cdc.gov/'>CDC</a>.
+            </span>
+        </div>
+        <div class='ml-8 basis-1/2 text-balance'>
+            <div class='items-left my-8 flex'>
+                <div class='iconify size-7 mdi--wrench-outline'></div>
+                <h1 class='ml-2 text-3xl text-slate-600'>Open Source Tooling</h1>
+            </div>
+            <span
+                >Code is available on <a href='https://github.com/GenSpectrum'>GitHub</a>, with customizable components
+                to build your own dashboards. We use data from the <a href='https://www.insdc.org/'
+                    >International Nucleotide Sequence Database Collaboration (INSDC)</a
+                >
+                and <a href='https://pathoplexus.org/'>Pathoplexus</a>, read more about our data processing <a
+                    href={Page.dataSources}>here</a
                 >.
-            </li>
-        </ul>
+            </span>
+        </div>
     </div>
 
-    <h1>Pathogens</h1>
-    <div class='mx-8 mb-8 flex flex-wrap justify-center gap-x-4 gap-y-8'>
+    <div class='mx-auto mb-8 mt-8 flex max-w-[1200px] items-center justify-center'>
+        <div class='iconify size-7 mdi--virus-outline'></div>
+        <h1 class='ml-2 text-3xl text-slate-600'>Pathogens</h1>
+    </div>
+    <div class='items mx-auto mb-8 flex max-w-[1200px] flex-wrap justify-center gap-x-4 gap-y-8'>
         {
             Object.values(organismConfig).map((organism) => (
-                <div class='w-[260px]'>
-                    <div class='rounded-b-md rounded-tr-md border-2 border-gray-100'>
-                        <h3 class={`rounded-tr-md p-4 text-xl ${organism.backgroundColor}`}>{organism.label}</h3>
-                        <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black'>
+                <div class='group w-[260px]'>
+                    <div class='rounded-md border-2 border-gray-100 hover:border-orange-400'>
+                        <h3 class='rounded-t-md bg-orange-300 p-4 text-xl group-hover:bg-orange-400'>
+                            {organism.label}
+                        </h3>
+                        <ul class='mb-4 ml-6 mr-6'>
                             {Object.values(ServerSide.routing.views[organism.organism]).map((view) => (
                                 <li class='flex items-start pt-2'>
-                                    <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
-                                    <a
-                                        href={view.getDefaultPageState()}
-                                        class={`hover:underline ${organism.menuListEntryDecoration} hover:decoration-4`}
-                                    >
-                                        {view.labelLong}
-                                    </a>
+                                    <div
+                                        class={`iconify mr-2 size-7 w-4 pt-[0.8rem] ${iconMapping[view.label] || 'mdi--virus-outline'}`}
+                                    />
+                                    <a href={view.getDefaultPageState()}>{view.labelLong}</a>
                                 </li>
                             ))}
                             {ServerSide.routing.externalPages[organism.organism].map((externalPage) => (
@@ -94,5 +107,6 @@ import { ServerSide } from '../views/serverSideRouting';
             ))
         }
     </div>
+
     <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus]} />
 </BaseLayout>

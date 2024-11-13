@@ -13,7 +13,7 @@ export function Navigation() {
             return {
                 label: view.labelLong,
                 href,
-                underlineColor: organism.menuListEntryDecoration,
+                underlineColor: 'hover:decoration-orange-400',
                 externalLink: false,
             };
         });
@@ -29,7 +29,7 @@ export function Navigation() {
 
         return {
             headline: organism.label,
-            headlineBackgroundColor: organism.backgroundColor,
+            headlineBackgroundColor: 'bg-orange-400',
             navigationEntries: megaMenuSections,
         };
     });
