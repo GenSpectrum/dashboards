@@ -18,14 +18,8 @@ const { forceLoggedOutState = false } = Astro.props;
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
     </div>
 
-    <div
-        class='z-0 md:hidden'
-        style={{
-            position: 'absolute',
-            right: '1.5rem',
-            top: '-2rem',
-        }}
-    >
-        <span>Closed</span>
+    <div class={`flex ${headerHeight} z-0 md:hidden md:z-6 gap-4 items-center justify-between`}>
+        <Brand name='' />
+        <div class='justify-end'>HamburgerMenu</div>
     </div>
 </header>
