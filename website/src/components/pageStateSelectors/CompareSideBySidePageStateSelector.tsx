@@ -58,7 +58,7 @@ export function CompareSideBySidePageStateSelector({
     };
 
     return (
-        <div className='flex flex-col gap-4 bg-gray-50 p-2'>
+        <div className='flex flex-col gap-4 bg-gray-100 p-2'>
             <div className='flex gap-8'>
                 <div className='flex-0'>
                     <BaselineSelector

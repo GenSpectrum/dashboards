@@ -58,7 +58,7 @@ export function SingleVariantPageStateSelector({
     };
 
     return (
-        <div className='flex flex-col gap-6 bg-gray-50 p-2'>
+        <div className='flex flex-col gap-6 bg-gray-100 p-2'>
             <BaselineSelector
                 onLocationChange={setLocation}
                 locationFilterConfig={locationFilterConfig}

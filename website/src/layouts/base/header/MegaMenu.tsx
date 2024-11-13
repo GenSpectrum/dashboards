@@ -12,30 +12,20 @@ export function MegaMenu({ className, children }: PropsWithChildren<WithClassNam
 
 export interface MegaMenuSectionProps {
     headline: string;
-    headlineBackgroundColor: string;
 }
 
-export function MegaMenuSection({
-    headline,
-    children,
-    headlineBackgroundColor,
-}: PropsWithChildren<MegaMenuSectionProps>) {
+export function MegaMenuSection({ headline, children }: PropsWithChildren<MegaMenuSectionProps>) {
     return (
-        <li>
-            <MegaMenuSectionHeadline label={headline} className={headlineBackgroundColor} />
-            <ul className='flex flex-col gap-2'>{children}</ul>
+        <li className='group'>
+            <h3 className='mb-4 bg-primary p-2 text-lg font-bold group-hover:bg-primaryFocus'>{headline}</h3>
+            <ul className='peer-hover flex flex-col gap-2'>{children}</ul>
         </li>
     );
-}
-
-function MegaMenuSectionHeadline({ label, className }: WithClassName<{ label: string }>) {
-    return <h3 className={`mb-4 p-2 text-lg font-bold ${className}`}>{label}</h3>;
 }
 
 export function MegaMenuListEntry({
     href,
     label,
-    className,
     externalLink = false,
 }: WithClassName<{
     href: string;
@@ -45,7 +35,7 @@ export function MegaMenuListEntry({
     return (
         <li>
             <a
-                className={`flex items-center p-2 hover:underline hover:decoration-4 ${className} ${externalLink ? 'after:iconify after:ml-0.5 after:mdi--external-link' : ''}`}
+                className={`flex items-center p-2 hover:underline hover:decoration-primaryFocus hover:decoration-4 ${externalLink ? 'after:iconify after:ml-0.5 after:mdi--external-link' : ''}`}
                 href={href}
             >
                 {label}

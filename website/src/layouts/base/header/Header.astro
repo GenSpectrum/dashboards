@@ -12,9 +12,20 @@ const { forceLoggedOutState = false } = Astro.props;
 ---
 
 <header class='sticky top-0 z-10 border-b bg-white'>
-    <div class={`flex ${headerHeight} items-center justify-between`}>
+    <div class={`flex ${headerHeight} subtitle hidden md:flex md:z-6 gap-4 items-center justify-between`}>
         <Brand name='GenSpectrum' />
         <Navigation />
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
+    </div>
+
+    <div
+        class='z-0 md:hidden'
+        style={{
+            position: 'absolute',
+            right: '1.5rem',
+            top: '-2rem',
+        }}
+    >
+        <span>Closed</span>
     </div>
 </header>

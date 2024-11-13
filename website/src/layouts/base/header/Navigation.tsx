@@ -13,7 +13,6 @@ export function Navigation() {
             return {
                 label: view.labelLong,
                 href,
-                underlineColor: organism.menuListEntryDecoration,
                 externalLink: false,
             };
         });
@@ -21,13 +20,11 @@ export function Navigation() {
             megaMenuSections.push({
                 label: 'CoV-Spectrum',
                 href: 'https://cov-spectrum.org',
-                underlineColor: organism.menuListEntryDecoration,
                 externalLink: true,
             });
         }
         return {
             headline: organism.label,
-            headlineBackgroundColor: organism.backgroundColor,
             navigationEntries: megaMenuSections,
         };
     });
@@ -46,7 +43,6 @@ export function Navigation() {
                                             label={entry.label}
                                             externalLink={entry.externalLink}
                                             href={entry.href}
-                                            className={entry.underlineColor}
                                         />
                                     ))}
                                 </MegaMenuSection>
