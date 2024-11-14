@@ -1,6 +1,7 @@
 ---
 import { Brand } from './Brand';
 import CallToAction from './CallToAction.astro';
+import { Hamburger } from './Hamburger';
 import { Navigation } from './Navigation';
 import { headerHeight } from './headerConstants';
 
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const { forceLoggedOutState = false } = Astro.props;
+const isOpen = false;
 ---
 
 <header class='sticky top-0 z-10 border-b bg-white'>
@@ -18,8 +20,8 @@ const { forceLoggedOutState = false } = Astro.props;
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
     </div>
 
-    <div class={`flex ${headerHeight} z-0 md:hidden md:z-6 gap-4 items-center justify-between`}>
+    <div class={`flex ${headerHeight} md:hidden gap-4 items-center justify-between mr-4`}>
         <Brand name='' />
-        <div class='justify-end'>HamburgerMenu</div>
+        <Hamburger isOpen={isOpen}/>
     </div>
 </header>
