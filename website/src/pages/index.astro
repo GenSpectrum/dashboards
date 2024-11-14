@@ -93,6 +93,23 @@ import { ServerSide } from '../views/serverSideRouting';
                 </div>
             ))
         }
+
+        <div class='w-[260px]'>
+            <div class='rounded-b-md rounded-tr-md border-2 border-gray-100'>
+                <h3 class='rounded-tr-md bg-amber-600 p-4 text-xl'>Swiss wastewater</h3>
+                <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black'>
+                    <li class='flex items-start pt-2'>
+                        <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]'></div>
+                        <a
+                            href='/swiss-wastewater/random'
+                            class='hover:underline hover:decoration-amber-600 hover:decoration-4'
+                        >
+                            Random
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus]} />
+    <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus, dataOrigins.wise]} />
 </BaseLayout>
