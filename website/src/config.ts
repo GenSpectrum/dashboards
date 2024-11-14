@@ -32,6 +32,12 @@ const organismsConfigSchema = z.object(
 );
 export type OrganismsConfig = z.infer<typeof organismsConfigSchema>;
 
+const environmentSchema = z.union([
+    z.literal('dashboards-dev'),
+    z.literal('dashboards-staging'),
+    z.literal('dashboards-prod'),
+]);
+
 const dashboardsConfigSchema = z.object({
     dashboards: z.object({
         organisms: organismsConfigSchema,
@@ -47,12 +53,6 @@ const dashboardsConfigSchema = z.object({
     }),
 });
 export type DashboardsConfig = z.infer<typeof dashboardsConfigSchema>;
-
-const environmentSchema = z.union([
-    z.literal('dashboards-dev'),
-    z.literal('dashboards-staging'),
-    z.literal('dashboards-prod'),
-]);
 
 let dashboardsConfig: DashboardsConfig | null = null;
 
@@ -100,7 +100,7 @@ function getConfigDir(): string {
     return configDir;
 }
 
-function getEnvironment() {
+export function getEnvironment() {
     return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
 }
 
