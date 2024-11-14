@@ -1,5 +1,3 @@
-import type { FC } from 'react';
-
 const styledHamburger = `
     .hamburger {
         width: 2rem;
@@ -43,9 +41,13 @@ const styledHamburger = `
     }
 `;
 
-export const Hamburger: FC<{ isOpen: boolean }> = ({ isOpen }) => {
+type HamburgerProps = {
+    isOpen: boolean;
+};
+
+function Hamburger({ isOpen }: HamburgerProps) {
     return (
-        <div className='relative' aria-label='main menu'>
+        <div className='relative mr-4' aria-label='main menu'>
             <div className='hamburger'>
                 <div className={`burger bg-black burger1--${isOpen ? 'open' : 'closed'}`} />
                 <div className={`burger bg-black burger2--${isOpen ? 'open' : 'closed'}`} />
@@ -54,4 +56,6 @@ export const Hamburger: FC<{ isOpen: boolean }> = ({ isOpen }) => {
             <style>{styledHamburger}</style>
         </div>
     );
-};
+}
+
+export { Hamburger };

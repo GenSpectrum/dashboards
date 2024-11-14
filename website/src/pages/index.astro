@@ -5,105 +5,97 @@ import { organismConfig } from '../types/Organism';
 import { dataOrigins } from '../types/dataOrigins';
 import { Page } from '../types/pages';
 import { ServerSide } from '../views/serverSideRouting';
+
+/* eslint-disable @typescript-eslint/naming-convention */
+const iconMapping: { [key: string]: string } = {
+    'Sequencing efforts': 'mdi--test-tube',
+    'Single variant': 'mdi--magnify',
+    'Compare side-by-side': 'mdi--compare-horizontal',
+};
+/* eslint-enable */
 ---
 
 <style>
-    h1 {
-        @apply text-center;
+    a {
+        @apply text-slate-500 hover:underline;
     }
 
-    .description a {
-        @apply underline;
+    .items a {
+        @apply text-black hover:underline hover:decoration-orange-400 hover:decoration-4;
+    }
+    h1 {
+        @apply text-center font-light;
     }
 </style>
 
 <BaseLayout title='GenSpectrum Dashboards'>
-    <h1 class='mb-20 mt-12 text-9xl text-slate-600'>
-        In<span class='text-orange-300'>spect</span> pathogen <span class='text-slate-300'>Gen</span>omic data
+    <h1 class='mx-auto my-12 max-w-[1000px] text-8xl text-slate-600'>
+        In<span class='font-medium text-orange-300'>spect</span> pathogen <span class='font-medium text-slate-300'
+            >Gen</span
+        >omic data
     </h1>
 
-    <div class='mb-12 ml-8 mr-8 mt-12 flex justify-evenly'>
-        <div class='mr-4 text-balance'>
-            <div class='flex items-left mb-8 mt-8'>
-                <svg viewBox='0 0 24 24' width='1.2em' height='1.2em' class='inline-block'
-                    ><path
-                        fill='currentColor'
-                        d='M11.95 18q.525 0 .888-.363t.362-.887t-.362-.888t-.888-.362t-.887.363t-.363.887t.363.888t.887.362m-.9-3.85h1.85q0-.825.188-1.3t1.062-1.3q.65-.65 1.025-1.238T15.55 8.9q0-1.4-1.025-2.15T12.1 6q-1.425 0-2.312.75T8.55 8.55l1.65.65q.125-.45.563-.975T12.1 7.7q.8 0 1.2.438t.4.962q0 .5-.3.938t-.75.812q-1.1.975-1.35 1.475t-.25 1.825M12 22q-2.075 0-3.9-.787t-3.175-2.138T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8'
-                    ></path></svg
-                >
+    <div class='mx-auto my-12 flex max-w-[1200px] px-8'>
+        <div class='ml-8 basis-1/2 text-balance'>
+            <div class='items-left my-8 flex'>
+                <div class='iconify size-7 mdi--information-outline'></div>
                 <h1 class='ml-2 text-3xl text-slate-600'>About Us</h1>
             </div>
             <span
                 >An interactive platform to help scientists and public health professionals query and analyze pathogen
-                sequences. The core team is at the <a
-                    class='text-slate-500 hover:underline'
-                    href='https://bsse.ethz.ch/cevo'
-                    >cEVO group
-                </a> at ETH Zurich, but we are grateful for our many <a
-                    class='text-slate-500 hover:underline'
+                sequences. The core team is at the <a href='https://bsse.ethz.ch/cevo'>cEVO group </a> at ETH Zurich, but
+                we are grateful for our many <a
                     href='https://github.com/GenSpectrum/cov-spectrum-website?tab=readme-ov-file#contributors-'
                 >
                     contributors
-                </a> from around the globe. We are funded by the <a
-                    class='text-slate-500 hover:underline'
-                    href='https://ethz.ch/en.html'>ETH Zurich</a
-                > and the <a class='text-slate-500 hover:underline' href='https://www.cdc.gov/'>CDC</a>
+                </a> from around the globe. We are funded by the <a href='https://ethz.ch/en.html'>ETH Zurich</a> and the
+                <a href='https://www.cdc.gov/'>CDC</a>.
             </span>
         </div>
-        <div class='ml-4 text-balance'>
-            <div class='flex items-left mb-8 mt-8'>
-                <svg viewBox='0 0 14 14' width='1.2em' height='1.2em' class='inline-block'
-                    ><path
-                        fill='none'
-                        stroke='currentColor'
-                        stroke-linecap='round'
-                        stroke-linejoin='round'
-                        d='M13.41 3.596a.76.76 0 0 0-.35-.51l-2 2a1 1 0 0 1-1.44 0l-.76-.68a1 1 0 0 1 0-1.4l2-2a.76.76 0 0 0-.48-.43a3.8 3.8 0 0 0-4.2 5.309L.815 11.252a1 1 0 0 0 .014 1.428l.561.538a1 1 0 0 0 1.396-.01l5.428-5.37a3.81 3.81 0 0 0 5.196-4.242'
-                    ></path></svg
-                >
+        <div class='ml-8 basis-1/2 text-balance'>
+            <div class='items-left my-8 flex'>
+                <div class='iconify size-7 mdi--wrench-outline'></div>
                 <h1 class='ml-2 text-3xl text-slate-600'>Open Source Tooling</h1>
             </div>
             <span
-                >Code is available on <a class='text-slate-500 hover:underline' href='https://github.com/GenSpectrum'
-                    >GitHub</a
-                >, with customizable components to build your own dashboards. We use data from the <a
-                    class='text-slate-500 hover:underline'
-                    href='https://www.insdc.org/'>International Nucleotide Sequence Database Collaboration (INSDC)</a
+                >Code is available on <a href='https://github.com/GenSpectrum'>GitHub</a>, with customizable components
+                to build your own dashboards. We use data from the <a href='https://www.insdc.org/'
+                    >International Nucleotide Sequence Database Collaboration (INSDC)</a
                 >
-                and <a class='text-slate-500 hover:underline' href='https://pathoplexus.org/'>Pathoplexus</a>, read more
-                about our data processing <a class='text-slate-500 hover:underline' href={Page.dataSources}>here</a>.
+                and <a href='https://pathoplexus.org/'>Pathoplexus</a>, read more about our data processing <a
+                    href={Page.dataSources}>here</a
+                >.
             </span>
         </div>
     </div>
 
-    <div class='flex items-center justify-center mb-8 mt-8'>
-        <img src='https://nextstrain.org/_next/static/media/fa-viruses-solid.74acb6f2.svg' class='h-6 w-6' />
+    <div class='mx-auto mb-8 mt-8 flex max-w-[1200px] items-center justify-center'>
+        <div class='iconify size-7 mdi--virus-outline'></div>
         <h1 class='ml-2 text-3xl text-slate-600'>Pathogens</h1>
     </div>
-    <div class='mx-8 mb-8 flex flex-wrap justify-center gap-x-4 gap-y-8'>
+    <div class='items mx-auto mb-8 flex max-w-[1200px] flex-wrap justify-center gap-x-4 gap-y-8'>
         {
             Object.values(organismConfig).map((organism) => (
-                <div class='w-[260px]'>
-                    <div class='rounded-b-md rounded-tr-md border-2 border-gray-100 hover:border-orange-400'>
-                        <h3 class='rounded-tr-md bg-orange-300 p-4 text-xl hover:bg-orange-400'>{organism.label}</h3>
-                        <ul class='mb-4 ml-6 mr-6 border-l-2 border-l-black'>
+                <div class='group w-[260px]'>
+                    <div class='rounded-md border-2 border-gray-100 hover:border-orange-400'>
+                        <h3 class='rounded-t-md bg-orange-300 p-4 text-xl group-hover:bg-orange-400'>
+                            {organism.label}
+                        </h3>
+                        <ul class='mb-4 ml-6 mr-6'>
                             {Object.values(ServerSide.routing.views[organism.organism]).map((view) => (
                                 <li class='flex items-start pt-2'>
-                                    <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
-                                    <a
-                                        href={view.getDefaultPageState()}
-                                        class='hover:underline hover:decoration-orange-300 hover:decoration-4'
-                                    >
-                                        {view.labelLong}
-                                    </a>
+                                    <div
+                                        class={`iconify mr-2 size-7 w-4 pt-[0.8rem] ${iconMapping[view.label] || 'mdi--virus-outline'}`}
+                                    />
+                                    <a href={view.getDefaultPageState()}>{view.labelLong}</a>
                                 </li>
                             ))}
                             {organism.organism === 'covid' && (
                                 <li class='flex items-start pt-4'>
-                                    <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
+                                    <div class='iconify mr-2 size-7 w-4 pt-[0.8rem] mdi--virus-outline' />
                                     <a
                                         href='https://cov-spectrum.org'
-                                        class='flex items-center after:iconify after:ml-0.5 after:mdi--external-link hover:underline hover:decoration-orange-300 hover:decoration-4'
+                                        class='flex items-center after:iconify after:ml-0.5 after:mdi--external-link'
                                     >
                                         CoV-Spectrum
                                     </a>
@@ -115,5 +107,6 @@ import { ServerSide } from '../views/serverSideRouting';
             ))
         }
     </div>
+
     <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus]} />
 </BaseLayout>

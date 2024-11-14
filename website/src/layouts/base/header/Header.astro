@@ -1,16 +1,53 @@
 ---
+import { getSession } from 'auth-astro/server';
+
 import { Brand } from './Brand';
 import CallToAction from './CallToAction.astro';
-import { Hamburger } from './Hamburger';
+import { HamburgerMenu, type PathogenMegaMenuItems } from './HamburgerMenu';
 import { Navigation } from './Navigation';
 import { headerHeight } from './headerConstants';
+import { organismConfig } from '../../../types/Organism.ts';
+import { ServerSide } from '../../../views/serverSideRouting.ts';
+
+interface Props {
+    forceLoggedOutState?: boolean;
+}
+
+const pathogenMegaMenuSections = Object.values(organismConfig).map((organism) => {
+    const megaMenuSections: PathogenMegaMenuItems[] = Object.values(ServerSide.routing.views[organism.organism]).map(
+        (view) => {
+            const href = view.getDefaultPageState();
+            return {
+                label: view.labelLong,
+                href,
+                underlineColor: 'hover:decoration-orange-400',
+                externalLink: false,
+            };
+        },
+    );
+    if (organism.organism === 'covid') {
+        megaMenuSections.push({
+            label: 'CoV-Spectrum',
+            href: 'https://cov-spectrum.org',
+            underlineColor: 'hover:decoration-orange-400',
+            externalLink: true,
+        });
+    }
+    return {
+        headline: organism.label,
+        headlineBackgroundColor: 'bg-orange-400',
+        navigationEntries: megaMenuSections,
+    };
+});
 
 interface Props {
     forceLoggedOutState?: boolean;
 }
 
 const { forceLoggedOutState = false } = Astro.props;
-const isOpen = false;
+
+const session = await getSession(Astro.request);
+const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
 ---
 
 <header class='sticky top-0 z-10 border-b bg-white'>
@@ -20,8 +57,13 @@ const isOpen = false;
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
     </div>
 
-    <div class={`flex ${headerHeight} md:hidden gap-4 items-center justify-between mr-4`}>
+    <div class={`flex ${headerHeight} md:hidden gap-4 items-center justify-between`}>
         <Brand name='' />
-        <Hamburger isOpen={isOpen}/>
+        <HamburgerMenu
+            session={session}
+            pathogenMegaMenuSections={pathogenMegaMenuSections}
+            showLoggedInState={showLoggedInState}
+            client:load
+        />
     </div>
 </header>
