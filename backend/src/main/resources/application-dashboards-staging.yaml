@@ -11,6 +11,9 @@ dashboards:
         hostField: "host"
         originatingLabField: "originatingLab"
         submittingLabField: "submittingLab"
+      externalNavigationLinks:
+        - url: "https://cov-spectrum.org"
+          label: "CoV-Spectrum"
     h5n1:
       lapis:
         url: "https://gs-staging-1.int.genspectrum.org/h5n1"
@@ -21,6 +24,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+      externalNavigationLinks:
+        - url: "https://loculus.staging.genspectrum.org/h5n1"
+          label: "Browse data"
     mpox:
       lapis:
         url: "https://gs-staging-1.int.genspectrum.org/mpox"
@@ -31,6 +37,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+      externalNavigationLinks:
+        - url: "https://loculus.staging.genspectrum.org/mpox"
+          label: "Browse data"
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
@@ -44,6 +53,9 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://pathoplexus.org/west-nile"
+          label: "Browse data"
     rsvA:
       lapis:
         url: "https://gs-staging-1.int.genspectrum.org/rsv-a"
@@ -54,6 +66,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+      externalNavigationLinks:
+        - url: "https://loculus.staging.genspectrum.org/rsv-a"
+          label: "Browse data"
     rsvB:
       lapis:
         url: "https://gs-staging-1.int.genspectrum.org/rsv-b"
@@ -64,6 +79,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+      externalNavigationLinks:
+        - url: "https://loculus.staging.genspectrum.org/rsv-b"
+          label: "Browse data"
   auth:
     github:
       clientId: "Iv23li4tJm7xQ3VkM3OC"

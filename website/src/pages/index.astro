@@ -77,17 +77,17 @@ import { ServerSide } from '../views/serverSideRouting';
                                     </a>
                                 </li>
                             ))}
-                            {organism.organism === 'covid' && (
-                                <li class='flex items-start pt-4'>
+                            {ServerSide.routing.externalPages[organism.organism].map((externalPage) => (
+                                <li class='flex items-start pt-2'>
                                     <div class='mr-2 w-4 border-b-2 border-b-black pt-[0.8rem]' />
                                     <a
-                                        href='https://cov-spectrum.org'
+                                        href={externalPage.url}
                                         class={`flex items-center hover:underline ${organism.menuListEntryDecoration} after:iconify after:ml-0.5 after:mdi--external-link hover:decoration-4`}
                                     >
-                                        CoV-Spectrum
+                                        {externalPage.label}
                                     </a>
                                 </li>
-                            )}
+                            ))}
                         </ul>
                     </div>
                 </div>

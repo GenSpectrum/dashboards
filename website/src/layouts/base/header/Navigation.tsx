@@ -17,14 +17,16 @@ export function Navigation() {
                 externalLink: false,
             };
         });
-        if (organism.organism === 'covid') {
-            megaMenuSections.push({
-                label: 'CoV-Spectrum',
-                href: 'https://cov-spectrum.org',
+
+        megaMenuSections.push(
+            ...ServerSide.routing.externalPages[organism.organism].map((externalPage) => ({
+                label: externalPage.label,
+                href: externalPage.url,
                 underlineColor: organism.menuListEntryDecoration,
                 externalLink: true,
-            });
-        }
+            })),
+        );
+
         return {
             headline: organism.label,
             headlineBackgroundColor: organism.backgroundColor,

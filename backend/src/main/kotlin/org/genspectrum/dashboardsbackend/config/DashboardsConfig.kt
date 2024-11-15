@@ -13,6 +13,7 @@ data class DashboardsConfig(
 
 data class OrganismConfig(
     val lapis: LapisConfig,
+    val externalNavigationLinks: Array<ExternalNavigationLink>?,
 )
 
 data class LapisConfig(
@@ -25,4 +26,9 @@ data class LapisConfig(
     val originatingLabField: String?,
     val submittingLabField: String?,
     val additionalFilters: Map<String, String>?,
+)
+
+data class ExternalNavigationLink(
+    val url: String,
+    val label: String,
 )
