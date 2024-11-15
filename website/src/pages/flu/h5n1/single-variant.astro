@@ -5,7 +5,7 @@ import { SingleVariantPageStateSelector } from '../../../components/pageStateSel
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize, getLineageFilterConfigs } from '../../../views/View';
+import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { getLapisMutations, getLocationSubdivision } from '../../../views/helpers';
 import type { OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -100,6 +100,14 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
                 )
             }
 
+            <ComponentWrapper title='Clades and lineages'>
+                <gs-aggregate
+                    fields={JSON.stringify(getLineageFilterFields(view.lineageFilters))}
+                    filter={JSON.stringify(variantFilter)}
+                    pageSize={defaultTablePageSize}
+                    width='100%'
+                    height='100%'></gs-aggregate>
+            </ComponentWrapper>
             <ComponentWrapper title='Hosts'>
                 <gs-aggregate
                     fields={JSON.stringify([view.hostField])}

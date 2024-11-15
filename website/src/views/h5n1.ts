@@ -33,7 +33,14 @@ class H5n1Constants {
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
-    public readonly lineageFilters: LineageFilterConfig[] = [];
+    public readonly lineageFilters: LineageFilterConfig[] = [
+        {
+            lapisField: 'clade',
+            placeholderText: 'Clade',
+            filterType: 'text' as const,
+            initialValue: undefined,
+        },
+    ];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
