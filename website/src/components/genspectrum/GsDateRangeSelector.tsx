@@ -1,10 +1,8 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import '@genspectrum/dashboard-components/components';
+import { type DateRangeOption, type DateRangeOptionChangedEvent } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
-
-// eslint-disable-next-line import/order,no-duplicate-imports -- make the component available
-import '@genspectrum/dashboard-components/components';
 
 export function GsDateRangeSelector({
     onDateRangeChange = () => {},
@@ -24,32 +22,32 @@ export function GsDateRangeSelector({
     const dateRangeSelectorRef = useRef<HTMLElement>();
 
     useEffect(() => {
-        const getDateRange = (dateFrom: string, dateTo: string) => {
-            return dateRangeOptions?.find((option) => option.dateFrom === dateFrom && option.dateTo === dateTo);
-        };
-
-        const handleDateRangeChange = (event: CustomEvent) => {
+        const handleDateRangeOptionChange = (event: DateRangeOptionChangedEvent) => {
             const dateRange = event.detail;
 
-            const dateFrom = dateRange[`${dateColumn}From`] as string;
-            const dateTo = dateRange[`${dateColumn}To`] as string;
-
-            const selectedDateRange = getDateRange(dateFrom, dateTo);
-            if (selectedDateRange) {
-                onDateRangeChange(selectedDateRange);
+            if (typeof dateRange === 'string') {
+                const dateRangeOption = dateRangeOptions?.find((option) => option.label === dateRange);
+                if (dateRangeOption !== undefined) {
+                    onDateRangeChange(dateRangeOption);
+                } else {
+                    throw new Error(`Invalid date range option: ${dateRange}`);
+                }
             } else {
-                onDateRangeChange({ label: CustomDateRangeLabel, dateFrom, dateTo });
+                onDateRangeChange({ label: CustomDateRangeLabel, ...dateRange });
             }
         };
 
         const currentDateRangeSelectorRef = dateRangeSelectorRef.current;
         if (currentDateRangeSelectorRef) {
-            currentDateRangeSelectorRef.addEventListener('gs-date-range-filter-changed', handleDateRangeChange);
+            currentDateRangeSelectorRef.addEventListener('gs-date-range-option-changed', handleDateRangeOptionChange);
         }
 
         return () => {
             if (currentDateRangeSelectorRef) {
-                currentDateRangeSelectorRef.removeEventListener('gs-date-range-filter-changed', handleDateRangeChange);
+                currentDateRangeSelectorRef.removeEventListener(
+                    'gs-date-range-option-changed',
+                    handleDateRangeOptionChange,
+                );
             }
         };
     }, [dateRangeOptions, dateColumn, onDateRangeChange, dateRangeSelectorRef]);

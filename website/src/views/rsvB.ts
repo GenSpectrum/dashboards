@@ -1,3 +1,5 @@
+import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+
 import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
 import {
     getDateRangeFromSearch,
@@ -18,9 +20,10 @@ const pathFragment = organismConfig[Organisms.rsvB].pathFragment;
 
 class RsvBConstants {
     public readonly organism = Organisms.rsvB;
-    public readonly defaultDateRange = { label: 'Since 2020', dateFrom: '2020-01-01' };
+    public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
     public readonly earliestDate = '1956-01-01';
-    public readonly dateRangeOptions = [
+    public readonly dateRangeOptions: DateRangeOption[] = [
+        dateRangeOptionPresets.lastYear,
         { label: 'Since 2020', dateFrom: '2020-01-01' },
         { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
         { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },

@@ -12,7 +12,7 @@ import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,
-    daterRangeFilterConfig,
+    dateRangeFilterConfig,
     mutationFilterConfig,
     lineageFilterConfigs,
     filterId,
@@ -21,7 +21,7 @@ export function CompareSideBySidePageStateSelector({
     organismsConfig,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    daterRangeFilterConfig: DateRangeFilterConfig;
+    dateRangeFilterConfig: DateRangeFilterConfig;
     mutationFilterConfig: MutationFilterConfig;
     lineageFilterConfigs: LineageFilterConfig[];
     filterId: number;
@@ -30,7 +30,7 @@ export function CompareSideBySidePageStateSelector({
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
-    const [dateRange, setDateRange] = useState<DateRangeOption>(daterRangeFilterConfig.initialDateRange);
+    const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const [mutation, setMutation] = useState<LapisMutationQuery | undefined>(mutationFilterConfig.initialMutations);
     const [lineages, setLineages] = useState<Record<string, string | undefined>>(
         lineageFilterConfigs.reduce((acc: Record<string, string | undefined>, config) => {
@@ -65,7 +65,7 @@ export function CompareSideBySidePageStateSelector({
                         onLocationChange={(location) => setLocation(location)}
                         locationFilterConfig={locationFilterConfig}
                         onDateRangeChange={(dateRange) => setDateRange(dateRange)}
-                        dateRangeFilterConfig={daterRangeFilterConfig}
+                        dateRangeFilterConfig={dateRangeFilterConfig}
                     />
                 </div>
                 <div className='flex-grow'>
