@@ -12,7 +12,7 @@ import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function SingleVariantPageStateSelector({
     locationFilterConfig,
-    daterRangeFilterConfig,
+    dateRangeFilterConfig,
     mutationFilterConfig,
     lineageFilterConfigs,
     organismViewKey,
@@ -20,7 +20,7 @@ export function SingleVariantPageStateSelector({
     pageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    daterRangeFilterConfig: DateRangeFilterConfig;
+    dateRangeFilterConfig: DateRangeFilterConfig;
     mutationFilterConfig: MutationFilterConfig;
     lineageFilterConfigs: LineageFilterConfig[];
     organismViewKey: OrganismViewKey;
@@ -28,7 +28,7 @@ export function SingleVariantPageStateSelector({
     pageState: BaselineAndVariantData;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
-    const [dateRange, setDateRange] = useState<DateRangeOption>(daterRangeFilterConfig.initialDateRange);
+    const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const [mutation, setMutation] = useState<LapisMutationQuery | undefined>(mutationFilterConfig.initialMutations);
 
     const [lineages, setLineages] = useState<Record<string, string | undefined>>(
@@ -63,7 +63,7 @@ export function SingleVariantPageStateSelector({
                 onLocationChange={setLocation}
                 locationFilterConfig={locationFilterConfig}
                 onDateRangeChange={setDateRange}
-                dateRangeFilterConfig={daterRangeFilterConfig}
+                dateRangeFilterConfig={dateRangeFilterConfig}
             />
             <VariantSelector
                 onMutationChange={setMutation}

@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
 import {
@@ -20,11 +20,9 @@ const pathFragment = organismConfig[Organisms.westNile].pathFragment;
 class WestNileConstants {
     public readonly organism = Organisms.westNile;
     public readonly earliestDate = '1930-01-01';
-    public readonly defaultDateRange: DateRangeOption = {
-        label: 'Since 2020',
-        dateFrom: '2020-01-01',
-    };
-    public readonly dateRangeOptions = [
+    public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
+    public readonly dateRangeOptions: DateRangeOption[] = [
+        dateRangeOptionPresets.lastYear,
         { label: 'Since 2020', dateFrom: '2020-01-01' },
         { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
         { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },

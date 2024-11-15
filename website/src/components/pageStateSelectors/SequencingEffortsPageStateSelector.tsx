@@ -11,19 +11,19 @@ import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function SequencingEffortsPageStateSelector({
     locationFilterConfig,
-    daterRangeFilterConfig,
+    dateRangeFilterConfig,
     pageState,
     organismViewKey,
     organismsConfig,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    daterRangeFilterConfig: DateRangeFilterConfig;
+    dateRangeFilterConfig: DateRangeFilterConfig;
     pageState: BaselineData;
     organismViewKey: OrganismViewKey;
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
-    const [dateRange, setDateRange] = useState<DateRangeOption>(daterRangeFilterConfig.initialDateRange);
+    const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const view = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]).getOrganismView(
         organismViewKey,
     );
@@ -46,7 +46,7 @@ export function SequencingEffortsPageStateSelector({
                 onLocationChange={(location) => setLocation(location)}
                 locationFilterConfig={locationFilterConfig}
                 onDateRangeChange={(dateRange) => setDateRange(dateRange)}
-                dateRangeFilterConfig={daterRangeFilterConfig}
+                dateRangeFilterConfig={dateRangeFilterConfig}
             />
             <ApplyFilterButton onClick={routeToNewPage} />
         </div>

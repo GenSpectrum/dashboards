@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type BaselineData, getLineageFilterFields, type VariantData, type View } from './View.ts';
 import {
@@ -25,13 +25,11 @@ const earliestDate = '2020-01-06';
 
 class CovidConstants {
     public readonly organism = Organisms.covid;
-    public readonly defaultDateRange: DateRangeOption = {
-        label: '2024',
-        dateFrom: '2024-01-01',
-    };
+    public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
     public readonly earliestDate = '2020-01-06';
     public readonly dateRangeOptions: DateRangeOption[] = [
-        { label: '2024', dateFrom: '2024-01-01' },
+        dateRangeOptionPresets.lastYear,
+        { label: '2024', dateFrom: '2024-01-01', dateTo: '2024-12-31' },
         { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
         { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
         { label: '2021', dateFrom: '2021-01-04', dateTo: '2022-01-02' },
