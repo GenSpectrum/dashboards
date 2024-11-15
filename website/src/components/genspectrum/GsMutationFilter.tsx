@@ -11,13 +11,11 @@ export type MutationFilter = {
 export function GsMutationFilter({
     initialValue,
     width,
-    onBlur = () => {},
     onMutationChange = () => {},
 }: {
     width?: string;
     initialValue?: MutationFilter | string[] | undefined;
     onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
-    onBlur?: (mutationFilter: MutationFilter | undefined) => void;
 }) {
     const mutationFilterRef = useRef<HTMLElement>();
 
@@ -26,23 +24,17 @@ export function GsMutationFilter({
             onMutationChange(event.detail);
         };
 
-        const handleMutationFilterBlur = (event: CustomEvent) => {
-            onBlur(event.detail);
-        };
-
         const currentMutationFilterRef = mutationFilterRef.current;
         if (currentMutationFilterRef) {
             currentMutationFilterRef.addEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
-            currentMutationFilterRef.addEventListener('gs-mutation-filter-on-blur', handleMutationFilterBlur);
         }
 
         return () => {
             if (currentMutationFilterRef) {
                 currentMutationFilterRef.removeEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
-                currentMutationFilterRef.removeEventListener('gs-mutation-filter-on-blur', handleMutationFilterBlur);
             }
         };
-    }, [onMutationChange, onBlur]);
+    }, [onMutationChange]);
 
     return (
         <gs-mutation-filter
