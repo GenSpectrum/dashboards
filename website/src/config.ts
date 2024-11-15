@@ -18,7 +18,17 @@ const lapisConfigSchema = z.object({
     additionalFilters: z.optional(z.record(z.string())),
 });
 
-const organismConfigSchema = z.object({ lapis: lapisConfigSchema });
+const externalNavigationLinkSchema = z.object({
+    url: z.string(),
+    label: z.string(),
+});
+export type ExternalNavigationLink = z.infer<typeof externalNavigationLinkSchema>;
+const externalNavigationLinksSchema = z.optional(z.array(externalNavigationLinkSchema));
+
+const organismConfigSchema = z.object({
+    lapis: lapisConfigSchema,
+    externalNavigationLinks: externalNavigationLinksSchema,
+});
 export type OrganismConfig = z.infer<typeof organismConfigSchema>;
 
 const organismsConfigSchema = z.object(

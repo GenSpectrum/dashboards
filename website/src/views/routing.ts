@@ -4,9 +4,9 @@ import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.
 import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
 import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
 import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.ts';
-import type { OrganismsConfig } from '../config.ts';
+import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
-import { Organisms } from '../types/Organism.ts';
+import { type Organism, Organisms } from '../types/Organism.ts';
 import type { InstanceLogger } from '../types/logMessage.ts';
 
 export const singleVariantViewKey = 'singleVariantView';
@@ -28,6 +28,7 @@ export type OrganismViewKey = {
 
 export class Routing {
     public readonly views;
+    public readonly externalPages;
 
     constructor(organismsConfig: OrganismsConfig, loggerProvider: (instance: string) => InstanceLogger) {
         this.views = {
@@ -60,6 +61,8 @@ export class Routing {
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
             },
         } as const;
+
+        this.externalPages = this.initializeExternalPages(organismsConfig);
     }
 
     public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
@@ -73,5 +76,15 @@ export class Routing {
     ): ViewsMap[Organism][Key] {
         const [organism, viewKey] = key.split(keySeparator) as [Organism, Key];
         return this.views[organism][viewKey];
+    }
+
+    private initializeExternalPages(organismsConfig: OrganismsConfig) {
+        return Object.entries(organismsConfig).reduce(
+            (acc, [organism, config]) => {
+                acc[organism as Organism] = config.externalNavigationLinks ?? [];
+                return acc;
+            },
+            {} as { [organism in Organism]: ExternalNavigationLink[] },
+        );
     }
 }
