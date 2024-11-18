@@ -10,9 +10,10 @@
         ? new URL('/', window.location.href).toString()
         : undefined;
 
-    document
-        .getElementById('login')
-        ?.addEventListener('click', () =>
-            signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain }),
-        );
+    document.getElementById('login')?.addEventListener('click', () =>
+        // @ts-expect-error -- 'callbackUrl' exists - but it's defined in SignInOptions from 'next-auth/react'.
+        // auth-astro removed the dependency on next-auth in 4.1.3, so we don't have the type anymore.
+        // I don't want to install next-auth just for the type, so I'm ignoring the error.
+        signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain }),
+    );
 </script>
