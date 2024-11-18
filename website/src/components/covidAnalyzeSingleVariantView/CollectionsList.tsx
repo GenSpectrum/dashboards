@@ -125,7 +125,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
             {variants.map((variant, index) => (
                 <button
                     key={`${variant.name}_${variant.query}_${index}`}
-                    className='border bg-white px-4 py-2 hover:bg-orange-300'
+                    className='border bg-white px-4 py-2 hover:bg-cyan'
                     onClick={() => selectVariant(variant)}
                 >
                     {variant.name}

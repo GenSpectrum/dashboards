@@ -21,21 +21,54 @@ const iconMapping: { [key: string]: string } = {
     }
 
     .items a {
-        @apply text-black hover:underline hover:decoration-orange-400 hover:decoration-4;
+        @apply text-black hover:underline hover:decoration-4;
     }
     h1 {
         @apply text-center font-light;
     }
+
+    @media (max-width: 768px) {
+        .largerLogo img {
+            display: none;
+        }
+
+        .largerLogo div {
+            @apply mx-auto;
+        }
+        .largerLogo h1 {
+            @apply text-6xl text-center;
+        }
+
+        .largerLogo h2 {
+            @apply text-center text-2xl;
+        }
+
+        .infoSection h1 {
+            @apply text-2xl;
+        }
+    }
+
 </style>
 
 <BaseLayout title='GenSpectrum Dashboards'>
-    <h1 class='mx-auto my-12 max-w-[1000px] text-8xl text-slate-600'>
-        In<span class='font-medium text-orange-300'>spect</span> pathogen <span class='font-medium text-slate-300'
-            >Gen</span
-        >omic data
-    </h1>
+    <div class='largerLogo my-10 flex items-center justify-center'>
+        <img src='/virus-outline-colorful.svg' alt='colorful-logo' width='200' height='200' />
+        <div class='ml-10'>
+            <h1 class='mb-4 text-7xl'>
+                Gen<span class='text-cyan font-medium'>S</span>
+                <span class='text-indigo font-medium'>p</span>
+                <span class='text-green font-medium'>e</span>
+                <span class='text-teal font-medium'>c</span>
+                <span class='text-sand font-medium'>t</span>
+                <span class='text-rose font-medium'>r</span>
+                <span class='text-wine font-medium'>u</span>
+                <span class='text-purple font-medium'>m</span>
+            </h1>
+            <h2 class='text-end text-3xl font-light text-slate-600'>Inspect pathogen genomic data</h2>
+        </div>
+    </div>
 
-    <div class='mx-auto my-12 flex max-w-[1200px] px-8'>
+    <div class='infoSection mx-auto my-12 flex max-w-[1200px] px-8'>
         <div class='ml-8 basis-1/2 text-balance'>
             <div class='items-left my-8 flex'>
                 <div class='iconify size-7 mdi--information-outline'></div>
@@ -77,8 +110,8 @@ const iconMapping: { [key: string]: string } = {
         {
             Object.values(organismConfig).map((organism) => (
                 <div class='group w-[260px]'>
-                    <div class='rounded-md border-2 border-gray-100 hover:border-orange-400'>
-                        <h3 class='rounded-t-md bg-orange-300 p-4 text-xl group-hover:bg-orange-400'>
+                    <div class={`${organism.borderEntryDecoration} rounded-md border-2 border-gray-100`}>
+                        <h3 class={`rounded-t-md p-4 text-xl ${organism.backgroundColor} ${organism.backgroundColorFocus}`}>
                             {organism.label}
                         </h3>
                         <ul class='mb-4 ml-6 mr-6'>
@@ -87,7 +120,7 @@ const iconMapping: { [key: string]: string } = {
                                     <div
                                         class={`iconify mr-2 size-7 w-4 pt-[0.8rem] ${iconMapping[view.label] || 'mdi--virus-outline'}`}
                                     />
-                                    <a href={view.getDefaultPageState()}>{view.labelLong}</a>
+                                    <a class={`${organism.menuListEntryDecoration}`} href={view.getDefaultPageState()}>{view.labelLong}</a>
                                 </li>
                             ))}
                             {organism.organism === 'covid' && (
@@ -95,7 +128,7 @@ const iconMapping: { [key: string]: string } = {
                                     <div class='iconify mr-2 size-7 w-4 pt-[0.8rem] mdi--virus-outline' />
                                     <a
                                         href='https://cov-spectrum.org'
-                                        class='flex items-center after:iconify after:ml-0.5 after:mdi--external-link'
+                                        class={`flex items-center after:iconify after:ml-0.5 after:mdi--external-link ${organism.menuListEntryDecoration}`}
                                     >
                                         CoV-Spectrum
                                     </a>

@@ -20,7 +20,7 @@ const pathogenMegaMenuSections = Object.values(organismConfig).map((organism) =>
             return {
                 label: view.labelLong,
                 href,
-                underlineColor: 'hover:decoration-orange-400',
+                underlineColor: organism.menuListEntryDecoration,
                 externalLink: false,
             };
         },
@@ -29,13 +29,13 @@ const pathogenMegaMenuSections = Object.values(organismConfig).map((organism) =>
         megaMenuSections.push({
             label: 'CoV-Spectrum',
             href: 'https://cov-spectrum.org',
-            underlineColor: 'hover:decoration-orange-400',
+            underlineColor: organism.menuListEntryDecoration,
             externalLink: true,
         });
     }
     return {
         headline: organism.label,
-        headlineBackgroundColor: 'bg-orange-400',
+        headlineBackgroundColor: organism.backgroundColor,
         navigationEntries: megaMenuSections,
     };
 });
@@ -52,13 +52,13 @@ const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
 
 <header class='sticky top-0 z-10 border-b bg-white'>
     <div class={`flex ${headerHeight} subtitle hidden md:flex md:z-6 gap-4 items-center justify-between`}>
-        <Brand name='GenSpectrum' />
+        <Brand />
         <Navigation />
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
     </div>
 
     <div class={`flex ${headerHeight} md:hidden gap-4 items-center justify-between`}>
-        <Brand name='' />
+        <Brand/>
         <HamburgerMenu
             session={session}
             pathogenMegaMenuSections={pathogenMegaMenuSections}
