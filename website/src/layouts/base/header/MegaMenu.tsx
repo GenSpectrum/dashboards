@@ -5,7 +5,7 @@ import type { WithClassName } from '../../../types/WithClassName.ts';
 export function MegaMenu({ className, children }: PropsWithChildren<WithClassName>) {
     return (
         <div className={`absolute left-0 w-screen bg-white shadow-lg ${className}`}>
-            <ul className='grid grid-cols-2 gap-4 border-2 border-gray-100 p-8 xl:grid-cols-6'>{children}</ul>
+            <ul className='grid grid-cols-2 gap-4 border-2 border-gray-100 p-8 xl:grid-cols-5'>{children}</ul>
         </div>
     );
 }

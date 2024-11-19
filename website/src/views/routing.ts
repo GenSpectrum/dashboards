@@ -1,7 +1,6 @@
 import type { View } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
-import { MpoxAnalyzeSingleVariantView, MpoxSequencingEffortsView } from './mpox.ts';
 import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
 import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
@@ -43,10 +42,6 @@ export class Routing {
             [Organisms.h5n1]: {
                 [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
                 [sequencingEffortsViewKey]: new H5n1SequencingEffortsView(organismsConfig),
-            },
-            [Organisms.mpox]: {
-                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
-                [sequencingEffortsViewKey]: new MpoxSequencingEffortsView(organismsConfig),
             },
             [Organisms.rsvA]: {
                 [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
