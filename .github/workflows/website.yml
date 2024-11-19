@@ -21,7 +21,7 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npm run check-format
       - run: npm run check-types
       - run: npm run check-astro
@@ -42,7 +42,7 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npm run test
 
   dockerImage:

@@ -24,7 +24,6 @@ type HamburgerMenuProps = {
     showLoggedInState: boolean;
 };
 
-
 function HamburgerMenu({ session, pathogenMegaMenuSections, showLoggedInState }: HamburgerMenuProps) {
     const { isOpen, toggle: toggleMenu, close: closeMenu } = useOffCanvas();
 
@@ -33,9 +32,9 @@ function HamburgerMenu({ session, pathogenMegaMenuSections, showLoggedInState }:
         const callbackUrlThatDoesNotImmediatelyLogoutAgain = new URL(window.location.href).pathname.endsWith('/logout')
             ? new URL('/', window.location.href).toString()
             : undefined;
-        
+
         const handleLoginClick = async () => {
-            await signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain } as any);
+            await signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain });
         };
 
         if (loginButton) {
@@ -167,7 +166,7 @@ function LoginButton() {
         const callbackUrlThatDoesNotImmediatelyLogoutAgain = currentUrl.pathname.endsWith('/logout')
             ? new URL('/', currentUrl).toString()
             : undefined;
-        await signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain } as any);
+        await signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain });
     };
 
     return <OffCanvasNavItem key='/login' text='Login' level='one' path={false} id='login' open={handleLogin} />;
