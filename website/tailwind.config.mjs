@@ -2,8 +2,8 @@ import { addIconSelectors } from '@iconify/tailwind';
 import daisyui from 'daisyui';
 
 const colors = {
-    indigo: '#473894', //rgba(51, 34, 136, 0.9)
-    green: '#117733', 
+    indigo: '#473894', // rgba(51, 34, 136, 0.9)
+    green: '#117733',
     cyan: '#35a6de', // I modified '#88CCEE' manually to make it darker
     teal: '#44AA99',
     olive: '#999933',
