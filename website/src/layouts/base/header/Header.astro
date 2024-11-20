@@ -16,13 +16,13 @@ const commonHeaderCss = `${headerHeight} gap-4 items-center justify-between`;
 
 <header class={`sticky top-0 ${zIndexHigherThanMutationFilterInfoButton} border-b bg-white`}>
     <div class={`${commonHeaderCss} hidden sm:flex `}>
-        <Brand name='GenSpectrum' />
+        <Brand />
         <Navigation />
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
     </div>
 
     <div class={`${commonHeaderCss} flex sm:hidden`}>
-        <Brand name='GenSpectrum' />
+        <Brand />
         <HamburgerMenu forceLoggedOutState={forceLoggedOutState} />
     </div>
 </header>

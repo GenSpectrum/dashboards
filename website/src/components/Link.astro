@@ -1,0 +1,13 @@
+---
+import { externalLinkIconCss } from './iconCss';
+interface Props {
+    href: string;
+    external?: boolean;
+}
+
+const { href, external } = Astro.props;
+---
+
+<a class={`text-slate-500 ${external === true ? externalLinkIconCss : ''}`} href={href}
+    ><span class='hover:underline'><slot /></span></a
+>

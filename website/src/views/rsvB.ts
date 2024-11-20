@@ -76,6 +76,7 @@ export class RsvBAnalyzeSingleVariantView extends RsvBConstants implements View<
             lineages: {},
         },
     };
+    public readonly iconType = 'magnify';
 
     public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
         const search = url.searchParams;
@@ -122,6 +123,7 @@ export class RsvBSequencingEffortsView extends RsvBConstants implements View<Bas
             dateRange: this.defaultDateRange,
         },
     };
+    public readonly iconType = 'tube';
 
     public parsePageStateFromUrl(url: URL): BaselineData {
         const search = url.searchParams;

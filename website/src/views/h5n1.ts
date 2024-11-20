@@ -80,6 +80,7 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
             lineages: {},
         },
     };
+    public readonly iconType = 'magnify';
 
     public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
         const search = url.searchParams;
@@ -126,6 +127,7 @@ export class H5n1SequencingEffortsView extends H5n1Constants implements View<Bas
             dateRange: this.defaultDateRange,
         },
     };
+    public readonly iconType = 'tube';
 
     public parsePageStateFromUrl(url: URL): BaselineData {
         const search = url.searchParams;
