@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
 
       - name: Install npm packages
-        run:  npm ci
+        run:  npm ci --legacy-peer-deps
 
       - name: Validate PR commits with commitlint
         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --verbose

@@ -6,10 +6,10 @@ WORKDIR /app
 COPY website/package.json website/package-lock.json website/patches ./
 
 FROM base AS prod-deps
-RUN npm clean-install --omit=dev
+RUN npm clean-install --omit=dev --legacy-peer-deps
 
 FROM base AS build
-RUN npm clean-install
+RUN npm clean-install --legacy-peer-deps
 COPY website/.env.docker .env
 COPY website .
 RUN npm run build -- --host
