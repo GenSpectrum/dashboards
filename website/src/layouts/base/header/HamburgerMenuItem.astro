@@ -1,0 +1,30 @@
+---
+type Props = {
+    href?: string;
+    externalLink?: boolean;
+    itemType: 'toplevel' | 'subitem';
+};
+
+const { href, externalLink, itemType } = Astro.props;
+
+const liClass = itemType === 'toplevel' ? 'text-xl font-bold ml-4 py-4' : 'text-md font-light ml-8 pt-2';
+---
+
+<li class={liClass}>
+    {
+        href === undefined ? (
+            <slot />
+        ) : (
+            <a
+                class={
+                    externalLink === true
+                        ? 'after:iconify after:ml-0.5 after:align-text-bottom after:mdi--external-link'
+                        : ''
+                }
+                href={href}
+            >
+                <slot />
+            </a>
+        )
+    }
+</li>

@@ -1,20 +1,28 @@
 ---
 import { Brand } from './Brand';
 import CallToAction from './CallToAction.astro';
+import HamburgerMenu from './HamburgerMenu.astro';
 import { Navigation } from './Navigation';
 import { headerHeight } from './headerConstants';
 
 interface Props {
     forceLoggedOutState?: boolean;
 }
-
 const { forceLoggedOutState = false } = Astro.props;
+
+const zIndexHigherThanMutationFilterInfoButton = 'z-20';
+const commonHeaderCss = `${headerHeight} gap-4 items-center justify-between`;
 ---
 
-<header class='sticky top-0 z-10 border-b bg-white'>
-    <div class={`flex ${headerHeight} items-center justify-between`}>
+<header class={`sticky top-0 ${zIndexHigherThanMutationFilterInfoButton} border-b bg-white`}>
+    <div class={`${commonHeaderCss} hidden sm:flex `}>
         <Brand name='GenSpectrum' />
         <Navigation />
         <CallToAction forceLoggedOutState={forceLoggedOutState} />
+    </div>
+
+    <div class={`${commonHeaderCss} flex sm:hidden`}>
+        <Brand name='GenSpectrum' />
+        <HamburgerMenu forceLoggedOutState={forceLoggedOutState} />
     </div>
 </header>

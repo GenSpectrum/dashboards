@@ -1,41 +1,15 @@
 import type { PropsWithChildren } from 'react';
 
 import { MegaMenu, MegaMenuListEntry, MegaMenuSection } from './MegaMenu.tsx';
+import { getPathogenMegaMenuSections } from './getPathogenMegaMenuSections.ts';
 import { headerHeight } from './headerConstants.ts';
-import { organismConfig } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
-import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function Navigation() {
-    const pathogenMegaMenuSections = Object.values(organismConfig).map((organism) => {
-        const megaMenuSections = Object.values(ServerSide.routing.views[organism.organism]).map((view) => {
-            const href = view.getDefaultPageState();
-            return {
-                label: view.labelLong,
-                href,
-                underlineColor: organism.menuListEntryDecoration,
-                externalLink: false,
-            };
-        });
-
-        megaMenuSections.push(
-            ...ServerSide.routing.externalPages[organism.organism].map((externalPage) => ({
-                label: externalPage.label,
-                href: externalPage.url,
-                underlineColor: organism.menuListEntryDecoration,
-                externalLink: true,
-            })),
-        );
-
-        return {
-            headline: organism.label,
-            headlineBackgroundColor: organism.backgroundColor,
-            navigationEntries: megaMenuSections,
-        };
-    });
+    const pathogenMegaMenuSections = getPathogenMegaMenuSections();
 
     return (
-        <nav className=''>
+        <nav>
             <ul className='flex space-x-8'>
                 <li>
                     <MegaMenuNavigationEntry label='Pathogens'>

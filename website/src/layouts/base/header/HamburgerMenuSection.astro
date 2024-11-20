@@ -1,0 +1,29 @@
+---
+import HamburgerMenuItem from './HamburgerMenuItem.astro';
+type Props = {
+    navigationEntries: {
+        label: string;
+        href?: string;
+        externalLink?: boolean;
+    }[];
+};
+
+const { navigationEntries } = Astro.props;
+---
+
+<li class='ml-4 text-xl font-bold'>
+    <details class='collapse collapse-arrow'>
+        <summary class='collapse-title m-0 pl-0'>
+            <slot />
+        </summary>
+        <ul>
+            {
+                navigationEntries.map((entry) => (
+                    <HamburgerMenuItem itemType='subitem' href={entry.href} externalLink={entry.externalLink}>
+                        {entry.label}
+                    </HamburgerMenuItem>
+                ))
+            }
+        </ul>
+    </details>
+</li>
