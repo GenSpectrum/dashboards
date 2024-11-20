@@ -24,6 +24,7 @@ const { title, forceLoggedOutState = false } = Astro.props;
         <meta name='viewport' content='width=device-width' />
         <meta name='generator' content={Astro.generator} />
         <title>{title}</title>
+        <script is:inline defer data-domain='genspectrum.org' src='https://plausible.io/js/script.js'></script>
         <script>
             import '@genspectrum/dashboard-components';
         </script>
