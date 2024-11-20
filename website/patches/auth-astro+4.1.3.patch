@@ -1,3 +1,67 @@
+diff --git a/node_modules/auth-astro/client.ts b/node_modules/auth-astro/client.ts
+index 8a30c9e..1e46f58 100644
+--- a/node_modules/auth-astro/client.ts
++++ b/node_modules/auth-astro/client.ts
+@@ -1,11 +1,42 @@
+-import type {
+-	LiteralUnion,
+-	SignInOptions,
+-	SignInAuthorizationParams,
+-	SignOutParams,
+-} from 'next-auth/react'
+ import type { BuiltInProviderType, RedirectableProviderType } from '@auth/core/providers'
+ 
++// manually imported from next-auth/react to get the proper type without installing the dependency ourselves
++export interface SignInOptions<Redirect extends boolean = true>
++	extends Record<string, unknown> {
++	/** @deprecated Use `redirectTo` instead. */
++	callbackUrl?: string
++	/**
++	 * Specify where the user should be redirected to after a successful signin.
++	 *
++	 * By default, it is the page the sign-in was initiated from.
++	 */
++	redirectTo?: string
++	/**
++	 * You might want to deal with the signin response on the same page, instead of redirecting to another page.
++	 * For example, if an error occurs (like wrong credentials given by the user), you might want to show an inline error message on the input field.
++	 *
++	 * For this purpose, you can set this to option `redirect: false`.
++	 */
++	redirect?: Redirect
++}
++export interface SignOutParams<Redirect extends boolean = true> {
++	/** @deprecated Use `redirectTo` instead. */
++	callbackUrl?: string
++	/**
++	 * If you pass `redirect: false`, the page will not reload.
++	 * The session will be deleted, and `useSession` is notified, so any indication about the user will be shown as logged out automatically.
++	 * It can give a very nice experience for the user.
++	 */
++	redirectTo?: string
++	/** [Documentation](https://next-auth.js.org/getting-started/client#using-the-redirect-false-option-1 */
++	redirect?: Redirect
++}
++export type SignInAuthorizationParams =
++	| string
++	| string[][]
++	| Record<string, string>
++	| URLSearchParams
++
+ interface AstroSignInOptions extends SignInOptions {
+ 	/** The base path for authentication (default: /api/auth) */
+ 	prefix?: string
+@@ -24,9 +55,7 @@ interface AstroSignOutParams extends SignOutParams {
+  * [Documentation](https://authjs.dev/reference/utilities/#signin)
+  */
+ export async function signIn<P extends RedirectableProviderType | undefined = undefined>(
+-	providerId?: LiteralUnion<
+-		P extends RedirectableProviderType ? P | BuiltInProviderType : BuiltInProviderType
+-	>,
++	providerId?: BuiltInProviderType,
+ 	options?: AstroSignInOptions,
+ 	authorizationParams?: SignInAuthorizationParams
+ ) {
 diff --git a/node_modules/auth-astro/src/integration.ts b/node_modules/auth-astro/src/integration.ts
 index f749024..9200d5c 100644
 --- a/node_modules/auth-astro/src/integration.ts

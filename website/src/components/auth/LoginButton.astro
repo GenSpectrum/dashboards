@@ -10,7 +10,9 @@
         ? new URL('/', window.location.href).toString()
         : undefined;
 
-    document.getElementById('login')?.addEventListener('click', () =>
-        signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain } as any),
-    );
+    document
+        .getElementById('login')
+        ?.addEventListener('click', () =>
+            signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain } as any),
+        );
 </script>
