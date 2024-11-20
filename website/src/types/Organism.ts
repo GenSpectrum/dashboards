@@ -62,7 +62,7 @@ export const organismConfig = {
         backgroundColor: 'bg-indigoMuted',
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'hover:decoration-indigo',
-        borderEntryDecoration: 'hover:order-indigo',
+        borderEntryDecoration: 'hover:border-indigo',
     },
 };
 export const allOrganisms = Object.keys(organismConfig) as Organism[];
