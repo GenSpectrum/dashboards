@@ -27,6 +27,19 @@ dashboards:
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/h5n1"
           label: "Browse data"
+    mpox:
+      lapis:
+        url: "https://lapis.genspectrum.org/mpox"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        hostField: "hostNameScientific"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/mpox"
+          label: "Browse data"
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
