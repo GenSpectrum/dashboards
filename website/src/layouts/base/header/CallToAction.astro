@@ -1,17 +1,14 @@
 ---
 import LoginState from '../../../components/auth/LoginState.astro';
-import { getEnvironment } from '../../../config';
+import { isLoginEnabled } from '../../../config';
 
 interface Props {
     forceLoggedOutState?: boolean;
 }
 
 const { forceLoggedOutState = false } = Astro.props;
-const dashboardsEnvironment = getEnvironment();
 ---
 
 <div class='mr-2 flex w-32 justify-end'>
-    <div class={`${dashboardsEnvironment === 'dashboards-prod' ? 'hidden' : 'visible'}`}>
-        <LoginState forceLoggedOutState={forceLoggedOutState} />
-    </div>
+    {isLoginEnabled() ? <LoginState forceLoggedOutState={forceLoggedOutState} /> : null}
 </div>
