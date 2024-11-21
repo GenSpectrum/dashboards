@@ -9,7 +9,6 @@ They utilize the [Dashboard Components](https://github.com/GenSpectrum/dashboard
 Currently, we support the following organisms:
 - SARS-CoV-2
 - Influenza A/H5N1
-- Mpox
 - West Nile Virus
 - RSV-A
 - RSV-B

@@ -4,6 +4,7 @@ import path from 'path';
 import YAML from 'yaml';
 import { z, type ZodError } from 'zod';
 
+import { menuIconTypeSchema } from './components/iconCss.ts';
 import { allOrganisms, type Organism } from './types/Organism.ts';
 
 const lapisConfigSchema = z.object({
@@ -21,6 +22,7 @@ const lapisConfigSchema = z.object({
 const externalNavigationLinkSchema = z.object({
     url: z.string(),
     label: z.string(),
+    menuIcon: menuIconTypeSchema,
 });
 export type ExternalNavigationLink = z.infer<typeof externalNavigationLinkSchema>;
 const externalNavigationLinksSchema = z.optional(z.array(externalNavigationLinkSchema));

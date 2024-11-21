@@ -31,4 +31,5 @@ data class LapisConfig(
 data class ExternalNavigationLink(
     val url: String,
     val label: String,
+    val menuIcon: String,
 )

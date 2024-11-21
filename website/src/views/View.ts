@@ -1,6 +1,7 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
+import type { MenuIconType } from '../components/iconCss.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
 import { type Organism, organismConfig } from '../types/Organism.ts';
@@ -38,6 +39,7 @@ export type View<PageState extends object> = {
     label: string;
     labelLong: string;
     defaultPageState: PageState;
+    iconType: MenuIconType;
 
     parsePageStateFromUrl: (url: URL) => PageState;
     toUrl: (pageState: PageState) => string;

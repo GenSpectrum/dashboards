@@ -80,6 +80,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
             lineages: {},
         },
     };
+    public readonly iconType = 'magnify';
 
     public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
         const search = url.searchParams;
@@ -126,6 +127,7 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
             dateRange: this.defaultDateRange,
         },
     };
+    public readonly iconType = 'tube';
 
     public parsePageStateFromUrl(url: URL): BaselineData {
         const search = url.searchParams;

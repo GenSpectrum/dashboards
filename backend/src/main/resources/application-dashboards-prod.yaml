@@ -14,6 +14,7 @@ dashboards:
       externalNavigationLinks:
         - url: "https://cov-spectrum.org"
           label: "CoV-Spectrum"
+          menuIcon: "virus"
     h5n1:
       lapis:
         url: "https://lapis.genspectrum.org/h5n1"
@@ -27,6 +28,7 @@ dashboards:
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/h5n1"
           label: "Browse data"
+          menuIcon: "database"
     mpox:
       lapis:
         url: "https://lapis.genspectrum.org/mpox"
@@ -40,6 +42,7 @@ dashboards:
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/mpox"
           label: "Browse data"
+          menuIcon: "database"
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
@@ -56,6 +59,7 @@ dashboards:
       externalNavigationLinks:
         - url: "https://pathoplexus.org/west-nile"
           label: "Browse data"
+          menuIcon: "database"
     rsvA:
       lapis:
         url: "https://lapis.genspectrum.org/rsv-a"
@@ -69,6 +73,7 @@ dashboards:
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/rsv-a"
           label: "Browse data"
+          menuIcon: "database"
     rsvB:
       lapis:
         url: "https://lapis.genspectrum.org/rsv-b"
@@ -82,6 +87,7 @@ dashboards:
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/rsv-b"
           label: "Browse data"
+          menuIcon: "database"
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"

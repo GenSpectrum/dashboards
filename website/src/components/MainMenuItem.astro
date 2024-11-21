@@ -1,0 +1,21 @@
+---
+import { externalLinkIconCss, type MenuIconType, iconMapping } from './iconCss';
+interface Props {
+    iconType: MenuIconType;
+    menuListEntryDecoration: string;
+    href: string;
+    external?: boolean;
+}
+
+const { iconType, menuListEntryDecoration, href, external } = Astro.props;
+---
+
+<li class='flex items-center pt-2'>
+    <span class={`iconify mr-2 ${iconMapping[iconType]}`}></span>
+    <a
+        class={`hover:underline hover:decoration-4 ${menuListEntryDecoration} ${external === true ? externalLinkIconCss : ''}`}
+        href={href}
+    >
+        <slot />
+    </a>
+</li>

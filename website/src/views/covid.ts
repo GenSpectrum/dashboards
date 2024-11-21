@@ -80,6 +80,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
     public readonly pathname = `/${pathFragment}/single-variant` as const;
     public readonly label = 'Single variant';
     public readonly labelLong = 'Analyze a single variant';
+    public readonly iconType = 'magnify';
 
     public readonly defaultPageState: CovidAnalyzeSingleVariantData = {
         baselineFilter: {
@@ -160,6 +161,7 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     public readonly pathname = `/${pathFragment}/compare-side-by-side` as const;
     public readonly label = 'Compare side-by-side';
     public readonly labelLong = 'Compare variants side-by-side';
+    public readonly iconType = 'compare';
 
     public readonly defaultPageState = {
         organism: this.organism,
@@ -365,6 +367,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
             dateRange: this.defaultDateRange,
         },
     };
+    public readonly iconType = 'tube';
 
     public parsePageStateFromUrl(url: URL): CovidSequencingEffortsData {
         const search = url.searchParams;
