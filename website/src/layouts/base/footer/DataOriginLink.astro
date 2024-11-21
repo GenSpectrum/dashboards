@@ -6,6 +6,6 @@ interface Props {
 const { href } = Astro.props;
 ---
 
-<a class='underline after:iconify after:ml-0.5 after:mdi--external-link' href={href}>
-    <slot />
+<a class='after:iconify after:align-text-bottom after:mdi--external-link' href={href}>
+    <span class='underline'><slot /></span>
 </a>
