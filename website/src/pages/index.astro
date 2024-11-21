@@ -31,17 +31,17 @@ import { ServerSide } from '../views/serverSideRouting';
             </div>
             <span
                 >An interactive platform to help scientists and public health professionals query and analyze pathogen
-                sequences. The core team is at the <Link external href='https://bsse.ethz.ch/cevo'>cEVO group</Link> at ETH
-                Zurich, but we are grateful for our many <Link
+                sequences. The core team is at the <Link external href='https://bsse.ethz.ch/cevo'>cEvo group</Link> at ETH
+                Zurich but we are grateful for our many <Link
                     external
-                    href='https://github.com/GenSpectrum/cov-spectrum-website?tab=readme-ov-file#contributors-'
-                    >contributors</Link
+                    href='https://github.com/GenSpectrum#contributors-'>contributors</Link
                 > from around the globe. We are funded by the <Link external href='https://ethz.ch/en.html'
                     >ETH Zurich</Link
                 >, the
-                <Link external href='https://www.cdc.gov/'>CDC</Link> and the <Link
+                <Link external href='https://www.cdc.gov/'>US CDC</Link> and the <Link
                     external
-                    href='https://www.cdc.gov/advanced-molecular-detection/index.html'>AMD</Link
+                    href='https://www.cdc.gov/advanced-molecular-detection/index.html'
+                    >Office of Advanced Molecular Detection (OAMD)</Link
                 >.
             </span>
         </div>
@@ -101,6 +101,24 @@ import { ServerSide } from '../views/serverSideRouting';
                 </div>
             ))
         }
+    </div>
+    <div class='mx-auto my-12 max-w-[900px] px-8 sm:flex'>
+        <div class='mx-8 text-balance'>
+            <div class='my-8 flex items-center'>
+                <div class='iconify size-7 mdi--format-quote-close-outline'></div>
+                <h2 class='ml-2'>How to cite</h2>
+            </div>
+            <span>
+                If this dashboard has been useful for you, we would be grateful if you cite the following paper:
+                <div class='mb-6 mt-4 rounded-xl bg-gray-50 p-4'>
+                    Chen, C., Nadeau, S., Yared, M., Voinov, P., Ning, X., Roemer, C. &amp; Stadler, T. "CoV-Spectrum:
+                    Analysis of globally shared SARS-CoV-2 data to Identify and Characterize New Variants"
+                    Bioinformatics (2021); doi: <Link href='https://doi.org/10.1093/bioinformatics/btab856'
+                        >10.1093/bioinformatics/btab856</Link
+                    >.
+                </div>
+            </span>
+        </div>
     </div>
 
     <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus]} />
