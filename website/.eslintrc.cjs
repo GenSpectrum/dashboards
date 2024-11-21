@@ -270,7 +270,7 @@ module.exports = {
         'react/jsx-curly-brace-presence': ['warn', 'never'],
         'react/jsx-fragments': ['error', 'syntax'],
         'react/jsx-uses-react': 'error',
-        'react/jsx-pascal-case': 'error',
+        'react/jsx-pascal-case': ['error', { allowNamespace: true }],
         'react/jsx-no-useless-fragment': 'error',
         'react/no-string-refs': 'error',
         'react-hooks/rules-of-hooks': 'error',
