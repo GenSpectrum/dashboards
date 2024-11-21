@@ -38,7 +38,7 @@
         "@astrojs/check": "^0.9.4",
         "@astrojs/react": "^3.6.2",
         "@astrojs/tailwind": "^5.1.2",
-        "@genspectrum/dashboard-components": "^0.8.5",
+        "@genspectrum/dashboard-components": "^0.9.0",
         "@iconify-json/mdi": "^1.2.1",
         "@iconify-json/mdi-light": "^1.2.1",
         "@iconify/tailwind": "^1.1.3",
