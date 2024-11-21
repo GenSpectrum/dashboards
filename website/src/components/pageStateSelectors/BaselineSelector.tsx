@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import type { LapisLocation } from '../../views/helpers.ts';

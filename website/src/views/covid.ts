@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import { type BaselineData, getLineageFilterFields, type VariantData, type View } from './View.ts';
 import {

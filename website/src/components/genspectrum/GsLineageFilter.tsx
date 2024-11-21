@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import '@genspectrum/dashboard-components';
+import '@genspectrum/dashboard-components/components';
 
 export function GsLineageFilter<Lineage extends string>({
     lapisField,

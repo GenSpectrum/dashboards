@@ -1,4 +1,4 @@
-import '@genspectrum/dashboard-components';
+import '@genspectrum/dashboard-components/components';
 
 import type { LapisFilter } from './GsPrevalenceOverTime.tsx';
 

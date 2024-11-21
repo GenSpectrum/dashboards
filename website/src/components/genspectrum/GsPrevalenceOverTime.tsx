@@ -1,4 +1,4 @@
-import '@genspectrum/dashboard-components';
+import '@genspectrum/dashboard-components/components';
 
 export type LapisFilter = Record<string, string | number | null | boolean | undefined | string[]>;
 

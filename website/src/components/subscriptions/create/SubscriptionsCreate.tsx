@@ -1,4 +1,4 @@
-import '@genspectrum/dashboard-components';
+import '@genspectrum/dashboard-components/components';
 import '@genspectrum/dashboard-components/style.css';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';

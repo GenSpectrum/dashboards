@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import type { VariantFilter } from './View.ts';
 import { CustomDateRangeLabel } from '../types/DateWindow.ts';

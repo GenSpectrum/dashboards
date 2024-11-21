@@ -1,10 +1,10 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
 
 // eslint-disable-next-line import/order,no-duplicate-imports -- make the component available
-import '@genspectrum/dashboard-components';
+import '@genspectrum/dashboard-components/components';
 
 export function GsDateRangeSelector({
     onDateRangeChange = () => {},
@@ -44,12 +44,12 @@ export function GsDateRangeSelector({
 
         const currentDateRangeSelectorRef = dateRangeSelectorRef.current;
         if (currentDateRangeSelectorRef) {
-            currentDateRangeSelectorRef.addEventListener('gs-date-range-changed', handleDateRangeChange);
+            currentDateRangeSelectorRef.addEventListener('gs-date-range-filter-changed', handleDateRangeChange);
         }
 
         return () => {
             if (currentDateRangeSelectorRef) {
-                currentDateRangeSelectorRef.removeEventListener('gs-date-range-changed', handleDateRangeChange);
+                currentDateRangeSelectorRef.removeEventListener('gs-date-range-filter-changed', handleDateRangeChange);
             }
         };
     }, [dateRangeOptions, dateColumn, onDateRangeChange, dateRangeSelectorRef]);
