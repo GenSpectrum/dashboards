@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 export const chooseGranularityBasedOnDateRange = (
     dateRange: DateRangeOption,

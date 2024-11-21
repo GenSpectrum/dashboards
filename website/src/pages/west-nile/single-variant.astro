@@ -100,7 +100,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
             }
             <ComponentWrapper title='Clades and lineages'>
                 <gs-aggregate
-                    fields={JSON.stringify([getLineageFilterFields(view.lineageFilters)])}
+                    fields={JSON.stringify(getLineageFilterFields(view.lineageFilters))}
                     filter={JSON.stringify(variantFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'

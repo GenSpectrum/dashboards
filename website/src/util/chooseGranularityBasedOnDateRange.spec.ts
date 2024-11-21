@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import { describe, expect, it } from 'vitest';
 
 import { chooseGranularityBasedOnDateRange } from './chooseGranularityBasedOnDateRange.ts';

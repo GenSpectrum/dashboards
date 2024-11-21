@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
