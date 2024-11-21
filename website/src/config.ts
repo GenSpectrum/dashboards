@@ -110,8 +110,12 @@ function getConfigDir(): string {
     return configDir;
 }
 
-export function getEnvironment() {
+function getEnvironment() {
     return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
+}
+
+export function isLoginEnabled() {
+    return getEnvironment() !== 'dashboards-prod';
 }
 
 function processEnvOrMetaEnv<T>(key: string, schema: z.ZodType<T>) {

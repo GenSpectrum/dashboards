@@ -5,6 +5,7 @@ import HamburgerMenuItem from './HamburgerMenuItem.astro';
 import HamburgerMenuSection from './HamburgerMenuSection.astro';
 import { getPathogenMegaMenuSections } from './getPathogenMegaMenuSections';
 import { LoginButton } from '../../../components/auth/LoginButton';
+import { isLoginEnabled } from '../../../config';
 import { Page } from '../../../types/pages';
 
 type Props = {
@@ -39,24 +40,26 @@ const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
         }
         <HamburgerMenuItem href={Page.dataSources} itemType='toplevel'>Data Sources </HamburgerMenuItem>
         {
-            showLoggedInState ? (
-                <HamburgerMenuSection
-                    navigationEntries={[
-                        { label: session.user!.name! },
-                        {
-                            label: 'Subscriptions',
-                            href: '/subscriptions',
-                        },
-                        { label: 'Logout', href: '/logout' },
-                    ]}
-                >
-                    My Account
-                </HamburgerMenuSection>
-            ) : (
-                <HamburgerMenuItem itemType='toplevel'>
-                    <LoginButton client:load />
-                </HamburgerMenuItem>
-            )
+            isLoginEnabled() ? (
+                showLoggedInState ? (
+                    <HamburgerMenuSection
+                        navigationEntries={[
+                            { label: session.user!.name! },
+                            {
+                                label: 'Subscriptions',
+                                href: '/subscriptions',
+                            },
+                            { label: 'Logout', href: '/logout' },
+                        ]}
+                    >
+                        My Account
+                    </HamburgerMenuSection>
+                ) : (
+                    <HamburgerMenuItem itemType='toplevel'>
+                        <LoginButton client:load />
+                    </HamburgerMenuItem>
+                )
+            ) : null
         }
     </ul>
 </nav>
