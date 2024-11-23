@@ -48,6 +48,8 @@ export type View<PageState extends object> = {
 
 export const defaultTablePageSize = 200;
 
+export const pathoplexusGroupNameField = 'groupName';
+
 export function getViewBreadcrumbEntries<PageState extends object>(view: View<PageState>) {
     return [
         ...defaultBreadcrumbs,
