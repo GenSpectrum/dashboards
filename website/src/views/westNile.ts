@@ -47,6 +47,14 @@ class WestNileConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly additionalSequencingEffortsFields = [
+        { label: 'Collection device', fieldName: 'collectionDevice' },
+        { label: 'Collection method', fieldName: 'collectionMethod' },
+        { label: 'Purpose of sampling', fieldName: 'purposeOfSampling' },
+        { label: 'Sample type', fieldName: 'sampleType' },
+        { label: 'Amplicon PCR primer scheme', fieldName: 'ampliconPcrPrimerScheme' },
+        { label: 'Sequencing protocol', fieldName: 'sequencingProtocol' },
+    ];
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = ['pathoplexus'];
 
