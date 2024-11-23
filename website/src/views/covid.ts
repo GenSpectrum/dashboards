@@ -86,9 +86,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
             dateRange: this.defaultDateRange,
         },
         variantFilter: {
-            lineages: {
-                nextcladePangoLineage: 'JN.1*',
-            },
+            lineages: {},
             mutations: {},
             variantQuery: undefined,
         },
