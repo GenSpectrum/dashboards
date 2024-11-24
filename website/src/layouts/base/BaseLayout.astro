@@ -23,6 +23,12 @@ const { title, forceLoggedOutState = false } = Astro.props;
         <link rel='icon' type='image/png' href='/virus-outline-colorful.svg' />
         <meta name='viewport' content='width=device-width' />
         <meta name='generator' content={Astro.generator} />
+        <meta property='og:type' content='website' />
+        <meta property='og:image' content='https://genspectrum.org/images/social-media-preview.png' />
+        <meta
+            property='og:description'
+            content='GenSpectrum is an interactive dashboard to query and analyze pathogen sequences, currently available for Influenza H5N1, RSV, SARS-CoV-2 and the West Nile virus.'
+        />
         <title>{title}</title>
         <script is:inline defer data-domain='genspectrum.org' src='https://plausible.io/js/script.js'></script>
         <script>
