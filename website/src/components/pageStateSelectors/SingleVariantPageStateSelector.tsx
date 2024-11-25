@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
-import { getClientLogger } from '../../clientLogger.ts';
 import { type OrganismsConfig } from '../../config.ts';
 import type { BaselineAndVariantData } from '../../views/View.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
@@ -38,9 +37,7 @@ export function SingleVariantPageStateSelector({
         }, {}),
     );
 
-    const view = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]).getOrganismView(
-        organismViewKey,
-    );
+    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const routeToNewPage = () => {
         const newPageState: BaselineAndVariantData = {
@@ -54,7 +51,7 @@ export function SingleVariantPageStateSelector({
                 lineages: { ...lineages },
             },
         };
-        window.location.href = view.toUrl(newPageState);
+        window.location.href = view.pageStateHandler.toUrl(newPageState);
     };
 
     return (

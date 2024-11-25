@@ -77,11 +77,11 @@ import { ServerSide } from '../views/serverSideRouting';
                         <ul class='mx-6 mb-4'>
                             {Object.values(ServerSide.routing.views[organism.organism]).map((view) => (
                                 <MainMenuItem
-                                    iconType={view.iconType}
+                                    iconType={view.viewConstants.iconType}
                                     menuListEntryDecoration={organism.menuListEntryDecoration}
-                                    href={view.getDefaultPageUrl()}
+                                    href={view.pageStateHandler.getDefaultPageUrl()}
                                 >
-                                    {view.labelLong}
+                                    {view.viewConstants.labelLong}
                                 </MainMenuItem>
                             ))}
                             {ServerSide.routing.externalPages[organism.organism].map((externalPage) => (

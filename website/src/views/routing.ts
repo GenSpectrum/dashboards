@@ -1,3 +1,5 @@
+import type { OrganismConstants } from './OrganismConstants.ts';
+import type { PageStateHandler } from './PageStateHandler.ts';
 import type { View } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
 import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
@@ -6,7 +8,6 @@ import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
 import { type Organism, Organisms } from '../types/Organism.ts';
-import type { InstanceLogger } from '../types/logMessage.ts';
 
 export const singleVariantViewKey = 'singleVariantView';
 export const compareVariantsViewKey = 'compareVariantsView';
@@ -29,14 +30,11 @@ export class Routing {
     public readonly views;
     public readonly externalPages;
 
-    constructor(organismsConfig: OrganismsConfig, loggerProvider: (instance: string) => InstanceLogger) {
+    constructor(organismsConfig: OrganismsConfig) {
         this.views = {
             [Organisms.covid]: {
                 [singleVariantViewKey]: new CovidAnalyzeSingleVariantView(organismsConfig),
-                [compareVariantsViewKey]: new CovidCompareVariantsView(
-                    organismsConfig,
-                    loggerProvider('CovidCompareVariantsView'),
-                ),
+                [compareVariantsViewKey]: new CovidCompareVariantsView(organismsConfig),
                 [sequencingEffortsViewKey]: new CovidSequencingEffortsView(organismsConfig),
             },
             [Organisms.h5n1]: {
@@ -64,7 +62,7 @@ export class Routing {
         key: `${Organism}${KeySeparator}${Key}`,
     ): ViewsMap[Organism][Key];
 
-    public getOrganismView(key: OrganismViewKey): View<object>;
+    public getOrganismView(key: OrganismViewKey): View<object, OrganismConstants, PageStateHandler<object>>;
 
     public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
         key: `${Organism}${KeySeparator}${Key}`,

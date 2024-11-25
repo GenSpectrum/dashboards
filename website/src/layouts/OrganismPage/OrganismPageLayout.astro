@@ -1,27 +1,27 @@
 ---
 import { getLapisUrl } from '../../config';
 import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
-import { getViewBreadcrumbEntries, getViewTitle, type View } from '../../views/View';
+import { type View } from '../../views/View';
 import { Breadcrumbs } from '../Breadcrumbs';
 import BaseLayout from '../base/BaseLayout.astro';
 import DataInfo from '../base/footer/DataInfo.astro';
 
-interface Props<PageState extends object> {
-    view: View<PageState>;
+interface Props {
+    view: View<any, any, any>;
 }
 
 const { view } = Astro.props;
 
-const lastUpdatedDate = await getLastUpdatedDate(getLapisUrl(view.organism));
+const lastUpdatedDate = await getLastUpdatedDate(getLapisUrl(view.organismConstants.organism));
 ---
 
-<BaseLayout title={getViewTitle(view)}>
+<BaseLayout title={view.viewTitle}>
     <div class='ml-2'>
-        <Breadcrumbs breadcrumbs={getViewBreadcrumbEntries(view)} />
+        <Breadcrumbs breadcrumbs={view.viewBreadcrumbEntries} />
     </div>
     <slot />
     <div class='flex justify-center' slot='secondary-footer'>
         <span class='mr-4 p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
-        <DataInfo dataOrigins={view.dataOrigins} />
+        <DataInfo dataOrigins={view.organismConstants.dataOrigins} />
     </div>
 </BaseLayout>

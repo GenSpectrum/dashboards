@@ -13,7 +13,7 @@ import { ServerSide } from '../../views/serverSideRouting';
 const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.parsePageStateFromUrl(Astro.url);
+const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 ---
 
 <OrganismPageLayout view={view}>
@@ -21,17 +21,22 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
         <div class='flex overflow-x-auto'>
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, baselineFilter }]) => {
-                    const baselineLapisFilter = view.baselineFilterToLapisFilter(baselineFilter);
+                    const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(baselineFilter);
                     const timeGranularity = chooseGranularityBasedOnDateRange(
                         baselineFilter.dateRange,
-                        new Date(view.earliestDate),
+                        new Date(view.organismConstants.earliestDate),
                     );
                     const initialMutations = getLapisMutations(variantFilter.mutations);
                     const numeratorFilter = {
-                        ...view.variantFilterToLapisFilter(variantFilter),
+                        ...variantFilter.lineages,
+                        ...variantFilter.mutations,
+                        variantQuery: variantFilter.variantQuery,
                         ...baselineLapisFilter,
                     };
-                    const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, variantFilter.lineages);
+                    const lineageFilterConfigs = getLineageFilterConfigs(
+                        view.organismConstants.lineageFilters,
+                        variantFilter.lineages,
+                    );
 
                     return (
                         <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 px-2'>
@@ -39,22 +44,24 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                                 {pageState.filters.size > 1 && (
                                     <a
                                         class='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
-                                        href={view.toUrl(view.removeFilter(pageState, id))}
+                                        href={view.pageStateHandler.toUrl(
+                                            view.pageStateHandler.removeFilter(pageState, id),
+                                        )}
                                     >
                                         Remove column
                                     </a>
                                 )}
                                 <CompareSideBySidePageStateSelector
                                     locationFilterConfig={{
-                                        locationFields: view.locationFields,
+                                        locationFields: view.organismConstants.locationFields,
                                         initialLocation: baselineFilter.location,
                                         placeholderText: 'Sampling location',
                                     }}
                                     dateRangeFilterConfig={{
                                         initialDateRange: baselineFilter.dateRange,
-                                        dateRangeOptions: view.dateRangeOptions,
-                                        earliestDate: view.earliestDate,
-                                        dateColumn: view.mainDateField,
+                                        dateRangeOptions: view.organismConstants.dateRangeOptions,
+                                        earliestDate: view.organismConstants.earliestDate,
+                                        dateColumn: view.organismConstants.mainDateField,
                                     }}
                                     mutationFilterConfig={{
                                         initialMutations,
@@ -114,7 +121,9 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                             </ComponentWrapper>
                             <ComponentWrapper title='Sub-lineages'>
                                 <gs-aggregate
-                                    fields={JSON.stringify(getLineageFilterFields(view.lineageFilters))}
+                                    fields={JSON.stringify(
+                                        getLineageFilterFields(view.organismConstants.lineageFilters),
+                                    )}
                                     filter={JSON.stringify(numeratorFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -123,7 +132,7 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
                             </ComponentWrapper>
                             <ComponentWrapper title='Hosts'>
                                 <gs-aggregate
-                                    fields={JSON.stringify([view.hostField])}
+                                    fields={JSON.stringify([view.organismConstants.hostField])}
                                     filter={JSON.stringify(numeratorFilter)}
                                     pageSize={defaultTablePageSize}
                                     width='100%'
@@ -136,7 +145,7 @@ const pageState = view.parsePageStateFromUrl(Astro.url);
             }
             <a
                 class='px-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
-                href={view.toUrl(view.addEmptyFilter(pageState))}
+                href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
                 style='writing-mode: vertical-rl;'
             >
                 Add column

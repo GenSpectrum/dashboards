@@ -1,23 +1,13 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
-import {
-    getDateRangeFromSearch,
-    getLapisLocationFromSearch,
-    getLapisVariantQuery,
-    type LapisFilter,
-    setSearchFromDateRange,
-    setSearchFromLapisVariantQuery,
-    setSearchFromLocation,
-} from './helpers.ts';
+import { GenericSequencingEffortsView, GenericSingleVariantView } from './View.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import type { SingleVariantConstants } from './OrganismConstants.ts';
+import { Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
-const pathFragment = organismConfig[Organisms.westNile].pathFragment;
-
-class WestNileConstants {
+class WestNileConstants implements SingleVariantConstants {
     public readonly organism = Organisms.westNile;
     public readonly earliestDate = '1930-01-01';
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
@@ -66,106 +56,16 @@ class WestNileConstants {
         this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
     }
+}
 
-    public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter {
-        return {
-            ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
-            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
-            ...this.additionalFilters,
-        };
+export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<WestNileConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new WestNileConstants(organismsConfig));
     }
 }
 
-export class WestNileAnalyzeSingleVariantView extends WestNileConstants implements View<BaselineAndVariantData> {
-    public readonly pathname = `/${pathFragment}/single-variant`;
-    public readonly label = 'Single variant';
-    public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultPageState: BaselineAndVariantData = {
-        baselineFilter: {
-            location: {},
-            dateRange: this.defaultDateRange,
-        },
-        variantFilter: {
-            mutations: {},
-            lineages: {},
-        },
-    };
-    public readonly iconType = 'magnify';
-
-    public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
-        const search = url.searchParams;
-        return {
-            baselineFilter: {
-                location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
-            },
-            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
-        };
-    }
-
-    public toUrl(pageState: BaselineAndVariantData): string {
-        const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.baselineFilter.location);
-        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
-        }
-        setSearchFromLapisVariantQuery(search, pageState.variantFilter, getLineageFilterFields(this.lineageFilters));
-        return `${this.pathname}?${search}`;
-    }
-
-    public toLapisFilter(pageState: BaselineAndVariantData) {
-        return {
-            ...this.toLapisFilterWithoutVariant(pageState),
-            ...pageState.variantFilter.mutations,
-            ...pageState.variantFilter.lineages,
-        };
-    }
-
-    public getDefaultPageUrl() {
-        return this.toUrl(this.defaultPageState);
-    }
-}
-
-export class WestNileSequencingEffortsView extends WestNileConstants implements View<BaselineData> {
-    public pathname = `/${pathFragment}/sequencing-efforts`;
-    public label = 'Sequencing efforts';
-    public labelLong = 'Sequencing efforts';
-    public readonly defaultPageState: BaselineData = {
-        baselineFilter: {
-            location: {},
-            dateRange: this.defaultDateRange,
-        },
-    };
-    public readonly iconType = 'tube';
-
-    public parsePageStateFromUrl(url: URL): BaselineData {
-        const search = url.searchParams;
-
-        return {
-            baselineFilter: {
-                location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
-            },
-        };
-    }
-
-    public toUrl(pageState: BaselineData): string {
-        const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.baselineFilter.location);
-        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
-        }
-        return `${this.pathname}?${search}`;
-    }
-
-    public toLapisFilter(pageState: BaselineData): LapisFilter {
-        return this.toLapisFilterWithoutVariant(pageState);
-    }
-
-    public getDefaultPageUrl() {
-        return this.toUrl(this.defaultPageState);
+export class WestNileSequencingEffortsView extends GenericSequencingEffortsView<WestNileConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new WestNileConstants(organismsConfig));
     }
 }

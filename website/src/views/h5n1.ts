@@ -1,26 +1,15 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { type BaselineAndVariantData, type BaselineData, getLineageFilterFields, type View } from './View.ts';
-import {
-    getDateRangeFromSearch,
-    getLapisLocationFromSearch,
-    getLapisVariantQuery,
-    type LapisFilter,
-    type LapisLocation,
-    setSearchFromDateRange,
-    setSearchFromLapisVariantQuery,
-    setSearchFromLocation,
-} from './helpers.ts';
+import { GenericSequencingEffortsView, GenericSingleVariantView } from './View.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import type { OrganismsConfig } from '../config.ts';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import type { SingleVariantConstants } from './OrganismConstants.ts';
+import { Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
-
-const pathFragment = organismConfig[Organisms.h5n1].pathFragment;
 
 const earliestDate = '1905-01-01';
 
-class H5n1Constants {
+class H5n1Constants implements SingleVariantConstants {
     public readonly organism = Organisms.h5n1;
     public readonly earliestDate = '1905-01-01';
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
@@ -61,105 +50,16 @@ class H5n1Constants {
         this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.h5n1.lapis.additionalFilters;
     }
+}
 
-    public toLapisFilterWithoutVariant(pageState: BaselineData): LapisFilter & LapisLocation {
-        return {
-            ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
-            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
-            ...this.additionalFilters,
-        };
+export class H5n1AnalyzeSingleVariantView extends GenericSingleVariantView<H5n1Constants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new H5n1Constants(organismsConfig));
     }
 }
 
-export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<BaselineAndVariantData> {
-    public readonly pathname = `/${pathFragment}/single-variant`;
-    public readonly label = 'Single variant';
-    public readonly labelLong = 'Analyze a single variant';
-    public readonly defaultPageState: BaselineAndVariantData = {
-        baselineFilter: {
-            location: {},
-            dateRange: this.defaultDateRange,
-        },
-        variantFilter: {
-            mutations: {},
-            lineages: {},
-        },
-    };
-    public readonly iconType = 'magnify';
-
-    public parsePageStateFromUrl(url: URL): BaselineAndVariantData {
-        const search = url.searchParams;
-        return {
-            baselineFilter: {
-                location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
-            },
-            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
-        };
-    }
-
-    public toUrl(pageState: BaselineAndVariantData): string {
-        const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.baselineFilter.location);
-        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
-        }
-        setSearchFromLapisVariantQuery(search, pageState.variantFilter, getLineageFilterFields(this.lineageFilters));
-        return `${this.pathname}?${search}`;
-    }
-
-    public toLapisFilter(pageState: BaselineAndVariantData): LapisFilter {
-        return {
-            ...this.toLapisFilterWithoutVariant(pageState),
-            ...pageState.variantFilter.lineages,
-            ...pageState.variantFilter.mutations,
-        };
-    }
-
-    public getDefaultPageUrl() {
-        return this.toUrl(this.defaultPageState);
-    }
-}
-
-export class H5n1SequencingEffortsView extends H5n1Constants implements View<BaselineData> {
-    public readonly pathname = `/${pathFragment}/sequencing-efforts`;
-    public readonly label = 'Sequencing efforts';
-    public readonly labelLong = 'Sequencing efforts';
-    public readonly defaultPageState: BaselineData = {
-        baselineFilter: {
-            location: {},
-            dateRange: this.defaultDateRange,
-        },
-    };
-    public readonly iconType = 'tube';
-
-    public parsePageStateFromUrl(url: URL): BaselineData {
-        const search = url.searchParams;
-        return {
-            baselineFilter: {
-                location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
-            },
-        };
-    }
-
-    public toUrl(pageState: BaselineData): string {
-        const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.baselineFilter.location);
-        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
-        }
-        return `${this.pathname}?${search}`;
-    }
-
-    public toLapisFilter(pageState: BaselineData): LapisFilter {
-        return this.toLapisFilterWithoutVariant(pageState);
-    }
-
-    public getDefaultPageUrl() {
-        return this.toUrl(this.defaultPageState);
+export class H5n1SequencingEffortsView extends GenericSequencingEffortsView<H5n1Constants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new H5n1Constants(organismsConfig));
     }
 }

@@ -1,6 +1,6 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { type BaselineData, getLineageFilterFields, type VariantData, type View } from './View.ts';
+import { type BaselineData, BaseView, getLineageFilterFields, type VariantData } from './View.ts';
 import {
     getDateRangeFromSearch,
     getIntegerFromSearch,
@@ -13,17 +13,21 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
+import type { SingleVariantConstants } from './OrganismConstants.ts';
+import { type PageStateHandler, SequencingEffortsStateHandler, SingleVariantStateHandler } from './PageStateHandler.ts';
+import {
+    compareVariantsViewConstants,
+    sequencingEffortsViewConstants,
+    singleVariantViewConstants,
+} from './ViewConstants.ts';
 import { compareVariantsViewKey } from './routing.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
-import type { InstanceLogger } from '../types/logMessage.ts';
-
-const pathFragment = organismConfig[Organisms.covid].pathFragment;
 
 const earliestDate = '2020-01-06';
 
-class CovidConstants {
+class CovidConstants implements SingleVariantConstants {
     public readonly organism = Organisms.covid;
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
     public readonly earliestDate = '2020-01-06';
@@ -64,14 +68,6 @@ class CovidConstants {
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
     }
-
-    public variantFilterToLapisFilter(filter: LapisCovidVariantFilter): LapisFilter {
-        return {
-            ...filter.lineages,
-            ...filter.mutations,
-            variantQuery: filter.variantQuery,
-        };
-    }
 }
 
 export type CovidAnalyzeSingleVariantData = BaselineData &
@@ -79,49 +75,69 @@ export type CovidAnalyzeSingleVariantData = BaselineData &
         collectionId?: number;
     };
 
-export class CovidAnalyzeSingleVariantView extends CovidConstants implements View<CovidAnalyzeSingleVariantData> {
-    public readonly pathname = `/${pathFragment}/single-variant` as const;
-    public readonly label = 'Single variant';
-    public readonly labelLong = 'Analyze a single variant';
-    public readonly iconType = 'magnify';
+export class CovidAnalyzeSingleVariantView extends BaseView<
+    CovidAnalyzeSingleVariantData,
+    CovidConstants,
+    CovidSingleVariantStateHandler
+> {
+    constructor(organismsConfig: OrganismsConfig) {
+        const constants = new CovidConstants(organismsConfig);
+        super(
+            constants,
+            new CovidSingleVariantStateHandler(
+                constants,
+                {
+                    baselineFilter: {
+                        location: {},
+                        dateRange: constants.defaultDateRange,
+                    },
+                    variantFilter: {
+                        lineages: {},
+                        mutations: {},
+                        variantQuery: undefined,
+                    },
+                },
+                organismConfig[constants.organism].pathFragment,
+            ),
+            singleVariantViewConstants,
+        );
+    }
+}
 
-    public readonly defaultPageState: CovidAnalyzeSingleVariantData = {
-        baselineFilter: {
-            location: {},
-            dateRange: this.defaultDateRange,
-        },
-        variantFilter: {
-            lineages: {},
-            mutations: {},
-            variantQuery: undefined,
-        },
-    };
+class CovidSingleVariantStateHandler
+    extends SingleVariantStateHandler
+    implements PageStateHandler<CovidAnalyzeSingleVariantData>
+{
+    constructor(
+        protected readonly constants: CovidConstants,
+        defaultPageState: CovidAnalyzeSingleVariantData,
+        pathname: string,
+    ) {
+        super(constants, defaultPageState, pathname);
+    }
 
-    public parsePageStateFromUrl(url: URL): CovidAnalyzeSingleVariantData {
+    public override parsePageStateFromUrl(url: URL): CovidAnalyzeSingleVariantData {
         const search = url.searchParams;
+        const baselineFilter = super.parsePageStateFromUrl(url).baselineFilter;
         return {
-            baselineFilter: {
-                location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
-            },
-            variantFilter: getLapisCovidVariantQuery(search, getLineageFilterFields(this.lineageFilters)),
+            baselineFilter,
+            variantFilter: getLapisCovidVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
     }
 
-    public toUrl(pageState: CovidAnalyzeSingleVariantData): string {
+    public override toUrl(pageState: CovidAnalyzeSingleVariantData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, pageState.baselineFilter.location);
 
-        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
+        if (pageState.baselineFilter.dateRange !== this.constants.defaultDateRange) {
+            setSearchFromDateRange(search, this.constants.mainDateField, pageState.baselineFilter.dateRange);
         }
 
         setSearchFromLapisCovidVariantQuery(
             search,
             pageState.variantFilter,
-            getLineageFilterFields(this.lineageFilters),
+            getLineageFilterFields(this.constants.lineageFilters),
         );
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
@@ -129,24 +145,11 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         return `${this.pathname}?${search}`;
     }
 
-    public toLapisFilter(pageState: CovidAnalyzeSingleVariantData) {
+    public override toLapisFilter(pageState: CovidAnalyzeSingleVariantData) {
         return {
-            ...this.toLapisFilterWithoutVariant(pageState),
-            ...this.variantFilterToLapisFilter(pageState.variantFilter),
+            ...super.toLapisFilter(pageState),
+            variantQuery: pageState.variantFilter.variantQuery,
         };
-    }
-
-    public toLapisFilterWithoutVariant(pageState: CovidAnalyzeSingleVariantData): LapisFilter {
-        return {
-            ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
-            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
-            ...this.additionalFilters,
-        };
-    }
-
-    public getDefaultPageUrl() {
-        return this.toUrl(this.defaultPageState);
     }
 }
 
@@ -158,56 +161,71 @@ type CovidCompareVariantsFilter = BaselineData & VariantData<LapisCovidVariantFi
 
 type Id = number;
 
-export class CovidCompareVariantsView extends CovidConstants implements View<CovidCompareVariantsData> {
-    public readonly pathname = `/${pathFragment}/compare-side-by-side` as const;
-    public readonly label = 'Compare side-by-side';
-    public readonly labelLong = 'Compare variants side-by-side';
-    public readonly iconType = 'compare';
+export class CovidCompareVariantsView extends BaseView<
+    CovidCompareVariantsData,
+    CovidConstants,
+    CovidCompareVariantsStateHandler
+> {
+    constructor(organismsConfig: OrganismsConfig) {
+        const constants = new CovidConstants(organismsConfig);
+        const defaultPageState = {
+            filters: new Map<Id, CovidCompareVariantsFilter>([
+                [
+                    0,
+                    {
+                        baselineFilter: {
+                            location: {},
+                            dateRange: constants.defaultDateRange,
+                        },
+                        variantFilter: {
+                            lineages: {
+                                nextcladePangoLineage: 'JN.1*',
+                            },
+                            mutations: {},
+                            variantQuery: undefined,
+                        },
+                    },
+                ],
+                [
+                    1,
+                    {
+                        baselineFilter: {
+                            location: {},
+                            dateRange: constants.defaultDateRange,
+                        },
+                        variantFilter: {
+                            lineages: {
+                                nextcladePangoLineage: 'XBB.1*',
+                            },
+                            mutations: {},
+                            variantQuery: undefined,
+                        },
+                    },
+                ],
+            ]),
+        };
 
-    public readonly defaultPageState = {
-        organism: this.organism,
-        pathname: this.pathname,
-        filters: new Map<Id, CovidCompareVariantsFilter>([
-            [
-                0,
-                {
-                    baselineFilter: {
-                        location: {},
-                        dateRange: this.defaultDateRange,
-                    },
-                    variantFilter: {
-                        lineages: {
-                            nextcladePangoLineage: 'JN.1*',
-                        },
-                        mutations: {},
-                        variantQuery: undefined,
-                    },
-                },
-            ],
-            [
-                1,
-                {
-                    baselineFilter: {
-                        location: {},
-                        dateRange: this.defaultDateRange,
-                    },
-                    variantFilter: {
-                        lineages: {
-                            nextcladePangoLineage: 'XBB.1*',
-                        },
-                        mutations: {},
-                        variantQuery: undefined,
-                    },
-                },
-            ],
-        ]),
-    };
+        super(
+            constants,
+            new CovidCompareVariantsStateHandler(
+                new CovidConstants(organismsConfig),
+                defaultPageState,
+                organismConfig[constants.organism].pathFragment,
+            ),
+            compareVariantsViewConstants,
+        );
+    }
+}
+
+class CovidCompareVariantsStateHandler implements PageStateHandler<CovidCompareVariantsData> {
+    protected readonly pathname;
 
     constructor(
-        organismsConfig: OrganismsConfig,
-        private readonly logger: InstanceLogger,
+        protected readonly constants: CovidConstants,
+        protected readonly defaultPageState: CovidCompareVariantsData,
+        pathFragment: string,
     ) {
-        super(organismsConfig);
+        this.pathname = `/${pathFragment}/${compareVariantsViewConstants.pathFragment}`;
     }
 
     public getDefaultPageUrl() {
@@ -237,10 +255,10 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
             setSearchFromLapisCovidVariantQuery(
                 searchOfFilter,
                 filter.variantFilter,
-                getLineageFilterFields(this.lineageFilters),
+                getLineageFilterFields(this.constants.lineageFilters),
             );
             setSearchFromLocation(searchOfFilter, filter.baselineFilter.location);
-            setSearchFromDateRange(searchOfFilter, this.mainDateField, filter.baselineFilter.dateRange);
+            setSearchFromDateRange(searchOfFilter, this.constants.mainDateField, filter.baselineFilter.dateRange);
 
             searchOfFilter.forEach((value, key) => {
                 searchParameterMap.get(columnId)?.set(key, value);
@@ -276,7 +294,7 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
                     location: {
                         region: 'Europe',
                     },
-                    dateRange: this.defaultDateRange,
+                    dateRange: this.constants.defaultDateRange,
                 },
                 variantFilter: {
                     lineages: {},
@@ -299,9 +317,9 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     public baselineFilterToLapisFilter(filter: CovidCompareVariantsFilter['baselineFilter']): LapisFilter {
         return {
             ...filter.location,
-            [`${this.mainDateField}From`]: filter.dateRange.dateFrom,
-            [`${this.mainDateField}To`]: filter.dateRange.dateTo,
-            ...this.additionalFilters,
+            [`${this.constants.mainDateField}From`]: filter.dateRange.dateFrom,
+            [`${this.constants.mainDateField}To`]: filter.dateRange.dateTo,
+            ...this.constants.additionalFilters,
         };
     }
 
@@ -341,12 +359,18 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
     private getFilter(filterParams: Map<string, string>) {
         const filter: BaselineData & VariantData = {
             baselineFilter: {
-                location: getLapisLocationFromSearch(filterParams, this.locationFields),
+                location: getLapisLocationFromSearch(filterParams, this.constants.locationFields),
                 dateRange:
-                    getDateRangeFromSearch(filterParams, this.mainDateField, this.dateRangeOptions) ??
-                    this.defaultDateRange,
+                    getDateRangeFromSearch(
+                        filterParams,
+                        this.constants.mainDateField,
+                        this.constants.dateRangeOptions,
+                    ) ?? this.constants.defaultDateRange,
             },
-            variantFilter: getLapisCovidVariantQuery(filterParams, getLineageFilterFields(this.lineageFilters)),
+            variantFilter: getLapisCovidVariantQuery(
+                filterParams,
+                getLineageFilterFields(this.constants.lineageFilters),
+            ),
         };
 
         return filter;
@@ -357,54 +381,54 @@ export type CovidSequencingEffortsData = BaselineData & {
     collectionId?: number;
 };
 
-export class CovidSequencingEffortsView extends CovidConstants implements View<CovidSequencingEffortsData> {
-    public readonly pathname = `/${pathFragment}/sequencing-efforts` as const;
-    public readonly label = 'Sequencing efforts';
-    public readonly labelLong = 'Sequencing efforts';
+export class CovidSequencingEffortsView extends BaseView<
+    CovidSequencingEffortsData,
+    CovidConstants,
+    CovidSequencingEffortsStateHandler
+> {
+    constructor(organismsConfig: OrganismsConfig) {
+        const constants = new CovidConstants(organismsConfig);
+        super(
+            constants,
+            new CovidSequencingEffortsStateHandler(
+                constants,
+                {
+                    baselineFilter: {
+                        location: {},
+                        dateRange: constants.defaultDateRange,
+                    },
+                },
+                organismConfig[constants.organism].pathFragment,
+            ),
+            sequencingEffortsViewConstants,
+        );
+    }
+}
 
-    public readonly defaultPageState: CovidSequencingEffortsData = {
-        baselineFilter: {
-            location: {},
-            dateRange: this.defaultDateRange,
-        },
-    };
-    public readonly iconType = 'tube';
+class CovidSequencingEffortsStateHandler
+    extends SequencingEffortsStateHandler
+    implements PageStateHandler<CovidSequencingEffortsData>
+{
+    constructor(constants: CovidConstants, defaultPageState: CovidSequencingEffortsData, pathFragment: string) {
+        super(constants, defaultPageState, pathFragment);
+    }
 
-    public parsePageStateFromUrl(url: URL): CovidSequencingEffortsData {
-        const search = url.searchParams;
+    public override parsePageStateFromUrl(url: URL): CovidSequencingEffortsData {
         return {
-            baselineFilter: {
-                location: getLapisLocationFromSearch(search, this.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.mainDateField, this.dateRangeOptions) ?? this.defaultDateRange,
-            },
-            collectionId: getIntegerFromSearch(search, 'collectionId'),
+            ...super.parsePageStateFromUrl(url),
+            collectionId: getIntegerFromSearch(url.searchParams, 'collectionId'),
         };
     }
 
-    public toUrl(pageState: CovidSequencingEffortsData): string {
+    public override toUrl(pageState: CovidSequencingEffortsData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, pageState.baselineFilter.location);
-
-        if (pageState.baselineFilter.dateRange !== this.defaultDateRange) {
-            setSearchFromDateRange(search, this.mainDateField, pageState.baselineFilter.dateRange);
+        if (pageState.baselineFilter.dateRange !== this.constants.defaultDateRange) {
+            setSearchFromDateRange(search, this.constants.mainDateField, pageState.baselineFilter.dateRange);
         }
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
         }
         return `${this.pathname}?${search}`;
-    }
-
-    public toLapisFilter(pageState: CovidSequencingEffortsData): LapisFilter {
-        return {
-            ...pageState.baselineFilter.location,
-            [`${this.mainDateField}From`]: pageState.baselineFilter.dateRange.dateFrom,
-            [`${this.mainDateField}To`]: pageState.baselineFilter.dateRange.dateTo,
-            ...this.additionalFilters,
-        };
-    }
-
-    public getDefaultPageUrl() {
-        return this.toUrl(this.defaultPageState);
     }
 }
