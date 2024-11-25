@@ -38,12 +38,11 @@ export type View<PageState extends object> = {
     pathname: string;
     label: string;
     labelLong: string;
-    defaultPageState: PageState;
     iconType: MenuIconType;
 
     parsePageStateFromUrl: (url: URL) => PageState;
     toUrl: (pageState: PageState) => string;
-    getDefaultPageState: () => string;
+    getDefaultPageUrl: () => string;
 };
 
 export const defaultTablePageSize = 200;

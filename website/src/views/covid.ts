@@ -145,7 +145,7 @@ export class CovidAnalyzeSingleVariantView extends CovidConstants implements Vie
         };
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }
@@ -210,7 +210,7 @@ export class CovidCompareVariantsView extends CovidConstants implements View<Cov
         super(organismsConfig);
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 
@@ -404,7 +404,7 @@ export class CovidSequencingEffortsView extends CovidConstants implements View<C
         };
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }

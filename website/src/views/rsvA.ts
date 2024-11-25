@@ -116,7 +116,7 @@ export class RsvAAnalyzeSingleVariantView extends RsvAConstants implements View<
         };
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }
@@ -157,7 +157,7 @@ export class RsvASequencingEffortsView extends RsvAConstants implements View<Bas
         return this.toLapisFilterWithoutVariant(pageState);
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }

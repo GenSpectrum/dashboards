@@ -123,7 +123,7 @@ export class WestNileAnalyzeSingleVariantView extends WestNileConstants implemen
         };
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }
@@ -165,7 +165,7 @@ export class WestNileSequencingEffortsView extends WestNileConstants implements 
         return this.toLapisFilterWithoutVariant(pageState);
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }

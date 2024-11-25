@@ -118,7 +118,7 @@ export class H5n1AnalyzeSingleVariantView extends H5n1Constants implements View<
         };
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }
@@ -159,7 +159,7 @@ export class H5n1SequencingEffortsView extends H5n1Constants implements View<Bas
         return this.toLapisFilterWithoutVariant(pageState);
     }
 
-    public getDefaultPageState() {
+    public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 }
