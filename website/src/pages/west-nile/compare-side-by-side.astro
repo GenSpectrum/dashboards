@@ -1,0 +1,7 @@
+---
+import GenericCompareSideBySidePage from '../../components/GenericCompareSideBySidePage.astro';
+import { Organisms } from '../../types/Organism';
+import { compareVariantsViewKey } from '../../views/routing';
+---
+
+<GenericCompareSideBySidePage organismViewKey={`${Organisms.westNile}.${compareVariantsViewKey}`} />

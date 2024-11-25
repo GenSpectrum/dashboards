@@ -6,7 +6,7 @@ import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig
 import type { OrganismsConfig } from '../../config.ts';
 import type { BaselineData } from '../../views/View.ts';
 import type { LapisLocation } from '../../views/helpers.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
+import { type OrganismViewKey, Routing, type sequencingEffortsViewKey } from '../../views/routing.ts';
 
 export function SequencingEffortsPageStateSelector({
     locationFilterConfig,
@@ -18,7 +18,7 @@ export function SequencingEffortsPageStateSelector({
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     pageState: BaselineData;
-    organismViewKey: OrganismViewKey;
+    organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);

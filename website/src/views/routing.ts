@@ -2,11 +2,15 @@ import type { OrganismConstants } from './OrganismConstants.ts';
 import type { PageStateHandler } from './PageStateHandler.ts';
 import type { View } from './View.ts';
 import { CovidAnalyzeSingleVariantView, CovidCompareVariantsView, CovidSequencingEffortsView } from './covid.ts';
-import { H5n1AnalyzeSingleVariantView, H5n1SequencingEffortsView } from './h5n1.ts';
-import { RsvAAnalyzeSingleVariantView, RsvASequencingEffortsView } from './rsvA.ts';
-import { RsvBAnalyzeSingleVariantView, RsvBSequencingEffortsView } from './rsvB.ts';
+import { H5n1AnalyzeSingleVariantView, H5n1CompareVariantsView, H5n1SequencingEffortsView } from './h5n1.ts';
+import { RsvAAnalyzeSingleVariantView, RsvACompareVariantsView, RsvASequencingEffortsView } from './rsvA.ts';
+import { RsvBAnalyzeSingleVariantView, RsvBCompareVariantsView, RsvBSequencingEffortsView } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
-import { WestNileAnalyzeSingleVariantView, WestNileSequencingEffortsView } from './westNile.ts';
+import {
+    WestNileAnalyzeSingleVariantView,
+    WestNileCompareVariantsView,
+    WestNileSequencingEffortsView,
+} from './westNile.ts';
 import { type Organism, Organisms } from '../types/Organism.ts';
 
 export const singleVariantViewKey = 'singleVariantView';
@@ -39,18 +43,22 @@ export class Routing {
             },
             [Organisms.h5n1]: {
                 [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H5n1CompareVariantsView(organismsConfig),
                 [sequencingEffortsViewKey]: new H5n1SequencingEffortsView(organismsConfig),
             },
             [Organisms.rsvA]: {
                 [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new RsvACompareVariantsView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
             },
             [Organisms.rsvB]: {
                 [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new RsvBCompareVariantsView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvBSequencingEffortsView(organismsConfig),
             },
             [Organisms.westNile]: {
                 [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
             },
         } as const;

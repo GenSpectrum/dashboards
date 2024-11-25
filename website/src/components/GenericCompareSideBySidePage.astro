@@ -1,15 +1,20 @@
 ---
-import ComponentWrapper from '../../components/ComponentWrapper.astro';
-import { CompareSideBySidePageStateSelector } from '../../components/pageStateSelectors/CompareSideBySidePageStateSelector';
-import { getDashboardsConfig, getLapisUrl } from '../../config';
-import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
-import { getLapisMutations } from '../../views/helpers';
-import type { OrganismViewKey } from '../../views/routing';
-import { ServerSide } from '../../views/serverSideRouting';
+import ComponentWrapper from '../components/ComponentWrapper.astro';
+import { getDashboardsConfig, getLapisUrl } from '../config';
+import OrganismPageLayout from '../layouts/OrganismPage/OrganismPageLayout.astro';
+import { type Organism } from '../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../util/chooseGranularityBasedOnDateRange';
+import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../views/View';
+import { getLapisMutations } from '../views/helpers';
+import { type compareVariantsViewKey, type OrganismViewKey } from '../views/routing';
+import { ServerSide } from '../views/serverSideRouting';
+import { CompareSideBySidePageStateSelector } from './pageStateSelectors/CompareSideBySidePageStateSelector';
 
-const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
+interface Props {
+    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareVariantsViewKey}`>;
+}
+
+const { organismViewKey } = Astro.props;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
@@ -29,7 +34,6 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                     const numeratorFilter = {
                         ...variantFilter.lineages,
                         ...variantFilter.mutations,
-                        variantQuery: variantFilter.variantQuery,
                         ...baselineLapisFilter,
                     };
                     const lineageFilterConfigs = getLineageFilterConfigs(

@@ -7,7 +7,7 @@ import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } 
 import { type OrganismsConfig } from '../../config.ts';
 import type { BaselineAndVariantData } from '../../views/View.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
+import { type OrganismViewKey, Routing, type singleVariantViewKey } from '../../views/routing.ts';
 
 export function SingleVariantPageStateSelector({
     locationFilterConfig,
@@ -22,7 +22,7 @@ export function SingleVariantPageStateSelector({
     dateRangeFilterConfig: DateRangeFilterConfig;
     mutationFilterConfig: MutationFilterConfig;
     lineageFilterConfigs: LineageFilterConfig[];
-    organismViewKey: OrganismViewKey;
+    organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
     pageState: BaselineAndVariantData;
 }) {
