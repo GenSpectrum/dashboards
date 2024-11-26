@@ -121,7 +121,7 @@ function MoreDropdown({
                     <p className='mb-2'>
                         We could not delete your subscription "{subscription.name}". Please try again later.
                     </p>
-                    <ErrorReportToastModal errorId={errorId} />
+                    <ErrorReportToastModal errorId={errorId} error={error} />
                 </>,
                 {
                     position: 'bottom-left',

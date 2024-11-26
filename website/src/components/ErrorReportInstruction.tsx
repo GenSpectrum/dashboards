@@ -1,6 +1,15 @@
 import { useRef, useState } from 'react';
 
-export function ErrorReportToastModal({ errorId }: { errorId: string }) {
+/**
+ * Throw this error if you want to display the error message to the user.
+ */
+export class UserFacingError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
+export function ErrorReportToastModal({ errorId, error }: { errorId: string; error: Error }) {
     const modalRef = useRef<HTMLDialogElement>(null);
 
     const openModal = () => {
@@ -11,6 +20,7 @@ export function ErrorReportToastModal({ errorId }: { errorId: string }) {
 
     return (
         <>
+            {error instanceof UserFacingError && <p className='mb-2'>The error was: {error.message}</p>}
             <p>
                 The problem persists?{' '}
                 <button className='link' onClick={openModal}>
@@ -19,7 +29,7 @@ export function ErrorReportToastModal({ errorId }: { errorId: string }) {
             </p>
             <dialog ref={modalRef} className='modal'>
                 <div className='modal-box'>
-                    <ErrorReportInstruction errorId={errorId} currentUrl={window.location.href} />
+                    <ErrorReportInstruction errorId={errorId} currentUrl={window.location.href} error={error} />
                     <div className='modal-action'>
                         <form method='dialog'>
                             <button className='btn'>Close</button>
@@ -31,7 +41,17 @@ export function ErrorReportToastModal({ errorId }: { errorId: string }) {
     );
 }
 
-export function ErrorReportInstruction({ errorId, currentUrl }: { errorId: string; currentUrl: string }) {
+const errorCutoff = 500;
+
+export function ErrorReportInstruction({
+    errorId,
+    currentUrl,
+    error,
+}: {
+    errorId: string;
+    currentUrl: string;
+    error?: { message: string };
+}) {
     const errorInfoRef = useRef<HTMLUListElement>(null);
 
     return (
@@ -49,6 +69,14 @@ export function ErrorReportInstruction({ errorId, currentUrl }: { errorId: strin
                         <li>Error ID: {errorId}</li>
                         <li>Time: {new Date().toISOString()}</li>
                         <li>Current URL: {currentUrl}</li>
+                        {error && (
+                            <li>
+                                Error message:{' '}
+                                {error.message.length > errorCutoff
+                                    ? `${error.message.substring(0, errorCutoff)}...`
+                                    : error.message}
+                            </li>
+                        )}
                     </ul>
                     <CopyToClipboardButton getTextToCopy={() => errorInfoRef.current?.innerText} />
                 </div>

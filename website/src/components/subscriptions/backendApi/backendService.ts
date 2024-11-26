@@ -8,6 +8,7 @@ import {
     subscriptionResponseSchema,
     triggerEvaluationResponseSchema,
 } from '../../../types/Subscription.ts';
+import { UserFacingError } from '../../ErrorReportInstruction.tsx';
 
 const X_REQUEST_ID_HEADER = 'x-request-id';
 
@@ -75,7 +76,7 @@ class ApiService {
             const backendError = problemDetailSchema.safeParse(response.data);
             if (backendError.success) {
                 throw new BackendError(
-                    response.statusText,
+                    backendError.data.detail ?? '(no detail)',
                     response.status,
                     backendError.data,
                     response.config.url ?? '',
@@ -90,7 +91,7 @@ class ApiService {
 
 const axiosNotFoundError = 'ENOTFOUND';
 
-export class BackendError extends Error {
+export class BackendError extends UserFacingError {
     constructor(
         message: string,
         public readonly status: number,
@@ -114,7 +115,7 @@ export class UnknownBackendError extends Error {
     }
 }
 
-export class BackendNotAvailable extends Error {
+export class BackendNotAvailable extends UserFacingError {
     constructor(url: string) {
         super(`Backend not available under ${url}`);
         this.name = 'BackendNotAvailable';
