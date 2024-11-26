@@ -20,37 +20,40 @@ interface Props {
 
 const { organismViewKey } = Astro.props;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-const pageState = view.parsePageStateFromUrl(Astro.url);
+const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const variantFilter = view.toLapisFilter(pageState);
-const baselineFilter = view.toLapisFilterWithoutVariant(pageState);
+const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
+const baselineFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
 const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.baselineFilter.dateRange,
-    new Date(view.earliestDate),
+    new Date(view.organismConstants.earliestDate),
 );
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    view.locationFields,
+    view.organismConstants.locationFields,
     pageState.baselineFilter.location,
 );
 
 const initialMutations = getLapisMutations(pageState.variantFilter.mutations);
-const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageState.variantFilter.lineages);
+const lineageFilterConfigs = getLineageFilterConfigs(
+    view.organismConstants.lineageFilters,
+    pageState.variantFilter.lineages,
+);
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
     <SingleVariantPageStateSelector
         slot='filters'
         locationFilterConfig={{
-            locationFields: view.locationFields,
+            locationFields: view.organismConstants.locationFields,
             initialLocation: pageState.baselineFilter.location,
             placeholderText: 'Sampling location',
         }}
         dateRangeFilterConfig={{
             initialDateRange: pageState.baselineFilter.dateRange,
-            dateRangeOptions: view.dateRangeOptions,
-            earliestDate: view.earliestDate,
-            dateColumn: view.mainDateField,
+            dateRangeOptions: view.organismConstants.dateRangeOptions,
+            earliestDate: view.organismConstants.earliestDate,
+            dateColumn: view.organismConstants.mainDateField,
         }}
         mutationFilterConfig={{ initialMutations }}
         lineageFilterConfigs={lineageFilterConfigs}
@@ -68,7 +71,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
                         lapisFilter: variantFilter,
                     })}
                     denominatorFilter={JSON.stringify(baselineFilter)}
-                    lapisDateField={view.mainDateField}
+                    lapisDateField={view.organismConstants.mainDateField}
                     granularity={timeGranularity}
                     smoothingWindow='0'
                     pageSize={defaultTablePageSize}
@@ -108,7 +111,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
             }
             <ComponentWrapper title='Clades and lineages'>
                 <gs-aggregate
-                    fields={JSON.stringify(getLineageFilterFields(view.lineageFilters))}
+                    fields={JSON.stringify(getLineageFilterFields(view.organismConstants.lineageFilters))}
                     filter={JSON.stringify(variantFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -116,7 +119,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
             </ComponentWrapper>
             <ComponentWrapper title='Hosts'>
                 <gs-aggregate
-                    fields={JSON.stringify([view.hostField])}
+                    fields={JSON.stringify([view.organismConstants.hostField])}
                     filter={JSON.stringify(variantFilter)}
                     pageSize={defaultTablePageSize}
                     width='100%'
@@ -132,7 +135,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
                 sequenceType='nucleotide'
                 views='["grid"]'
                 granularity={timeGranularity}
-                lapisDateField={view.mainDateField}></gs-mutations-over-time>
+                lapisDateField={view.organismConstants.mainDateField}></gs-mutations-over-time>
         </ComponentWrapper>
 
         <ComponentWrapper title='Amino acid mutations over time' height='600px'>
@@ -143,7 +146,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(view.lineageFilters, pageSt
                 sequenceType='amino acid'
                 views='["grid"]'
                 granularity={timeGranularity}
-                lapisDateField={view.mainDateField}></gs-mutations-over-time>
+                lapisDateField={view.organismConstants.mainDateField}></gs-mutations-over-time>
         </ComponentWrapper>
     </div>
 </SingleVariantOrganismPageLayout>

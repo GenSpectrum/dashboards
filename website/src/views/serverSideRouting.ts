@@ -1,9 +1,8 @@
 import { getDashboardsConfig } from '../config.ts';
 import { Routing } from './routing.ts';
-import { getInstanceLogger } from '../logger.ts';
 
 const organismsConfig = getDashboardsConfig().dashboards.organisms;
-const routing = new Routing(organismsConfig, getInstanceLogger);
+const routing = new Routing(organismsConfig);
 
 /**
  * Constants for use in server-side code - for convenience.

@@ -12,16 +12,16 @@ import { ServerSide } from '../../views/serverSideRouting';
 
 const organismViewKey: OrganismViewKey = 'westNile.sequencingEffortsView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-const pageState = view.parsePageStateFromUrl(Astro.url);
+const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const baselineFilter = view.toLapisFilter(pageState);
+const baselineFilter = view.pageStateHandler.toLapisFilter(pageState);
 
 const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.baselineFilter.dateRange,
-    new Date(view.earliestDate),
+    new Date(view.organismConstants.earliestDate),
 );
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    view.locationFields,
+    view.organismConstants.locationFields,
     pageState.baselineFilter.location,
 );
 ---
@@ -30,15 +30,15 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     <SequencingEffortsPageStateSelector
         slot='filters'
         locationFilterConfig={{
-            locationFields: view.locationFields,
+            locationFields: view.organismConstants.locationFields,
             initialLocation: pageState.baselineFilter.location,
             placeholderText: 'Sampling location',
         }}
         dateRangeFilterConfig={{
             initialDateRange: pageState.baselineFilter.dateRange,
-            dateRangeOptions: view.dateRangeOptions,
-            earliestDate: view.earliestDate,
-            dateColumn: view.mainDateField,
+            dateRangeOptions: view.organismConstants.dateRangeOptions,
+            earliestDate: view.organismConstants.earliestDate,
+            dateColumn: view.organismConstants.mainDateField,
         }}
         pageState={pageState}
         organismViewKey={organismViewKey}
@@ -53,7 +53,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                     displayName: '',
                     lapisFilter: baselineFilter,
                 })}
-                lapisDateField={view.mainDateField}
+                lapisDateField={view.organismConstants.mainDateField}
                 views='["bar", "line", "table"]'
                 pageSize={defaultTablePageSize}
                 width='100%'
@@ -75,7 +75,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         }
         <ComponentWrapper title='Hosts' height='600px'>
             <gs-aggregate
-                fields={JSON.stringify([view.hostField])}
+                fields={JSON.stringify([view.organismConstants.hostField])}
                 filter={JSON.stringify(baselineFilter)}
                 pageSize={defaultTablePageSize}
                 width='100%'
@@ -91,7 +91,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         </ComponentWrapper>
         <ComponentWrapper title='Author affiliations' height='600px'>
             <gs-aggregate
-                fields={JSON.stringify([view.authorAffiliationsField])}
+                fields={JSON.stringify([view.organismConstants.authorAffiliationsField])}
                 filter={JSON.stringify(baselineFilter)}
                 pageSize={defaultTablePageSize}
                 width='100%'
@@ -99,14 +99,17 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         </ComponentWrapper>
         <ComponentWrapper title='Authors' height='600px'>
             <gs-aggregate
-                fields={JSON.stringify([view.authorsField, view.authorAffiliationsField])}
+                fields={JSON.stringify([
+                    view.organismConstants.authorsField,
+                    view.organismConstants.authorAffiliationsField,
+                ])}
                 filter={JSON.stringify(baselineFilter)}
                 pageSize={defaultTablePageSize}
                 width='100%'
                 height='100%'></gs-aggregate>
         </ComponentWrapper>
         {
-            view.additionalSequencingEffortsFields.map(({ label, fieldName }) => (
+            view.organismConstants.additionalSequencingEffortsFields.map(({ label, fieldName }) => (
                 <ComponentWrapper title={label} height='300px'>
                     <gs-aggregate
                         fields={JSON.stringify([fieldName])}

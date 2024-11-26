@@ -3,15 +3,15 @@ import OrganismPageLayout from './OrganismPageLayout.astro';
 import { getLapisUrl } from '../../config';
 import type { View } from '../../views/View';
 
-interface Props<PageState extends object> {
-    view: View<PageState>;
+interface Props {
+    view: View<any, any, any>;
 }
 
 const { view } = Astro.props;
 ---
 
 <OrganismPageLayout view={view}>
-    <gs-app lapis={getLapisUrl(view.organism)}>
+    <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
             <slot name='filters' />
             <slot name='dataDisplay' />

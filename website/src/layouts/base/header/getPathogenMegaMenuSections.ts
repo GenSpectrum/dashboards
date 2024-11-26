@@ -4,9 +4,9 @@ import { ServerSide } from '../../../views/serverSideRouting.ts';
 export function getPathogenMegaMenuSections() {
     return Object.values(organismConfig).map((organism) => {
         const megaMenuSections = Object.values(ServerSide.routing.views[organism.organism]).map((view) => {
-            const href = view.getDefaultPageState();
+            const href = view.pageStateHandler.getDefaultPageUrl();
             return {
-                label: view.labelLong,
+                label: view.viewConstants.labelLong,
                 href,
                 underlineColor: organism.menuListEntryDecoration,
                 externalLink: false,

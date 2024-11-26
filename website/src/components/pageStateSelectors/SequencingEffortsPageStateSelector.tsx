@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
-import { getClientLogger } from '../../clientLogger.ts';
 import type { OrganismsConfig } from '../../config.ts';
 import type { BaselineData } from '../../views/View.ts';
 import type { LapisLocation } from '../../views/helpers.ts';
@@ -24,9 +23,7 @@ export function SequencingEffortsPageStateSelector({
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
-    const view = useMemo(() => new Routing(organismsConfig, getClientLogger), [organismsConfig]).getOrganismView(
-        organismViewKey,
-    );
+    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const routeToNewPage = () => {
         const newPageState: BaselineData = {
@@ -37,7 +34,7 @@ export function SequencingEffortsPageStateSelector({
             },
         };
 
-        window.location.href = view.toUrl(newPageState);
+        window.location.href = view.pageStateHandler.toUrl(newPageState);
     };
 
     return (
