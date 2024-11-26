@@ -1,15 +1,9 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import {
-    type BaselineAndVariantData,
-    BaseView,
-    type CompareVariantsData,
-    GenericSequencingEffortsView,
-    GenericSingleVariantView,
-    type Id,
-} from './View.ts';
+import { type BaselineAndVariantData, type CompareVariantsData, type Id } from './View.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
+import { BaseView, GenericSequencingEffortsView, GenericSingleVariantView } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
 import { GenericCompareVariantsStateHandler } from './PageStateHandler.ts';
 import { compareVariantsViewConstants } from './ViewConstants.ts';

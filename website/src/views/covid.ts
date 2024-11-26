@@ -2,7 +2,6 @@ import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashb
 
 import {
     type BaselineData,
-    BaseView,
     type CompareVariantsData,
     getLineageFilterFields,
     type Id,
@@ -19,6 +18,7 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
+import { BaseView } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
 import {
     CompareVariantsStateHandler,
