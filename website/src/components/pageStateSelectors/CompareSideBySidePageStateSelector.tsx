@@ -7,7 +7,7 @@ import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } 
 import type { OrganismsConfig } from '../../config.ts';
 import type { CovidCompareVariantsData } from '../../views/covid.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
+import { type compareVariantsViewKey, type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,
@@ -25,7 +25,7 @@ export function CompareSideBySidePageStateSelector({
     lineageFilterConfigs: LineageFilterConfig[];
     filterId: number;
     pageState: CovidCompareVariantsData;
-    organismViewKey: OrganismViewKey;
+    organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);

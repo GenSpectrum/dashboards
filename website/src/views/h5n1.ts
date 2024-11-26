@@ -1,10 +1,19 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { GenericSequencingEffortsView, GenericSingleVariantView } from './View.ts';
+import {
+    type BaselineAndVariantData,
+    BaseView,
+    type CompareVariantsData,
+    GenericSequencingEffortsView,
+    GenericSingleVariantView,
+    type Id,
+} from './View.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import type { OrganismsConfig } from '../config.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
-import { Organisms } from '../types/Organism.ts';
+import { GenericCompareVariantsStateHandler } from './PageStateHandler.ts';
+import { compareVariantsViewConstants } from './ViewConstants.ts';
+import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
 const earliestDate = '1905-01-01';
@@ -55,6 +64,58 @@ class H5n1Constants implements SingleVariantConstants {
 export class H5n1AnalyzeSingleVariantView extends GenericSingleVariantView<H5n1Constants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new H5n1Constants(organismsConfig));
+    }
+}
+
+export class H5n1CompareVariantsView extends BaseView<
+    CompareVariantsData,
+    H5n1Constants,
+    GenericCompareVariantsStateHandler
+> {
+    constructor(organismsConfig: OrganismsConfig) {
+        const constants = new H5n1Constants(organismsConfig);
+        const defaultPageState = {
+            filters: new Map<Id, BaselineAndVariantData>([
+                [
+                    0,
+                    {
+                        baselineFilter: {
+                            location: {},
+                            dateRange: constants.defaultDateRange,
+                        },
+                        variantFilter: {
+                            lineages: {},
+                            mutations: {},
+                        },
+                    },
+                ],
+                [
+                    1,
+                    {
+                        baselineFilter: {
+                            location: {},
+                            dateRange: constants.defaultDateRange,
+                        },
+                        variantFilter: {
+                            lineages: {
+                                clade: '2.3.4.4b',
+                            },
+                            mutations: {},
+                        },
+                    },
+                ],
+            ]),
+        };
+
+        super(
+            constants,
+            new GenericCompareVariantsStateHandler(
+                constants,
+                defaultPageState,
+                organismConfig[constants.organism].pathFragment,
+            ),
+            compareVariantsViewConstants,
+        );
     }
 }
 

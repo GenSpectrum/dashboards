@@ -1,10 +1,19 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { GenericSequencingEffortsView, GenericSingleVariantView } from './View.ts';
+import {
+    type BaselineAndVariantData,
+    BaseView,
+    type CompareVariantsData,
+    GenericSequencingEffortsView,
+    GenericSingleVariantView,
+    type Id,
+} from './View.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
-import { Organisms } from '../types/Organism.ts';
+import { GenericCompareVariantsStateHandler } from './PageStateHandler.ts';
+import { compareVariantsViewConstants } from './ViewConstants.ts';
+import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
 class WestNileConstants implements SingleVariantConstants {
@@ -61,6 +70,58 @@ class WestNileConstants implements SingleVariantConstants {
 export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new WestNileConstants(organismsConfig));
+    }
+}
+
+export class WestNileCompareVariantsView extends BaseView<
+    CompareVariantsData,
+    WestNileConstants,
+    GenericCompareVariantsStateHandler
+> {
+    constructor(organismsConfig: OrganismsConfig) {
+        const constants = new WestNileConstants(organismsConfig);
+        const defaultPageState = {
+            filters: new Map<Id, BaselineAndVariantData>([
+                [
+                    0,
+                    {
+                        baselineFilter: {
+                            location: {},
+                            dateRange: constants.defaultDateRange,
+                        },
+                        variantFilter: {
+                            lineages: {},
+                            mutations: {},
+                        },
+                    },
+                ],
+                [
+                    1,
+                    {
+                        baselineFilter: {
+                            location: {},
+                            dateRange: constants.defaultDateRange,
+                        },
+                        variantFilter: {
+                            lineages: {
+                                lineage: '2',
+                            },
+                            mutations: {},
+                        },
+                    },
+                ],
+            ]),
+        };
+
+        super(
+            constants,
+            new GenericCompareVariantsStateHandler(
+                constants,
+                defaultPageState,
+                organismConfig[constants.organism].pathFragment,
+            ),
+            compareVariantsViewConstants,
+        );
     }
 }
 

@@ -28,6 +28,12 @@ export type VariantData<VariantFilterType = VariantFilter> = {
 
 export type BaselineAndVariantData = BaselineData & VariantData;
 
+export type Id = number;
+
+export type CompareVariantsData<ColumnData extends BaselineAndVariantData = BaselineAndVariantData> = {
+    filters: Map<Id, ColumnData>;
+};
+
 /**
  * PageState is the state of the organism pages. It:
  * - can be set by users via input components
