@@ -27,7 +27,7 @@ getInstanceLogger('500ErrorPage').error(`An error occurred: ${getErrorLogMessage
         <details class='collapse'>
             <summary class='collapse-title link'> The problem persists? Learn how to report an issue.</summary>
             <div class='collapse-content'>
-                <ErrorReportInstruction errorId={errorId} currentUrl={Astro.url.toString()} />
+                <ErrorReportInstruction errorId={errorId} currentUrl={Astro.url.toString()} client:load />
             </div>
         </details>
     </PageContainer>
