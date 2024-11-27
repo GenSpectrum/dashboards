@@ -5,7 +5,7 @@ const views = [
     {
         linkName: 'Analyze a single variant',
         title: 'Single variant',
-        expectedHeadline: 'Prevalence over time',
+        expectedHeadline: 'Analyze a single variant',
     },
     {
         linkName: 'Compare variants side-by-side',

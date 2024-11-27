@@ -1,14 +1,14 @@
 ---
-import ComponentWrapper from '../components/ComponentWrapper.astro';
-import { getDashboardsConfig, getLapisUrl } from '../config';
-import OrganismPageLayout from '../layouts/OrganismPage/OrganismPageLayout.astro';
-import { type Organism } from '../types/Organism';
-import { chooseGranularityBasedOnDateRange } from '../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../views/View';
-import { getLapisMutations } from '../views/helpers';
-import { type compareVariantsViewKey, type OrganismViewKey } from '../views/routing';
-import { ServerSide } from '../views/serverSideRouting';
-import { CompareSideBySidePageStateSelector } from './pageStateSelectors/CompareSideBySidePageStateSelector';
+import { getDashboardsConfig, getLapisUrl } from '../../../config';
+import OrganismPageLayout from '../../../layouts/OrganismPage/OrganismPageLayout.astro';
+import { type Organism } from '../../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLapisMutations } from '../../../views/helpers';
+import { type compareVariantsViewKey, type OrganismViewKey } from '../../../views/routing';
+import { ServerSide } from '../../../views/serverSideRouting';
+import ComponentWrapper from '../../ComponentWrapper.astro';
+import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 
 interface Props {
     organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareVariantsViewKey}`>;

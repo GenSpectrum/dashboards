@@ -1,21 +1,26 @@
 ---
-import ComponentHeadline from '../../components/ComponentHeadline.astro';
-import ComponentWrapper from '../../components/ComponentWrapper.astro';
-import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
-import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
-import SelectVariant from '../../components/views/analyzeSingleVariant/SelectVariant.astro';
-import { getDashboardsConfig } from '../../config';
-import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
-import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
-import { getLapisMutations, getLocationSubdivision } from '../../views/helpers';
-import { type OrganismViewKey } from '../../views/routing';
-import { ServerSide } from '../../views/serverSideRouting';
+import SelectVariant from './SelectVariant.astro';
+import { getDashboardsConfig } from '../../../config';
+import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
+import type { Organism } from '../../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
+import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLapisMutations, getLocationSubdivision } from '../../../views/helpers';
+import { type OrganismViewKey, type singleVariantViewKey } from '../../../views/routing';
+import { ServerSide } from '../../../views/serverSideRouting';
+import ComponentHeadline from '../../ComponentHeadline.astro';
+import ComponentWrapper from '../../ComponentWrapper.astro';
+import ComponentsGrid from '../../ComponentsGrid.astro';
+import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
 
-const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
+interface Props {
+    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof singleVariantViewKey}`>;
+}
+
+const { organismViewKey } = Astro.props;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
+
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
@@ -31,7 +36,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 );
 
 const initialMutations = getLapisMutations(pageState.variantFilter.mutations);
-
 const lineageFilterConfigs = getLineageFilterConfigs(
     view.organismConstants.lineageFilters,
     pageState.variantFilter.lineages,
@@ -41,35 +45,26 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
-    <div class='bg-gray-50' slot='filters'>
-        <SingleVariantPageStateSelector
-            locationFilterConfig={{
-                locationFields: view.organismConstants.locationFields,
-                initialLocation: pageState.baselineFilter.location,
-                placeholderText: 'Sampling location',
-            }}
-            dateRangeFilterConfig={{
-                initialDateRange: pageState.baselineFilter.dateRange,
-                dateRangeOptions: view.organismConstants.dateRangeOptions,
-                earliestDate: view.organismConstants.earliestDate,
-                dateColumn: view.organismConstants.mainDateField,
-            }}
-            mutationFilterConfig={{ initialMutations }}
-            lineageFilterConfigs={lineageFilterConfigs}
-            pageState={pageState}
-            organismViewKey={organismViewKey}
-            organismsConfig={getDashboardsConfig().dashboards.organisms}
-            client:only='react'
-        />
-        <div class='p-2'>
-            <h2 class='my-2'>Or select a known variant:</h2>
-            <CollectionsList
-                initialCollectionId={pageState.collectionId}
-                organismsConfig={getDashboardsConfig().dashboards.organisms}
-                client:load
-            />
-        </div>
-    </div>
+    <SingleVariantPageStateSelector
+        slot='filters'
+        locationFilterConfig={{
+            locationFields: view.organismConstants.locationFields,
+            initialLocation: pageState.baselineFilter.location,
+            placeholderText: 'Sampling location',
+        }}
+        dateRangeFilterConfig={{
+            initialDateRange: pageState.baselineFilter.dateRange,
+            dateRangeOptions: view.organismConstants.dateRangeOptions,
+            earliestDate: view.organismConstants.earliestDate,
+            dateColumn: view.organismConstants.mainDateField,
+        }}
+        mutationFilterConfig={{ initialMutations }}
+        lineageFilterConfigs={lineageFilterConfigs}
+        pageState={pageState}
+        organismViewKey={organismViewKey}
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        client:only='react'
+    />
 
     {
         noVariantSelected ? (
@@ -101,17 +96,6 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                             height='100%'
                         />
                     </ComponentWrapper>
-                    <ComponentWrapper title='Relative growth advantage'>
-                        <gs-relative-growth-advantage
-                            numeratorFilter={JSON.stringify(variantFilter)}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
-                            generationTime='7'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-
                     <ComponentWrapper title='Nucleotide mutations'>
                         <gs-mutations
                             lapisFilter={JSON.stringify(variantFilter)}
@@ -132,16 +116,6 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                             height='100%'
                         />
                     </ComponentWrapper>
-
-                    <ComponentWrapper title='Sub-lineages'>
-                        <gs-aggregate
-                            fields={JSON.stringify(getLineageFilterFields(view.organismConstants.lineageFilters))}
-                            filter={JSON.stringify(variantFilter)}
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
                     {subdivisionField !== undefined && (
                         <ComponentWrapper title={subdivisionLabel}>
                             <gs-aggregate
@@ -153,7 +127,15 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                             />
                         </ComponentWrapper>
                     )}
-
+                    <ComponentWrapper title='Clades and lineages'>
+                        <gs-aggregate
+                            fields={JSON.stringify(getLineageFilterFields(view.organismConstants.lineageFilters))}
+                            filter={JSON.stringify(variantFilter)}
+                            pageSize={defaultTablePageSize}
+                            width='100%'
+                            height='100%'
+                        />
+                    </ComponentWrapper>
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
                             fields={JSON.stringify([view.organismConstants.hostField])}
@@ -164,7 +146,6 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                         />
                     </ComponentWrapper>
                 </ComponentsGrid>
-
                 <ComponentWrapper title='Nucleotide mutations over time' height='600px'>
                     <gs-mutations-over-time
                         width='100%'
