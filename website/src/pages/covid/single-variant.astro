@@ -83,6 +83,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(
                         lapisFilter: variantFilter,
                     })}
                     denominatorFilter={JSON.stringify(baselineFilter)}
+                    lapisDateField={view.organismConstants.mainDateField}
                     granularity={timeGranularity}
                     smoothingWindow='0'
                     pageSize={defaultTablePageSize}
