@@ -25,7 +25,7 @@ export abstract class BaseView<
         this.viewBreadcrumbEntries = [
             ...defaultBreadcrumbs,
             { name: organismConfig[this.organismConstants.organism].label },
-            { name: this.viewConstants.label, href: this.pathname },
+            { name: this.viewConstants.label, href: this.pageStateHandler.getDefaultPageUrl() },
         ];
     }
 }
