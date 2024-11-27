@@ -1,4 +1,5 @@
 ---
+import ComponentHeadline from './ComponentHeadline.astro';
 interface Props {
     title: string;
     height?: string;
@@ -8,7 +9,7 @@ const { title, height = '400px' } = Astro.props;
 ---
 
 <div>
-    <h2 class='font-bold'>{title}</h2>
+    <ComponentHeadline>{title}</ComponentHeadline>
     <div style={{ height }}>
         <slot />
     </div>
