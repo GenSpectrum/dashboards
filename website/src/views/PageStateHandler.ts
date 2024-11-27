@@ -23,7 +23,8 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import { compareVariantsViewKey } from './routing.ts';
-import { Organisms } from '../types/Organism.ts';
+import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
+import { organismConfig } from '../types/Organism.ts';
 
 export interface PageStateHandler<PageState extends object> {
     parsePageStateFromUrl(url: URL): PageState;
@@ -143,6 +144,8 @@ function toLapisFilterWithoutVariant(
     };
 }
 
+const $ = '$';
+
 export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAndVariantData = BaselineAndVariantData>
     implements PageStateHandler<CompareVariantsData<ColumnData>>
 {
@@ -227,10 +230,10 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
         const filterMap = new Map<Id, Map<string, string>>();
 
         for (const [key, value] of search) {
-            const keySplit = key.split('$');
+            const keySplit = key.split($);
             if (keySplit.length !== 2) {
-                throw Error(
-                    `Failed parsing query parameters on ${Organisms.covid} ${compareVariantsViewKey}: Invalid key in URLSearchParam: ${key}`,
+                throw new UserFacingError(
+                    `Failed parsing query parameters on ${organismConfig[this.constants.organism].label} ${compareVariantsViewKey}: Invalid key in URLSearchParam: '${key}'. Expected key of the form <parameter>${$}<id>`,
                 );
             }
             const id = Number.parseInt(keySplit[1], 10);
@@ -250,7 +253,7 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
         const search = new URLSearchParams();
         for (const [id, filter] of filters) {
             for (const [key, value] of filter) {
-                search.append(`${key}$${id}`, value);
+                search.append(`${key}${$}${id}`, value);
             }
         }
         return search;

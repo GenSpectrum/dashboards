@@ -2,6 +2,7 @@ import { getSession } from 'auth-astro/server';
 
 import { getBackendHost } from '../../../config.ts';
 import { getInstanceLogger } from '../../../logger.ts';
+import type { ProblemDetail } from '../../../types/ProblemDetail.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 const API_PATHNAME_LENGTH = '/api'.length;
@@ -43,22 +44,15 @@ function getBackendUrl(request: Request, userId: string) {
     return backendUrl;
 }
 
-type BackendError = {
-    title: string;
-    detail: string;
-    status: number;
-    instance: string;
-};
-
 const getUnauthorizedResponse = (requestUrl: string) => {
-    const response: BackendError = {
+    const response: ProblemDetail = {
         title: 'Unauthorized',
         detail: "You're not authorized to access this resource",
         status: 401,
         instance: requestUrl,
     };
 
-    return new Response(JSON.stringify({ response }), {
+    return Response.json(response, {
         status: 401,
         headers: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -68,14 +62,14 @@ const getUnauthorizedResponse = (requestUrl: string) => {
 };
 
 const getInternalErrorResponse = (requestUrl: string) => {
-    const response: BackendError = {
+    const response: ProblemDetail = {
         title: 'Internal Server Error',
-        detail: "Couldn't fetch data from the backend",
+        detail: 'Failed to connect the backend service',
         status: 500,
         instance: requestUrl,
     };
 
-    return new Response(JSON.stringify({ response }), {
+    return Response.json(response, {
         status: 500,
         headers: {
             // eslint-disable-next-line @typescript-eslint/naming-convention

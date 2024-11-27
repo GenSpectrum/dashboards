@@ -2,10 +2,10 @@
 // eslint-disable-next-line import/no-deprecated -- "Parse errors in imported module 'uuid': parser.parse is not a function (undefined:undefined)"
 import { v4 as uuidv4 } from 'uuid';
 
-import { ErrorReportInstruction } from '../components/ErrorReportInstruction';
-import BaseLayout from '../layouts/base/BaseLayout.astro';
+import { ErrorReportInstruction, UserFacingError } from '../components/ErrorReportInstruction';
+import { defaultBreadcrumbs } from '../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { getInstanceLogger } from '../logger';
-import { PageContainer } from '../styles/containers/PageContainer';
 import { PageHeadline } from '../styles/containers/PageHeadline';
 import { getErrorLogMessage } from '../util/getErrorLogMessage';
 
@@ -19,16 +19,20 @@ const errorId = uuidv4();
 getInstanceLogger('500ErrorPage').error(`An error occurred: ${getErrorLogMessage(error)}`, { errorId });
 ---
 
-<BaseLayout title='GenSpectrum Dashboards'>
-    <PageContainer>
-        <PageHeadline>Oops! Something went wrong...</PageHeadline>
-        <div class='mb-2'>We are sorry for the inconvenience. Please try again later.</div>
+<ContaineredPageLayout title='GenSpectrum Dashboards' breadcrumbs={defaultBreadcrumbs}>
+    <PageHeadline>Oops! Something went wrong...</PageHeadline>
+    {error instanceof UserFacingError && <div class='mb-2'>{error.message}</div>}
+    <div class='mb-2'>We are sorry for the inconvenience. Please try again later.</div>
 
-        <details class='collapse'>
-            <summary class='collapse-title link'> The problem persists? Learn how to report an issue.</summary>
-            <div class='collapse-content'>
-                <ErrorReportInstruction errorId={errorId} currentUrl={Astro.url.toString()} client:load />
-            </div>
-        </details>
-    </PageContainer>
-</BaseLayout>
+    <details class='collapse'>
+        <summary class='collapse-title link'> The problem persists? Learn how to report an issue.</summary>
+        <div class='collapse-content'>
+            <ErrorReportInstruction
+                errorId={errorId}
+                currentUrl={Astro.url.toString()}
+                error={error instanceof UserFacingError ? { message: error.message } : undefined}
+                client:load
+            />
+        </div>
+    </details>
+</ContaineredPageLayout>

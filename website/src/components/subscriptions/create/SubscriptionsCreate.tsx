@@ -56,7 +56,7 @@ export function SubscriptionsCreateInner({
             toast.error(
                 <>
                     <p className='mb-2'>We could not create your subscription. Please try again later.</p>
-                    <ErrorReportToastModal errorId={errorId} />
+                    <ErrorReportToastModal errorId={errorId} error={error} />
                 </>,
                 {
                     position: 'bottom-left',
