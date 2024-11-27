@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
-import type { OrganismsConfig } from '../../config.ts';
-import { type CovidAnalyzeSingleVariantData } from '../../views/covid.ts';
-import { Routing } from '../../views/routing.ts';
-import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
+import type { OrganismsConfig } from '../../../config.ts';
+import { type CovidAnalyzeSingleVariantData } from '../../../views/covid.ts';
+import { Routing } from '../../../views/routing.ts';
+import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
 type CollectionVariant = {
     name: string;

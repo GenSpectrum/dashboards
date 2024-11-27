@@ -31,7 +31,7 @@ export function BaselineSelector({
 }) {
     return (
         <div>
-            <SelectorHeadline>Filter dataset</SelectorHeadline>
+            <SelectorHeadline>Dataset Filter</SelectorHeadline>
             <div className='flex flex-col gap-2'>
                 <GsLocationFilter
                     fields={locationFilterConfig.locationFields}
