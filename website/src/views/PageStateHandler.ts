@@ -209,9 +209,9 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
     }
 
     public addEmptyFilter(pageState: CompareVariantsData<ColumnData>): CovidCompareVariantsData {
-        const lastId = Math.max(...Array.from(pageState.filters.keys()));
+        const newId = pageState.filters.size === 0 ? 0 : Math.max(...Array.from(pageState.filters.keys())) + 1;
 
-        return this.setFilter(pageState, this.getEmptyColumnData(), lastId + 1);
+        return this.setFilter(pageState, this.getEmptyColumnData(), newId);
     }
 
     public removeFilter(pageState: CompareVariantsData<ColumnData>, columnId: number): CovidCompareVariantsData {
