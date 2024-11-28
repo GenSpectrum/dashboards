@@ -16,3 +16,7 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

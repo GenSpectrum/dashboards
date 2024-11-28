@@ -1,0 +1,68 @@
+name: End-to-end Tests
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Cache .npm
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('lapis-e2e/**/package-lock.json') }}
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Docker metadata
+      id: dockerMetadata
+      uses: docker/metadata-action@v5
+      with:
+        images: "dummyImageName"
+        tags: |
+          type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
+          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+    - name: Get Branch Tag
+      id: branchTag
+      env:
+        TAG: ${{ steps.dockerMetadata.outputs.tags }}
+      run: echo "branchTag=${TAG##*:}" >> $GITHUB_OUTPUT
+
+    - name: Wait for website Docker image
+      uses: lewagon/wait-on-check-action@v1.3.4
+      with:
+        ref: ${{ github.sha }}
+        check-name: Build Website Docker Image
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 10
+    - name: Wait for backend Docker image
+      uses: lewagon/wait-on-check-action@v1.3.4
+      with:
+        ref: ${{ github.sha }}
+        check-name: Build Backend Docker Image
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 5
+
+    - name: Start Docker Containers
+      run: docker compose -f ../docker-compose.yml up -d --wait
+      env:
+        WEBSITE_TAG: ${{ steps.branchTag.outputs.branchTag }}
+        BACKEND_TAG: ${{ steps.branchTag.outputs.branchTag }}
+
+    - name: Run Playwright tests
+      run: npm run e2e
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: website/playwright-report/
+        retention-days: 30

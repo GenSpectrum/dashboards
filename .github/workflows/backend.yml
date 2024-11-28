@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew ktlintCheck
 
   dockerImage:
-    name: Build Docker Image
+    name: Build Backend Docker Image
     runs-on: ubuntu-latest
     permissions:
       contents: read
