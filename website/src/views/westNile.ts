@@ -1,7 +1,6 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type BaselineAndVariantData, type CompareSideBySideData, type Id } from './View.ts';
-import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -12,6 +11,7 @@ import {
 import type { SingleVariantConstants } from './OrganismConstants.ts';
 import { GenericCompareSideBySideStateHandler } from './PageStateHandler.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
@@ -125,6 +125,12 @@ export class WestNileCompareSideBySideView extends BaseView<
 }
 
 export class WestNileSequencingEffortsView extends GenericSequencingEffortsView<WestNileConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new WestNileConstants(organismsConfig));
+    }
+}
+
+export class WestNileCompareVariantsView extends GenericCompareVariantsView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new WestNileConstants(organismsConfig));
     }

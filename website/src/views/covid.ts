@@ -18,7 +18,7 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
-import { BaseView } from './BaseView.ts';
+import { BaseView, GenericCompareVariantsView } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
 import {
     CompareSideBySideStateHandler,
@@ -31,7 +31,7 @@ import {
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
 } from './ViewConstants.ts';
-import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
@@ -323,5 +323,11 @@ class CovidSequencingEffortsStateHandler
             search.set('collectionId', pageState.collectionId.toString());
         }
         return `${this.pathname}?${search}`;
+    }
+}
+
+export class CovidCompareVariantsView extends GenericCompareVariantsView<CovidConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new CovidConstants(organismsConfig));
     }
 }

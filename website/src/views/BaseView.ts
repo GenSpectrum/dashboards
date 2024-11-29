@@ -1,13 +1,13 @@
 import type { OrganismConstants, SequencingEffortsConstants, SingleVariantConstants } from './OrganismConstants.ts';
-import { type PageStateHandler, SequencingEffortsStateHandler, SingleVariantStateHandler } from './PageStateHandler.ts';
 import {
+    CompareVariantsStateHandler,
     type PageStateHandler,
     SequencingEffortsStateHandler,
     SingleVariantStateHandler,
 } from './PageStateHandler.ts';
-import type { BaselineAndVariantData, BaselineData, View } from './View.ts';
-import { sequencingEffortsViewConstants, singleVariantViewConstants, type ViewConstants } from './ViewConstants.ts';
+import type { BaselineAndVariantData, BaselineData, CompareVariantsData, View } from './View.ts';
 import {
+    compareVariantsViewConstants,
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
     type ViewConstants,
@@ -86,6 +86,30 @@ export class GenericSequencingEffortsView<Constants extends SequencingEffortsCon
                 organismConfig[constants.organism].pathFragment,
             ),
             sequencingEffortsViewConstants,
+        );
+    }
+}
+
+export class GenericCompareVariantsView<Constants extends SingleVariantConstants> extends BaseView<
+    CompareVariantsData,
+    Constants,
+    CompareVariantsStateHandler
+> {
+    constructor(constants: Constants) {
+        super(
+            constants,
+            new CompareVariantsStateHandler(
+                constants,
+                {
+                    baselineFilter: {
+                        location: {},
+                        dateRange: constants.defaultDateRange,
+                    },
+                    variants: new Map(),
+                },
+                organismConfig[constants.organism].pathFragment,
+            ),
+            compareVariantsViewConstants,
         );
     }
 }

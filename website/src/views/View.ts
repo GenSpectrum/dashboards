@@ -3,8 +3,8 @@ import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import type { OrganismConstants } from './OrganismConstants.ts';
 import { type PageStateHandler } from './PageStateHandler.ts';
 import { type ViewConstants } from './ViewConstants';
-import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
-import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
+import type { LapisCovidVariantFilter, LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
 
 export type BaselineFilter = {
@@ -32,6 +32,10 @@ export type Id = number;
 export type CompareSideBySideData<ColumnData extends BaselineAndVariantData = BaselineAndVariantData> = {
     filters: Map<Id, ColumnData>;
 };
+
+export type CompareVariantsData = {
+    variants: Map<Id, VariantFilter>;
+} & BaselineData;
 
 /**
  * PageState is the state of the organism pages. It:

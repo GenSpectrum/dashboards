@@ -1,6 +1,7 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import type { VariantFilter } from './View.ts';
+import type { MutationFilter } from '../components/genspectrum/GsMutationFilter.tsx';
 import { CustomDateRangeLabel } from '../types/DateWindow.ts';
 
 export type LapisFilter = Record<string, string | number | null | boolean | string[] | undefined>;
@@ -113,6 +114,15 @@ export type LapisMutationQuery = {
     nucleotideInsertions?: string[];
     aminoAcidInsertions?: string[];
 };
+
+export function getMutationFilter(mutationFilter: LapisMutationQuery): MutationFilter {
+    return {
+        nucleotideMutations: mutationFilter.nucleotideMutations || [],
+        aminoAcidMutations: mutationFilter.aminoAcidMutations || [],
+        nucleotideInsertions: mutationFilter.nucleotideInsertions || [],
+        aminoAcidInsertions: mutationFilter.aminoAcidInsertions || [],
+    };
+}
 
 export type LapisLineageQuery = {
     [lineage: string]: string | undefined;

@@ -18,7 +18,7 @@ export const compareSideBySideViewConstants = {
     label: 'Compare side-by-side',
     labelLong: 'Compare variants side-by-side',
     pathFragment: 'compare-side-by-side',
-    iconType: 'compare',
+    iconType: 'table',
 } as const satisfies ViewConstants;
 
 export const sequencingEffortsViewConstants = {
@@ -26,4 +26,11 @@ export const sequencingEffortsViewConstants = {
     labelLong: 'Sequencing efforts',
     pathFragment: 'sequencing-efforts',
     iconType: 'tube',
+} as const satisfies ViewConstants;
+
+export const compareVariantsViewConstants = {
+    label: 'Compare variants',
+    labelLong: 'Compare variants',
+    pathFragment: 'compare-variants',
+    iconType: 'compare',
 } as const satisfies ViewConstants;
