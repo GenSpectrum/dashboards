@@ -17,7 +17,7 @@ dashboards:
           menuIcon: "virus"
     h5n1:
       lapis:
-        url: "https://gs-staging-1.int.genspectrum.org/h5n1"
+        url: "https://api.loculus.staging.genspectrum.org/h5n1"
         mainDateField: "sampleCollectionDate"
         locationFields:
           - "country"
@@ -31,7 +31,7 @@ dashboards:
           menuIcon: "database"
     mpox:
       lapis:
-        url: "https://gs-staging-1.int.genspectrum.org/mpox"
+        url: "https://api.loculus.staging.genspectrum.org/mpox"
         mainDateField: "sampleCollectionDate"
         locationFields:
           - "country"
@@ -62,7 +62,7 @@ dashboards:
           menuIcon: "database"
     rsvA:
       lapis:
-        url: "https://gs-staging-1.int.genspectrum.org/rsv-a"
+        url: "https://api.loculus.staging.genspectrum.org/rsv-a"
         mainDateField: "sampleCollectionDate"
         locationFields:
           - "country"
@@ -76,7 +76,7 @@ dashboards:
           menuIcon: "database"
     rsvB:
       lapis:
-        url: "https://gs-staging-1.int.genspectrum.org/rsv-b"
+        url: "https://api.loculus.staging.genspectrum.org/rsv-b"
         mainDateField: "sampleCollectionDate"
         locationFields:
           - "country"
