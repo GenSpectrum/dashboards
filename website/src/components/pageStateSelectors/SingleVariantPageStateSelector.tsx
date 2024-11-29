@@ -3,11 +3,13 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
-import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
+import type { LineageFilterConfig } from './LineageFilterInput.tsx';
+import { type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import type { BaselineAndVariantData } from '../../views/View.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
-import { type OrganismViewKey, Routing, type singleVariantViewKey } from '../../views/routing.ts';
+import { type OrganismViewKey, Routing } from '../../views/routing.ts';
+import type { singleVariantViewKey } from '../../views/viewKeys.ts';
 
 export function SingleVariantPageStateSelector({
     locationFilterConfig,

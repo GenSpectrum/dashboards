@@ -1,0 +1,7 @@
+---
+import GenericCompareVariantsPage from '../../components/GenericCompareVariantsPage.astro';
+import { Organisms } from '../../types/Organism';
+import { compareVariantsViewKey } from '../../views/viewKeys';
+---
+
+<GenericCompareVariantsPage organismViewKey={`${Organisms.covid}.${compareVariantsViewKey}`} />

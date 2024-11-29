@@ -1,12 +1,17 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type BaselineAndVariantData, type CompareSideBySideData, type Id } from './View.ts';
-import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import { type OrganismsConfig } from '../config.ts';
-import { BaseView, GenericSequencingEffortsView, GenericSingleVariantView } from './BaseView.ts';
+import {
+    BaseView,
+    GenericCompareVariantsView,
+    GenericSequencingEffortsView,
+    GenericSingleVariantView,
+} from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
 import { GenericCompareSideBySideStateHandler } from './PageStateHandler.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
@@ -112,6 +117,12 @@ export class RsvBCompareSideBySideView extends BaseView<
 }
 
 export class RsvBSequencingEffortsView extends GenericSequencingEffortsView<RsvBConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new RsvBConstants(organismsConfig));
+    }
+}
+
+export class RsvBCompareVariantsView extends GenericCompareVariantsView<RsvBConstants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new RsvBConstants(organismsConfig));
     }

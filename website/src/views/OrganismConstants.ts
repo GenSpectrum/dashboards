@@ -1,6 +1,6 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
-import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
+import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import type { Organism } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 

@@ -8,6 +8,7 @@ export const iconMapping = {
     compare: 'mdi--compare-horizontal',
     database: 'mdi--database-outline',
     virus: 'mdi--virus-outline',
+    table: 'mdi--table',
 } as const;
 
 export const menuIconTypeSchema = z.enum(Object.keys(iconMapping) as [keyof typeof iconMapping]);

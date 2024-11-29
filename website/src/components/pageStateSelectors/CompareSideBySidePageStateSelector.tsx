@@ -3,11 +3,13 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
-import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
+import type { LineageFilterConfig } from './LineageFilterInput.tsx';
+import { type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import type { CovidCompareSideBySideData } from '../../views/covid.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
-import { type compareSideBySideViewKey, type OrganismViewKey, Routing } from '../../views/routing.ts';
+import { type OrganismViewKey, Routing } from '../../views/routing.ts';
+import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,

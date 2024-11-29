@@ -1,18 +1,10 @@
+import { type LineageFilterConfig, LineageFilterInput } from './LineageFilterInput.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
-import type { LapisMutationQuery } from '../../views/helpers.ts';
-import { GsLineageFilter } from '../genspectrum/GsLineageFilter.tsx';
+import { getMutationFilter, type LapisMutationQuery } from '../../views/helpers.ts';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter.tsx';
-import { GsTextInput } from '../genspectrum/GsTextInput.tsx';
 
 export type MutationFilterConfig = {
     initialMutations: LapisMutationQuery;
-};
-
-export type LineageFilterConfig = {
-    initialValue: string | undefined;
-    placeholderText: string;
-    lapisField: string;
-    filterType: 'lineage' | 'text';
 };
 
 export function VariantSelector({
@@ -45,38 +37,11 @@ export function VariantSelector({
                         key={lineageFilterConfig.lapisField}
                     />
                 ))}
-                <GsMutationFilter initialValue={mutationFilter} onMutationChange={onMutationChange} />
+                <GsMutationFilter
+                    initialValue={getMutationFilter(mutationFilter)}
+                    onMutationChange={onMutationChange}
+                />
             </div>
         </div>
     );
-}
-
-function LineageFilterInput({
-    lineageFilterConfig,
-    onLineageChange,
-}: {
-    lineageFilterConfig: LineageFilterConfig;
-    onLineageChange: (lineage: string | undefined) => void;
-}) {
-    switch (lineageFilterConfig.filterType) {
-        case 'lineage':
-            return (
-                <GsLineageFilter
-                    lapisField={lineageFilterConfig.lapisField}
-                    placeholderText={lineageFilterConfig.placeholderText}
-                    onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                    initialValue={lineageFilterConfig.initialValue}
-                />
-            );
-
-        case 'text':
-            return (
-                <GsTextInput
-                    lapisField={lineageFilterConfig.lapisField}
-                    placeholderText={lineageFilterConfig.placeholderText}
-                    onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                    initialValue={lineageFilterConfig.initialValue}
-                />
-            );
-    }
 }
