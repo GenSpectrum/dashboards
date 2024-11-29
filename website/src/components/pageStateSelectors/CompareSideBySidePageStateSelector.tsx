@@ -5,9 +5,9 @@ import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { type LineageFilterConfig, type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
-import type { CovidCompareVariantsData } from '../../views/covid.ts';
+import type { CovidCompareSideBySideData } from '../../views/covid.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
-import { type compareVariantsViewKey, type OrganismViewKey, Routing } from '../../views/routing.ts';
+import { type compareSideBySideViewKey, type OrganismViewKey, Routing } from '../../views/routing.ts';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,
@@ -24,8 +24,8 @@ export function CompareSideBySidePageStateSelector({
     mutationFilterConfig: MutationFilterConfig;
     lineageFilterConfigs: LineageFilterConfig[];
     filterId: number;
-    pageState: CovidCompareVariantsData;
-    organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
+    pageState: CovidCompareSideBySideData;
+    organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);

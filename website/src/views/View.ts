@@ -29,7 +29,7 @@ export type BaselineAndVariantData = BaselineData & VariantData;
 
 export type Id = number;
 
-export type CompareVariantsData<ColumnData extends BaselineAndVariantData = BaselineAndVariantData> = {
+export type CompareSideBySideData<ColumnData extends BaselineAndVariantData = BaselineAndVariantData> = {
     filters: Map<Id, ColumnData>;
 };
 

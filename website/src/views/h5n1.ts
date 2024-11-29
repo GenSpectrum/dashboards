@@ -1,12 +1,12 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { type BaselineAndVariantData, type CompareVariantsData, type Id } from './View.ts';
+import { type BaselineAndVariantData, type CompareSideBySideData, type Id } from './View.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/VariantSelector.tsx';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView, GenericSingleVariantView } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
-import { GenericCompareVariantsStateHandler } from './PageStateHandler.ts';
-import { compareVariantsViewConstants } from './ViewConstants.ts';
+import { GenericCompareSideBySideStateHandler } from './PageStateHandler.ts';
+import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
@@ -61,10 +61,10 @@ export class H5n1AnalyzeSingleVariantView extends GenericSingleVariantView<H5n1C
     }
 }
 
-export class H5n1CompareVariantsView extends BaseView<
-    CompareVariantsData,
+export class H5n1CompareSideBySideView extends BaseView<
+    CompareSideBySideData,
     H5n1Constants,
-    GenericCompareVariantsStateHandler
+    GenericCompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new H5n1Constants(organismsConfig);
@@ -103,12 +103,12 @@ export class H5n1CompareVariantsView extends BaseView<
 
         super(
             constants,
-            new GenericCompareVariantsStateHandler(
+            new GenericCompareSideBySideStateHandler(
                 constants,
                 defaultPageState,
                 organismConfig[constants.organism].pathFragment,
             ),
-            compareVariantsViewConstants,
+            compareSideBySideViewConstants,
         );
     }
 }
