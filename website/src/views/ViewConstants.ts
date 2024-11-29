@@ -14,7 +14,7 @@ export const singleVariantViewConstants = {
     iconType: 'magnify',
 } as const satisfies ViewConstants;
 
-export const compareVariantsViewConstants = {
+export const compareSideBySideViewConstants = {
     label: 'Compare side-by-side',
     labelLong: 'Compare variants side-by-side',
     pathFragment: 'compare-side-by-side',

@@ -1,7 +1,17 @@
 import type { OrganismConstants, SequencingEffortsConstants, SingleVariantConstants } from './OrganismConstants.ts';
 import { type PageStateHandler, SequencingEffortsStateHandler, SingleVariantStateHandler } from './PageStateHandler.ts';
+import {
+    type PageStateHandler,
+    SequencingEffortsStateHandler,
+    SingleVariantStateHandler,
+} from './PageStateHandler.ts';
 import type { BaselineAndVariantData, BaselineData, View } from './View.ts';
 import { sequencingEffortsViewConstants, singleVariantViewConstants, type ViewConstants } from './ViewConstants.ts';
+import {
+    sequencingEffortsViewConstants,
+    singleVariantViewConstants,
+    type ViewConstants,
+} from './ViewConstants.ts';
 import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
 import { organismConfig } from '../types/Organism.ts';
 

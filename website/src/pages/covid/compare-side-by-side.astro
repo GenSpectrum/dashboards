@@ -9,7 +9,7 @@ import { getLapisMutations } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 
-const organismViewKey: OrganismViewKey = 'covid.compareVariantsView';
+const organismViewKey: OrganismViewKey = 'covid.compareSideBySideView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);

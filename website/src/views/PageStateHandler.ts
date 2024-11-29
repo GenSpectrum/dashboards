@@ -2,16 +2,16 @@ import type { SequencingEffortsConstants, SingleVariantConstants } from './Organ
 import {
     type BaselineAndVariantData,
     type BaselineData,
-    type CompareVariantsData,
+    type CompareSideBySideData,
     getLineageFilterFields,
     type Id,
 } from './View.ts';
 import {
-    compareVariantsViewConstants,
+    compareSideBySideViewConstants,
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
 } from './ViewConstants.ts';
-import type { CovidCompareVariantsData } from './covid.ts';
+import type { CovidCompareSideBySideData } from './covid.ts';
 import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
@@ -22,7 +22,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { compareVariantsViewKey } from './routing.ts';
+import { compareSideBySideViewKey } from './routing.ts';
 import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
 import { organismConfig } from '../types/Organism.ts';
 
@@ -146,24 +146,24 @@ function toLapisFilterWithoutVariant(
 
 const $ = '$';
 
-export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAndVariantData = BaselineAndVariantData>
-    implements PageStateHandler<CompareVariantsData<ColumnData>>
+export abstract class CompareSideBySideStateHandler<ColumnData extends BaselineAndVariantData = BaselineAndVariantData>
+    implements PageStateHandler<CompareSideBySideData<ColumnData>>
 {
     protected readonly pathname;
 
     constructor(
         protected readonly constants: SingleVariantConstants,
-        protected readonly defaultPageState: CompareVariantsData<ColumnData>,
+        protected readonly defaultPageState: CompareSideBySideData<ColumnData>,
         pathFragment: string,
     ) {
-        this.pathname = `/${pathFragment}/${compareVariantsViewConstants.pathFragment}`;
+        this.pathname = `/${pathFragment}/${compareSideBySideViewConstants.pathFragment}`;
     }
 
     public getDefaultPageUrl() {
         return this.toUrl(this.defaultPageState);
     }
 
-    public parsePageStateFromUrl(url: URL): CompareVariantsData<ColumnData> {
+    public parsePageStateFromUrl(url: URL): CompareSideBySideData<ColumnData> {
         const filterPerColumn = this.decodeMultipleFiltersFromSearch(url.searchParams);
 
         const filters = new Map<number, ColumnData>();
@@ -176,7 +176,7 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
         };
     }
 
-    public toUrl(pageState: CompareVariantsData<ColumnData>): string {
+    public toUrl(pageState: CompareSideBySideData<ColumnData>): string {
         const searchParameterMap = new Map<Id, Map<string, string>>();
 
         for (const [columnId, filter] of pageState.filters) {
@@ -196,10 +196,10 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
     }
 
     public setFilter(
-        pageState: CompareVariantsData<ColumnData>,
+        pageState: CompareSideBySideData<ColumnData>,
         newFilter: ColumnData,
         columnId: Id,
-    ): CovidCompareVariantsData {
+    ): CovidCompareSideBySideData {
         const filtersPerColumn = new Map(pageState.filters);
 
         filtersPerColumn.set(columnId, newFilter);
@@ -208,13 +208,13 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
         };
     }
 
-    public addEmptyFilter(pageState: CompareVariantsData<ColumnData>): CovidCompareVariantsData {
+    public addEmptyFilter(pageState: CompareSideBySideData<ColumnData>): CovidCompareSideBySideData {
         const newId = pageState.filters.size === 0 ? 0 : Math.max(...Array.from(pageState.filters.keys())) + 1;
 
         return this.setFilter(pageState, this.getEmptyColumnData(), newId);
     }
 
-    public removeFilter(pageState: CompareVariantsData<ColumnData>, columnId: number): CovidCompareVariantsData {
+    public removeFilter(pageState: CompareSideBySideData<ColumnData>, columnId: number): CovidCompareSideBySideData {
         const filters = new Map(pageState.filters);
         filters.delete(columnId);
         return {
@@ -233,7 +233,7 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
             const keySplit = key.split($);
             if (keySplit.length !== 2) {
                 throw new UserFacingError(
-                    `Failed parsing query parameters on ${organismConfig[this.constants.organism].label} ${compareVariantsViewKey}: Invalid key in URLSearchParam: '${key}'. Expected key of the form <parameter>${$}<id>`,
+                    `Failed parsing query parameters on ${organismConfig[this.constants.organism].label} ${compareSideBySideViewKey}: Invalid key in URLSearchParam: '${key}'. Expected key of the form <parameter>${$}<id>`,
                 );
             }
             const id = Number.parseInt(keySplit[1], 10);
@@ -266,7 +266,7 @@ export abstract class CompareVariantsStateHandler<ColumnData extends BaselineAnd
     protected abstract getFilter(filterParams: Map<string, string>): ColumnData;
 }
 
-export class GenericCompareVariantsStateHandler extends CompareVariantsStateHandler {
+export class GenericCompareSideBySideStateHandler extends CompareSideBySideStateHandler {
     protected writeColumnDataToSearchParams(searchOfFilter: URLSearchParams, filter: BaselineAndVariantData): void {
         setSearchFromLapisVariantQuery(
             searchOfFilter,

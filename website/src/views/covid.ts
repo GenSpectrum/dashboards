@@ -2,7 +2,7 @@ import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashb
 
 import {
     type BaselineData,
-    type CompareVariantsData,
+    type CompareSideBySideData,
     getLineageFilterFields,
     type Id,
     type VariantData,
@@ -21,13 +21,13 @@ import { type OrganismsConfig } from '../config.ts';
 import { BaseView } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
 import {
-    CompareVariantsStateHandler,
+    CompareSideBySideStateHandler,
     type PageStateHandler,
     SequencingEffortsStateHandler,
     SingleVariantStateHandler,
 } from './PageStateHandler.ts';
 import {
-    compareVariantsViewConstants,
+    compareSideBySideViewConstants,
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
 } from './ViewConstants.ts';
@@ -163,18 +163,18 @@ class CovidSingleVariantStateHandler
     }
 }
 
-type CovidCompareVariantsFilter = BaselineData & VariantData<LapisCovidVariantFilter>;
-export type CovidCompareVariantsData = CompareVariantsData<CovidCompareVariantsFilter>;
+type CovidCompareSideBySideFilter = BaselineData & VariantData<LapisCovidVariantFilter>;
+export type CovidCompareSideBySideData = CompareSideBySideData<CovidCompareSideBySideFilter>;
 
-export class CovidCompareVariantsView extends BaseView<
-    CovidCompareVariantsData,
+export class CovidCompareSideBySideView extends BaseView<
+    CovidCompareSideBySideData,
     CovidConstants,
-    CovidCompareVariantsStateHandler
+    CovidCompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new CovidConstants(organismsConfig);
         const defaultPageState = {
-            filters: new Map<Id, CovidCompareVariantsFilter>([
+            filters: new Map<Id, CovidCompareSideBySideFilter>([
                 [
                     0,
                     {
@@ -212,20 +212,20 @@ export class CovidCompareVariantsView extends BaseView<
 
         super(
             constants,
-            new CovidCompareVariantsStateHandler(
+            new CovidCompareSideBySideStateHandler(
                 new CovidConstants(organismsConfig),
                 defaultPageState,
                 organismConfig[constants.organism].pathFragment,
             ),
-            compareVariantsViewConstants,
+            compareSideBySideViewConstants,
         );
     }
 }
 
-class CovidCompareVariantsStateHandler extends CompareVariantsStateHandler<CovidCompareVariantsFilter> {
+class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<CovidCompareSideBySideFilter> {
     protected override writeColumnDataToSearchParams(
         searchOfFilter: URLSearchParams,
-        filter: CovidCompareVariantsFilter,
+        filter: CovidCompareSideBySideFilter,
     ): void {
         setSearchFromLapisCovidVariantQuery(
             searchOfFilter,
@@ -236,7 +236,7 @@ class CovidCompareVariantsStateHandler extends CompareVariantsStateHandler<Covid
         setSearchFromDateRange(searchOfFilter, this.constants.mainDateField, filter.baselineFilter.dateRange);
     }
 
-    protected override getEmptyColumnData(): CovidCompareVariantsFilter {
+    protected override getEmptyColumnData(): CovidCompareSideBySideFilter {
         return {
             baselineFilter: {
                 location: {
@@ -251,7 +251,7 @@ class CovidCompareVariantsStateHandler extends CompareVariantsStateHandler<Covid
         };
     }
 
-    protected override getFilter(filterParams: Map<string, string>): CovidCompareVariantsFilter {
+    protected override getFilter(filterParams: Map<string, string>): CovidCompareSideBySideFilter {
         return {
             baselineFilter: {
                 location: getLapisLocationFromSearch(filterParams, this.constants.locationFields),

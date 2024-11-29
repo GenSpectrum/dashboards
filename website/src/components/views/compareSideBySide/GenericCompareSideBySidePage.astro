@@ -5,13 +5,13 @@ import { type Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { getLapisMutations } from '../../../views/helpers';
-import { type compareVariantsViewKey, type OrganismViewKey } from '../../../views/routing';
+import { type compareSideBySideViewKey, type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 
 interface Props {
-    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareVariantsViewKey}`>;
+    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareSideBySideViewKey}`>;
 }
 
 const { organismViewKey } = Astro.props;
