@@ -6,6 +6,7 @@ import { H5n1AnalyzeSingleVariantView, H5n1CompareVariantsView, H5n1SequencingEf
 import { RsvAAnalyzeSingleVariantView, RsvACompareVariantsView, RsvASequencingEffortsView } from './rsvA.ts';
 import { RsvBAnalyzeSingleVariantView, RsvBCompareVariantsView, RsvBSequencingEffortsView } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
+import { SwissWastewaterRandomView } from './swissWastewater.ts';
 import {
     WestNileAnalyzeSingleVariantView,
     WestNileCompareVariantsView,
@@ -60,6 +61,9 @@ export class Routing {
                 [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
+            },
+            [Organisms.swissWastewater]: {
+                random: new SwissWastewaterRandomView(),
             },
         } as const;
 
