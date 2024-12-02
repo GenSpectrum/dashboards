@@ -54,7 +54,6 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
             }}
             mutationFilterConfig={{ initialMutations: pageState.variantFilter.mutations }}
             lineageFilterConfigs={lineageFilterConfigs}
-            pageState={pageState}
             organismViewKey={organismViewKey}
             organismsConfig={getDashboardsConfig().dashboards.organisms}
             client:only='react'
