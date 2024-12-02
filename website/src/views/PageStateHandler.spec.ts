@@ -106,29 +106,6 @@ describe('CompareVariantsStateHandler', () => {
         });
     });
 
-    it('should convert variant filters to Lapis filters', () => {
-        const pageState: CompareVariantsData = {
-            ...mockDefaultPageState,
-            variants: new Map([
-                [
-                    1,
-                    {
-                        lineages: { lineage: 'B.1.1.7' },
-                        mutations: { nucleotideMutations: ['D614G'] },
-                    },
-                ],
-            ]),
-        };
-        const lapisFilters = handler.variantFiltersToLapisFilters(pageState);
-        expect(lapisFilters.length).toBe(1);
-        expect(lapisFilters[0]).toStrictEqual({
-            lineage: 'B.1.1.7',
-            nucleotideMutations: ['D614G'],
-            dateFrom: '2024-11-22',
-            dateTo: '2024-11-29',
-        });
-    });
-
     it('should return empty variant filter config', () => {
         const variantFilterConfig = handler.getEmptyVariantFilterConfig();
         expect(variantFilterConfig).toStrictEqual({
@@ -204,5 +181,33 @@ describe('CompareVariantsStateHandler', () => {
                 nucleotideMutations: [],
             },
         });
+    });
+
+    it('should convert the page state to a named variant filter', () => {
+        const pageState: CompareVariantsData = {
+            ...mockDefaultPageState,
+            variants: new Map([
+                [
+                    1,
+                    {
+                        lineages: { lineage: 'B.1.1.7' },
+                        mutations: { nucleotideMutations: ['D614G'], aminoAcidMutations: ['S:A123T'] },
+                    },
+                ],
+            ]),
+        };
+        const namedVariantFilter = handler.variantFiltersToNamedLapisFilters(pageState);
+        expect(namedVariantFilter).deep.equal([
+            {
+                displayName: 'B.1.1.7 + D614G + S:A123T',
+                lapisFilter: {
+                    aminoAcidMutations: ['S:A123T'],
+                    dateFrom: '2024-11-22',
+                    dateTo: '2024-11-29',
+                    lineage: 'B.1.1.7',
+                    nucleotideMutations: ['D614G'],
+                },
+            },
+        ]);
     });
 });

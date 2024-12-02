@@ -28,10 +28,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from './helpers.ts';
-import { compareSideBySideViewKey } from './viewKeys.ts';
-import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
 import type { VariantFilterConfig } from '../components/pageStateSelectors/CompareVariantsPageStateSelector.tsx';
-import { organismConfig } from '../types/Organism.ts';
 
 export interface PageStateHandler<PageState extends object> {
     parsePageStateFromUrl(url: URL): PageState;
@@ -171,11 +168,7 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends BaselineA
     }
 
     public parsePageStateFromUrl(url: URL): CompareSideBySideData<ColumnData> {
-        const filterPerColumn = decodeFiltersFromSearch(url.searchParams, (key) => {
-            throw new UserFacingError(
-                `Failed parsing query parameters on ${organismConfig[this.constants.organism].label} ${compareSideBySideViewKey}: Invalid key in URLSearchParam: '${key}'. Expected key of the form <parameter>${$}<id>`,
-            );
-        });
+        const filterPerColumn = decodeFiltersFromSearch(url.searchParams);
 
         const filters = new Map<number, ColumnData>();
         for (const [columnId, filterParams] of filterPerColumn) {
@@ -380,7 +373,7 @@ export class CompareVariantsStateHandler implements PageStateHandler<CompareVari
 
     private toDisplayName(variantFilter: VariantFilter) {
         return [
-            ...Object.values(variantFilter.lineages),
+            ...Object.values(variantFilter.lineages).filter((lineage) => lineage !== undefined),
             ...(variantFilter.mutations.nucleotideMutations ?? []),
             ...(variantFilter.mutations.aminoAcidMutations ?? []),
             ...(variantFilter.mutations.nucleotideInsertions ?? []),
@@ -406,13 +399,12 @@ export class CompareVariantsStateHandler implements PageStateHandler<CompareVari
     }
 }
 
-function decodeFiltersFromSearch(search: URLSearchParams, handleNonMatchingKey: (key: string) => void = () => {}) {
+function decodeFiltersFromSearch(search: URLSearchParams) {
     const filterMap = new Map<Id, Map<string, string>>();
 
     for (const [key, value] of search) {
         const keySplit = key.split($);
         if (keySplit.length !== 2) {
-            handleNonMatchingKey(key);
             continue;
         }
         const id = Number.parseInt(keySplit[1], 10);
