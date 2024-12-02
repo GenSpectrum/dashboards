@@ -20,7 +20,6 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const variantFilters = view.pageStateHandler.variantFiltersToLapisFilters(pageState);
 const baselineFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState.baselineFilter);
 const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.baselineFilter.dateRange,
@@ -29,12 +28,7 @@ const timeGranularity = chooseGranularityBasedOnDateRange(
 
 const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageState);
 
-const numeratorFilters = JSON.stringify(
-    variantFilters.map((variantFilter, index) => ({
-        displayName: `Variant ${index + 1}`,
-        lapisFilter: variantFilter,
-    })),
-);
+const numeratorFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
@@ -61,7 +55,7 @@ const numeratorFilters = JSON.stringify(
     <ComponentsGrid slot='dataDisplay'>
         <ComponentWrapper title='Prevalence over time'>
             <gs-prevalence-over-time
-                numeratorFilter={numeratorFilters}
+                numeratorFilter={JSON.stringify(numeratorFilters)}
                 denominatorFilter={JSON.stringify(baselineFilter)}
                 lapisDateField={view.organismConstants.mainDateField}
                 granularity={timeGranularity}
@@ -73,7 +67,7 @@ const numeratorFilters = JSON.stringify(
         </ComponentWrapper>
         <ComponentWrapper title='Nucleotide changes'>
             <gs-mutation-comparison
-                lapisFilters={numeratorFilters}
+                lapisFilters={JSON.stringify(numeratorFilters)}
                 sequenceType='nucleotide'
                 views='["venn", "table"]'
                 pageSize={defaultTablePageSize}
@@ -82,7 +76,7 @@ const numeratorFilters = JSON.stringify(
         </ComponentWrapper>
         <ComponentWrapper title='Amino acid changes'>
             <gs-mutation-comparison
-                lapisFilters={numeratorFilters}
+                lapisFilters={JSON.stringify(numeratorFilters)}
                 sequenceType='amino acid'
                 views='["venn", "table"]'
                 pageSize={defaultTablePageSize}
