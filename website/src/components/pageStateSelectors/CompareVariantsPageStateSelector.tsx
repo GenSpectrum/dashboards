@@ -6,7 +6,7 @@ import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig
 import type { LineageFilterConfig } from './LineageFilterInput.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
-import type { CompareVariantsData, Id, VariantFilter } from '../../views/View.ts';
+import type { Id, VariantFilter } from '../../views/View.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
@@ -32,7 +32,6 @@ export function CompareVariantsPageStateSelector({
     emptyVariantFilterConfig,
     organismViewKey,
     organismsConfig,
-    pageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -40,7 +39,6 @@ export function CompareVariantsPageStateSelector({
     emptyVariantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
-    pageState: CompareVariantsData;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -52,24 +50,21 @@ export function CompareVariantsPageStateSelector({
         [organismsConfig, organismViewKey],
     );
 
-    const routeToNewPage = () => {
+    const newPageState = useMemo(() => {
         const variants = new Map(
             Array.from(variantConfigs).map(([id, variantFilterConfig]) => {
                 return [id, toVariantFilter(variantFilterConfig)];
             }),
         );
 
-        const newPageState: CompareVariantsData = {
-            ...pageState,
+        return {
             baselineFilter: {
                 location,
                 dateRange,
             },
             variants,
         };
-
-        window.location.href = view.pageStateHandler.toUrl(newPageState);
-    };
+    }, [location, dateRange, variantConfigs]);
 
     return (
         <div className='flex flex-col gap-6 bg-gray-50 p-2'>
@@ -84,7 +79,7 @@ export function CompareVariantsPageStateSelector({
                 setVariantFilterConfigs={setVariantConfigs}
                 emptyVariantFilterConfig={emptyVariantFilterConfig}
             />
-            <ApplyFilterButton onClick={routeToNewPage} />
+            <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
     );
 }

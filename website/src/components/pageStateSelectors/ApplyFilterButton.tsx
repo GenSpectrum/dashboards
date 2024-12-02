@@ -1,16 +1,17 @@
-import type { JSX } from 'react';
-
 import type { WithClassName } from '../../types/WithClassName.ts';
+import type { PageStateHandler } from '../../views/PageStateHandler.ts';
 
-export function ApplyFilterButton({
-    onClick,
+export function ApplyFilterButton<PageState extends object, StateHandler extends PageStateHandler<PageState>>({
+    pageStateHandler,
+    newPageState,
     className,
 }: WithClassName<{
-    onClick: JSX.IntrinsicElements['button']['onClick'];
+    pageStateHandler: StateHandler;
+    newPageState: PageState;
 }>) {
     return (
-        <button className={`btn btn-primary ${className}`} onClick={onClick}>
+        <a className={`btn btn-primary ${className}`} href={pageStateHandler.toUrl(newPageState)}>
             Apply filters
-        </button>
+        </a>
     );
 }

@@ -6,7 +6,6 @@ import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig
 import type { LineageFilterConfig } from './LineageFilterInput.tsx';
 import { type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
-import type { BaselineAndVariantData } from '../../views/View.ts';
 import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { singleVariantViewKey } from '../../views/viewKeys.ts';
@@ -18,7 +17,6 @@ export function SingleVariantPageStateSelector({
     lineageFilterConfigs,
     organismViewKey,
     organismsConfig,
-    pageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -26,7 +24,6 @@ export function SingleVariantPageStateSelector({
     lineageFilterConfigs: LineageFilterConfig[];
     organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
-    pageState: BaselineAndVariantData;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -41,9 +38,8 @@ export function SingleVariantPageStateSelector({
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
-    const routeToNewPage = () => {
-        const newPageState: BaselineAndVariantData = {
-            ...pageState,
+    const newPageState = useMemo(
+        () => ({
             baselineFilter: {
                 location,
                 dateRange,
@@ -52,9 +48,9 @@ export function SingleVariantPageStateSelector({
                 mutations: { ...mutation },
                 lineages: { ...lineages },
             },
-        };
-        window.location.href = view.pageStateHandler.toUrl(newPageState);
-    };
+        }),
+        [location, dateRange, mutation, lineages],
+    );
 
     return (
         <div className='flex flex-col gap-6 bg-gray-50 p-2'>
@@ -77,7 +73,7 @@ export function SingleVariantPageStateSelector({
                     },
                 }))}
             />
-            <ApplyFilterButton onClick={routeToNewPage} />
+            <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
     );
 }

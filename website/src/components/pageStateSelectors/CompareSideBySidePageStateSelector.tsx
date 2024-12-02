@@ -41,7 +41,7 @@ export function CompareSideBySidePageStateSelector({
     );
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
-    const routeToNewPage = () => {
+    const newPageState = useMemo(() => {
         pageState.filters.set(filterId, {
             baselineFilter: {
                 location,
@@ -53,8 +53,8 @@ export function CompareSideBySidePageStateSelector({
             },
         });
 
-        window.location.href = view.pageStateHandler.toUrl(pageState);
-    };
+        return pageState;
+    }, [location, dateRange, mutation, lineages, filterId, pageState]);
 
     return (
         <div className='flex flex-col gap-4 bg-gray-50 p-2'>
@@ -84,7 +84,7 @@ export function CompareSideBySidePageStateSelector({
                 </div>
             </div>
             <div className='flex justify-end'>
-                <ApplyFilterButton onClick={routeToNewPage} className='btn-sm max-w-64' />
+                <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
             </div>
         </div>
     );
