@@ -13,7 +13,7 @@ data class DashboardsConfig(
 
 data class OrganismConfig(
     val lapis: LapisConfig,
-    val externalNavigationLinks: Array<ExternalNavigationLink>?,
+    val externalNavigationLinks: List<ExternalNavigationLink>?,
 )
 
 data class LapisConfig(
