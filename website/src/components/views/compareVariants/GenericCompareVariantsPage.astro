@@ -21,15 +21,15 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const baselineFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState.baselineFilter);
+const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(pageState.datasetFilter);
 const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.baselineFilter.dateRange,
+    pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
 
 const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageState);
 
-const numeratorFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
+const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
 
 const notEnoughVariantsSelected = pageState.variants.size < 2;
 ---
@@ -39,30 +39,29 @@ const notEnoughVariantsSelected = pageState.variants.size < 2;
         slot='filters'
         locationFilterConfig={{
             locationFields: view.organismConstants.locationFields,
-            initialLocation: pageState.baselineFilter.location,
+            initialLocation: pageState.datasetFilter.location,
             placeholderText: 'Sampling location',
         }}
         dateRangeFilterConfig={{
-            initialDateRange: pageState.baselineFilter.dateRange,
+            initialDateRange: pageState.datasetFilter.dateRange,
             dateRangeOptions: view.organismConstants.dateRangeOptions,
             earliestDate: view.organismConstants.earliestDate,
             dateColumn: view.organismConstants.mainDateField,
         }}
         variantFilterConfigs={variantFilterConfigs}
-        emptyVariantFilterConfig={view.pageStateHandler.getEmptyVariantFilterConfig()}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
     />
     {
         notEnoughVariantsSelected ? (
-            <SelectVariants>ohoh</SelectVariants>
+            <SelectVariants slot='dataDisplay' />
         ) : (
             <ComponentsGrid slot='dataDisplay'>
                 <ComponentWrapper title='Prevalence over time'>
                     <gs-prevalence-over-time
-                        numeratorFilter={JSON.stringify(numeratorFilters)}
-                        denominatorFilter={JSON.stringify(baselineFilter)}
+                        numeratorFilter={JSON.stringify(numeratorLapisFilters)}
+                        denominatorFilter={JSON.stringify(datasetLapisFilter)}
                         lapisDateField={view.organismConstants.mainDateField}
                         granularity={timeGranularity}
                         smoothingWindow='0'
@@ -74,7 +73,7 @@ const notEnoughVariantsSelected = pageState.variants.size < 2;
                 </ComponentWrapper>
                 <ComponentWrapper title='Nucleotide changes'>
                     <gs-mutation-comparison
-                        lapisFilters={JSON.stringify(numeratorFilters)}
+                        lapisFilters={JSON.stringify(numeratorLapisFilters)}
                         sequenceType='nucleotide'
                         views='["venn", "table"]'
                         pageSize={defaultTablePageSize}
@@ -84,7 +83,7 @@ const notEnoughVariantsSelected = pageState.variants.size < 2;
                 </ComponentWrapper>
                 <ComponentWrapper title='Amino acid changes'>
                     <gs-mutation-comparison
-                        lapisFilters={JSON.stringify(numeratorFilters)}
+                        lapisFilters={JSON.stringify(numeratorLapisFilters)}
                         sequenceType='amino acid'
                         views='["venn", "table"]'
                         pageSize={defaultTablePageSize}

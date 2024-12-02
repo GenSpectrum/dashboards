@@ -1,0 +1,71 @@
+---
+import { getDashboardsConfig } from '../../../config';
+import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
+import type { Organism } from '../../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { defaultTablePageSize } from '../../../views/View';
+import { type OrganismViewKey } from '../../../views/routing';
+import { ServerSide } from '../../../views/serverSideRouting';
+import { type compareToBaselineViewKey } from '../../../views/viewKeys';
+import ComponentWrapper from '../../ComponentWrapper.astro';
+import ComponentsGrid from '../../ComponentsGrid.astro';
+import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
+
+interface Props {
+    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareToBaselineViewKey}`>;
+}
+
+const { organismViewKey } = Astro.props;
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+
+const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
+
+const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState);
+const timeGranularity = chooseGranularityBasedOnDateRange(
+    pageState.datasetFilter.dateRange,
+    new Date(view.organismConstants.earliestDate),
+);
+
+const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageState);
+const baselineFilterConfig = view.pageStateHandler.toBaselineFilterConfig(pageState);
+
+const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
+---
+
+<SingleVariantOrganismPageLayout view={view}>
+    <CompareVariantsToBaselineStateSelector
+        slot='filters'
+        locationFilterConfig={{
+            locationFields: view.organismConstants.locationFields,
+            initialLocation: pageState.datasetFilter.location,
+            placeholderText: 'Sampling location',
+        }}
+        dateRangeFilterConfig={{
+            initialDateRange: pageState.datasetFilter.dateRange,
+            dateRangeOptions: view.organismConstants.dateRangeOptions,
+            earliestDate: view.organismConstants.earliestDate,
+            dateColumn: view.organismConstants.mainDateField,
+        }}
+        baselineFilterConfig={baselineFilterConfig}
+        variantFilterConfigs={variantFilterConfigs}
+        organismViewKey={organismViewKey}
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        client:only='react'
+    />
+    <ComponentsGrid slot='dataDisplay'>
+        <ComponentWrapper title='Prevalence over time'>
+            <gs-prevalence-over-time
+                numeratorFilter={JSON.stringify(numeratorLapisFilters)}
+                denominatorFilter={JSON.stringify(baselineLapisFilter)}
+                lapisDateField={view.organismConstants.mainDateField}
+                granularity={timeGranularity}
+                smoothingWindow='0'
+                pageSize={defaultTablePageSize}
+                width='100%'
+                height='100%'
+                views={JSON.stringify(['line', 'table', 'bar'])}
+                yAxisMaxLinear='maxInData'
+                yAxisMaxLogarithmic='maxInData'></gs-prevalence-over-time>
+        </ComponentWrapper>
+    </ComponentsGrid>
+</SingleVariantOrganismPageLayout>
