@@ -24,16 +24,16 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
-const baselineFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
+const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
+const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
 const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.baselineFilter.dateRange,
+    pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
-    pageState.baselineFilter.location,
+    pageState.datasetFilter.location,
 );
 
 const lineageFilterConfigs = getLineageFilterConfigs(
@@ -49,17 +49,19 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
         slot='filters'
         locationFilterConfig={{
             locationFields: view.organismConstants.locationFields,
-            initialLocation: pageState.baselineFilter.location,
+            initialLocation: pageState.datasetFilter.location,
             placeholderText: 'Sampling location',
         }}
         dateRangeFilterConfig={{
-            initialDateRange: pageState.baselineFilter.dateRange,
+            initialDateRange: pageState.datasetFilter.dateRange,
             dateRangeOptions: view.organismConstants.dateRangeOptions,
             earliestDate: view.organismConstants.earliestDate,
             dateColumn: view.organismConstants.mainDateField,
         }}
-        mutationFilterConfig={{ initialMutations: pageState.variantFilter.mutations }}
-        lineageFilterConfigs={lineageFilterConfigs}
+        variantFilterConfig={{
+            mutationFilterConfig: pageState.variantFilter.mutations,
+            lineageFilterConfigs,
+        }}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
@@ -73,8 +75,8 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                 <div class='h-56 sm:h-32'>
                     <ComponentHeadline>Stats</ComponentHeadline>
                     <gs-statistics
-                        numeratorFilter={JSON.stringify(variantFilter)}
-                        denominatorFilter={JSON.stringify(baselineFilter)}
+                        numeratorFilter={JSON.stringify(variantLapisFilter)}
+                        denominatorFilter={JSON.stringify(datasetLapisFilter)}
                         width='100%'
                         height='100%'
                     />
@@ -84,9 +86,9 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                         <gs-prevalence-over-time
                             numeratorFilter={JSON.stringify({
                                 displayName: '',
-                                lapisFilter: variantFilter,
+                                lapisFilter: variantLapisFilter,
                             })}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
+                            denominatorFilter={JSON.stringify(datasetLapisFilter)}
                             lapisDateField={view.organismConstants.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
@@ -97,7 +99,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     </ComponentWrapper>
                     <ComponentWrapper title='Nucleotide mutations'>
                         <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
+                            lapisFilter={JSON.stringify(variantLapisFilter)}
                             sequenceType='nucleotide'
                             views='["grid", "table", "insertions"]'
                             pageSize={defaultTablePageSize}
@@ -107,7 +109,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     </ComponentWrapper>
                     <ComponentWrapper title='Amino acid mutations'>
                         <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
+                            lapisFilter={JSON.stringify(variantLapisFilter)}
                             sequenceType='amino acid'
                             views='["grid", "table", "insertions"]'
                             pageSize={defaultTablePageSize}
@@ -119,7 +121,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                         <ComponentWrapper title={subdivisionLabel}>
                             <gs-aggregate
                                 fields={JSON.stringify([subdivisionField])}
-                                filter={JSON.stringify(variantFilter)}
+                                filter={JSON.stringify(variantLapisFilter)}
                                 pageSize={defaultTablePageSize}
                                 width='100%'
                                 height='100%'
@@ -129,7 +131,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     <ComponentWrapper title='Clades and lineages'>
                         <gs-aggregate
                             fields={JSON.stringify(getLineageFilterFields(view.organismConstants.lineageFilters))}
-                            filter={JSON.stringify(variantFilter)}
+                            filter={JSON.stringify(variantLapisFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
                             height='100%'
@@ -138,7 +140,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     <ComponentWrapper title='Hosts'>
                         <gs-aggregate
                             fields={JSON.stringify([view.organismConstants.hostField])}
-                            filter={JSON.stringify(variantFilter)}
+                            filter={JSON.stringify(variantLapisFilter)}
                             pageSize={defaultTablePageSize}
                             width='100%'
                             height='100%'
@@ -149,7 +151,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     <gs-mutations-over-time
                         width='100%'
                         height='100%'
-                        lapisFilter={JSON.stringify(variantFilter)}
+                        lapisFilter={JSON.stringify(variantLapisFilter)}
                         sequenceType='nucleotide'
                         views='["grid"]'
                         granularity={timeGranularity}
@@ -161,7 +163,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     <gs-mutations-over-time
                         width='100%'
                         height='100%'
-                        lapisFilter={JSON.stringify(variantFilter)}
+                        lapisFilter={JSON.stringify(variantLapisFilter)}
                         sequenceType='amino acid'
                         views='["grid"]'
                         granularity={timeGranularity}

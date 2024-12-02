@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 const organisms = ['SARS-CoV-2', 'Influenza A/H5N1', 'West Nile', 'RSV-A', 'RSV-B'];
 const views = [
@@ -14,6 +14,7 @@ const views = [
     },
     { linkName: 'Sequencing efforts', title: 'Sequencing efforts', expectedHeadline: 'Number sequences' },
     { linkName: 'Compare variants', title: 'Compare variants', expectedHeadline: 'Compare Variants' },
+    { linkName: 'Compare to baseline', title: 'Compare to baseline', expectedHeadline: 'Prevalence over time' },
 ];
 
 test.describe('Main page', () => {

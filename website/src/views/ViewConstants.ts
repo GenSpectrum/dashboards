@@ -34,3 +34,10 @@ export const compareVariantsViewConstants = {
     pathFragment: 'compare-variants',
     iconType: 'compare',
 } as const satisfies ViewConstants;
+
+export const compareToBaselineViewConstants = {
+    label: 'Compare to baseline',
+    labelLong: 'Compare to baseline',
+    pathFragment: 'compare-to-baseline',
+    iconType: 'chartSankey',
+} as const satisfies ViewConstants;

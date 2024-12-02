@@ -1,5 +1,5 @@
 import type { WithClassName } from '../../types/WithClassName.ts';
-import type { PageStateHandler } from '../../views/PageStateHandler.ts';
+import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler.ts';
 
 export function ApplyFilterButton<PageState extends object, StateHandler extends PageStateHandler<PageState>>({
     pageStateHandler,
