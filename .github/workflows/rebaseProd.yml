@@ -25,6 +25,10 @@ jobs:
           if gh pr list --base prod --head main --state open --json number | jq -e '. | length > 0'; then
             echo "PR to update prod from main already exists - skipping creation"
           else
-            body="This pull request updates the \`prod\` branch with the latest changes from the \`main\` branch. **Do not squash-merge** this PR."
+            body="This pull request updates the \`prod\` branch with the latest changes from the \`main\` branch.
+  
+            ### Make sure to merge this creating a merge commit.
+            **Do not squash-merge** this PR. **Do not rebase and merge**."
+        
             gh pr create --base prod --head main --title "Update prod from main" --body "$body"
           fi
