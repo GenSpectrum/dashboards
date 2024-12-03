@@ -20,7 +20,6 @@ import type { CovidCompareSideBySideData } from './covid.ts';
 import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
-    getLapisMutations,
     getLapisVariantQuery,
     type LapisFilter,
     type LapisLocation,
@@ -394,7 +393,7 @@ export class CompareVariantsStateHandler implements PageStateHandler<CompareVari
     private toLineageAndMutationFilterConfig(variant: VariantFilter) {
         return {
             lineageFilterConfigs: getLineageFilterConfigs(this.constants.lineageFilters, variant.lineages),
-            mutationFilterConfig: getLapisMutations(variant.mutations),
+            mutationFilterConfig: variant.mutations,
         };
     }
 }

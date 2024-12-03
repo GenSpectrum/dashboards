@@ -132,19 +132,6 @@ export type LapisCovidVariantFilter = VariantFilter & {
     variantQuery?: string;
 };
 
-export const getLapisMutations = (query: LapisMutationQuery): LapisMutationQuery => {
-    return {
-        nucleotideMutations: getArrayPropertyOrEmpty(query, 'nucleotideMutations'),
-        aminoAcidMutations: getArrayPropertyOrEmpty(query, 'aminoAcidMutations'),
-        nucleotideInsertions: getArrayPropertyOrEmpty(query, 'nucleotideInsertions'),
-        aminoAcidInsertions: getArrayPropertyOrEmpty(query, 'aminoAcidInsertions'),
-    };
-};
-
-const getArrayPropertyOrEmpty = (query: LapisMutationQuery, name: keyof LapisMutationQuery): string[] => {
-    return Array.isArray(query[name]) ? query[name] : [];
-};
-
 export const getLapisMutationsQueryFromSearch = (search: URLSearchParams | Map<string, string>): LapisMutationQuery => {
     return {
         nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),

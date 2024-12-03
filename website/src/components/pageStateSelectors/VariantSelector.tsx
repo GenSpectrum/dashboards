@@ -19,13 +19,6 @@ export function VariantSelector({
         onLineageChange: (lineage: string | undefined) => void;
     }[];
 }) {
-    const mutationFilter = {
-        nucleotideMutations: mutationFilterConfig.initialMutations.nucleotideMutations || [],
-        aminoAcidMutations: mutationFilterConfig.initialMutations.aminoAcidMutations || [],
-        nucleotideInsertions: mutationFilterConfig.initialMutations.nucleotideInsertions || [],
-        aminoAcidInsertions: mutationFilterConfig.initialMutations.aminoAcidInsertions || [],
-    };
-
     return (
         <div>
             <SelectorHeadline>Variant Filter</SelectorHeadline>
@@ -38,7 +31,7 @@ export function VariantSelector({
                     />
                 ))}
                 <GsMutationFilter
-                    initialValue={getMutationFilter(mutationFilter)}
+                    initialValue={getMutationFilter(mutationFilterConfig.initialMutations)}
                     onMutationChange={onMutationChange}
                 />
             </div>

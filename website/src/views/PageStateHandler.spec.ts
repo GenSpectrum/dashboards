@@ -117,12 +117,7 @@ describe('CompareVariantsStateHandler', () => {
                     initialValue: undefined,
                 },
             ],
-            mutationFilterConfig: {
-                aminoAcidInsertions: [],
-                aminoAcidMutations: [],
-                nucleotideInsertions: [],
-                nucleotideMutations: [],
-            },
+            mutationFilterConfig: {},
         });
     });
 
@@ -158,9 +153,6 @@ describe('CompareVariantsStateHandler', () => {
                 },
             ],
             mutationFilterConfig: {
-                aminoAcidInsertions: [],
-                aminoAcidMutations: [],
-                nucleotideInsertions: [],
                 nucleotideMutations: ['D614G'],
             },
         });
@@ -175,10 +167,7 @@ describe('CompareVariantsStateHandler', () => {
                 },
             ],
             mutationFilterConfig: {
-                aminoAcidInsertions: [],
                 aminoAcidMutations: ['S:A123T'],
-                nucleotideInsertions: [],
-                nucleotideMutations: [],
             },
         });
     });

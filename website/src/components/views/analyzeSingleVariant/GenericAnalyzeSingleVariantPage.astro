@@ -6,9 +6,10 @@ import type { Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
 import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
-import { getLapisMutations, getLocationSubdivision } from '../../../views/helpers';
-import { type OrganismViewKey, type singleVariantViewKey } from '../../../views/routing';
+import { getLocationSubdivision } from '../../../views/helpers';
+import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
+import { type singleVariantViewKey } from '../../../views/viewKeys';
 import ComponentHeadline from '../../ComponentHeadline.astro';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
@@ -35,7 +36,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     pageState.baselineFilter.location,
 );
 
-const initialMutations = getLapisMutations(pageState.variantFilter.mutations);
 const lineageFilterConfigs = getLineageFilterConfigs(
     view.organismConstants.lineageFilters,
     pageState.variantFilter.lineages,
@@ -58,7 +58,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
             earliestDate: view.organismConstants.earliestDate,
             dateColumn: view.organismConstants.mainDateField,
         }}
-        mutationFilterConfig={{ initialMutations }}
+        mutationFilterConfig={{ initialMutations: pageState.variantFilter.mutations }}
         lineageFilterConfigs={lineageFilterConfigs}
         pageState={pageState}
         organismViewKey={organismViewKey}

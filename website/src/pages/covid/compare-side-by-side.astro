@@ -5,7 +5,6 @@ import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
-import { getLapisMutations } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 
@@ -25,7 +24,6 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                         baselineFilter.dateRange,
                         new Date(view.organismConstants.earliestDate),
                     );
-                    const initialMutations = getLapisMutations(variantFilter.mutations);
                     const numeratorFilter = {
                         ...variantFilter.lineages,
                         ...variantFilter.mutations,
@@ -63,7 +61,7 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                         dateColumn: view.organismConstants.mainDateField,
                                     }}
                                     mutationFilterConfig={{
-                                        initialMutations,
+                                        initialMutations: variantFilter.mutations,
                                     }}
                                     lineageFilterConfigs={lineageFilterConfigs}
                                     filterId={id}

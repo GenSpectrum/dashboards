@@ -4,12 +4,11 @@ import OrganismPageLayout from '../../../layouts/OrganismPage/OrganismPageLayout
 import { type Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
-import { getLapisMutations } from '../../../views/helpers';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
+import { type compareSideBySideViewKey } from '../../../views/viewKeys';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
-import { type compareSideBySideViewKey } from '../views/viewKeys';
 
 interface Props {
     organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareSideBySideViewKey}`>;
@@ -31,7 +30,6 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                         baselineFilter.dateRange,
                         new Date(view.organismConstants.earliestDate),
                     );
-                    const initialMutations = getLapisMutations(variantFilter.mutations);
                     const numeratorFilter = {
                         ...variantFilter.lineages,
                         ...variantFilter.mutations,
@@ -68,7 +66,7 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                         dateColumn: view.organismConstants.mainDateField,
                                     }}
                                     mutationFilterConfig={{
-                                        initialMutations,
+                                        initialMutations: variantFilter.mutations,
                                     }}
                                     lineageFilterConfigs={lineageFilterConfigs}
                                     filterId={id}

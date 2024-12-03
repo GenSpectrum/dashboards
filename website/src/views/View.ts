@@ -3,7 +3,7 @@ import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import type { OrganismConstants } from './OrganismConstants.ts';
 import { type PageStateHandler } from './PageStateHandler.ts';
 import { type ViewConstants } from './ViewConstants';
-import type { LapisCovidVariantFilter, LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
+import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
 
