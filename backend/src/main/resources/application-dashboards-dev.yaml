@@ -25,6 +25,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/h5n1"
           label: "Browse data"
@@ -39,6 +42,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/mpox"
           label: "Browse data"
@@ -71,6 +77,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/rsv-a"
           label: "Browse data"
@@ -85,6 +94,9 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/rsv-b"
           label: "Browse data"
