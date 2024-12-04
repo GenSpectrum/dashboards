@@ -10,7 +10,7 @@ export function ApplyFilterButton<PageState extends object, StateHandler extends
     newPageState: PageState;
 }>) {
     return (
-        <a className={`btn btn-primary ${className}`} href={pageStateHandler.toUrl(newPageState)}>
+        <a role='button' className={`btn btn-primary ${className}`} href={pageStateHandler.toUrl(newPageState)}>
             Apply filters
         </a>
     );

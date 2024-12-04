@@ -13,6 +13,7 @@ const views = [
         expectedHeadline: 'Prevalence over time',
     },
     { linkName: 'Sequencing efforts', title: 'Sequencing efforts', expectedHeadline: 'Number sequences' },
+    { linkName: 'Compare variants', title: 'Compare variants', expectedHeadline: 'Compare Variants' },
 ];
 
 test.describe('Main page', () => {
@@ -28,7 +29,11 @@ test.describe('Main page', () => {
         for (const organism of organisms) {
             for (const { linkName, title, expectedHeadline } of views) {
                 await page.goto('/');
-                await page.getByRole('heading', { name: organism }).locator('..').getByText(linkName).click();
+                await page
+                    .getByRole('heading', { name: organism })
+                    .locator('..')
+                    .getByText(linkName, { exact: true })
+                    .click();
                 await expect(page).toHaveTitle(`${title} | ${organism} | GenSpectrum`);
                 await expect(page.getByRole('heading', { name: expectedHeadline }).first()).toBeVisible();
             }
