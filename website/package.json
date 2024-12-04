@@ -8,12 +8,12 @@
         "build": "astro build",
         "preview": "astro preview",
         "astro": "astro",
-        "format": "eslint \"./**/*.{ts,tsx,astro,mjs,cjs}\" --fix && prettier --ignore-path \"../.gitignore\" --write \"./**/*.{ts,tsx,json,astro,md,mdx,mjs,cjs}\"",
+        "format": "eslint . --fix && prettier --ignore-path \"../.gitignore\" --write \"./**/*.{ts,tsx,json,astro,md,mdx,mjs,cjs}\"",
         "check": "npm run check-format && npm run check-types && npm run check-astro && npm run check-lint",
         "check-format": "prettier --check \"**/*.{ts,tsx,json,astro,md,mdx,mjs,cjs}\"",
         "check-types": "astro sync && tsc --noEmit",
         "check-astro": "astro check",
-        "check-lint": "eslint \"./**/*.{ts,tsx,astro,mjs,cjs}\"",
+        "check-lint": "eslint .",
         "postinstall": "patch-package",
         "test": "vitest",
         "e2e": "playwright test"
@@ -52,6 +52,7 @@
         "@typescript-eslint/parser": "^8.17.0",
         "daisyui": "^4.12.14",
         "eslint": "^9.16.0",
+        "@eslint/js": "^9.16.0",
         "eslint-plugin-astro": "^1.3.1",
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-react": "^7.37.2",
@@ -62,6 +63,7 @@
         "prettier-plugin-tailwindcss": "^0.6.9",
         "tailwindcss": "^3.4.15",
         "typescript": "^5.7.2",
+        "typescript-eslint": "^8.17.0",
         "vitest": "^2.1.8",
         "zod": "^3.23.8"
     }
