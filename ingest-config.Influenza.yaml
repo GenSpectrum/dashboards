@@ -1,0 +1,54 @@
+backend_url: http://localhost:8079
+check_ena_deposition: true
+insdc_segment_specific_fields:
+- insdcAccessionBase
+- insdcAccessionFull
+- insdcVersion
+- ncbiUpdateDate
+keycloak_token_url: http://localhost:8083/realms/loculus/protocol/openid-connect/token
+nextclade_dataset_name: flu/h5n1
+nextclade_dataset_name_map:
+  seg4: community/moncla-lab/iav-h5/ha/all-clades
+nextclade_dataset_server: https://raw.githubusercontent.com/genspectrum/nextclade-datasets/main/data
+nextclade_dataset_server_map:
+  seg4: https://data.clades.nextstrain.org/v3
+nucleotide_sequences:
+- seg1
+- seg2
+- seg3
+- seg4
+- seg5
+- seg6
+- seg7
+- seg8
+organism: h5n1
+rename:
+  bioprojects: bioprojectAccession
+  country: geoLocCountry
+  division: geoLocAdmin1
+  genbankAccession: insdcAccessionFull
+  ncbiCollectionDate: sampleCollectionDate
+  ncbiHostCommonName: hostNameCommon
+  ncbiHostName: hostNameScientific
+  ncbiHostSex: hostGender
+  ncbiHostTaxId: hostTaxonId
+  ncbiIsLabHost: isLabHost
+  ncbiIsolateName: specimenCollectorSampleId
+  ncbiPurposeOfSampling: purposeOfSampling
+  ncbiSraAccessions: sraRunAccession
+  ncbiSubmitterAffiliation: authorAffiliations
+  ncbiSubmitterNames: authors
+taxon_id: 197911
+verify_loculus_version_is: latest
+ncbi_entrez_mappings:
+  metadata_mapping:
+    ncbiSerotype: serotype
+  segment_product_mapping:
+    seg1: [PB2, 'polymerase PB2', 'PB2 protein', 'polymerase basic protein 2', 'polymerase B2', 'polymerase basic 2', 'polymerase basic subunit 2']
+    seg2: [PB1, 'polymerase PB1', 'PB1-F2 protein', 'PB1-F2', 'polymerase basic protein 1', 'putative PB1-F2 protein', 'polymerase B1', 'polymerase basic protein 1-F2', 'polymerase basic protein 1 F2', 'polymerase basic 1', 'polymerase basic subunit 1']
+    seg3: [PA, 'polymerase PA', 'polymerase A', 'PA-X protein', 'polymerase acidic protein', 'plymerase acidic protein', 'putative polymerase PA', 'putative PA-X protein']
+    seg4: [HA, HA1, HA2, hemagglutinin, 'hemagglutinin precursor', 'haemagglutinin precursor', 'hemagglutinin protein', 'haemagglutinin', 'haemagglutin', 'hemaggluitnin', 'haemagglutinin protein', 'hemaglutinin', 'haemagglutinin HA1 chain', 'haemagglutinin HA2 chain']
+    seg5: [NP, 'nucleocapsid protein', 'nucleoprotein', 'nuleoprotein']
+    seg6: [NA, 'neuraminidase', 'neuramidinase', 'neuramindase']
+    seg7: [M, 'matrix protein 2', 'matrix protein 1', 'matrix protein2', 'matrix protein1', 'M2 ion channel', 'membrane ion channel 2', 'matrix protein', 'putative matrix protein 1', 'putative matrix protein 2']
+    seg8: [NS, 'NEP', 'NS1', 'NSP', 'NS1 protein', 'nuclear export protein', 'nuclear export protein 2', 'nonstructural protein 1', 'nonstructual protein 1', 'nonstructural protein 2', 'nonstructural protein', 'NEP/NS2']
