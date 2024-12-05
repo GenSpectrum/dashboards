@@ -19,7 +19,7 @@ We value clean code, here are some guidelines on what we consider clean code:
 
 ### Frontend
 
-We make use of two frameworks: Astro, React, and Tailwindcss.
+We make use of some major libraries: Astro, React, Daisyui, and Tailwindcss.
 
 - use Astro when possible (for performance reasons)
     - however avoid script tags, since they are harder to maintain. In this case use React.
