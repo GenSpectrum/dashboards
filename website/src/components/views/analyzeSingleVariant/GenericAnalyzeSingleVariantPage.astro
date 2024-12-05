@@ -9,17 +9,18 @@ import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields }
 import { getLocationSubdivision } from '../../../views/helpers';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
-import { type singleVariantViewKey } from '../../../views/viewKeys';
+import { singleVariantViewKey } from '../../../views/viewKeys';
 import ComponentHeadline from '../../ComponentHeadline.astro';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
 
 interface Props {
-    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof singleVariantViewKey}`>;
+    organism: Organism;
 }
 
-const { organismViewKey } = Astro.props;
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${singleVariantViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);

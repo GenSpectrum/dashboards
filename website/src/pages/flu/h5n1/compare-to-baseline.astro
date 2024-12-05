@@ -1,7 +1,6 @@
 ---
 import GenericCompareToBaselinePage from '../../../components/views/compareToBaseline/GenericCompareToBaselinePage.astro';
 import { Organisms } from '../../../types/Organism';
-import { compareToBaselineViewKey } from '../../../views/viewKeys';
 ---
 
-<GenericCompareToBaselinePage organismViewKey={`${Organisms.h5n1}.${compareToBaselineViewKey}`} />
+<GenericCompareToBaselinePage organism={Organisms.h5n1} />
