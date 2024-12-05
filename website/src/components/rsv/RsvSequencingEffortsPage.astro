@@ -9,17 +9,15 @@ import { defaultTablePageSize } from '../../views/View';
 import { getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
-import { type sequencingEffortsViewKey } from '../../views/viewKeys';
+import { sequencingEffortsViewKey } from '../../views/viewKeys';
 import { SequencingEffortsPageStateSelector } from '../pageStateSelectors/SequencingEffortsPageStateSelector';
 
 interface Props {
-    organismViewKey: Extract<
-        OrganismViewKey,
-        `${typeof Organisms.rsvA | typeof Organisms.rsvB}.${typeof sequencingEffortsViewKey}`
-    >;
+    organism: typeof Organisms.rsvA | typeof Organisms.rsvB;
 }
 
-const { organismViewKey } = Astro.props;
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);

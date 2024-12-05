@@ -7,16 +7,17 @@ import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranulari
 import { defaultTablePageSize } from '../../../views/View';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
-import { type compareVariantsViewKey } from '../../../views/viewKeys';
+import { compareVariantsViewKey } from '../../../views/viewKeys';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
 import { CompareVariantsPageStateSelector } from '../../pageStateSelectors/CompareVariantsPageStateSelector';
 
 interface Props {
-    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareVariantsViewKey}`>;
+    organism: Organism;
 }
 
-const { organismViewKey } = Astro.props;
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${compareVariantsViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);

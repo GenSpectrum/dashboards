@@ -6,15 +6,16 @@ import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranulari
 import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
-import { type compareSideBySideViewKey } from '../../../views/viewKeys';
+import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 
 interface Props {
-    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareSideBySideViewKey}`>;
+    organism: Organism;
 }
 
-const { organismViewKey } = Astro.props;
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
