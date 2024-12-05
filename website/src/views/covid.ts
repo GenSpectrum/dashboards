@@ -294,10 +294,6 @@ class CovidSequencingEffortsStateHandler
     extends SequencingEffortsStateHandler
     implements PageStateHandler<CovidSequencingEffortsData>
 {
-    constructor(constants: CovidConstants, defaultPageState: CovidSequencingEffortsData, pathFragment: string) {
-        super(constants, defaultPageState, pathFragment);
-    }
-
     public override parsePageStateFromUrl(url: URL): CovidSequencingEffortsData {
         return {
             ...super.parsePageStateFromUrl(url),

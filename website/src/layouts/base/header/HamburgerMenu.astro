@@ -44,7 +44,7 @@ const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
                 showLoggedInState ? (
                     <HamburgerMenuSection
                         navigationEntries={[
-                            { label: session.user!.name! },
+                            { label: session.user?.name ?? 'My Account' },
                             {
                                 label: 'Subscriptions',
                                 href: '/subscriptions',

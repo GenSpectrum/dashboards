@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { z } from 'zod';
 
 import type { OrganismsConfig } from '../../../config.ts';
 import { type CovidAnalyzeSingleVariantData } from '../../../views/covid.ts';
@@ -84,6 +85,16 @@ type CollectionVariantListProps = {
     organismsConfig: OrganismsConfig;
 };
 
+const querySchema = z.object({
+    pangoLineage: z.string().optional(),
+    nextcladePangoLineage: z.string().optional(),
+    nucMutations: z.array(z.string()),
+    aaMutations: z.array(z.string()),
+    nucInsertions: z.array(z.string()),
+    aaInsertions: z.array(z.string()),
+    variantQuery: z.string().optional(),
+});
+
 function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
     const variants = collection.variants;
 
@@ -94,8 +105,8 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
             .getOrganismView('covid.singleVariantView')
             .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
         let newPageState: CovidAnalyzeSingleVariantData;
-        const query = JSON.parse(variant.query);
-        if ('variantQuery' in query) {
+        const query = querySchema.parse(JSON.parse(variant.query));
+        if (query.variantQuery !== undefined) {
             newPageState = {
                 ...currentPageState,
                 collectionId: collection.id,

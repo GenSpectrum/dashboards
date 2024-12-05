@@ -12,7 +12,7 @@ const logger = getInstanceLogger('SubscriptionsProxy');
 export async function ALL({ request }: { request: Request }) {
     const session = await getSession(request);
 
-    if (!session || session.user?.id === undefined) {
+    if (session?.user?.id === undefined) {
         return getUnauthorizedResponse(request.url);
     }
 
