@@ -14,7 +14,7 @@ export const setSearchFromString = (
     name: string,
     value: string | undefined | null | string[],
 ) => {
-    if (value !== null && value !== undefined && value !== '' && Array.isArray(value) === false) {
+    if (value !== null && value !== undefined && value !== '' && !Array.isArray(value)) {
         search.set(name, value);
     }
 };
@@ -36,7 +36,7 @@ export const setSearchFromDateRange = (
     if (dateRange !== null && dateRange !== undefined) {
         let serializedValue: string;
         if (dateRange.label === CustomDateRangeLabel) {
-            serializedValue = `${dateRange.dateFrom}--${dateRange.dateTo}`;
+            serializedValue = `${dateRange.dateFrom ?? ''}--${dateRange.dateTo ?? ''}`;
         } else {
             serializedValue = dateRange.label;
         }
@@ -117,10 +117,10 @@ export type LapisMutationQuery = {
 
 export function getMutationFilter(mutationFilter: LapisMutationQuery): MutationFilter {
     return {
-        nucleotideMutations: mutationFilter.nucleotideMutations || [],
-        aminoAcidMutations: mutationFilter.aminoAcidMutations || [],
-        nucleotideInsertions: mutationFilter.nucleotideInsertions || [],
-        aminoAcidInsertions: mutationFilter.aminoAcidInsertions || [],
+        nucleotideMutations: mutationFilter.nucleotideMutations ?? [],
+        aminoAcidMutations: mutationFilter.aminoAcidMutations ?? [],
+        nucleotideInsertions: mutationFilter.nucleotideInsertions ?? [],
+        aminoAcidInsertions: mutationFilter.aminoAcidInsertions ?? [],
     };
 }
 
@@ -211,7 +211,6 @@ export function getLocationSubdivision(locationFields: string[], locationFilter:
     for (let i = locationFields.length - 1; i >= 0; i--) {
         const field = locationFields[i];
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- We need to check for undefined
         if (locationFilter[field] !== undefined) {
             const locationOneLevelUp = locationFields[i + 1];
             if (locationOneLevelUp) {

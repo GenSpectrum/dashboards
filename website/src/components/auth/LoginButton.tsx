@@ -8,5 +8,5 @@ export function LoginButton() {
         await signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain });
     };
 
-    return <button onClick={login}>Login</button>;
+    return <button onClick={void login}>Login</button>;
 }

@@ -16,11 +16,13 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify(maybeLogMessage.error.issues), { status: 400 });
 };
 
-const loggers: Map<string, InstanceLogger> = new Map();
+const loggers = new Map<string, InstanceLogger>();
 
 function getLogger(instance: string) {
-    if (!loggers.has(instance)) {
-        loggers.set(instance, getInstanceLogger(instance));
+    let logger = loggers.get(instance);
+    if (!logger) {
+        logger = getInstanceLogger(instance);
+        loggers.set(instance, logger);
     }
-    return loggers.get(instance) as InstanceLogger;
+    return logger;
 }

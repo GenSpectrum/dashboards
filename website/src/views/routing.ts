@@ -105,6 +105,21 @@ export class Routing {
         this.externalPages = this.initializeExternalPages(organismsConfig);
     }
 
+    public getAllViewsForOrganism(organism: keyof ViewsMap) {
+        switch (organism) {
+            case Organisms.covid:
+                return Object.values(this.views[Organisms.covid]);
+            case Organisms.h5n1:
+                return Object.values(this.views[Organisms.h5n1]);
+            case Organisms.rsvA:
+                return Object.values(this.views[Organisms.rsvA]);
+            case Organisms.rsvB:
+                return Object.values(this.views[Organisms.rsvB]);
+            case Organisms.westNile:
+                return Object.values(this.views[Organisms.westNile]);
+        }
+    }
+
     public getOrganismView<Organism extends keyof ViewsMap, Key extends ViewKey<Organism>>(
         key: `${Organism}${KeySeparator}${Key}`,
     ): ViewsMap[Organism][Key];

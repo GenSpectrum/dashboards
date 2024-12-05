@@ -1,6 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -34,4 +33,3 @@ export default defineConfig({
         },
     ],
 });
-/* eslint-enable @typescript-eslint/strict-boolean-expressions */
