@@ -17,28 +17,28 @@ export const getClientLogger = (instance: string): InstanceLogger => {
     const logger = new ClientLogger();
     return {
         error: (message: string, context?: AdditionalLogContext) =>
-            logger.sendLogMessage({
+            void logger.sendLogMessage({
                 level: 'error',
                 message,
                 instance,
                 ...context,
             }),
         warn: (message: string, context?: AdditionalLogContext) =>
-            logger.sendLogMessage({
+            void logger.sendLogMessage({
                 level: 'warn',
                 message,
                 instance,
                 ...context,
             }),
         info: (message: string, context?: AdditionalLogContext) =>
-            logger.sendLogMessage({
+            void logger.sendLogMessage({
                 level: 'info',
                 message,
                 instance,
                 ...context,
             }),
         debug: (message: string, context?: AdditionalLogContext) =>
-            logger.sendLogMessage({
+            void logger.sendLogMessage({
                 level: 'debug',
                 message,
                 instance,

@@ -39,7 +39,11 @@ export function SubscriptionEntry({
         return (
             <div
                 className='tooltip tooltip-right'
-                data-tip={`${subscription.triggerEvaluationResult.type === 'ConditionMet' ? 'Trigger conditions were met' : 'Trigger conditions were not met'}`}
+                data-tip={
+                    subscription.triggerEvaluationResult.type === 'ConditionMet'
+                        ? 'Trigger conditions were met'
+                        : 'Trigger conditions were not met'
+                }
             >
                 <div className={`iconify size-8 ${getConditionIcon()}`} />
             </div>
@@ -138,7 +142,7 @@ function MoreDropdown({
         deleteSubscriptionDialog.current?.focus();
     };
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         deleteSubscription.mutate();
     };
 
