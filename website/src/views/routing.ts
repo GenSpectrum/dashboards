@@ -30,6 +30,7 @@ import {
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
+import { SwissWastewaterRandomView } from './swissWastewater.ts';
 import {
     compareSideBySideViewKey,
     compareToBaselineViewKey,
@@ -99,6 +100,9 @@ export class Routing {
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
                 [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new WestNileCompareToBaselineView(organismsConfig),
+            },
+            [Organisms.swissWastewater]: {
+                random: new SwissWastewaterRandomView(),
             },
         } as const;
 

@@ -6,6 +6,7 @@ export const Organisms = {
     westNile: 'westNile' as const,
     rsvA: 'rsvA' as const,
     rsvB: 'rsvB' as const,
+    swissWastewater: 'swissWastewater' as const,
 };
 
 export const organismConfig = {
@@ -53,6 +54,15 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+    },
+    [Organisms.swissWastewater]: {
+        organism: Organisms.swissWastewater,
+        pathFragment: 'swiss-wastewater',
+        label: 'Swiss Wastewater',
+        backgroundColor: 'bg-[#fbb05b]',
+        backgroundColorFocus: 'group-hover:bg-amber-600',
+        menuListEntryDecoration: 'decoration-amber-600',
+        borderEntryDecoration: 'hover:border-amber-600',
     },
 };
 export const allOrganisms = Object.keys(organismConfig) as Organism[];
