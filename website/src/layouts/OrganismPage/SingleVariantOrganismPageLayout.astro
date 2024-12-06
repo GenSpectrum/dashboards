@@ -13,7 +13,9 @@ const { view } = Astro.props;
 <OrganismPageLayout view={view}>
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
-            <slot name='filters' />
+            <div class='h-fit bg-gray-50 p-2'>
+                <slot name='filters' />
+            </div>
             <slot name='dataDisplay' />
         </div>
     </gs-app>

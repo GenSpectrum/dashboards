@@ -2,6 +2,7 @@
 import ComponentHeadline from '../../components/ComponentHeadline.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
 import SelectVariant from '../../components/views/analyzeSingleVariant/SelectVariant.astro';
@@ -39,7 +40,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
-    <div class='bg-gray-50' slot='filters'>
+    <div slot='filters'>
         <SingleVariantPageStateSelector
             locationFilterConfig={{
                 locationFields: view.organismConstants.locationFields,
@@ -59,7 +60,9 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
             organismViewKey={organismViewKey}
             organismsConfig={getDashboardsConfig().dashboards.organisms}
             client:only='react'
-        />
+        >
+            <AnalyzeSingleVariantSelectorFallback slot='fallback' />
+        </SingleVariantPageStateSelector>
         <div class='p-2'>
             <h2 class='my-2'>Or select a known variant:</h2>
             <CollectionsList

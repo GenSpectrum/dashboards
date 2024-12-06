@@ -1,6 +1,7 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../components/pageStateSelectors/CompareSideBySidePageStateSelector';
+import { CompareSideBySideSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
@@ -69,7 +70,12 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
                                     client:only='react'
-                                />
+                                >
+                                    <CompareSideBySideSelectorFallback
+                                        slot='fallback'
+                                        numFilters={pageState.filters.size}
+                                    />
+                                </CompareSideBySidePageStateSelector>
                             </div>
 
                             <ComponentWrapper title='Prevalence over time'>

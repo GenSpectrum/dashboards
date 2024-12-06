@@ -1,6 +1,7 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import { SequencingEffortsSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../../components/pageStateSelectors/SequencingEffortsPageStateSelector';
 import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
@@ -43,7 +44,9 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
-    />
+    >
+        <SequencingEffortsSelectorFallback slot='fallback' />
+    </SequencingEffortsPageStateSelector>
 
     <ComponentsGrid slot='dataDisplay'>
         <ComponentWrapper title='Number sequences' height='600px'>
