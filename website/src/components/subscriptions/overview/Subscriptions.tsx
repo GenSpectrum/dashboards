@@ -52,7 +52,7 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
             userId={userId}
             subscriptions={subscriptions}
             organismsFromUrl={organismsFromUrl}
-            refetchSubscriptions={refetchSubscriptions}
+            refetchSubscriptions={() => void refetchSubscriptions()}
         />
     );
 }

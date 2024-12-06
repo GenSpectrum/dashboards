@@ -36,10 +36,14 @@ export function decodeFiltersFromSearch(search: URLSearchParams) {
         if (Number.isNaN(id)) {
             continue;
         }
-        if (!filterMap.has(id)) {
-            filterMap.set(id, new Map<string, string>());
+
+        let filter = filterMap.get(id);
+
+        if (filter === undefined) {
+            filter = new Map<string, string>();
+            filterMap.set(id, filter);
         }
-        const filter = filterMap.get(id)!;
+
         filter.set(keySplit[0], value);
     }
     return filterMap;
