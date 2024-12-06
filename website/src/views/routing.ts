@@ -105,9 +105,7 @@ export class Routing {
         this.externalPages = this.initializeExternalPages(organismsConfig);
     }
 
-    public getAllViewsForOrganism(
-        organism: keyof ViewsMap,
-    ): View<object, OrganismConstants, PageStateHandler<object>>[] {
+    public getAllViewsForOrganism(organism: keyof ViewsMap) {
         switch (organism) {
             case Organisms.covid:
                 return Object.values(this.views[Organisms.covid]);

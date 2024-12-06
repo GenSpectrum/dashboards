@@ -10,7 +10,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 const importRules = {
     'import/no-cycle': 'error',
     'import/no-deprecated': 'error',
-    'import/no-extraneous-dependencies': 'off',
+    'import/no-extraneous-dependencies': 'error',
     'import/no-internal-modules': 'off',
     'import/order': [
         'error',
@@ -20,6 +20,11 @@ const importRules = {
             'alphabetize': { order: 'asc' },
         },
     ],
+};
+
+const importRulesAstro = {
+    ...importRules,
+    'import/no-deprecated': 'off',
 };
 
 const enableFromEslint = {
@@ -88,7 +93,7 @@ const disableFromReact = {
 };
 
 export default tseslint.config(
-    { ignores: ['dist'], files: ['**/*.ts', '**/*.tsx'] },
+    { ignores: ['dist', 'node_modules'], files: ['**/*.ts', '**/*.tsx'] },
     {
         files: ['**/*.ts', '**/*.tsx'],
         extends: [
@@ -138,9 +143,13 @@ export default tseslint.config(
             ...namingConvention,
             ...disableFromTypescriptEsLint,
             ...enableFromEslint,
+            ...importRulesAstro,
         },
         languageOptions: {
             parser: astroParser,
+        },
+        plugins: {
+            import: importPlugin,
         },
     },
 );
