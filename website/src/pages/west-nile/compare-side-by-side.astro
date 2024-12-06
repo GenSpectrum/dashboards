@@ -1,7 +1,6 @@
 ---
 import GenericCompareSideBySidePage from '../../components/views/compareSideBySide/GenericCompareSideBySidePage.astro';
 import { Organisms } from '../../types/Organism';
-import { compareSideBySideViewKey } from '../../views/viewKeys';
 ---
 
-<GenericCompareSideBySidePage organismViewKey={`${Organisms.westNile}.${compareSideBySideViewKey}`} />
+<GenericCompareSideBySidePage organism={Organisms.westNile} />

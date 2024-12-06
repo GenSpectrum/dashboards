@@ -1,19 +1,19 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import type { OrganismConstants } from './OrganismConstants.ts';
-import { type PageStateHandler } from './PageStateHandler.ts';
 import { type ViewConstants } from './ViewConstants';
 import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
+import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
 
-export type BaselineFilter = {
+export type DatasetFilter = {
     location: LapisLocation;
     dateRange: DateRangeOption;
 };
 
-export type BaselineData = {
-    baselineFilter: BaselineFilter;
+export type Dataset = {
+    datasetFilter: DatasetFilter;
 };
 
 export type VariantFilter = {
@@ -25,17 +25,26 @@ export type VariantData<VariantFilterType = VariantFilter> = {
     variantFilter: VariantFilterType;
 };
 
-export type BaselineAndVariantData = BaselineData & VariantData;
+export type BaselineData = {
+    baselineFilter: VariantFilter;
+};
+
+export type DatasetAndVariantData = Dataset & VariantData;
 
 export type Id = number;
 
-export type CompareSideBySideData<ColumnData extends BaselineAndVariantData = BaselineAndVariantData> = {
+export type CompareSideBySideData<ColumnData extends DatasetAndVariantData = DatasetAndVariantData> = {
     filters: Map<Id, ColumnData>;
 };
 
 export type CompareVariantsData = {
     variants: Map<Id, VariantFilter>;
-} & BaselineData;
+} & Dataset;
+
+export type CompareToBaselineData = {
+    variants: Map<Id, VariantFilter>;
+} & Dataset &
+    BaselineData;
 
 /**
  * PageState is the state of the organism pages. It:

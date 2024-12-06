@@ -1,6 +1,5 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
-import { SelectorHeadline } from './SelectorHeadline.tsx';
 import type { LapisLocation } from '../../views/helpers.ts';
 import { GsDateRangeSelector } from '../genspectrum/GsDateRangeSelector.tsx';
 import { GsLocationFilter } from '../genspectrum/GsLocationFilter.tsx';
@@ -30,26 +29,23 @@ export function BaselineSelector({
     dateRangeFilterConfig: DateRangeFilterConfig;
 }) {
     return (
-        <div>
-            <SelectorHeadline>Dataset Filter</SelectorHeadline>
-            <div className='flex flex-col gap-2'>
-                <GsLocationFilter
-                    fields={locationFilterConfig.locationFields}
-                    onLocationChange={onLocationChange}
-                    initialValue={locationFilterConfig.locationFields
-                        .map((field) => locationFilterConfig.initialLocation[field])
-                        .filter(Boolean)
-                        .join(' / ')}
-                    placeholderText={locationFilterConfig.placeholderText}
-                ></GsLocationFilter>
-                <GsDateRangeSelector
-                    dateColumn={dateRangeFilterConfig.dateColumn}
-                    onDateRangeChange={onDateRangeChange}
-                    earliestDate={dateRangeFilterConfig.earliestDate}
-                    initialValue={dateRangeFilterConfig.initialDateRange}
-                    dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
-                ></GsDateRangeSelector>
-            </div>
+        <div className='flex flex-col gap-2'>
+            <GsLocationFilter
+                fields={locationFilterConfig.locationFields}
+                onLocationChange={onLocationChange}
+                initialValue={locationFilterConfig.locationFields
+                    .map((field) => locationFilterConfig.initialLocation[field])
+                    .filter(Boolean)
+                    .join(' / ')}
+                placeholderText={locationFilterConfig.placeholderText}
+            ></GsLocationFilter>
+            <GsDateRangeSelector
+                dateColumn={dateRangeFilterConfig.dateColumn}
+                onDateRangeChange={onDateRangeChange}
+                earliestDate={dateRangeFilterConfig.earliestDate}
+                initialValue={dateRangeFilterConfig.initialDateRange}
+                dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
+            ></GsDateRangeSelector>
         </div>
     );
 }

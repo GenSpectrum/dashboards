@@ -1,12 +1,6 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import {
-    type BaselineData,
-    type CompareSideBySideData,
-    getLineageFilterFields,
-    type Id,
-    type VariantData,
-} from './View.ts';
+import { type CompareSideBySideData, type Dataset, getLineageFilterFields, type Id, type VariantData } from './View.ts';
 import {
     getDateRangeFromSearch,
     getIntegerFromSearch,
@@ -18,22 +12,20 @@ import {
     setSearchFromLocation,
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
-import { BaseView, GenericCompareVariantsView } from './BaseView.ts';
+import { BaseView, GenericCompareToBaselineView, GenericCompareVariantsView } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
-import {
-    CompareSideBySideStateHandler,
-    type PageStateHandler,
-    SequencingEffortsStateHandler,
-    SingleVariantStateHandler,
-} from './PageStateHandler.ts';
 import {
     compareSideBySideViewConstants,
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
 } from './ViewConstants.ts';
+import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
+import { SequencingEffortsStateHandler } from './pageStateHandlers/SequencingEffortsPageStateHandler.ts';
+import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 
 const earliestDate = '2020-01-06';
 
@@ -80,7 +72,7 @@ class CovidConstants implements SingleVariantConstants {
     }
 }
 
-export type CovidAnalyzeSingleVariantData = BaselineData &
+export type CovidAnalyzeSingleVariantData = Dataset &
     VariantData<LapisCovidVariantFilter> & {
         collectionId?: number;
     };
@@ -97,7 +89,7 @@ export class CovidAnalyzeSingleVariantView extends BaseView<
             new CovidSingleVariantStateHandler(
                 constants,
                 {
-                    baselineFilter: {
+                    datasetFilter: {
                         location: {},
                         dateRange: constants.defaultDateRange,
                     },
@@ -115,7 +107,7 @@ export class CovidAnalyzeSingleVariantView extends BaseView<
 }
 
 class CovidSingleVariantStateHandler
-    extends SingleVariantStateHandler
+    extends SingleVariantPageStateHandler
     implements PageStateHandler<CovidAnalyzeSingleVariantData>
 {
     constructor(
@@ -128,9 +120,9 @@ class CovidSingleVariantStateHandler
 
     public override parsePageStateFromUrl(url: URL): CovidAnalyzeSingleVariantData {
         const search = url.searchParams;
-        const baselineFilter = super.parsePageStateFromUrl(url).baselineFilter;
+        const baselineFilter = super.parsePageStateFromUrl(url).datasetFilter;
         return {
-            baselineFilter,
+            datasetFilter: baselineFilter,
             variantFilter: getLapisCovidVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
@@ -138,10 +130,10 @@ class CovidSingleVariantStateHandler
 
     public override toUrl(pageState: CovidAnalyzeSingleVariantData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.baselineFilter.location);
+        setSearchFromLocation(search, pageState.datasetFilter.location);
 
-        if (pageState.baselineFilter.dateRange !== this.constants.defaultDateRange) {
-            setSearchFromDateRange(search, this.constants.mainDateField, pageState.baselineFilter.dateRange);
+        if (pageState.datasetFilter.dateRange !== this.constants.defaultDateRange) {
+            setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
         }
 
         setSearchFromLapisCovidVariantQuery(
@@ -163,7 +155,7 @@ class CovidSingleVariantStateHandler
     }
 }
 
-type CovidCompareSideBySideFilter = BaselineData & VariantData<LapisCovidVariantFilter>;
+type CovidCompareSideBySideFilter = Dataset & VariantData<LapisCovidVariantFilter>;
 export type CovidCompareSideBySideData = CompareSideBySideData<CovidCompareSideBySideFilter>;
 
 export class CovidCompareSideBySideView extends BaseView<
@@ -178,7 +170,7 @@ export class CovidCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        baselineFilter: {
+                        datasetFilter: {
                             location: {},
                             dateRange: constants.defaultDateRange,
                         },
@@ -194,7 +186,7 @@ export class CovidCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        baselineFilter: {
+                        datasetFilter: {
                             location: {},
                             dateRange: constants.defaultDateRange,
                         },
@@ -232,13 +224,13 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
             filter.variantFilter,
             getLineageFilterFields(this.constants.lineageFilters),
         );
-        setSearchFromLocation(searchOfFilter, filter.baselineFilter.location);
-        setSearchFromDateRange(searchOfFilter, this.constants.mainDateField, filter.baselineFilter.dateRange);
+        setSearchFromLocation(searchOfFilter, filter.datasetFilter.location);
+        setSearchFromDateRange(searchOfFilter, this.constants.mainDateField, filter.datasetFilter.dateRange);
     }
 
     protected override getEmptyColumnData(): CovidCompareSideBySideFilter {
         return {
-            baselineFilter: {
+            datasetFilter: {
                 location: {
                     region: 'Europe',
                 },
@@ -253,7 +245,7 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
 
     protected override getFilter(filterParams: Map<string, string>): CovidCompareSideBySideFilter {
         return {
-            baselineFilter: {
+            datasetFilter: {
                 location: getLapisLocationFromSearch(filterParams, this.constants.locationFields),
                 dateRange:
                     getDateRangeFromSearch(
@@ -270,7 +262,7 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
     }
 }
 
-export type CovidSequencingEffortsData = BaselineData & {
+export type CovidSequencingEffortsData = Dataset & {
     collectionId?: number;
 };
 
@@ -286,7 +278,7 @@ export class CovidSequencingEffortsView extends BaseView<
             new CovidSequencingEffortsStateHandler(
                 constants,
                 {
-                    baselineFilter: {
+                    datasetFilter: {
                         location: {},
                         dateRange: constants.defaultDateRange,
                     },
@@ -315,9 +307,9 @@ class CovidSequencingEffortsStateHandler
 
     public override toUrl(pageState: CovidSequencingEffortsData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.baselineFilter.location);
-        if (pageState.baselineFilter.dateRange !== this.constants.defaultDateRange) {
-            setSearchFromDateRange(search, this.constants.mainDateField, pageState.baselineFilter.dateRange);
+        setSearchFromLocation(search, pageState.datasetFilter.location);
+        if (pageState.datasetFilter.dateRange !== this.constants.defaultDateRange) {
+            setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
         }
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
@@ -327,6 +319,12 @@ class CovidSequencingEffortsStateHandler
 }
 
 export class CovidCompareVariantsView extends GenericCompareVariantsView<CovidConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new CovidConstants(organismsConfig));
+    }
+}
+
+export class CovidCompareToBaselineView extends GenericCompareToBaselineView<CovidConstants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new CovidConstants(organismsConfig));
     }

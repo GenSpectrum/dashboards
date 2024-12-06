@@ -5,28 +5,33 @@ import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
+import { VariantSelector } from './VariantSelector.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import type { Id } from '../../views/View.ts';
 import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
-import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
+import { type compareToBaselineViewKey } from '../../views/viewKeys.ts';
 
-export function CompareVariantsPageStateSelector({
+export function CompareVariantsToBaselineStateSelector({
     locationFilterConfig,
     dateRangeFilterConfig,
+    baselineFilterConfig,
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
+    baselineFilterConfig: VariantFilterConfig;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
-    organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
+    organismViewKey: OrganismViewKey & `${string}.${typeof compareToBaselineViewKey}`;
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
+    const [baselineFilterConfigState, setBaselineFilterConfigState] =
+        useState<VariantFilterConfig>(baselineFilterConfig);
 
     const [variantConfigs, setVariantConfigs] = useState<Map<Id, VariantFilterConfig>>(variantFilterConfigs);
 
@@ -48,8 +53,9 @@ export function CompareVariantsPageStateSelector({
                 dateRange,
             },
             variants,
+            baselineFilter: toVariantFilter(baselineFilterConfigState),
         };
-    }, [location, dateRange, variantConfigs]);
+    }, [variantConfigs, location, dateRange, baselineFilterConfigState]);
 
     return (
         <div className='flex flex-col gap-6 bg-gray-50 p-2'>
@@ -60,6 +66,13 @@ export function CompareVariantsPageStateSelector({
                     locationFilterConfig={locationFilterConfig}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                />
+            </div>
+            <div>
+                <SelectorHeadline>Baseline Filter</SelectorHeadline>
+                <VariantSelector
+                    onVariantFilterChange={setBaselineFilterConfigState}
+                    variantFilterConfig={baselineFilterConfigState}
                 />
             </div>
             <div>

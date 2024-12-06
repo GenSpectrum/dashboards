@@ -3,19 +3,19 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
-import type { LineageFilterConfig } from './LineageFilterInput.tsx';
-import { type MutationFilterConfig, VariantSelector } from './VariantSelector.tsx';
+import { SelectorHeadline } from './SelectorHeadline.tsx';
+import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
+import { VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import type { CovidCompareSideBySideData } from '../../views/covid.ts';
-import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
+import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,
     dateRangeFilterConfig,
-    mutationFilterConfig,
-    lineageFilterConfigs,
+    variantFilterConfig,
     filterId,
     pageState,
     organismViewKey,
@@ -23,8 +23,7 @@ export function CompareSideBySidePageStateSelector({
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
-    mutationFilterConfig: MutationFilterConfig;
-    lineageFilterConfigs: LineageFilterConfig[];
+    variantFilterConfig: VariantFilterConfig;
     filterId: number;
     pageState: CovidCompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
@@ -32,34 +31,27 @@ export function CompareSideBySidePageStateSelector({
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
-    const [mutation, setMutation] = useState<LapisMutationQuery | undefined>(mutationFilterConfig.initialMutations);
-    const [lineages, setLineages] = useState<Record<string, string | undefined>>(
-        lineageFilterConfigs.reduce((acc: Record<string, string | undefined>, config) => {
-            acc[config.lapisField] = config.initialValue;
-            return acc;
-        }, {}),
-    );
+    const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
+
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const newPageState = useMemo(() => {
         pageState.filters.set(filterId, {
-            baselineFilter: {
+            datasetFilter: {
                 location,
                 dateRange,
             },
-            variantFilter: {
-                mutations: { ...mutation },
-                lineages: { ...lineages },
-            },
+            variantFilter: toVariantFilter(variantFilterConfigState),
         });
 
         return pageState;
-    }, [location, dateRange, mutation, lineages, filterId, pageState]);
+    }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
 
     return (
         <div className='flex flex-col gap-4 bg-gray-50 p-2'>
             <div className='flex gap-8'>
                 <div className='flex-0'>
+                    <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <BaselineSelector
                         onLocationChange={(location) => setLocation(location)}
                         locationFilterConfig={locationFilterConfig}
@@ -68,18 +60,10 @@ export function CompareSideBySidePageStateSelector({
                     />
                 </div>
                 <div className='flex-grow'>
+                    <SelectorHeadline>Variant Filter</SelectorHeadline>
                     <VariantSelector
-                        onMutationChange={setMutation}
-                        mutationFilterConfig={mutationFilterConfig}
-                        lineageFilterConfigs={lineageFilterConfigs.map((lineageFilterConfig) => ({
-                            lineageFilterConfig,
-                            onLineageChange: (lineage) => {
-                                setLineages((lineages) => ({
-                                    ...lineages,
-                                    [lineageFilterConfig.lapisField]: lineage,
-                                }));
-                            },
-                        }))}
+                        onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
+                        variantFilterConfig={variantFilterConfigState}
                     />
                 </div>
             </div>

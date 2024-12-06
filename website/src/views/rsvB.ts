@@ -1,19 +1,20 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { type BaselineAndVariantData, type CompareSideBySideData, type Id } from './View.ts';
+import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
+    GenericCompareToBaselineView,
     GenericCompareVariantsView,
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
-import { GenericCompareSideBySideStateHandler } from './PageStateHandler.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
+import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 class RsvBConstants implements SingleVariantConstants {
     public readonly organism = Organisms.rsvB;
@@ -72,11 +73,11 @@ export class RsvBCompareSideBySideView extends BaseView<
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new RsvBConstants(organismsConfig);
         const defaultPageState = {
-            filters: new Map<Id, BaselineAndVariantData>([
+            filters: new Map<Id, DatasetAndVariantData>([
                 [
                     0,
                     {
-                        baselineFilter: {
+                        datasetFilter: {
                             location: {},
                             dateRange: constants.defaultDateRange,
                         },
@@ -89,7 +90,7 @@ export class RsvBCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        baselineFilter: {
+                        datasetFilter: {
                             location: {},
                             dateRange: constants.defaultDateRange,
                         },
@@ -123,6 +124,12 @@ export class RsvBSequencingEffortsView extends GenericSequencingEffortsView<RsvB
 }
 
 export class RsvBCompareVariantsView extends GenericCompareVariantsView<RsvBConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new RsvBConstants(organismsConfig));
+    }
+}
+
+export class RsvBCompareToBaselineView extends GenericCompareToBaselineView<RsvBConstants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new RsvBConstants(organismsConfig));
     }

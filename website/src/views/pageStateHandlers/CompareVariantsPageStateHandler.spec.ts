@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import type { SingleVariantConstants } from './OrganismConstants.ts';
-import { CompareVariantsStateHandler } from './PageStateHandler.ts';
-import type { CompareVariantsData } from './View';
-import { Organisms } from '../types/Organism.ts';
+import { Organisms } from '../../types/Organism.ts';
+import type { SingleVariantConstants } from '../OrganismConstants.ts';
+import type { CompareVariantsData } from '../View.ts';
+import { CompareVariantsPageStateHandler } from './CompareVariantsPageStateHandler.ts';
 
 const mockConstants: SingleVariantConstants = {
     organism: Organisms.covid,
@@ -25,14 +25,14 @@ const mockConstants: SingleVariantConstants = {
 
 const mockDefaultPageState: CompareVariantsData = {
     variants: new Map(),
-    baselineFilter: {
+    datasetFilter: {
         location: {},
         dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
     },
 };
 
-describe('CompareVariantsStateHandler', () => {
-    const handler = new CompareVariantsStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+describe('CompareVariantsPageStateHandler', () => {
+    const handler = new CompareVariantsPageStateHandler(mockConstants, mockDefaultPageState, 'testPath');
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
@@ -48,8 +48,8 @@ describe('CompareVariantsStateHandler', () => {
 
         const pageState = handler.parsePageStateFromUrl(url);
 
-        expect(pageState.baselineFilter.location).toEqual({ country: 'US' });
-        expect(pageState.baselineFilter.dateRange).toEqual(mockConstants.defaultDateRange);
+        expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
+        expect(pageState.datasetFilter.dateRange).toEqual(mockConstants.defaultDateRange);
 
         expect(pageState.variants.size).toBe(2);
         expect(pageState.variants.get(1)).toEqual({
@@ -80,7 +80,7 @@ describe('CompareVariantsStateHandler', () => {
                     },
                 ],
             ]),
-            baselineFilter: {
+            datasetFilter: {
                 location: { country: 'US' },
                 dateRange: mockConstants.defaultDateRange,
             },
@@ -94,9 +94,9 @@ describe('CompareVariantsStateHandler', () => {
         );
     });
 
-    it('should convert baseline filter to Lapis filter', () => {
-        const lapisFilter = handler.baselineFilterToLapisFilter({
-            ...mockDefaultPageState.baselineFilter,
+    it('should convert dataset filter to Lapis filter', () => {
+        const lapisFilter = handler.datasetFilterToLapisFilter({
+            ...mockDefaultPageState.datasetFilter,
             location: { country: 'US' },
         });
         expect(lapisFilter).toStrictEqual({

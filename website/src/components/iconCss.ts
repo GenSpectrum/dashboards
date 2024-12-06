@@ -9,6 +9,7 @@ export const iconMapping = {
     database: 'mdi--database-outline',
     virus: 'mdi--virus-outline',
     table: 'mdi--table',
+    chartSankey: 'mdi--chart-sankey',
 } as const;
 
 export const menuIconTypeSchema = z.enum(Object.keys(iconMapping) as [keyof typeof iconMapping]);

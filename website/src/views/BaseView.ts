@@ -1,19 +1,19 @@
 import type { OrganismConstants, SequencingEffortsConstants, SingleVariantConstants } from './OrganismConstants.ts';
+import type { CompareToBaselineData, CompareVariantsData, Dataset, DatasetAndVariantData, View } from './View.ts';
 import {
-    CompareVariantsStateHandler,
-    type PageStateHandler,
-    SequencingEffortsStateHandler,
-    SingleVariantStateHandler,
-} from './PageStateHandler.ts';
-import type { BaselineAndVariantData, BaselineData, CompareVariantsData, View } from './View.ts';
-import {
+    compareToBaselineViewConstants,
     compareVariantsViewConstants,
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
     type ViewConstants,
 } from './ViewConstants.ts';
+import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
 import { organismConfig } from '../types/Organism.ts';
+import { CompareToBaselineStateHandler } from './pageStateHandlers/CompareToBaselinePageStateHandler.ts';
+import { CompareVariantsPageStateHandler } from './pageStateHandlers/CompareVariantsPageStateHandler.ts';
+import { SequencingEffortsStateHandler } from './pageStateHandlers/SequencingEffortsPageStateHandler.ts';
+import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 
 export abstract class BaseView<
     PageState extends object,
@@ -41,17 +41,17 @@ export abstract class BaseView<
 }
 
 export class GenericSingleVariantView<Constants extends SingleVariantConstants> extends BaseView<
-    BaselineAndVariantData,
+    DatasetAndVariantData,
     Constants,
-    SingleVariantStateHandler
+    SingleVariantPageStateHandler
 > {
     constructor(constants: Constants) {
         super(
             constants,
-            new SingleVariantStateHandler(
+            new SingleVariantPageStateHandler(
                 constants,
                 {
-                    baselineFilter: {
+                    datasetFilter: {
                         location: {},
                         dateRange: constants.defaultDateRange,
                     },
@@ -68,7 +68,7 @@ export class GenericSingleVariantView<Constants extends SingleVariantConstants> 
 }
 
 export class GenericSequencingEffortsView<Constants extends SequencingEffortsConstants> extends BaseView<
-    BaselineData,
+    Dataset,
     Constants,
     SequencingEffortsStateHandler
 > {
@@ -78,7 +78,7 @@ export class GenericSequencingEffortsView<Constants extends SequencingEffortsCon
             new SequencingEffortsStateHandler(
                 constants,
                 {
-                    baselineFilter: {
+                    datasetFilter: {
                         location: {},
                         dateRange: constants.defaultDateRange,
                     },
@@ -93,15 +93,15 @@ export class GenericSequencingEffortsView<Constants extends SequencingEffortsCon
 export class GenericCompareVariantsView<Constants extends SingleVariantConstants> extends BaseView<
     CompareVariantsData,
     Constants,
-    CompareVariantsStateHandler
+    CompareVariantsPageStateHandler
 > {
     constructor(constants: Constants) {
         super(
             constants,
-            new CompareVariantsStateHandler(
+            new CompareVariantsPageStateHandler(
                 constants,
                 {
-                    baselineFilter: {
+                    datasetFilter: {
                         location: {},
                         dateRange: constants.defaultDateRange,
                     },
@@ -110,6 +110,34 @@ export class GenericCompareVariantsView<Constants extends SingleVariantConstants
                 organismConfig[constants.organism].pathFragment,
             ),
             compareVariantsViewConstants,
+        );
+    }
+}
+
+export class GenericCompareToBaselineView<Constants extends SingleVariantConstants> extends BaseView<
+    CompareToBaselineData,
+    Constants,
+    CompareToBaselineStateHandler
+> {
+    constructor(constants: Constants) {
+        super(
+            constants,
+            new CompareToBaselineStateHandler(
+                constants,
+                {
+                    datasetFilter: {
+                        location: {},
+                        dateRange: constants.defaultDateRange,
+                    },
+                    variants: new Map(),
+                    baselineFilter: {
+                        mutations: {},
+                        lineages: {},
+                    },
+                },
+                organismConfig[constants.organism].pathFragment,
+            ),
+            compareToBaselineViewConstants,
         );
     }
 }
