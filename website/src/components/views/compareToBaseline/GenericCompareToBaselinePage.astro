@@ -10,6 +10,7 @@ import { compareToBaselineViewKey } from '../../../views/viewKeys';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
 import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
+import { CompareToBaselineSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
 interface Props {
     organism: Organism;
@@ -52,7 +53,9 @@ const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFi
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
-    />
+    >
+        <CompareToBaselineSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
+    </CompareVariantsToBaselineStateSelector>
     <ComponentsGrid slot='dataDisplay'>
         <ComponentWrapper title='Prevalence over time'>
             <gs-prevalence-over-time
