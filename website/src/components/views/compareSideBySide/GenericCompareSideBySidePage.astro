@@ -9,6 +9,7 @@ import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
+import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
 interface Props {
     organism: Organism;
@@ -75,7 +76,12 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
                                     client:only='react'
-                                />
+                                >
+                                    <CompareSideBySideSelectorFallback
+                                        slot='fallback'
+                                        numFilters={pageState.filters.size}
+                                    />
+                                </CompareSideBySidePageStateSelector>
                             </div>
 
                             <ComponentWrapper title='Prevalence over time'>

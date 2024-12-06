@@ -35,7 +35,7 @@ export function SequencingEffortsPageStateSelector({
     );
 
     return (
-        <div className='flex flex-col gap-6 bg-gray-50 p-2'>
+        <div className='flex flex-col gap-6'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector

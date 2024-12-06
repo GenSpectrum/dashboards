@@ -13,6 +13,7 @@ import { singleVariantViewKey } from '../../../views/viewKeys';
 import ComponentHeadline from '../../ComponentHeadline.astro';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
+import { AnalyzeSingleVariantSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
 
 interface Props {
@@ -66,7 +67,9 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
-    />
+    >
+        <AnalyzeSingleVariantSelectorFallback slot='fallback' />
+    </SingleVariantPageStateSelector>
 
     {
         noVariantSelected ? (

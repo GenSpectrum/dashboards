@@ -10,6 +10,7 @@ import { getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../views/viewKeys';
+import { SequencingEffortsSelectorFallback } from '../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../pageStateSelectors/SequencingEffortsPageStateSelector';
 
 interface Props {
@@ -51,7 +52,9 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
-    />
+    >
+        <SequencingEffortsSelectorFallback slot='fallback' />
+    </SequencingEffortsPageStateSelector>
 
     <ComponentsGrid slot='dataDisplay'>
         <ComponentWrapper title='Number sequences' height='600px'>
