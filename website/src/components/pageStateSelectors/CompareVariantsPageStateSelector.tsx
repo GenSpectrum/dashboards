@@ -3,40 +3,25 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
-import type { LineageFilterConfig } from './LineageFilterInput.tsx';
+import { SelectorHeadline } from './SelectorHeadline.tsx';
+import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
-import type { Id, VariantFilter } from '../../views/View.ts';
-import { type LapisLocation, type LapisMutationQuery } from '../../views/helpers.ts';
+import type { Id } from '../../views/View.ts';
+import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
-
-export type VariantFilterConfig = {
-    lineageFilterConfigs: LineageFilterConfig[];
-    mutationFilterConfig: LapisMutationQuery;
-};
-
-function toVariantFilter(variantFilterConfig: VariantFilterConfig): VariantFilter {
-    return {
-        mutations: variantFilterConfig.mutationFilterConfig,
-        lineages: variantFilterConfig.lineageFilterConfigs.reduce((acc, lineageFilterConfig) => {
-            return { ...acc, [lineageFilterConfig.lapisField]: lineageFilterConfig.initialValue };
-        }, {}),
-    };
-}
 
 export function CompareVariantsPageStateSelector({
     locationFilterConfig,
     dateRangeFilterConfig,
     variantFilterConfigs,
-    emptyVariantFilterConfig,
     organismViewKey,
     organismsConfig,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
-    emptyVariantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
 }) {
@@ -58,7 +43,7 @@ export function CompareVariantsPageStateSelector({
         );
 
         return {
-            baselineFilter: {
+            datasetFilter: {
                 location,
                 dateRange,
             },
@@ -67,18 +52,24 @@ export function CompareVariantsPageStateSelector({
     }, [location, dateRange, variantConfigs]);
 
     return (
-        <div className='flex flex-col gap-6 bg-gray-50 p-2'>
-            <BaselineSelector
-                onLocationChange={setLocation}
-                locationFilterConfig={locationFilterConfig}
-                onDateRangeChange={setDateRange}
-                dateRangeFilterConfig={dateRangeFilterConfig}
-            />
-            <VariantsSelector
-                variantFilterConfigs={variantConfigs}
-                setVariantFilterConfigs={setVariantConfigs}
-                emptyVariantFilterConfig={emptyVariantFilterConfig}
-            />
+        <div className='flex flex-col gap-6'>
+            <div>
+                <SelectorHeadline>Filter dataset</SelectorHeadline>
+                <BaselineSelector
+                    onLocationChange={setLocation}
+                    locationFilterConfig={locationFilterConfig}
+                    onDateRangeChange={setDateRange}
+                    dateRangeFilterConfig={dateRangeFilterConfig}
+                />
+            </div>
+            <div>
+                <SelectorHeadline>Variant Filters</SelectorHeadline>
+                <VariantsSelector
+                    variantFilterConfigs={variantConfigs}
+                    setVariantFilterConfigs={setVariantConfigs}
+                    emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
+                />
+            </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
     );

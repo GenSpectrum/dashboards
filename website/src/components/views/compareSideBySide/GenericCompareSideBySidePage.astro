@@ -6,15 +6,17 @@ import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranulari
 import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
-import { type compareSideBySideViewKey } from '../../../views/viewKeys';
+import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import ComponentWrapper from '../../ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
+import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
 interface Props {
-    organismViewKey: Extract<OrganismViewKey, `${Organism}.${typeof compareSideBySideViewKey}`>;
+    organism: Organism;
 }
 
-const { organismViewKey } = Astro.props;
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
@@ -24,16 +26,16 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='flex overflow-x-auto'>
             {
-                Array.from(pageState.filters).map(([id, { variantFilter, baselineFilter }]) => {
-                    const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(baselineFilter);
+                Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
+                    const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(datasetFilter);
                     const timeGranularity = chooseGranularityBasedOnDateRange(
-                        baselineFilter.dateRange,
+                        datasetFilter.dateRange,
                         new Date(view.organismConstants.earliestDate),
                     );
                     const numeratorFilter = {
                         ...variantFilter.lineages,
                         ...variantFilter.mutations,
-                        ...baselineLapisFilter,
+                        ...datasetLapisFilter,
                     };
                     const lineageFilterConfigs = getLineageFilterConfigs(
                         view.organismConstants.lineageFilters,
@@ -56,25 +58,30 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                 <CompareSideBySidePageStateSelector
                                     locationFilterConfig={{
                                         locationFields: view.organismConstants.locationFields,
-                                        initialLocation: baselineFilter.location,
+                                        initialLocation: datasetFilter.location,
                                         placeholderText: 'Sampling location',
                                     }}
                                     dateRangeFilterConfig={{
-                                        initialDateRange: baselineFilter.dateRange,
+                                        initialDateRange: datasetFilter.dateRange,
                                         dateRangeOptions: view.organismConstants.dateRangeOptions,
                                         earliestDate: view.organismConstants.earliestDate,
                                         dateColumn: view.organismConstants.mainDateField,
                                     }}
-                                    mutationFilterConfig={{
-                                        initialMutations: variantFilter.mutations,
+                                    variantFilterConfig={{
+                                        mutationFilterConfig: variantFilter.mutations,
+                                        lineageFilterConfigs,
                                     }}
-                                    lineageFilterConfigs={lineageFilterConfigs}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
                                     client:only='react'
-                                />
+                                >
+                                    <CompareSideBySideSelectorFallback
+                                        slot='fallback'
+                                        numFilters={pageState.filters.size}
+                                    />
+                                </CompareSideBySidePageStateSelector>
                             </div>
 
                             <ComponentWrapper title='Prevalence over time'>
@@ -83,7 +90,7 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                         displayName: '',
                                         lapisFilter: numeratorFilter,
                                     })}
-                                    denominatorFilter={JSON.stringify(baselineLapisFilter)}
+                                    denominatorFilter={JSON.stringify(datasetLapisFilter)}
                                     lapisDateField={view.organismConstants.mainDateField}
                                     granularity={timeGranularity}
                                     smoothingWindow='0'

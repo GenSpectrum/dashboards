@@ -1,19 +1,20 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
-import { type BaselineAndVariantData, type CompareSideBySideData, type Id } from './View.ts';
+import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
+    GenericCompareToBaselineView,
     GenericCompareVariantsView,
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
 import type { SingleVariantConstants } from './OrganismConstants.ts';
-import { GenericCompareSideBySideStateHandler } from './PageStateHandler.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
+import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 class WestNileConstants implements SingleVariantConstants {
     public readonly organism = Organisms.westNile;
@@ -80,11 +81,11 @@ export class WestNileCompareSideBySideView extends BaseView<
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new WestNileConstants(organismsConfig);
         const defaultPageState = {
-            filters: new Map<Id, BaselineAndVariantData>([
+            filters: new Map<Id, DatasetAndVariantData>([
                 [
                     0,
                     {
-                        baselineFilter: {
+                        datasetFilter: {
                             location: {},
                             dateRange: constants.defaultDateRange,
                         },
@@ -97,7 +98,7 @@ export class WestNileCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        baselineFilter: {
+                        datasetFilter: {
                             location: {},
                             dateRange: constants.defaultDateRange,
                         },
@@ -131,6 +132,12 @@ export class WestNileSequencingEffortsView extends GenericSequencingEffortsView<
 }
 
 export class WestNileCompareVariantsView extends GenericCompareVariantsView<WestNileConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new WestNileConstants(organismsConfig));
+    }
+}
+
+export class WestNileCompareToBaselineView extends GenericCompareToBaselineView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
         super(new WestNileConstants(organismsConfig));
     }

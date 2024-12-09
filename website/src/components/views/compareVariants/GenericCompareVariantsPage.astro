@@ -1,0 +1,101 @@
+---
+import SelectVariants from './SelectVariants.astro';
+import { getDashboardsConfig } from '../../../config';
+import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
+import type { Organism } from '../../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { defaultTablePageSize } from '../../../views/View';
+import { type OrganismViewKey } from '../../../views/routing';
+import { ServerSide } from '../../../views/serverSideRouting';
+import { compareVariantsViewKey } from '../../../views/viewKeys';
+import ComponentWrapper from '../../ComponentWrapper.astro';
+import ComponentsGrid from '../../ComponentsGrid.astro';
+import { CompareVariantsPageStateSelector } from '../../pageStateSelectors/CompareVariantsPageStateSelector';
+import { CompareVariantsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
+
+interface Props {
+    organism: Organism;
+}
+
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${compareVariantsViewKey}` satisfies OrganismViewKey;
+const view = ServerSide.routing.getOrganismView(organismViewKey);
+
+const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
+
+const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(pageState.datasetFilter);
+const timeGranularity = chooseGranularityBasedOnDateRange(
+    pageState.datasetFilter.dateRange,
+    new Date(view.organismConstants.earliestDate),
+);
+
+const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageState);
+
+const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
+
+const notEnoughVariantsSelected = pageState.variants.size < 2;
+---
+
+<SingleVariantOrganismPageLayout view={view}>
+    <CompareVariantsPageStateSelector
+        slot='filters'
+        locationFilterConfig={{
+            locationFields: view.organismConstants.locationFields,
+            initialLocation: pageState.datasetFilter.location,
+            placeholderText: 'Sampling location',
+        }}
+        dateRangeFilterConfig={{
+            initialDateRange: pageState.datasetFilter.dateRange,
+            dateRangeOptions: view.organismConstants.dateRangeOptions,
+            earliestDate: view.organismConstants.earliestDate,
+            dateColumn: view.organismConstants.mainDateField,
+        }}
+        variantFilterConfigs={variantFilterConfigs}
+        organismViewKey={organismViewKey}
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        client:only='react'
+    >
+        <CompareVariantsSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
+    </CompareVariantsPageStateSelector>
+    {
+        notEnoughVariantsSelected ? (
+            <SelectVariants slot='dataDisplay' />
+        ) : (
+            <ComponentsGrid slot='dataDisplay'>
+                <ComponentWrapper title='Prevalence over time'>
+                    <gs-prevalence-over-time
+                        numeratorFilter={JSON.stringify(numeratorLapisFilters)}
+                        denominatorFilter={JSON.stringify(datasetLapisFilter)}
+                        lapisDateField={view.organismConstants.mainDateField}
+                        granularity={timeGranularity}
+                        smoothingWindow='0'
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'
+                        views={JSON.stringify(['line', 'table', 'bar', 'bubble'])}
+                    />
+                </ComponentWrapper>
+                <ComponentWrapper title='Nucleotide changes'>
+                    <gs-mutation-comparison
+                        lapisFilters={JSON.stringify(numeratorLapisFilters)}
+                        sequenceType='nucleotide'
+                        views='["venn", "table"]'
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'
+                    />
+                </ComponentWrapper>
+                <ComponentWrapper title='Amino acid changes'>
+                    <gs-mutation-comparison
+                        lapisFilters={JSON.stringify(numeratorLapisFilters)}
+                        sequenceType='amino acid'
+                        views='["venn", "table"]'
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'
+                    />
+                </ComponentWrapper>
+            </ComponentsGrid>
+        )
+    }
+</SingleVariantOrganismPageLayout>

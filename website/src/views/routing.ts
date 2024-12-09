@@ -1,33 +1,38 @@
 import type { OrganismConstants } from './OrganismConstants.ts';
-import type { PageStateHandler } from './PageStateHandler.ts';
 import type { View } from './View.ts';
 import {
     CovidAnalyzeSingleVariantView,
     CovidCompareSideBySideView,
+    CovidCompareToBaselineView,
     CovidCompareVariantsView,
     CovidSequencingEffortsView,
 } from './covid.ts';
 import {
     H5n1AnalyzeSingleVariantView,
     H5n1CompareSideBySideView,
+    H5n1CompareToBaselineView,
     H5n1CompareVariantsView,
     H5n1SequencingEffortsView,
 } from './h5n1.ts';
+import type { PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import {
     RsvAAnalyzeSingleVariantView,
     RsvACompareSideBySideView,
+    RsvACompareToBaselineView,
     RsvACompareVariantsView,
     RsvASequencingEffortsView,
 } from './rsvA.ts';
 import {
     RsvBAnalyzeSingleVariantView,
     RsvBCompareSideBySideView,
+    RsvBCompareToBaselineView,
     RsvBCompareVariantsView,
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import {
     compareSideBySideViewKey,
+    compareToBaselineViewKey,
     compareVariantsViewKey,
     sequencingEffortsViewKey,
     singleVariantViewKey,
@@ -35,6 +40,7 @@ import {
 import {
     WestNileAnalyzeSingleVariantView,
     WestNileCompareSideBySideView,
+    WestNileCompareToBaselineView,
     WestNileCompareVariantsView,
     WestNileSequencingEffortsView,
 } from './westNile.ts';
@@ -64,30 +70,35 @@ export class Routing {
                 [compareSideBySideViewKey]: new CovidCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new CovidSequencingEffortsView(organismsConfig),
                 [compareVariantsViewKey]: new CovidCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new CovidCompareToBaselineView(organismsConfig),
             },
             [Organisms.h5n1]: {
                 [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
                 [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new H5n1SequencingEffortsView(organismsConfig),
                 [compareVariantsViewKey]: new H5n1CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
             },
             [Organisms.rsvA]: {
                 [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
                 [compareSideBySideViewKey]: new RsvACompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
                 [compareVariantsViewKey]: new RsvACompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new RsvACompareToBaselineView(organismsConfig),
             },
             [Organisms.rsvB]: {
                 [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
                 [compareSideBySideViewKey]: new RsvBCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvBSequencingEffortsView(organismsConfig),
                 [compareVariantsViewKey]: new RsvBCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new RsvBCompareToBaselineView(organismsConfig),
             },
             [Organisms.westNile]: {
                 [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
                 [compareSideBySideViewKey]: new WestNileCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
                 [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new WestNileCompareToBaselineView(organismsConfig),
             },
         } as const;
 

@@ -1,6 +1,7 @@
 ---
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import { CompareSideBySidePageStateSelector } from '../../components/pageStateSelectors/CompareSideBySidePageStateSelector';
+import { CompareSideBySideSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
@@ -18,10 +19,10 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='flex overflow-x-auto'>
             {
-                Array.from(pageState.filters).map(([id, { variantFilter, baselineFilter }]) => {
-                    const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(baselineFilter);
+                Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
+                    const baselineLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(datasetFilter);
                     const timeGranularity = chooseGranularityBasedOnDateRange(
-                        baselineFilter.dateRange,
+                        datasetFilter.dateRange,
                         new Date(view.organismConstants.earliestDate),
                     );
                     const numeratorFilter = {
@@ -51,25 +52,30 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                 <CompareSideBySidePageStateSelector
                                     locationFilterConfig={{
                                         locationFields: view.organismConstants.locationFields,
-                                        initialLocation: baselineFilter.location,
+                                        initialLocation: datasetFilter.location,
                                         placeholderText: 'Sampling location',
                                     }}
                                     dateRangeFilterConfig={{
-                                        initialDateRange: baselineFilter.dateRange,
+                                        initialDateRange: datasetFilter.dateRange,
                                         dateRangeOptions: view.organismConstants.dateRangeOptions,
                                         earliestDate: view.organismConstants.earliestDate,
                                         dateColumn: view.organismConstants.mainDateField,
                                     }}
-                                    mutationFilterConfig={{
-                                        initialMutations: variantFilter.mutations,
+                                    variantFilterConfig={{
+                                        mutationFilterConfig: variantFilter.mutations,
+                                        lineageFilterConfigs,
                                     }}
-                                    lineageFilterConfigs={lineageFilterConfigs}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
                                     client:only='react'
-                                />
+                                >
+                                    <CompareSideBySideSelectorFallback
+                                        slot='fallback'
+                                        numFilters={pageState.filters.size}
+                                    />
+                                </CompareSideBySidePageStateSelector>
                             </div>
 
                             <ComponentWrapper title='Prevalence over time'>

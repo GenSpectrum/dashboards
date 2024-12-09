@@ -9,30 +9,29 @@ import { defaultTablePageSize } from '../../views/View';
 import { getLocationSubdivision } from '../../views/helpers';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
-import { type sequencingEffortsViewKey } from '../../views/viewKeys';
+import { sequencingEffortsViewKey } from '../../views/viewKeys';
+import { SequencingEffortsSelectorFallback } from '../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../pageStateSelectors/SequencingEffortsPageStateSelector';
 
 interface Props {
-    organismViewKey: Extract<
-        OrganismViewKey,
-        `${typeof Organisms.rsvA | typeof Organisms.rsvB}.${typeof sequencingEffortsViewKey}`
-    >;
+    organism: typeof Organisms.rsvA | typeof Organisms.rsvB;
 }
 
-const { organismViewKey } = Astro.props;
+const { organism } = Astro.props;
+const organismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const baselineFilter = view.pageStateHandler.toLapisFilter(pageState);
+const datasetLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 
 const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.baselineFilter.dateRange,
+    pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
-    pageState.baselineFilter.location,
+    pageState.datasetFilter.location,
 );
 ---
 
@@ -41,11 +40,11 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         slot='filters'
         locationFilterConfig={{
             locationFields: view.organismConstants.locationFields,
-            initialLocation: pageState.baselineFilter.location,
+            initialLocation: pageState.datasetFilter.location,
             placeholderText: 'Sampling location',
         }}
         dateRangeFilterConfig={{
-            initialDateRange: pageState.baselineFilter.dateRange,
+            initialDateRange: pageState.datasetFilter.dateRange,
             dateRangeOptions: view.organismConstants.dateRangeOptions,
             earliestDate: view.organismConstants.earliestDate,
             dateColumn: view.organismConstants.mainDateField,
@@ -53,14 +52,16 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
-    />
+    >
+        <SequencingEffortsSelectorFallback slot='fallback' />
+    </SequencingEffortsPageStateSelector>
 
     <ComponentsGrid slot='dataDisplay'>
         <ComponentWrapper title='Number sequences' height='600px'>
             <gs-number-sequences-over-time
                 lapisFilter={JSON.stringify({
                     displayName: '',
-                    lapisFilter: baselineFilter,
+                    lapisFilter: datasetLapisFilter,
                 })}
                 lapisDateField={view.organismConstants.mainDateField}
                 views='["bar", "line", "table"]'
@@ -74,7 +75,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                 <ComponentWrapper title={subdivisionLabel} height='600px'>
                     <gs-aggregate
                         fields={JSON.stringify([subdivisionField])}
-                        filter={JSON.stringify(baselineFilter)}
+                        filter={JSON.stringify(datasetLapisFilter)}
                         pageSize={defaultTablePageSize}
                         width='100%'
                         height='100%'
@@ -85,7 +86,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         <ComponentWrapper title='Hosts' height='600px'>
             <gs-aggregate
                 fields={JSON.stringify([view.organismConstants.hostField])}
-                filter={JSON.stringify(baselineFilter)}
+                filter={JSON.stringify(datasetLapisFilter)}
                 pageSize={defaultTablePageSize}
                 width='100%'
                 height='100%'></gs-aggregate>
@@ -93,7 +94,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         <ComponentWrapper title='Author affiliations' height='600px'>
             <gs-aggregate
                 fields={JSON.stringify([view.organismConstants.authorAffiliationsField])}
-                filter={JSON.stringify(baselineFilter)}
+                filter={JSON.stringify(datasetLapisFilter)}
                 pageSize={defaultTablePageSize}
                 width='100%'
                 height='100%'></gs-aggregate>
@@ -104,7 +105,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                     view.organismConstants.authorsField,
                     view.organismConstants.authorAffiliationsField,
                 ])}
-                filter={JSON.stringify(baselineFilter)}
+                filter={JSON.stringify(datasetLapisFilter)}
                 pageSize={defaultTablePageSize}
                 width='100%'
                 height='100%'></gs-aggregate>

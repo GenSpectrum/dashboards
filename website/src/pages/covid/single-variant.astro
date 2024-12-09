@@ -2,6 +2,7 @@
 import ComponentHeadline from '../../components/ComponentHeadline.astro';
 import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
 import SelectVariant from '../../components/views/analyzeSingleVariant/SelectVariant.astro';
@@ -19,15 +20,15 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
-const baselineFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
+const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
 const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.baselineFilter.dateRange,
+    pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
-    pageState.baselineFilter.location,
+    pageState.datasetFilter.location,
 );
 
 const lineageFilterConfigs = getLineageFilterConfigs(
@@ -39,25 +40,29 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
-    <div class='bg-gray-50' slot='filters'>
+    <div slot='filters'>
         <SingleVariantPageStateSelector
             locationFilterConfig={{
                 locationFields: view.organismConstants.locationFields,
-                initialLocation: pageState.baselineFilter.location,
+                initialLocation: pageState.datasetFilter.location,
                 placeholderText: 'Sampling location',
             }}
             dateRangeFilterConfig={{
-                initialDateRange: pageState.baselineFilter.dateRange,
+                initialDateRange: pageState.datasetFilter.dateRange,
                 dateRangeOptions: view.organismConstants.dateRangeOptions,
                 earliestDate: view.organismConstants.earliestDate,
                 dateColumn: view.organismConstants.mainDateField,
             }}
-            mutationFilterConfig={{ initialMutations: pageState.variantFilter.mutations }}
-            lineageFilterConfigs={lineageFilterConfigs}
+            variantFilterConfig={{
+                mutationFilterConfig: pageState.variantFilter.mutations,
+                lineageFilterConfigs,
+            }}
             organismViewKey={organismViewKey}
             organismsConfig={getDashboardsConfig().dashboards.organisms}
             client:only='react'
-        />
+        >
+            <AnalyzeSingleVariantSelectorFallback slot='fallback' />
+        </SingleVariantPageStateSelector>
         <div class='p-2'>
             <h2 class='my-2'>Or select a known variant:</h2>
             <CollectionsList
@@ -77,7 +82,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     <ComponentHeadline>Stats</ComponentHeadline>
                     <gs-statistics
                         numeratorFilter={JSON.stringify(variantFilter)}
-                        denominatorFilter={JSON.stringify(baselineFilter)}
+                        denominatorFilter={JSON.stringify(datasetLapisFilter)}
                         width='100%'
                         height='100%'
                     />
@@ -89,7 +94,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                                 displayName: '',
                                 lapisFilter: variantFilter,
                             })}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
+                            denominatorFilter={JSON.stringify(datasetLapisFilter)}
                             lapisDateField={view.organismConstants.mainDateField}
                             granularity={timeGranularity}
                             smoothingWindow='0'
@@ -101,7 +106,7 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     <ComponentWrapper title='Relative growth advantage'>
                         <gs-relative-growth-advantage
                             numeratorFilter={JSON.stringify(variantFilter)}
-                            denominatorFilter={JSON.stringify(baselineFilter)}
+                            denominatorFilter={JSON.stringify(datasetLapisFilter)}
                             generationTime='7'
                             pageSize={defaultTablePageSize}
                             width='100%'

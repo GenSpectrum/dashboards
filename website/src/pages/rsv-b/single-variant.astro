@@ -1,7 +1,6 @@
 ---
 import GenericAnalyzeSingleVariantPage from '../../components/views/analyzeSingleVariant/GenericAnalyzeSingleVariantPage.astro';
 import { Organisms } from '../../types/Organism';
-import { singleVariantViewKey } from '../../views/viewKeys';
 ---
 
-<GenericAnalyzeSingleVariantPage organismViewKey={`${Organisms.rsvB}.${singleVariantViewKey}`} />
+<GenericAnalyzeSingleVariantPage organism={Organisms.rsvB} />

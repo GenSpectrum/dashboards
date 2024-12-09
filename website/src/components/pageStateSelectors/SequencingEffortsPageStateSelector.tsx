@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { SelectorHeadline } from './SelectorHeadline.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import type { LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
@@ -25,7 +26,7 @@ export function SequencingEffortsPageStateSelector({
 
     const newPageState = useMemo(
         () => ({
-            baselineFilter: {
+            datasetFilter: {
                 location,
                 dateRange,
             },
@@ -34,13 +35,16 @@ export function SequencingEffortsPageStateSelector({
     );
 
     return (
-        <div className='flex flex-col gap-6 bg-gray-50 p-2'>
-            <BaselineSelector
-                onLocationChange={(location) => setLocation(location)}
-                locationFilterConfig={locationFilterConfig}
-                onDateRangeChange={(dateRange) => setDateRange(dateRange)}
-                dateRangeFilterConfig={dateRangeFilterConfig}
-            />
+        <div className='flex flex-col gap-6'>
+            <div>
+                <SelectorHeadline>Filter dataset</SelectorHeadline>
+                <BaselineSelector
+                    onLocationChange={(location) => setLocation(location)}
+                    locationFilterConfig={locationFilterConfig}
+                    onDateRangeChange={(dateRange) => setDateRange(dateRange)}
+                    dateRangeFilterConfig={dateRangeFilterConfig}
+                />
+            </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
     );
