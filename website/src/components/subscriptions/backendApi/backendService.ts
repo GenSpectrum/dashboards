@@ -60,7 +60,7 @@ class ApiService {
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response) {
-                    await this.handleErrors(error.response);
+                    this.handleErrors(error.response);
                 }
 
                 if (error.code === axiosNotFoundError) {
@@ -71,7 +71,7 @@ class ApiService {
         }
     }
 
-    private async handleErrors(response: AxiosResponse) {
+    private handleErrors(response: AxiosResponse) {
         if (response.status >= 300 || response.status < 200) {
             const backendError = problemDetailSchema.safeParse(response.data);
             if (backendError.success) {
@@ -123,10 +123,6 @@ export class BackendNotAvailable extends UserFacingError {
 }
 
 export class BackendService extends ApiService {
-    constructor(backendUrl: string) {
-        super(backendUrl);
-    }
-
     public async getSubscriptions({ userId }: { userId: string }) {
         const url = `/subscriptions`;
         return this.get({ url, requestParams: { userId }, schema: z.array(subscriptionResponseSchema) });

@@ -26,17 +26,13 @@ function getError(assertionError: AssertionError) {
 }
 
 export const lapisRequestMocks = {
-    info: (response: LapisInfo, statusCode: number = 200) => {
+    info: (response: LapisInfo, statusCode = 200) => {
         testServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver({ statusCode, response })));
     },
 };
 
 export const backendRequestMocks = {
-    getSubscriptions: (
-        requestParam: { userId: string },
-        response: SubscriptionResponse[],
-        statusCode: number = 200,
-    ) => {
+    getSubscriptions: (requestParam: { userId: string }, response: SubscriptionResponse[], statusCode = 200) => {
         testServer.use(
             http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver({ statusCode, response, requestParam })),
         );
@@ -44,7 +40,7 @@ export const backendRequestMocks = {
     getEvaluateTrigger: (
         requestParam: { userId: string; id: string },
         response: TriggerEvaluationResponse,
-        statusCode: number = 200,
+        statusCode = 200,
     ) => {
         testServer.use(
             http.get(
@@ -57,7 +53,7 @@ export const backendRequestMocks = {
         body: SubscriptionRequest,
         requestParam: { userId: string },
         response: SubscriptionResponse,
-        statusCode: number = 200,
+        statusCode = 200,
     ) => {
         testServer.use(
             http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver({ statusCode, body, response, requestParam })),
@@ -68,7 +64,7 @@ export const backendRequestMocks = {
         requestParam: { userId: string },
         pathVariables: { subscriptionId: string },
         response: SubscriptionResponse,
-        statusCode: number = 200,
+        statusCode = 200,
     ) => {
         testServer.use(
             http.put(
@@ -80,7 +76,7 @@ export const backendRequestMocks = {
     deleteSubscription: (
         requestParam: { userId: string },
         pathVariables: { subscriptionId: string },
-        statusCode: number = 204,
+        statusCode = 204,
     ) => {
         testServer.use(
             http.delete(
@@ -89,12 +85,9 @@ export const backendRequestMocks = {
             ),
         );
     },
-    getSubscriptionsBackendError: (
-        response: ProblemDetail | { notProblemDetail: string },
-        statusCode: number = 400,
-    ) => {
+    getSubscriptionsBackendError: (response: ProblemDetail | { notProblemDetail: string }, statusCode = 400) => {
         testServer.use(
-            http.get(`${DUMMY_BACKEND_URL}/subscriptions`, async () => {
+            http.get(`${DUMMY_BACKEND_URL}/subscriptions`, () => {
                 return new Response(JSON.stringify(response), {
                     status: statusCode,
                 });
@@ -103,15 +96,15 @@ export const backendRequestMocks = {
     },
 };
 
-function resolver<Request, Response>({
+function resolver({
     statusCode,
     body,
     response,
     requestParam,
 }: {
     statusCode: number;
-    body?: Request;
-    response?: Response;
+    body?: unknown;
+    response?: unknown;
     requestParam?: Record<string, string>;
 }) {
     return async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
