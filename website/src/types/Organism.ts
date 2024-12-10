@@ -6,6 +6,7 @@ export const Organisms = {
     westNile: 'westNile' as const,
     rsvA: 'rsvA' as const,
     rsvB: 'rsvB' as const,
+    mpox: 'mpox' as const,
 };
 
 export const organismConfig = {
@@ -53,6 +54,15 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+    },
+    [Organisms.mpox]: {
+        organism: Organisms.mpox,
+        pathFragment: 'mpox',
+        label: 'Mpox',
+        backgroundColor: 'bg-roseMuted',
+        backgroundColorFocus: 'group-hover:bg-rose',
+        menuListEntryDecoration: 'hover:decoration-rose',
+        borderEntryDecoration: 'hover:border-rose',
     },
 };
 export const allOrganisms = Object.keys(organismConfig) as Organism[];
