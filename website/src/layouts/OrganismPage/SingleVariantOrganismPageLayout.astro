@@ -1,10 +1,12 @@
 ---
 import OrganismPageLayout from './OrganismPageLayout.astro';
 import { getLapisUrl } from '../../config';
+import type { OrganismConstants } from '../../views/OrganismConstants';
 import type { View } from '../../views/View';
+import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 
 interface Props {
-    view: View<any, any, any>;
+    view: View<object, OrganismConstants, PageStateHandler<object>>;
 }
 
 const { view } = Astro.props;

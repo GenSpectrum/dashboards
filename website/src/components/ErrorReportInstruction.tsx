@@ -3,11 +3,7 @@ import { useRef, useState } from 'react';
 /**
  * Throw this error if you want to display the error message to the user.
  */
-export class UserFacingError extends Error {
-    constructor(message: string) {
-        super(message);
-    }
-}
+export class UserFacingError extends Error {}
 
 export function ErrorReportToastModal({ errorId, error }: { errorId: string; error: Error }) {
     const modalRef = useRef<HTMLDialogElement>(null);
@@ -88,6 +84,16 @@ export function ErrorReportInstruction({
 function CopyToClipboardButton({ getTextToCopy }: { getTextToCopy: () => string | undefined }) {
     const [copiedRecently, setCopiedRecently] = useState(false);
 
+    const onCopy = async () => {
+        const text = getTextToCopy();
+        if (text === undefined) {
+            return;
+        }
+        await navigator.clipboard.writeText(text);
+        setCopiedRecently(true);
+        setTimeout(() => setCopiedRecently(false), 3000);
+    };
+
     return (
         <div
             className='tooltip tooltip-left mx-4 my-auto'
@@ -96,18 +102,7 @@ function CopyToClipboardButton({ getTextToCopy }: { getTextToCopy: () => string 
             {copiedRecently ? (
                 <span className='iconify text-2xl text-green mdi--tick' />
             ) : (
-                <button
-                    className='iconify text-xl mdi--content-copy'
-                    onClick={async () => {
-                        const text = getTextToCopy();
-                        if (text === undefined) {
-                            return;
-                        }
-                        await navigator.clipboard.writeText(text);
-                        setCopiedRecently(true);
-                        setTimeout(() => setCopiedRecently(false), 3000);
-                    }}
-                />
+                <button className='iconify text-xl mdi--content-copy' onClick={void onCopy} />
             )}
         </div>
     );

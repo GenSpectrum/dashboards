@@ -74,7 +74,7 @@ import { ServerSide } from '../views/serverSideRouting';
                             {organism.label}
                         </h3>
                         <ul class='mx-6 mb-4'>
-                            {Object.values(ServerSide.routing.views[organism.organism]).map((view) => (
+                            {ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => (
                                 <MainMenuItem
                                     iconType={view.viewConstants.iconType}
                                     menuListEntryDecoration={organism.menuListEntryDecoration}
