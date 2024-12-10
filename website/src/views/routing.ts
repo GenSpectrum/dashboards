@@ -14,6 +14,13 @@ import {
     H5n1CompareVariantsView,
     H5n1SequencingEffortsView,
 } from './h5n1.ts';
+import {
+    MpoxAnalyzeSingleVariantView,
+    MpoxCompareSideBySideView,
+    MpoxCompareToBaselineView,
+    MpoxCompareVariantsView,
+    MpoxSequencingEffortsView,
+} from './mpox.ts';
 import type { PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import {
     RsvAAnalyzeSingleVariantView,
@@ -100,6 +107,13 @@ export class Routing {
                 [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new WestNileCompareToBaselineView(organismsConfig),
             },
+            [Organisms.mpox]: {
+                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
+                [compareSideBySideViewKey]: new MpoxCompareSideBySideView(organismsConfig),
+                [sequencingEffortsViewKey]: new MpoxSequencingEffortsView(organismsConfig),
+                [compareVariantsViewKey]: new MpoxCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new MpoxCompareToBaselineView(organismsConfig),
+            },
         } as const;
 
         this.externalPages = this.initializeExternalPages(organismsConfig);
@@ -117,6 +131,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.rsvB]);
             case Organisms.westNile:
                 return Object.values(this.views[Organisms.westNile]);
+            case Organisms.mpox:
+                return Object.values(this.views[Organisms.mpox]);
         }
     }
 
