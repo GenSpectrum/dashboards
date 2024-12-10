@@ -1,5 +1,7 @@
 ---
 import { ServerSide } from '../../views/serverSideRouting';
 
-return Astro.redirect(ServerSide.routing.getOrganismView('covid.singleVariantView').getDefaultPageUrl());
+return Astro.redirect(
+    ServerSide.routing.getOrganismView('covid.singleVariantView').pageStateHandler.getDefaultPageUrl(),
+);
 ---

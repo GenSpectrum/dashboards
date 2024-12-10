@@ -13,7 +13,7 @@ import type { SingleVariantConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
-import type { DataOrigin } from '../types/dataOrigins.ts';
+import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 const earliestDate = '1905-01-01';
@@ -49,7 +49,7 @@ class H5n1Constants implements SingleVariantConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
-    public readonly dataOrigins: DataOrigin[] = ['insdc'];
+    public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;

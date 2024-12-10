@@ -23,7 +23,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
-import type { DataOrigin } from '../types/dataOrigins.ts';
+import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SequencingEffortsStateHandler } from './pageStateHandlers/SequencingEffortsPageStateHandler.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 
@@ -60,7 +60,7 @@ class CovidConstants implements SingleVariantConstants {
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
-    public readonly dataOrigins: DataOrigin[] = ['nextstrain'];
+    public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
