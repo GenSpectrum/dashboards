@@ -35,7 +35,7 @@ dashboards:
     mpox:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/mpox"
-        mainDateField: "sampleCollectionDateRangeLower"
+        mainDateField: "sampleCollectionDate"
         locationFields:
           - "country"
           - "division"
@@ -52,7 +52,7 @@ dashboards:
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
