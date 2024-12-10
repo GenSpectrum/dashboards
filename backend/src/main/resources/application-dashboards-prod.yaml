@@ -52,7 +52,7 @@ dashboards:
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
