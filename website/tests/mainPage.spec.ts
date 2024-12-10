@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const organisms = ['SARS-CoV-2', 'Influenza A/H5N1', 'West Nile', 'RSV-A', 'RSV-B'];
+const organisms = ['SARS-CoV-2', 'Influenza A/H5N1', 'West Nile', 'RSV-A', 'RSV-B', 'Mpox'];
 const views = [
     {
         linkName: 'Analyze a single variant',
