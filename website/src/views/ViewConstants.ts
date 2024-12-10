@@ -14,9 +14,10 @@ export const singleVariantViewConstants = {
     iconType: 'magnify',
 } as const satisfies ViewConstants;
 
+export const nonBreakingHyphen = '\u2011';
 export const compareSideBySideViewConstants = {
-    label: 'Compare side-by-side',
-    labelLong: 'Compare variants side-by-side',
+    label: `Compare side${nonBreakingHyphen}by${nonBreakingHyphen}side`,
+    labelLong: `Compare variants side${nonBreakingHyphen}by${nonBreakingHyphen}side`,
     pathFragment: 'compare-side-by-side',
     iconType: 'table',
 } as const satisfies ViewConstants;

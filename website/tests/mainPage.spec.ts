@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { nonBreakingHyphen } from '../src/views/ViewConstants.ts';
+
 const organisms = ['SARS-CoV-2', 'Influenza A/H5N1', 'West Nile', 'RSV-A', 'RSV-B', 'Mpox'];
 const views = [
     {
@@ -8,8 +10,8 @@ const views = [
         expectedHeadline: 'Analyze a single variant',
     },
     {
-        linkName: 'Compare variants side-by-side',
-        title: 'Compare side-by-side',
+        linkName: `Compare variants side${nonBreakingHyphen}by${nonBreakingHyphen}side`,
+        title: `Compare side${nonBreakingHyphen}by${nonBreakingHyphen}side`,
         expectedHeadline: 'Prevalence over time',
     },
     { linkName: 'Sequencing efforts', title: 'Sequencing efforts', expectedHeadline: 'Number sequences' },
