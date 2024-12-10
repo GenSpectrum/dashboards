@@ -35,7 +35,7 @@ dashboards:
     mpox:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/mpox"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "country"
           - "division"
