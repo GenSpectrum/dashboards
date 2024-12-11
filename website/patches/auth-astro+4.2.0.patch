@@ -64,10 +64,10 @@ index 8a30c9e..d853a86 100644
  	authorizationParams?: SignInAuthorizationParams
  ) {
 diff --git a/node_modules/auth-astro/src/integration.ts b/node_modules/auth-astro/src/integration.ts
-index f749024..9200d5c 100644
+index 04262ae..5b19bc6 100644
 --- a/node_modules/auth-astro/src/integration.ts
 +++ b/node_modules/auth-astro/src/integration.ts
-@@ -41,7 +41,7 @@ export default (config: AstroAuthConfig = {}): AstroIntegration => ({
+@@ -34,7 +34,7 @@ export default (config: AstroAuthConfig = {}): AstroIntegration => ({
  				logger.error('No Adapter found, please make sure you provide one in your Astro config')
  			}
  			const edge = ['@astrojs/vercel/edge', '@astrojs/cloudflare'].includes(
