@@ -1,26 +1,25 @@
 ---
-import ComponentWrapper from '../../components/ComponentWrapper.astro';
-import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import { getDashboardsConfig } from '../../config';
-import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { type Organisms } from '../../types/Organism';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize } from '../../views/View';
-import { getLocationSubdivision } from '../../views/helpers';
-import type { OrganismViewKey } from '../../views/routing';
-import { ServerSide } from '../../views/serverSideRouting';
-import { sequencingEffortsViewKey } from '../../views/viewKeys';
-import { SequencingEffortsSelectorFallback } from '../pageStateSelectors/FallbackElement';
-import { SequencingEffortsPageStateSelector } from '../pageStateSelectors/SequencingEffortsPageStateSelector';
+import { getDashboardsConfig } from '../../../config';
+import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
+import { type Organism } from '../../../types/Organism';
+import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { defaultTablePageSize } from '../../../views/View';
+import { getLocationSubdivision } from '../../../views/helpers';
+import { type OrganismViewKey } from '../../../views/routing';
+import { ServerSide } from '../../../views/serverSideRouting';
+import { sequencingEffortsViewKey } from '../../../views/viewKeys';
+import ComponentWrapper from '../../ComponentWrapper.astro';
+import ComponentsGrid from '../../ComponentsGrid.astro';
+import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
+import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
 interface Props {
-    organism: typeof Organisms.rsvA | typeof Organisms.rsvB;
+    organism: Organism;
 }
 
 const { organism } = Astro.props;
-const organismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
+const organismViewKey: OrganismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
-
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const datasetLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
@@ -91,24 +90,18 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
                 width='100%'
                 height='100%'></gs-aggregate>
         </ComponentWrapper>
-        <ComponentWrapper title='Author affiliations' height='600px'>
-            <gs-aggregate
-                fields={JSON.stringify([view.organismConstants.authorAffiliationsField])}
-                filter={JSON.stringify(datasetLapisFilter)}
-                pageSize={defaultTablePageSize}
-                width='100%'
-                height='100%'></gs-aggregate>
-        </ComponentWrapper>
-        <ComponentWrapper title='Authors' height='600px'>
-            <gs-aggregate
-                fields={JSON.stringify([
-                    view.organismConstants.authorsField,
-                    view.organismConstants.authorAffiliationsField,
-                ])}
-                filter={JSON.stringify(datasetLapisFilter)}
-                pageSize={defaultTablePageSize}
-                width='100%'
-                height='100%'></gs-aggregate>
-        </ComponentWrapper>
+        {
+            view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height }) => (
+                <ComponentWrapper title={label} height={height}>
+                    <gs-aggregate
+                        fields={JSON.stringify(fields)}
+                        filter={JSON.stringify(datasetLapisFilter)}
+                        pageSize={defaultTablePageSize}
+                        width='100%'
+                        height='100%'
+                    />
+                </ComponentWrapper>
+            ))
+        }
     </ComponentsGrid>
 </SingleVariantOrganismPageLayout>
