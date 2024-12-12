@@ -66,6 +66,9 @@ export type OrganismViewKey = {
     }[ViewKey<Organism>];
 }[keyof ViewsMap];
 
+type OrganismExtractor<T, ViewKey extends string> = T extends `${infer O}.${ViewKey}` ? O : never;
+export type OrganismWithViewKey<ViewKey extends string> = OrganismExtractor<OrganismViewKey, ViewKey>;
+
 export class Routing {
     public readonly views;
     public readonly externalPages;
