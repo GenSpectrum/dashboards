@@ -1,3 +1,5 @@
+import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-components/util';
+
 import type { SingleVariantConstants } from '../OrganismConstants.ts';
 import {
     type CompareToBaselineData,
@@ -12,14 +14,12 @@ import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    type LapisFilter,
     setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from '../helpers.ts';
 import {
     decodeFiltersFromSearch,
-    type NamedLapisFilter,
     type PageStateHandler,
     searchParamsFromFilterMap,
     toDisplayName,

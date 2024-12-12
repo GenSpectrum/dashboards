@@ -1,3 +1,5 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import type { SingleVariantConstants } from '../OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from '../View.ts';
 import { compareSideBySideViewConstants } from '../ViewConstants.ts';
@@ -6,7 +8,6 @@ import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    type LapisFilter,
     setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,

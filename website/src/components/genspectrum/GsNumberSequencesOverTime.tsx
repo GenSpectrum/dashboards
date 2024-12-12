@@ -1,16 +1,5 @@
 import '@genspectrum/dashboard-components/components';
-
-import type { LapisFilter } from './GsPrevalenceOverTime.tsx';
-
-type LapisFilters =
-    | {
-          lapisFilter: LapisFilter;
-          displayName: string;
-      }
-    | {
-          lapisFilter: LapisFilter;
-          displayName: string;
-      }[];
+import type { NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
 type Views = 'bar' | 'line' | 'table';
 
@@ -27,7 +16,7 @@ export function GsNumberSequencesOverTime({
     pageSize,
 }: {
     lapisDateField: string;
-    lapisFilter?: LapisFilters;
+    lapisFilter: NamedLapisFilter[];
     views?: Views[];
     width?: string;
     height?: string;

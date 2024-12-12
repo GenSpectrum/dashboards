@@ -7,7 +7,6 @@ import { organismSchema } from './Organism.ts';
 export const lapisFilterSchema = z.record(
     z.union([z.string(), z.number(), z.null(), z.undefined(), z.boolean(), z.array(z.string())]),
 );
-export type LapisFilter = z.infer<typeof lapisFilterSchema>;
 
 const triggerEvaluationConditionMetSchema = z.object({
     evaluatedValue: z.number(),

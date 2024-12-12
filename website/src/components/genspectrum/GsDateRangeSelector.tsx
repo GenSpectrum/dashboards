@@ -9,10 +9,10 @@ export function GsDateRangeSelector({
     initialValue,
     dateRangeOptions,
     earliestDate,
-    dateColumn,
+    lapisDateField,
     width,
 }: {
-    dateColumn: string;
+    lapisDateField: string;
     onDateRangeChange?: (dateRange: DateRangeOption) => void;
     initialValue?: DateRangeOption;
     dateRangeOptions?: DateRangeOption[];
@@ -50,7 +50,7 @@ export function GsDateRangeSelector({
                 );
             }
         };
-    }, [dateRangeOptions, dateColumn, onDateRangeChange, dateRangeSelectorRef]);
+    }, [dateRangeOptions, lapisDateField, onDateRangeChange, dateRangeSelectorRef]);
 
     const isCustom = initialValue?.label === CustomDateRangeLabel;
 
@@ -62,7 +62,7 @@ export function GsDateRangeSelector({
             initialValue={isCustom ? undefined : initialValue?.label}
             initialDateFrom={isCustom ? initialValue.dateFrom : undefined}
             initialDateTo={isCustom ? initialValue.dateTo : undefined}
-            dateColumn={dateColumn}
+            lapisDateField={lapisDateField}
             width={width}
         ></gs-date-range-selector>
     );

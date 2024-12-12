@@ -1,5 +1,6 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
-import type { LapisFilter } from '../../../types/Subscription.ts';
 import { GsLocationFilter } from '../../genspectrum/GsLocationFilter.tsx';
 
 export function BaselineInput({ onBaselineChange }: { onBaselineChange: (baseline: LapisFilter) => void }) {

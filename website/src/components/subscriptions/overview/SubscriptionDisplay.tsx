@@ -1,8 +1,9 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import type { PropsWithChildren } from 'react';
 
 import { type DateWindow, dateWindowConfig } from '../../../types/DateWindow.ts';
 import { type EvaluationInterval } from '../../../types/EvaluationInterval.ts';
-import type { CountTrigger, LapisFilter, ProportionTrigger, Subscription } from '../../../types/Subscription.ts';
+import type { CountTrigger, ProportionTrigger, Subscription } from '../../../types/Subscription.ts';
 import type { WithClassName } from '../../../types/WithClassName.ts';
 import { proportionAsPercent } from '../../../util/proportionAsPercent.ts';
 

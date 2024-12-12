@@ -3,13 +3,14 @@ import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { type Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize } from '../../../views/View';
+import { ComponentHeight } from '../../../views/OrganismConstants';
 import { getLocationSubdivision } from '../../../views/helpers';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
-import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
+import GsAggregate from '../../genspectrum/GsAggregate.astro';
+import GsNumberSequencesOverTime from '../../genspectrum/GsNumberSequencesOverTime.astro';
 import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
@@ -56,51 +57,35 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     </SequencingEffortsPageStateSelector>
 
     <ComponentsGrid slot='dataDisplay'>
-        <ComponentWrapper title='Number sequences' height='600px'>
-            <gs-number-sequences-over-time
-                lapisFilter={JSON.stringify({
+        <GsNumberSequencesOverTime
+            lapisFilters={[
+                {
                     displayName: '',
                     lapisFilter: datasetLapisFilter,
-                })}
-                lapisDateField={view.organismConstants.mainDateField}
-                views='["bar", "line", "table"]'
-                pageSize={defaultTablePageSize}
-                width='100%'
-                height='100%'
-                granularity={timeGranularity}></gs-number-sequences-over-time>
-        </ComponentWrapper>
+                },
+            ]}
+            lapisDateField={view.organismConstants.mainDateField}
+            granularity={timeGranularity}
+        />
         {
             subdivisionField !== undefined && (
-                <ComponentWrapper title={subdivisionLabel} height='600px'>
-                    <gs-aggregate
-                        fields={JSON.stringify([subdivisionField])}
-                        filter={JSON.stringify(datasetLapisFilter)}
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'
-                    />
-                </ComponentWrapper>
+                <GsAggregate
+                    title={subdivisionLabel}
+                    height={ComponentHeight.large}
+                    fields={[subdivisionField]}
+                    lapisFilter={datasetLapisFilter}
+                />
             )
         }
-        <ComponentWrapper title='Hosts' height='600px'>
-            <gs-aggregate
-                fields={JSON.stringify([view.organismConstants.hostField])}
-                filter={JSON.stringify(datasetLapisFilter)}
-                pageSize={defaultTablePageSize}
-                width='100%'
-                height='100%'></gs-aggregate>
-        </ComponentWrapper>
+        <GsAggregate
+            title='Hosts'
+            height={ComponentHeight.large}
+            fields={[view.organismConstants.hostField]}
+            lapisFilter={datasetLapisFilter}
+        />
         {
             view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height }) => (
-                <ComponentWrapper title={label} height={height}>
-                    <gs-aggregate
-                        fields={JSON.stringify(fields)}
-                        filter={JSON.stringify(datasetLapisFilter)}
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'
-                    />
-                </ComponentWrapper>
+                <GsAggregate title={label} height={height} fields={fields} lapisFilter={datasetLapisFilter} />
             ))
         }
     </ComponentsGrid>

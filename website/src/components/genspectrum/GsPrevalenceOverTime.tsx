@@ -1,18 +1,6 @@
 import '@genspectrum/dashboard-components/components';
+import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
-export type LapisFilter = Record<string, string | number | null | boolean | undefined | string[]>;
-
-type NumeratorFilter =
-    | {
-          lapisFilter: LapisFilter;
-          displayName: string;
-      }
-    | {
-          lapisFilter: LapisFilter;
-          displayName: string;
-      }[];
-
-type DenominatorFilter = LapisFilter;
 type Views = 'bar' | 'line' | 'bubble' | 'table';
 type ConfidenceIntervalMethod = 'none' | 'wilson';
 type AxisMax = 'maxInData' | 'limitTo1' | number;
@@ -30,8 +18,8 @@ export function GsPrevalenceOverTime({
     pageSize,
     yAxisMaxLinear,
 }: {
-    numeratorFilter: NumeratorFilter;
-    denominatorFilter: DenominatorFilter;
+    numeratorFilter: NamedLapisFilter[];
+    denominatorFilter: LapisFilter;
     views?: Views[];
     granularity?: 'day' | 'week' | 'month' | 'year';
     smoothingWindow?: number;
