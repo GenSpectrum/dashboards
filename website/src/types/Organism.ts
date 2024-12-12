@@ -7,6 +7,7 @@ export const Organisms = {
     rsvA: 'rsvA' as const,
     rsvB: 'rsvB' as const,
     mpox: 'mpox' as const,
+    flu: 'flu' as const,
 };
 
 export const organismConfig = {
@@ -23,6 +24,15 @@ export const organismConfig = {
         organism: Organisms.h5n1,
         pathFragment: 'flu/h5n1',
         label: 'Influenza A/H5N1',
+        backgroundColor: 'bg-cyanMuted',
+        backgroundColorFocus: 'group-hover:bg-cyan',
+        menuListEntryDecoration: 'decoration-cyan',
+        borderEntryDecoration: 'hover:border-cyan',
+    },
+    [Organisms.flu]: {
+        organism: Organisms.flu,
+        pathFragment: 'flu',
+        label: 'Influenza A',
         backgroundColor: 'bg-cyanMuted',
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
