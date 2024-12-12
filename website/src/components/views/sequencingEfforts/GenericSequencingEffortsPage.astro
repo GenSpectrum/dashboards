@@ -1,11 +1,10 @@
 ---
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { type Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
 import { getLocationSubdivision } from '../../../views/helpers';
-import { type OrganismViewKey } from '../../../views/routing';
+import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
 import ComponentsGrid from '../../ComponentsGrid.astro';
@@ -14,8 +13,9 @@ import GsNumberSequencesOverTime from '../../genspectrum/GsNumberSequencesOverTi
 import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
+type OrganismViewCompareVariant = OrganismWithViewKey<typeof sequencingEffortsViewKey>;
 interface Props {
-    organism: Organism;
+    organism: OrganismViewCompareVariant;
 }
 
 const { organism } = Astro.props;

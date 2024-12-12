@@ -1,9 +1,8 @@
 ---
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import type { Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { type OrganismViewKey } from '../../../views/routing';
+import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
 import ComponentsGrid from '../../ComponentsGrid.astro';
@@ -11,8 +10,9 @@ import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
 import { CompareToBaselineSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
+type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareToBaselineViewKey>;
 interface Props {
-    organism: Organism;
+    organism: OrganismViewCompareVariant;
 }
 
 const { organism } = Astro.props;

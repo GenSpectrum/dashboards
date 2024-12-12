@@ -1,10 +1,9 @@
 ---
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismPageLayout from '../../../layouts/OrganismPage/OrganismPageLayout.astro';
-import { type Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
-import { type OrganismViewKey } from '../../../views/routing';
+import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import GsAggregate from '../../genspectrum/GsAggregate.astro';
@@ -13,8 +12,9 @@ import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
+type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareSideBySideViewKey>;
 interface Props {
-    organism: Organism;
+    organism: OrganismViewCompareVariant;
 }
 
 const { organism } = Astro.props;

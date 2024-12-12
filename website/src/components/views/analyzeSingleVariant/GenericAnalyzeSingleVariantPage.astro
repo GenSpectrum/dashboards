@@ -2,12 +2,11 @@
 import SelectVariant from './SelectVariant.astro';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import type { Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
 import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/helpers';
-import { type OrganismViewKey } from '../../../views/routing';
+import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
 import ComponentHeadline from '../../ComponentHeadline.astro';
@@ -19,8 +18,9 @@ import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { AnalyzeSingleVariantSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
 
+type OrganismViewCompareVariant = OrganismWithViewKey<typeof singleVariantViewKey>;
 interface Props {
-    organism: Organism;
+    organism: OrganismViewCompareVariant;
 }
 
 const { organism } = Astro.props;
