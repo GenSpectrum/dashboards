@@ -21,6 +21,7 @@ const mockConstants: SingleVariantConstants = {
             initialValue: undefined,
         },
     ],
+    additionalSequencingEffortsFields: [],
 };
 
 const mockDefaultPageState: CompareToBaselineData = {

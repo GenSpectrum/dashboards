@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import type { SingleVariantConstants } from './OrganismConstants.ts';
+import { getPathoplexusAdditionalSequencingEffortsFields, type SingleVariantConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -46,14 +46,11 @@ class WestNileConstants implements SingleVariantConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
-    public readonly additionalSequencingEffortsFields = [
-        { label: 'Collection device', fieldName: 'collectionDevice' },
-        { label: 'Collection method', fieldName: 'collectionMethod' },
-        { label: 'Purpose of sampling', fieldName: 'purposeOfSampling' },
-        { label: 'Sample type', fieldName: 'sampleType' },
-        { label: 'Amplicon PCR primer scheme', fieldName: 'ampliconPcrPrimerScheme' },
-        { label: 'Sequencing protocol', fieldName: 'sequencingProtocol' },
-    ];
+
+    public get additionalSequencingEffortsFields() {
+        return getPathoplexusAdditionalSequencingEffortsFields(this);
+    }
+
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 

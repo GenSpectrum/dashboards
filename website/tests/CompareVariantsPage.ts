@@ -1,11 +1,13 @@
 import { expect, type Page } from '@playwright/test';
 
+import { ViewPage } from './ViewPage.ts';
 import { type Organism, organismConfig } from '../src/types/Organism.ts';
 
-export class CompareVariantsPage {
+export class CompareVariantsPage extends ViewPage {
     public readonly selectVariantsMessage;
 
-    constructor(public readonly page: Page) {
+    constructor(page: Page) {
+        super(page);
         this.selectVariantsMessage = this.page.getByText('please select two or more variants', { exact: false });
     }
 
@@ -21,13 +23,5 @@ export class CompareVariantsPage {
         await expect(lineageFieldLocator).toHaveCount(numberLineageFields + 1);
 
         await lineageFieldLocator.last().fill(lineage);
-    }
-
-    public async submitFilters() {
-        await this.page.getByRole('button', { name: 'Apply filters' }).click();
-    }
-
-    public diagramTitle(title: string) {
-        return this.page.getByRole('heading', { name: title });
     }
 }
