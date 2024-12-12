@@ -3,11 +3,13 @@ import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismPageLayout from '../../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { type Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
-import ComponentWrapper from '../../ComponentWrapper.astro';
+import GsAggregate from '../../genspectrum/GsAggregate.astro';
+import GsMutations from '../../genspectrum/GsMutations.astro';
+import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
@@ -84,61 +86,29 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                 </CompareSideBySidePageStateSelector>
                             </div>
 
-                            <ComponentWrapper title='Prevalence over time'>
-                                <gs-prevalence-over-time
-                                    numeratorFilter={JSON.stringify({
+                            <GsPrevalenceOverTime
+                                numeratorFilters={[
+                                    {
                                         displayName: '',
                                         lapisFilter: numeratorFilter,
-                                    })}
-                                    denominatorFilter={JSON.stringify(datasetLapisFilter)}
-                                    lapisDateField={view.organismConstants.mainDateField}
-                                    granularity={timeGranularity}
-                                    smoothingWindow='0'
-                                    pageSize={defaultTablePageSize}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </ComponentWrapper>
-                            <ComponentWrapper title='Nucleotide mutations'>
-                                <gs-mutations
-                                    lapisFilter={JSON.stringify(numeratorFilter)}
-                                    sequenceType='nucleotide'
-                                    views='["grid", "table", "insertions"]'
-                                    pageSize={defaultTablePageSize}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </ComponentWrapper>
-                            <ComponentWrapper title='Amino acid mutations'>
-                                <gs-mutations
-                                    lapisFilter={JSON.stringify(numeratorFilter)}
-                                    sequenceType='amino acid'
-                                    views='["grid", "table", "insertions"]'
-                                    pageSize={defaultTablePageSize}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </ComponentWrapper>
-                            <ComponentWrapper title='Sub-lineages'>
-                                <gs-aggregate
-                                    fields={JSON.stringify(
-                                        getLineageFilterFields(view.organismConstants.lineageFilters),
-                                    )}
-                                    filter={JSON.stringify(numeratorFilter)}
-                                    pageSize={defaultTablePageSize}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </ComponentWrapper>
-                            <ComponentWrapper title='Hosts'>
-                                <gs-aggregate
-                                    fields={JSON.stringify([view.organismConstants.hostField])}
-                                    filter={JSON.stringify(numeratorFilter)}
-                                    pageSize={defaultTablePageSize}
-                                    width='100%'
-                                    height='100%'
-                                />
-                            </ComponentWrapper>
+                                    },
+                                ]}
+                                denominatorFilter={datasetLapisFilter}
+                                lapisDateField={view.organismConstants.mainDateField}
+                                granularity={timeGranularity}
+                            />
+                            <GsMutations lapisFilter={numeratorFilter} sequenceType='nucleotide' />
+                            <GsMutations lapisFilter={numeratorFilter} sequenceType='amino acid' />
+                            <GsAggregate
+                                title='Sub-lineages'
+                                fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
+                                lapisFilter={numeratorFilter}
+                            />
+                            <GsAggregate
+                                title='Hosts'
+                                fields={[view.organismConstants.hostField]}
+                                lapisFilter={numeratorFilter}
+                            />
                         </div>
                     );
                 })

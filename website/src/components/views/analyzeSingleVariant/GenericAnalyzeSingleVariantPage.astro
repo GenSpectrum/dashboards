@@ -5,14 +5,17 @@ import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/Singl
 import type { Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
-import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/helpers';
 import { type OrganismViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
 import ComponentHeadline from '../../ComponentHeadline.astro';
-import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
+import GsAggregate from '../../genspectrum/GsAggregate.astro';
+import GsMutations from '../../genspectrum/GsMutations.astro';
+import GsMutationsOverTime from '../../genspectrum/GsMutationsOverTime.astro';
+import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { AnalyzeSingleVariantSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
 
@@ -86,94 +89,49 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     />
                 </div>
                 <ComponentsGrid>
-                    <ComponentWrapper title='Prevalence over time'>
-                        <gs-prevalence-over-time
-                            numeratorFilter={JSON.stringify({
+                    <GsPrevalenceOverTime
+                        numeratorFilters={[
+                            {
                                 displayName: '',
                                 lapisFilter: variantLapisFilter,
-                            })}
-                            denominatorFilter={JSON.stringify(datasetLapisFilter)}
-                            lapisDateField={view.organismConstants.mainDateField}
-                            granularity={timeGranularity}
-                            smoothingWindow='0'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-                    <ComponentWrapper title='Nucleotide mutations'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantLapisFilter)}
-                            sequenceType='nucleotide'
-                            views='["grid", "table", "insertions"]'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-                    <ComponentWrapper title='Amino acid mutations'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantLapisFilter)}
-                            sequenceType='amino acid'
-                            views='["grid", "table", "insertions"]'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
+                            },
+                        ]}
+                        denominatorFilter={datasetLapisFilter}
+                        lapisDateField={view.organismConstants.mainDateField}
+                        granularity={timeGranularity}
+                    />
+                    <GsMutations lapisFilter={variantLapisFilter} sequenceType='nucleotide' />
+                    <GsMutations lapisFilter={variantLapisFilter} sequenceType='amino acid' />
                     {subdivisionField !== undefined && (
-                        <ComponentWrapper title={subdivisionLabel}>
-                            <gs-aggregate
-                                fields={JSON.stringify([subdivisionField])}
-                                filter={JSON.stringify(variantLapisFilter)}
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'
-                            />
-                        </ComponentWrapper>
+                        <GsAggregate
+                            title={subdivisionLabel}
+                            fields={[subdivisionField]}
+                            lapisFilter={variantLapisFilter}
+                        />
                     )}
-                    <ComponentWrapper title='Clades and lineages'>
-                        <gs-aggregate
-                            fields={JSON.stringify(getLineageFilterFields(view.organismConstants.lineageFilters))}
-                            filter={JSON.stringify(variantLapisFilter)}
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-                    <ComponentWrapper title='Hosts'>
-                        <gs-aggregate
-                            fields={JSON.stringify([view.organismConstants.hostField])}
-                            filter={JSON.stringify(variantLapisFilter)}
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
+                    <GsAggregate
+                        title='Clades and lineages'
+                        fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
+                        lapisFilter={variantLapisFilter}
+                    />
+                    <GsAggregate
+                        title='Hosts'
+                        fields={[view.organismConstants.hostField]}
+                        lapisFilter={variantLapisFilter}
+                    />
                 </ComponentsGrid>
-                <ComponentWrapper title='Nucleotide mutations over time' height='600px'>
-                    <gs-mutations-over-time
-                        width='100%'
-                        height='100%'
-                        lapisFilter={JSON.stringify(variantLapisFilter)}
-                        sequenceType='nucleotide'
-                        views='["grid"]'
-                        granularity={timeGranularity}
-                        lapisDateField={view.organismConstants.mainDateField}
-                    />
-                </ComponentWrapper>
-
-                <ComponentWrapper title='Amino acid mutations over time' height='600px'>
-                    <gs-mutations-over-time
-                        width='100%'
-                        height='100%'
-                        lapisFilter={JSON.stringify(variantLapisFilter)}
-                        sequenceType='amino acid'
-                        views='["grid"]'
-                        granularity={timeGranularity}
-                        lapisDateField={view.organismConstants.mainDateField}
-                    />
-                </ComponentWrapper>
+                <GsMutationsOverTime
+                    lapisFilter={variantLapisFilter}
+                    sequenceType='nucleotide'
+                    granularity={timeGranularity}
+                    lapisDateField={view.organismConstants.mainDateField}
+                />
+                <GsMutationsOverTime
+                    lapisFilter={variantLapisFilter}
+                    sequenceType='amino acid'
+                    granularity={timeGranularity}
+                    lapisDateField={view.organismConstants.mainDateField}
+                />
             </div>
         )
     }

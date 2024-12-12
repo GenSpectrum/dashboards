@@ -40,7 +40,7 @@ export function GsTextInput<LapisField extends string>({
             lapisField={lapisField}
             placeholderText={placeholderText}
             width={width}
-            initialValue={initialValue}
+            initialValue={initialValue ?? ''}
         ></gs-text-input>
     );
 }

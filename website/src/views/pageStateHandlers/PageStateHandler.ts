@@ -1,6 +1,8 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import type { SequencingEffortsConstants } from '../OrganismConstants.ts';
 import { type Dataset, type Id, type VariantFilter } from '../View.ts';
-import { type LapisFilter, type LapisLocation } from '../helpers.ts';
+import { type LapisLocation } from '../helpers.ts';
 
 export interface PageStateHandler<PageState extends object> {
     parsePageStateFromUrl(url: URL): PageState;
@@ -78,11 +80,6 @@ export function searchParamsFromFilterMap<Entry>(
 
     return encodeMultipleFiltersToUrlSearchParam(searchParameterMap);
 }
-
-export type NamedLapisFilter = {
-    lapisFilter: LapisFilter;
-    displayName: string;
-};
 
 export function toDisplayName(variantFilter: VariantFilter) {
     return [

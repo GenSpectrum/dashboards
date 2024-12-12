@@ -1,3 +1,4 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useState } from 'react';
 
 import { BaselineInput } from './BaselineInput.tsx';
@@ -6,7 +7,7 @@ import { DateWindowInput } from './DateWindowInput.tsx';
 import { type TriggerType, TriggerTypeInput } from './TriggerTypeInput.tsx';
 import { VariantInput } from './VariantInput.tsx';
 import type { DateWindow } from '../../../types/DateWindow.ts';
-import type { LapisFilter, Trigger } from '../../../types/Subscription.ts';
+import type { Trigger } from '../../../types/Subscription.ts';
 
 export function TriggerInput({
     onTriggerChange,

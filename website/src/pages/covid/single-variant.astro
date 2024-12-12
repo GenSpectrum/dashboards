@@ -1,7 +1,11 @@
 ---
 import ComponentHeadline from '../../components/ComponentHeadline.astro';
-import ComponentWrapper from '../../components/ComponentWrapper.astro';
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
+import GsAggregate from '../../components/genspectrum/GsAggregate.astro';
+import GsMutations from '../../components/genspectrum/GsMutations.astro';
+import GsMutationsOverTime from '../../components/genspectrum/GsMutationsOverTime.astro';
+import GsPrevalenceOverTime from '../../components/genspectrum/GsPrevalenceOverTime.astro';
+import GsRelativeGrowthAdvantage from '../../components/genspectrum/GsRelativeGrowthAdvantage.astro';
 import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
@@ -10,7 +14,7 @@ import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { defaultTablePageSize, getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
+import { getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
 import { getLocationSubdivision } from '../../views/helpers';
 import { type OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
@@ -88,109 +92,52 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
                     />
                 </div>
                 <ComponentsGrid>
-                    <ComponentWrapper title='Prevalence over time'>
-                        <gs-prevalence-over-time
-                            numeratorFilter={JSON.stringify({
+                    <GsPrevalenceOverTime
+                        numeratorFilters={[
+                            {
                                 displayName: '',
                                 lapisFilter: variantFilter,
-                            })}
-                            denominatorFilter={JSON.stringify(datasetLapisFilter)}
-                            lapisDateField={view.organismConstants.mainDateField}
-                            granularity={timeGranularity}
-                            smoothingWindow='0'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-                    <ComponentWrapper title='Relative growth advantage'>
-                        <gs-relative-growth-advantage
-                            numeratorFilter={JSON.stringify(variantFilter)}
-                            denominatorFilter={JSON.stringify(datasetLapisFilter)}
-                            generationTime='7'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                            lapisDateField={view.organismConstants.mainDateField}
-                        />
-                    </ComponentWrapper>
-
-                    <ComponentWrapper title='Nucleotide mutations'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
-                            sequenceType='nucleotide'
-                            views='["grid", "table", "insertions"]'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-                    <ComponentWrapper title='Amino acid mutations'>
-                        <gs-mutations
-                            lapisFilter={JSON.stringify(variantFilter)}
-                            sequenceType='amino acid'
-                            views='["grid", "table", "insertions"]'
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
-
-                    <ComponentWrapper title='Sub-lineages'>
-                        <gs-aggregate
-                            fields={JSON.stringify(getLineageFilterFields(view.organismConstants.lineageFilters))}
-                            filter={JSON.stringify(variantFilter)}
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
+                            },
+                        ]}
+                        denominatorFilter={datasetLapisFilter}
+                        lapisDateField={view.organismConstants.mainDateField}
+                        granularity={timeGranularity}
+                    />
+                    <GsRelativeGrowthAdvantage
+                        numeratorFilter={variantFilter}
+                        denominatorFilter={datasetLapisFilter}
+                        lapisDateField={view.organismConstants.mainDateField}
+                    />
+                    <GsMutations lapisFilter={variantFilter} sequenceType='nucleotide' />
+                    <GsMutations lapisFilter={variantFilter} sequenceType='amino acid' />
+                    <GsAggregate
+                        title='Sub-lineages'
+                        fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
+                        lapisFilter={variantFilter}
+                    />
                     {subdivisionField !== undefined && (
-                        <ComponentWrapper title={subdivisionLabel}>
-                            <gs-aggregate
-                                fields={JSON.stringify([subdivisionField])}
-                                filter={JSON.stringify(variantFilter)}
-                                pageSize={defaultTablePageSize}
-                                width='100%'
-                                height='100%'
-                            />
-                        </ComponentWrapper>
+                        <GsAggregate title={subdivisionLabel} fields={[subdivisionField]} lapisFilter={variantFilter} />
                     )}
-
-                    <ComponentWrapper title='Hosts'>
-                        <gs-aggregate
-                            fields={JSON.stringify([view.organismConstants.hostField])}
-                            filter={JSON.stringify(variantFilter)}
-                            pageSize={defaultTablePageSize}
-                            width='100%'
-                            height='100%'
-                        />
-                    </ComponentWrapper>
+                    <GsAggregate
+                        title='Hosts'
+                        fields={[view.organismConstants.hostField]}
+                        lapisFilter={variantFilter}
+                    />
                 </ComponentsGrid>
 
-                <ComponentWrapper title='Nucleotide mutations over time' height='600px'>
-                    <gs-mutations-over-time
-                        width='100%'
-                        height='100%'
-                        lapisFilter={JSON.stringify(variantFilter)}
-                        sequenceType='nucleotide'
-                        views='["grid"]'
-                        granularity={timeGranularity}
-                        lapisDateField={view.organismConstants.mainDateField}
-                    />
-                </ComponentWrapper>
+                <GsMutationsOverTime
+                    lapisFilter={variantFilter}
+                    sequenceType='nucleotide'
+                    granularity={timeGranularity}
+                    lapisDateField={view.organismConstants.mainDateField}
+                />
 
-                <ComponentWrapper title='Amino acid mutations over time' height='600px'>
-                    <gs-mutations-over-time
-                        width='100%'
-                        height='100%'
-                        lapisFilter={JSON.stringify(variantFilter)}
-                        sequenceType='amino acid'
-                        views='["grid"]'
-                        granularity={timeGranularity}
-                        lapisDateField={view.organismConstants.mainDateField}
-                    />
-                </ComponentWrapper>
+                <GsMutationsOverTime
+                    lapisFilter={variantFilter}
+                    sequenceType='amino acid'
+                    granularity={timeGranularity}
+                    lapisDateField={view.organismConstants.mainDateField}
+                />
             </div>
         )
     }
