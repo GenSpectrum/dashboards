@@ -21,6 +21,7 @@ test.describe('The Sequencing Efforts Page', () => {
                 const options = organismOptions[organism];
 
                 await sequencingEffortsPage.goto(organism);
+                await sequencingEffortsPage.expectToSeeNoComponentErrors();
                 await sequencingEffortsPage.selectLocation(options.location);
                 await sequencingEffortsPage.selectDateRange('All times');
                 await sequencingEffortsPage.submitFilters();
