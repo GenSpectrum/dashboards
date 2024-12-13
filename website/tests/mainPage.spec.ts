@@ -16,7 +16,11 @@ const views = [
     },
     { linkName: 'Sequencing efforts', title: 'Sequencing efforts', expectedHeadline: 'Number sequences' },
     { linkName: 'Compare variants', title: 'Compare variants', expectedHeadline: 'Compare Variants' },
-    { linkName: 'Compare to baseline', title: 'Compare to baseline', expectedHeadline: 'Analyze a variant compared to a baseline' },
+    {
+        linkName: 'Compare to baseline',
+        title: 'Compare to baseline',
+        expectedHeadline: 'Analyze a variant compared to a baseline',
+    },
 ];
 
 test.describe('Main page', () => {
@@ -37,6 +41,8 @@ test.describe('Main page', () => {
                     .locator('..')
                     .getByText(linkName, { exact: true })
                     .click();
+                await expect(page.locator('text=Error -')).not.toBeVisible();
+                await expect(page.locator('text=Something went wrong')).not.toBeVisible();
                 await expect(page).toHaveTitle(`${title} | ${organism} | GenSpectrum`);
                 await expect(page.getByRole('heading', { name: expectedHeadline }).first()).toBeVisible();
             }
