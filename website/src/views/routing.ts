@@ -7,10 +7,7 @@ import {
     CovidCompareVariantsView,
     CovidSequencingEffortsView,
 } from './covid.ts';
-import {
-    FluCompareSideBySideView,
-    FluSequencingEffortsView,
-} from './flu.ts';
+import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
 import {
     H5n1AnalyzeSingleVariantView,
     H5n1CompareSideBySideView,
@@ -137,7 +134,7 @@ export class Routing {
             case Organisms.h5n1:
                 return Object.values(this.views[Organisms.h5n1]);
             case Organisms.flu:
-                    return Object.values(this.views[Organisms.flu]);
+                return Object.values(this.views[Organisms.flu]);
             case Organisms.rsvA:
                 return Object.values(this.views[Organisms.rsvA]);
             case Organisms.rsvB:

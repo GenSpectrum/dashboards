@@ -2,11 +2,8 @@ import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashb
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
-import {
-    BaseView,
-    GenericSequencingEffortsView,
-} from './BaseView.ts';
-import { getAuthorRelatedSequencingEffortsFields, type SingleVariantConstants } from './OrganismConstants.ts';
+import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
+import { getAuthorRelatedSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -15,7 +12,7 @@ import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/Compar
 
 const earliestDate = '1905-01-01';
 
-class FluConstants implements SingleVariantConstants {
+class FluConstants implements ExtendedConstants {
     public readonly organism = Organisms.flu;
     public readonly earliestDate = '1905-01-01';
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
@@ -36,8 +33,14 @@ class FluConstants implements SingleVariantConstants {
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'clade',
-            placeholderText: 'Clade',
+            lapisField: 'subtypeHA',
+            placeholderText: 'HA subtype',
+            filterType: 'text' as const,
+            initialValue: undefined,
+        },
+        {
+            lapisField: 'subtypeNA',
+            placeholderText: 'NA subtype',
             filterType: 'text' as const,
             initialValue: undefined,
         },
@@ -93,7 +96,8 @@ export class FluCompareSideBySideView extends BaseView<
                         },
                         variantFilter: {
                             lineages: {
-                                clade: '2.3.4.4b',
+                                subtypeHA: 'H5',
+                                subtypeNA: 'N1',
                             },
                             mutations: {},
                         },
