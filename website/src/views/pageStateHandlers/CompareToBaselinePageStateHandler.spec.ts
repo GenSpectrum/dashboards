@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { Organisms } from '../../types/Organism.ts';
-import type { SingleVariantConstants } from '../OrganismConstants.ts';
+import type { ExtendedConstants } from '../OrganismConstants.ts';
 import type { CompareToBaselineData } from '../View.ts';
 import { CompareToBaselineStateHandler } from './CompareToBaselinePageStateHandler.ts';
 
-const mockConstants: SingleVariantConstants = {
+const mockConstants: ExtendedConstants = {
     organism: Organisms.covid,
     dataOrigins: [],
     locationFields: ['country', 'region'],

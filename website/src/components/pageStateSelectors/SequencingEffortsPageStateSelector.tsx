@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
+import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
+import { VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import type { LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
@@ -12,15 +14,18 @@ import type { sequencingEffortsViewKey } from '../../views/viewKeys.ts';
 export function SequencingEffortsPageStateSelector({
     locationFilterConfig,
     dateRangeFilterConfig,
+    variantFilterConfig,
     organismViewKey,
     organismsConfig,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
+    variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
+    const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
@@ -30,8 +35,9 @@ export function SequencingEffortsPageStateSelector({
                 location,
                 dateRange,
             },
+            variantFilter: toVariantFilter(variantFilterConfigState),
         }),
-        [location, dateRange],
+        [location, dateRange, variantFilterConfigState],
     );
 
     return (
@@ -43,6 +49,13 @@ export function SequencingEffortsPageStateSelector({
                     locationFilterConfig={locationFilterConfig}
                     onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                />
+            </div>
+            <div>
+                <VariantSelector
+                    onVariantFilterChange={setVariantFilterConfigState}
+                    variantFilterConfig={variantFilterConfigState}
+                    hideMutationFilter={true}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

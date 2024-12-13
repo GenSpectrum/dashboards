@@ -21,16 +21,13 @@ export interface AdditionalSequencingEffortsField {
     readonly height: (typeof ComponentHeight)[keyof typeof ComponentHeight];
 }
 
-export interface SequencingEffortsConstants extends OrganismConstants {
+export interface ExtendedConstants extends OrganismConstants {
     readonly locationFields: string[];
     readonly mainDateField: string;
     readonly dateRangeOptions: DateRangeOption[];
     readonly defaultDateRange: DateRangeOption;
     readonly additionalFilters: Record<string, string> | undefined;
     readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
-}
-
-export interface SingleVariantConstants extends SequencingEffortsConstants {
     readonly lineageFilters: LineageFilterConfig[];
 }
 
