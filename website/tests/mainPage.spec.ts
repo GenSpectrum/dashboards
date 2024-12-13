@@ -16,7 +16,7 @@ const views = [
     },
     { linkName: 'Sequencing efforts', title: 'Sequencing efforts', expectedHeadline: 'Number sequences' },
     { linkName: 'Compare variants', title: 'Compare variants', expectedHeadline: 'Compare Variants' },
-    { linkName: 'Compare to baseline', title: 'Compare to baseline', expectedHeadline: 'Prevalence over time' },
+    { linkName: 'Compare to baseline', title: 'Compare to baseline', expectedHeadline: 'Analyze a variant compared to a baseline' },
 ];
 
 test.describe('Main page', () => {
