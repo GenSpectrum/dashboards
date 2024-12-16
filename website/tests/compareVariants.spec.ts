@@ -9,6 +9,7 @@ const organismOptions = {
     [Organisms.westNile]: { lineage: '2', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvA]: { lineage: 'A.D.5.2', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvB]: { lineage: 'B.D.E.1', lineageFieldPlaceholder: 'Lineage' },
+    [Organisms.mpox]: { lineage: 'F.1', lineageFieldPlaceholder: 'Lineage' },
 };
 
 test.describe('The Compare Variants page', () => {
@@ -25,6 +26,7 @@ test.describe('The Compare Variants page', () => {
             await compareVariantsPage.submitFilters();
 
             await expect(compareVariantsPage.diagramTitle('Prevalence over time')).toBeVisible();
+            await compareVariantsPage.expectToSeeNoComponentErrors();
         });
     }
 });

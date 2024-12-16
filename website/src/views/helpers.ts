@@ -4,8 +4,6 @@ import type { VariantFilter } from './View.ts';
 import type { MutationFilter } from '../components/genspectrum/GsMutationFilter.tsx';
 import { CustomDateRangeLabel } from '../types/DateWindow.ts';
 
-export type LapisFilter = Record<string, string | number | null | boolean | string[] | undefined>;
-
 /**
  * Sets the value to the search params if the value is not empty, not undefined and not null
  */

@@ -1,0 +1,29 @@
+---
+import type { TemporalGranularity, LapisFilter, SequenceType } from '@genspectrum/dashboard-components/util';
+
+import { ComponentHeight } from '../../views/OrganismConstants';
+import ComponentWrapper from '../ComponentWrapper.astro';
+
+interface Props {
+    lapisFilter: LapisFilter;
+    sequenceType: SequenceType;
+    granularity: TemporalGranularity;
+    lapisDateField: string;
+}
+
+const { lapisFilter, sequenceType, granularity, lapisDateField } = Astro.props;
+---
+
+<ComponentWrapper
+    title={sequenceType === 'nucleotide' ? 'Nucleotide mutations over time' : 'Amino acid mutations over time'}
+    height={ComponentHeight.large}
+>
+    <gs-mutations-over-time
+        width='100%'
+        height='100%'
+        lapisFilter={JSON.stringify(lapisFilter)}
+        sequenceType={sequenceType}
+        views='["grid"]'
+        granularity={granularity}
+        lapisDateField={lapisDateField}></gs-mutations-over-time>
+</ComponentWrapper>

@@ -34,11 +34,11 @@ dashboards:
           menuIcon: "database"
     mpox:
       lapis:
-        url: "https://api.loculus.staging.genspectrum.org/mpox"
+        url: "https://lapis.pathoplexus.org/mpox"
         mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
-          - "country"
-          - "division"
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
@@ -46,13 +46,13 @@ dashboards:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
       externalNavigationLinks:
-        - url: "https://loculus.staging.genspectrum.org/mpox"
+        - url: "https://pathoplexus.org/mpox"
           label: "Browse data"
           menuIcon: "database"
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"

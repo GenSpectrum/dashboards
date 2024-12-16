@@ -13,7 +13,7 @@ import {
 } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import { BaseView, GenericCompareToBaselineView, GenericCompareVariantsView } from './BaseView.ts';
-import type { SingleVariantConstants } from './OrganismConstants.ts';
+import { ComponentHeight, type SingleVariantConstants } from './OrganismConstants.ts';
 import {
     compareSideBySideViewConstants,
     sequencingEffortsViewConstants,
@@ -23,7 +23,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
-import type { DataOrigin } from '../types/dataOrigins.ts';
+import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SequencingEffortsStateHandler } from './pageStateHandlers/SequencingEffortsPageStateHandler.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 
@@ -60,7 +60,19 @@ class CovidConstants implements SingleVariantConstants {
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
-    public readonly dataOrigins: DataOrigin[] = ['nextstrain'];
+    public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
+
+    public get additionalSequencingEffortsFields() {
+        const originatingLab =
+            this.originatingLabField === undefined
+                ? []
+                : [{ label: 'Originating lab', fields: [this.originatingLabField], height: ComponentHeight.large }];
+        const submittingLab =
+            this.submittingLabField === undefined
+                ? []
+                : [{ label: 'Submitting lab ', fields: [this.submittingLabField], height: ComponentHeight.large }];
+        return [...originatingLab, ...submittingLab];
+    }
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;

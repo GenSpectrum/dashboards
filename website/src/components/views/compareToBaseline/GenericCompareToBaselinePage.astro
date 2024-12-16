@@ -1,19 +1,19 @@
 ---
+import SelectBaseline from './SelectBaseline.astro';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import type { Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize } from '../../../views/View';
-import { type OrganismViewKey } from '../../../views/routing';
+import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
-import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
+import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
 import { CompareToBaselineSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
+type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareToBaselineViewKey>;
 interface Props {
-    organism: Organism;
+    organism: OrganismViewCompareVariant;
 }
 
 const { organism } = Astro.props;
@@ -32,6 +32,7 @@ const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageSt
 const baselineFilterConfig = view.pageStateHandler.toBaselineFilterConfig(pageState);
 
 const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
+const noVariantSelected = pageState.variants.size < 1;
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
@@ -56,20 +57,19 @@ const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFi
     >
         <CompareToBaselineSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
     </CompareVariantsToBaselineStateSelector>
-    <ComponentsGrid slot='dataDisplay'>
-        <ComponentWrapper title='Prevalence over time'>
-            <gs-prevalence-over-time
-                numeratorFilter={JSON.stringify(numeratorLapisFilters)}
-                denominatorFilter={JSON.stringify(baselineLapisFilter)}
-                lapisDateField={view.organismConstants.mainDateField}
-                granularity={timeGranularity}
-                smoothingWindow='0'
-                pageSize={defaultTablePageSize}
-                width='100%'
-                height='100%'
-                views={JSON.stringify(['line', 'table', 'bar'])}
-                yAxisMaxLinear='maxInData'
-                yAxisMaxLogarithmic='maxInData'></gs-prevalence-over-time>
-        </ComponentWrapper>
-    </ComponentsGrid>
+    {
+        noVariantSelected ? (
+            <SelectBaseline slot='dataDisplay' />
+        ) : (
+            <ComponentsGrid slot='dataDisplay'>
+                <GsPrevalenceOverTime
+                    numeratorFilters={numeratorLapisFilters}
+                    denominatorFilter={baselineLapisFilter}
+                    lapisDateField={view.organismConstants.mainDateField}
+                    granularity={timeGranularity}
+                    views={['line', 'table', 'bar']}
+                />
+            </ComponentsGrid>
+        )
+    }
 </SingleVariantOrganismPageLayout>

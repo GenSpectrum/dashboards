@@ -38,7 +38,7 @@ export function GsLineageFilter<Lineage extends string>({
         <gs-lineage-filter
             lapisField={lapisField}
             placeholderText={placeholderText}
-            initialValue={initialValue}
+            initialValue={initialValue ?? ''}
             width={width}
             ref={lineageFilterRef}
         ></gs-lineage-filter>

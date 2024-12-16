@@ -2,19 +2,19 @@
 import SelectVariants from './SelectVariants.astro';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import type { Organism } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { defaultTablePageSize } from '../../../views/View';
-import { type OrganismViewKey } from '../../../views/routing';
+import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareVariantsViewKey } from '../../../views/viewKeys';
-import ComponentWrapper from '../../ComponentWrapper.astro';
 import ComponentsGrid from '../../ComponentsGrid.astro';
+import GsMutationComparison from '../../genspectrum/GsMutationComparison.astro';
+import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareVariantsPageStateSelector } from '../../pageStateSelectors/CompareVariantsPageStateSelector';
 import { CompareVariantsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
+type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareVariantsViewKey>;
 interface Props {
-    organism: Organism;
+    organism: OrganismViewCompareVariant;
 }
 
 const { organism } = Astro.props;
@@ -62,39 +62,15 @@ const notEnoughVariantsSelected = pageState.variants.size < 2;
             <SelectVariants slot='dataDisplay' />
         ) : (
             <ComponentsGrid slot='dataDisplay'>
-                <ComponentWrapper title='Prevalence over time'>
-                    <gs-prevalence-over-time
-                        numeratorFilter={JSON.stringify(numeratorLapisFilters)}
-                        denominatorFilter={JSON.stringify(datasetLapisFilter)}
-                        lapisDateField={view.organismConstants.mainDateField}
-                        granularity={timeGranularity}
-                        smoothingWindow='0'
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'
-                        views={JSON.stringify(['line', 'table', 'bar', 'bubble'])}
-                    />
-                </ComponentWrapper>
-                <ComponentWrapper title='Nucleotide changes'>
-                    <gs-mutation-comparison
-                        lapisFilters={JSON.stringify(numeratorLapisFilters)}
-                        sequenceType='nucleotide'
-                        views='["venn", "table"]'
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'
-                    />
-                </ComponentWrapper>
-                <ComponentWrapper title='Amino acid changes'>
-                    <gs-mutation-comparison
-                        lapisFilters={JSON.stringify(numeratorLapisFilters)}
-                        sequenceType='amino acid'
-                        views='["venn", "table"]'
-                        pageSize={defaultTablePageSize}
-                        width='100%'
-                        height='100%'
-                    />
-                </ComponentWrapper>
+                <GsPrevalenceOverTime
+                    numeratorFilters={numeratorLapisFilters}
+                    denominatorFilter={datasetLapisFilter}
+                    lapisDateField={view.organismConstants.mainDateField}
+                    granularity={timeGranularity}
+                    views={['line', 'table', 'bar', 'bubble']}
+                />
+                <GsMutationComparison lapisFilters={numeratorLapisFilters} sequenceType='nucleotide' />
+                <GsMutationComparison lapisFilters={numeratorLapisFilters} sequenceType='amino acid' />
             </ComponentsGrid>
         )
     }

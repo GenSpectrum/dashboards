@@ -1,5 +1,7 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import { type DateWindow, getStartDate } from '../../../types/DateWindow.ts';
-import type { LapisFilter, SubscriptionRequest } from '../../../types/Subscription.ts';
+import type { SubscriptionRequest } from '../../../types/Subscription.ts';
 import { GsNumberSequencesOverTime } from '../../genspectrum/GsNumberSequencesOverTime.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 
@@ -36,13 +38,15 @@ export function FilterDisplay({
                         <h2 className='component-title'>Count over time</h2>
                         <div className='h-[400px]'>
                             <GsNumberSequencesOverTime
-                                lapisFilter={{
-                                    displayName: 'Your variant',
-                                    lapisFilter: addDateWindowToFilter(
-                                        subscription.trigger.filter,
-                                        subscription.dateWindow,
-                                    ),
-                                }}
+                                lapisFilter={[
+                                    {
+                                        displayName: 'Your variant',
+                                        lapisFilter: addDateWindowToFilter(
+                                            subscription.trigger.filter,
+                                            subscription.dateWindow,
+                                        ),
+                                    },
+                                ]}
                                 granularity={getGranularity(subscription.dateWindow)}
                                 views={['line', 'table']}
                                 height='100%'
@@ -57,13 +61,15 @@ export function FilterDisplay({
                         <h2 className='component-title'>Prevalence over time</h2>
                         <div className='h-[400px]'>
                             <GsPrevalenceOverTime
-                                numeratorFilter={{
-                                    displayName: 'Your variant',
-                                    lapisFilter: addDateWindowToFilter(
-                                        subscription.trigger.numeratorFilter,
-                                        subscription.dateWindow,
-                                    ),
-                                }}
+                                numeratorFilter={[
+                                    {
+                                        displayName: 'Your variant',
+                                        lapisFilter: addDateWindowToFilter(
+                                            subscription.trigger.numeratorFilter,
+                                            subscription.dateWindow,
+                                        ),
+                                    },
+                                ]}
                                 denominatorFilter={addDateWindowToFilter(
                                     subscription.trigger.denominatorFilter,
                                     subscription.dateWindow,

@@ -9,11 +9,11 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import type { SingleVariantConstants } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type SingleVariantConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
-import type { DataOrigin } from '../types/dataOrigins.ts';
+import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 class RsvAConstants implements SingleVariantConstants {
@@ -47,7 +47,11 @@ class RsvAConstants implements SingleVariantConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
-    public readonly dataOrigins: DataOrigin[] = ['insdc'];
+    public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
+
+    public get additionalSequencingEffortsFields() {
+        return getAuthorRelatedSequencingEffortsFields(this);
+    }
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;

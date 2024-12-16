@@ -1,0 +1,40 @@
+---
+import type {
+    LapisFilter,
+    NamedLapisFilter,
+    PrevalenceOverTimeView,
+    TemporalGranularity,
+} from '@genspectrum/dashboard-components/util';
+
+import { defaultTablePageSize } from '../../views/View';
+import ComponentWrapper from '../ComponentWrapper.astro';
+
+interface Props {
+    numeratorFilters: NamedLapisFilter[];
+    denominatorFilter: LapisFilter;
+    lapisDateField: string;
+    granularity: TemporalGranularity;
+    views?: PrevalenceOverTimeView[];
+}
+
+const {
+    numeratorFilters,
+    denominatorFilter,
+    lapisDateField,
+    granularity,
+    views = ['bar', 'line', 'bubble', 'table'],
+} = Astro.props;
+---
+
+<ComponentWrapper title='Prevalence over time'>
+    <gs-prevalence-over-time
+        numeratorFilters={JSON.stringify(numeratorFilters)}
+        denominatorFilter={JSON.stringify(denominatorFilter)}
+        lapisDateField={lapisDateField}
+        granularity={granularity}
+        smoothingWindow='0'
+        pageSize={defaultTablePageSize}
+        views={JSON.stringify(views)}
+        width='100%'
+        height='100%'></gs-prevalence-over-time>
+</ComponentWrapper>

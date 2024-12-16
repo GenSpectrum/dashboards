@@ -1,7 +1,7 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useState } from 'react';
 
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
-import type { LapisFilter } from '../../../types/Subscription.ts';
 import { GsLineageFilter } from '../../genspectrum/GsLineageFilter.tsx';
 import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 
