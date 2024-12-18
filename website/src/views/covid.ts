@@ -66,6 +66,7 @@ class CovidConstants implements ExtendedConstants {
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly additionalFields: Record<string, Record<string, string>> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
 
     public get additionalSequencingEffortsFields() {
@@ -87,6 +88,7 @@ class CovidConstants implements ExtendedConstants {
         this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
+        this.additionalFields = organismsConfig.covid.lapis.additionalFields;
     }
 }
 

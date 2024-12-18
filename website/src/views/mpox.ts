@@ -62,6 +62,7 @@ class MpoxConstants implements ExtendedConstants {
     }
 
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly additionalFields: Record<string, Record<string, string>> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -71,6 +72,7 @@ class MpoxConstants implements ExtendedConstants {
         this.authorsField = organismsConfig.mpox.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;
+        this.additionalFields = organismsConfig.mpox.lapis.additionalFields;
     }
 }
 

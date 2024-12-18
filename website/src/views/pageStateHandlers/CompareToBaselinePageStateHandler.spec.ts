@@ -13,6 +13,7 @@ const mockConstants: ExtendedConstants = {
     dateRangeOptions: [{ label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' }],
     defaultDateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
     additionalFilters: undefined,
+    additionalFields: undefined,
     lineageFilters: [
         {
             lapisField: 'lineage',

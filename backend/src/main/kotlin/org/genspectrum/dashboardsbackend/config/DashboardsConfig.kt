@@ -26,6 +26,7 @@ data class LapisConfig(
     val originatingLabField: String?,
     val submittingLabField: String?,
     val additionalFilters: Map<String, String>?,
+    val additionalFields: Map<String, Map<String, String>?,
 )
 
 data class ExternalNavigationLink(

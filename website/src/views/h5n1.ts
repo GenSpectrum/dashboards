@@ -49,6 +49,7 @@ class H5n1Constants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly additionalFields: Record<string, Record<string, string>> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
 
     public get additionalSequencingEffortsFields() {
@@ -62,6 +63,7 @@ class H5n1Constants implements ExtendedConstants {
         this.authorsField = organismsConfig.h5n1.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.h5n1.lapis.additionalFilters;
+        this.additionalFields = organismsConfig.h5n1.lapis.additionalFields;
     }
 }
 

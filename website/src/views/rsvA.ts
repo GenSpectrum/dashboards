@@ -47,6 +47,7 @@ class RsvAConstants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly additionalFields: Record<string, Record<string, string>> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
 
     public get additionalSequencingEffortsFields() {
@@ -60,6 +61,7 @@ class RsvAConstants implements ExtendedConstants {
         this.authorsField = organismsConfig.rsvA.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.rsvA.lapis.additionalFilters;
+        this.additionalFields = organismsConfig.rsvA.lapis.additionalFields;
     }
 }
 

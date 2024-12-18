@@ -52,6 +52,7 @@ class WestNileConstants implements ExtendedConstants {
     }
 
     public readonly additionalFilters: Record<string, string> | undefined;
+    public readonly additionalFields: Record<string, Record<string, string>> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -61,6 +62,7 @@ class WestNileConstants implements ExtendedConstants {
         this.authorsField = organismsConfig.westNile.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
+        this.additionalFields = organismsConfig.westNile.lapis.additionalFields;
     }
 }
 

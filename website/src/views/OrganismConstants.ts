@@ -27,6 +27,7 @@ export interface ExtendedConstants extends OrganismConstants {
     readonly dateRangeOptions: DateRangeOption[];
     readonly defaultDateRange: DateRangeOption;
     readonly additionalFilters: Record<string, string> | undefined;
+    readonly additionalFields: Record<string, Record<string, string>> | undefined;
     readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
     readonly lineageFilters: LineageFilterConfig[];
 }

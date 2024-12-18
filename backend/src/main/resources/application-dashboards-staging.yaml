@@ -11,6 +11,27 @@ dashboards:
         hostField: "host"
         originatingLabField: "originatingLab"
         submittingLabField: "submittingLab"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: completeness
+            type: int
+            range: [0, 100]
+          - name: totalAmbiguousNucs
+            type: int
+          - name: totalDeletedNucs
+            type: int
+          - name: totalFrameShifts
+            type: int
+          - name: totalInsertedNucs
+            type: int
+          - name: totalSnps
+            type: int
+          - name: totalUnknownNucs
+            type: int
+          - name: length
+            type: int
       externalNavigationLinks:
         - url: "https://cov-spectrum.org"
           label: "CoV-Spectrum"
@@ -25,6 +46,41 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: completeness
+            type: int
+            range: [0, 100]
+          - name: totalAmbiguousNucs
+            type: int
+          - name: totalDeletedNucs
+            type: int
+          - name: totalFrameShifts
+            type: int
+          - name: totalInsertedNucs
+            type: int
+          - name: totalSnps
+            type: int
+          - name: totalUnknownNucs
+            type: int
+          - name: length_seg1
+            type: int
+          - name: length_seg2
+            type: int
+          - name: length_seg3
+            type: int
+          - name: length_seg4 
+            type: int
+          - name: length_seg5
+            type: int
+          - name: length_seg6
+            type: int
+          - name: length_seg7
+            type: int
+          - name: length_seg8
+            type: int
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -45,6 +101,12 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: length
+            type: int
       externalNavigationLinks:
         - url: "https://api.loculus.staging.genspectrum.org/influenza-a"
           label: "Browse data"
@@ -59,6 +121,27 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: completeness
+            type: int
+            range: [0, 100]
+          - name: totalAmbiguousNucs
+            type: int
+          - name: totalDeletedNucs
+            type: int
+          - name: totalFrameShifts
+            type: int
+          - name: totalInsertedNucs
+            type: int
+          - name: totalSnps
+            type: int
+          - name: totalUnknownNucs
+            type: int
+          - name: length
+            type: int
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -76,6 +159,27 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: completeness
+            type: int
+            range: [0, 100]
+          - name: totalAmbiguousNucs
+            type: int
+          - name: totalDeletedNucs
+            type: int
+          - name: totalFrameShifts
+            type: int
+          - name: totalInsertedNucs
+            type: int
+          - name: totalSnps
+            type: int
+          - name: totalUnknownNucs
+            type: int
+          - name: length
+            type: int
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -93,6 +197,27 @@ dashboards:
         hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: completeness
+            type: int
+            range: [0, 100]
+          - name: totalAmbiguousNucs
+            type: int
+          - name: totalDeletedNucs
+            type: int
+          - name: totalFrameShifts
+            type: int
+          - name: totalInsertedNucs
+            type: int
+          - name: totalSnps
+            type: int
+          - name: totalUnknownNucs
+            type: int
+          - name: length
+            type: int
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -113,6 +238,27 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        additionalFields:
+          - name: hostNameScientific
+          - name: authors
+          - name: authorAffiliations
+          - name: completeness
+            type: int
+            range: [0, 100]
+          - name: totalAmbiguousNucs
+            type: int
+          - name: totalDeletedNucs
+            type: int
+          - name: totalFrameShifts
+            type: int
+          - name: totalInsertedNucs
+            type: int
+          - name: totalSnps
+            type: int
+          - name: totalUnknownNucs
+            type: int
+          - name: length
+            type: int
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/rsv-b"
           label: "Browse data"
