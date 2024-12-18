@@ -3,13 +3,15 @@ import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
-import { getLocationSubdivision } from '../../../views/helpers';
+import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLocationDisplayConfig } from '../../../views/locationHelpers';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
 import ComponentsGrid from '../../ComponentsGrid.astro';
 import GsAggregate from '../../genspectrum/GsAggregate.astro';
 import GsNumberSequencesOverTime from '../../genspectrum/GsNumberSequencesOverTime.astro';
+import GsSequencesByLocation from '../../genspectrum/GsSequencesByLocation.astro';
 import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
@@ -21,17 +23,22 @@ interface Props {
 const { organism } = Astro.props;
 const organismViewKey: OrganismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
+
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const datasetLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
-
+const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
-const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    view.organismConstants.locationFields,
-    pageState.datasetFilter.location,
+const {
+    label: locationLabel,
+    locationField,
+    mapName,
+} = getLocationDisplayConfig(view.organismConstants.locationFields, pageState.datasetFilter.location);
+const lineageFilterConfigs = getLineageFilterConfigs(
+    view.organismConstants.lineageFilters,
+    pageState.variantFilter.lineages,
 );
 ---
 
@@ -52,6 +59,7 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
+        variantFilterConfig={{ mutationFilterConfig: pageState.variantFilter.mutations, lineageFilterConfigs }}
     >
         <SequencingEffortsSelectorFallback slot='fallback' />
     </SequencingEffortsPageStateSelector>
@@ -61,19 +69,20 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             lapisFilters={[
                 {
                     displayName: '',
-                    lapisFilter: datasetLapisFilter,
+                    lapisFilter: variantLapisFilter,
                 },
             ]}
             lapisDateField={view.organismConstants.mainDateField}
             granularity={timeGranularity}
         />
         {
-            subdivisionField !== undefined && (
-                <GsAggregate
-                    title={subdivisionLabel}
+            locationField !== undefined && (
+                <GsSequencesByLocation
+                    title={locationLabel}
                     height={ComponentHeight.large}
-                    fields={[subdivisionField]}
-                    lapisFilter={datasetLapisFilter}
+                    lapisLocationField={locationField}
+                    lapisFilter={variantLapisFilter}
+                    mapName={mapName}
                 />
             )
         }
@@ -81,11 +90,16 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             title='Hosts'
             height={ComponentHeight.large}
             fields={[view.organismConstants.hostField]}
-            lapisFilter={datasetLapisFilter}
+            lapisFilter={variantLapisFilter}
+        />
+        <GsAggregate
+            title='Sub-lineages'
+            fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
+            lapisFilter={variantLapisFilter}
         />
         {
             view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height }) => (
-                <GsAggregate title={label} height={height} fields={fields} lapisFilter={datasetLapisFilter} />
+                <GsAggregate title={label} height={height} fields={fields} lapisFilter={variantLapisFilter} />
             ))
         }
     </ComponentsGrid>

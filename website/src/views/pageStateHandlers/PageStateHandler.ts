@@ -1,6 +1,6 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { SequencingEffortsConstants } from '../OrganismConstants.ts';
+import type { ExtendedConstants } from '../OrganismConstants.ts';
 import { type Dataset, type Id, type VariantFilter } from '../View.ts';
 import { type LapisLocation } from '../helpers.ts';
 
@@ -14,7 +14,7 @@ export interface PageStateHandler<PageState extends object> {
 
 export function toLapisFilterWithoutVariant(
     pageState: Dataset,
-    constants: SequencingEffortsConstants,
+    constants: ExtendedConstants,
 ): LapisFilter & LapisLocation {
     return {
         ...pageState.datasetFilter.location,

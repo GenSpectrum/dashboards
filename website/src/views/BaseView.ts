@@ -1,5 +1,5 @@
-import type { OrganismConstants, SequencingEffortsConstants, SingleVariantConstants } from './OrganismConstants.ts';
-import type { CompareToBaselineData, CompareVariantsData, Dataset, DatasetAndVariantData, View } from './View.ts';
+import type { OrganismConstants, ExtendedConstants } from './OrganismConstants.ts';
+import type { CompareToBaselineData, CompareVariantsData, DatasetAndVariantData, View } from './View.ts';
 import {
     compareToBaselineViewConstants,
     compareVariantsViewConstants,
@@ -40,7 +40,7 @@ export abstract class BaseView<
     }
 }
 
-export class GenericSingleVariantView<Constants extends SingleVariantConstants> extends BaseView<
+export class GenericSingleVariantView<Constants extends ExtendedConstants> extends BaseView<
     DatasetAndVariantData,
     Constants,
     SingleVariantPageStateHandler
@@ -67,8 +67,8 @@ export class GenericSingleVariantView<Constants extends SingleVariantConstants> 
     }
 }
 
-export class GenericSequencingEffortsView<Constants extends SequencingEffortsConstants> extends BaseView<
-    Dataset,
+export class GenericSequencingEffortsView<Constants extends ExtendedConstants> extends BaseView<
+    DatasetAndVariantData,
     Constants,
     SequencingEffortsStateHandler
 > {
@@ -82,6 +82,10 @@ export class GenericSequencingEffortsView<Constants extends SequencingEffortsCon
                         location: {},
                         dateRange: constants.defaultDateRange,
                     },
+                    variantFilter: {
+                        mutations: {},
+                        lineages: {},
+                    },
                 },
                 organismConfig[constants.organism].pathFragment,
             ),
@@ -90,7 +94,7 @@ export class GenericSequencingEffortsView<Constants extends SequencingEffortsCon
     }
 }
 
-export class GenericCompareVariantsView<Constants extends SingleVariantConstants> extends BaseView<
+export class GenericCompareVariantsView<Constants extends ExtendedConstants> extends BaseView<
     CompareVariantsData,
     Constants,
     CompareVariantsPageStateHandler
@@ -114,7 +118,7 @@ export class GenericCompareVariantsView<Constants extends SingleVariantConstants
     }
 }
 
-export class GenericCompareToBaselineView<Constants extends SingleVariantConstants> extends BaseView<
+export class GenericCompareToBaselineView<Constants extends ExtendedConstants> extends BaseView<
     CompareToBaselineData,
     Constants,
     CompareToBaselineStateHandler

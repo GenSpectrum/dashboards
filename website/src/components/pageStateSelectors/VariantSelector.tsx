@@ -6,9 +6,11 @@ import { GsMutationFilter } from '../genspectrum/GsMutationFilter.tsx';
 export function VariantSelector({
     onVariantFilterChange,
     variantFilterConfig,
+    hideMutationFilter,
 }: {
     variantFilterConfig: VariantFilterConfig;
     onVariantFilterChange: (variantFilter: VariantFilterConfig) => void;
+    hideMutationFilter?: boolean | undefined;
 }) {
     return (
         <div className='flex flex-col gap-2'>
@@ -29,19 +31,21 @@ export function VariantSelector({
                     key={lineageFilterConfig.lapisField}
                 />
             ))}
-            <GsMutationFilter
-                initialValue={getMutationFilter(variantFilterConfig.mutationFilterConfig)}
-                onMutationChange={(mutation) => {
-                    if (mutation === undefined) {
-                        return;
-                    }
-                    const newVariantFilterConfig = {
-                        ...variantFilterConfig,
-                        mutationFilterConfig: mutation,
-                    };
-                    onVariantFilterChange(newVariantFilterConfig);
-                }}
-            />
+            {!hideMutationFilter && (
+                <GsMutationFilter
+                    initialValue={getMutationFilter(variantFilterConfig.mutationFilterConfig)}
+                    onMutationChange={(mutation) => {
+                        if (mutation === undefined) {
+                            return;
+                        }
+                        const newVariantFilterConfig = {
+                            ...variantFilterConfig,
+                            mutationFilterConfig: mutation,
+                        };
+                        onVariantFilterChange(newVariantFilterConfig);
+                    }}
+                />
+            )}
         </div>
     );
 }

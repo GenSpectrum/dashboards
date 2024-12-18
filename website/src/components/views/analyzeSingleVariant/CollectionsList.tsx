@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import type { OrganismsConfig } from '../../../config.ts';
-import { type CovidAnalyzeSingleVariantData } from '../../../views/covid.ts';
+import { type CovidVariantData } from '../../../views/covid.ts';
 import { Routing } from '../../../views/routing.ts';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
@@ -104,7 +104,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
         const currentPageState = routing
             .getOrganismView('covid.singleVariantView')
             .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
-        let newPageState: CovidAnalyzeSingleVariantData;
+        let newPageState: CovidVariantData;
         const query = querySchema.parse(JSON.parse(variant.query));
         if (query.variantQuery !== undefined) {
             newPageState = {

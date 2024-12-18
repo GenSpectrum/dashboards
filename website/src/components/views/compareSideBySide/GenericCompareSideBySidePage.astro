@@ -15,9 +15,10 @@ import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/Fall
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareSideBySideViewKey>;
 interface Props {
     organism: OrganismViewCompareVariant;
+    hideMutationFilter?: boolean;
 }
 
-const { organism } = Astro.props;
+const { organism, hideMutationFilter } = Astro.props;
 const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
@@ -97,8 +98,12 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                 lapisDateField={view.organismConstants.mainDateField}
                                 granularity={timeGranularity}
                             />
-                            <GsMutations lapisFilter={numeratorFilter} sequenceType='nucleotide' />
-                            <GsMutations lapisFilter={numeratorFilter} sequenceType='amino acid' />
+                            {!hideMutationFilter && (
+                                <>
+                                    <GsMutations lapisFilter={numeratorFilter} sequenceType='nucleotide' />
+                                    <GsMutations lapisFilter={numeratorFilter} sequenceType='amino acid' />
+                                </>
+                            )}
                             <GsAggregate
                                 title='Sub-lineages'
                                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}

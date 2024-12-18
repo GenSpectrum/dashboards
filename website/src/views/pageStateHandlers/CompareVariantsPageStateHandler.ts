@@ -1,6 +1,6 @@
 import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { SingleVariantConstants } from '../OrganismConstants.ts';
+import type { ExtendedConstants } from '../OrganismConstants.ts';
 import {
     type CompareVariantsData,
     type DatasetFilter,
@@ -31,7 +31,7 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
     protected readonly pathname;
 
     constructor(
-        protected readonly constants: SingleVariantConstants,
+        protected readonly constants: ExtendedConstants,
         protected readonly defaultPageState: CompareVariantsData,
         pathFragment: string,
     ) {

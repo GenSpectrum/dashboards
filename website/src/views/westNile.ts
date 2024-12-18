@@ -9,14 +9,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type SingleVariantConstants } from './OrganismConstants.ts';
+import { getPathoplexusAdditionalSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
-class WestNileConstants implements SingleVariantConstants {
+class WestNileConstants implements ExtendedConstants {
     public readonly organism = Organisms.westNile;
     public readonly earliestDate = '1930-01-01';
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
