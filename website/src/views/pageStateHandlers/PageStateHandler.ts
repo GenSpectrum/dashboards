@@ -1,8 +1,8 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { ExtendedConstants } from '../OrganismConstants.ts';
-import { type Dataset, type Id, type VariantFilter } from '../View.ts';
-import { type LapisLocation } from '../helpers.ts';
+import { type Dataset, type Id } from '../View.ts';
+import { type LapisCovidVariantFilter, type LapisLocation } from '../helpers.ts';
 
 export interface PageStateHandler<PageState extends object> {
     parsePageStateFromUrl(url: URL): PageState;
@@ -81,12 +81,13 @@ export function searchParamsFromFilterMap<Entry>(
     return encodeMultipleFiltersToUrlSearchParam(searchParameterMap);
 }
 
-export function toDisplayName(variantFilter: VariantFilter) {
+export function toDisplayName(variantFilter: LapisCovidVariantFilter) {
     return [
         ...Object.values(variantFilter.lineages).filter((lineage) => lineage !== undefined),
         ...(variantFilter.mutations.nucleotideMutations ?? []),
         ...(variantFilter.mutations.aminoAcidMutations ?? []),
         ...(variantFilter.mutations.nucleotideInsertions ?? []),
         ...(variantFilter.mutations.aminoAcidInsertions ?? []),
+        ...(variantFilter.variantQuery !== undefined ? [variantFilter.variantQuery] : []),
     ].join(' + ');
 }

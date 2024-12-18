@@ -10,12 +10,14 @@ import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageState
 import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
 import SelectVariant from '../../components/views/analyzeSingleVariant/SelectVariant.astro';
+import { sanitizeForFilename } from '../../components/views/compareSideBySide/toDownloadLink';
 import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
 import { getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
 import { getLocationSubdivision } from '../../views/locationHelpers';
+import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 
@@ -41,9 +43,20 @@ const lineageFilterConfigs = getLineageFilterConfigs(
 );
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
+
+const displayName = toDisplayName(pageState.variantFilter);
+const downloadLinks = noVariantSelected
+    ? []
+    : [
+          {
+              label: `Download accessions of ${displayName}`,
+              filter: variantFilter,
+              downloadFileBasename: `${view.organismConstants.organism}_${sanitizeForFilename(displayName)}_accessions`,
+          },
+      ];
 ---
 
-<SingleVariantOrganismPageLayout view={view}>
+<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <div slot='filters'>
         <SingleVariantPageStateSelector
             locationFilterConfig={{

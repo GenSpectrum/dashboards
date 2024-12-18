@@ -56,6 +56,7 @@ class MpoxConstants implements ExtendedConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly accessionDownloadFields;
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
@@ -71,6 +72,7 @@ class MpoxConstants implements ExtendedConstants {
         this.authorsField = organismsConfig.mpox.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.mpox.lapis.accessionDownloadFields;
     }
 }
 

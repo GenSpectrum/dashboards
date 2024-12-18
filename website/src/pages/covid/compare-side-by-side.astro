@@ -5,6 +5,7 @@ import GsPrevalenceOverTime from '../../components/genspectrum/GsPrevalenceOverT
 import GsRelativeGrowthAdvantage from '../../components/genspectrum/GsRelativeGrowthAdvantage.astro';
 import { CompareSideBySidePageStateSelector } from '../../components/pageStateSelectors/CompareSideBySidePageStateSelector';
 import { CompareSideBySideSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
+import { toDownloadLink } from '../../components/views/compareSideBySide/toDownloadLink';
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
@@ -16,9 +17,13 @@ const organismViewKey: OrganismViewKey = 'covid.compareSideBySideView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
+
+const downloadLinks = [...pageState.filters.entries()].map(
+    toDownloadLink(view.pageStateHandler, view.organismConstants.organism),
+);
 ---
 
-<OrganismPageLayout view={view}>
+<OrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='flex overflow-x-auto'>
             {

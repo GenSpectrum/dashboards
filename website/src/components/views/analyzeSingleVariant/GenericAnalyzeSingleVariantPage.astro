@@ -6,6 +6,7 @@ import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranulari
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
 import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/locationHelpers';
+import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
@@ -17,6 +18,7 @@ import GsMutationsOverTime from '../../genspectrum/GsMutationsOverTime.astro';
 import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { AnalyzeSingleVariantSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
+import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof singleVariantViewKey>;
 interface Props {
@@ -47,9 +49,20 @@ const lineageFilterConfigs = getLineageFilterConfigs(
 );
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
+
+const displayName = toDisplayName(pageState.variantFilter);
+const downloadLinks = noVariantSelected
+    ? []
+    : [
+          {
+              label: `Download accessions of "${displayName}"`,
+              filter: variantLapisFilter,
+              downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
+          },
+      ];
 ---
 
-<SingleVariantOrganismPageLayout view={view}>
+<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <SingleVariantPageStateSelector
         slot='filters'
         locationFilterConfig={{

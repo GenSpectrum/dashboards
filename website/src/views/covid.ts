@@ -1,4 +1,4 @@
-import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { type DateRangeOption, dateRangeOptionPresets, type LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import {
     type CompareSideBySideData,
@@ -67,6 +67,7 @@ class CovidConstants implements ExtendedConstants {
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
+    public readonly accessionDownloadFields;
 
     public get additionalSequencingEffortsFields() {
         const originatingLab =
@@ -87,6 +88,7 @@ class CovidConstants implements ExtendedConstants {
         this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.covid.lapis.accessionDownloadFields;
     }
 }
 
@@ -276,6 +278,18 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
                 filterParams,
                 getLineageFilterFields(this.constants.lineageFilters),
             ),
+        };
+    }
+
+    public variantFilterToLapisFilter(
+        datasetFilter: CovidCompareSideBySideFilter['datasetFilter'],
+        variantFilter: CovidCompareSideBySideFilter['variantFilter'],
+    ): LapisFilter {
+        return {
+            ...variantFilter.lineages,
+            ...variantFilter.mutations,
+            variantQuery: variantFilter.variantQuery,
+            ...this.datasetFilterToLapisFilter(datasetFilter),
         };
     }
 }

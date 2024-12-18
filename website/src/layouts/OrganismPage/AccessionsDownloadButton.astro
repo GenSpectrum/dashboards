@@ -1,0 +1,61 @@
+---
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
+import { assembleDownloadUrl } from './assembleDownloadUrl';
+import { getLapisUrl } from '../../config';
+import { Modal } from '../../styles/containers/Modal';
+import { ModalContent } from '../../styles/containers/ModalContent';
+import { ModalHeader } from '../../styles/containers/ModalHeader';
+import type { OrganismConstants } from '../../views/OrganismConstants';
+import type { View } from '../../views/View';
+import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
+
+type DownloadLink = {
+    label: string;
+    filter: LapisFilter;
+    downloadFileBasename: string;
+};
+
+interface Props {
+    view: View<object, OrganismConstants, PageStateHandler<object>>;
+    downloadLinks: DownloadLink[];
+}
+
+const { view, downloadLinks } = Astro.props;
+
+const modalId = 'accessionDownloadModal';
+---
+
+<button class='flex items-center gap-1 p-2 text-xs' onclick={`${modalId}.showModal()`}>
+    <span class='iconify text-base mdi--download'></span>
+    Download data
+</button>
+<Modal id={modalId}>
+    <ModalHeader title='Download data' icon='mdi--download' />
+    <ModalContent>
+        <p>You can download a list of accessions that are used for the visualizations on this page:</p>
+        <div class='m-8'>
+            {
+                downloadLinks
+                    .map(({ label, filter, downloadFileBasename }) => ({
+                        label,
+                        url: assembleDownloadUrl(
+                            view.organismConstants.accessionDownloadFields,
+                            filter,
+                            downloadFileBasename,
+                            getLapisUrl(view.organismConstants.organism),
+                        ),
+                    }))
+                    .map(({ label, url }) => (
+                        <a class='link m-2 flex items-center gap-1' href={url}>
+                            <span class='iconify text-xl mdi--download' />
+                            {label}
+                        </a>
+                    ))
+            }
+        </div>
+        <form method='dialog' class='flex flex-col items-end'>
+            <button class='underline'>Close</button>
+        </form>
+    </ModalContent>
+</Modal>

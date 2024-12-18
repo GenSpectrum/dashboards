@@ -8,6 +8,7 @@ import type { DataOrigin } from '../types/dataOrigins.ts';
 export interface OrganismConstants {
     readonly organism: Organism;
     readonly dataOrigins: DataOrigin[];
+    readonly accessionDownloadFields: string[];
 }
 
 export const ComponentHeight = {

@@ -26,7 +26,7 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
+const lapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
@@ -42,7 +42,16 @@ const lineageFilterConfigs = getLineageFilterConfigs(
 );
 ---
 
-<SingleVariantOrganismPageLayout view={view}>
+<SingleVariantOrganismPageLayout
+    view={view}
+    downloadLinks={[
+        {
+            label: 'Download accessions',
+            filter: lapisFilter,
+            downloadFileBasename: `${organism}_sequencing_efforts_accessions`,
+        },
+    ]}
+>
     <SequencingEffortsPageStateSelector
         slot='filters'
         locationFilterConfig={{
@@ -69,7 +78,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(
             lapisFilters={[
                 {
                     displayName: '',
-                    lapisFilter: variantLapisFilter,
+                    lapisFilter: lapisFilter,
                 },
             ]}
             lapisDateField={view.organismConstants.mainDateField}
@@ -81,7 +90,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(
                     title={locationLabel}
                     height={ComponentHeight.large}
                     lapisLocationField={locationField}
-                    lapisFilter={variantLapisFilter}
+                    lapisFilter={lapisFilter}
                     mapName={mapName}
                 />
             )
@@ -90,16 +99,16 @@ const lineageFilterConfigs = getLineageFilterConfigs(
             title='Hosts'
             height={ComponentHeight.large}
             fields={[view.organismConstants.hostField]}
-            lapisFilter={variantLapisFilter}
+            lapisFilter={lapisFilter}
         />
         <GsAggregate
             title='Sub-lineages'
             fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
-            lapisFilter={variantLapisFilter}
+            lapisFilter={lapisFilter}
         />
         {
             view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height }) => (
-                <GsAggregate title={label} height={height} fields={fields} lapisFilter={variantLapisFilter} />
+                <GsAggregate title={label} height={height} fields={fields} lapisFilter={lapisFilter} />
             ))
         }
     </ComponentsGrid>
