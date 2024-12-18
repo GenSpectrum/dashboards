@@ -78,6 +78,7 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    hideMutationFilter={hideMutationFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback
