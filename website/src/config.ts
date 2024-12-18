@@ -17,6 +17,7 @@ const lapisConfigSchema = z.object({
     originatingLabField: z.optional(z.string()),
     submittingLabField: z.optional(z.string()),
     additionalFilters: z.optional(z.record(z.string())),
+    accessionDownloadFields: z.array(z.string()),
 });
 
 const externalNavigationLinkSchema = z.object({

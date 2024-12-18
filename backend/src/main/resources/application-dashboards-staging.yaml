@@ -11,6 +11,8 @@ dashboards:
         hostField: "host"
         originatingLabField: "originatingLab"
         submittingLabField: "submittingLab"
+        accessionDownloadFields:
+          - "strain"
       externalNavigationLinks:
         - url: "https://cov-spectrum.org"
           label: "CoV-Spectrum"
@@ -28,6 +30,15 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull_seg1"
+          - "insdcAccessionFull_seg2"
+          - "insdcAccessionFull_seg3"
+          - "insdcAccessionFull_seg4"
+          - "insdcAccessionFull_seg5"
+          - "insdcAccessionFull_seg6"
+          - "insdcAccessionFull_seg7"
+          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/h5n1"
           label: "Browse data"
@@ -45,6 +56,9 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
+          - "accessionVersion"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/mpox"
           label: "Browse data"
@@ -62,6 +76,9 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
+          - "accessionVersion"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/west-nile"
           label: "Browse data"
@@ -79,6 +96,8 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/rsv-a"
           label: "Browse data"
@@ -96,6 +115,8 @@ dashboards:
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
       externalNavigationLinks:
         - url: "https://loculus.staging.genspectrum.org/rsv-b"
           label: "Browse data"

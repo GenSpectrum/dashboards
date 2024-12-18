@@ -46,6 +46,7 @@ class WestNileConstants implements ExtendedConstants {
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
+    public readonly accessionDownloadFields;
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
@@ -61,6 +62,7 @@ class WestNileConstants implements ExtendedConstants {
         this.authorsField = organismsConfig.westNile.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.westNile.lapis.accessionDownloadFields;
     }
 }
 

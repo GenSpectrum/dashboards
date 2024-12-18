@@ -11,6 +11,7 @@ import GsMutationComparison from '../../genspectrum/GsMutationComparison.astro';
 import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareVariantsPageStateSelector } from '../../pageStateSelectors/CompareVariantsPageStateSelector';
 import { CompareVariantsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
+import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareVariantsViewKey>;
 interface Props {
@@ -34,9 +35,17 @@ const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageSt
 const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
 
 const notEnoughVariantsSelected = pageState.variants.size < 2;
+
+const downloadLinks = notEnoughVariantsSelected
+    ? []
+    : numeratorLapisFilters.map(({ lapisFilter, displayName }) => ({
+          label: `Download accessions of "${displayName}"`,
+          filter: lapisFilter,
+          downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
+      }));
 ---
 
-<SingleVariantOrganismPageLayout view={view}>
+<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <CompareVariantsPageStateSelector
         slot='filters'
         locationFilterConfig={{
