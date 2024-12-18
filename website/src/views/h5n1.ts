@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getAuthorRelatedSequencingEffortsFields, type SingleVariantConstants } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,7 +18,7 @@ import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/Compar
 
 const earliestDate = '1905-01-01';
 
-class H5n1Constants implements SingleVariantConstants {
+class H5n1Constants implements ExtendedConstants {
     public readonly organism = Organisms.h5n1;
     public readonly earliestDate = '1905-01-01';
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;

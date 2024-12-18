@@ -1,6 +1,6 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { SingleVariantConstants } from '../OrganismConstants.ts';
+import type { ExtendedConstants } from '../OrganismConstants.ts';
 import { type Dataset, type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { singleVariantViewConstants } from '../ViewConstants.ts';
 import {
@@ -20,7 +20,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
     protected readonly pathname;
 
     constructor(
-        protected readonly constants: SingleVariantConstants,
+        protected readonly constants: ExtendedConstants,
         protected readonly defaultPageState: PageState,
         pathFragment: string,
     ) {

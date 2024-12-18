@@ -9,14 +9,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getAuthorRelatedSequencingEffortsFields, type SingleVariantConstants } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
-class RsvAConstants implements SingleVariantConstants {
+class RsvAConstants implements ExtendedConstants {
     public readonly organism = Organisms.rsvA;
     public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
     public readonly earliestDate = '1956-01-01';
