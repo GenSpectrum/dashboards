@@ -200,34 +200,3 @@ export const setSearchFromLapisCovidVariantQuery = (
     setSearchFromLapisVariantQuery(search, query, lineageFilters);
     setSearchFromString(search, 'variantQuery', query.variantQuery);
 };
-
-export function getLocationSubdivision(locationFields: string[], locationFilter: LapisLocation) {
-    if (locationFields.length <= 1) {
-        return { label: '', field: undefined };
-    }
-
-    for (let i = locationFields.length - 1; i >= 0; i--) {
-        const field = locationFields[i];
-
-        if (locationFilter[field] !== undefined) {
-            const locationOneLevelUp = locationFields[i + 1];
-            if (locationOneLevelUp) {
-                return { label: getLocationLabel(locationOneLevelUp), field: locationOneLevelUp };
-            }
-
-            return { label: '', field: undefined };
-        }
-    }
-
-    return {
-        label: getLocationLabel(locationFields[0]),
-        field: locationFields[0],
-    };
-}
-
-function getLocationLabel(field: string) {
-    if (field.toLowerCase().includes('country')) {
-        return 'Country';
-    }
-    return 'Geographic sub-divisions';
-}

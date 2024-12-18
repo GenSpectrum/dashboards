@@ -10,11 +10,11 @@ interface Props {
 }
 const { forceLoggedOutState = false } = Astro.props;
 
-const zIndexHigherThanMutationFilterInfoButton = 'z-20';
+const zIndexHigherThanLeafletButtons = 'z-[1100]';
 const commonHeaderCss = `${headerHeight} gap-4 items-center justify-between`;
 ---
 
-<header class={`sticky top-0 ${zIndexHigherThanMutationFilterInfoButton} border-b bg-white`}>
+<header class={`sticky top-0 ${zIndexHigherThanLeafletButtons} border-b bg-white`}>
     <div class={`${commonHeaderCss} hidden sm:flex `}>
         <Brand />
         <Navigation />

@@ -1,0 +1,48 @@
+---
+import { type LapisFilter } from '@genspectrum/dashboard-components/util';
+
+import { getSequencesByLocationMapData } from '../../util/getSequencesByLocationMapData';
+import { defaultTablePageSize } from '../../views/View';
+import ComponentWrapper from '../ComponentWrapper.astro';
+
+interface Props {
+    title: string;
+    height?: string;
+    lapisLocationField: string;
+    lapisFilter: LapisFilter;
+    mapName?: string;
+}
+
+const { title, height, lapisLocationField, lapisFilter, mapName } = Astro.props;
+
+const mapData = getSequencesByLocationMapData(mapName, Astro.url);
+---
+
+<ComponentWrapper title={title} height={height}>
+    {
+        mapData === undefined ? (
+            <gs-sequences-by-location
+                lapisLocationField={lapisLocationField}
+                lapisFilter={JSON.stringify(lapisFilter)}
+                pageSize={defaultTablePageSize}
+                views={JSON.stringify(['table'])}
+                width='100%'
+                height='100%'
+            />
+        ) : (
+            <gs-sequences-by-location
+                lapisLocationField={lapisLocationField}
+                lapisFilter={JSON.stringify(lapisFilter)}
+                pageSize={defaultTablePageSize}
+                views={JSON.stringify(['map', 'table'])}
+                mapSource={JSON.stringify(mapData.mapSource)}
+                width='100%'
+                height='100%'
+                zoom={mapData.zoom}
+                offsetX={mapData.offsetX}
+                offsetY={mapData.offsetY}
+                enableMapNavigation
+            />
+        )
+    }
+</ComponentWrapper>

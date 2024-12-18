@@ -3,13 +3,14 @@ import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
-import { getLocationSubdivision } from '../../../views/helpers';
+import { getLocationDisplayConfig } from '../../../views/locationHelpers';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
 import ComponentsGrid from '../../ComponentsGrid.astro';
 import GsAggregate from '../../genspectrum/GsAggregate.astro';
 import GsNumberSequencesOverTime from '../../genspectrum/GsNumberSequencesOverTime.astro';
+import GsSequencesByLocation from '../../genspectrum/GsSequencesByLocation.astro';
 import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
@@ -29,10 +30,11 @@ const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
-const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    view.organismConstants.locationFields,
-    pageState.datasetFilter.location,
-);
+const {
+    label: locationLabel,
+    locationField,
+    mapName,
+} = getLocationDisplayConfig(view.organismConstants.locationFields, pageState.datasetFilter.location);
 ---
 
 <SingleVariantOrganismPageLayout view={view}>
@@ -68,12 +70,13 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
             granularity={timeGranularity}
         />
         {
-            subdivisionField !== undefined && (
-                <GsAggregate
-                    title={subdivisionLabel}
+            locationField !== undefined && (
+                <GsSequencesByLocation
+                    title={locationLabel}
                     height={ComponentHeight.large}
-                    fields={[subdivisionField]}
+                    lapisLocationField={locationField}
                     lapisFilter={datasetLapisFilter}
+                    mapName={mapName}
                 />
             )
         }

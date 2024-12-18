@@ -1,0 +1,2 @@
+# Ignore maps, they should be as compact as possible. Pretty-printing increases the size by a factor of ~3.
+public/mapData/
