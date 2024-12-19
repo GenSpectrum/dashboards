@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { type JSX, type RefObject } from 'react';
 import { toast } from 'react-toastify';
-import { v4 as uuidv4 } from 'uuid';
 
 import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
@@ -13,7 +12,7 @@ import { ModalHeader } from '../../../styles/containers/ModalHeader.tsx';
 import { organismConfig } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
-import { ErrorReportToastModal } from '../../ErrorReportInstruction.tsx';
+import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 
 const logger = getClientLogger('SubscriptionEntry');
@@ -102,6 +101,8 @@ function MoreDropdown({
     userId: string;
     refetchSubscriptions: () => void;
 }) {
+    const { showErrorToast } = useErrorToast(logger);
+
     const deleteSubscription = useMutation({
         mutationFn: () =>
             getBackendServiceForClientside().deleteSubscription({
@@ -116,22 +117,13 @@ function MoreDropdown({
             });
         },
         onError: (error) => {
-            const errorId = uuidv4();
-            logger.error(`Failed to delete subscription with id '${subscription.id}': ${getErrorLogMessage(error)}`, {
-                errorId,
+            showErrorToast({
+                error,
+                logMessage: `Failed to delete subscription with id '${subscription.id}': ${getErrorLogMessage(error)}`,
+                errorToastMessages: [
+                    `We could not delete your subscription "${subscription.name}". Please try again later.`,
+                ],
             });
-            toast.error(
-                <>
-                    <p className='mb-2'>
-                        We could not delete your subscription "{subscription.name}". Please try again later.
-                    </p>
-                    <ErrorReportToastModal errorId={errorId} error={error} />
-                </>,
-                {
-                    position: 'bottom-left',
-                    autoClose: false,
-                },
-            );
         },
     });
 
