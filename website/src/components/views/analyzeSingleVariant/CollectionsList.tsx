@@ -90,10 +90,10 @@ type CollectionVariantListProps = {
 const querySchema = z.object({
     pangoLineage: z.string().optional(),
     nextcladePangoLineage: z.string().optional(),
-    nucMutations: z.array(z.string()),
-    aaMutations: z.array(z.string()),
-    nucInsertions: z.array(z.string()),
-    aaInsertions: z.array(z.string()),
+    nucMutations: z.array(z.string()).optional(),
+    aaMutations: z.array(z.string()).optional(),
+    nucInsertions: z.array(z.string()).optional(),
+    aaInsertions: z.array(z.string()).optional(),
     variantQuery: z.string().optional(),
 });
 
