@@ -98,9 +98,27 @@ const querySchema = z.object({
 function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
     const variants = collection.variants;
 
+    const selectVariant = useSelectVariant(organismsConfig, collection.id);
+
+    return (
+        <div className='flex flex-col'>
+            {variants.map((variant, index) => (
+                <button
+                    key={`${variant.name}_${variant.query}_${index}`}
+                    className='border bg-white px-4 py-2 hover:bg-cyan'
+                    onClick={() => selectVariant(variant)}
+                >
+                    {variant.name}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+function useSelectVariant(organismsConfig: OrganismsConfig, collectionId: number) {
     const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
 
-    const selectVariant = (variant: CollectionVariant) => {
+    return (variant: CollectionVariant) => {
         const currentPageState = routing
             .getOrganismView('covid.singleVariantView')
             .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
@@ -109,7 +127,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
         if (query.variantQuery !== undefined) {
             newPageState = {
                 ...currentPageState,
-                collectionId: collection.id,
+                collectionId: collectionId,
                 variantFilter: {
                     lineages: {},
                     mutations: {},
@@ -119,7 +137,7 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
         } else {
             newPageState = {
                 ...currentPageState,
-                collectionId: collection.id,
+                collectionId: collectionId,
                 variantFilter: {
                     lineages: {
                         nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
@@ -135,18 +153,4 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
         }
         window.location.href = routing.getOrganismView('covid.singleVariantView').pageStateHandler.toUrl(newPageState);
     };
-
-    return (
-        <div className='flex flex-col'>
-            {variants.map((variant, index) => (
-                <button
-                    key={`${variant.name}_${variant.query}_${index}`}
-                    className='border bg-white px-4 py-2 hover:bg-cyan'
-                    onClick={() => selectVariant(variant)}
-                >
-                    {variant.name}
-                </button>
-            ))}
-        </div>
-    );
 }
