@@ -88,6 +88,11 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
         return toLapisFilterWithoutVariant({ datasetFilter }, this.constants);
     }
 
+    public abstract variantFilterToLapisFilter(
+        datasetFilter: ColumnData['datasetFilter'],
+        variantFilter: ColumnData['variantFilter'],
+    ): LapisFilter;
+
     protected abstract writeColumnDataToSearchParams(searchOfFilter: URLSearchParams, filter: ColumnData): void;
 
     protected abstract getEmptyColumnData(): ColumnData;
@@ -131,6 +136,17 @@ export class GenericCompareSideBySideStateHandler extends CompareSideBySideState
                     ) ?? this.constants.defaultDateRange,
             },
             variantFilter: getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
+        };
+    }
+
+    public variantFilterToLapisFilter(
+        datasetFilter: DatasetAndVariantData['datasetFilter'],
+        variantFilter: DatasetAndVariantData['variantFilter'],
+    ): LapisFilter {
+        return {
+            ...variantFilter.lineages,
+            ...variantFilter.mutations,
+            ...this.datasetFilterToLapisFilter(datasetFilter),
         };
     }
 }

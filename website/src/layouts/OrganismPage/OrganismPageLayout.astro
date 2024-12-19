@@ -1,6 +1,8 @@
 ---
-import { getLapisUrl } from '../../config';
-import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
+import type { ComponentProps } from 'astro/types';
+
+import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
+import LastUpdatedInfo from './LastUpdatedInfo.astro';
 import type { OrganismConstants } from '../../views/OrganismConstants';
 import { type View } from '../../views/View';
 import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
@@ -10,11 +12,10 @@ import DataInfo from '../base/footer/DataInfo.astro';
 
 interface Props {
     view: View<object, OrganismConstants, PageStateHandler<object>>;
+    downloadLinks: ComponentProps<typeof AccessionsDownloadButton>['downloadLinks'];
 }
 
-const { view } = Astro.props;
-
-const lastUpdatedDate = await getLastUpdatedDate(getLapisUrl(view.organismConstants.organism));
+const { view, downloadLinks } = Astro.props;
 ---
 
 <BaseLayout title={view.viewTitle}>
@@ -22,8 +23,9 @@ const lastUpdatedDate = await getLastUpdatedDate(getLapisUrl(view.organismConsta
         <Breadcrumbs breadcrumbs={view.viewBreadcrumbEntries} />
     </div>
     <slot />
-    <div class='flex justify-center' slot='secondary-footer'>
-        <span class='mr-4 p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
+    <div class='flex flex-col justify-center sm:flex-row sm:gap-4' slot='secondary-footer'>
+        {downloadLinks.length > 0 && <AccessionsDownloadButton view={view} downloadLinks={downloadLinks} />}
+        <LastUpdatedInfo view={view} />
         <DataInfo dataOrigins={view.organismConstants.dataOrigins} />
     </div>
 </BaseLayout>

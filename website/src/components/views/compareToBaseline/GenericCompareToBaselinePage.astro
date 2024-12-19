@@ -10,6 +10,7 @@ import ComponentsGrid from '../../ComponentsGrid.astro';
 import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
 import { CompareToBaselineSelectorFallback } from '../../pageStateSelectors/FallbackElement';
+import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareToBaselineViewKey>;
 interface Props {
@@ -33,9 +34,17 @@ const baselineFilterConfig = view.pageStateHandler.toBaselineFilterConfig(pageSt
 
 const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
 const noVariantSelected = pageState.variants.size < 1;
+
+const downloadLinks = noVariantSelected
+    ? []
+    : numeratorLapisFilters.map(({ lapisFilter, displayName }) => ({
+          label: `Download accessions of "${displayName}"`,
+          filter: lapisFilter,
+          downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
+      }));
 ---
 
-<SingleVariantOrganismPageLayout view={view}>
+<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <CompareVariantsToBaselineStateSelector
         slot='filters'
         locationFilterConfig={{

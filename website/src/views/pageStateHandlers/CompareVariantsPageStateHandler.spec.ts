@@ -22,6 +22,7 @@ const mockConstants: ExtendedConstants = {
         },
     ],
     additionalSequencingEffortsFields: [],
+    accessionDownloadFields: [],
 };
 
 const mockDefaultPageState: CompareVariantsData = {

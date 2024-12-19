@@ -1,11 +1,9 @@
-import { useRef } from 'react';
-
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardContent } from '../../../styles/containers/CardContent.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
 import { CardHeader } from '../../../styles/containers/CardHeader.tsx';
 import { DividerList } from '../../../styles/containers/DividerList.tsx';
-import { ModalBox } from '../../../styles/containers/ModalBox.tsx';
+import { Modal, useModalRef } from '../../../styles/containers/Modal.tsx';
 import { ModalContent } from '../../../styles/containers/ModalContent.tsx';
 import { ModalHeader } from '../../../styles/containers/ModalHeader.tsx';
 import { PageContainer } from '../../../styles/containers/PageContainer.tsx';
@@ -75,7 +73,7 @@ function EmailEntry({ channel }: { channel: EmailChannel }) {
 }
 
 function AddEmailButton() {
-    const addMailDialog = useRef<HTMLDialogElement>(null);
+    const addMailDialog = useModalRef();
 
     const toggleDialog = () => {
         addMailDialog.current?.showModal();
@@ -86,40 +84,37 @@ function AddEmailButton() {
             <button className='btn btn-primary btn-sm' onClick={toggleDialog}>
                 + Add
             </button>
-            <dialog className='modal' ref={addMailDialog}>
-                <ModalBox>
-                    <ModalHeader title='Add Email' icon='mdi--email' />
+            <Modal modalRef={addMailDialog}>
+                <ModalHeader title='Add Email' icon='mdi--email' />
+                <ModalContent>
+                    <InputLabel
+                        title='Email address'
+                        description='You can provide the email address where you want to send the messages.'
+                    >
+                        <input className='input input-sm input-bordered w-full' placeholder='test@mailbox.org' />
+                    </InputLabel>
 
-                    <ModalContent>
-                        <InputLabel
-                            title='Email address'
-                            description='You can provide the email address where you want to send the messages.'
-                        >
-                            <input className='input input-sm input-bordered w-full' placeholder='test@mailbox.org' />
-                        </InputLabel>
+                    <div className='divider'></div>
 
-                        <div className='divider'></div>
+                    <InputLabel
+                        title='Name'
+                        description='You can provide a custom name for your email to find it later on.'
+                    >
+                        <input className='input input-sm input-bordered w-full' placeholder='Name' />
+                    </InputLabel>
 
-                        <InputLabel
-                            title='Name'
-                            description='You can provide a custom name for your email to find it later on.'
-                        >
-                            <input className='input input-sm input-bordered w-full' placeholder='Name' />
-                        </InputLabel>
+                    <div className='divider'></div>
 
-                        <div className='divider'></div>
-
-                        <div className='modal-action'>
-                            <form method='dialog'>
-                                <button className='btn btn-outline float-right w-24'>Discard</button>
-                            </form>
-                            <form method='dialog'>
-                                <button className='btn btn-primary float-right w-24 underline'>Add</button>
-                            </form>
-                        </div>
-                    </ModalContent>
-                </ModalBox>
-            </dialog>
+                    <div className='modal-action'>
+                        <form method='dialog'>
+                            <button className='btn btn-outline float-right w-24'>Discard</button>
+                        </form>
+                        <form method='dialog'>
+                            <button className='btn btn-primary float-right w-24 underline'>Add</button>
+                        </form>
+                    </div>
+                </ModalContent>
+            </Modal>
         </>
     );
 }
@@ -151,7 +146,7 @@ function SlackEntry({ channel }: { channel: SlackChannel }) {
 }
 
 function AddSlackButton() {
-    const addSlackDialog = useRef<HTMLDialogElement>(null);
+    const addSlackDialog = useModalRef();
 
     const toggleDialog = () => {
         addSlackDialog.current?.showModal();
@@ -162,45 +157,43 @@ function AddSlackButton() {
             <button className='btn btn-primary btn-sm' onClick={toggleDialog}>
                 + Add
             </button>
-            <dialog className='modal' ref={addSlackDialog}>
-                <ModalBox>
-                    <ModalHeader title='Add Slack channel' icon='mdi--slack' />
+            <Modal modalRef={addSlackDialog}>
+                <ModalHeader title='Add Slack channel' icon='mdi--slack' />
 
-                    <ModalContent>
-                        <InputLabel
-                            title='Slack webhook URL'
-                            description={
-                                'You can get the Slack Incoming Webhook URL in the Slack settings:\nChannel Settings > Add an App > Incoming WebHooks.'
-                            }
-                        >
-                            <input
-                                className='input input-sm input-bordered w-full'
-                                placeholder='https://hooks.slack.com/services/...'
-                            />
-                        </InputLabel>
+                <ModalContent>
+                    <InputLabel
+                        title='Slack webhook URL'
+                        description={
+                            'You can get the Slack Incoming Webhook URL in the Slack settings:\nChannel Settings > Add an App > Incoming WebHooks.'
+                        }
+                    >
+                        <input
+                            className='input input-sm input-bordered w-full'
+                            placeholder='https://hooks.slack.com/services/...'
+                        />
+                    </InputLabel>
 
-                        <div className='divider'></div>
+                    <div className='divider'></div>
 
-                        <InputLabel
-                            title='Name of channel'
-                            description='You can provide a custom name for your channel to find it later on.'
-                        >
-                            <input className='input input-sm input-bordered w-full' placeholder='Name' />
-                        </InputLabel>
+                    <InputLabel
+                        title='Name of channel'
+                        description='You can provide a custom name for your channel to find it later on.'
+                    >
+                        <input className='input input-sm input-bordered w-full' placeholder='Name' />
+                    </InputLabel>
 
-                        <div className='divider'></div>
+                    <div className='divider'></div>
 
-                        <div className='modal-action'>
-                            <form method='dialog'>
-                                <button className='btn btn-outline float-right w-24'>Discard</button>
-                            </form>
-                            <form method='dialog'>
-                                <button className='btn btn-primary float-right w-24 underline'>Add</button>
-                            </form>
-                        </div>
-                    </ModalContent>
-                </ModalBox>
-            </dialog>
+                    <div className='modal-action'>
+                        <form method='dialog'>
+                            <button className='btn btn-outline float-right w-24'>Discard</button>
+                        </form>
+                        <form method='dialog'>
+                            <button className='btn btn-primary float-right w-24 underline'>Add</button>
+                        </form>
+                    </div>
+                </ModalContent>
+            </Modal>
         </>
     );
 }
