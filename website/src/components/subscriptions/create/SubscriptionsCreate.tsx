@@ -2,8 +2,6 @@ import '@genspectrum/dashboard-components/components';
 import '@genspectrum/dashboard-components/style.css';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { v4 as uuidv4 } from 'uuid';
 
 import { FilterDisplay } from './FilterDisplay.tsx';
 import { IntervalInput } from './IntervalInput.tsx';
@@ -22,7 +20,7 @@ import { type EvaluationInterval, EvaluationIntervals } from '../../../types/Eva
 import { type Organism, Organisms } from '../../../types/Organism.ts';
 import type { SubscriptionRequest, Trigger } from '../../../types/Subscription.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
-import { ErrorReportToastModal } from '../../ErrorReportInstruction.tsx';
+import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { GsApp } from '../../genspectrum/GsApp.tsx';
 import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
@@ -42,6 +40,8 @@ export function SubscriptionsCreateInner({
     // TODO: Enable notificationChannels in #82, #128
     // notificationChannels: NotificationChannels;
 }) {
+    const { showErrorToast } = useErrorToast(logger);
+
     const createSubscription = useMutation({
         mutationFn: () =>
             getBackendServiceForClientside().postSubscription({
@@ -49,20 +49,11 @@ export function SubscriptionsCreateInner({
                 userId,
             }),
         onError: (error) => {
-            const errorId = uuidv4();
-            logger.error(`Failed to create a new subscription: ${getErrorLogMessage(error)}`, {
-                errorId,
+            showErrorToast({
+                error,
+                logMessage: `Failed to create a new subscription: ${getErrorLogMessage(error)}`,
+                errorToastMessages: ['We could not create your subscription. Please try again later.'],
             });
-            toast.error(
-                <>
-                    <p className='mb-2'>We could not create your subscription. Please try again later.</p>
-                    <ErrorReportToastModal errorId={errorId} error={error} />
-                </>,
-                {
-                    position: 'bottom-left',
-                    autoClose: false,
-                },
-            );
         },
     });
 

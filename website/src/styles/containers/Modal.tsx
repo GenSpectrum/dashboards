@@ -6,7 +6,11 @@ export function useModalRef() {
     return useRef<HTMLDialogElement>(null);
 }
 
-type ModalProps =
+const modalSize = {
+    large: 'max-w-screen-lg',
+};
+
+type ModalProps = (
     | {
           /** set this when using from React and open it via `modalRef.current?.showModal()` */
           modalRef: RefObject<HTMLDialogElement>;
@@ -16,12 +20,15 @@ type ModalProps =
           /** set this when using from Astro and open it via `onclick="id.showModal()"` */
           id: string;
           modalRef?: undefined;
-      };
+      }
+) & {
+    size?: keyof typeof modalSize;
+};
 
-export const Modal: FC<PropsWithChildren<ModalProps>> = ({ children, modalRef, id }) => {
+export const Modal: FC<PropsWithChildren<ModalProps>> = ({ children, modalRef, id, size }) => {
     return (
         <dialog className='modal' ref={modalRef} id={id}>
-            <ModalBox>{children}</ModalBox>
+            <ModalBox className={size !== undefined ? modalSize[size] : ''}>{children}</ModalBox>
             <form method='dialog' className='modal-backdrop'>
                 <button>close on clicking outside of modal</button>
             </form>

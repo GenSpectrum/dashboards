@@ -1,4 +1,40 @@
 import { useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Modal, useModalRef } from '../styles/containers/Modal.tsx';
+import type { InstanceLogger } from '../types/logMessage.ts';
+
+type ErrorToastArguments = {
+    error: Error;
+    logMessage: string;
+    errorToastMessages: [string, ...string[]];
+};
+
+export function useErrorToast(logger: InstanceLogger) {
+    return {
+        showErrorToast: ({ error, logMessage, errorToastMessages }: ErrorToastArguments) => {
+            const errorId = uuidv4();
+            logger.error(logMessage, {
+                errorId,
+            });
+            toast.error(
+                <>
+                    {errorToastMessages.map((toastMessage, index) => (
+                        <p className='mb-2' key={index}>
+                            {toastMessage}
+                        </p>
+                    ))}
+                    <ErrorReportToastModal errorId={errorId} error={error} />
+                </>,
+                {
+                    position: 'bottom-left',
+                    autoClose: false,
+                },
+            );
+        },
+    };
+}
 
 /**
  * Throw this error if you want to display the error message to the user.
@@ -6,7 +42,7 @@ import { useRef, useState } from 'react';
 export class UserFacingError extends Error {}
 
 export function ErrorReportToastModal({ errorId, error }: { errorId: string; error: Error }) {
-    const modalRef = useRef<HTMLDialogElement>(null);
+    const modalRef = useModalRef();
 
     const openModal = () => {
         if (modalRef.current) {
@@ -23,8 +59,8 @@ export function ErrorReportToastModal({ errorId, error }: { errorId: string; err
                     Help us fix the issue.
                 </button>
             </p>
-            <dialog ref={modalRef} className='modal'>
-                <div className='modal-box'>
+            <Modal modalRef={modalRef} size='large'>
+                <div className='p-8'>
                     <ErrorReportInstruction errorId={errorId} currentUrl={window.location.href} error={error} />
                     <div className='modal-action'>
                         <form method='dialog'>
@@ -32,7 +68,7 @@ export function ErrorReportToastModal({ errorId, error }: { errorId: string; err
                         </form>
                     </div>
                 </div>
-            </dialog>
+            </Modal>
         </>
     );
 }
