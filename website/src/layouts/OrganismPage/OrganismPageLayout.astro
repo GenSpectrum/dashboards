@@ -26,9 +26,9 @@ const lastUpdatedDate = await getLastUpdatedDate(getLapisUrl(view.organismConsta
         <Breadcrumbs breadcrumbs={view.viewBreadcrumbEntries} />
     </div>
     <slot />
-    <div class='flex justify-center gap-4' slot='secondary-footer'>
+    <div class='flex flex-col justify-center sm:flex-row sm:gap-4' slot='secondary-footer'>
         {downloadLinks.length > 0 && <AccessionsDownloadButton view={view} downloadLinks={downloadLinks} />}
-        <span class='p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
+        <span class='flex justify-center p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
         <DataInfo dataOrigins={view.organismConstants.dataOrigins} />
     </div>
 </BaseLayout>
