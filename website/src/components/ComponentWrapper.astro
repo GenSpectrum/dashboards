@@ -9,7 +9,7 @@ const { title, height = '400px' } = Astro.props;
 ---
 
 <div>
-    <ComponentHeadline>{title}</ComponentHeadline>
+    <ComponentHeadline title={title} />
     <div style={{ height }}>
         <slot />
     </div>
