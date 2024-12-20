@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { z } from 'zod';
 
+import { getClientLogger } from '../../../clientLogger.ts';
 import type { OrganismsConfig } from '../../../config.ts';
 import { type CovidVariantData } from '../../../views/covid.ts';
 import { Routing } from '../../../views/routing.ts';
+import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
 type CollectionVariant = {
@@ -98,14 +100,51 @@ const querySchema = z.object({
 function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
     const variants = collection.variants;
 
+    const selectVariant = useSelectVariant(organismsConfig, collection);
+
+    return (
+        <div className='flex flex-col'>
+            {variants.map((variant, index) => (
+                <button
+                    key={`${variant.name}_${variant.query}_${index}`}
+                    className='border bg-white px-4 py-2 hover:bg-cyan'
+                    onClick={() => selectVariant(variant)}
+                >
+                    {variant.name}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+const logger = getClientLogger('CollectionList');
+
+function useSelectVariant(organismsConfig: OrganismsConfig, collection: Collection) {
     const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
 
-    const selectVariant = (variant: CollectionVariant) => {
+    const { showErrorToast } = useErrorToast(logger);
+
+    return (variant: CollectionVariant) => {
         const currentPageState = routing
             .getOrganismView('covid.singleVariantView')
             .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
         let newPageState: CovidVariantData;
-        const query = querySchema.parse(JSON.parse(variant.query));
+
+        const queryParseResult = querySchema.safeParse(JSON.parse(variant.query));
+
+        if (!queryParseResult.success) {
+            showErrorToast({
+                error: queryParseResult.error,
+                logMessage: `Failed to parse query of variant ${variant.name} of collection ${collection.id}: ${queryParseResult.error.message}`,
+                errorToastMessages: [
+                    `The variant filter of the collection variant "${variant.name}" seems to be invalid.`,
+                ],
+            });
+            return;
+        }
+
+        const query = queryParseResult.data;
+
         if (query.variantQuery !== undefined) {
             newPageState = {
                 ...currentPageState,
@@ -135,18 +174,4 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
         }
         window.location.href = routing.getOrganismView('covid.singleVariantView').pageStateHandler.toUrl(newPageState);
     };
-
-    return (
-        <div className='flex flex-col'>
-            {variants.map((variant, index) => (
-                <button
-                    key={`${variant.name}_${variant.query}_${index}`}
-                    className='border bg-white px-4 py-2 hover:bg-cyan'
-                    onClick={() => selectVariant(variant)}
-                >
-                    {variant.name}
-                </button>
-            ))}
-        </div>
-    );
 }
