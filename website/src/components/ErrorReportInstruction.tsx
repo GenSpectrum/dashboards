@@ -102,7 +102,7 @@ function CopyToClipboardButton({ getTextToCopy }: { getTextToCopy: () => string 
             {copiedRecently ? (
                 <span className='iconify text-2xl text-green mdi--tick' />
             ) : (
-                <button className='iconify text-xl mdi--content-copy' onClick={void onCopy} />
+                <button className='iconify text-xl mdi--content-copy' onClick={() => void onCopy()} />
             )}
         </div>
     );
