@@ -57,7 +57,7 @@ dashboards:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
       externalNavigationLinks:
-        - url: "https://api.loculus.genspectrum.org/influenza-a"
+        - url: "https://loculus.genspectrum.org/influenza-a"
           label: "Browse data"
           menuIcon: "database"
     mpox:

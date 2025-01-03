@@ -50,6 +50,7 @@ class FluConstants implements ExtendedConstants {
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
+    public readonly accessionDownloadFields;
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);
@@ -62,6 +63,7 @@ class FluConstants implements ExtendedConstants {
         this.authorsField = organismsConfig.flu.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.flu.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.flu.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.flu.lapis.accessionDownloadFields;
     }
 }
 

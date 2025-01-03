@@ -1,12 +1,12 @@
 import { expect } from '@playwright/test';
 
 import { test } from './e2e.fixture.ts';
-import { Organisms, organismConfig } from '../src/types/Organism.ts';
+import { Organisms } from '../src/types/Organism.ts';
 import { type OrganismWithViewKey } from '../src/views/routing';
 import { compareVariantsViewKey } from '../src/views/viewKeys';
 
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareVariantsViewKey>;
-export const allViewCompareOrganisms = Object.keys(organismConfig) as OrganismViewCompareVariant[];
+const allViewCompareOrganisms = ['covid', 'h5n1', 'westNile', 'rsvA', 'rsvB', 'mpox'] as OrganismViewCompareVariant[];
 
 const organismOptions = {
     [Organisms.covid]: { lineage: 'JN.1*', lineageFieldPlaceholder: 'Nextclade pango lineage' },
