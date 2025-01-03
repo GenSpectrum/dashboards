@@ -23,7 +23,6 @@ test.describe('The Compare Variants page', () => {
 
             await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
             await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
-            await compareVariantsPage.submitFilters();
 
             await expect(compareVariantsPage.diagramTitle('Prevalence over time')).toBeVisible();
             await compareVariantsPage.expectToSeeNoComponentErrors();

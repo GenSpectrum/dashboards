@@ -24,7 +24,6 @@ test.describe('The Sequencing Efforts Page', () => {
                 await sequencingEffortsPage.expectToSeeNoComponentErrors();
                 await sequencingEffortsPage.selectLocation(options.location);
                 await sequencingEffortsPage.selectDateRange('All times');
-                await sequencingEffortsPage.submitFilters();
 
                 await expect(sequencingEffortsPage.diagramTitle('Number sequences')).toBeVisible();
                 await sequencingEffortsPage.expectToSeeNoComponentErrors();

@@ -1,8 +1,7 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
@@ -45,6 +44,19 @@ export function SingleVariantPageStateSelector({
         [location, dateRange, variantFilterConfigState],
     );
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const newUrl = view.pageStateHandler.toUrl(newPageState);
+
+            const currentUrl = new URL(window.location.href);
+            const targetUrl = new URL(newUrl, window.location.origin);
+
+            if (currentUrl.href !== targetUrl.href) {
+                window.location.href = targetUrl.href;
+            }
+        }
+    }, [newPageState, view]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
@@ -64,7 +76,6 @@ export function SingleVariantPageStateSelector({
                     lapisFilter={lapisFilter}
                 />
             </div>
-            <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
     );
 }

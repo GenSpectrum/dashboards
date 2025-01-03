@@ -1,8 +1,7 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
@@ -39,7 +38,8 @@ export function CompareSideBySidePageStateSelector({
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const newPageState = useMemo(() => {
-        pageState.filters.set(filterId, {
+        const updatedFilters = new Map(pageState.filters);
+        updatedFilters.set(filterId, {
             datasetFilter: {
                 location,
                 dateRange,
@@ -47,8 +47,22 @@ export function CompareSideBySidePageStateSelector({
             variantFilter: toVariantFilter(variantFilterConfigState),
         });
 
-        return pageState;
+        return {
+            ...pageState,
+            filters: updatedFilters,
+        };
     }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
+
+    useEffect(() => {
+        const newUrl = view.pageStateHandler.toUrl(newPageState);
+
+        const currentUrl = new URL(window.location.href);
+        const targetUrl = new URL(newUrl, window.location.origin);
+
+        if (currentUrl.href !== targetUrl.href) {
+            window.location.href = targetUrl.href;
+        }
+    }, [newPageState, view]);
 
     return (
         <div className='flex flex-col gap-4 bg-gray-50 p-2'>
@@ -70,9 +84,6 @@ export function CompareSideBySidePageStateSelector({
                         lapisFilter={lapisFilter}
                     />
                 </div>
-            </div>
-            <div className='flex justify-end'>
-                <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
             </div>
         </div>
     );
