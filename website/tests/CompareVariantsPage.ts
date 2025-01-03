@@ -15,12 +15,14 @@ export class CompareVariantsPage extends ViewPage {
         await this.page.goto(`/${organismConfig[organism].pathFragment}/compare-variants`);
     }
 
-    public async addVariant(lineageFieldPlaceholder: string, lineage: string) {
+    public async addVariant(lineageFieldPlaceholder: string, lineage: string, startingNumber: number) {
+        await expect(this.page.getByText('Variant Filters')).toBeVisible({ timeout: 5000 });
         const lineageFieldLocator = this.page.getByPlaceholder(lineageFieldPlaceholder);
-        const numberLineageFields = await lineageFieldLocator.count();
+        await expect(lineageFieldLocator).toHaveCount(startingNumber, { timeout: 5000 });
 
         await this.page.getByRole('button', { name: '+ Add variant' }).click();
-        await expect(lineageFieldLocator).toHaveCount(numberLineageFields + 1);
+        await expect(this.page.getByText('Variant Filters')).toBeVisible({ timeout: 5000 });
+        await expect(lineageFieldLocator).toHaveCount(startingNumber + 1, { timeout: 5000 });
 
         await lineageFieldLocator.last().fill(lineage);
     }

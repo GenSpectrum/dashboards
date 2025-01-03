@@ -1,46 +1,38 @@
-import { useEffect, useRef } from 'react';
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
+import { GsTextInput } from '../genspectrum/GsTextInput.tsx';
 import '@genspectrum/dashboard-components/components';
+import type { LocationFilterConfig } from '../pageStateSelectors/BaselineSelector.tsx';
 
-export function GsLocationFilter<Field extends string>({
+export function GsLocationFilter({
     onLocationChange = () => {},
-    fields,
-    placeholderText,
-    width,
-    initialValue,
+    locationFilterConfig,
+    lapisFilter,
 }: {
-    width?: string;
-    placeholderText?: string;
-    fields: Field[];
-    onLocationChange?: (location: { [key in Field]: string | undefined }) => void;
-    initialValue?: string;
+    onLocationChange?: (locationFilterConfig: LocationFilterConfig) => void;
+    locationFilterConfig: LocationFilterConfig;
+    lapisFilter: LapisFilter;
 }) {
-    const locationFilterRef = useRef<HTMLElement>();
+    return locationFilterConfig.locationFields.map((field) => {
+        return (
+            <GsTextInput
+                key={field}
+                lapisField={field}
+                lapisFilter={lapisFilter}
+                placeholderText={field}
+                initialValue={locationFilterConfig.initialLocation[field] ?? ''}
+                onInputChange={(location) => {
+                    const newLocationFilterConfig = {
+                        ...locationFilterConfig,
+                        initialLocation: {
+                            ...locationFilterConfig.initialLocation,
+                            ...location,
+                        },
+                    };
 
-    useEffect(() => {
-        const handleLocationChange = (event: CustomEvent) => {
-            onLocationChange(event.detail);
-        };
-
-        const currentLocationFilterRef = locationFilterRef.current;
-        if (currentLocationFilterRef) {
-            currentLocationFilterRef.addEventListener('gs-location-changed', handleLocationChange);
-        }
-
-        return () => {
-            if (currentLocationFilterRef) {
-                currentLocationFilterRef.removeEventListener('gs-location-changed', handleLocationChange);
-            }
-        };
-    }, [onLocationChange]);
-
-    return (
-        <gs-location-filter
-            fields={JSON.stringify(fields)}
-            placeholderText={placeholderText}
-            width={width}
-            ref={locationFilterRef}
-            initialValue={initialValue}
-        ></gs-location-filter>
-    );
+                    onLocationChange(newLocationFilterConfig);
+                }}
+            />
+        );
+    });
 }

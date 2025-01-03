@@ -4,12 +4,12 @@ import { test } from './e2e.fixture.ts';
 import { allOrganisms, Organisms } from '../src/types/Organism.ts';
 
 const organismOptions = {
-    [Organisms.covid]: { location: 'North America' },
-    [Organisms.h5n1]: { location: 'USA' },
-    [Organisms.westNile]: { location: 'USA' },
-    [Organisms.rsvA]: { location: 'USA' },
-    [Organisms.rsvB]: { location: 'USA' },
-    [Organisms.mpox]: { location: 'USA' },
+    [Organisms.covid]: { placeholder: 'division', location: 'North America' },
+    [Organisms.h5n1]: { placeholder: 'country', location: 'USA' },
+    [Organisms.westNile]: { placeholder: 'country', location: 'USA' },
+    [Organisms.rsvA]: { placeholder: 'country', location: 'USA' },
+    [Organisms.rsvB]: { placeholder: 'country', location: 'USA' },
+    [Organisms.mpox]: { placeholder: 'country', location: 'USA' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
@@ -22,7 +22,7 @@ test.describe('The Sequencing Efforts Page', () => {
 
                 await sequencingEffortsPage.goto(organism);
                 await sequencingEffortsPage.expectToSeeNoComponentErrors();
-                await sequencingEffortsPage.selectLocation(options.location);
+                await sequencingEffortsPage.selectLocation(options.placeholder, options.location);
                 await sequencingEffortsPage.selectDateRange('All times');
 
                 await expect(sequencingEffortsPage.diagramTitle('Number sequences')).toBeVisible();

@@ -6,8 +6,8 @@ export class SequencingEffortsPage extends ViewPage {
         await this.page.goto(`/${organismConfig[organism].pathFragment}/sequencing-efforts`);
     }
 
-    public async selectLocation(location: string) {
-        const locationField = this.page.getByPlaceholder('Sampling location');
+    public async selectLocation(placeholder: string, location: string) {
+        const locationField = this.page.getByPlaceholder(placeholder);
         await locationField.fill(location);
     }
 

@@ -7,7 +7,6 @@ import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantSelector } from './VariantSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
-import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { singleVariantViewKey } from '../../views/viewKeys.ts';
 
@@ -26,7 +25,7 @@ export function SingleVariantPageStateSelector({
     organismsConfig: OrganismsConfig;
     lapisFilter: LapisFilter;
 }) {
-    const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
+    const [locationConfig, setLocationConfig] = useState<LocationFilterConfig>(locationFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
 
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
@@ -36,12 +35,12 @@ export function SingleVariantPageStateSelector({
     const newPageState = useMemo(
         () => ({
             datasetFilter: {
-                location,
+                location: locationConfig.initialLocation,
                 dateRange,
             },
             variantFilter: toVariantFilter(variantFilterConfigState),
         }),
-        [location, dateRange, variantFilterConfigState],
+        [locationConfig, dateRange, variantFilterConfigState],
     );
 
     useEffect(() => {
@@ -62,10 +61,11 @@ export function SingleVariantPageStateSelector({
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
-                    onLocationChange={setLocation}
+                    onLocationChange={(locationConfig) => setLocationConfig(locationConfig)}
                     locationFilterConfig={locationFilterConfig}
-                    onDateRangeChange={setDateRange}
+                    onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <div>

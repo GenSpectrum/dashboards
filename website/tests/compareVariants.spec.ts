@@ -21,8 +21,10 @@ test.describe('The Compare Variants page', () => {
             await expect(compareVariantsPage.selectVariantsMessage).toBeVisible();
             await expect(compareVariantsPage.diagramTitle('Prevalence over time')).not.toBeVisible();
 
-            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
-            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
+            await compareVariantsPage.expectToSeeNoComponentErrors();
+            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage, 0);
+            await compareVariantsPage.expectToSeeNoComponentErrors();
+            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage, 1);
 
             await expect(compareVariantsPage.diagramTitle('Prevalence over time')).toBeVisible();
             await compareVariantsPage.expectToSeeNoComponentErrors();

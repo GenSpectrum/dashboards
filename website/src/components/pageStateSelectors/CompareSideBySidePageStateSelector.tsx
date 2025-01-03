@@ -8,7 +8,6 @@ import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig
 import { VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import type { CovidCompareSideBySideData } from '../../views/covid.ts';
-import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
 
@@ -31,7 +30,7 @@ export function CompareSideBySidePageStateSelector({
     organismsConfig: OrganismsConfig;
     lapisFilter: LapisFilter;
 }) {
-    const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
+    const [locationConfig, setLocationConfig] = useState<LocationFilterConfig>(locationFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
 
@@ -41,7 +40,7 @@ export function CompareSideBySidePageStateSelector({
         const updatedFilters = new Map(pageState.filters);
         updatedFilters.set(filterId, {
             datasetFilter: {
-                location,
+                location: locationConfig.initialLocation,
                 dateRange,
             },
             variantFilter: toVariantFilter(variantFilterConfigState),
@@ -51,7 +50,7 @@ export function CompareSideBySidePageStateSelector({
             ...pageState,
             filters: updatedFilters,
         };
-    }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
+    }, [locationConfig, dateRange, variantFilterConfigState, filterId, pageState]);
 
     useEffect(() => {
         const newUrl = view.pageStateHandler.toUrl(newPageState);
@@ -70,10 +69,11 @@ export function CompareSideBySidePageStateSelector({
                 <div className='flex-0'>
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <BaselineSelector
-                        onLocationChange={(location) => setLocation(location)}
+                        onLocationChange={(locationConfig) => setLocationConfig(locationConfig)}
                         locationFilterConfig={locationFilterConfig}
                         onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                         dateRangeFilterConfig={dateRangeFilterConfig}
+                        lapisFilter={lapisFilter}
                     />
                 </div>
                 <div className='flex-grow'>

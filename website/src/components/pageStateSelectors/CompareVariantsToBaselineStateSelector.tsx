@@ -9,7 +9,6 @@ import { VariantSelector } from './VariantSelector.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import type { Id } from '../../views/View.ts';
-import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import { type compareToBaselineViewKey } from '../../views/viewKeys.ts';
 
@@ -30,7 +29,7 @@ export function CompareVariantsToBaselineStateSelector({
     organismsConfig: OrganismsConfig;
     lapisFilter: LapisFilter;
 }) {
-    const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
+    const [locationConfig, setLocationConfig] = useState<LocationFilterConfig>(locationFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const [baselineFilterConfigState, setBaselineFilterConfigState] =
         useState<VariantFilterConfig>(baselineFilterConfig);
@@ -51,13 +50,13 @@ export function CompareVariantsToBaselineStateSelector({
 
         return {
             datasetFilter: {
-                location,
+                location: locationConfig.initialLocation,
                 dateRange,
             },
             variants,
             baselineFilter: toVariantFilter(baselineFilterConfigState),
         };
-    }, [variantConfigs, location, dateRange, baselineFilterConfigState]);
+    }, [variantConfigs, locationConfig, dateRange, baselineFilterConfigState]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -77,10 +76,11 @@ export function CompareVariantsToBaselineStateSelector({
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
-                    onLocationChange={setLocation}
+                    onLocationChange={setLocationConfig}
                     locationFilterConfig={locationFilterConfig}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <div>

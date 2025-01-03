@@ -4,6 +4,12 @@ import { InputLabel } from '../../../styles/input/InputLabel.tsx';
 import { GsLocationFilter } from '../../genspectrum/GsLocationFilter.tsx';
 
 export function BaselineInput({ onBaselineChange }: { onBaselineChange: (baseline: LapisFilter) => void }) {
+    const locationFilterConfig = {
+        locationFields: ['region', 'country'],
+        initialLocation: {},
+        placeholderText: 'Location',
+    };
+
     return (
         <InputLabel
             title='Baseline'
@@ -11,12 +17,12 @@ export function BaselineInput({ onBaselineChange }: { onBaselineChange: (baselin
         >
             <div className='w-full'>
                 <GsLocationFilter
-                    fields={['region', 'country']}
-                    placeholderText='Baseline location'
-                    onLocationChange={(location) => {
-                        onBaselineChange(location);
+                    locationFilterConfig={locationFilterConfig}
+                    onLocationChange={(locationConfig) => {
+                        onBaselineChange(locationConfig.initialLocation);
                     }}
-                />
+                    lapisFilter={{}}
+                ></GsLocationFilter>
             </div>
         </InputLabel>
     );

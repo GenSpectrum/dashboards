@@ -7,7 +7,6 @@ import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import type { Id } from '../../views/View.ts';
-import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
 
@@ -26,7 +25,7 @@ export function CompareVariantsPageStateSelector({
     organismsConfig: OrganismsConfig;
     lapisFilter: LapisFilter;
 }) {
-    const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
+    const [locationConfig, setLocationConfig] = useState<LocationFilterConfig>(locationFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
 
     const [variantConfigs, setVariantConfigs] = useState<Map<Id, VariantFilterConfig>>(variantFilterConfigs);
@@ -45,12 +44,12 @@ export function CompareVariantsPageStateSelector({
 
         return {
             datasetFilter: {
-                location,
+                location: locationConfig.initialLocation,
                 dateRange,
             },
             variants,
         };
-    }, [location, dateRange, variantConfigs]);
+    }, [locationConfig, dateRange, variantConfigs]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -70,10 +69,11 @@ export function CompareVariantsPageStateSelector({
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
-                    onLocationChange={setLocation}
+                    onLocationChange={setLocationConfig}
                     locationFilterConfig={locationFilterConfig}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <div>
