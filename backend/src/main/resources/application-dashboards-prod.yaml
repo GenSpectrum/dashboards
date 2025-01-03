@@ -43,6 +43,23 @@ dashboards:
         - url: "https://loculus.genspectrum.org/h5n1"
           label: "Browse data"
           menuIcon: "database"
+    flu:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/influenza-a"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        hostField: "hostNameScientific"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://api.loculus.genspectrum.org/influenza-a"
+          label: "Browse data"
+          menuIcon: "database"
     mpox:
       lapis:
         url: "https://lapis.pathoplexus.org/mpox"

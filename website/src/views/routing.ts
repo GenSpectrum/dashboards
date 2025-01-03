@@ -7,6 +7,7 @@ import {
     CovidCompareVariantsView,
     CovidSequencingEffortsView,
 } from './covid.ts';
+import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
 import {
     H5n1AnalyzeSingleVariantView,
     H5n1CompareSideBySideView,
@@ -89,6 +90,10 @@ export class Routing {
                 [compareVariantsViewKey]: new H5n1CompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
             },
+            [Organisms.flu]: {
+                [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
+                [sequencingEffortsViewKey]: new FluSequencingEffortsView(organismsConfig),
+            },
             [Organisms.rsvA]: {
                 [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
                 [compareSideBySideViewKey]: new RsvACompareSideBySideView(organismsConfig),
@@ -128,6 +133,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.covid]);
             case Organisms.h5n1:
                 return Object.values(this.views[Organisms.h5n1]);
+            case Organisms.flu:
+                return Object.values(this.views[Organisms.flu]);
             case Organisms.rsvA:
                 return Object.values(this.views[Organisms.rsvA]);
             case Organisms.rsvB:

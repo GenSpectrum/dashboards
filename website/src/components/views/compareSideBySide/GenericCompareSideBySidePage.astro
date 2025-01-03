@@ -80,6 +80,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    hideMutationFilter={hideMutationFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback
