@@ -1,4 +1,5 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
@@ -20,6 +21,7 @@ export function CompareSideBySidePageStateSelector({
     pageState,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -28,6 +30,7 @@ export function CompareSideBySidePageStateSelector({
     pageState: CovidCompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -64,6 +67,7 @@ export function CompareSideBySidePageStateSelector({
                     <VariantSelector
                         onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
                         variantFilterConfig={variantFilterConfigState}
+                        lapisFilter={lapisFilter}
                     />
                 </div>
             </div>

@@ -1,3 +1,5 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import { LineageFilterInput } from './LineageFilterInput.tsx';
 import type { VariantFilterConfig } from './VariantFilterConfig.ts';
 import { getMutationFilter } from '../../views/helpers.ts';
@@ -7,10 +9,12 @@ export function VariantSelector({
     onVariantFilterChange,
     variantFilterConfig,
     hideMutationFilter,
+    lapisFilter,
 }: {
     variantFilterConfig: VariantFilterConfig;
     onVariantFilterChange: (variantFilter: VariantFilterConfig) => void;
     hideMutationFilter?: boolean | undefined;
+    lapisFilter: LapisFilter;
 }) {
     return (
         <div className='flex flex-col gap-2'>
@@ -29,6 +33,7 @@ export function VariantSelector({
                         onVariantFilterChange(newVariantFilterConfig);
                     }}
                     key={lineageFilterConfig.lapisField}
+                    lapisFilter={lapisFilter}
                 />
             ))}
             {!hideMutationFilter && (

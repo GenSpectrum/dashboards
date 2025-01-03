@@ -63,6 +63,7 @@ const downloadLinks = noVariantSelected
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
+        lapisFilter={baselineLapisFilter}
     >
         <CompareToBaselineSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
     </CompareVariantsToBaselineStateSelector>

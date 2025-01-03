@@ -81,6 +81,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
                                     client:only='react'
+                                    lapisFilter={datasetLapisFilter}
                                 >
                                     <CompareSideBySideSelectorFallback
                                         slot='fallback'

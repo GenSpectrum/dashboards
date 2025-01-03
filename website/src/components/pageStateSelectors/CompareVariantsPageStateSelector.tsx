@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
@@ -18,12 +18,14 @@ export function CompareVariantsPageStateSelector({
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -66,6 +68,7 @@ export function CompareVariantsPageStateSelector({
                 <SelectorHeadline>Variant Filters</SelectorHeadline>
                 <VariantsSelector
                     variantFilterConfigs={variantConfigs}
+                    lapisFilter={lapisFilter}
                     setVariantFilterConfigs={setVariantConfigs}
                     emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
                 />

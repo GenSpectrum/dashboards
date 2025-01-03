@@ -69,6 +69,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
         variantFilterConfig={{ mutationFilterConfig: pageState.variantFilter.mutations, lineageFilterConfigs }}
+        lapisFilter={lapisFilter}
     >
         <SequencingEffortsSelectorFallback slot='fallback' />
     </SequencingEffortsPageStateSelector>

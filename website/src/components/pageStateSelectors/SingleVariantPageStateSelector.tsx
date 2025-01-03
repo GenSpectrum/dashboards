@@ -1,4 +1,5 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
@@ -17,12 +18,14 @@ export function SingleVariantPageStateSelector({
     variantFilterConfig,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -58,6 +61,7 @@ export function SingleVariantPageStateSelector({
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={variantFilterConfigState}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

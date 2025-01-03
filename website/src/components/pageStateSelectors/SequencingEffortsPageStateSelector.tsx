@@ -1,4 +1,5 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
@@ -17,12 +18,14 @@ export function SequencingEffortsPageStateSelector({
     variantFilterConfig,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
@@ -56,6 +59,7 @@ export function SequencingEffortsPageStateSelector({
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={variantFilterConfigState}
                     hideMutationFilter={true}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

@@ -1,4 +1,5 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
@@ -20,6 +21,7 @@ export function CompareVariantsToBaselineStateSelector({
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -27,6 +29,7 @@ export function CompareVariantsToBaselineStateSelector({
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareToBaselineViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -73,6 +76,7 @@ export function CompareVariantsToBaselineStateSelector({
                 <VariantSelector
                     onVariantFilterChange={setBaselineFilterConfigState}
                     variantFilterConfig={baselineFilterConfigState}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <div>
@@ -81,6 +85,7 @@ export function CompareVariantsToBaselineStateSelector({
                     variantFilterConfigs={variantConfigs}
                     setVariantFilterConfigs={setVariantConfigs}
                     emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
+                    lapisFilter={lapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
