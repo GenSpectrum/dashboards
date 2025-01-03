@@ -20,6 +20,7 @@ export function VariantInput({ onVariantInputChange }: { onVariantInputChange: (
             <div className='flex w-full flex-col gap-2'>
                 <GsLineageFilter
                     lapisField='pangoLineage'
+                    lapisFilter={{}}
                     placeholderText='Pangolineage'
                     onLineageChange={(lineage) => {
                         setVariantFilter((prevVariantFilter) => {

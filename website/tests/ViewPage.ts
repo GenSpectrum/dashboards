@@ -7,10 +7,6 @@ export abstract class ViewPage {
 
     public abstract goto(organism: Organism): Promise<void>;
 
-    public async submitFilters() {
-        await this.page.getByRole('button', { name: 'Apply filters' }).click();
-    }
-
     public diagramTitle(title: string) {
         return this.page.getByRole('heading', { name: title });
     }

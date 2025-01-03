@@ -1,3 +1,5 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import { type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantSelector } from './VariantSelector.tsx';
 import type { Id } from '../../views/View.ts';
@@ -6,10 +8,12 @@ export function VariantsSelector({
     variantFilterConfigs,
     setVariantFilterConfigs,
     emptyVariantFilterConfigProvider,
+    lapisFilter,
 }: {
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     setVariantFilterConfigs: (variants: Map<Id, VariantFilterConfig>) => void;
     emptyVariantFilterConfigProvider: () => VariantFilterConfig;
+    lapisFilter: LapisFilter;
 }) {
     const removeVariant = (id: Id) => {
         setVariantFilterConfigs(new Map(Array.from(variantFilterConfigs).filter(([key]) => key !== id)));
@@ -44,6 +48,7 @@ export function VariantsSelector({
                     </div>
                     <VariantSelector
                         variantFilterConfig={filterConfig}
+                        lapisFilter={lapisFilter}
                         onVariantFilterChange={(variantFilter) => updateVariantFilter(id, variantFilter)}
                     />
                 </div>
