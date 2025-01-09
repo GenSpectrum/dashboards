@@ -26,6 +26,7 @@ import {
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
 import type { VariantFilterConfig } from '../../components/pageStateSelectors/VariantFilterConfig.ts';
+import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareVariantsPageStateHandler implements PageStateHandler<CompareVariantsData> {
     protected readonly pathname;
@@ -75,7 +76,7 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
             setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
         }
 
-        return `${this.pathname}?${search}`;
+        return formatUrl(this.pathname, search);
     }
 
     public datasetFilterToLapisFilter(datasetFilter: DatasetFilter): LapisFilter {

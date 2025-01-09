@@ -42,7 +42,7 @@ describe('CompareToBaselinePageStateHandler', () => {
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/testPath/compare-to-baseline?date=Last+7+Days');
+        expect(url).toBe('/testPath/compare-to-baseline?date=Last+7+Days&');
     });
 
     it('should parse page state from URL, including variants', () => {
@@ -51,7 +51,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 'country=US&date=Last 7 Days' +
                 '&lineage=B.2.3.4&nucleotideMutations=C234G' +
                 '&lineage$1=B.1.1.7&nucleotideMutations$1=D614G' +
-                '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T',
+                '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T' +
+                '&',
         );
 
         const pageState = handler.parsePageStateFromUrl(url);
@@ -114,7 +115,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 'nucleotideMutations%241=D614G&lineage%241=B.1.1.7' +
                 '&aminoAcidMutations%242=S%3AA123T&lineage%242=A.1.2.3' +
                 '&country=US' +
-                '&nucleotideMutations=C234G&lineage=B.2.3.4',
+                '&nucleotideMutations=C234G&lineage=B.2.3.4' +
+                '&',
         );
     });
 

@@ -38,14 +38,15 @@ describe('CompareVariantsPageStateHandler', () => {
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/testPath/compare-variants?date=Last+7+Days');
+        expect(url).toBe('/testPath/compare-variants?date=Last+7+Days&');
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
             'http://example.com/testPath/compareVariants?country=US&date=Last 7 Days' +
                 '&lineage$1=B.1.1.7&nucleotideMutations$1=D614G' +
-                '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T',
+                '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T' +
+                '&',
         );
 
         const pageState = handler.parsePageStateFromUrl(url);
@@ -92,7 +93,8 @@ describe('CompareVariantsPageStateHandler', () => {
             '/testPath/compare-variants?' +
                 'nucleotideMutations%241=D614G&lineage%241=B.1.1.7' +
                 '&aminoAcidMutations%242=S%3AA123T&lineage%242=A.1.2.3' +
-                '&country=US',
+                '&country=US' +
+                '&',
         );
     });
 

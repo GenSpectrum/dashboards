@@ -13,6 +13,7 @@ import {
     setSearchFromLocation,
 } from '../helpers.ts';
 import { type PageStateHandler, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
+import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
     implements PageStateHandler<DatasetAndVariantData>
@@ -51,7 +52,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
             pageState.variantFilter,
             getLineageFilterFields(this.constants.lineageFilters),
         );
-        return `${this.pathname}?${search}`;
+        return formatUrl(this.pathname, search);
     }
 
     public toLapisFilter(pageState: DatasetAndVariantData) {
