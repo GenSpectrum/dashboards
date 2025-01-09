@@ -32,6 +32,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SequencingEffortsStateHandler } from './pageStateHandlers/SequencingEffortsPageStateHandler.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
+import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
 
@@ -164,7 +165,7 @@ class CovidSingleVariantStateHandler
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
         }
-        return `${this.pathname}?${search}`;
+        return formatUrl(this.pathname, search);
     }
 
     public override toLapisFilter(pageState: CovidVariantData) {
@@ -350,7 +351,8 @@ class CovidSequencingEffortsStateHandler
         if (pageState.collectionId !== undefined) {
             search.set('collectionId', pageState.collectionId.toString());
         }
-        return `${this.pathname}?${search}`;
+
+        return formatUrl(this.pathname, search);
     }
 
     public override toLapisFilter(pageState: CovidVariantData) {
