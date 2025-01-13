@@ -1,5 +1,5 @@
 ---
-import { type LapisFilter } from '@genspectrum/dashboard-components/util';
+import { type LapisFilter, views } from '@genspectrum/dashboard-components/util';
 
 import { defaultTablePageSize } from '../../views/View';
 import ComponentWrapper from '../ComponentWrapper.astro';
@@ -16,6 +16,7 @@ const { title, height, fields, lapisFilter } = Astro.props;
 
 <ComponentWrapper title={title} height={height}>
     <gs-aggregate
+        views={JSON.stringify([views.table])}
         fields={JSON.stringify(fields)}
         lapisFilter={JSON.stringify(lapisFilter)}
         pageSize={defaultTablePageSize}

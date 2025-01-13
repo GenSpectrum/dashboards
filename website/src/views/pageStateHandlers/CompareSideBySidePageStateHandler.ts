@@ -18,6 +18,7 @@ import {
     searchParamsFromFilterMap,
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
+import { formatUrl } from '../../util/formatUrl.ts';
 
 export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAndVariantData = DatasetAndVariantData>
     implements PageStateHandler<CompareSideBySideData<ColumnData>>
@@ -54,7 +55,7 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
             this.writeColumnDataToSearchParams(search, variant),
         );
 
-        return `${this.pathname}?${search}`;
+        return formatUrl(this.pathname, search);
     }
 
     public setFilter(

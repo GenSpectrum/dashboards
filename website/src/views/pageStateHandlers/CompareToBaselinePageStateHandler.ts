@@ -26,6 +26,7 @@ import {
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
 import type { VariantFilterConfig } from '../../components/pageStateSelectors/VariantFilterConfig.ts';
+import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareToBaselineStateHandler implements PageStateHandler<CompareToBaselineData> {
     protected readonly pathname;
@@ -84,7 +85,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
             getLineageFilterFields(this.constants.lineageFilters),
         );
 
-        return `${this.pathname}?${search}`;
+        return formatUrl(this.pathname, search);
     }
 
     public datasetFilterToLapisFilter(baselineFilter: DatasetFilter): LapisFilter {

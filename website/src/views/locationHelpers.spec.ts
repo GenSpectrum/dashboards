@@ -13,7 +13,7 @@ describe('getLocationDisplayConfig', () => {
 
         const actual = getLocationDisplayConfig(locationFields, locationFilter);
 
-        const expected = { label: 'World', mapName: 'World', locationField: countryField };
+        const expected = { mapName: 'World', locationField: countryField };
         expect(actual).toEqual(expected);
     });
 
@@ -25,7 +25,6 @@ describe('getLocationDisplayConfig', () => {
         const actual = getLocationDisplayConfig(locationFields, locationFilter);
 
         const expected = {
-            label: 'Country',
             mapName: 'myContinentValue',
             locationField: countryField,
         };
@@ -41,7 +40,6 @@ describe('getLocationDisplayConfig', () => {
         const actual = getLocationDisplayConfig(locationFields, locationFilter);
 
         const expected = {
-            label: 'Geographic sub-divisions',
             mapName: 'myCountryValue',
             locationField: divisionField,
         };
