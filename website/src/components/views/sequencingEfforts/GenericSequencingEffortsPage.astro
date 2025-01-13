@@ -31,11 +31,10 @@ const timeGranularity = chooseGranularityBasedOnDateRange(
     pageState.datasetFilter.dateRange,
     new Date(view.organismConstants.earliestDate),
 );
-const {
-    label: locationLabel,
-    locationField,
-    mapName,
-} = getLocationDisplayConfig(view.organismConstants.locationFields, pageState.datasetFilter.location);
+const { locationField, mapName } = getLocationDisplayConfig(
+    view.organismConstants.locationFields,
+    pageState.datasetFilter.location,
+);
 const lineageFilterConfigs = getLineageFilterConfigs(
     view.organismConstants.lineageFilters,
     pageState.variantFilter.lineages,
@@ -87,7 +86,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(
         {
             locationField !== undefined && (
                 <GsSequencesByLocation
-                    title={locationLabel}
+                    title='Sequences by location'
                     height={ComponentHeight.large}
                     lapisLocationField={locationField}
                     lapisFilter={lapisFilter}
