@@ -4,12 +4,11 @@ import { hasOnlyUndefinedValues } from '../util/hasOnlyUndefinedValues.ts';
 export function getLocationDisplayConfig(locationFields: string[], locationFilter: LapisLocation) {
     if (hasOnlyUndefinedValues(locationFilter)) {
         const locationField = locationFields.find((it) => isCountryField(it)) ?? locationFields[0];
-        return { label: 'World', mapName: 'World', locationField };
+        return { mapName: 'World', locationField };
     }
 
-    const { label, locationValue, field } = getLocationSubdivision(locationFields, locationFilter);
+    const { locationValue, field } = getLocationSubdivision(locationFields, locationFilter);
     return {
-        label,
         mapName: locationValue,
         locationField: field,
     };
