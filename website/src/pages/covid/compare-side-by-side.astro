@@ -102,8 +102,16 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                 denominatorFilter={baselineLapisFilter}
                                 lapisDateField={view.organismConstants.mainDateField}
                             />
-                            <GsMutations lapisFilter={numeratorFilter} sequenceType='nucleotide' />
-                            <GsMutations lapisFilter={numeratorFilter} sequenceType='amino acid' />
+                            <GsMutations
+                                lapisFilter={numeratorFilter}
+                                baselineLapisFilter={baselineLapisFilter}
+                                sequenceType='nucleotide'
+                            />
+                            <GsMutations
+                                lapisFilter={numeratorFilter}
+                                baselineLapisFilter={baselineLapisFilter}
+                                sequenceType='amino acid'
+                            />
                             <GsAggregate
                                 title='Sub-lineages'
                                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}

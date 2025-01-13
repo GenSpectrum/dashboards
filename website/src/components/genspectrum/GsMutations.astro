@@ -6,15 +6,17 @@ import ComponentWrapper from '../ComponentWrapper.astro';
 
 interface Props {
     lapisFilter: LapisFilter;
+    baselineLapisFilter?: LapisFilter;
     sequenceType: SequenceType;
 }
 
-const { lapisFilter, sequenceType } = Astro.props;
+const { lapisFilter, baselineLapisFilter, sequenceType } = Astro.props;
 ---
 
 <ComponentWrapper title={sequenceType === 'nucleotide' ? 'Nucleotide mutations' : 'Amino acid mutations'}>
     <gs-mutations
         lapisFilter={JSON.stringify(lapisFilter)}
+        baselineLapisFilter={JSON.stringify(baselineLapisFilter)}
         sequenceType={sequenceType}
         views='["grid", "table", "insertions"]'
         pageSize={defaultTablePageSize}

@@ -113,8 +113,16 @@ const downloadLinks = noVariantSelected
                         denominatorFilter={datasetLapisFilter}
                         lapisDateField={view.organismConstants.mainDateField}
                     />
-                    <GsMutations lapisFilter={variantFilter} sequenceType='nucleotide' />
-                    <GsMutations lapisFilter={variantFilter} sequenceType='amino acid' />
+                    <GsMutations
+                        lapisFilter={variantFilter}
+                        baselineLapisFilter={datasetLapisFilter}
+                        sequenceType='nucleotide'
+                    />
+                    <GsMutations
+                        lapisFilter={variantFilter}
+                        baselineLapisFilter={datasetLapisFilter}
+                        sequenceType='amino acid'
+                    />
                     <GsAggregate
                         title='Sub-lineages'
                         fields={getLineageFilterFields(view.organismConstants.lineageFilters)}

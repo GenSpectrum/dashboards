@@ -102,8 +102,16 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                             />
                             {!hideMutationFilter && (
                                 <>
-                                    <GsMutations lapisFilter={numeratorFilter} sequenceType='nucleotide' />
-                                    <GsMutations lapisFilter={numeratorFilter} sequenceType='amino acid' />
+                                    <GsMutations
+                                        lapisFilter={numeratorFilter}
+                                        baselineLapisFilter={datasetLapisFilter}
+                                        sequenceType='nucleotide'
+                                    />
+                                    <GsMutations
+                                        lapisFilter={numeratorFilter}
+                                        baselineLapisFilter={datasetLapisFilter}
+                                        sequenceType='amino acid'
+                                    />
                                 </>
                             )}
                             <GsAggregate
