@@ -105,8 +105,16 @@ const downloadLinks = noVariantSelected
                         lapisDateField={view.organismConstants.mainDateField}
                         granularity={timeGranularity}
                     />
-                    <GsMutations lapisFilter={variantLapisFilter} sequenceType='nucleotide' />
-                    <GsMutations lapisFilter={variantLapisFilter} sequenceType='amino acid' />
+                    <GsMutations
+                        lapisFilter={variantLapisFilter}
+                        baselineLapisFilter={datasetLapisFilter}
+                        sequenceType='nucleotide'
+                    />
+                    <GsMutations
+                        lapisFilter={variantLapisFilter}
+                        baselineLapisFilter={datasetLapisFilter}
+                        sequenceType='amino acid'
+                    />
                     {subdivisionField !== undefined && (
                         <GsAggregate
                             title={subdivisionLabel}
