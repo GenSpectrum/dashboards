@@ -98,8 +98,8 @@ export class FluCompareSideBySideView extends BaseView<
                         },
                         variantFilter: {
                             lineages: {
-                                subtypeHA: 'H5',
-                                subtypeNA: 'N1',
+                                subtypeHA: 'H3',
+                                subtypeNA: 'N2',
                             },
                             mutations: {},
                         },
