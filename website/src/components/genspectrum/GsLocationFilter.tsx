@@ -15,7 +15,7 @@ export function GsLocationFilter<Field extends string>({
     onLocationChange?: (location: { [key in Field]: string | undefined }) => void;
     initialValue?: string;
 }) {
-    const locationFilterRef = useRef<HTMLElement>();
+    const locationFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const handleLocationChange = (event: CustomEvent) => {
@@ -36,7 +36,7 @@ export function GsLocationFilter<Field extends string>({
 
     return (
         <gs-location-filter
-            fields={JSON.stringify(fields)}
+            fields={fields}
             placeholderText={placeholderText}
             width={width}
             ref={locationFilterRef}

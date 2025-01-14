@@ -19,7 +19,7 @@ export function GsDateRangeSelector({
     earliestDate?: string;
     width?: string;
 }) {
-    const dateRangeSelectorRef = useRef<HTMLElement>();
+    const dateRangeSelectorRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const handleDateRangeOptionChange = (event: DateRangeOptionChangedEvent) => {
