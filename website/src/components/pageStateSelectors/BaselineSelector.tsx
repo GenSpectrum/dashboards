@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { LapisLocation } from '../../views/helpers.ts';
 import { GsDateRangeSelector } from '../genspectrum/GsDateRangeSelector.tsx';
@@ -22,22 +22,20 @@ export function BaselineSelector({
     onLocationChange,
     dateRangeFilterConfig,
     onDateRangeChange,
+    lapisFilter,
 }: {
-    onLocationChange: (location: LapisLocation) => void;
+    onLocationChange: (locationFilterConfig: LocationFilterConfig) => void;
     locationFilterConfig: LocationFilterConfig;
     onDateRangeChange: (dateRange: DateRangeOption) => void;
     dateRangeFilterConfig: DateRangeFilterConfig;
+    lapisFilter: LapisFilter;
 }) {
     return (
         <div className='flex flex-col gap-2'>
             <GsLocationFilter
-                fields={locationFilterConfig.locationFields}
                 onLocationChange={onLocationChange}
-                initialValue={locationFilterConfig.locationFields
-                    .map((field) => locationFilterConfig.initialLocation[field])
-                    .filter(Boolean)
-                    .join(' / ')}
-                placeholderText={locationFilterConfig.placeholderText}
+                locationFilterConfig={locationFilterConfig}
+                lapisFilter={lapisFilter}
             ></GsLocationFilter>
             <GsDateRangeSelector
                 lapisDateField={dateRangeFilterConfig.dateColumn}

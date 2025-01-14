@@ -1,3 +1,4 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
@@ -8,12 +9,14 @@ export function GsTextInput<LapisField extends string>({
     width,
     onInputChange = () => {},
     initialValue,
+    lapisFilter,
 }: {
     lapisField: LapisField;
     placeholderText?: string;
     width?: string;
     onInputChange?: (input: { [key in LapisField]: string | undefined }) => void;
     initialValue?: string | undefined;
+    lapisFilter: LapisFilter;
 }) {
     const textInputRef = useRef<HTMLElement>();
 
@@ -38,6 +41,7 @@ export function GsTextInput<LapisField extends string>({
         <gs-text-input
             ref={textInputRef}
             lapisField={lapisField}
+            lapisFilter={JSON.stringify(lapisFilter)}
             placeholderText={placeholderText}
             width={width}
             initialValue={initialValue ?? ''}

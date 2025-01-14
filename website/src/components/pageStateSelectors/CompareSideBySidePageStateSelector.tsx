@@ -1,14 +1,13 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
-import { useMemo, useState } from 'react';
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { useEffect, useMemo, useState } from 'react';
 
-import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import type { CovidCompareSideBySideData } from '../../views/covid.ts';
-import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
 
@@ -20,6 +19,7 @@ export function CompareSideBySidePageStateSelector({
     pageState,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -28,24 +28,40 @@ export function CompareSideBySidePageStateSelector({
     pageState: CovidCompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
-    const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
+    const [locationConfig, setLocationConfig] = useState<LocationFilterConfig>(locationFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const newPageState = useMemo(() => {
-        pageState.filters.set(filterId, {
+        const updatedFilters = new Map(pageState.filters);
+        updatedFilters.set(filterId, {
             datasetFilter: {
-                location,
+                location: locationConfig.initialLocation,
                 dateRange,
             },
             variantFilter: toVariantFilter(variantFilterConfigState),
         });
 
-        return pageState;
-    }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
+        return {
+            ...pageState,
+            filters: updatedFilters,
+        };
+    }, [locationConfig, dateRange, variantFilterConfigState, filterId, pageState]);
+
+    useEffect(() => {
+        const newUrl = view.pageStateHandler.toUrl(newPageState);
+
+        const currentUrl = new URL(window.location.href);
+        const targetUrl = new URL(newUrl, window.location.origin);
+
+        if (currentUrl.href !== targetUrl.href) {
+            window.location.href = targetUrl.href;
+        }
+    }, [newPageState, view]);
 
     return (
         <div className='flex flex-col gap-4 bg-gray-50 p-2'>
@@ -53,10 +69,11 @@ export function CompareSideBySidePageStateSelector({
                 <div className='flex-0'>
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <BaselineSelector
-                        onLocationChange={(location) => setLocation(location)}
+                        onLocationChange={(locationConfig) => setLocationConfig(locationConfig)}
                         locationFilterConfig={locationFilterConfig}
                         onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                         dateRangeFilterConfig={dateRangeFilterConfig}
+                        lapisFilter={lapisFilter}
                     />
                 </div>
                 <div className='flex-grow'>
@@ -64,11 +81,9 @@ export function CompareSideBySidePageStateSelector({
                     <VariantSelector
                         onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
                         variantFilterConfig={variantFilterConfigState}
+                        lapisFilter={lapisFilter}
                     />
                 </div>
-            </div>
-            <div className='flex justify-end'>
-                <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
             </div>
         </div>
     );
