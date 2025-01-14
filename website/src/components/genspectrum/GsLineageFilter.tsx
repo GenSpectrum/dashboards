@@ -15,7 +15,7 @@ export function GsLineageFilter<Lineage extends string>({
     width?: string;
     onLineageChange?: (lineage: { [key in Lineage]: string | undefined }) => void;
 }) {
-    const lineageFilterRef = useRef<HTMLElement>();
+    const lineageFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const handleLineageChange = (event: CustomEvent) => {

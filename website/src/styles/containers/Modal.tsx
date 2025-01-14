@@ -13,7 +13,7 @@ const modalSize = {
 type ModalProps = (
     | {
           /** set this when using from React and open it via `modalRef.current?.showModal()` */
-          modalRef: RefObject<HTMLDialogElement>;
+          modalRef: RefObject<HTMLDialogElement | null>;
           id?: undefined;
       }
     | {

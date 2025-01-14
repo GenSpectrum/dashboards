@@ -15,7 +15,7 @@ export function GsTextInput<LapisField extends string>({
     onInputChange?: (input: { [key in LapisField]: string | undefined }) => void;
     initialValue?: string | undefined;
 }) {
-    const textInputRef = useRef<HTMLElement>();
+    const textInputRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const handleTextInputChange = (event: CustomEvent) => {
@@ -23,12 +23,12 @@ export function GsTextInput<LapisField extends string>({
         };
 
         const currentInputRef = textInputRef.current;
-        if (currentInputRef !== undefined) {
+        if (currentInputRef) {
             currentInputRef.addEventListener('gs-text-input-changed', handleTextInputChange);
         }
 
         return () => {
-            if (currentInputRef !== undefined) {
+            if (currentInputRef) {
                 currentInputRef.removeEventListener('gs-text-input-changed', handleTextInputChange);
             }
         };
