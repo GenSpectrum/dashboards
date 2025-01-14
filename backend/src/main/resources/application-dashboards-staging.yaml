@@ -66,7 +66,7 @@ dashboards:
           - "insdcAccessionFull_seg7"
           - "insdcAccessionFull_seg8"
       externalNavigationLinks:
-        - url: "https://api.loculus.staging.genspectrum.org/influenza-a"
+        - url: "https://loculus.staging.genspectrum.org/influenza-a"
           label: "Browse data"
           menuIcon: "database"
     mpox:

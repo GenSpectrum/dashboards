@@ -84,7 +84,7 @@ export class FluCompareSideBySideView extends BaseView<
                             dateRange: constants.defaultDateRange,
                         },
                         variantFilter: {
-                            lineages: {},
+                            lineages: { subtypeHA: 'H5', subtypeNA: 'N1' },
                             mutations: {},
                         },
                     },
