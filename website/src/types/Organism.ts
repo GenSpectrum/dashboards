@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const Organisms = {
     covid: 'covid' as const,
+    flu: 'flu' as const,
     h5n1: 'h5n1' as const,
     westNile: 'westNile' as const,
     rsvA: 'rsvA' as const,
@@ -18,6 +19,15 @@ export const organismConfig = {
         backgroundColor: 'bg-sandMuted',
         backgroundColorFocus: 'group-hover:bg-sand',
         borderEntryDecoration: 'hover:border-sand',
+    },
+    [Organisms.flu]: {
+        organism: Organisms.flu,
+        pathFragment: 'flu',
+        label: 'Influenza A',
+        backgroundColor: 'bg-cyanMuted',
+        backgroundColorFocus: 'group-hover:bg-cyan',
+        menuListEntryDecoration: 'decoration-cyan',
+        borderEntryDecoration: 'hover:border-cyan',
     },
     [Organisms.h5n1]: {
         organism: Organisms.h5n1,

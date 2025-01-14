@@ -8,6 +8,7 @@ The dashboards visualize genomic data obtained from several [LAPIS](https://gith
 They utilize the [Dashboard Components](https://github.com/GenSpectrum/dashboard-components) library.
 Currently, we support the following organisms:
 - SARS-CoV-2
+- Influenza A
 - Influenza A/H5N1
 - West Nile Virus
 - RSV-A
