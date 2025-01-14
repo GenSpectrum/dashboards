@@ -2,11 +2,8 @@ import { expect } from '@playwright/test';
 
 import { test } from './e2e.fixture.ts';
 import { Organisms } from '../src/types/Organism.ts';
-import { type OrganismWithViewKey } from '../src/views/routing';
 import { compareVariantsViewKey } from '../src/views/viewKeys';
-
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareVariantsViewKey>;
-const allViewCompareOrganisms = ['covid', 'h5n1', 'westNile', 'rsvA', 'rsvB', 'mpox'] as OrganismViewCompareVariant[];
+import { organismsWithView } from './helpers.ts';
 
 const organismOptions = {
     [Organisms.covid]: { lineage: 'JN.1*', lineageFieldPlaceholder: 'Nextclade pango lineage' },
@@ -18,7 +15,7 @@ const organismOptions = {
 };
 
 test.describe('The Compare Variants page', () => {
-    for (const organism of allViewCompareOrganisms) {
+    for (const organism of organismsWithView(compareVariantsViewKey)) {
         test(`should show diagrams after selecting two variants ${organism}`, async ({ compareVariantsPage }) => {
             const options = organismOptions[organism];
 

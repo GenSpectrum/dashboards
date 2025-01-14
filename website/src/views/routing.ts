@@ -159,6 +159,13 @@ export class Routing {
         return this.views[organism][viewKey];
     }
 
+    public isOrganismWithViewKey<ViewKey extends string>(
+        organism: Organism,
+        key: ViewKey,
+    ): organism is OrganismWithViewKey<ViewKey> {
+        return key in this.views[organism];
+    }
+
     private initializeExternalPages(organismsConfig: OrganismsConfig) {
         return Object.entries(organismsConfig).reduce(
             (acc, [organism, config]) => {
