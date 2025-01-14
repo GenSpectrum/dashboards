@@ -10,6 +10,7 @@ import { type OrganismsConfig } from '../../config.ts';
 import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { singleVariantViewKey } from '../../views/viewKeys.ts';
+import {GsTextInput} from "../genspectrum/GsTextInput.tsx";
 
 export function SingleVariantPageStateSelector({
     locationFilterConfig,
@@ -42,6 +43,8 @@ export function SingleVariantPageStateSelector({
         [location, dateRange, variantFilterConfigState],
     );
 
+    const [advancedQuery, setAdvancedQuery] = useState(false);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
@@ -54,11 +57,27 @@ export function SingleVariantPageStateSelector({
                 />
             </div>
             <div>
-                <SelectorHeadline>Variant Filter</SelectorHeadline>
-                <VariantSelector
-                    onVariantFilterChange={setVariantFilterConfigState}
-                    variantFilterConfig={variantFilterConfigState}
-                />
+                <div className='flex justify-between'>
+                    <SelectorHeadline>Variant Filter</SelectorHeadline>
+                    <div className='flex items-center gap-1 text-sm'>
+                        <span>Advanced</span>
+                        <input
+                            type='checkbox'
+                            className='checkbox checkbox-xs peer'
+                            onInput={() => setAdvancedQuery(!advancedQuery)}
+                        />
+                    </div>
+                </div>
+                {advancedQuery? (
+                    <GsTextInput placeholderText={"Advanced query: A123T & ins_123:TA"} lapisField={"variantQuery"}></GsTextInput>
+                ) :
+                    (<VariantSelector
+                        onVariantFilterChange={setVariantFilterConfigState}
+                        variantFilterConfig={variantFilterConfigState}
+                    />)
+                }
+
+
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
