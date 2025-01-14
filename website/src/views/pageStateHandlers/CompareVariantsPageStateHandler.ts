@@ -4,8 +4,8 @@ import type { ExtendedConstants } from '../OrganismConstants.ts';
 import {
     type CompareVariantsData,
     type DatasetFilter,
-    getLineageFilterConfigs,
     getLineageFilterFields,
+    getVariantFilterConfig,
     type Id,
     type VariantFilter,
 } from '../View.ts';
@@ -23,6 +23,7 @@ import {
     type PageStateHandler,
     searchParamsFromFilterMap,
     toDisplayName,
+    toLapisFilterFromVariant,
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
 import type { VariantFilterConfig } from '../../components/pageStateSelectors/VariantFilterConfig.ts';
@@ -90,8 +91,7 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
             return {
                 lapisFilter: {
                     ...baselineFilter,
-                    ...variantFilter.lineages,
-                    ...variantFilter.mutations,
+                    ...toLapisFilterFromVariant(variantFilter),
                 },
                 displayName: toDisplayName(variantFilter),
             };
@@ -99,28 +99,28 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
     }
 
     public getEmptyVariantFilterConfig(): VariantFilterConfig {
-        return this.toLineageAndMutationFilterConfig({
-            lineages: {},
-            mutations: {},
-        });
+        return getVariantFilterConfig(
+            this.constants.lineageFilters,
+            {
+                lineages: {},
+                mutations: {},
+            },
+            this.constants.useAdvancedQuery,
+        );
     }
 
     public toVariantFilterConfigs(pageState: CompareVariantsData): Map<Id, VariantFilterConfig> {
         return new Map<Id, VariantFilterConfig>(
-            Array.from(pageState.variants, ([key, variant]) => [key, this.toLineageAndMutationFilterConfig(variant)]),
+            Array.from(pageState.variants, ([key, variant]) => [
+                key,
+                getVariantFilterConfig(this.constants.lineageFilters, variant, this.constants.useAdvancedQuery),
+            ]),
         );
     }
 
     private getFilter(filterParams: Map<string, string>): VariantFilter {
         return {
             ...getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
-        };
-    }
-
-    private toLineageAndMutationFilterConfig(variant: VariantFilter) {
-        return {
-            lineageFilterConfigs: getLineageFilterConfigs(this.constants.lineageFilters, variant.lineages),
-            mutationFilterConfig: variant.mutations,
         };
     }
 }

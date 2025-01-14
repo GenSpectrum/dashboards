@@ -15,7 +15,7 @@ import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
+import { getLineageFilterFields, getVariantFilterConfig } from '../../views/View';
 import { getLocationSubdivision } from '../../views/locationHelpers';
 import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey } from '../../views/routing';
@@ -37,9 +37,10 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     pageState.datasetFilter.location,
 );
 
-const lineageFilterConfigs = getLineageFilterConfigs(
+const variantFilterConfig = getVariantFilterConfig(
     view.organismConstants.lineageFilters,
-    pageState.variantFilter.lineages,
+    pageState.variantFilter,
+    view.organismConstants.useAdvancedQuery,
 );
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
@@ -70,10 +71,7 @@ const downloadLinks = noVariantSelected
                 earliestDate: view.organismConstants.earliestDate,
                 dateColumn: view.organismConstants.mainDateField,
             }}
-            variantFilterConfig={{
-                mutationFilterConfig: pageState.variantFilter.mutations,
-                lineageFilterConfigs,
-            }}
+            variantFilterConfig={variantFilterConfig}
             organismViewKey={organismViewKey}
             organismsConfig={getDashboardsConfig().dashboards.organisms}
             client:only='react'

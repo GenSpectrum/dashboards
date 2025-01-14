@@ -1,6 +1,18 @@
 import { type DateRangeOption, dateRangeOptionPresets, type LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import {
+    getDateRangeFromSearch,
+    getIntegerFromSearch,
+    getLapisLocationFromSearch,
+    getLapisVariantQuery,
+    setSearchFromDateRange,
+    setSearchFromLapisVariantQuery,
+    setSearchFromLocation,
+} from './helpers.ts';
+import { type OrganismsConfig } from '../config.ts';
+import { BaseView, GenericCompareToBaselineView, GenericCompareVariantsView } from './BaseView.ts';
+import { ComponentHeight, type ExtendedConstants } from './OrganismConstants.ts';
+import {
     type CompareSideBySideData,
     type DatasetAndVariantData,
     getLineageFilterFields,
@@ -8,25 +20,12 @@ import {
     type VariantData,
 } from './View.ts';
 import {
-    getDateRangeFromSearch,
-    getIntegerFromSearch,
-    getLapisCovidVariantQuery,
-    getLapisLocationFromSearch,
-    type LapisCovidVariantFilter,
-    setSearchFromDateRange,
-    setSearchFromLapisCovidVariantQuery,
-    setSearchFromLocation,
-} from './helpers.ts';
-import { type OrganismsConfig } from '../config.ts';
-import { BaseView, GenericCompareToBaselineView, GenericCompareVariantsView } from './BaseView.ts';
-import { ComponentHeight, type ExtendedConstants } from './OrganismConstants.ts';
-import {
     compareSideBySideViewConstants,
     sequencingEffortsViewConstants,
     singleVariantViewConstants,
 } from './ViewConstants.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
-import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
+import { type PageStateHandler, toLapisFilterWithoutVariant } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
@@ -63,6 +62,7 @@ class CovidConstants implements ExtendedConstants {
             initialValue: undefined,
         },
     ];
+    public readonly useAdvancedQuery = true;
     public readonly hostField: string;
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
@@ -93,10 +93,7 @@ class CovidConstants implements ExtendedConstants {
     }
 }
 
-export type CovidVariantData = DatasetAndVariantData &
-    VariantData<LapisCovidVariantFilter> & {
-        collectionId?: number;
-    };
+export type CovidVariantData = DatasetAndVariantData & { collectionId?: number };
 
 export class CovidAnalyzeSingleVariantView extends BaseView<
     CovidVariantData,
@@ -117,7 +114,6 @@ export class CovidAnalyzeSingleVariantView extends BaseView<
                     variantFilter: {
                         lineages: {},
                         mutations: {},
-                        variantQuery: undefined,
                     },
                 },
                 organismConfig[constants.organism].pathFragment,
@@ -144,7 +140,7 @@ class CovidSingleVariantStateHandler
         const baselineFilter = super.parsePageStateFromUrl(url).datasetFilter;
         return {
             datasetFilter: baselineFilter,
-            variantFilter: getLapisCovidVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
+            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
     }
@@ -157,7 +153,7 @@ class CovidSingleVariantStateHandler
             setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
         }
 
-        setSearchFromLapisCovidVariantQuery(
+        setSearchFromLapisVariantQuery(
             search,
             pageState.variantFilter,
             getLineageFilterFields(this.constants.lineageFilters),
@@ -167,16 +163,9 @@ class CovidSingleVariantStateHandler
         }
         return formatUrl(this.pathname, search);
     }
-
-    public override toLapisFilter(pageState: CovidVariantData) {
-        return {
-            ...super.toLapisFilter(pageState),
-            variantQuery: pageState.variantFilter.variantQuery,
-        };
-    }
 }
 
-type CovidCompareSideBySideFilter = DatasetAndVariantData & VariantData<LapisCovidVariantFilter>;
+type CovidCompareSideBySideFilter = DatasetAndVariantData & VariantData;
 export type CovidCompareSideBySideData = CompareSideBySideData<CovidCompareSideBySideFilter>;
 
 export class CovidCompareSideBySideView extends BaseView<
@@ -240,7 +229,7 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
         searchOfFilter: URLSearchParams,
         filter: CovidCompareSideBySideFilter,
     ): void {
-        setSearchFromLapisCovidVariantQuery(
+        setSearchFromLapisVariantQuery(
             searchOfFilter,
             filter.variantFilter,
             getLineageFilterFields(this.constants.lineageFilters),
@@ -275,10 +264,7 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
                         this.constants.dateRangeOptions,
                     ) ?? this.constants.defaultDateRange,
             },
-            variantFilter: getLapisCovidVariantQuery(
-                filterParams,
-                getLineageFilterFields(this.constants.lineageFilters),
-            ),
+            variantFilter: getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
         };
     }
 
@@ -286,12 +272,18 @@ class CovidCompareSideBySideStateHandler extends CompareSideBySideStateHandler<C
         datasetFilter: CovidCompareSideBySideFilter['datasetFilter'],
         variantFilter: CovidCompareSideBySideFilter['variantFilter'],
     ): LapisFilter {
-        return {
-            ...variantFilter.lineages,
-            ...variantFilter.mutations,
-            variantQuery: variantFilter.variantQuery,
-            ...this.datasetFilterToLapisFilter(datasetFilter),
-        };
+        if (variantFilter.variantQuery) {
+            return {
+                variantQuery: variantFilter.variantQuery,
+                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants),
+            };
+        } else {
+            return {
+                ...variantFilter.lineages,
+                ...variantFilter.mutations,
+                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants),
+            };
+        }
     }
 }
 
@@ -332,7 +324,7 @@ class CovidSequencingEffortsStateHandler
         const baselineFilter = super.parsePageStateFromUrl(url).datasetFilter;
         return {
             datasetFilter: baselineFilter,
-            variantFilter: getLapisCovidVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
+            variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
             collectionId: getIntegerFromSearch(search, 'collectionId'),
         };
     }
@@ -343,7 +335,7 @@ class CovidSequencingEffortsStateHandler
         if (pageState.datasetFilter.dateRange !== this.constants.defaultDateRange) {
             setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
         }
-        setSearchFromLapisCovidVariantQuery(
+        setSearchFromLapisVariantQuery(
             search,
             pageState.variantFilter,
             getLineageFilterFields(this.constants.lineageFilters),
@@ -353,13 +345,6 @@ class CovidSequencingEffortsStateHandler
         }
 
         return formatUrl(this.pathname, search);
-    }
-
-    public override toLapisFilter(pageState: CovidVariantData) {
-        return {
-            ...super.toLapisFilter(pageState),
-            variantQuery: pageState.variantFilter.variantQuery,
-        };
     }
 }
 
