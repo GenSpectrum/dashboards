@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test';
 
 import { test } from './e2e.fixture.ts';
+import { organismsWithView } from './helpers.ts';
 import { Organisms } from '../src/types/Organism.ts';
 import { compareVariantsViewKey } from '../src/views/viewKeys';
-import { organismsWithView } from './helpers.ts';
 
 const organismOptions = {
     [Organisms.covid]: { lineage: 'JN.1*', lineageFieldPlaceholder: 'Nextclade pango lineage' },
