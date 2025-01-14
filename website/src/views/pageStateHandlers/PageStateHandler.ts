@@ -1,8 +1,8 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { ExtendedConstants } from '../OrganismConstants.ts';
-import { type Dataset, type Id } from '../View.ts';
-import { type LapisCovidVariantFilter, type LapisLocation } from '../helpers.ts';
+import { type Dataset, type Id, type VariantFilter } from '../View.ts';
+import { type LapisLocation } from '../helpers.ts';
 
 export interface PageStateHandler<PageState extends object> {
     parsePageStateFromUrl(url: URL): PageState;
@@ -22,6 +22,17 @@ export function toLapisFilterWithoutVariant(
         [`${constants.mainDateField}To`]: pageState.datasetFilter.dateRange.dateTo,
         ...constants.additionalFilters,
     };
+}
+
+export function toLapisFilterFromVariant(variantFilter: VariantFilter) {
+    if (variantFilter.variantQuery) {
+        return { variantQuery: variantFilter.variantQuery };
+    } else {
+        return {
+            ...variantFilter.lineages,
+            ...variantFilter.mutations,
+        };
+    }
 }
 
 const variantFilterUrlDelimiter = '$';
@@ -81,13 +92,20 @@ export function searchParamsFromFilterMap<Entry>(
     return encodeMultipleFiltersToUrlSearchParam(searchParameterMap);
 }
 
-export function toDisplayName(variantFilter: LapisCovidVariantFilter) {
+export function toDisplayName(variantFilter: VariantFilter) {
+    if (variantFilter.variantQuery) {
+        return variantFilter.variantQuery;
+    }
+
+    const lineages = variantFilter.lineages
+        ? Object.values(variantFilter.lineages).filter((lineage) => lineage !== undefined)
+        : [];
+
     return [
-        ...Object.values(variantFilter.lineages).filter((lineage) => lineage !== undefined),
-        ...(variantFilter.mutations.nucleotideMutations ?? []),
-        ...(variantFilter.mutations.aminoAcidMutations ?? []),
-        ...(variantFilter.mutations.nucleotideInsertions ?? []),
-        ...(variantFilter.mutations.aminoAcidInsertions ?? []),
-        ...(variantFilter.variantQuery !== undefined ? [variantFilter.variantQuery] : []),
+        ...lineages,
+        ...(variantFilter.mutations?.nucleotideMutations ?? []),
+        ...(variantFilter.mutations?.aminoAcidMutations ?? []),
+        ...(variantFilter.mutations?.nucleotideInsertions ?? []),
+        ...(variantFilter.mutations?.aminoAcidInsertions ?? []),
     ].join(' + ');
 }

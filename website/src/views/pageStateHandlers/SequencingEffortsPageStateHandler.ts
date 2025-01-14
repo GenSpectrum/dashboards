@@ -9,7 +9,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from '../helpers.ts';
-import { type PageStateHandler, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
+import { type PageStateHandler, toLapisFilterFromVariant, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
@@ -55,8 +55,7 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
     public toLapisFilter(pageState: DatasetAndVariantData) {
         return {
             ...toLapisFilterWithoutVariant(pageState, this.constants),
-            ...pageState.variantFilter.lineages,
-            ...pageState.variantFilter.mutations,
+            ...toLapisFilterFromVariant(pageState.variantFilter),
         };
     }
 

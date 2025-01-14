@@ -54,8 +54,7 @@ export function SequencingEffortsPageStateSelector({
             <div>
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
-                    variantFilterConfig={variantFilterConfigState}
-                    hideMutationFilter={true}
+                    variantFilterConfig={{ ...variantFilterConfigState, mutationFilterConfig: undefined }}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

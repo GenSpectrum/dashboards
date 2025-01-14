@@ -3,7 +3,8 @@ import { toDownloadLink } from './toDownloadLink';
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
+import { toLapisFilterWithoutVariant } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
@@ -16,10 +17,10 @@ import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/Fall
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareSideBySideViewKey>;
 interface Props {
     organism: OrganismViewCompareVariant;
-    hideMutationFilter?: boolean;
+    hideMutationComponents?: boolean;
 }
 
-const { organism, hideMutationFilter } = Astro.props;
+const { organism, hideMutationComponents } = Astro.props;
 const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
@@ -33,7 +34,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
         <div class='flex overflow-x-auto'>
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
-                    const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(datasetFilter);
+                    const datasetLapisFilter = toLapisFilterWithoutVariant({ datasetFilter }, view.organismConstants);
                     const timeGranularity = chooseGranularityBasedOnDateRange(
                         datasetFilter.dateRange,
                         new Date(view.organismConstants.earliestDate),
@@ -42,9 +43,11 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                         datasetFilter,
                         variantFilter,
                     );
-                    const lineageFilterConfigs = getLineageFilterConfigs(
+                    const variantFilterConfig = getVariantFilterConfig(
                         view.organismConstants.lineageFilters,
-                        variantFilter.lineages,
+                        variantFilter,
+                        view.organismConstants.useAdvancedQuery,
+                        hideMutationComponents,
                     );
 
                     return (
@@ -72,15 +75,11 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                         earliestDate: view.organismConstants.earliestDate,
                                         dateColumn: view.organismConstants.mainDateField,
                                     }}
-                                    variantFilterConfig={{
-                                        mutationFilterConfig: variantFilter.mutations,
-                                        lineageFilterConfigs,
-                                    }}
+                                    variantFilterConfig={variantFilterConfig}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
-                                    hideMutationFilter={hideMutationFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback
@@ -101,7 +100,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                 lapisDateField={view.organismConstants.mainDateField}
                                 granularity={timeGranularity}
                             />
-                            {!hideMutationFilter && (
+                            {!hideMutationComponents && (
                                 <>
                                     <GsMutations
                                         lapisFilter={numeratorFilter}
@@ -115,6 +114,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     />
                                 </>
                             )}
+
                             <GsAggregate
                                 title='Sub-lineages'
                                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}

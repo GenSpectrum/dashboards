@@ -20,7 +20,6 @@ export function CompareSideBySidePageStateSelector({
     pageState,
     organismViewKey,
     organismsConfig,
-    hideMutationFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -29,7 +28,6 @@ export function CompareSideBySidePageStateSelector({
     pageState: CovidCompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
-    hideMutationFilter?: boolean | undefined;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
@@ -66,7 +64,6 @@ export function CompareSideBySidePageStateSelector({
                     <VariantSelector
                         onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
                         variantFilterConfig={variantFilterConfigState}
-                        hideMutationFilter={hideMutationFilter}
                     />
                 </div>
             </div>

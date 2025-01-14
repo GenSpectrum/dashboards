@@ -4,8 +4,8 @@ import type { ExtendedConstants } from '../OrganismConstants.ts';
 import {
     type CompareToBaselineData,
     type DatasetFilter,
-    getLineageFilterConfigs,
     getLineageFilterFields,
+    getVariantFilterConfig,
     type Id,
     type VariantFilter,
 } from '../View.ts';
@@ -23,6 +23,7 @@ import {
     type PageStateHandler,
     searchParamsFromFilterMap,
     toDisplayName,
+    toLapisFilterFromVariant,
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
 import type { VariantFilterConfig } from '../../components/pageStateSelectors/VariantFilterConfig.ts';
@@ -97,8 +98,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
 
         return {
             ...datasetFilter,
-            ...pageState.baselineFilter.lineages,
-            ...pageState.baselineFilter.mutations,
+            ...toLapisFilterFromVariant(pageState.baselineFilter),
         };
     }
 
@@ -109,8 +109,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
             return {
                 lapisFilter: {
                     ...datasetFilter,
-                    ...variantFilter.lineages,
-                    ...variantFilter.mutations,
+                    ...toLapisFilterFromVariant(variantFilter),
                 },
                 displayName: toDisplayName(variantFilter),
             };
@@ -118,32 +117,36 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
     }
 
     public getEmptyVariantFilterConfig(): VariantFilterConfig {
-        return this.toLineageAndMutationFilterConfig({
-            lineages: {},
-            mutations: {},
-        });
+        return getVariantFilterConfig(
+            this.constants.lineageFilters,
+            {
+                lineages: {},
+                mutations: {},
+            },
+            this.constants.useAdvancedQuery,
+        );
     }
 
     public toVariantFilterConfigs(pageState: CompareToBaselineData): Map<Id, VariantFilterConfig> {
         return new Map<Id, VariantFilterConfig>(
-            Array.from(pageState.variants, ([key, variant]) => [key, this.toLineageAndMutationFilterConfig(variant)]),
+            Array.from(pageState.variants, ([key, variant]) => [
+                key,
+                getVariantFilterConfig(this.constants.lineageFilters, variant, this.constants.useAdvancedQuery),
+            ]),
         );
     }
 
     public toBaselineFilterConfig(pageState: CompareToBaselineData): VariantFilterConfig {
-        return this.toLineageAndMutationFilterConfig(pageState.baselineFilter);
+        return getVariantFilterConfig(
+            this.constants.lineageFilters,
+            pageState.baselineFilter,
+            this.constants.useAdvancedQuery,
+        );
     }
 
     private getFilter(filterParams: Map<string, string>): VariantFilter {
         return {
             ...getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
-        };
-    }
-
-    private toLineageAndMutationFilterConfig(variant: VariantFilter) {
-        return {
-            lineageFilterConfigs: getLineageFilterConfigs(this.constants.lineageFilters, variant.lineages),
-            mutationFilterConfig: variant.mutations,
         };
     }
 }

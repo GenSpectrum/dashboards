@@ -45,6 +45,7 @@ class H5n1Constants implements ExtendedConstants {
             initialValue: undefined,
         },
     ];
+    public readonly useAdvancedQuery = false;
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;

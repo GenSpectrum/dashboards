@@ -9,7 +9,8 @@ import { toDownloadLink } from '../../components/views/compareSideBySide/toDownl
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismViewPageLayout from '../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
-import { getLineageFilterConfigs, getLineageFilterFields } from '../../views/View';
+import { getLineageFilterFields, getVariantFilterConfig } from '../../views/View';
+import { toLapisFilterWithoutVariant } from '../../views/pageStateHandlers/PageStateHandler';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 
@@ -28,7 +29,7 @@ const downloadLinks = [...pageState.filters.entries()].map(
         <div class='flex overflow-x-auto'>
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
-                    const baselineLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(datasetFilter);
+                    const baselineLapisFilter = toLapisFilterWithoutVariant({ datasetFilter }, view.organismConstants);
                     const timeGranularity = chooseGranularityBasedOnDateRange(
                         datasetFilter.dateRange,
                         new Date(view.organismConstants.earliestDate),
@@ -39,9 +40,10 @@ const downloadLinks = [...pageState.filters.entries()].map(
                         variantQuery: variantFilter.variantQuery,
                         ...baselineLapisFilter,
                     };
-                    const lineageFilterConfigs = getLineageFilterConfigs(
+                    const variantFilterConfig = getVariantFilterConfig(
                         view.organismConstants.lineageFilters,
-                        variantFilter.lineages,
+                        variantFilter,
+                        view.organismConstants.useAdvancedQuery,
                     );
 
                     return (
@@ -69,10 +71,7 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                         earliestDate: view.organismConstants.earliestDate,
                                         dateColumn: view.organismConstants.mainDateField,
                                     }}
-                                    variantFilterConfig={{
-                                        mutationFilterConfig: variantFilter.mutations,
-                                        lineageFilterConfigs,
-                                    }}
+                                    variantFilterConfig={variantFilterConfig}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}

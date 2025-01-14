@@ -30,6 +30,7 @@ export interface ExtendedConstants extends OrganismConstants {
     readonly additionalFilters: Record<string, string> | undefined;
     readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
     readonly lineageFilters: LineageFilterConfig[];
+    readonly useAdvancedQuery: boolean;
 }
 
 export function getAuthorRelatedSequencingEffortsFields(constants: {
