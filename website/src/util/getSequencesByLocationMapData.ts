@@ -35,7 +35,6 @@ function loadKnownMapFiles() {
 
     const mapSpecs = Object.entries(topoJsonFiles).map(([relativeMapFilePath, map]) => {
         const mapName = path.basename(relativeMapFilePath, '.topo.json');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const topologyObjectsKey = Object.keys(map.objects)[0];
 
         return { mapName, topologyObjectsKey };
@@ -83,7 +82,6 @@ export function getSequencesByLocationMapData(mapName: string | undefined, curre
         return undefined;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const absoluteMapUrl = new URL(mapData.mapSource.url, currentUrl);
     return {
         ...mapData,
