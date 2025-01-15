@@ -9,12 +9,13 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
+import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 class WestNileConstants implements ExtendedConstants {
     public readonly organism = Organisms.westNile;
@@ -41,6 +42,40 @@ class WestNileConstants implements ExtendedConstants {
             placeholderText: 'Lineage',
             filterType: 'text' as const,
             initialValue: undefined,
+        },
+    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
+        { type: 'text', lapisField: 'submitter', placeholderText: 'Submitter' },
+        {
+            type: 'text',
+            lapisField: 'hostNameScientific',
+            placeholderText: 'Host name scientific',
+            label: 'Host name scientific',
+        },
+        {
+            type: 'text',
+            lapisField: 'hostGender',
+            placeholderText: 'Host gender',
+            label: 'Host gender',
+        },
+        {
+            type: 'text',
+            lapisField: 'hostGender',
+            placeholderText: 'Host gender',
+            label: 'Host gender',
+        },
+        {
+            type: 'text',
+            lapisField: 'hostGender',
+            placeholderText: 'Host gender',
+            label: 'Host gender',
+        },
+        {
+            type: 'date',
+            dateRangeOptions: [dateRangeOptionPresets.lastMonth, dateRangeOptionPresets.last2Months],
+            earliestDate: '1999-01-01',
+            defaultDateRange: dateRangeOptionPresets.lastMonth,
+            dateColumn: 'sampleCollectionDateRangeUpper',
         },
     ];
     public readonly useAdvancedQuery = false;

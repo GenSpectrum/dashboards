@@ -20,6 +20,7 @@ import { getLocationSubdivision } from '../../views/locationHelpers';
 import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
+import { SelectorHeadline } from '../../components/pageStateSelectors/SelectorHeadline';
 
 const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
 const view = ServerSide.routing.getOrganismView(organismViewKey);
@@ -55,6 +56,7 @@ const downloadLinks = noVariantSelected
               downloadFileBasename: `${view.organismConstants.organism}_${sanitizeForFilename(displayName)}_accessions`,
           },
       ];
+const organismConfig = getDashboardsConfig().dashboards.organisms;
 ---
 
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
@@ -73,16 +75,17 @@ const downloadLinks = noVariantSelected
             }}
             variantFilterConfig={variantFilterConfig}
             organismViewKey={organismViewKey}
-            organismsConfig={getDashboardsConfig().dashboards.organisms}
+            organismsConfig={organismConfig}
             client:only='react'
         >
             <AnalyzeSingleVariantSelectorFallback slot='fallback' />
         </SingleVariantPageStateSelector>
-        <div class='p-2'>
-            <h2 class='my-2'>Or select a known variant:</h2>
+        <hr class='my-4 border-gray-200' />
+        <div class='mt-4'>
+            <SelectorHeadline> Collections </SelectorHeadline>
             <CollectionsList
                 initialCollectionId={pageState.collectionId}
-                organismsConfig={getDashboardsConfig().dashboards.organisms}
+                organismsConfig={organismConfig}
                 client:load
             />
         </div>
@@ -90,7 +93,9 @@ const downloadLinks = noVariantSelected
 
     {
         noVariantSelected ? (
-            <SelectVariant slot='dataDisplay' />
+            <div class='mx-auto'>
+                <SelectVariant slot='dataDisplay' />
+            </div>
         ) : (
             <div class='mx-[8px] flex flex-col gap-y-6' slot='dataDisplay'>
                 <GsStatistics numeratorFilter={variantFilter} denominatorFilter={datasetLapisFilter} />

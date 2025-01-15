@@ -4,7 +4,7 @@ import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
-import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
+import { getBaselineFilterConfigs, getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/locationHelpers';
 import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -48,6 +48,10 @@ const variantFilterConfig = getVariantFilterConfig(
     pageState.variantFilter,
     view.organismConstants.useAdvancedQuery,
 );
+const baselineFilterConfigs = getBaselineFilterConfigs(
+    pageState.datasetFilter,
+    view.organismConstants.baselineFilterConfigs
+);
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 
@@ -80,6 +84,7 @@ const downloadLinks = noVariantSelected
         variantFilterConfig={variantFilterConfig}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
+        baselineFilterConfigs={baselineFilterConfigs}
         client:only='react'
     >
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />
@@ -87,7 +92,9 @@ const downloadLinks = noVariantSelected
 
     {
         noVariantSelected ? (
-            <SelectVariant slot='dataDisplay' />
+            <div class='mx-auto'>
+                <SelectVariant slot='dataDisplay' />
+            </div>
         ) : (
             <div class='mx-[8px] flex flex-col gap-y-6' slot='dataDisplay'>
                 <GsStatistics numeratorFilter={variantLapisFilter} denominatorFilter={datasetLapisFilter} />

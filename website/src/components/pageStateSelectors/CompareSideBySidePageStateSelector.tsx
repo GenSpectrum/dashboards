@@ -11,6 +11,8 @@ import type { CovidCompareSideBySideData } from '../../views/covid.ts';
 import { type LapisLocation } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
+import { ButtonWithIcon } from './ButtonWithIcon.tsx';
+import { Inset } from '../../styles/Inset.tsx';
 
 export function CompareSideBySidePageStateSelector({
     locationFilterConfig,
@@ -30,7 +32,7 @@ export function CompareSideBySidePageStateSelector({
     organismsConfig: OrganismsConfig;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
-    const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
+    const [dateRange, setDateRange] = useState<DateRangeOption | undefined>(dateRangeFilterConfig.initialDateRange);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
@@ -48,27 +50,46 @@ export function CompareSideBySidePageStateSelector({
     }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
 
     return (
-        <div className='flex flex-col gap-4 bg-gray-50 p-2'>
-            <div className='flex gap-8'>
-                <div className='flex-0'>
-                    <SelectorHeadline>Filter dataset</SelectorHeadline>
-                    <BaselineSelector
-                        onLocationChange={(location) => setLocation(location)}
-                        locationFilterConfig={locationFilterConfig}
-                        onDateRangeChange={(dateRange) => setDateRange(dateRange)}
-                        dateRangeFilterConfig={dateRangeFilterConfig}
-                    />
-                </div>
-                <div className='flex-grow'>
-                    <SelectorHeadline>Variant Filter</SelectorHeadline>
-                    <VariantSelector
-                        onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
-                        variantFilterConfig={variantFilterConfigState}
-                    />
-                </div>
+        <div>
+            <hr className='my-2 border-gray-200' />
+            <div className='mb-2 flex justify-end gap-4 text-sm'>
+                <ButtonWithIcon icon={'mdi--tooltip-help-outline'}>
+                    <div>Help</div>
+                </ButtonWithIcon>
+                <ButtonWithIcon icon={'mdi--wrench'}>
+                    <div>Add filter fields</div>
+                </ButtonWithIcon>
+                <ButtonWithIcon icon={'mdi--circle-arrows'}>
+                    <div>Reset</div>
+                </ButtonWithIcon>
             </div>
-            <div className='flex justify-end'>
-                <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
+            <div className='flex flex-col gap-4 p-2 shadow-lg'>
+                <div className='flex gap-8'>
+                    <div className='flex-0'>
+                        <SelectorHeadline>Filter dataset</SelectorHeadline>
+                        <Inset className='p-2'>
+                            <BaselineSelector
+                                onLocationChange={(location) => setLocation(location)}
+                                locationFilterConfig={locationFilterConfig}
+                                onDateRangeChange={(dateRange) => setDateRange(dateRange)}
+                                dateRangeFilterConfig={dateRangeFilterConfig}
+                            />
+                        </Inset>
+                    </div>
+                    <div className='flex-grow'>
+                        <SelectorHeadline>Variant Filter</SelectorHeadline>
+                        <Inset className='p-2'>
+                            <VariantSelector
+                                onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
+                                variantFilterConfig={variantFilterConfigState}
+
+                            />
+                        </Inset>
+                    </div>
+                </div>
+                <div className='flex justify-end'>
+                    <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
+                </div>
             </div>
         </div>
     );

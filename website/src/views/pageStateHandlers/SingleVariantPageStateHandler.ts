@@ -1,4 +1,4 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { ExtendedConstants } from '../OrganismConstants.ts';
 import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
@@ -7,10 +7,12 @@ import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
+    getStringFromSearch,
     type LapisLocation,
     setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
+    setSearchFromString,
 } from '../helpers.ts';
 import { type PageStateHandler, toLapisFilterFromVariant, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
@@ -30,12 +32,35 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
 
     public parsePageStateFromUrl(url: URL): DatasetAndVariantData {
         const search = url.searchParams;
+
+        const baselineFilterConfigs = this.constants.baselineFilterConfigs?.reduce(
+            (acc, config) => {
+                switch (config.type) {
+                    case 'date': {
+                        return {
+                            ...acc,
+                            [config.dateColumn]:
+                                getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions) ??
+                                config.defaultDateRange,
+                        };
+                    }
+                    case 'text': {
+                        return { ...acc, [config.lapisField]: getStringFromSearch(search, config.lapisField) };
+                    }
+                }
+            },
+            {} as {
+                [key: string]: DateRangeOption | string | undefined;
+            },
+        );
+
         return {
             datasetFilter: {
                 location: getLapisLocationFromSearch(search, this.constants.locationFields),
                 dateRange:
                     getDateRangeFromSearch(search, this.constants.mainDateField, this.constants.dateRangeOptions) ??
                     this.constants.defaultDateRange,
+                ...baselineFilterConfigs,
             },
             variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
         };
@@ -44,9 +69,26 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
     public toUrl(pageState: DatasetAndVariantData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, pageState.datasetFilter.location);
-        if (pageState.datasetFilter.dateRange !== this.constants.defaultDateRange) {
+        if (JSON.stringify(pageState.datasetFilter.dateRange) !== JSON.stringify(this.constants.defaultDateRange)) {
             setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
         }
+        this.constants.baselineFilterConfigs?.map((config) => {
+            switch (config.type) {
+                case 'date': {
+                    const value = pageState.datasetFilter[config.dateColumn] as DateRangeOption | undefined;
+                    if (JSON.stringify(value) !== JSON.stringify(config.defaultDateRange)) {
+                        setSearchFromDateRange(search, config.dateColumn, value);
+                    }
+                    break;
+                }
+                case 'text': {
+                    const value = pageState.datasetFilter[config.lapisField] as string | undefined;
+                    setSearchFromString(search, config.lapisField, value);
+                    break;
+                }
+            }
+        });
+
         setSearchFromLapisVariantQuery(
             search,
             pageState.variantFilter,

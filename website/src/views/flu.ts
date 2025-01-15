@@ -45,6 +45,7 @@ class FluConstants implements ExtendedConstants {
             initialValue: undefined,
         },
     ];
+    public readonly baselineFilterConfigs = undefined;
     public readonly useAdvancedQuery = false;
     public readonly hostField: string;
     public readonly authorsField: string | undefined;

@@ -63,6 +63,7 @@ class CovidConstants implements ExtendedConstants {
         },
     ];
     public readonly useAdvancedQuery = true;
+    public readonly baselineFilterConfigs = undefined;
     public readonly hostField: string;
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;

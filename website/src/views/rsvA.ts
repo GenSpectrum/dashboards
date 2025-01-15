@@ -44,6 +44,7 @@ class RsvAConstants implements ExtendedConstants {
         },
     ];
     public readonly useAdvancedQuery = false;
+    public readonly baselineFilterConfigs = undefined;
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
