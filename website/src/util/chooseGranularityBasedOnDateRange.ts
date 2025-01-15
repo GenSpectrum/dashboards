@@ -1,9 +1,16 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
-export const chooseGranularityBasedOnDateRange = (
-    dateRange: DateRangeOption,
-    earliestDate: Date,
-): 'day' | 'week' | 'month' | 'year' => {
+export const chooseGranularityBasedOnDateRange = ({
+    earliestDate,
+    dateRange,
+}: {
+    earliestDate: Date;
+    dateRange?: DateRangeOption;
+}): 'day' | 'week' | 'month' | 'year' => {
+    if (dateRange === undefined) {
+        return 'year';
+    }
+
     const dateFrom = dateRange.dateFrom !== undefined ? new Date(dateRange.dateFrom) : earliestDate;
     const dateTo = dateRange.dateTo !== undefined ? new Date(dateRange.dateTo) : new Date();
 

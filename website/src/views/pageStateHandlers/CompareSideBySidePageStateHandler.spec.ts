@@ -3,15 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { Organisms } from '../../types/Organism.ts';
 import type { ExtendedConstants } from '../OrganismConstants.ts';
 import type { CompareSideBySideData, DatasetAndVariantData } from '../View.ts';
-import { GenericCompareSideBySideStateHandler } from './CompareSideBySidePageStateHandler.ts';
+import { CompareSideBySideStateHandler } from './CompareSideBySidePageStateHandler.ts';
+
+const mockDateRangeOption = { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' };
 
 const mockConstants: ExtendedConstants = {
     organism: Organisms.covid,
     dataOrigins: [],
     locationFields: ['country', 'region'],
     mainDateField: 'date',
-    dateRangeOptions: [{ label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' }],
-    defaultDateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
     additionalFilters: undefined,
     lineageFilters: [
         {
@@ -24,6 +24,21 @@ const mockConstants: ExtendedConstants = {
     additionalSequencingEffortsFields: [],
     accessionDownloadFields: [],
     useAdvancedQuery: false,
+    baselineFilterConfigs: [
+        {
+            type: 'text',
+            lapisField: 'someTextField',
+            placeholderText: 'Some text field',
+            label: 'Some text field',
+        },
+        {
+            type: 'date',
+            dateRangeOptions: [mockDateRangeOption],
+            earliestDate: '1999-01-01',
+            defaultDateRange: mockDateRangeOption,
+            dateColumn: 'date',
+        },
+    ],
 };
 
 const mockDefaultPageState: CompareSideBySideData = {
@@ -33,7 +48,8 @@ const mockDefaultPageState: CompareSideBySideData = {
             {
                 datasetFilter: {
                     location: {},
-                    dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+                    dateFilters: {},
+                    textFilters: {},
                 },
                 variantFilter: {
                     lineages: {},
@@ -46,7 +62,10 @@ const mockDefaultPageState: CompareSideBySideData = {
             {
                 datasetFilter: {
                     location: {},
-                    dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+                    dateFilters: {
+                        date: mockDateRangeOption,
+                    },
+                    textFilters: {},
                 },
                 variantFilter: {
                     lineages: { lineage: 'B.1.1.7' },
@@ -57,25 +76,22 @@ const mockDefaultPageState: CompareSideBySideData = {
     ]),
 };
 
-describe('GenericCompareSideBySideStateHandler', () => {
-    const handler = new GenericCompareSideBySideStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+describe('CompareSideBySideStateHandler', () => {
+    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState, 'testPath');
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
         expect(url).toBe(
-            '/testPath/compare-side-by-side?' +
-                'date%241=Last+7+Days' +
-                '&lineage%242=B.1.1.7&date%242=Last+7+Days' +
-                '&',
+            '/testPath/compare-side-by-side?' + 'columns=2' + '&lineage%242=B.1.1.7' + '&date%242=Last+7+Days' + '&',
         );
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
             'http://example.com/testPath/compare-side-by-side?' +
-                'date%241=Last+7+Days' +
-                '&lineage%242=B.1.1.7&date%242=Last+7+Days' +
-                '&variantQuery%243=C234G' +
+                'columns=3' +
+                '&lineage%241=B.1.1.7&date%241=Last+7+Days' +
+                '&variantQuery%242=C234G' +
                 '&',
         );
 
@@ -83,14 +99,13 @@ describe('GenericCompareSideBySideStateHandler', () => {
 
         expect(pageState.filters.size).toBe(3);
 
-        expect(pageState.filters.get(1)).toEqual({
+        expect(pageState.filters.get(0)).toEqual({
             datasetFilter: {
-                dateRange: {
-                    label: 'Last 7 Days',
-                    dateFrom: '2024-11-22',
-                    dateTo: '2024-11-29',
-                },
                 location: {},
+                dateFilters: {
+                    date: mockDateRangeOption,
+                },
+                textFilters: {},
             },
             variantFilter: {
                 lineages: {},
@@ -98,13 +113,12 @@ describe('GenericCompareSideBySideStateHandler', () => {
             },
         });
 
-        expect(pageState.filters.get(2)).toEqual({
+        expect(pageState.filters.get(1)).toEqual({
             datasetFilter: {
-                dateRange: {
-                    label: 'Last 7 Days',
-                    dateFrom: '2024-11-22',
-                    dateTo: '2024-11-29',
+                dateFilters: {
+                    date: mockDateRangeOption,
                 },
+                textFilters: {},
                 location: {},
             },
             variantFilter: {
@@ -115,14 +129,13 @@ describe('GenericCompareSideBySideStateHandler', () => {
             },
         });
 
-        expect(pageState.filters.get(3)).toEqual({
+        expect(pageState.filters.get(2)).toEqual({
             datasetFilter: {
-                dateRange: {
-                    label: 'Last 7 Days',
-                    dateFrom: '2024-11-22',
-                    dateTo: '2024-11-29',
+                dateFilters: {
+                    date: mockDateRangeOption,
                 },
                 location: {},
+                textFilters: {},
             },
             variantFilter: {
                 variantQuery: 'C234G',
@@ -138,7 +151,8 @@ describe('GenericCompareSideBySideStateHandler', () => {
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+                            dateFilters: { date: mockDateRangeOption },
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: { lineage: 'B.1.1.7' },
@@ -151,7 +165,8 @@ describe('GenericCompareSideBySideStateHandler', () => {
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+                            dateFilters: { date: mockDateRangeOption },
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: { lineage: 'B.1.1.7' },
@@ -166,7 +181,8 @@ describe('GenericCompareSideBySideStateHandler', () => {
         const url = handler.toUrl(pageState);
         expect(url).toBe(
             '/testPath/compare-side-by-side?' +
-                'lineage%241=B.1.1.7&date%241=Last+7+Days' +
+                'columns=2' +
+                '&lineage%241=B.1.1.7&date%241=Last+7+Days' +
                 '&variantQuery%242=C234G&date%242=Last+7+Days' +
                 '&',
         );
@@ -175,8 +191,11 @@ describe('GenericCompareSideBySideStateHandler', () => {
     it('should convert variant filter to Lapis filter', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {
-                dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+                dateFilters: { date: mockDateRangeOption },
                 location: { country: 'US' },
+                textFilters: {
+                    someTextField: 'SomeText',
+                },
             },
             {
                 lineages: { lineage: 'B.1.1.7' },
@@ -189,14 +208,18 @@ describe('GenericCompareSideBySideStateHandler', () => {
             country: 'US',
             lineage: 'B.1.1.7',
             nucleotideMutations: ['A123T'],
+            someTextField: 'SomeText',
         });
     });
 
     it('should convert variant filter with variantQuery to Lapis filter', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {
-                dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+                dateFilters: { date: mockDateRangeOption },
                 location: { country: 'US' },
+                textFilters: {
+                    someTextField: 'SomeText',
+                },
             },
             {
                 lineages: { lineage: 'B.1.1.7' },
@@ -208,6 +231,7 @@ describe('GenericCompareSideBySideStateHandler', () => {
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             country: 'US',
+            someTextField: 'SomeText',
             variantQuery: 'C234G',
         });
     });

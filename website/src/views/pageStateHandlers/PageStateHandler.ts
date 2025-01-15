@@ -1,8 +1,14 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { ExtendedConstants } from '../OrganismConstants.ts';
+import type { BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector.tsx';
 import { type Dataset, type Id, type VariantFilter } from '../View.ts';
-import { type LapisLocation } from '../helpers.ts';
+import {
+    getDateRangeFromSearch,
+    getStringFromSearch,
+    type LapisLocation,
+    setSearchFromDateRange,
+    setSearchFromString,
+} from '../helpers.ts';
 
 export interface PageStateHandler<PageState extends object> {
     parsePageStateFromUrl(url: URL): PageState;
@@ -14,13 +20,42 @@ export interface PageStateHandler<PageState extends object> {
 
 export function toLapisFilterWithoutVariant(
     pageState: Dataset,
-    constants: ExtendedConstants,
+    additionalFilters: Record<string, string> | undefined,
 ): LapisFilter & LapisLocation {
+    const dateFilters = Object.entries(pageState.datasetFilter.dateFilters).reduce(
+        (acc, [lapisField, dateRange]) => {
+            if (dateRange === undefined) {
+                return acc;
+            }
+
+            return {
+                ...acc,
+                [`${lapisField}From`]: dateRange.dateFrom,
+                [`${lapisField}To`]: dateRange.dateTo,
+            };
+        },
+        {} as { [key: string]: string | undefined },
+    );
+
+    const textFilters = Object.entries(pageState.datasetFilter.textFilters).reduce(
+        (acc, [lapisField, text]) => {
+            if (text === undefined) {
+                return acc;
+            }
+
+            return {
+                ...acc,
+                [lapisField]: text,
+            };
+        },
+        {} as { [key: string]: string | undefined },
+    );
+
     return {
         ...pageState.datasetFilter.location,
-        [`${constants.mainDateField}From`]: pageState.datasetFilter.dateRange.dateFrom,
-        [`${constants.mainDateField}To`]: pageState.datasetFilter.dateRange.dateTo,
-        ...constants.additionalFilters,
+        ...dateFilters,
+        ...textFilters,
+        ...additionalFilters,
     };
 }
 
@@ -35,10 +70,88 @@ export function toLapisFilterFromVariant(variantFilter: VariantFilter) {
     }
 }
 
+export function parseDateRangesFromUrl(
+    search: URLSearchParams | Map<string, string>,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const dateRangeFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'date');
+
+    return (
+        dateRangeFilterConfigs?.reduce(
+            (acc, config) => {
+                const dateRange =
+                    getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions) ??
+                    config.defaultDateRange;
+                return {
+                    ...acc,
+                    [config.dateColumn]: dateRange,
+                };
+            },
+            {} as {
+                [key: string]: DateRangeOption | undefined;
+            },
+        ) ?? {}
+    );
+}
+
+export function parseTextFiltersFromUrl(
+    search: URLSearchParams | Map<string, string>,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const textFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'text');
+
+    return (
+        textFilterConfigs?.reduce(
+            (acc, config) => {
+                return {
+                    ...acc,
+                    [config.lapisField]: getStringFromSearch(search, config.lapisField),
+                };
+            },
+            {} as {
+                [key: string]: string | undefined;
+            },
+        ) ?? {}
+    );
+}
+
+export function setSearchFromDateFilters(
+    search: URLSearchParams,
+    pageState: Dataset,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const dateRangeFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'date');
+
+    dateRangeFilterConfigs?.forEach((config) => {
+        const value = pageState.datasetFilter.dateFilters[config.dateColumn];
+        setSearchFromDateRange(search, config.dateColumn, value);
+    });
+}
+
+export function setSearchFromTextFilters(
+    search: URLSearchParams,
+    pageState: Dataset,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const textFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'text');
+
+    textFilterConfigs?.forEach((config) => {
+        const value = pageState.datasetFilter.textFilters[config.lapisField];
+        setSearchFromString(search, config.lapisField, value);
+    });
+}
+
 const variantFilterUrlDelimiter = '$';
+const columnsKey = 'columns';
 
 export function decodeFiltersFromSearch(search: URLSearchParams) {
     const filterMap = new Map<Id, Map<string, string>>();
+
+    const numFilters = Number.parseInt(search.get(columnsKey) ?? '0', 10);
+
+    for (let id = 0; id < numFilters; id++) {
+        filterMap.set(id, new Map<string, string>());
+    }
 
     for (const [key, value] of search) {
         const keySplit = key.split(variantFilterUrlDelimiter);
@@ -46,24 +159,28 @@ export function decodeFiltersFromSearch(search: URLSearchParams) {
             continue;
         }
         const id = Number.parseInt(keySplit[1], 10);
-        if (Number.isNaN(id)) {
+        if (Number.isNaN(id) || id > numFilters) {
             continue;
         }
 
-        let filter = filterMap.get(id);
+        const filter = filterMap.get(id);
 
         if (filter === undefined) {
-            filter = new Map<string, string>();
-            filterMap.set(id, filter);
+            continue;
         }
 
         filter.set(keySplit[0], value);
     }
+
     return filterMap;
 }
 
 export function encodeMultipleFiltersToUrlSearchParam(filters: Map<Id, Map<string, string>>) {
     const search = new URLSearchParams();
+    if (filters.size > 0) {
+        search.append(columnsKey, `${filters.size}`);
+    }
+
     for (const [id, filter] of filters) {
         for (const [key, value] of filter) {
             search.append(`${key}${variantFilterUrlDelimiter}${id}`, value);

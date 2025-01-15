@@ -11,17 +11,19 @@ import {
 } from '../View.ts';
 import { compareToBaselineViewConstants } from '../ViewConstants.ts';
 import {
-    getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from '../helpers.ts';
 import {
     decodeFiltersFromSearch,
     type PageStateHandler,
+    parseDateRangesFromUrl,
+    parseTextFiltersFromUrl,
     searchParamsFromFilterMap,
+    setSearchFromDateFilters,
+    setSearchFromTextFilters,
     toDisplayName,
     toLapisFilterFromVariant,
     toLapisFilterWithoutVariant,
@@ -47,26 +49,20 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
     public parsePageStateFromUrl(url: URL): CompareToBaselineData {
         const search = url.searchParams;
 
-        const datasetFilter = {
-            location: getLapisLocationFromSearch(search, this.constants.locationFields),
-            dateRange:
-                getDateRangeFromSearch(search, this.constants.mainDateField, this.constants.dateRangeOptions) ??
-                this.constants.defaultDateRange,
-        };
-
-        const baselineFilter = getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters));
-
         const filterPerColumn = decodeFiltersFromSearch(url.searchParams);
-
         const variants = new Map<number, VariantFilter>();
         for (const [columnId, filterParams] of filterPerColumn) {
             variants.set(columnId, this.getFilter(filterParams));
         }
 
         return {
-            datasetFilter,
+            datasetFilter: {
+                location: getLapisLocationFromSearch(search, this.constants.locationFields),
+                dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
+                textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
+            },
             variants,
-            baselineFilter,
+            baselineFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
         };
     }
 
@@ -76,9 +72,8 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
         );
 
         setSearchFromLocation(search, pageState.datasetFilter.location);
-        if (pageState.datasetFilter.dateRange !== this.constants.defaultDateRange) {
-            setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
-        }
+        setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
 
         setSearchFromLapisVariantQuery(
             search,
@@ -90,7 +85,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
     }
 
     public datasetFilterToLapisFilter(baselineFilter: DatasetFilter): LapisFilter {
-        return toLapisFilterWithoutVariant({ datasetFilter: baselineFilter }, this.constants);
+        return toLapisFilterWithoutVariant({ datasetFilter: baselineFilter }, this.constants.additionalFilters);
     }
 
     public baselineFilterToLapisFilter(pageState: CompareToBaselineData): LapisFilter {

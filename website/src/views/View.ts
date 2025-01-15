@@ -10,7 +10,16 @@ import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
 
 export type DatasetFilter = {
     location: LapisLocation;
-    dateRange: DateRangeOption;
+    textFilters: TextFilterState;
+    dateFilters: DateFilterState;
+};
+
+export type DateFilterState = {
+    [key: string]: DateRangeOption | undefined;
+};
+
+export type TextFilterState = {
+    [key: string]: string | undefined;
 };
 
 export type Dataset = {
