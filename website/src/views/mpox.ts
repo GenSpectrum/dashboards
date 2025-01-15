@@ -1,4 +1,4 @@
-import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -9,35 +9,20 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
+import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
-import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+
+const earliestDate = '1960-01-01';
 
 class MpoxConstants implements ExtendedConstants {
     public readonly organism = Organisms.mpox;
-    public readonly earliestDate = '1960-01-01';
-    public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
-    public readonly dateRangeOptions: DateRangeOption[] = [
-        dateRangeOptionPresets.lastMonth,
-        dateRangeOptionPresets.last2Months,
-        dateRangeOptionPresets.last3Months,
-        dateRangeOptionPresets.last6Months,
-        dateRangeOptionPresets.lastYear,
-        { label: '2024', dateFrom: '2024-01-01' },
-        { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
-        { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
-        { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
-        { label: 'Since 2021', dateFrom: '2021-01-01' },
-        { label: 'Before 2021', dateFrom: this.earliestDate, dateTo: '2020-12-31' },
-        { label: 'Since 2017', dateFrom: '2017-01-01' },
-        { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
-        { label: 'Before 2017', dateFrom: this.earliestDate, dateTo: '2016-12-31' },
-        dateRangeOptionPresets.allTimes,
-    ];
     public readonly mainDateField: string;
+    public readonly earliestDate = earliestDate;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
@@ -54,6 +39,32 @@ class MpoxConstants implements ExtendedConstants {
         },
     ];
     public readonly useAdvancedQuery = false;
+    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
+        {
+            type: 'date',
+            dateRangeOptions: [
+                dateRangeOptionPresets.lastMonth,
+                dateRangeOptionPresets.last2Months,
+                dateRangeOptionPresets.last3Months,
+                dateRangeOptionPresets.last6Months,
+                dateRangeOptionPresets.lastYear,
+                { label: '2024', dateFrom: '2024-01-01' },
+                { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
+                { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
+                { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
+                { label: 'Since 2021', dateFrom: '2021-01-01' },
+                { label: 'Before 2021', dateFrom: earliestDate, dateTo: '2020-12-31' },
+                { label: 'Since 2017', dateFrom: '2017-01-01' },
+                { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
+                { label: 'Before 2017', dateFrom: earliestDate, dateTo: '2016-12-31' },
+                dateRangeOptionPresets.allTimes,
+            ],
+            earliestDate: '1960-01-01',
+            defaultDateRange: dateRangeOptionPresets.lastYear,
+            dateColumn: 'sampleCollectionDateRangeLower',
+            label: 'Sample collection date lower',
+        },
+    ];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
@@ -86,7 +97,7 @@ export class MpoxAnalyzeSingleVariantView extends GenericSingleVariantView<MpoxC
 export class MpoxCompareSideBySideView extends BaseView<
     CompareSideBySideData,
     MpoxConstants,
-    GenericCompareSideBySideStateHandler
+    CompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new MpoxConstants(organismsConfig);
@@ -97,7 +108,8 @@ export class MpoxCompareSideBySideView extends BaseView<
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: constants.defaultDateRange,
+                            dateFilters: {},
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: {
@@ -112,7 +124,8 @@ export class MpoxCompareSideBySideView extends BaseView<
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: constants.defaultDateRange,
+                            dateFilters: {},
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: {
@@ -127,7 +140,7 @@ export class MpoxCompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new GenericCompareSideBySideStateHandler(
+            new CompareSideBySideStateHandler(
                 constants,
                 defaultPageState,
                 organismConfig[constants.organism].pathFragment,

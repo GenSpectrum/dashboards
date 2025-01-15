@@ -32,8 +32,8 @@ test.describe('Main page', () => {
         await expect(page.getByRole('heading', { name: 'Inspect pathogen genomic data' })).toBeVisible();
     });
 
-    test(`should have a main organism navigation that links to the organism views`, async ({ page }) => {
-        for (const organism of organisms) {
+    organisms.forEach((organism) => {
+        test(`should navigate to all views for ${organism}`, async ({ page }) => {
             for (const { linkName, title, expectedHeadline } of views) {
                 await page.goto('/');
                 await page
@@ -46,6 +46,6 @@ test.describe('Main page', () => {
                 await expect(page).toHaveTitle(`${title} | ${organism} | GenSpectrum`);
                 await expect(page.getByRole('heading', { name: expectedHeadline }).first()).toBeVisible();
             }
-        }
+        });
     });
 });

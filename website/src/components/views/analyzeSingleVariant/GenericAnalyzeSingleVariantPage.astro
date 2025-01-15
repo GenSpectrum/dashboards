@@ -33,10 +33,10 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.datasetFilter.dateRange,
-    new Date(view.organismConstants.earliestDate),
-);
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    earliestDate: new Date(view.organismConstants.earliestDate),
+    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
+});
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
@@ -68,18 +68,14 @@ const downloadLinks = noVariantSelected
         slot='filters'
         locationFilterConfig={{
             locationFields: view.organismConstants.locationFields,
-            initialLocation: pageState.datasetFilter.location,
             placeholderText: 'Sampling location',
-        }}
-        dateRangeFilterConfig={{
-            initialDateRange: pageState.datasetFilter.dateRange,
-            dateRangeOptions: view.organismConstants.dateRangeOptions,
-            earliestDate: view.organismConstants.earliestDate,
-            dateColumn: view.organismConstants.mainDateField,
+            label: 'Sampling location',
         }}
         variantFilterConfig={variantFilterConfig}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
+        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+        datasetFilter={pageState.datasetFilter}
         client:only='react'
     >
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />
@@ -87,7 +83,9 @@ const downloadLinks = noVariantSelected
 
     {
         noVariantSelected ? (
-            <SelectVariant slot='dataDisplay' />
+            <div class='mx-auto'>
+                <SelectVariant slot='dataDisplay' />
+            </div>
         ) : (
             <div class='mx-[8px] flex flex-col gap-y-6' slot='dataDisplay'>
                 <GsStatistics numeratorFilter={variantLapisFilter} denominatorFilter={datasetLapisFilter} />

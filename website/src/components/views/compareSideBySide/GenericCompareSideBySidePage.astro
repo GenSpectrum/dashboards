@@ -34,11 +34,14 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
         <div class='flex overflow-x-auto'>
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
-                    const datasetLapisFilter = toLapisFilterWithoutVariant({ datasetFilter }, view.organismConstants);
-                    const timeGranularity = chooseGranularityBasedOnDateRange(
-                        datasetFilter.dateRange,
-                        new Date(view.organismConstants.earliestDate),
+                    const datasetLapisFilter = toLapisFilterWithoutVariant(
+                        { datasetFilter },
+                        view.organismConstants.additionalFilters,
                     );
+                    const timeGranularity = chooseGranularityBasedOnDateRange({
+                        earliestDate: new Date(view.organismConstants.earliestDate),
+                        dateRange: datasetFilter.dateFilters[view.organismConstants.mainDateField],
+                    });
                     const numeratorFilter = view.pageStateHandler.variantFilterToLapisFilter(
                         datasetFilter,
                         variantFilter,
@@ -66,20 +69,15 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                 <CompareSideBySidePageStateSelector
                                     locationFilterConfig={{
                                         locationFields: view.organismConstants.locationFields,
-                                        initialLocation: datasetFilter.location,
                                         placeholderText: 'Sampling location',
-                                    }}
-                                    dateRangeFilterConfig={{
-                                        initialDateRange: datasetFilter.dateRange,
-                                        dateRangeOptions: view.organismConstants.dateRangeOptions,
-                                        earliestDate: view.organismConstants.earliestDate,
-                                        dateColumn: view.organismConstants.mainDateField,
                                     }}
                                     variantFilterConfig={variantFilterConfig}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+                                    datasetFilter={datasetFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback

@@ -7,6 +7,7 @@ import GsPrevalenceOverTime from '../../components/genspectrum/GsPrevalenceOverT
 import GsRelativeGrowthAdvantage from '../../components/genspectrum/GsRelativeGrowthAdvantage.astro';
 import GsStatistics from '../../components/genspectrum/GsStatistics.astro';
 import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
+import { SelectorHeadline } from '../../components/pageStateSelectors/SelectorHeadline';
 import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
 import SelectVariant from '../../components/views/analyzeSingleVariant/SelectVariant.astro';
@@ -27,10 +28,10 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
 const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.datasetFilter.dateRange,
-    new Date(view.organismConstants.earliestDate),
-);
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    earliestDate: new Date(view.organismConstants.earliestDate),
+    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
+});
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
@@ -55,6 +56,7 @@ const downloadLinks = noVariantSelected
               downloadFileBasename: `${view.organismConstants.organism}_${sanitizeForFilename(displayName)}_accessions`,
           },
       ];
+const organismConfig = getDashboardsConfig().dashboards.organisms;
 ---
 
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
@@ -62,27 +64,23 @@ const downloadLinks = noVariantSelected
         <SingleVariantPageStateSelector
             locationFilterConfig={{
                 locationFields: view.organismConstants.locationFields,
-                initialLocation: pageState.datasetFilter.location,
                 placeholderText: 'Sampling location',
-            }}
-            dateRangeFilterConfig={{
-                initialDateRange: pageState.datasetFilter.dateRange,
-                dateRangeOptions: view.organismConstants.dateRangeOptions,
-                earliestDate: view.organismConstants.earliestDate,
-                dateColumn: view.organismConstants.mainDateField,
             }}
             variantFilterConfig={variantFilterConfig}
             organismViewKey={organismViewKey}
-            organismsConfig={getDashboardsConfig().dashboards.organisms}
+            organismsConfig={organismConfig}
+            baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+            datasetFilter={pageState.datasetFilter}
             client:only='react'
         >
             <AnalyzeSingleVariantSelectorFallback slot='fallback' />
         </SingleVariantPageStateSelector>
-        <div class='p-2'>
-            <h2 class='my-2'>Or select a known variant:</h2>
+        <hr class='my-4 border-gray-200' />
+        <div class='mt-4'>
+            <SelectorHeadline> Collections </SelectorHeadline>
             <CollectionsList
                 initialCollectionId={pageState.collectionId}
-                organismsConfig={getDashboardsConfig().dashboards.organisms}
+                organismsConfig={organismConfig}
                 client:load
             />
         </div>
@@ -90,7 +88,9 @@ const downloadLinks = noVariantSelected
 
     {
         noVariantSelected ? (
-            <SelectVariant slot='dataDisplay' />
+            <div class='mx-auto'>
+                <SelectVariant slot='dataDisplay' />
+            </div>
         ) : (
             <div class='mx-[8px] flex flex-col gap-y-6' slot='dataDisplay'>
                 <GsStatistics numeratorFilter={variantFilter} denominatorFilter={datasetLapisFilter} />

@@ -5,13 +5,13 @@ import type { ExtendedConstants } from '../OrganismConstants.ts';
 import type { DatasetAndVariantData } from '../View.ts';
 import { SingleVariantPageStateHandler } from './SingleVariantPageStateHandler.ts';
 
+const mockDateRangeOption = { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' };
+
 const mockConstants: ExtendedConstants = {
     organism: Organisms.covid,
     dataOrigins: [],
     locationFields: ['country', 'region'],
     mainDateField: 'date',
-    dateRangeOptions: [{ label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' }],
-    defaultDateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
     additionalFilters: undefined,
     lineageFilters: [
         {
@@ -24,12 +24,30 @@ const mockConstants: ExtendedConstants = {
     additionalSequencingEffortsFields: [],
     accessionDownloadFields: [],
     useAdvancedQuery: false,
+    baselineFilterConfigs: [
+        {
+            type: 'text',
+            lapisField: 'someTextField',
+            placeholderText: 'Some text field',
+            label: 'Some text field',
+        },
+        {
+            type: 'date',
+            dateRangeOptions: [mockDateRangeOption],
+            earliestDate: '1999-01-01',
+            defaultDateRange: mockDateRangeOption,
+            dateColumn: 'date',
+        },
+    ],
 };
 
 const mockDefaultPageState: DatasetAndVariantData = {
     datasetFilter: {
         location: {},
-        dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+        dateFilters: {
+            date: mockDateRangeOption,
+        },
+        textFilters: {},
     },
     variantFilter: {
         lineages: {},
@@ -56,7 +74,7 @@ describe('SingleVariantPageStateHandler', () => {
         const pageState = handler.parsePageStateFromUrl(url);
 
         expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
-        expect(pageState.datasetFilter.dateRange).toEqual(mockConstants.defaultDateRange);
+        expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
 
         expect(pageState.variantFilter).toEqual({
             lineages: { lineage: 'B.2.3.4' },
@@ -75,12 +93,17 @@ describe('SingleVariantPageStateHandler', () => {
             },
             datasetFilter: {
                 location: { country: 'US' },
-                dateRange: mockConstants.defaultDateRange,
+                dateFilters: { date: mockDateRangeOption },
+                textFilters: {},
             },
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/single-variant?' + 'country=US' + '&nucleotideMutations=D614G&lineage=B.1.1.7' + '&',
+            '/testPath/single-variant?' +
+                'country=US' +
+                '&date=Last+7+Days' +
+                '&nucleotideMutations=D614G&lineage=B.1.1.7' +
+                '&',
         );
     });
 

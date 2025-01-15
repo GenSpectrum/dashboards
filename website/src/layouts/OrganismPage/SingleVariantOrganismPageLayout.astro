@@ -19,7 +19,7 @@ const { view, downloadLinks } = Astro.props;
 <OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
-            <div class='h-fit bg-gray-50 p-2'>
+            <div class='h-fit p-2 shadow-lg'>
                 <slot name='filters' />
             </div>
             <slot name='dataDisplay' />

@@ -53,7 +53,8 @@ export class GenericSingleVariantView<Constants extends ExtendedConstants> exten
                 {
                     datasetFilter: {
                         location: {},
-                        dateRange: constants.defaultDateRange,
+                        dateFilters: {},
+                        textFilters: {},
                     },
                     variantFilter: {
                         mutations: {},
@@ -80,7 +81,8 @@ export class GenericSequencingEffortsView<Constants extends ExtendedConstants> e
                 {
                     datasetFilter: {
                         location: {},
-                        dateRange: constants.defaultDateRange,
+                        dateFilters: {},
+                        textFilters: {},
                     },
                     variantFilter: {
                         mutations: {},
@@ -107,7 +109,8 @@ export class GenericCompareVariantsView<Constants extends ExtendedConstants> ext
                 {
                     datasetFilter: {
                         location: {},
-                        dateRange: constants.defaultDateRange,
+                        dateFilters: {},
+                        textFilters: {},
                     },
                     variants: new Map(),
                 },
@@ -131,7 +134,8 @@ export class GenericCompareToBaselineView<Constants extends ExtendedConstants> e
                 {
                     datasetFilter: {
                         location: {},
-                        dateRange: constants.defaultDateRange,
+                        dateFilters: {},
+                        textFilters: {},
                     },
                     variants: new Map(),
                     baselineFilter: {

@@ -4,15 +4,21 @@ import type { ExtendedConstants } from '../OrganismConstants.ts';
 import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { singleVariantViewConstants } from '../ViewConstants.ts';
 import {
-    getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
     type LapisLocation,
-    setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from '../helpers.ts';
-import { type PageStateHandler, toLapisFilterFromVariant, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
+import {
+    type PageStateHandler,
+    parseDateRangesFromUrl,
+    parseTextFiltersFromUrl,
+    setSearchFromDateFilters,
+    setSearchFromTextFilters,
+    toLapisFilterFromVariant,
+    toLapisFilterWithoutVariant,
+} from './PageStateHandler.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
@@ -30,12 +36,12 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
 
     public parsePageStateFromUrl(url: URL): DatasetAndVariantData {
         const search = url.searchParams;
+
         return {
             datasetFilter: {
                 location: getLapisLocationFromSearch(search, this.constants.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(search, this.constants.mainDateField, this.constants.dateRangeOptions) ??
-                    this.constants.defaultDateRange,
+                dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
+                textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
             },
             variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
         };
@@ -44,9 +50,9 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
     public toUrl(pageState: DatasetAndVariantData): string {
         const search = new URLSearchParams();
         setSearchFromLocation(search, pageState.datasetFilter.location);
-        if (pageState.datasetFilter.dateRange !== this.constants.defaultDateRange) {
-            setSearchFromDateRange(search, this.constants.mainDateField, pageState.datasetFilter.dateRange);
-        }
+        setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+
         setSearchFromLapisVariantQuery(
             search,
             pageState.variantFilter,
@@ -57,13 +63,13 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
 
     public toLapisFilter(pageState: DatasetAndVariantData) {
         return {
-            ...toLapisFilterWithoutVariant(pageState, this.constants),
+            ...toLapisFilterWithoutVariant(pageState, this.constants.additionalFilters),
             ...toLapisFilterFromVariant(pageState.variantFilter),
         };
     }
 
     public toLapisFilterWithoutVariant(pageState: DatasetAndVariantData): LapisFilter & LapisLocation {
-        return toLapisFilterWithoutVariant(pageState, this.constants);
+        return toLapisFilterWithoutVariant(pageState, this.constants.additionalFilters);
     }
 
     public getDefaultPageUrl() {
