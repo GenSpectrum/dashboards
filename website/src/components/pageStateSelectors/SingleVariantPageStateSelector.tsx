@@ -43,9 +43,19 @@ export function SingleVariantPageStateSelector({
     );
 
     return (
-        <div className='flex flex-col gap-6'>
+        <div>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
+                <div className='mb-2 flex justify-end gap-2 text-sm'>
+                    <button className='flex items-center gap-1'>
+                        <div className='iconify mdi--wrench'></div>
+                        <div>Add filter fields</div>
+                    </button>
+                    <button className='flex items-center gap-1'>
+                        <div className='iconify mdi--circle-arrows'></div>
+                        <div>Reset</div>
+                    </button>
+                </div>
                 <BaselineSelector
                     onLocationChange={setLocation}
                     locationFilterConfig={locationFilterConfig}
