@@ -1,0 +1,38 @@
+---
+import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import DataInfo from '../../layouts/base/footer/DataInfo.astro';
+import { dataOrigins } from '../../types/dataOrigins';
+
+const lapisUrl = 'https://api.wise-loculus.genspectrum.org/rsv';
+const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
+---
+
+<BaseLayout title='Swiss wastewater - RSV'>
+    <div class='m-6'>
+        <h1 class='text-2xl'>Swiss wastewater - RSV</h1>
+        <gs-app lapis={lapisUrl}>
+            {
+                ['RSV-A', 'RSV-B'].map((reference) => (
+                    <div class='mt-4 w-full'>
+                        <h2 class='font-bold'>{reference}</h2>
+                        <gs-wastewater-mutations-over-time
+                            height='400px'
+                            lapisFilter={JSON.stringify({
+                                reference,
+                                versionStatus: 'LATEST_VERSION',
+                                isRevocation: false,
+                            })}
+                            sequenceType='nucleotide'
+                        />
+                    </div>
+                ))
+            }
+        </gs-app>
+
+        <div class='flex justify-center' slot='secondary-footer'>
+            <span class='mr-4 p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
+            <DataInfo dataOrigins={[dataOrigins.wise]} />
+        </div>
+    </div>
+</BaseLayout>

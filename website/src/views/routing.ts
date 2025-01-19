@@ -38,6 +38,7 @@ import {
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
+import { SwissWastewaterInfluenzaView, SwissWastewaterRSVView } from './swissWastewater.ts';
 import {
     compareSideBySideViewKey,
     compareToBaselineViewKey,
@@ -122,6 +123,10 @@ export class Routing {
                 [compareVariantsViewKey]: new MpoxCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new MpoxCompareToBaselineView(organismsConfig),
             },
+            [Organisms.swissWastewater]: {
+                rsv: new SwissWastewaterRSVView(),
+                influenza: new SwissWastewaterInfluenzaView(),
+            },
         } as const;
 
         this.externalPages = this.initializeExternalPages(organismsConfig);
@@ -143,6 +148,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.westNile]);
             case Organisms.mpox:
                 return Object.values(this.views[Organisms.mpox]);
+            case Organisms.swissWastewater:
+                return Object.values(this.views[Organisms.swissWastewater]);
         }
     }
 

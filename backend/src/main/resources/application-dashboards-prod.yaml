@@ -147,6 +147,19 @@ dashboards:
         - url: "https://loculus.genspectrum.org/rsv-b"
           label: "Browse data"
           menuIcon: "database"
+    swissWastewater:
+      lapis:
+        url: "https://wise-loculus.genspectrum.org/???"
+        mainDateField: "date"
+        locationFields:
+          - "location"
+        hostField: "???"
+        authorAffiliationsField: "???"
+        authorsField: "???"
+      externalNavigationLinks:
+        - url: "https://wise-loculus.genspectrum.org"
+          label: "Browse data"
+          menuIcon: "database"
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"
