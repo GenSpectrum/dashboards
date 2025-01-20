@@ -1,5 +1,5 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
-import { useMemo, useState } from 'react';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
+import { useMemo, useEffect, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
@@ -18,15 +18,18 @@ export function CompareVariantsPageStateSelector({
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
+    const [currentLapisFilter, setCurrentLapisFilter] = useState<LapisFilter>(lapisFilter);
 
     const [variantConfigs, setVariantConfigs] = useState<Map<Id, VariantFilterConfig>>(variantFilterConfigs);
 
@@ -51,6 +54,12 @@ export function CompareVariantsPageStateSelector({
         };
     }, [location, dateRange, variantConfigs]);
 
+    useEffect(() => {
+        const newLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter({ ...newPageState.datasetFilter });
+
+        setCurrentLapisFilter(newLapisFilter);
+    }, [newPageState, view]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
@@ -60,6 +69,7 @@ export function CompareVariantsPageStateSelector({
                     locationFilterConfig={locationFilterConfig}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
@@ -68,6 +78,7 @@ export function CompareVariantsPageStateSelector({
                     variantFilterConfigs={variantConfigs}
                     setVariantFilterConfigs={setVariantConfigs}
                     emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

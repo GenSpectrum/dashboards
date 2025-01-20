@@ -13,6 +13,7 @@ export function CountFilterInput({ onCountFilterChange }: { onCountFilterChange:
                     onLocationChange={(location) => {
                         onCountFilterChange(location);
                     }}
+                    lapisFilter={{}}
                 />
             </div>
         </InputLabel>

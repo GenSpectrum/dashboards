@@ -62,6 +62,7 @@ const downloadLinks = notEnoughVariantsSelected
         variantFilterConfigs={variantFilterConfigs}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
+        lapisFilter={datasetLapisFilter}
         client:only='react'
     >
         <CompareVariantsSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />

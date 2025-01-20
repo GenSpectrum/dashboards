@@ -81,6 +81,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
                                     hideMutationFilter={hideMutationFilter}
+                                    lapisFilter={numeratorFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback
