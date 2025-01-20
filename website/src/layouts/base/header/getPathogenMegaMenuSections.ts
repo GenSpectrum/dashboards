@@ -2,7 +2,7 @@ import { organismConfig } from '../../../types/Organism.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function getPathogenMegaMenuSections() {
-    return Object.values(organismConfig).map((organism) => {
+    let sections = Object.values(organismConfig).map((organism) => {
         const megaMenuSections = ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => {
             const href = view.pageStateHandler.getDefaultPageUrl();
             return {
@@ -32,4 +32,35 @@ export function getPathogenMegaMenuSections() {
             navigationEntries: megaMenuSections,
         };
     });
+    sections.push({
+        headline: 'Swiss Wastewater',
+        headlineBackgroundColor: 'bg-[#fbb05b]',
+        headlineBackgroundColorFocus: 'group-hover:bg-amber-600',
+        borderEntryDecoration: 'hover:border-amber-600',
+        navigationEntries: [
+            {
+                label: 'RSV',
+                iconType: 'table',
+                href: '/swiss-wastewater/rsv',
+                underlineColor: 'decoration-amber-600',
+                externalLink: false,
+            },
+            {
+                label: 'Influenza',
+                iconType: 'table',
+                href: '/swiss-wastewater/influenza',
+                underlineColor: 'decoration-amber-600',
+                externalLink: false,
+            },
+            {
+                label: 'Browse data',
+                iconType: 'database',
+                href: 'https://wise-loculus.genspectrum.org',
+                underlineColor: 'decoration-amber-600',
+                externalLink: true,
+            },
+        ],
+    });
+
+    return sections;
 }
