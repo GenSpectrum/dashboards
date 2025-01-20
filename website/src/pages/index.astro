@@ -4,10 +4,9 @@ import MainMenuItem from '../components/MainMenuItem.astro';
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import DataInfo from '../layouts/base/footer/DataInfo.astro';
 import { BrandName } from '../layouts/base/header/Brand';
-import { organismConfig } from '../types/Organism';
+import { getPathogenMegaMenuSections } from '../layouts/base/header/getPathogenMegaMenuSections';
 import { dataOrigins } from '../types/dataOrigins';
 import { Page } from '../types/pages';
-import { ServerSide } from '../views/serverSideRouting';
 ---
 
 <BaseLayout title='GenSpectrum Dashboards'>
@@ -65,32 +64,23 @@ import { ServerSide } from '../views/serverSideRouting';
     </div>
     <div class='items mx-auto mb-8 flex max-w-[1200px] flex-wrap justify-center gap-x-4 gap-y-8'>
         {
-            Object.values(organismConfig).map((organism) => (
+            getPathogenMegaMenuSections().map((section) => (
                 <div class='group w-[260px]'>
-                    <div class={`${organism.borderEntryDecoration} rounded-md border-2 border-gray-100`}>
+                    <div class={`${section.borderEntryDecoration} rounded-md border-2 border-gray-100`}>
                         <h3
-                            class={`rounded-t-md p-4 text-xl ${organism.backgroundColor} ${organism.backgroundColorFocus}`}
+                            class={`rounded-t-md p-4 text-xl ${section.headlineBackgroundColor} ${section.headlineBackgroundColorFocus}`}
                         >
-                            {organism.label}
+                            {section.headline}
                         </h3>
                         <ul class='mx-6 mb-4'>
-                            {ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => (
+                            {section.navigationEntries.map((entry) => (
                                 <MainMenuItem
-                                    iconType={view.viewConstants.iconType}
-                                    menuListEntryDecoration={organism.menuListEntryDecoration}
-                                    href={view.pageStateHandler.getDefaultPageUrl()}
+                                    iconType={entry.iconType}
+                                    menuListEntryDecoration={entry.underlineColor}
+                                    href={entry.href}
+                                    external={entry.externalLink}
                                 >
-                                    {view.viewConstants.labelLong}
-                                </MainMenuItem>
-                            ))}
-                            {ServerSide.routing.externalPages[organism.organism].map((externalPage) => (
-                                <MainMenuItem
-                                    iconType={externalPage.menuIcon}
-                                    menuListEntryDecoration={organism.menuListEntryDecoration}
-                                    href={externalPage.url}
-                                    external
-                                >
-                                    {externalPage.label}
+                                    {entry.label}
                                 </MainMenuItem>
                             ))}
                         </ul>
