@@ -12,12 +12,18 @@ const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
     <div class='m-6'>
         <h1 class='text-2xl'>Swiss wastewater - influenza</h1>
         <gs-app lapis={lapisUrl}>
-            <div class='mt-4 w-full'>
-                <gs-wastewater-mutations-over-time
-                    height='400px'
-                    lapisFilter={JSON.stringify({ versionStatus: 'LATEST_VERSION', isRevocation: false })}
-                    sequenceType='nucleotide'></gs-wastewater-mutations-over-time>
-            </div>
+            {
+                ['nucleotide', 'amino acid'].map((sequenceType) => (
+                    <div class='mt-4 w-full'>
+                        <h2 class='font-bold'>{sequenceType}</h2>
+                        <gs-wastewater-mutations-over-time
+                            height='400px'
+                            lapisFilter={JSON.stringify({ versionStatus: 'LATEST_VERSION', isRevocation: false })}
+                            sequenceType={sequenceType}
+                        />
+                    </div>
+                ))
+            }
         </gs-app>
 
         <div class='flex justify-center' slot='secondary-footer'>
