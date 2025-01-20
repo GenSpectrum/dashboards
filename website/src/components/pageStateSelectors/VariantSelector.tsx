@@ -1,3 +1,5 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
 import { LineageFilterInput } from './LineageFilterInput.tsx';
 import type { VariantFilterConfig } from './VariantFilterConfig.ts';
 import { getMutationFilter } from '../../views/helpers.ts';
@@ -7,9 +9,11 @@ import { GsMutationFilter } from '../genspectrum/GsMutationFilter.tsx';
 export function VariantSelector({
     onVariantFilterChange,
     variantFilterConfig,
+    lapisFilter,
 }: {
     variantFilterConfig: VariantFilterConfig;
     onVariantFilterChange: (variantFilter: VariantFilterConfig) => void;
+    lapisFilter: LapisFilter;
 }) {
     return (
         <div>
@@ -63,7 +67,8 @@ export function VariantSelector({
                             onVariantFilterChange(newVariantFilterConfig);
                         }}
                         key={lineageFilterConfig.lapisField}
-                    />
+                        lapisFilter={lapisFilter}
+                />
                 ))}
                 {variantFilterConfig.mutationFilterConfig && (
                     <GsMutationFilter

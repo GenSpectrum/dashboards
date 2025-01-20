@@ -76,6 +76,7 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    lapisFilter={numeratorFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback

@@ -1,5 +1,5 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
-import { useMemo, useState } from 'react';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
+import { useMemo, useEffect, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
@@ -17,16 +17,20 @@ export function SequencingEffortsPageStateSelector({
     variantFilterConfig,
     organismViewKey,
     organismsConfig,
+    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
+    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
+    const [currentLapisFilter, setCurrentLapisFilter] = useState<LapisFilter>(lapisFilter);
+
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const newPageState = useMemo(
@@ -40,6 +44,12 @@ export function SequencingEffortsPageStateSelector({
         [location, dateRange, variantFilterConfigState],
     );
 
+    useEffect(() => {
+        const newLapisFilter = view.pageStateHandler.toLapisFilter(newPageState);
+
+        setCurrentLapisFilter(newLapisFilter);
+    }, [newPageState, view]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
@@ -49,12 +59,14 @@ export function SequencingEffortsPageStateSelector({
                     locationFilterConfig={locationFilterConfig}
                     onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={{ ...variantFilterConfigState, mutationFilterConfig: undefined }}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

@@ -1,3 +1,4 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
@@ -5,12 +6,14 @@ import '@genspectrum/dashboard-components/components';
 export function GsLineageFilter<Lineage extends string>({
     lapisField,
     value,
+    lapisFilter,
     placeholderText,
     width,
     onLineageChange = () => {},
 }: {
     lapisField: Lineage;
     value?: string;
+    lapisFilter: LapisFilter;
     placeholderText?: string;
     width?: string;
     onLineageChange?: (lineage: { [key in Lineage]: string | undefined }) => void;
@@ -41,6 +44,7 @@ export function GsLineageFilter<Lineage extends string>({
             value={value ?? ''}
             width={width}
             ref={lineageFilterRef}
+            lapisFilter={lapisFilter}
         ></gs-lineage-filter>
     );
 }

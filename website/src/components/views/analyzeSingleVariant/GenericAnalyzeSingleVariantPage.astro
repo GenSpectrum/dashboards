@@ -81,6 +81,7 @@ const downloadLinks = noVariantSelected
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
+        lapisFilter={variantLapisFilter}
     >
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />
     </SingleVariantPageStateSelector>
