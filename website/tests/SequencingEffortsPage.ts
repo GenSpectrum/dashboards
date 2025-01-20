@@ -9,6 +9,10 @@ export class SequencingEffortsPage extends ViewPage {
     public async selectLocation(location: string) {
         const locationField = this.page.getByPlaceholder('Sampling location');
         await locationField.fill(location);
+        await this.page
+            .getByRole('option', { name: new RegExp(`^${location}`, 'i'), exact: true })
+            .first()
+            .click();
     }
 
     public async selectDateRange(dateRangeOption: string) {

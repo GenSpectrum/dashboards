@@ -1,19 +1,20 @@
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
+import type { LapisLocation } from '../../views/helpers.ts';
 
 export function GsLocationFilter<Field extends string>({
     onLocationChange = () => {},
     fields,
     placeholderText,
     width,
-    initialValue,
+    value,
 }: {
     width?: string;
     placeholderText?: string;
     fields: Field[];
     onLocationChange?: (location: { [key in Field]: string | undefined }) => void;
-    initialValue?: string;
+    value?: LapisLocation;
 }) {
     const locationFilterRef = useRef<HTMLElement>();
 
@@ -40,7 +41,7 @@ export function GsLocationFilter<Field extends string>({
             placeholderText={placeholderText}
             width={width}
             ref={locationFilterRef}
-            initialValue={initialValue}
+            value={JSON.stringify(value)}
         ></gs-location-filter>
     );
 }
