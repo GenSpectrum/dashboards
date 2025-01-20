@@ -45,11 +45,7 @@ const organismsConfigSchema = z.object(
 );
 export type OrganismsConfig = z.infer<typeof organismsConfigSchema>;
 
-const environmentSchema = z.union([
-    z.literal('dashboards-dev'),
-    z.literal('dashboards-staging'),
-    z.literal('dashboards-prod'),
-]);
+const environmentSchema = z.union([z.literal('dashboards-staging'), z.literal('dashboards-prod')]);
 
 const dashboardsConfigSchema = z.object({
     dashboards: z.object({

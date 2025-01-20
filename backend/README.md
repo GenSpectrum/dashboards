@@ -11,7 +11,7 @@ You have to provide config information to the backend:
 
 To run the backend locally, you can use the following command:
 ```bash
-./gradlew bootRun --args='--spring.profiles.active=local-db,dashboards-dev'
+./gradlew bootRun --args='--spring.profiles.active=local-db,dashboards-prod'
 ```
 
 Run tests:
