@@ -33,10 +33,7 @@ export function BaselineSelector({
             <GsLocationFilter
                 fields={locationFilterConfig.locationFields}
                 onLocationChange={onLocationChange}
-                initialValue={locationFilterConfig.locationFields
-                    .map((field) => locationFilterConfig.initialLocation[field])
-                    .filter(Boolean)
-                    .join(' / ')}
+                value={locationFilterConfig.initialLocation}
                 placeholderText={locationFilterConfig.placeholderText}
             ></GsLocationFilter>
             <GsDateRangeSelector
