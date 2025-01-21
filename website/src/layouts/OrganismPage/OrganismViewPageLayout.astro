@@ -2,7 +2,7 @@
 import type { ComponentProps } from 'astro/types';
 
 import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
-import OrganismPageLayout from './OrganismPageLayout.astro';
+import DataPageLayout from './DataPageLayout.astro';
 import { getLapisUrl } from '../../config';
 import type { OrganismConstants } from '../../views/OrganismConstants';
 import { type View } from '../../views/View';
@@ -16,7 +16,7 @@ interface Props {
 const { view, downloadLinks } = Astro.props;
 ---
 
-<OrganismPageLayout
+<DataPageLayout
     title={view.viewTitle}
     breadcrumbs={view.viewBreadcrumbEntries}
     downloadLinks={downloadLinks}
@@ -25,4 +25,4 @@ const { view, downloadLinks } = Astro.props;
     accessionDownloadFields={view.organismConstants.accessionDownloadFields}
 >
     <slot />
-</OrganismPageLayout>
+</DataPageLayout>

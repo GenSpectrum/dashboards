@@ -1,6 +1,6 @@
 ---
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
-import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
+import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
@@ -8,7 +8,7 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
 ---
 
-<OrganismPageLayout
+<DataPageLayout
     title='Swiss wastewater - RSV'
     breadcrumbs={[
         ...defaultBreadcrumbs,
@@ -38,4 +38,4 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
             }
         </div>
     </gs-app>
-</OrganismPageLayout>
+</DataPageLayout>
