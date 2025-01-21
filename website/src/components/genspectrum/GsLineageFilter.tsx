@@ -4,13 +4,13 @@ import '@genspectrum/dashboard-components/components';
 
 export function GsLineageFilter<Lineage extends string>({
     lapisField,
-    initialValue,
+    value,
     placeholderText,
     width,
     onLineageChange = () => {},
 }: {
     lapisField: Lineage;
-    initialValue?: string;
+    value?: string;
     placeholderText?: string;
     width?: string;
     onLineageChange?: (lineage: { [key in Lineage]: string | undefined }) => void;
@@ -38,7 +38,7 @@ export function GsLineageFilter<Lineage extends string>({
         <gs-lineage-filter
             lapisField={lapisField}
             placeholderText={placeholderText}
-            initialValue={initialValue ?? ''}
+            value={value ?? ''}
             width={width}
             ref={lineageFilterRef}
         ></gs-lineage-filter>
