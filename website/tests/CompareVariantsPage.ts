@@ -27,5 +27,10 @@ export class CompareVariantsPage extends ViewPage {
         await expect(lineageFieldLocator).toHaveCount(numberLineageFields + 1);
 
         await lineageFieldLocator.last().fill(lineage);
+
+        const selectedLineage = this.page.getByText(lineage, { exact: true });
+        if ((await selectedLineage.count()) > 0) {
+            await selectedLineage.first().click();
+        }
     }
 }
