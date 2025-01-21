@@ -1,20 +1,19 @@
 ---
-import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
-import DataInfo from '../../layouts/base/footer/DataInfo.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
+import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
+import type { SequenceType } from '@genspectrum/dashboard-components/util';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
-const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
 ---
 
 <OrganismPageLayout
     title='Swiss wastewater - Influenza'
     breadcrumbs={[
         ...defaultBreadcrumbs,
-        { name: 'Swiss wastewater' },
+        { name: 'Swiss Wastewater' },
         {
             name: 'Influenza',
             href: wastewaterConfig.pages.influenza,
@@ -22,24 +21,21 @@ const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
     ]}
     dataOrigins={[dataOrigins.wise]}
     lapisUrl={lapisUrl}
-    accessionDownloadFields={[]}
-    downloadLinks={[]}
 >
-    <div class='m-6'>
-        <h1 class='text-2xl'>Swiss wastewater - influenza</h1>
-        <gs-app lapis={lapisUrl}>
+    <gs-app lapis={lapisUrl}>
+        <div class='m-4 flex flex-col gap-4'>
             {
-                ['nucleotide', 'amino acid'].map((sequenceType) => (
-                    <div class='mt-4 w-full'>
-                        <h2 class='font-bold capitalize'>{sequenceType} Mutations</h2>
-                        <gs-wastewater-mutations-over-time
-                            height='400px'
-                            lapisFilter={JSON.stringify({ versionStatus: 'LATEST_VERSION', isRevocation: false })}
-                            sequenceType={sequenceType}
-                        />
-                    </div>
+                (['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                    <GsWastewaterMutationsOverTime
+                        title={`${sequenceType} mutations`}
+                        lapisFilter={{
+                            versionStatus: 'LATEST_VERSION',
+                            isRevocation: false,
+                        }}
+                        sequenceType={sequenceType}
+                    />
                 ))
             }
-        </gs-app>
-    </div>
+        </div>
+    </gs-app>
 </OrganismPageLayout>
