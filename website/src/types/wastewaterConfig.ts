@@ -9,6 +9,6 @@ export const wastewaterConfig = {
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
     pages: {
         rsv: `/${pathFragment}/rsv`,
-        influenza: `/${pathFragment}/influenza`,
+        influenza: `/${pathFragment}/flu`,
     },
 };
