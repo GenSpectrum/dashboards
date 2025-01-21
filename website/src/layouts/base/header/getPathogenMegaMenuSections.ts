@@ -1,6 +1,11 @@
 import { organismConfig } from '../../../types/Organism.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
+export const wastewaterConfig = {
+    pathFragment: 'swiss-wastewater',
+    menuListEntryDecoration: 'decoration-amber-600',
+};
+
 export function getPathogenMegaMenuSections() {
     const sections = Object.values(organismConfig).map((organism) => {
         const megaMenuSections = ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => {
@@ -42,22 +47,22 @@ export function getPathogenMegaMenuSections() {
             {
                 label: 'RSV',
                 iconType: 'table',
-                href: '/swiss-wastewater/rsv',
-                underlineColor: 'decoration-amber-600',
+                href: `/${wastewaterConfig.pathFragment}/rsv`,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
             {
                 label: 'Influenza',
                 iconType: 'table',
-                href: '/swiss-wastewater/influenza',
-                underlineColor: 'decoration-amber-600',
+                href: `/${wastewaterConfig.pathFragment}/influenza`,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
             {
                 label: 'Browse data',
                 iconType: 'database',
                 href: 'https://wise-loculus.genspectrum.org',
-                underlineColor: 'decoration-amber-600',
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },
         ],

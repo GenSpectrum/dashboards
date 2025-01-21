@@ -80,12 +80,3 @@ export type Organism = keyof typeof organismConfig;
 
 export const organismSchema = z.enum(Object.keys(organismConfig) as [keyof typeof organismConfig]);
 export const organismsSchema = z.array(organismSchema);
-
-export const wastewaterConfig = {
-    pathFragment: 'swiss-wastewater',
-    label: 'Swiss Wastewater',
-    backgroundColor: 'bg-[#fbb05b]',
-    backgroundColorFocus: 'group-hover:bg-amber-600',
-    menuListEntryDecoration: 'decoration-amber-600',
-    borderEntryDecoration: 'hover:border-amber-600',
-};
