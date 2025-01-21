@@ -21,7 +21,7 @@
     "dependencies": {
         "@astrojs/node": "^9.0.1",
         "@auth/core": "^0.37.4",
-        "@genspectrum/dashboard-components": "^0.11.7",
+        "@genspectrum/dashboard-components": "^0.12.0",
         "@tanstack/react-query": "^5.64.1",
         "astro": "^5.1.6",
         "auth-astro": "^4.2.0",
