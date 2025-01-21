@@ -41,10 +41,5 @@ const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
                 ))
             }
         </gs-app>
-
-        <div class='flex justify-center' slot='secondary-footer'>
-            <span class='mr-4 p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
-            <DataInfo dataOrigins={[dataOrigins.wise]} />
-        </div>
     </div>
 </OrganismPageLayout>
