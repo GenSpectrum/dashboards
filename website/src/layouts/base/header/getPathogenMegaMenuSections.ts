@@ -36,9 +36,9 @@ export function getPathogenMegaMenuSections() {
 
     sections.push({
         headline: 'Swiss Wastewater',
-        headlineBackgroundColor: 'bg-[#fbb05b]',
-        headlineBackgroundColorFocus: 'group-hover:bg-amber-600',
-        borderEntryDecoration: 'hover:border-amber-600',
+        headlineBackgroundColor: wastewaterConfig.backgroundColor,
+        headlineBackgroundColorFocus: wastewaterConfig.backgroundColorFocus,
+        borderEntryDecoration: wastewaterConfig.borderEntryDecoration,
         navigationEntries: [
             {
                 label: 'RSV',
