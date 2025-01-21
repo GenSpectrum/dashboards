@@ -9,6 +9,7 @@ export function getPathogenMegaMenuSections() {
                 label: view.viewConstants.labelLong,
                 href,
                 underlineColor: organism.menuListEntryDecoration,
+                iconType: view.viewConstants.iconType,
                 externalLink: false,
             };
         });
@@ -18,6 +19,7 @@ export function getPathogenMegaMenuSections() {
                 label: externalPage.label,
                 href: externalPage.url,
                 underlineColor: organism.menuListEntryDecoration,
+                iconType: externalPage.menuIcon,
                 externalLink: true,
             })),
         );
@@ -25,6 +27,8 @@ export function getPathogenMegaMenuSections() {
         return {
             headline: organism.label,
             headlineBackgroundColor: organism.backgroundColor,
+            headlineBackgroundColorFocus: organism.backgroundColorFocus,
+            borderEntryDecoration: organism.borderEntryDecoration,
             navigationEntries: megaMenuSections,
         };
     });
