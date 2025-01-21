@@ -34,47 +34,93 @@ export function BaselineSelector({
 
     return (
         <div>
-            <div className={`flex flex-col gap-2 overflow-y-scroll ${openLarge ? 'max-h-[100vh]' : 'max-h-[35vh]'}`}>
-                <div>Sampling location</div>
-                <GsLocationFilter
-                    fields={locationFilterConfig.locationFields}
-                    onLocationChange={onLocationChange}
-                    initialValue={locationFilterConfig.locationFields
-                        .map((field) => locationFilterConfig.initialLocation[field])
-                        .filter(Boolean)
-                        .join(' / ')}
-                    placeholderText={locationFilterConfig.placeholderText}
-                ></GsLocationFilter>
-                <div>Date</div>
-                <GsDateRangeSelector
-                    lapisDateField={dateRangeFilterConfig.dateColumn}
-                    onDateRangeChange={onDateRangeChange}
-                    earliestDate={dateRangeFilterConfig.earliestDate}
-                    initialValue={dateRangeFilterConfig.initialDateRange}
-                    dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
-                ></GsDateRangeSelector>
-                <div>Age</div>
-                <GsTextInput lapisField={'age'} placeholderText={'Age'}></GsTextInput>
-                <div>Some other date</div>
-                <GsDateRangeSelector
-                    lapisDateField={dateRangeFilterConfig.dateColumn}
-                    onDateRangeChange={onDateRangeChange}
-                    earliestDate={dateRangeFilterConfig.earliestDate}
-                    initialValue={dateRangeFilterConfig.initialDateRange}
-                    dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
-                ></GsDateRangeSelector>
-                <div>Host</div>
-                <GsTextInput lapisField={'host'} placeholderText={'Host'}></GsTextInput>
-                <div>Submitting lab</div>
-                <GsTextInput lapisField={'submittingLab'} placeholderText={'Submitting lab'}></GsTextInput>
-                <div>Sampling strategy</div>
-                <GsTextInput lapisField={'samplingStrategy'} placeholderText={'Sampling strategy'}></GsTextInput>
+            <div
+                className={`flex flex-col gap-2 overflow-y-scroll ${openLarge ? 'max-h-[100vh]' : 'max-h-[35vh]'} rounded-md bg-white p-2`}
+            >
+                <label className='form-control w-full'>
+                    <div className='label'>
+                        <span className='label-text'>Sampling location</span>
+                    </div>
+                    <GsLocationFilter
+                        fields={locationFilterConfig.locationFields}
+                        onLocationChange={onLocationChange}
+                        initialValue={locationFilterConfig.locationFields
+                            .map((field) => locationFilterConfig.initialLocation[field])
+                            .filter(Boolean)
+                            .join(' / ')}
+                        placeholderText={locationFilterConfig.placeholderText}
+                    ></GsLocationFilter>
+                </label>
+
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>Date</span>
+                    </div>
+                    <GsDateRangeSelector
+                        lapisDateField={dateRangeFilterConfig.dateColumn}
+                        onDateRangeChange={onDateRangeChange}
+                        earliestDate={dateRangeFilterConfig.earliestDate}
+                        initialValue={dateRangeFilterConfig.initialDateRange}
+                        dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
+                    ></GsDateRangeSelector>
+                </label>
+
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>Age</span>
+                    </div>
+                    <GsTextInput lapisField={'age'} placeholderText={'Age'}></GsTextInput>
+                </label>
+
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>Some other date</span>
+                    </div>
+                    <GsDateRangeSelector
+                        lapisDateField={dateRangeFilterConfig.dateColumn}
+                        onDateRangeChange={onDateRangeChange}
+                        earliestDate={dateRangeFilterConfig.earliestDate}
+                        initialValue={dateRangeFilterConfig.initialDateRange}
+                        dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
+                    ></GsDateRangeSelector>
+                </label>
+
+
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>Host</span>
+                    </div>
+                    <GsTextInput lapisField={'host'} placeholderText={'Host'}></GsTextInput>
+                </label>
+
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>Submitting lab</span>
+                    </div>
+                    <GsTextInput lapisField={'submittingLab'} placeholderText={'Submitting lab'}></GsTextInput>
+                </label>
+
+
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>Sampling strategy</span>
+                    </div>
+                    <GsTextInput lapisField={'samplingStrategy'} placeholderText={'Sampling strategy'}></GsTextInput>
+                </label>
+                <div></div>
+
             </div>
-            <button className='btn btn-outline btn-xs mb-4 mt-2 w-full' onClick={() => setOpenLarge(!openLarge)}>
+            <button className='mb-4 mt-2' onClick={() => setOpenLarge(!openLarge)}>
                 {openLarge ? (
-                    <div className='iconify mdi--keyboard-arrow-up'></div>
+                    <>
+                        <span className='iconify mdi--keyboard-arrow-up'></span>
+                        <span className='text-info'>See less</span>
+                    </>
                 ) : (
-                    <div className='iconify mdi--keyboard-arrow-down'></div>
+                    <>
+                        <span className='iconify mdi--keyboard-arrow-down'></span>
+                        <span className='text-info'>See more</span>
+                    </>
                 )}
             </button>
         </div>

@@ -13,7 +13,7 @@ export function VariantSelector({
     hideMutationFilter?: boolean | undefined;
 }) {
     return (
-        <div className='flex flex-col gap-2'>
+        <div className='flex flex-col gap-2 bg-white rounded-md p-2'>
             {variantFilterConfig.lineageFilterConfigs.map((lineageFilterConfig) => (
                 <LineageFilterInput
                     lineageFilterConfig={lineageFilterConfig}

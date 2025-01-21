@@ -45,8 +45,11 @@ export function SingleVariantPageStateSelector({
     return (
         <div>
             <div>
-                <SelectorHeadline>Filter dataset</SelectorHeadline>
-                <div className='mb-2 flex justify-end gap-2 text-sm'>
+                <div className='mb-2 flex justify-end gap-4 text-sm'>
+                    <button className='flex items-center gap-1'>
+                        <div className='iconify mdi--tooltip-help-outline'></div>
+                        <div>Help</div>
+                    </button>
                     <button className='flex items-center gap-1'>
                         <div className='iconify mdi--wrench'></div>
                         <div>Add filter fields</div>
@@ -56,6 +59,9 @@ export function SingleVariantPageStateSelector({
                         <div>Reset</div>
                     </button>
                 </div>
+                <SelectorHeadline>
+                    Filter dataset <span className='iconify text-sm mdi--information-outline'/>
+                </SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={setLocation}
                     locationFilterConfig={locationFilterConfig}
@@ -64,13 +70,17 @@ export function SingleVariantPageStateSelector({
                 />
             </div>
             <div>
-                <SelectorHeadline>Variant Filter</SelectorHeadline>
+                <SelectorHeadline>
+                    Variant Filter <span className='iconify text-sm mdi--information-outline'/>
+                </SelectorHeadline>
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={variantFilterConfigState}
                 />
             </div>
-            <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
+            <div className='mt-2'>
+            <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState}/>
+            </div>
         </div>
     );
 }
