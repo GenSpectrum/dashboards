@@ -7,13 +7,13 @@ export function GsTextInput<LapisField extends string>({
     placeholderText,
     width,
     onInputChange = () => {},
-    initialValue,
+    value,
 }: {
     lapisField: LapisField;
     placeholderText?: string;
     width?: string;
     onInputChange?: (input: { [key in LapisField]: string | undefined }) => void;
-    initialValue?: string | undefined;
+    value?: string | undefined;
 }) {
     const textInputRef = useRef<HTMLElement>();
 
@@ -40,7 +40,7 @@ export function GsTextInput<LapisField extends string>({
             lapisField={lapisField}
             placeholderText={placeholderText}
             width={width}
-            initialValue={initialValue ?? ''}
+            value={value ?? ''}
         ></gs-text-input>
     );
 }

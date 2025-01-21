@@ -22,7 +22,7 @@ export function LineageFilterInput({
                     lapisField={lineageFilterConfig.lapisField}
                     placeholderText={lineageFilterConfig.placeholderText}
                     onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                    initialValue={lineageFilterConfig.initialValue}
+                    value={lineageFilterConfig.initialValue}
                 />
             );
 
@@ -32,7 +32,7 @@ export function LineageFilterInput({
                     lapisField={lineageFilterConfig.lapisField}
                     placeholderText={lineageFilterConfig.placeholderText}
                     onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                    initialValue={lineageFilterConfig.initialValue}
+                    value={lineageFilterConfig.initialValue}
                 />
             );
     }
