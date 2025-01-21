@@ -3,8 +3,9 @@ import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import DataInfo from '../../layouts/base/footer/DataInfo.astro';
 import { dataOrigins } from '../../types/dataOrigins';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
 
-const lapisUrl = 'https://api.wise-loculus.genspectrum.org/rsv';
+const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
 const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
 ---
 

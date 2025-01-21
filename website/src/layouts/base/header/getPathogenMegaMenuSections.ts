@@ -1,10 +1,6 @@
 import { organismConfig } from '../../../types/Organism.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
-
-export const wastewaterConfig = {
-    pathFragment: 'swiss-wastewater',
-    menuListEntryDecoration: 'decoration-amber-600',
-};
+import { wastewaterConfig } from '../../../types/wastewaterConfig.ts';
 
 export function getPathogenMegaMenuSections() {
     const sections = Object.values(organismConfig).map((organism) => {
@@ -61,7 +57,7 @@ export function getPathogenMegaMenuSections() {
             {
                 label: 'Browse data',
                 iconType: 'database',
-                href: 'https://wise-loculus.genspectrum.org',
+                href: wastewaterConfig.browseDataUrl,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },

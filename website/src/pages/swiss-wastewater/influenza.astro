@@ -3,8 +3,9 @@ import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import DataInfo from '../../layouts/base/footer/DataInfo.astro';
 import { dataOrigins } from '../../types/dataOrigins';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
 
-const lapisUrl = 'https://api.wise-loculus.genspectrum.org/influenza';
+const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
 const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
 ---
 
@@ -15,7 +16,7 @@ const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
             {
                 ['nucleotide', 'amino acid'].map((sequenceType) => (
                     <div class='mt-4 w-full'>
-                        <h2 class='font-bold'>{sequenceType}</h2>
+                        <h2 class='font-bold capitalize'>{sequenceType}</h2>
                         <gs-wastewater-mutations-over-time
                             height='400px'
                             lapisFilter={JSON.stringify({ versionStatus: 'LATEST_VERSION', isRevocation: false })}
