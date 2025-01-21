@@ -1,6 +1,7 @@
 ---
 import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import DataInfo from '../../layouts/base/footer/DataInfo.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
@@ -9,14 +10,28 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
 const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
 ---
 
-<BaseLayout title='Swiss wastewater - influenza'>
+<OrganismPageLayout
+    title='Swiss wastewater - Influenza'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Swiss wastewater' },
+        {
+            name: 'Influenza',
+            href: wastewaterConfig.pages.influenza,
+        },
+    ]}
+    dataOrigins={[dataOrigins.wise]}
+    lapisUrl={lapisUrl}
+    accessionDownloadFields={[]}
+    downloadLinks={[]}
+>
     <div class='m-6'>
         <h1 class='text-2xl'>Swiss wastewater - influenza</h1>
         <gs-app lapis={lapisUrl}>
             {
                 ['nucleotide', 'amino acid'].map((sequenceType) => (
                     <div class='mt-4 w-full'>
-                        <h2 class='font-bold capitalize'>{sequenceType}</h2>
+                        <h2 class='font-bold capitalize'>{sequenceType} Mutations</h2>
                         <gs-wastewater-mutations-over-time
                             height='400px'
                             lapisFilter={JSON.stringify({ versionStatus: 'LATEST_VERSION', isRevocation: false })}
@@ -32,4 +47,4 @@ const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
             <DataInfo dataOrigins={[dataOrigins.wise]} />
         </div>
     </div>
-</BaseLayout>
+</OrganismPageLayout>

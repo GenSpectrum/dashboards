@@ -2,13 +2,9 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import { assembleDownloadUrl } from './assembleDownloadUrl';
-import { getLapisUrl } from '../../config';
 import { Modal } from '../../styles/containers/Modal';
 import { ModalContent } from '../../styles/containers/ModalContent';
 import { ModalHeader } from '../../styles/containers/ModalHeader';
-import type { OrganismConstants } from '../../views/OrganismConstants';
-import type { View } from '../../views/View';
-import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 
 type DownloadLink = {
     label: string;
@@ -17,11 +13,12 @@ type DownloadLink = {
 };
 
 interface Props {
-    view: View<object, OrganismConstants, PageStateHandler<object>>;
+    accessionDownloadFields: string[];
     downloadLinks: DownloadLink[];
+    lapisUrl: string;
 }
 
-const { view, downloadLinks } = Astro.props;
+const { accessionDownloadFields, downloadLinks, lapisUrl } = Astro.props;
 
 const modalId = 'accessionDownloadModal';
 ---
@@ -39,12 +36,7 @@ const modalId = 'accessionDownloadModal';
                 downloadLinks
                     .map(({ label, filter, downloadFileBasename }) => ({
                         label,
-                        url: assembleDownloadUrl(
-                            view.organismConstants.accessionDownloadFields,
-                            filter,
-                            downloadFileBasename,
-                            getLapisUrl(view.organismConstants.organism),
-                        ),
+                        url: assembleDownloadUrl(accessionDownloadFields, filter, downloadFileBasename, lapisUrl),
                     }))
                     .map(({ label, url }) => (
                         <a class='link m-2 flex items-center gap-1' href={url}>

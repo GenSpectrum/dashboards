@@ -1,15 +1,27 @@
 ---
-import { getLastUpdatedDate } from '../../lapis/getLastUpdatedDate';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import DataInfo from '../../layouts/base/footer/DataInfo.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import OrganismPageLayout from '../../layouts/OrganismPage/OrganismPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
-const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
 ---
 
-<BaseLayout title='Swiss wastewater - RSV'>
+<OrganismPageLayout
+    title='Swiss wastewater - RSV'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Swiss wastewater' },
+        {
+            name: 'RSV',
+            href: wastewaterConfig.pages.rsv,
+        },
+    ]}
+    dataOrigins={[dataOrigins.wise]}
+    lapisUrl={lapisUrl}
+    accessionDownloadFields={[]}
+    downloadLinks={[]}
+>
     <div class='m-6'>
         <h1 class='text-2xl'>Swiss wastewater - RSV</h1>
         <gs-app lapis={lapisUrl}>
@@ -30,10 +42,5 @@ const lastUpdatedDate = await getLastUpdatedDate(lapisUrl);
                 ))
             }
         </gs-app>
-
-        <div class='flex justify-center' slot='secondary-footer'>
-            <span class='mr-4 p-2 text-xs'>Data last updated: {lastUpdatedDate ?? 'unknown'}</span>
-            <DataInfo dataOrigins={[dataOrigins.wise]} />
-        </div>
     </div>
-</BaseLayout>
+</OrganismPageLayout>

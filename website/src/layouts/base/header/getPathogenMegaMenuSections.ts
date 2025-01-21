@@ -1,6 +1,6 @@
 import { organismConfig } from '../../../types/Organism.ts';
-import { ServerSide } from '../../../views/serverSideRouting.ts';
 import { wastewaterConfig } from '../../../types/wastewaterConfig.ts';
+import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function getPathogenMegaMenuSections() {
     const sections = Object.values(organismConfig).map((organism) => {
@@ -43,14 +43,14 @@ export function getPathogenMegaMenuSections() {
             {
                 label: 'RSV',
                 iconType: 'table',
-                href: `/${wastewaterConfig.pathFragment}/rsv`,
+                href: wastewaterConfig.pages.rsv,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
             {
                 label: 'Influenza',
                 iconType: 'table',
-                href: `/${wastewaterConfig.pathFragment}/influenza`,
+                href: wastewaterConfig.pages.influenza,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
