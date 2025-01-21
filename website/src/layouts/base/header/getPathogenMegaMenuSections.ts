@@ -2,7 +2,7 @@ import { organismConfig } from '../../../types/Organism.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function getPathogenMegaMenuSections() {
-    let sections = Object.values(organismConfig).map((organism) => {
+    const sections = Object.values(organismConfig).map((organism) => {
         const megaMenuSections = ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => {
             const href = view.pageStateHandler.getDefaultPageUrl();
             return {
@@ -32,6 +32,7 @@ export function getPathogenMegaMenuSections() {
             navigationEntries: megaMenuSections,
         };
     });
+
     sections.push({
         headline: 'Swiss Wastewater',
         headlineBackgroundColor: 'bg-[#fbb05b]',

@@ -38,7 +38,6 @@ import {
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
-import { SwissWastewaterInfluenzaView, SwissWastewaterRSVView } from './swissWastewater.ts';
 import {
     compareSideBySideViewKey,
     compareToBaselineViewKey,

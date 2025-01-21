@@ -11,7 +11,6 @@ const organismOptions = {
     [Organisms.rsvA]: { location: 'USA' },
     [Organisms.rsvB]: { location: 'USA' },
     [Organisms.mpox]: { location: 'USA' },
-    [Organisms.swissWastewater]: { location: 'USA' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
