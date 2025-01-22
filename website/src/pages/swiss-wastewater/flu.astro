@@ -1,0 +1,42 @@
+---
+import type { SequenceType } from '@genspectrum/dashboard-components/util';
+
+import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
+import { dataOrigins } from '../../types/dataOrigins';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
+
+const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
+---
+
+<DataPageLayout
+    title='Swiss wastewater - Influenza'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Swiss Wastewater' },
+        {
+            name: 'Influenza',
+            href: wastewaterConfig.pages.influenza,
+        },
+    ]}
+    dataOrigins={[dataOrigins.wise]}
+    lapisUrl={lapisUrl}
+>
+    <gs-app lapis={lapisUrl}>
+        <div class='m-4 flex flex-col gap-4'>
+            {
+                (['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                    <GsWastewaterMutationsOverTime
+                        title={`${sequenceType} mutations`}
+                        lapisFilter={{
+                            versionStatus: 'LATEST_VERSION',
+                            isRevocation: false,
+                        }}
+                        sequenceType={sequenceType}
+                    />
+                ))
+            }
+        </div>
+    </gs-app>
+</DataPageLayout>

@@ -2,7 +2,7 @@
 import type { ComponentProps } from 'astro/types';
 
 import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
-import OrganismPageLayout from './OrganismPageLayout.astro';
+import OrganismViewPageLayout from './OrganismViewPageLayout.astro';
 import { getLapisUrl } from '../../config';
 import type { OrganismConstants } from '../../views/OrganismConstants';
 import type { View } from '../../views/View';
@@ -16,7 +16,7 @@ interface Props {
 const { view, downloadLinks } = Astro.props;
 ---
 
-<OrganismPageLayout view={view} downloadLinks={downloadLinks}>
+<OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
             <div class='h-fit bg-gray-50 p-2'>
@@ -25,4 +25,4 @@ const { view, downloadLinks } = Astro.props;
             <slot name='dataDisplay' />
         </div>
     </gs-app>
-</OrganismPageLayout>
+</OrganismViewPageLayout>

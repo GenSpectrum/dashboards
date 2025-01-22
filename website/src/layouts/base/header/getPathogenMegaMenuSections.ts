@@ -1,8 +1,9 @@
 import { organismConfig } from '../../../types/Organism.ts';
+import { wastewaterConfig } from '../../../types/wastewaterConfig.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 export function getPathogenMegaMenuSections() {
-    return Object.values(organismConfig).map((organism) => {
+    const sections = Object.values(organismConfig).map((organism) => {
         const megaMenuSections = ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => {
             const href = view.pageStateHandler.getDefaultPageUrl();
             return {
@@ -32,4 +33,36 @@ export function getPathogenMegaMenuSections() {
             navigationEntries: megaMenuSections,
         };
     });
+
+    sections.push({
+        headline: 'Swiss Wastewater',
+        headlineBackgroundColor: wastewaterConfig.backgroundColor,
+        headlineBackgroundColorFocus: wastewaterConfig.backgroundColorFocus,
+        borderEntryDecoration: wastewaterConfig.borderEntryDecoration,
+        navigationEntries: [
+            {
+                label: 'RSV',
+                iconType: 'table',
+                href: wastewaterConfig.pages.rsv,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: false,
+            },
+            {
+                label: 'Influenza',
+                iconType: 'table',
+                href: wastewaterConfig.pages.influenza,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: false,
+            },
+            {
+                label: 'Browse data',
+                iconType: 'database',
+                href: wastewaterConfig.browseDataUrl,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: true,
+            },
+        ],
+    });
+
+    return sections;
 }
