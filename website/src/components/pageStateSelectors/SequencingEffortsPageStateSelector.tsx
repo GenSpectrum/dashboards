@@ -1,5 +1,5 @@
-import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
-import { useMemo, useEffect, useState } from 'react';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
@@ -17,19 +17,16 @@ export function SequencingEffortsPageStateSelector({
     variantFilterConfig,
     organismViewKey,
     organismsConfig,
-    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
-    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
-    const [currentLapisFilter, setCurrentLapisFilter] = useState<LapisFilter>(lapisFilter);
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
@@ -44,11 +41,9 @@ export function SequencingEffortsPageStateSelector({
         [location, dateRange, variantFilterConfigState],
     );
 
-    useEffect(() => {
-        const newLapisFilter = view.pageStateHandler.toLapisFilter(newPageState);
-
-        setCurrentLapisFilter(newLapisFilter);
-    }, [newPageState, view]);
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.toLapisFilter(newPageState);
+    }, [newPageState]);
 
     return (
         <div className='flex flex-col gap-6'>
@@ -56,7 +51,7 @@ export function SequencingEffortsPageStateSelector({
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={(location) => setLocation(location)}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                     dateRangeFilterConfig={dateRangeFilterConfig}
                     lapisFilter={currentLapisFilter}
