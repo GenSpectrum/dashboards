@@ -8,6 +8,10 @@ import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
+const getReferencesUrl = `${lapisUrl}/sample/aggregated?fields=reference&versionStatus=LATEST_VERSION&isRevocation=false`;
+const references = (await (await fetch(getReferencesUrl)).json()).data.map(
+    (d: { reference: string }) => d.reference,
+) as string[];
 ---
 
 <DataPageLayout
@@ -26,15 +30,21 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
     <gs-app lapis={lapisUrl}>
         <div class='m-4 flex flex-col gap-4'>
             {
-                (['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
-                    <GsWastewaterMutationsOverTime
-                        title={`${sequenceType} mutations`}
-                        lapisFilter={{
-                            versionStatus: 'LATEST_VERSION',
-                            isRevocation: false,
-                        }}
-                        sequenceType={sequenceType}
-                    />
+                references.map((reference) => (
+                    <>
+                        <h2 class='text-2xl'>{reference}</h2>
+                        {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                            <GsWastewaterMutationsOverTime
+                                title={`${sequenceType} mutations`}
+                                lapisFilter={{
+                                    reference,
+                                    versionStatus: 'LATEST_VERSION',
+                                    isRevocation: false,
+                                }}
+                                sequenceType={sequenceType}
+                            />
+                        ))}
+                    </>
                 ))
             }
         </div>
