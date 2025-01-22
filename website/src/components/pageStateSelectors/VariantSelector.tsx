@@ -68,7 +68,7 @@ export function VariantSelector({
                         }}
                         key={lineageFilterConfig.lapisField}
                         lapisFilter={lapisFilter}
-                />
+                    />
                 ))}
                 {variantFilterConfig.mutationFilterConfig && (
                     <GsMutationFilter

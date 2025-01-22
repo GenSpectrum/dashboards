@@ -1,5 +1,5 @@
-import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
-import { useMemo, useEffect, useState } from 'react';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
@@ -20,7 +20,6 @@ export function CompareSideBySidePageStateSelector({
     pageState,
     organismViewKey,
     organismsConfig,
-    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -29,11 +28,9 @@ export function CompareSideBySidePageStateSelector({
     pageState: CovidCompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
-    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
-    const [currentLapisFilter, setCurrentLapisFilter] = useState<LapisFilter>(lapisFilter);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
@@ -54,17 +51,17 @@ export function CompareSideBySidePageStateSelector({
         };
     }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
 
-    useEffect(() => {
-        const filter = newPageState.filters.get(filterId);
+    const currentLapisFilter = useMemo(() => {
+        const filter = newPageState.filters.get(filterId) ?? {
+            datasetFilter: {
+                location,
+                dateRange,
+            },
+            variantFilter: toVariantFilter(variantFilterConfigState),
+        };
 
-        if (filter?.datasetFilter) {
-            const newLapisFilter = view.pageStateHandler.variantFilterToLapisFilter(
-                filter.datasetFilter,
-                filter.variantFilter,
-            );
-            setCurrentLapisFilter(newLapisFilter);
-        }
-    }, [newPageState, view]);
+        return view.pageStateHandler.variantFilterToLapisFilter(filter.datasetFilter, filter.variantFilter);
+    }, [newPageState]);
 
     return (
         <div className='flex flex-col gap-4 bg-gray-50 p-2'>
@@ -73,7 +70,7 @@ export function CompareSideBySidePageStateSelector({
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <BaselineSelector
                         onLocationChange={(location) => setLocation(location)}
-                        locationFilterConfig={locationFilterConfig}
+                        locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                         onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                         dateRangeFilterConfig={dateRangeFilterConfig}
                         lapisFilter={currentLapisFilter}

@@ -1,5 +1,5 @@
-import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
-import { useMemo, useEffect, useState } from 'react';
+import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
@@ -18,18 +18,15 @@ export function CompareVariantsPageStateSelector({
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
-    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
-    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
-    const [currentLapisFilter, setCurrentLapisFilter] = useState<LapisFilter>(lapisFilter);
 
     const [variantConfigs, setVariantConfigs] = useState<Map<Id, VariantFilterConfig>>(variantFilterConfigs);
 
@@ -54,11 +51,9 @@ export function CompareVariantsPageStateSelector({
         };
     }, [location, dateRange, variantConfigs]);
 
-    useEffect(() => {
-        const newLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter({ ...newPageState.datasetFilter });
-
-        setCurrentLapisFilter(newLapisFilter);
-    }, [newPageState, view]);
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.datasetFilterToLapisFilter({ ...newPageState.datasetFilter });
+    }, [newPageState]);
 
     return (
         <div className='flex flex-col gap-6'>
@@ -66,7 +61,7 @@ export function CompareVariantsPageStateSelector({
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={setLocation}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
                     lapisFilter={currentLapisFilter}

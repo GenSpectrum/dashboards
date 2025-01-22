@@ -1,6 +1,5 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
@@ -21,7 +20,6 @@ export function CompareVariantsToBaselineStateSelector({
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
-    lapisFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     dateRangeFilterConfig: DateRangeFilterConfig;
@@ -29,11 +27,9 @@ export function CompareVariantsToBaselineStateSelector({
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareToBaselineViewKey}`;
     organismsConfig: OrganismsConfig;
-    lapisFilter: LapisFilter;
 }) {
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
-    const [currentLapisFilter, setCurrentLapisFilter] = useState<LapisFilter>(lapisFilter);
     const [baselineFilterConfigState, setBaselineFilterConfigState] =
         useState<VariantFilterConfig>(baselineFilterConfig);
 
@@ -61,13 +57,9 @@ export function CompareVariantsToBaselineStateSelector({
         };
     }, [variantConfigs, location, dateRange, baselineFilterConfigState]);
 
-    useEffect(() => {
-        const newLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter({
-            ...newPageState,
-        });
-
-        setCurrentLapisFilter(newLapisFilter);
-    }, [newPageState, view]);
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.baselineFilterToLapisFilter(newPageState);
+    }, [newPageState]);
 
     return (
         <div className='flex flex-col gap-6'>
@@ -75,7 +67,7 @@ export function CompareVariantsToBaselineStateSelector({
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={setLocation}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
                     lapisFilter={currentLapisFilter}
