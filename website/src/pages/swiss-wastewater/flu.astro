@@ -12,6 +12,44 @@ const getReferencesUrl = `${lapisUrl}/sample/aggregated?fields=reference&version
 const references = (await (await fetch(getReferencesUrl)).json()).data.map(
     (d: { reference: string }) => d.reference,
 ) as string[];
+
+const additionalInfo = new Map<string, string>([
+    [
+        'H1',
+        'Frequencies of all nonsynonymous mutations (minimum read depth 100x) in the IAV H1 segment relative to reference CY121680.1 (A/California/07/2009(H1N1)).',
+    ],
+    [
+        'N1',
+        'Frequencies of all nonsynonymous mutations (minimum read depth 100x) in the IAV N1 segment relative to reference CY121682.1 (A/California/07/2009(H1N1)).',
+    ],
+    [
+        'H3',
+        'Frequencies of all nonsynonymous mutations (minimum read depth 100x) in the IAV H3 segment relative to reference CY163680.1 (A/Wisconsin/67/2005(H3N2)).',
+    ],
+    [
+        'N2',
+        'Frequencies of all nonsynonymous mutations (minimum read depth 100x) in the IAV N2 segment relative to reference CY163680.1 (A/Wisconsin/67/2005(H3N2)).',
+    ],
+]);
+
+const additionalAAInfo = new Map<string, string>([
+    [
+        'H1',
+        'Same data as under Nucleotide mutations, but nucleotide substitutions are translated into amino acid substitutions relative to HA1 + HA2 (HA0) gene, for genemap see <a class="text-blue-500" href="https://github.com/nextstrain/seasonal-flu/blob/master/config/h1n1pdm/ha/genemap.gff">here</a>.',
+    ],
+    [
+        'N1',
+        'Same data as under Nucleotide mutations, but nucleotide substitutions are translated into amino acid substitutions relative to NA gene, for genemap see <a class="text-blue-500" href="https://github.com/nextstrain/seasonal-flu/blob/master/config/h1n1pdm/ha/genemap.gff">here</a>.',
+    ],
+    [
+        'H3',
+        ' Same data as under Nucleotide mutations, but nucleotide substitutions are translated into amino acid substitutions relative to HA1 + HA2 (HA0) gene, for genemap see <a class="text-blue-500" href="https://github.com/nextstrain/seasonal-flu/blob/master/config/h3n2/ha/genemap.gff">here</a>.',
+    ],
+    [
+        'N2',
+        'Same data as under Nucleotide mutations, but nucleotide substitutions are translated into amino acid substitutions relative to NA gene, for genemap see <a class="text-blue-500" href="https://github.com/nextstrain/seasonal-flu/blob/master/config/h3n2/ha/genemap.gff">here</a>.',
+    ],
+]);
 ---
 
 <DataPageLayout
@@ -42,6 +80,10 @@ const references = (await (await fetch(getReferencesUrl)).json()).data.map(
                                     isRevocation: false,
                                 }}
                                 sequenceType={sequenceType}
+                                info={
+                                    (additionalInfo.get(reference) ?? '') +
+                                    (sequenceType === 'amino acid' ? ' ' + (additionalAAInfo.get(reference) ?? '') : '')
+                                }
                             />
                         ))}
                     </>
