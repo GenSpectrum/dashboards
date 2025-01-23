@@ -32,12 +32,12 @@ export function GsPrevalenceOverTime({
 }) {
     return (
         <gs-prevalence-over-time
-            numeratorFilter={JSON.stringify(numeratorFilter)}
-            denominatorFilter={JSON.stringify(denominatorFilter)}
+            numeratorFilter={numeratorFilter}
+            denominatorFilter={denominatorFilter}
             granularity={granularity}
             smoothingWindow={smoothingWindow}
-            views={JSON.stringify(views)}
-            confidenceIntervalMethods={JSON.stringify(confidenceIntervalMethods)}
+            views={views}
+            confidenceIntervalMethods={confidenceIntervalMethods}
             width={width}
             height={height}
             lapisDateField={lapisDateField}

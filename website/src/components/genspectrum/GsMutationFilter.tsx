@@ -36,11 +36,5 @@ export function GsMutationFilter({
         };
     }, [onMutationChange]);
 
-    return (
-        <gs-mutation-filter
-            width={width}
-            initialValue={JSON.stringify(initialValue)}
-            ref={mutationFilterRef}
-        ></gs-mutation-filter>
-    );
+    return <gs-mutation-filter width={width} initialValue={initialValue} ref={mutationFilterRef}></gs-mutation-filter>;
 }

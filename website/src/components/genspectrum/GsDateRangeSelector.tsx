@@ -57,7 +57,7 @@ export function GsDateRangeSelector({
     return (
         <gs-date-range-selector
             ref={dateRangeSelectorRef}
-            dateRangeOptions={JSON.stringify(dateRangeOptions)}
+            dateRangeOptions={dateRangeOptions}
             earliestDate={earliestDate}
             initialValue={isCustom ? undefined : initialValue?.label}
             initialDateFrom={isCustom ? initialValue.dateFrom : undefined}
