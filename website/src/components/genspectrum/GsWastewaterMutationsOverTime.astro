@@ -7,9 +7,10 @@ interface Props {
     title: string;
     lapisFilter: LapisFilter;
     sequenceType: SequenceType;
+    info?: string;
 }
 
-const { title, lapisFilter, sequenceType } = Astro.props;
+const { title, lapisFilter, sequenceType, info } = Astro.props;
 ---
 
 <ComponentWrapper title={title}>
@@ -17,5 +18,8 @@ const { title, lapisFilter, sequenceType } = Astro.props;
         lapisFilter={JSON.stringify(lapisFilter)}
         sequenceType={sequenceType}
         width='100%'
-        height='100%'></gs-wastewater-mutations-over-time>
+        height='100%'
+    >
+        <span slot='infoText'><Fragment set:html={info} /></span>
+    </gs-wastewater-mutations-over-time>
 </ComponentWrapper>
