@@ -8,7 +8,7 @@ import { compareVariantsViewKey } from '../src/views/viewKeys';
 const organismOptions = {
     [Organisms.covid]: { lineage: 'JN.1*', lineageFieldPlaceholder: 'Nextclade pango lineage' },
     [Organisms.h5n1]: { lineage: '2.3.4.4b', lineageFieldPlaceholder: 'Clade' },
-    [Organisms.westNile]: { lineage: '2', lineageFieldPlaceholder: 'Lineage' },
+    [Organisms.westNile]: { lineage: '1A', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvA]: { lineage: 'A.D.5.2', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvB]: { lineage: 'B.D.E.1', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.mpox]: { lineage: 'F.1', lineageFieldPlaceholder: 'Lineage' },
@@ -21,13 +21,13 @@ test.describe('The Compare Variants page', () => {
 
             await compareVariantsPage.goto(organism);
             await expect(compareVariantsPage.selectVariantsMessage).toBeVisible();
-            await expect(compareVariantsPage.diagramTitle('Prevalence over time')).not.toBeVisible();
+            await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).not.toBeVisible();
 
             await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
             await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
             await compareVariantsPage.submitFilters();
 
-            await expect(compareVariantsPage.diagramTitle('Prevalence over time')).toBeVisible();
+            await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).toBeVisible();
             await compareVariantsPage.expectToSeeNoComponentErrors();
         });
     }

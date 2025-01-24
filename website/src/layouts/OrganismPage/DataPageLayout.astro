@@ -1,0 +1,41 @@
+---
+import type { ComponentProps } from 'astro/types';
+
+import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
+import LastUpdatedInfo from './LastUpdatedInfo.astro';
+import type { DataOrigin } from '../../types/dataOrigins';
+import { type BreadcrumbElement, Breadcrumbs } from '../Breadcrumbs';
+import BaseLayout from '../base/BaseLayout.astro';
+import DataInfo from '../base/footer/DataInfo.astro';
+
+interface Props {
+    title: string;
+    breadcrumbs: BreadcrumbElement[];
+    dataOrigins: DataOrigin[];
+    lapisUrl: string;
+    downloadLinks?: ComponentProps<typeof AccessionsDownloadButton>['downloadLinks'];
+    accessionDownloadFields?: string[];
+}
+
+const { title, breadcrumbs, dataOrigins, lapisUrl, downloadLinks = [], accessionDownloadFields = [] } = Astro.props;
+---
+
+<BaseLayout title={title}>
+    <div class='ml-2'>
+        <Breadcrumbs breadcrumbs={breadcrumbs} />
+    </div>
+    <slot />
+    <div class='flex flex-col justify-center sm:flex-row sm:gap-4' slot='secondary-footer'>
+        {
+            downloadLinks.length > 0 && (
+                <AccessionsDownloadButton
+                    accessionDownloadFields={accessionDownloadFields}
+                    downloadLinks={downloadLinks}
+                    lapisUrl={lapisUrl}
+                />
+            )
+        }
+        <LastUpdatedInfo lapisUrl={lapisUrl} />
+        <DataInfo dataOrigins={dataOrigins} />
+    </div>
+</BaseLayout>

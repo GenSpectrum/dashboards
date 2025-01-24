@@ -1,0 +1,41 @@
+---
+import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
+import { dataOrigins } from '../../types/dataOrigins';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
+
+const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
+---
+
+<DataPageLayout
+    title='Swiss wastewater - RSV'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Swiss Wastewater' },
+        {
+            name: 'RSV',
+            href: wastewaterConfig.pages.rsv,
+        },
+    ]}
+    dataOrigins={[dataOrigins.wise]}
+    lapisUrl={lapisUrl}
+>
+    <gs-app lapis={lapisUrl}>
+        <div class='m-4 flex flex-col gap-4'>
+            {
+                ['RSV-A', 'RSV-B'].map((reference) => (
+                    <GsWastewaterMutationsOverTime
+                        title={reference}
+                        lapisFilter={{
+                            reference,
+                            versionStatus: 'LATEST_VERSION',
+                            isRevocation: false,
+                        }}
+                        sequenceType='nucleotide'
+                    />
+                ))
+            }
+        </div>
+    </gs-app>
+</DataPageLayout>

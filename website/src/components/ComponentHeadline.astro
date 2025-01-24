@@ -10,7 +10,7 @@ const fragmentId = title.toLowerCase().replace(/ /g, '-');
 ---
 
 <h2 class={`font-bold ${fragmentLinkScrollMargin} `} id={fragmentId}>
-    <a href={`#${fragmentId}`} class='group flex items-center gap-1'>
+    <a href={`#${fragmentId}`} class='group flex items-center gap-1 capitalize'>
         {title}
         <span class='iconify font-normal opacity-0 mdi--link-variant group-hover:opacity-100'></span>
     </a>

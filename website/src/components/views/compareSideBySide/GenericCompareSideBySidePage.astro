@@ -1,7 +1,7 @@
 ---
 import { toDownloadLink } from './toDownloadLink';
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
-import OrganismPageLayout from '../../../layouts/OrganismPage/OrganismPageLayout.astro';
+import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -28,7 +28,7 @@ const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
 ---
 
-<OrganismPageLayout view={view} downloadLinks={downloadLinks}>
+<OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
     <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
         <div class='flex overflow-x-auto'>
             {
@@ -138,4 +138,4 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
             </a>
         </div>
     </gs-app>
-</OrganismPageLayout>
+</OrganismViewPageLayout>

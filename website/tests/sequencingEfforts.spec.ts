@@ -27,7 +27,7 @@ test.describe('The Sequencing Efforts Page', () => {
                 await sequencingEffortsPage.selectDateRange('All times');
                 await sequencingEffortsPage.submitFilters();
 
-                await expect(sequencingEffortsPage.diagramTitle('Number sequences')).toBeVisible();
+                await expect(sequencingEffortsPage.diagramTitle('Number Sequences')).toBeVisible();
                 await sequencingEffortsPage.expectToSeeNoComponentErrors();
             });
         });
