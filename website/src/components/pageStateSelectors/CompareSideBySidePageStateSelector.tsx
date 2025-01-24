@@ -38,7 +38,8 @@ export function CompareSideBySidePageStateSelector({
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const newPageState = useMemo(() => {
-        pageState.filters.set(filterId, {
+        const updatedFilters = new Map(pageState.filters);
+        updatedFilters.set(filterId, {
             datasetFilter: {
                 location,
                 dateRange,
@@ -46,8 +47,23 @@ export function CompareSideBySidePageStateSelector({
             variantFilter: toVariantFilter(variantFilterConfigState),
         });
 
-        return pageState;
+        return {
+            ...pageState,
+            filters: updatedFilters,
+        };
     }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
+
+    const currentLapisFilter = useMemo(() => {
+        const filter = newPageState.filters.get(filterId) ?? {
+            datasetFilter: {
+                location,
+                dateRange,
+            },
+            variantFilter: toVariantFilter(variantFilterConfigState),
+        };
+
+        return view.pageStateHandler.variantFilterToLapisFilter(filter.datasetFilter, filter.variantFilter);
+    }, [newPageState]);
 
     return (
         <div className='flex flex-col gap-4 bg-gray-50 p-2'>
@@ -56,9 +72,10 @@ export function CompareSideBySidePageStateSelector({
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <BaselineSelector
                         onLocationChange={(location) => setLocation(location)}
-                        locationFilterConfig={locationFilterConfig}
+                        locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                         onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                         dateRangeFilterConfig={dateRangeFilterConfig}
+                        lapisFilter={currentLapisFilter}
                     />
                 </div>
                 <div className='flex-grow'>
@@ -67,6 +84,7 @@ export function CompareSideBySidePageStateSelector({
                         onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
                         variantFilterConfig={variantFilterConfigState}
                         hideMutationFilter={hideMutationFilter}
+                        lapisFilter={currentLapisFilter}
                     />
                 </div>
             </div>

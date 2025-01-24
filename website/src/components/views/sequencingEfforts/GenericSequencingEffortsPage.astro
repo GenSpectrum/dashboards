@@ -66,8 +66,8 @@ const lineageFilterConfigs = getLineageFilterConfigs(
         }}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
-        client:only='react'
         variantFilterConfig={{ mutationFilterConfig: pageState.variantFilter.mutations, lineageFilterConfigs }}
+        client:only='react'
     >
         <SequencingEffortsSelectorFallback slot='fallback' />
     </SequencingEffortsPageStateSelector>
