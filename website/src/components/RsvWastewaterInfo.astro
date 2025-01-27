@@ -1,0 +1,29 @@
+---
+interface Props {
+    reference: string;
+}
+
+const { reference } = Astro.props;
+
+/* eslint-disable @typescript-eslint/naming-convention */
+const additionalInfo = {
+    'RSV-A': {
+        referenceSequence: 'EPI_ISL_412866 (hRSV/A/England/397/2017)',
+    },
+    'RSV-B': {
+        referenceSequence: 'EPI_ISL_1653999 (hRSV/B/Australia/VIC-RCH056/2019)',
+    },
+};
+/* eslint-enable @typescript-eslint/naming-convention */
+
+if (!(reference in additionalInfo)) {
+    return null;
+}
+
+const info = additionalInfo[reference as keyof typeof additionalInfo];
+---
+
+<span>
+    Mutations are provided in terms of nucleotide substitutions (minimum read depth 30x) of the {reference} subtype relative
+    to the reference {info.referenceSequence}.
+</span>

@@ -1,4 +1,5 @@
 ---
+import RsvWastewaterInfo from '../../components/RsvWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
@@ -33,7 +34,9 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
                             isRevocation: false,
                         }}
                         sequenceType='nucleotide'
-                    />
+                    >
+                        <RsvWastewaterInfo slot='infoText' reference={reference} />
+                    </GsWastewaterMutationsOverTime>
                 ))
             }
         </div>
