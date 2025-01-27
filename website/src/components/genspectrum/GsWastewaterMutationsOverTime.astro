@@ -7,10 +7,9 @@ interface Props {
     title: string;
     lapisFilter: LapisFilter;
     sequenceType: SequenceType;
-    info?: string;
 }
 
-const { title, lapisFilter, sequenceType, info } = Astro.props;
+const { title, lapisFilter, sequenceType } = Astro.props;
 ---
 
 <ComponentWrapper title={title}>
@@ -21,6 +20,6 @@ const { title, lapisFilter, sequenceType, info } = Astro.props;
         height='100%'
         maxNumberOfGridRows='700'
     >
-        <span slot='infoText'><Fragment set:html={info} /></span>
+        <span slot='infoText'><slot name='infoText' /></span>
     </gs-wastewater-mutations-over-time>
 </ComponentWrapper>
