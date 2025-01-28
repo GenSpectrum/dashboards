@@ -4,7 +4,7 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
-import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { wastewaterConfig, RSVTypes } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
 ---
@@ -25,7 +25,7 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
     <gs-app lapis={lapisUrl}>
         <div class='m-4 flex flex-col gap-4'>
             {
-                ['RSV-A', 'RSV-B'].map((reference) => (
+                RSVTypes.map((reference) => (
                     <GsWastewaterMutationsOverTime
                         title={reference}
                         lapisFilter={{

@@ -1,12 +1,14 @@
 ---
+import { type RSVType } from '../types/wastewaterConfig';
+
 interface Props {
-    reference: string;
+    reference: RSVType;
 }
 
 const { reference } = Astro.props;
 
 /* eslint-disable @typescript-eslint/naming-convention */
-const additionalInfo = {
+const additionalInfo: Record<RSVType, { referenceSequence: string }> = {
     'RSV-A': {
         referenceSequence: 'EPI_ISL_412866 (hRSV/A/England/397/2017)',
     },
@@ -16,11 +18,7 @@ const additionalInfo = {
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
-if (!(reference in additionalInfo)) {
-    return null;
-}
-
-const info = additionalInfo[reference as keyof typeof additionalInfo];
+const info = additionalInfo[reference];
 ---
 
 <span>
