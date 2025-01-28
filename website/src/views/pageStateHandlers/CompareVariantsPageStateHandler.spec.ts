@@ -23,6 +23,7 @@ const mockConstants: ExtendedConstants = {
     ],
     additionalSequencingEffortsFields: [],
     accessionDownloadFields: [],
+    useAdvancedQuery: true,
 };
 
 const mockDefaultPageState: CompareVariantsData = {
@@ -46,6 +47,7 @@ describe('CompareVariantsPageStateHandler', () => {
             'http://example.com/testPath/compareVariants?country=US&date=Last 7 Days' +
                 '&lineage$1=B.1.1.7&nucleotideMutations$1=D614G' +
                 '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T' +
+                '&variantQuery$3=C234G' +
                 '&',
         );
 
@@ -54,7 +56,7 @@ describe('CompareVariantsPageStateHandler', () => {
         expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
         expect(pageState.datasetFilter.dateRange).toEqual(mockConstants.defaultDateRange);
 
-        expect(pageState.variants.size).toBe(2);
+        expect(pageState.variants.size).toBe(3);
         expect(pageState.variants.get(1)).toEqual({
             lineages: { lineage: 'B.1.1.7' },
             mutations: { nucleotideMutations: ['D614G'] },
@@ -62,6 +64,9 @@ describe('CompareVariantsPageStateHandler', () => {
         expect(pageState.variants.get(2)).toEqual({
             lineages: { lineage: 'A.1.2.3' },
             mutations: { aminoAcidMutations: ['S:A123T'] },
+        });
+        expect(pageState.variants.get(3)).toEqual({
+            variantQuery: 'C234G',
         });
     });
 
@@ -82,6 +87,12 @@ describe('CompareVariantsPageStateHandler', () => {
                         mutations: { aminoAcidMutations: ['S:A123T'] },
                     },
                 ],
+                [
+                    3,
+                    {
+                        variantQuery: 'C234G',
+                    },
+                ],
             ]),
             datasetFilter: {
                 location: { country: 'US' },
@@ -93,6 +104,7 @@ describe('CompareVariantsPageStateHandler', () => {
             '/testPath/compare-variants?' +
                 'nucleotideMutations%241=D614G&lineage%241=B.1.1.7' +
                 '&aminoAcidMutations%242=S%3AA123T&lineage%242=A.1.2.3' +
+                '&variantQuery%243=C234G' +
                 '&country=US' +
                 '&',
         );
@@ -122,6 +134,8 @@ describe('CompareVariantsPageStateHandler', () => {
                 },
             ],
             mutationFilterConfig: {},
+            isInVariantQueryMode: false,
+            variantQueryConfig: undefined,
         });
     });
 
@@ -143,10 +157,16 @@ describe('CompareVariantsPageStateHandler', () => {
                         mutations: { aminoAcidMutations: ['S:A123T'] },
                     },
                 ],
+                [
+                    3,
+                    {
+                        variantQuery: 'C234G',
+                    },
+                ],
             ]),
         };
         const variantFilterConfigs = handler.toVariantFilterConfigs(pageState);
-        expect(variantFilterConfigs.size).toBe(2);
+        expect(variantFilterConfigs.size).toBe(3);
         expect(variantFilterConfigs.get(1)).toStrictEqual({
             lineageFilterConfigs: [
                 {
@@ -159,6 +179,8 @@ describe('CompareVariantsPageStateHandler', () => {
             mutationFilterConfig: {
                 nucleotideMutations: ['D614G'],
             },
+            isInVariantQueryMode: false,
+            variantQueryConfig: undefined,
         });
 
         expect(variantFilterConfigs.get(2)).toStrictEqual({
@@ -173,6 +195,22 @@ describe('CompareVariantsPageStateHandler', () => {
             mutationFilterConfig: {
                 aminoAcidMutations: ['S:A123T'],
             },
+            isInVariantQueryMode: false,
+            variantQueryConfig: undefined,
+        });
+
+        expect(variantFilterConfigs.get(3)).toStrictEqual({
+            lineageFilterConfigs: [
+                {
+                    filterType: 'text',
+                    initialValue: undefined,
+                    lapisField: 'lineage',
+                    placeholderText: 'Lineage',
+                },
+            ],
+            mutationFilterConfig: {},
+            isInVariantQueryMode: true,
+            variantQueryConfig: 'C234G',
         });
     });
 
@@ -187,6 +225,12 @@ describe('CompareVariantsPageStateHandler', () => {
                         mutations: { nucleotideMutations: ['D614G'], aminoAcidMutations: ['S:A123T'] },
                     },
                 ],
+                [
+                    2,
+                    {
+                        variantQuery: 'C234G',
+                    },
+                ],
             ]),
         };
         const namedVariantFilter = handler.variantFiltersToNamedLapisFilters(pageState);
@@ -199,6 +243,14 @@ describe('CompareVariantsPageStateHandler', () => {
                     dateTo: '2024-11-29',
                     lineage: 'B.1.1.7',
                     nucleotideMutations: ['D614G'],
+                },
+            },
+            {
+                displayName: 'C234G',
+                lapisFilter: {
+                    dateFrom: '2024-11-22',
+                    dateTo: '2024-11-29',
+                    variantQuery: 'C234G',
                 },
             },
         ]);

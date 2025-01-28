@@ -126,10 +126,6 @@ export type LapisLineageQuery = {
     [lineage: string]: string | undefined;
 };
 
-export type LapisCovidVariantFilter = VariantFilter & {
-    variantQuery?: string;
-};
-
 export const getLapisMutationsQueryFromSearch = (search: URLSearchParams | Map<string, string>): LapisMutationQuery => {
     return {
         nucleotideMutations: getStringArrayFromSearch(search, 'nucleotideMutations'),
@@ -143,6 +139,11 @@ export const getLapisVariantQuery = (
     search: URLSearchParams | Map<string, string>,
     lineageFilters: string[],
 ): VariantFilter => {
+    const variantQuery = search.get('variantQuery');
+    if (variantQuery) {
+        return { variantQuery };
+    }
+
     const lineageQuery = lineageFilters
         .map((filter) => {
             const value = getStringFromSearch(search, filter);
@@ -164,39 +165,18 @@ export const setSearchFromLapisMutationsQuery = (search: URLSearchParams, query:
 
 export const setSearchFromLapisVariantQuery = (
     search: URLSearchParams,
-    query: LapisCovidVariantFilter,
+    query: VariantFilter,
     lineageFilters: string[],
 ) => {
-    setSearchFromLapisMutationsQuery(search, query.mutations);
+    if (query.variantQuery !== undefined) {
+        setSearchFromString(search, 'variantQuery', query.variantQuery);
+    } else {
+        setSearchFromLapisMutationsQuery(search, query.mutations ?? {});
 
-    lineageFilters.forEach((filter) => {
-        setSearchFromString(search, filter, query.lineages[filter]);
-    });
-};
-
-export const getLapisCovidVariantQuery = (
-    search: URLSearchParams | Map<string, string>,
-    lineageFilters: string[],
-): LapisCovidVariantFilter => {
-    const query = getLapisVariantQuery(search, lineageFilters);
-    const variantQuery = getStringFromSearch(search, 'variantQuery');
-    if (variantQuery !== undefined) {
-        return {
-            ...query,
-            variantQuery,
-        };
+        lineageFilters.forEach((filter) => {
+            if (query.lineages) {
+                setSearchFromString(search, filter, query.lineages[filter]);
+            }
+        });
     }
-
-    return {
-        ...query,
-    };
-};
-
-export const setSearchFromLapisCovidVariantQuery = (
-    search: URLSearchParams,
-    query: LapisCovidVariantFilter,
-    lineageFilters: string[],
-) => {
-    setSearchFromLapisVariantQuery(search, query, lineageFilters);
-    setSearchFromString(search, 'variantQuery', query.variantQuery);
 };

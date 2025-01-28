@@ -3,7 +3,7 @@ import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
-import { getLineageFilterConfigs, getLineageFilterFields } from '../../../views/View';
+import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
 import { getLocationDisplayConfig } from '../../../views/locationHelpers';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -35,9 +35,10 @@ const { locationField, mapName } = getLocationDisplayConfig(
     view.organismConstants.locationFields,
     pageState.datasetFilter.location,
 );
-const lineageFilterConfigs = getLineageFilterConfigs(
+const variantFilterConfig = getVariantFilterConfig(
     view.organismConstants.lineageFilters,
-    pageState.variantFilter.lineages,
+    pageState.variantFilter,
+    view.organismConstants.useAdvancedQuery,
 );
 ---
 
@@ -67,7 +68,7 @@ const lineageFilterConfigs = getLineageFilterConfigs(
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
-        variantFilterConfig={{ mutationFilterConfig: pageState.variantFilter.mutations, lineageFilterConfigs }}
+        variantFilterConfig={variantFilterConfig}
     >
         <SequencingEffortsSelectorFallback slot='fallback' />
     </SequencingEffortsPageStateSelector>

@@ -34,18 +34,16 @@ export function VariantsSelector({
     };
 
     return (
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-3'>
             {Array.from(variantFilterConfigs).map(([id, filterConfig]) => (
                 <div key={id}>
-                    <div className='flex items-center justify-end'>
-                        <button className='btn btn-ghost btn-sm font-normal' onClick={() => removeVariant(id)}>
-                            Remove
-                        </button>
-                    </div>
                     <VariantSelector
                         variantFilterConfig={filterConfig}
                         onVariantFilterChange={(variantFilter) => updateVariantFilter(id, variantFilter)}
                     />
+                    <button className='text-sm hover:text-gray-500' onClick={() => removeVariant(id)}>
+                        Remove
+                    </button>
                 </div>
             ))}
             <button className='btn btn-sm max-w-32' onClick={addVariant}>

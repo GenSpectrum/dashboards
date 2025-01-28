@@ -1,0 +1,56 @@
+---
+import type { SequenceType } from '@genspectrum/dashboard-components/util';
+
+interface Props {
+    reference: string;
+    sequenceType: SequenceType;
+}
+
+const { reference, sequenceType } = Astro.props;
+
+/* eslint-disable @typescript-eslint/naming-convention */
+const additionalInfo = {
+    H1: {
+        referenceSequence: 'CY121680.1 (A/California/07/2009(H1N1))',
+        translationGene: 'HA1 + HA2 (HA0)',
+        genemapLink: 'https://github.com/nextstrain/seasonal-flu/blob/master/config/h1n1pdm/ha/genemap.gff',
+    },
+    N1: {
+        referenceSequence: 'CY121682.1 (A/California/07/2009(H1N1))',
+        translationGene: 'NA',
+        genemapLink: 'https://github.com/nextstrain/seasonal-flu/blob/master/config/h1n1pdm/ha/genemap.gff',
+    },
+    H3: {
+        referenceSequence: 'CY163680.1 (A/Wisconsin/67/2005(H3N2))',
+        translationGene: 'HA1 + HA2 (HA0)',
+        genemapLink: 'https://github.com/nextstrain/seasonal-flu/blob/master/config/h3n2/ha/genemap.gff',
+    },
+    N2: {
+        referenceSequence: 'CY163680.1 (A/Wisconsin/67/2005(H3N2))',
+        translationGene: 'NA',
+        genemapLink: 'https://github.com/nextstrain/seasonal-flu/blob/master/config/h3n2/ha/genemap.gff',
+    },
+};
+/* eslint-enable @typescript-eslint/naming-convention */
+
+if (!(reference in additionalInfo)) {
+    return null;
+}
+
+const info = additionalInfo[reference as keyof typeof additionalInfo];
+---
+
+<span>
+    Frequencies of all nonsynonymous mutations (minimum read depth 100x) in the IAV
+    {reference} segment relative to reference {info.referenceSequence}.
+</span>
+{
+    sequenceType === 'amino acid' && (
+        <span>
+            Same data as under Nucleotide mutations, but nucleotide substitutions are translated into amino acid
+            substitutions relative to {info.translationGene} gene, for genemap see{' '}
+            {/* prettier-ignore *//* make sure there is no space between the link and the dot */}
+            <a class="text-blue-600 hover:text-blue-800" href={info.genemapLink}>here</a>.
+        </span>
+    )
+}

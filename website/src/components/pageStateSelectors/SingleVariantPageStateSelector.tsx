@@ -55,6 +55,7 @@ export function SingleVariantPageStateSelector({
             </div>
             <div>
                 <SelectorHeadline>Variant Filter</SelectorHeadline>
+
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={variantFilterConfigState}
