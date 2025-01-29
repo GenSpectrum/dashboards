@@ -44,7 +44,7 @@ export function GsLineageFilter<Lineage extends string>({
             value={value ?? ''}
             width={width}
             ref={lineageFilterRef}
-            lapisFilter={lapisFilter}
+            lapisFilter={JSON.stringify(lapisFilter)}
         ></gs-lineage-filter>
     );
 }
