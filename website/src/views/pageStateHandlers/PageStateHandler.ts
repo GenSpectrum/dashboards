@@ -1,4 +1,4 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { ExtendedConstants } from '../OrganismConstants.ts';
 import { type Dataset, type Id, type VariantFilter } from '../View.ts';
@@ -16,10 +16,43 @@ export function toLapisFilterWithoutVariant(
     pageState: Dataset,
     constants: ExtendedConstants,
 ): LapisFilter & LapisLocation {
+    const baselineFilters = constants.baselineFilterConfigs?.reduce(
+        (acc, config) => {
+            switch (config.type) {
+                case 'date': {
+                    const value = pageState.datasetFilter[config.dateColumn] as DateRangeOption | undefined;
+                    if (value === undefined) {
+                        return acc;
+                    }
+
+                    return {
+                        ...acc,
+                        [`${config.dateColumn}From`]: value.dateFrom,
+                        [`${config.dateColumn}To`]: value.dateTo,
+                    };
+                }
+                case 'text': {
+                    const value = pageState.datasetFilter[config.lapisField] as string | undefined;
+                    if (value === undefined) {
+                        return acc;
+                    }
+
+                    return {
+                        ...acc,
+                        [config.lapisField]: value,
+                        [config.lapisField]: value,
+                    };
+                }
+            }
+        },
+        {} as { [key: string]: string | undefined },
+    );
+
     return {
         ...pageState.datasetFilter.location,
         [`${constants.mainDateField}From`]: pageState.datasetFilter.dateRange.dateFrom,
         [`${constants.mainDateField}To`]: pageState.datasetFilter.dateRange.dateTo,
+        ...baselineFilters,
         ...constants.additionalFilters,
     };
 }

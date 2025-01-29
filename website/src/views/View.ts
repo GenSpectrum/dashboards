@@ -7,10 +7,13 @@ import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import type { VariantFilterConfig } from '../components/pageStateSelectors/VariantFilterConfig.ts';
 import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
+import type {BaselineFilterConfig} from "../components/pageStateSelectors/BaselineSelector.tsx";
 
 export type DatasetFilter = {
     location: LapisLocation;
     dateRange: DateRangeOption;
+} & {
+    [key: string]: DateRangeOption | string | LapisLocation | undefined;
 };
 
 export type Dataset = {
@@ -102,4 +105,25 @@ export function getLineageFilterConfigs(
             initialValue: (lineages ? lineages[config.lapisField] : undefined) ?? config.initialValue,
         };
     });
+}
+
+export function getBaselineFilterConfigs(
+    dataset: DatasetFilter,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined
+): BaselineFilterConfig[] | undefined {
+    return baselineFilterConfigs?.map(config => {
+        switch (config.type) {
+            case 'date': {
+                return {
+                    ...config,
+                    initialDateRange: dataset[config.dateColumn] as DateRangeOption | undefined,
+                };
+            }
+            case 'text': {
+                return {
+                    ...config, value: dataset[config.lapisField] as string | undefined,
+                }
+            }
+        }
+    })
 }

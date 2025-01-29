@@ -1,6 +1,7 @@
 import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 
 import { pathoplexusGroupNameField } from './View.ts';
+import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import type { Organism } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
@@ -31,6 +32,8 @@ export interface ExtendedConstants extends OrganismConstants {
     readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
     readonly lineageFilters: LineageFilterConfig[];
     readonly useAdvancedQuery: boolean;
+
+    readonly baselineFilterConfigs?: BaselineFilterConfig[];
 }
 
 export function getAuthorRelatedSequencingEffortsFields(constants: {
