@@ -23,9 +23,9 @@ test.describe('The Compare Variants page', () => {
             await expect(compareVariantsPage.selectVariantsMessage).toBeVisible();
             await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).not.toBeVisible();
 
-            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
-            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
             await compareVariantsPage.selectDateRange('All times');
+            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
+            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
             await compareVariantsPage.submitFilters();
 
             await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).toBeVisible();
