@@ -12,7 +12,7 @@ export abstract class ViewPage {
     }
 
     public diagramTitle(title: string) {
-        return this.page.getByRole('heading', { name: title });
+        return this.page.getByRole('link', { name: title });
     }
 
     public async expectToSeeNoComponentErrors() {
