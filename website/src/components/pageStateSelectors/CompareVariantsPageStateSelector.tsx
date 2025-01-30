@@ -52,7 +52,7 @@ export function CompareVariantsPageStateSelector({
     }, [location, dateRange, variantConfigs]);
 
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.datasetFilterToLapisFilter({ ...newPageState.datasetFilter });
+        return view.pageStateHandler.datasetFilterToLapisFilter(newPageState.datasetFilter);
     }, [newPageState]);
 
     return (

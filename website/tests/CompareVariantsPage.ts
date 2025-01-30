@@ -31,8 +31,4 @@ export class CompareVariantsPage extends ViewPage {
         const selectedLineage = this.page.getByRole('option', { name: lineage, exact: false });
         await selectedLineage.first().click();
     }
-
-    public async selectDateRange(dateRangeOption: string) {
-        await this.page.locator('gs-date-range-selector').getByRole('combobox').selectOption(dateRangeOption);
-    }
 }

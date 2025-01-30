@@ -19,4 +19,8 @@ export abstract class ViewPage {
         await expect(this.page.getByText('Error -', { exact: false })).not.toBeVisible();
         await expect(this.page.getByText('Something went wrong', { exact: false })).not.toBeVisible();
     }
+
+    public async selectDateRange(dateRangeOption: string) {
+        await this.page.locator('gs-date-range-selector').getByRole('combobox').selectOption(dateRangeOption);
+    }
 }
