@@ -16,6 +16,7 @@ export function BaselineInput({ onBaselineChange }: { onBaselineChange: (baselin
                     onLocationChange={(location) => {
                         onBaselineChange(location);
                     }}
+                    lapisFilter={{}}
                 />
             </div>
         </InputLabel>

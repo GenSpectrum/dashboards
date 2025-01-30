@@ -26,6 +26,7 @@ export function VariantInput({ onVariantInputChange }: { onVariantInputChange: (
                             return { ...prevVariantFilter, ...lineage };
                         });
                     }}
+                    lapisFilter={{}}
                 />
                 <GsMutationFilter
                     width='100%'

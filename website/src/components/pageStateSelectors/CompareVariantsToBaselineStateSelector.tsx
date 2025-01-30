@@ -57,15 +57,20 @@ export function CompareVariantsToBaselineStateSelector({
         };
     }, [variantConfigs, location, dateRange, baselineFilterConfigState]);
 
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.baselineFilterToLapisFilter(newPageState);
+    }, [newPageState]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={setLocation}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
@@ -73,6 +78,7 @@ export function CompareVariantsToBaselineStateSelector({
                 <VariantSelector
                     onVariantFilterChange={setBaselineFilterConfigState}
                     variantFilterConfig={baselineFilterConfigState}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
@@ -81,6 +87,7 @@ export function CompareVariantsToBaselineStateSelector({
                     variantFilterConfigs={variantConfigs}
                     setVariantFilterConfigs={setVariantConfigs}
                     emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

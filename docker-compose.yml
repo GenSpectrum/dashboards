@@ -2,6 +2,7 @@ services:
   website:
     image: ghcr.io/genspectrum/dashboards/website:${WEBSITE_TAG}
     init: true
+    platform: linux/amd64
     ports:
       - "127.0.0.1:4321:4321"
     environment:

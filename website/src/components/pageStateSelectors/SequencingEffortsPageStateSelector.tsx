@@ -27,6 +27,7 @@ export function SequencingEffortsPageStateSelector({
     const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
     const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
+
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
     const newPageState = useMemo(
@@ -40,21 +41,27 @@ export function SequencingEffortsPageStateSelector({
         [location, dateRange, variantFilterConfigState],
     );
 
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.toLapisFilter(newPageState);
+    }, [newPageState]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={(location) => setLocation(location)}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={{ ...variantFilterConfigState, mutationFilterConfig: undefined }}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

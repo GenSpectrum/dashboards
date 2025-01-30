@@ -7,7 +7,7 @@ const organismOptions = {
     [Organisms.covid]: { location: 'North America' },
     [Organisms.h5n1]: { location: 'USA' },
     [Organisms.flu]: { location: 'Switzerland' },
-    [Organisms.westNile]: { location: 'USA' },
+    [Organisms.westNile]: { location: 'Austria' },
     [Organisms.rsvA]: { location: 'USA' },
     [Organisms.rsvB]: { location: 'USA' },
     [Organisms.mpox]: { location: 'USA' },

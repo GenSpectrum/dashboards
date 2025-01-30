@@ -35,16 +35,18 @@ export function CompareSideBySidePageStateSelector({
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
-    const newPageState = useMemo(() => {
-        pageState.filters.set(filterId, {
-            datasetFilter: {
-                location,
-                dateRange,
-            },
+    const { newPageState, currentLapisFilter } = useMemo(() => {
+        const filter = {
+            datasetFilter: { location, dateRange },
             variantFilter: toVariantFilter(variantFilterConfigState),
-        });
-
-        return pageState;
+        };
+        const currentLapisFilter = view.pageStateHandler.variantFilterToLapisFilter(
+            filter.datasetFilter,
+            filter.variantFilter,
+        );
+        const updatedFilters = new Map(pageState.filters);
+        updatedFilters.set(filterId, filter);
+        return { newPageState: { filters: updatedFilters }, currentLapisFilter };
     }, [location, dateRange, variantFilterConfigState, filterId, pageState]);
 
     return (
@@ -54,9 +56,10 @@ export function CompareSideBySidePageStateSelector({
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <BaselineSelector
                         onLocationChange={(location) => setLocation(location)}
-                        locationFilterConfig={locationFilterConfig}
+                        locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                         onDateRangeChange={(dateRange) => setDateRange(dateRange)}
                         dateRangeFilterConfig={dateRangeFilterConfig}
+                        lapisFilter={currentLapisFilter}
                     />
                 </div>
                 <div className='flex-grow'>
@@ -64,6 +67,7 @@ export function CompareSideBySidePageStateSelector({
                     <VariantSelector
                         onVariantFilterChange={(variantFilter) => setVariantFilterConfigState(variantFilter)}
                         variantFilterConfig={variantFilterConfigState}
+                        lapisFilter={currentLapisFilter}
                     />
                 </div>
             </div>
