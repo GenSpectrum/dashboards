@@ -51,15 +51,20 @@ export function CompareVariantsPageStateSelector({
         };
     }, [location, dateRange, variantConfigs]);
 
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.datasetFilterToLapisFilter(newPageState.datasetFilter);
+    }, [newPageState]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={setLocation}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
@@ -68,6 +73,7 @@ export function CompareVariantsPageStateSelector({
                     variantFilterConfigs={variantConfigs}
                     setVariantFilterConfigs={setVariantConfigs}
                     emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

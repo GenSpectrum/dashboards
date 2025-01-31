@@ -1,7 +1,7 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { ExtendedConstants } from '../OrganismConstants.ts';
-import { type Dataset, type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
+import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { singleVariantViewConstants } from '../ViewConstants.ts';
 import {
     getDateRangeFromSearch,
@@ -12,7 +12,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from '../helpers.ts';
-import { type PageStateHandler, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
+import { type PageStateHandler, toLapisFilterFromVariant, toLapisFilterWithoutVariant } from './PageStateHandler.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
@@ -58,12 +58,11 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
     public toLapisFilter(pageState: DatasetAndVariantData) {
         return {
             ...toLapisFilterWithoutVariant(pageState, this.constants),
-            ...pageState.variantFilter.lineages,
-            ...pageState.variantFilter.mutations,
+            ...toLapisFilterFromVariant(pageState.variantFilter),
         };
     }
 
-    public toLapisFilterWithoutVariant(pageState: Dataset): LapisFilter & LapisLocation {
+    public toLapisFilterWithoutVariant(pageState: DatasetAndVariantData): LapisFilter & LapisLocation {
         return toLapisFilterWithoutVariant(pageState, this.constants);
     }
 

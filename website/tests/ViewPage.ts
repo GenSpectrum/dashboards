@@ -12,11 +12,15 @@ export abstract class ViewPage {
     }
 
     public diagramTitle(title: string) {
-        return this.page.getByRole('heading', { name: title });
+        return this.page.getByRole('link', { name: title });
     }
 
     public async expectToSeeNoComponentErrors() {
         await expect(this.page.getByText('Error -', { exact: false })).not.toBeVisible();
         await expect(this.page.getByText('Something went wrong', { exact: false })).not.toBeVisible();
+    }
+
+    public async selectDateRange(dateRangeOption: string) {
+        await this.page.locator('gs-date-range-selector').getByRole('combobox').selectOption(dateRangeOption);
     }
 }

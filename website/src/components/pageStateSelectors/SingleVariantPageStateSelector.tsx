@@ -42,22 +42,29 @@ export function SingleVariantPageStateSelector({
         [location, dateRange, variantFilterConfigState],
     );
 
+    const currentLapisFilter = useMemo(() => {
+        return view.pageStateHandler.toLapisFilter(newPageState);
+    }, [newPageState]);
+
     return (
         <div className='flex flex-col gap-6'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <BaselineSelector
                     onLocationChange={setLocation}
-                    locationFilterConfig={locationFilterConfig}
+                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
                     onDateRangeChange={setDateRange}
                     dateRangeFilterConfig={dateRangeFilterConfig}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <div>
                 <SelectorHeadline>Variant Filter</SelectorHeadline>
+
                 <VariantSelector
                     onVariantFilterChange={setVariantFilterConfigState}
                     variantFilterConfig={variantFilterConfigState}
+                    lapisFilter={currentLapisFilter}
                 />
             </div>
             <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />

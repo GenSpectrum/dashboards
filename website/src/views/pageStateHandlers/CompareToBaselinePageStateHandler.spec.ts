@@ -23,6 +23,7 @@ const mockConstants: ExtendedConstants = {
     ],
     additionalSequencingEffortsFields: [],
     accessionDownloadFields: [],
+    useAdvancedQuery: true,
 };
 
 const mockDefaultPageState: CompareToBaselineData = {
@@ -52,6 +53,7 @@ describe('CompareToBaselinePageStateHandler', () => {
                 '&lineage=B.2.3.4&nucleotideMutations=C234G' +
                 '&lineage$1=B.1.1.7&nucleotideMutations$1=D614G' +
                 '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T' +
+                '&variantQuery$3=A123T' +
                 '&',
         );
 
@@ -67,7 +69,7 @@ describe('CompareToBaselinePageStateHandler', () => {
             },
         });
 
-        expect(pageState.variants.size).toBe(2);
+        expect(pageState.variants.size).toBe(3);
         expect(pageState.variants.get(1)).toEqual({
             lineages: { lineage: 'B.1.1.7' },
             mutations: { nucleotideMutations: ['D614G'] },
@@ -75,6 +77,9 @@ describe('CompareToBaselinePageStateHandler', () => {
         expect(pageState.variants.get(2)).toEqual({
             lineages: { lineage: 'A.1.2.3' },
             mutations: { aminoAcidMutations: ['S:A123T'] },
+        });
+        expect(pageState.variants.get(3)).toEqual({
+            variantQuery: 'A123T',
         });
     });
 
@@ -93,6 +98,12 @@ describe('CompareToBaselinePageStateHandler', () => {
                     {
                         lineages: { lineage: 'A.1.2.3' },
                         mutations: { aminoAcidMutations: ['S:A123T'] },
+                    },
+                ],
+                [
+                    3,
+                    {
+                        variantQuery: 'C234G',
                     },
                 ],
             ]),
@@ -114,6 +125,7 @@ describe('CompareToBaselinePageStateHandler', () => {
             '/testPath/compare-to-baseline?' +
                 'nucleotideMutations%241=D614G&lineage%241=B.1.1.7' +
                 '&aminoAcidMutations%242=S%3AA123T&lineage%242=A.1.2.3' +
+                '&variantQuery%243=C234G' +
                 '&country=US' +
                 '&nucleotideMutations=C234G&lineage=B.2.3.4' +
                 '&',
@@ -144,6 +156,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 },
             ],
             mutationFilterConfig: {},
+            isInVariantQueryMode: false,
+            variantQueryConfig: undefined,
         });
     });
 
@@ -165,10 +179,16 @@ describe('CompareToBaselinePageStateHandler', () => {
                         mutations: { aminoAcidMutations: ['S:A123T'] },
                     },
                 ],
+                [
+                    3,
+                    {
+                        variantQuery: 'C234G',
+                    },
+                ],
             ]),
         };
         const variantFilterConfigs = handler.toVariantFilterConfigs(pageState);
-        expect(variantFilterConfigs.size).toBe(2);
+        expect(variantFilterConfigs.size).toBe(3);
         expect(variantFilterConfigs.get(1)).toStrictEqual({
             lineageFilterConfigs: [
                 {
@@ -181,6 +201,8 @@ describe('CompareToBaselinePageStateHandler', () => {
             mutationFilterConfig: {
                 nucleotideMutations: ['D614G'],
             },
+            isInVariantQueryMode: false,
+            variantQueryConfig: undefined,
         });
 
         expect(variantFilterConfigs.get(2)).toStrictEqual({
@@ -195,6 +217,22 @@ describe('CompareToBaselinePageStateHandler', () => {
             mutationFilterConfig: {
                 aminoAcidMutations: ['S:A123T'],
             },
+            isInVariantQueryMode: false,
+            variantQueryConfig: undefined,
+        });
+
+        expect(variantFilterConfigs.get(3)).toStrictEqual({
+            lineageFilterConfigs: [
+                {
+                    lapisField: 'lineage',
+                    placeholderText: 'Lineage',
+                    filterType: 'text',
+                    initialValue: undefined,
+                },
+            ],
+            mutationFilterConfig: {},
+            isInVariantQueryMode: true,
+            variantQueryConfig: 'C234G',
         });
     });
 

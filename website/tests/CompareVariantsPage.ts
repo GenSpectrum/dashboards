@@ -28,9 +28,7 @@ export class CompareVariantsPage extends ViewPage {
 
         await lineageFieldLocator.last().fill(lineage);
 
-        const selectedLineage = this.page.getByText(lineage, { exact: true });
-        if ((await selectedLineage.count()) > 0) {
-            await selectedLineage.first().click();
-        }
+        const selectedLineage = this.page.getByRole('option', { name: lineage, exact: false });
+        await selectedLineage.first().click();
     }
 }

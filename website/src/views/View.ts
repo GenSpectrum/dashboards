@@ -5,6 +5,7 @@ import { type ViewConstants } from './ViewConstants';
 import type { LapisLineageQuery, LapisLocation, LapisMutationQuery } from './helpers.ts';
 import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
+import type { VariantFilterConfig } from '../components/pageStateSelectors/VariantFilterConfig.ts';
 import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
 
 export type DatasetFilter = {
@@ -17,8 +18,9 @@ export type Dataset = {
 };
 
 export type VariantFilter = {
-    mutations: LapisMutationQuery;
-    lineages: LapisLineageQuery;
+    mutations?: LapisMutationQuery;
+    lineages?: LapisLineageQuery;
+    variantQuery?: string;
 };
 
 export type VariantData<VariantFilterType = VariantFilter> = {
@@ -74,14 +76,30 @@ export function getLineageFilterFields(lineageFilters: LineageFilterConfig[]) {
     return lineageFilters.map((filter) => filter.lapisField);
 }
 
+export function getVariantFilterConfig(
+    lineageFilterConfigs: LineageFilterConfig[],
+    variantFilter: VariantFilter,
+    useAdvancedQuery: boolean,
+    hideMutationFilter?: boolean,
+): VariantFilterConfig {
+    const mutationFilterConfig = hideMutationFilter ? undefined : (variantFilter.mutations ?? {});
+
+    return {
+        variantQueryConfig: variantFilter.variantQuery,
+        mutationFilterConfig,
+        lineageFilterConfigs: getLineageFilterConfigs(lineageFilterConfigs, variantFilter.lineages),
+        isInVariantQueryMode: useAdvancedQuery ? variantFilter.variantQuery !== undefined : undefined,
+    };
+}
+
 export function getLineageFilterConfigs(
     lineageFilterConfigs: LineageFilterConfig[],
-    lineages: LapisLineageQuery,
+    lineages?: LapisLineageQuery,
 ): LineageFilterConfig[] {
     return lineageFilterConfigs.map((config) => {
         return {
             ...config,
-            initialValue: lineages[config.lapisField] ?? config.initialValue,
+            initialValue: (lineages ? lineages[config.lapisField] : undefined) ?? config.initialValue,
         };
     });
 }
