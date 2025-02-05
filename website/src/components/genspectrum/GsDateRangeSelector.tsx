@@ -6,7 +6,7 @@ import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
 
 export function GsDateRangeSelector({
     onDateRangeChange = () => {},
-    initialValue,
+    value,
     dateRangeOptions,
     earliestDate,
     lapisDateField,
@@ -14,7 +14,7 @@ export function GsDateRangeSelector({
 }: {
     lapisDateField: string;
     onDateRangeChange?: (dateRange: DateRangeOption) => void;
-    initialValue?: DateRangeOption;
+    value?: DateRangeOption;
     dateRangeOptions?: DateRangeOption[];
     earliestDate?: string;
     width?: string;
@@ -52,16 +52,14 @@ export function GsDateRangeSelector({
         };
     }, [dateRangeOptions, lapisDateField, onDateRangeChange, dateRangeSelectorRef]);
 
-    const isCustom = initialValue?.label === CustomDateRangeLabel;
+    const isCustom = value?.label === CustomDateRangeLabel;
 
     return (
         <gs-date-range-selector
             ref={dateRangeSelectorRef}
             dateRangeOptions={JSON.stringify(dateRangeOptions)}
             earliestDate={earliestDate}
-            initialValue={isCustom ? undefined : initialValue?.label}
-            initialDateFrom={isCustom ? initialValue.dateFrom : undefined}
-            initialDateTo={isCustom ? initialValue.dateTo : undefined}
+            value={JSON.stringify(isCustom ? value : value?.label)}
             lapisDateField={lapisDateField}
             width={width}
         ></gs-date-range-selector>
