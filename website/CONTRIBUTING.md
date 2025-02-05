@@ -24,7 +24,7 @@ We make use of some major libraries: Astro, React, Daisyui, and Tailwindcss.
 - use Astro when possible (for performance reasons)
     - however avoid script tags, since they are harder to maintain. In this case use React.
 - when possible use css over js for interactivity
-    - it often yiels less and simpler code
+    - it often yields less and simpler code
     - we can profit from browser parallelization and optimizations (modern browsers are highly optimized for parsing
       HTML and CSS - when using
       JS that's not immediately possible)
