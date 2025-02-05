@@ -25,9 +25,7 @@ We make use of some major libraries: Astro, React, Daisyui, and Tailwindcss.
     - however avoid script tags, since they are harder to maintain. In this case use React.
 - when possible use css over js for interactivity
     - it often yields less and simpler code
-    - we can profit from browser parallelization and optimizations (modern browsers are highly optimized for parsing
-      HTML and CSS - when using
-      JS that's not immediately possible)
+    - we can profit from browser parallelization and optimizations (modern browsers are highly optimized for parsing HTML and CSS - when using JS that's not immediately possible)
 - use React for interactive components
 - Use constant collection instead of strings for constants, eg.:
     ```typescript
