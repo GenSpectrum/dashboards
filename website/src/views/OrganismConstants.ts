@@ -34,7 +34,7 @@ export interface ExtendedConstants extends OrganismConstants {
 export function getAuthorRelatedSequencingEffortsFields(constants: {
     authorsField: string | undefined;
     authorAffiliationsField: string | undefined;
-}) {
+}): AdditionalSequencingEffortsField[] {
     const authorAffiliations =
         constants.authorAffiliationsField === undefined
             ? []
@@ -60,7 +60,7 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
 
 export function getPathoplexusAdditionalSequencingEffortsFields(
     constants: Parameters<typeof getAuthorRelatedSequencingEffortsFields>[0],
-) {
+): AdditionalSequencingEffortsField[] {
     return [
         {
             label: 'Pathoplexus submitting groups',
