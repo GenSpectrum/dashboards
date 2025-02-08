@@ -1,3 +1,7 @@
+/**
+ * Identification, basic styling (full name) and page styling information for an organism.
+ */
+
 import { z } from 'zod';
 
 export const Organisms = {

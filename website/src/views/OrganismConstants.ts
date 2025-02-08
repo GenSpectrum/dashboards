@@ -5,9 +5,14 @@ import type { LineageFilterConfig } from '../components/pageStateSelectors/Linea
 import type { Organism } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
+/**
+ * Organism constants are values describing an organism, that are then used as parameters for setting up
+ * a view for that organism (XX how?).
+ */
 export interface OrganismConstants {
     readonly organism: Organism;
     readonly dataOrigins: DataOrigin[];
+    /** XX what is this? */
     readonly accessionDownloadFields: string[];
 }
 
@@ -16,12 +21,18 @@ export const ComponentHeight = {
     small: '300px',
 } as const;
 
+/**
+ * XX, used in mbox and westNile views
+ */
 export interface AdditionalSequencingEffortsField {
     readonly label: string;
     readonly fields: string[];
     readonly height: (typeof ComponentHeight)[keyof typeof ComponentHeight];
 }
 
+/**
+ * XX, used in all(?) views
+ */
 export interface ExtendedConstants extends OrganismConstants {
     readonly locationFields: string[];
     readonly mainDateField: string;
@@ -36,7 +47,7 @@ export interface ExtendedConstants extends OrganismConstants {
 export function getAuthorRelatedSequencingEffortsFields(constants: {
     authorsField: string | undefined;
     authorAffiliationsField: string | undefined;
-}) {
+}): AdditionalSequencingEffortsField[] {
     const authorAffiliations =
         constants.authorAffiliationsField === undefined
             ? []
@@ -62,7 +73,7 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
 
 export function getPathoplexusAdditionalSequencingEffortsFields(
     constants: Parameters<typeof getAuthorRelatedSequencingEffortsFields>[0],
-) {
+): AdditionalSequencingEffortsField[] {
     return [
         {
             label: 'Pathoplexus submitting groups',
