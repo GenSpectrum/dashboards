@@ -11,4 +11,9 @@ export default defineConfig({
     adapter: node({
         mode: 'standalone',
     }),
+    vite: {
+        build: {
+            minify: 'esbuild',
+        },
+    },
 });
