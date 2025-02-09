@@ -94,5 +94,6 @@ npm i ../../dashboard-components/components
 
 > Note: You need to rebuild the components every time you make changes to them.
 > Otherwise the changes will not be visible in the dashboards.
+> `npm i ../../dashboard-components/components` only has to be executed once, though.
 
 This makes use of https://docs.npmjs.com/cli/v9/configuring-npm/package-json#local-paths.
