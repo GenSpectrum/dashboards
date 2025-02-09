@@ -22,6 +22,7 @@
         "@astrojs/node": "^9.0.2",
         "@auth/core": "^0.37.4",
         "@genspectrum/dashboard-components": "^0.13.6",
+        "@playform/compress": "^0.1.7",
         "@tanstack/react-query": "^5.65.0",
         "astro": "^5.1.10",
         "auth-astro": "^4.2.0",
