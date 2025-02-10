@@ -23,7 +23,7 @@ We value clean code, here are some guidelines on what we consider clean code:
 
 The website shows dashboards for several organisms.
 The data sources are publicly available instances of [LAPIS](https://github.com/GenSpectrum/LAPIS) (one for each organism).
-Every organism has several views on the data.
+Every organism has several views on the data. "View" here means the whole page as displayed in the browser, each with their own base URL, which is mirroring the sub-paths of the `.astro` files in `website/src/pages/`.
 The different views of an organism highlight different aspects of the data,
 but they use the same LAPIS instance.
 
