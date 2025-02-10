@@ -63,7 +63,7 @@ We make use of some major libraries: Astro, React, DaisyUI, and Tailwindcss.
 
 - Render pages using Astro when possible
     - Astro renders HTML on the server, which is faster than rendering on the client.
-    - Avoid client side JavaScript code in Astro components.
+    - Avoid vanilla client side JavaScript code in Astro components.
       If you need interactivity in the browser, then you should use React.
 - when possible use CSS over JavaScript for interactivity (e.g. for modals, dropdowns, etc.)
     - it often yields less and simpler code
