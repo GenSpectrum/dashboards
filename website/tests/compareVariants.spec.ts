@@ -12,6 +12,7 @@ const organismOptions = {
     [Organisms.rsvA]: { lineage: 'A.D.5.2', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvB]: { lineage: 'B.D.E.1', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.mpox]: { lineage: 'F.1', lineageFieldPlaceholder: 'Lineage' },
+    [Organisms.ebolaZaire]: { mutation: 'T18365C' },
 };
 
 test.describe('The Compare Variants page', () => {
@@ -24,8 +25,8 @@ test.describe('The Compare Variants page', () => {
             await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).not.toBeVisible();
 
             await compareVariantsPage.selectDateRange('All times');
-            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
-            await compareVariantsPage.addVariant(options.lineageFieldPlaceholder, options.lineage);
+            await compareVariantsPage.addVariant(options);
+            await compareVariantsPage.addVariant(options);
             await compareVariantsPage.submitFilters();
 
             await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).toBeVisible();
