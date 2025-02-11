@@ -85,6 +85,9 @@ dashboards:
         accessionDownloadFields:
           - "insdcAccessionFull"
           - "accessionVersion"
+          - "dataUseTerms"
+          - "dataUseTermsUrl"
+          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/mpox"
           label: "Browse data"
@@ -105,6 +108,9 @@ dashboards:
         accessionDownloadFields:
           - "insdcAccessionFull"
           - "accessionVersion"
+          - "dataUseTerms"
+          - "dataUseTermsUrl"
+          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/west-nile"
           label: "Browse data"

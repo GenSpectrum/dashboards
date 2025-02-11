@@ -43,7 +43,7 @@ export function BaselineSelector({
                 lapisDateField={dateRangeFilterConfig.dateColumn}
                 onDateRangeChange={onDateRangeChange}
                 earliestDate={dateRangeFilterConfig.earliestDate}
-                initialValue={dateRangeFilterConfig.initialDateRange}
+                value={dateRangeFilterConfig.initialDateRange}
                 dateRangeOptions={dateRangeFilterConfig.dateRangeOptions}
             ></GsDateRangeSelector>
         </div>
