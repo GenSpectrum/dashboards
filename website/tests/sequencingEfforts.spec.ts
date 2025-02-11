@@ -12,6 +12,7 @@ const organismOptions = {
     [Organisms.rsvB]: { location: 'USA' },
     [Organisms.mpox]: { location: 'USA' },
     [Organisms.ebolaZaire]: { location: 'Gabon' },
+    [Organisms.cchf]: { location: 'Turkey' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
