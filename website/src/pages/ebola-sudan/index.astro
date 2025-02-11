@@ -1,0 +1,11 @@
+---
+import { Organisms } from '../../types/Organism';
+import { ServerSide } from '../../views/serverSideRouting';
+import { singleVariantViewKey } from '../../views/viewKeys';
+
+return Astro.redirect(
+    ServerSide.routing
+        .getOrganismView(`${Organisms.ebolaSudan}.${singleVariantViewKey}`)
+        .pageStateHandler.getDefaultPageUrl(),
+);
+---
