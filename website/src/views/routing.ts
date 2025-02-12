@@ -77,50 +77,50 @@ export class Routing {
     constructor(organismsConfig: OrganismsConfig) {
         this.views = {
             [Organisms.covid]: {
-                [singleVariantViewKey]: new CovidAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new CovidCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new CovidSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new CovidAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new CovidCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new CovidCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new CovidCompareSideBySideView(organismsConfig),
             },
             [Organisms.h5n1]: {
-                [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new H5n1SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new H5n1CompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
             },
             [Organisms.flu]: {
-                [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new FluSequencingEffortsView(organismsConfig),
+                [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
             },
             [Organisms.rsvA]: {
-                [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new RsvACompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new RsvACompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new RsvACompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new RsvACompareSideBySideView(organismsConfig),
             },
             [Organisms.rsvB]: {
-                [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new RsvBCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvBSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new RsvBCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new RsvBCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new RsvBCompareSideBySideView(organismsConfig),
             },
             [Organisms.westNile]: {
-                [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new WestNileCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new WestNileCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new WestNileCompareSideBySideView(organismsConfig),
             },
             [Organisms.mpox]: {
-                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new MpoxCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new MpoxSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new MpoxCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new MpoxCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new MpoxCompareSideBySideView(organismsConfig),
             },
         } as const;
 
