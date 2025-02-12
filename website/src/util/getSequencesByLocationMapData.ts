@@ -7,25 +7,30 @@ let knownMapFiles: ReturnType<typeof loadKnownMapFiles> | null = null;
 
 /* eslint-disable @typescript-eslint/naming-convention -- the keys must match the country names */
 const mapMetadata: Record<string, Omit<MapData, 'mapSource'>> = {
-    Germany: {
+    'Germany': {
         zoom: 5.8,
         offsetX: 10,
         offsetY: 51.4,
     },
-    Switzerland: {
+    'Switzerland': {
         zoom: 7.7,
         offsetX: 8.2,
         offsetY: 46.8,
     },
-    USA: {
+    'USA': {
         zoom: 4.1,
         offsetX: -98,
         offsetY: 38,
     },
-    World: {
+    'World': {
         zoom: 1.5,
         offsetX: 0,
         offsetY: 10,
+    },
+    'Democratic Republic of the Congo': {
+        zoom: 5,
+        offsetX: 20,
+        offsetY: -5,
     },
 };
 /* eslint-enable @typescript-eslint/naming-convention */
