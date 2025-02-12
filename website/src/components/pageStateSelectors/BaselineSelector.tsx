@@ -1,9 +1,9 @@
 import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { DatasetFilter } from '../../views/View.ts';
-import { GsDateRangeSelector } from '../genspectrum/GsDateRangeSelector.tsx';
+import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter.tsx';
 import { GsLocationFilter } from '../genspectrum/GsLocationFilter.tsx';
-import { GsTextInput } from '../genspectrum/GsTextInput.tsx';
+import { GsTextFilter } from '../genspectrum/GsTextFilter.tsx';
 
 export type LocationFilterConfig = {
     locationFields: string[];
@@ -77,7 +77,7 @@ export function BaselineSelector({
                                     <div className='label'>
                                         <span className='label-text'>{config.label ?? config.dateColumn}</span>
                                     </div>
-                                    <GsDateRangeSelector
+                                    <GsDateRangeFilter
                                         lapisDateField={config.dateColumn}
                                         onDateRangeChange={(newDateRange) => {
                                             setDatasetFilter({
@@ -91,7 +91,7 @@ export function BaselineSelector({
                                         earliestDate={config.earliestDate}
                                         value={datasetFilter.dateFilters[config.dateColumn]}
                                         dateRangeOptions={config.dateRangeOptions}
-                                    ></GsDateRangeSelector>
+                                    />
                                 </label>
                             );
                         }
@@ -101,7 +101,7 @@ export function BaselineSelector({
                                     <div className='label'>
                                         <span className='label-text'>{config.label ?? config.lapisField}</span>
                                     </div>
-                                    <GsTextInput
+                                    <GsTextFilter
                                         value={datasetFilter.textFilters[config.lapisField]}
                                         lapisField={config.lapisField}
                                         placeholderText={config.placeholderText}
@@ -115,7 +115,7 @@ export function BaselineSelector({
                                             });
                                         }}
                                         lapisFilter={lapisFilter}
-                                    ></GsTextInput>
+                                    />
                                 </label>
                             );
                         }
