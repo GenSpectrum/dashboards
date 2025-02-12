@@ -51,7 +51,7 @@ class WestNileConstants implements ExtendedConstants {
             earliestDate: '1999-01-01',
             defaultDateRange: dateRangeOptionPresets.lastYear,
             dateColumn: 'sampleCollectionDateRangeLower',
-            label: 'Sample collection date range lower',
+            label: 'Sample collection date',
         },
     ];
     public readonly useAdvancedQuery = false;
