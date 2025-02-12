@@ -62,7 +62,7 @@ class MpoxConstants implements ExtendedConstants {
             earliestDate: '1960-01-01',
             defaultDateRange: dateRangeOptionPresets.lastYear,
             dateColumn: 'sampleCollectionDateRangeLower',
-            label: 'Sample collection date lower',
+            label: 'Sample collection date',
         },
     ];
     public readonly hostField: string;
