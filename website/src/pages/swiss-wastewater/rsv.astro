@@ -1,4 +1,6 @@
 ---
+import type { SequenceType } from '@genspectrum/dashboard-components/util';
+
 import RsvWastewaterInfo from '../../components/RsvWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
@@ -26,17 +28,22 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
         <div class='m-4 flex flex-col gap-4'>
             {
                 RSVTypes.map((reference) => (
-                    <GsWastewaterMutationsOverTime
-                        title={reference}
-                        lapisFilter={{
-                            reference,
-                            versionStatus: 'LATEST_VERSION',
-                            isRevocation: false,
-                        }}
-                        sequenceType='nucleotide'
-                    >
-                        <RsvWastewaterInfo slot='infoText' reference={reference} />
-                    </GsWastewaterMutationsOverTime>
+                    <>
+                        <h2 class='text-2xl'>{reference}</h2>
+                        {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                            <GsWastewaterMutationsOverTime
+                                title={`${sequenceType} mutations`}
+                                lapisFilter={{
+                                    reference,
+                                    versionStatus: 'LATEST_VERSION',
+                                    isRevocation: false,
+                                }}
+                                sequenceType={sequenceType}
+                            >
+                                <RsvWastewaterInfo slot='infoText' reference={reference} sequenceType={sequenceType} />
+                            </GsWastewaterMutationsOverTime>
+                        ))}
+                    </>
                 ))
             }
         </div>
