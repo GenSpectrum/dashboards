@@ -1,4 +1,6 @@
 ---
+import { views } from '@genspectrum/dashboard-components/util';
+
 import SelectVariant from './SelectVariant.astro';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
@@ -116,17 +118,20 @@ const downloadLinks = noVariantSelected
                             title={subdivisionLabel}
                             fields={[subdivisionField]}
                             lapisFilter={variantLapisFilter}
+                            views={[views.table, views.bar]}
                         />
                     )}
                     <GsAggregate
                         title='Clades and lineages'
                         fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
                         lapisFilter={variantLapisFilter}
+                        views={[views.table, views.bar]}
                     />
                     <GsAggregate
                         title='Hosts'
                         fields={[view.organismConstants.hostField]}
                         lapisFilter={variantLapisFilter}
+                        views={[views.table, views.bar]}
                     />
                 </ComponentsGrid>
                 <GsMutationsOverTime

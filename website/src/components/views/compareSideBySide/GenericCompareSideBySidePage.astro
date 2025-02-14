@@ -1,4 +1,6 @@
 ---
+import { views } from '@genspectrum/dashboard-components/util';
+
 import { toDownloadLink } from './toDownloadLink';
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
@@ -117,11 +119,13 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                 title='Sub-lineages'
                                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
                                 lapisFilter={numeratorFilter}
+                                views={[views.table, views.bar]}
                             />
                             <GsAggregate
                                 title='Hosts'
                                 fields={[view.organismConstants.hostField]}
                                 lapisFilter={numeratorFilter}
+                                views={[views.table, views.bar]}
                             />
                         </div>
                     );
