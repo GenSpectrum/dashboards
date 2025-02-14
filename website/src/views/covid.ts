@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, views } from '@genspectrum/dashboard-components/util';
 
 import {
     getIntegerFromSearch,
@@ -78,11 +78,25 @@ class CovidConstants implements ExtendedConstants {
         const originatingLab =
             this.originatingLabField === undefined
                 ? []
-                : [{ label: 'Originating lab', fields: [this.originatingLabField], height: ComponentHeight.large }];
+                : [
+                      {
+                          label: 'Originating lab',
+                          fields: [this.originatingLabField],
+                          height: ComponentHeight.large,
+                          views: [views.table],
+                      },
+                  ];
         const submittingLab =
             this.submittingLabField === undefined
                 ? []
-                : [{ label: 'Submitting lab ', fields: [this.submittingLabField], height: ComponentHeight.large }];
+                : [
+                      {
+                          label: 'Submitting lab ',
+                          fields: [this.submittingLabField],
+                          height: ComponentHeight.large,
+                          views: [views.table],
+                      },
+                  ];
         return [...originatingLab, ...submittingLab];
     }
 

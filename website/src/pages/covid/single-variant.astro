@@ -1,4 +1,6 @@
 ---
+import { views } from '@genspectrum/dashboard-components/util';
+
 import ComponentsGrid from '../../components/ComponentsGrid.astro';
 import GsAggregate from '../../components/genspectrum/GsAggregate.astro';
 import GsMutations from '../../components/genspectrum/GsMutations.astro';
@@ -125,14 +127,21 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                         title='Sub-lineages'
                         fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
                         lapisFilter={variantFilter}
+                        views={[views.table, views.bar]}
                     />
                     {subdivisionField !== undefined && (
-                        <GsAggregate title={subdivisionLabel} fields={[subdivisionField]} lapisFilter={variantFilter} />
+                        <GsAggregate
+                            title={subdivisionLabel}
+                            fields={[subdivisionField]}
+                            lapisFilter={variantFilter}
+                            views={[views.table, views.bar]}
+                        />
                     )}
                     <GsAggregate
                         title='Hosts'
                         fields={[view.organismConstants.hostField]}
                         lapisFilter={variantFilter}
+                        views={[views.table, views.bar]}
                     />
                 </ComponentsGrid>
 

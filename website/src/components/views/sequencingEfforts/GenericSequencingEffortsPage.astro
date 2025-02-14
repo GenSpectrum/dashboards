@@ -1,4 +1,6 @@
 ---
+import { views } from '@genspectrum/dashboard-components/util';
+
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
@@ -96,15 +98,17 @@ const variantFilterConfig = getVariantFilterConfig(
             height={ComponentHeight.large}
             fields={[view.organismConstants.hostField]}
             lapisFilter={lapisFilter}
+            views={[views.table, views.bar]}
         />
         <GsAggregate
             title='Sub-lineages'
             fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
             lapisFilter={lapisFilter}
+            views={[views.table, views.bar]}
         />
         {
-            view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height }) => (
-                <GsAggregate title={label} height={height} fields={fields} lapisFilter={lapisFilter} />
+            view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height, views }) => (
+                <GsAggregate title={label} height={height} fields={fields} lapisFilter={lapisFilter} views={views} />
             ))
         }
     </ComponentsGrid>
