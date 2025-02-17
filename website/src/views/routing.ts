@@ -1,6 +1,13 @@
 import type { OrganismConstants } from './OrganismConstants.ts';
 import type { View } from './View.ts';
 import {
+    CchfAnalyzeSingleVariantView,
+    CchfCompareSideBySideView,
+    CchfCompareToBaselineView,
+    CchfCompareVariantsView,
+    CchfSequencingEffortsView,
+} from './cchf.ts';
+import {
     CovidAnalyzeSingleVariantView,
     CovidCompareSideBySideView,
     CovidCompareToBaselineView,
@@ -136,6 +143,13 @@ export class Routing {
                 [compareToBaselineViewKey]: new EbolaZaireCompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new EbolaZaireCompareSideBySideView(organismsConfig),
             },
+            [Organisms.cchf]: {
+                [sequencingEffortsViewKey]: new CchfSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new CchfAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new CchfCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new CchfCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new CchfCompareSideBySideView(organismsConfig),
+            },
         } as const;
 
         this.externalPages = this.initializeExternalPages(organismsConfig);
@@ -159,6 +173,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.mpox]);
             case Organisms.ebolaZaire:
                 return Object.values(this.views[Organisms.ebolaZaire]);
+            case Organisms.cchf:
+                return Object.values(this.views[Organisms.cchf]);
         }
     }
 

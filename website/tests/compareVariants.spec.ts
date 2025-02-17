@@ -13,6 +13,7 @@ const organismOptions = {
     [Organisms.rsvB]: { lineage: 'B.D.E.1', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.mpox]: { lineage: 'F.1', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.ebolaZaire]: { mutation: 'T18365C' },
+    [Organisms.cchf]: { mutation: 'M:G3565A' },
 };
 
 test.describe('The Compare Variants page', () => {

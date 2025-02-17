@@ -176,6 +176,29 @@ dashboards:
         - url: "https://pathoplexus.org/ebola-zaire"
           label: "Browse data"
           menuIcon: "database"
+    cchf:
+      lapis:
+        url: "https://lapis.pathoplexus.org/cchf"
+        mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
+        hostField: "hostNameScientific"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
+          - "accessionVersion"
+          - "dataUseTerms"
+          - "dataUseTermsUrl"
+          - "dataUseTermsRestrictedUntil"
+      externalNavigationLinks:
+        - url: "https://pathoplexus.org/cchf"
+          label: "Browse data"
+          menuIcon: "database"
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"
