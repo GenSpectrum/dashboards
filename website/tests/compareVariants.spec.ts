@@ -12,6 +12,7 @@ const organismOptions = {
     [Organisms.rsvA]: { lineage: 'A.D.5.2', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvB]: { lineage: 'B.D.E.1', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.mpox]: { lineage: 'F.1', lineageFieldPlaceholder: 'Lineage' },
+    [Organisms.ebolaSudan]: { mutation: 'G5902T' },
     [Organisms.ebolaZaire]: { mutation: 'T18365C' },
     [Organisms.cchf]: { mutation: 'M:G3565A' },
 };

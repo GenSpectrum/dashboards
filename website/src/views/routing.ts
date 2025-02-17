@@ -15,6 +15,13 @@ import {
     CovidSequencingEffortsView,
 } from './covid.ts';
 import {
+    EbolaSudanAnalyzeSingleVariantView,
+    EbolaSudanCompareSideBySideView,
+    EbolaSudanCompareToBaselineView,
+    EbolaSudanCompareVariantsView,
+    EbolaSudanSequencingEffortsView,
+} from './ebolaSudan.ts';
+import {
     EbolaZaireAnalyzeSingleVariantView,
     EbolaZaireCompareSideBySideView,
     EbolaZaireCompareToBaselineView,
@@ -36,6 +43,7 @@ import {
     MpoxCompareVariantsView,
     MpoxSequencingEffortsView,
 } from './mpox.ts';
+import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import type { PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import {
     RsvAAnalyzeSingleVariantView,
@@ -51,7 +59,6 @@ import {
     RsvBCompareVariantsView,
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
-import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import {
     compareSideBySideViewKey,
     compareToBaselineViewKey,
@@ -136,6 +143,13 @@ export class Routing {
                 [compareToBaselineViewKey]: new MpoxCompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new MpoxCompareSideBySideView(organismsConfig),
             },
+            [Organisms.ebolaSudan]: {
+                [sequencingEffortsViewKey]: new EbolaSudanSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new EbolaSudanAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new EbolaSudanCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new EbolaSudanCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new EbolaSudanCompareSideBySideView(organismsConfig),
+            },
             [Organisms.ebolaZaire]: {
                 [sequencingEffortsViewKey]: new EbolaZaireSequencingEffortsView(organismsConfig),
                 [singleVariantViewKey]: new EbolaZaireAnalyzeSingleVariantView(organismsConfig),
@@ -173,6 +187,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.mpox]);
             case Organisms.ebolaZaire:
                 return Object.values(this.views[Organisms.ebolaZaire]);
+            case Organisms.ebolaSudan:
+                return Object.values(this.views[Organisms.ebolaSudan]);
             case Organisms.cchf:
                 return Object.values(this.views[Organisms.cchf]);
         }

@@ -11,6 +11,7 @@ const organismOptions = {
     [Organisms.rsvA]: { location: 'USA' },
     [Organisms.rsvB]: { location: 'USA' },
     [Organisms.mpox]: { location: 'USA' },
+    [Organisms.ebolaSudan]: { location: 'Uganda' },
     [Organisms.ebolaZaire]: { location: 'Gabon' },
     [Organisms.cchf]: { location: 'Turkey' },
 };
