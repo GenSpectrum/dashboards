@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 
 import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
 
-export function GsDateRangeSelector({
+export function GsDateRangeFilter({
     onDateRangeChange = () => {},
     value,
     dateRangeOptions,
@@ -55,13 +55,13 @@ export function GsDateRangeSelector({
     const isCustom = value?.label === CustomDateRangeLabel;
 
     return (
-        <gs-date-range-selector
+        <gs-date-range-filter
             ref={dateRangeSelectorRef}
             dateRangeOptions={JSON.stringify(dateRangeOptions)}
             earliestDate={earliestDate}
             value={JSON.stringify(isCustom ? value : value?.label)}
             lapisDateField={lapisDateField}
             width={width}
-        ></gs-date-range-selector>
+        ></gs-date-range-filter>
     );
 }

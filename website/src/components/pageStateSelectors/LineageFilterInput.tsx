@@ -1,7 +1,7 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter.tsx';
-import { GsTextInput } from '../genspectrum/GsTextInput.tsx';
+import { GsTextFilter } from '../genspectrum/GsTextFilter.tsx';
 
 export type LineageFilterConfig = {
     initialValue: string | undefined;
@@ -33,7 +33,7 @@ export function LineageFilterInput({
 
         case 'text':
             return (
-                <GsTextInput
+                <GsTextFilter
                     lapisField={lineageFilterConfig.lapisField}
                     placeholderText={lineageFilterConfig.placeholderText}
                     onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}

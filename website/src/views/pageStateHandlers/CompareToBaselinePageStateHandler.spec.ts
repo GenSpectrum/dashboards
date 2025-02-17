@@ -5,13 +5,13 @@ import type { ExtendedConstants } from '../OrganismConstants.ts';
 import type { CompareToBaselineData } from '../View.ts';
 import { CompareToBaselineStateHandler } from './CompareToBaselinePageStateHandler.ts';
 
+const mockDateRangeOption = { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' };
+
 const mockConstants: ExtendedConstants = {
     organism: Organisms.covid,
     dataOrigins: [],
     locationFields: ['country', 'region'],
     mainDateField: 'date',
-    dateRangeOptions: [{ label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' }],
-    defaultDateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
     additionalFilters: undefined,
     lineageFilters: [
         {
@@ -24,13 +24,29 @@ const mockConstants: ExtendedConstants = {
     additionalSequencingEffortsFields: [],
     accessionDownloadFields: [],
     useAdvancedQuery: true,
+    baselineFilterConfigs: [
+        {
+            type: 'text',
+            lapisField: 'someTextField',
+            placeholderText: 'Some text field',
+            label: 'Some text field',
+        },
+        {
+            type: 'date',
+            dateRangeOptions: [mockDateRangeOption],
+            earliestDate: '1999-01-01',
+            defaultDateRange: mockDateRangeOption,
+            dateColumn: 'date',
+        },
+    ],
 };
 
 const mockDefaultPageState: CompareToBaselineData = {
     variants: new Map(),
     datasetFilter: {
         location: {},
-        dateRange: { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' },
+        dateFilters: { date: mockDateRangeOption },
+        textFilters: {},
     },
     baselineFilter: {
         lineages: {},
@@ -49,18 +65,19 @@ describe('CompareToBaselinePageStateHandler', () => {
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
             'http://example.com/testPath/compare-to-baseline?' +
-                'country=US&date=Last 7 Days' +
+                'columns=3' +
+                '&country=US&date=Last 7 Days' +
                 '&lineage=B.2.3.4&nucleotideMutations=C234G' +
-                '&lineage$1=B.1.1.7&nucleotideMutations$1=D614G' +
-                '&lineage$2=A.1.2.3&aminoAcidMutations$2=S:A123T' +
-                '&variantQuery$3=A123T' +
+                '&lineage$0=B.1.1.7&nucleotideMutations$0=D614G' +
+                '&lineage$1=A.1.2.3&aminoAcidMutations$1=S:A123T' +
+                '&variantQuery$2=A123T' +
                 '&',
         );
 
         const pageState = handler.parsePageStateFromUrl(url);
 
         expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
-        expect(pageState.datasetFilter.dateRange).toEqual(mockConstants.defaultDateRange);
+        expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
 
         expect(pageState.baselineFilter).toEqual({
             lineages: { lineage: 'B.2.3.4' },
@@ -70,15 +87,15 @@ describe('CompareToBaselinePageStateHandler', () => {
         });
 
         expect(pageState.variants.size).toBe(3);
-        expect(pageState.variants.get(1)).toEqual({
+        expect(pageState.variants.get(0)).toEqual({
             lineages: { lineage: 'B.1.1.7' },
             mutations: { nucleotideMutations: ['D614G'] },
         });
-        expect(pageState.variants.get(2)).toEqual({
+        expect(pageState.variants.get(1)).toEqual({
             lineages: { lineage: 'A.1.2.3' },
             mutations: { aminoAcidMutations: ['S:A123T'] },
         });
-        expect(pageState.variants.get(3)).toEqual({
+        expect(pageState.variants.get(2)).toEqual({
             variantQuery: 'A123T',
         });
     });
@@ -87,21 +104,21 @@ describe('CompareToBaselinePageStateHandler', () => {
         const pageState: CompareToBaselineData = {
             variants: new Map([
                 [
-                    1,
+                    0,
                     {
                         lineages: { lineage: 'B.1.1.7' },
                         mutations: { nucleotideMutations: ['D614G'] },
                     },
                 ],
                 [
-                    2,
+                    1,
                     {
                         lineages: { lineage: 'A.1.2.3' },
                         mutations: { aminoAcidMutations: ['S:A123T'] },
                     },
                 ],
                 [
-                    3,
+                    2,
                     {
                         variantQuery: 'C234G',
                     },
@@ -109,7 +126,8 @@ describe('CompareToBaselinePageStateHandler', () => {
             ]),
             datasetFilter: {
                 location: { country: 'US' },
-                dateRange: mockConstants.defaultDateRange,
+                dateFilters: { date: mockDateRangeOption },
+                textFilters: {},
             },
             baselineFilter: {
                 lineages: {
@@ -123,10 +141,11 @@ describe('CompareToBaselinePageStateHandler', () => {
         const url = handler.toUrl(pageState);
         expect(url).toBe(
             '/testPath/compare-to-baseline?' +
-                'nucleotideMutations%241=D614G&lineage%241=B.1.1.7' +
-                '&aminoAcidMutations%242=S%3AA123T&lineage%242=A.1.2.3' +
-                '&variantQuery%243=C234G' +
-                '&country=US' +
+                'columns=3' +
+                '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
+                '&aminoAcidMutations%241=S%3AA123T&lineage%241=A.1.2.3' +
+                '&variantQuery%242=C234G' +
+                '&country=US&date=Last+7+Days' +
                 '&nucleotideMutations=C234G&lineage=B.2.3.4' +
                 '&',
         );

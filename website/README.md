@@ -80,7 +80,7 @@ For development, it might be useful to use your local version of the
 [dashboard-components](https://github.com/GenSpectrum/dashboard-components):
 
 0. Stop the current `npm run dev` process.
-1. Build the components locally by running `npm run build` in the components directory
+1. Build the components locally by running `npm run build` in the components directory (if that runs out of memory, you may have to `export NODE_OPTIONS=--max_old_space_size=4096`)
 2. Install the local components
    (assuming that you have cloned the dashboards and the dashboard-components into the same directory):
 
@@ -94,5 +94,6 @@ npm i ../../dashboard-components/components
 
 > Note: You need to rebuild the components every time you make changes to them.
 > Otherwise the changes will not be visible in the dashboards.
+> `npm i ../../dashboard-components/components` only has to be executed once, though.
 
 This makes use of https://docs.npmjs.com/cli/v9/configuring-npm/package-json#local-paths.

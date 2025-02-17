@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
 
-export function GsTextInput<LapisField extends string>({
+export function GsTextFilter<LapisField extends string>({
     lapisField,
     placeholderText,
     lapisFilter,
@@ -27,24 +27,24 @@ export function GsTextInput<LapisField extends string>({
 
         const currentInputRef = textInputRef.current;
         if (currentInputRef !== undefined) {
-            currentInputRef.addEventListener('gs-text-input-changed', handleTextInputChange);
+            currentInputRef.addEventListener('gs-text-filter-changed', handleTextInputChange);
         }
 
         return () => {
             if (currentInputRef !== undefined) {
-                currentInputRef.removeEventListener('gs-text-input-changed', handleTextInputChange);
+                currentInputRef.removeEventListener('gs-text-filter-changed', handleTextInputChange);
             }
         };
     }, [onInputChange]);
 
     return (
-        <gs-text-input
+        <gs-text-filter
             ref={textInputRef}
             lapisField={lapisField}
             placeholderText={placeholderText}
             lapisFilter={JSON.stringify(lapisFilter)}
             width={width}
             value={value ?? ''}
-        ></gs-text-input>
+        ></gs-text-filter>
     );
 }

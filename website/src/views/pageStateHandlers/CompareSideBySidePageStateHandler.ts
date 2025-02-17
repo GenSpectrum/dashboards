@@ -3,31 +3,30 @@ import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import type { ExtendedConstants } from '../OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from '../View.ts';
 import { compareSideBySideViewConstants } from '../ViewConstants.ts';
-import type { CovidCompareSideBySideData } from '../covid.ts';
 import {
-    getDateRangeFromSearch,
     getLapisLocationFromSearch,
     getLapisVariantQuery,
-    setSearchFromDateRange,
     setSearchFromLapisVariantQuery,
     setSearchFromLocation,
 } from '../helpers.ts';
 import {
     decodeFiltersFromSearch,
     type PageStateHandler,
+    parseDateRangesFromUrl,
+    parseTextFiltersFromUrl,
     searchParamsFromFilterMap,
+    setSearchFromDateFilters,
+    setSearchFromTextFilters,
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
-export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAndVariantData = DatasetAndVariantData>
-    implements PageStateHandler<CompareSideBySideData<ColumnData>>
-{
+export class CompareSideBySideStateHandler implements PageStateHandler<CompareSideBySideData> {
     protected readonly pathname;
 
     constructor(
         protected readonly constants: ExtendedConstants,
-        protected readonly defaultPageState: CompareSideBySideData<ColumnData>,
+        protected readonly defaultPageState: CompareSideBySideData,
         pathFragment: string,
     ) {
         this.pathname = `/${pathFragment}/${compareSideBySideViewConstants.pathFragment}`;
@@ -37,10 +36,10 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
         return this.toUrl(this.defaultPageState);
     }
 
-    public parsePageStateFromUrl(url: URL): CompareSideBySideData<ColumnData> {
+    public parsePageStateFromUrl(url: URL): CompareSideBySideData {
         const filterPerColumn = decodeFiltersFromSearch(url.searchParams);
 
-        const filters = new Map<number, ColumnData>();
+        const filters = new Map<number, DatasetAndVariantData>();
         for (const [columnId, filterParams] of filterPerColumn) {
             filters.set(columnId, this.getFilter(filterParams));
         }
@@ -50,7 +49,7 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
         };
     }
 
-    public toUrl(pageState: CompareSideBySideData<ColumnData>): string {
+    public toUrl(pageState: CompareSideBySideData): string {
         const search = searchParamsFromFilterMap(pageState.filters, (search, variant) =>
             this.writeColumnDataToSearchParams(search, variant),
         );
@@ -59,10 +58,10 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
     }
 
     public setFilter(
-        pageState: CompareSideBySideData<ColumnData>,
-        newFilter: ColumnData,
+        pageState: CompareSideBySideData,
+        newFilter: DatasetAndVariantData,
         columnId: Id,
-    ): CovidCompareSideBySideData {
+    ): CompareSideBySideData {
         const filtersPerColumn = new Map(pageState.filters);
 
         filtersPerColumn.set(columnId, newFilter);
@@ -71,13 +70,13 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
         };
     }
 
-    public addEmptyFilter(pageState: CompareSideBySideData<ColumnData>): CovidCompareSideBySideData {
+    public addEmptyFilter(pageState: CompareSideBySideData): CompareSideBySideData {
         const newId = pageState.filters.size === 0 ? 0 : Math.max(...Array.from(pageState.filters.keys())) + 1;
 
         return this.setFilter(pageState, this.getEmptyColumnData(), newId);
     }
 
-    public removeFilter(pageState: CompareSideBySideData<ColumnData>, columnId: number): CovidCompareSideBySideData {
+    public removeFilter(pageState: CompareSideBySideData, columnId: number): CompareSideBySideData {
         const filters = new Map(pageState.filters);
         filters.delete(columnId);
         return {
@@ -85,19 +84,24 @@ export abstract class CompareSideBySideStateHandler<ColumnData extends DatasetAn
         };
     }
 
-    public abstract variantFilterToLapisFilter(
-        datasetFilter: ColumnData['datasetFilter'],
-        variantFilter: ColumnData['variantFilter'],
-    ): LapisFilter;
+    public variantFilterToLapisFilter(
+        datasetFilter: DatasetAndVariantData['datasetFilter'],
+        variantFilter: DatasetAndVariantData['variantFilter'],
+    ): LapisFilter {
+        if (variantFilter.variantQuery) {
+            return {
+                variantQuery: variantFilter.variantQuery,
+                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants.additionalFilters),
+            };
+        } else {
+            return {
+                ...variantFilter.lineages,
+                ...variantFilter.mutations,
+                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants.additionalFilters),
+            };
+        }
+    }
 
-    protected abstract writeColumnDataToSearchParams(searchOfFilter: URLSearchParams, filter: ColumnData): void;
-
-    protected abstract getEmptyColumnData(): ColumnData;
-
-    protected abstract getFilter(filterParams: Map<string, string>): ColumnData;
-}
-
-export class GenericCompareSideBySideStateHandler extends CompareSideBySideStateHandler {
     protected writeColumnDataToSearchParams(searchOfFilter: URLSearchParams, filter: DatasetAndVariantData): void {
         setSearchFromLapisVariantQuery(
             searchOfFilter,
@@ -105,14 +109,16 @@ export class GenericCompareSideBySideStateHandler extends CompareSideBySideState
             getLineageFilterFields(this.constants.lineageFilters),
         );
         setSearchFromLocation(searchOfFilter, filter.datasetFilter.location);
-        setSearchFromDateRange(searchOfFilter, this.constants.mainDateField, filter.datasetFilter.dateRange);
+        setSearchFromDateFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
+        setSearchFromTextFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
     }
 
     protected getEmptyColumnData(): DatasetAndVariantData {
         return {
             datasetFilter: {
                 location: {},
-                dateRange: this.constants.defaultDateRange,
+                textFilters: {},
+                dateFilters: {},
             },
             variantFilter: {
                 lineages: {},
@@ -125,32 +131,10 @@ export class GenericCompareSideBySideStateHandler extends CompareSideBySideState
         return {
             datasetFilter: {
                 location: getLapisLocationFromSearch(filterParams, this.constants.locationFields),
-                dateRange:
-                    getDateRangeFromSearch(
-                        filterParams,
-                        this.constants.mainDateField,
-                        this.constants.dateRangeOptions,
-                    ) ?? this.constants.defaultDateRange,
+                dateFilters: parseDateRangesFromUrl(filterParams, this.constants.baselineFilterConfigs),
+                textFilters: parseTextFiltersFromUrl(filterParams, this.constants.baselineFilterConfigs),
             },
             variantFilter: getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
         };
-    }
-
-    public variantFilterToLapisFilter(
-        datasetFilter: DatasetAndVariantData['datasetFilter'],
-        variantFilter: DatasetAndVariantData['variantFilter'],
-    ): LapisFilter {
-        if (variantFilter.variantQuery) {
-            return {
-                variantQuery: variantFilter.variantQuery,
-                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants),
-            };
-        } else {
-            return {
-                ...variantFilter.lineages,
-                ...variantFilter.mutations,
-                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants),
-            };
-        }
     }
 }

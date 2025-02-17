@@ -1,5 +1,5 @@
 ---
-import { type LapisFilter, views } from '@genspectrum/dashboard-components/util';
+import { type AggregateView, type LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import { defaultTablePageSize } from '../../views/View';
 import ComponentWrapper from '../ComponentWrapper.astro';
@@ -9,14 +9,15 @@ interface Props {
     height?: string;
     fields: string[];
     lapisFilter: LapisFilter;
+    views: AggregateView[];
 }
 
-const { title, height, fields, lapisFilter } = Astro.props;
+const { title, height, fields, lapisFilter, views } = Astro.props;
 ---
 
 <ComponentWrapper title={title} height={height}>
     <gs-aggregate
-        views={JSON.stringify([views.table])}
+        views={JSON.stringify(views)}
         fields={JSON.stringify(fields)}
         lapisFilter={JSON.stringify(lapisFilter)}
         pageSize={defaultTablePageSize}

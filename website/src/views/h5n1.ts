@@ -1,4 +1,4 @@
-import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
@@ -9,32 +9,19 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getAuthorRelatedSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
+import { type ExtendedConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
+import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
-import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 const earliestDate = '1905-01-01';
 
 class H5n1Constants implements ExtendedConstants {
     public readonly organism = Organisms.h5n1;
-    public readonly earliestDate = '1905-01-01';
-    public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
-    public readonly dateRangeOptions: DateRangeOption[] = [
-        dateRangeOptionPresets.lastMonth,
-        dateRangeOptionPresets.last2Months,
-        dateRangeOptionPresets.last3Months,
-        dateRangeOptionPresets.last6Months,
-        dateRangeOptionPresets.lastYear,
-        { label: 'Since 2020', dateFrom: '2020-01-01' },
-        { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-        { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-        { label: 'Since 2000', dateFrom: '2000-01-01' },
-        { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
-        { label: 'All times', dateFrom: this.earliestDate },
-    ];
+    public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
@@ -46,6 +33,28 @@ class H5n1Constants implements ExtendedConstants {
         },
     ];
     public readonly useAdvancedQuery = false;
+    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
+        {
+            type: 'date',
+            dateRangeOptions: [
+                dateRangeOptionPresets.lastMonth,
+                dateRangeOptionPresets.last2Months,
+                dateRangeOptionPresets.last3Months,
+                dateRangeOptionPresets.last6Months,
+                dateRangeOptionPresets.lastYear,
+                { label: 'Since 2020', dateFrom: '2020-01-01' },
+                { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
+                { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
+                { label: 'Since 2000', dateFrom: '2000-01-01' },
+                { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
+                { label: 'All times', dateFrom: this.earliestDate },
+            ],
+            earliestDate,
+            defaultDateRange: dateRangeOptionPresets.lastYear,
+            dateColumn: 'sampleCollectionDate',
+            label: 'Sample collection date',
+        },
+    ];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
@@ -77,7 +86,7 @@ export class H5n1AnalyzeSingleVariantView extends GenericSingleVariantView<H5n1C
 export class H5n1CompareSideBySideView extends BaseView<
     CompareSideBySideData,
     H5n1Constants,
-    GenericCompareSideBySideStateHandler
+    CompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new H5n1Constants(organismsConfig);
@@ -88,7 +97,8 @@ export class H5n1CompareSideBySideView extends BaseView<
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: constants.defaultDateRange,
+                            dateFilters: {},
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: {},
@@ -101,7 +111,8 @@ export class H5n1CompareSideBySideView extends BaseView<
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: constants.defaultDateRange,
+                            dateFilters: {},
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: {
@@ -116,7 +127,7 @@ export class H5n1CompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new GenericCompareSideBySideStateHandler(
+            new CompareSideBySideStateHandler(
                 constants,
                 defaultPageState,
                 organismConfig[constants.organism].pathFragment,

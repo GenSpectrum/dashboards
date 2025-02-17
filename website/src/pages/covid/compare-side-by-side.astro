@@ -1,4 +1,6 @@
 ---
+import { views } from '@genspectrum/dashboard-components/util';
+
 import GsAggregate from '../../components/genspectrum/GsAggregate.astro';
 import GsMutations from '../../components/genspectrum/GsMutations.astro';
 import GsPrevalenceOverTime from '../../components/genspectrum/GsPrevalenceOverTime.astro';
@@ -29,11 +31,14 @@ const downloadLinks = [...pageState.filters.entries()].map(
         <div class='flex overflow-x-auto'>
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
-                    const baselineLapisFilter = toLapisFilterWithoutVariant({ datasetFilter }, view.organismConstants);
-                    const timeGranularity = chooseGranularityBasedOnDateRange(
-                        datasetFilter.dateRange,
-                        new Date(view.organismConstants.earliestDate),
+                    const baselineLapisFilter = toLapisFilterWithoutVariant(
+                        { datasetFilter },
+                        view.organismConstants.additionalFilters,
                     );
+                    const timeGranularity = chooseGranularityBasedOnDateRange({
+                        earliestDate: new Date(view.organismConstants.earliestDate),
+                        dateRange: datasetFilter.dateFilters[view.organismConstants.mainDateField],
+                    });
                     const numeratorFilter = {
                         ...variantFilter.lineages,
                         ...variantFilter.mutations,
@@ -62,20 +67,15 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                 <CompareSideBySidePageStateSelector
                                     locationFilterConfig={{
                                         locationFields: view.organismConstants.locationFields,
-                                        initialLocation: datasetFilter.location,
                                         placeholderText: 'Sampling location',
                                     }}
-                                    dateRangeFilterConfig={{
-                                        initialDateRange: datasetFilter.dateRange,
-                                        dateRangeOptions: view.organismConstants.dateRangeOptions,
-                                        earliestDate: view.organismConstants.earliestDate,
-                                        dateColumn: view.organismConstants.mainDateField,
-                                    }}
+                                    baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                                     variantFilterConfig={variantFilterConfig}
                                     filterId={id}
                                     pageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    datasetFilter={datasetFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback
@@ -115,11 +115,13 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                 title='Sub-lineages'
                                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
                                 lapisFilter={numeratorFilter}
+                                views={[views.table, views.bar]}
                             />
                             <GsAggregate
                                 title='Hosts'
                                 fields={[view.organismConstants.hostField]}
                                 lapisFilter={numeratorFilter}
+                                views={[views.table, views.bar]}
                             />
                         </div>
                     );

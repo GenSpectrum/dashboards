@@ -1,32 +1,32 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector, type DateRangeFilterConfig, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { type BaselineFilterConfig, BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
-import type { Id } from '../../views/View.ts';
-import { type LapisLocation } from '../../views/helpers.ts';
+import { Inset } from '../../styles/Inset.tsx';
+import type { DatasetFilter, Id } from '../../views/View.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
 
 export function CompareVariantsPageStateSelector({
     locationFilterConfig,
-    dateRangeFilterConfig,
     variantFilterConfigs,
     organismViewKey,
     organismsConfig,
+    baselineFilterConfigs,
+    datasetFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    dateRangeFilterConfig: DateRangeFilterConfig;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
+    baselineFilterConfigs?: BaselineFilterConfig[];
+    datasetFilter: DatasetFilter;
 }) {
-    const [location, setLocation] = useState<LapisLocation>(locationFilterConfig.initialLocation);
-    const [dateRange, setDateRange] = useState<DateRangeOption>(dateRangeFilterConfig.initialDateRange);
+    const [datasetFilterState, setDatasetFilterState] = useState(datasetFilter);
 
     const [variantConfigs, setVariantConfigs] = useState<Map<Id, VariantFilterConfig>>(variantFilterConfigs);
 
@@ -43,40 +43,47 @@ export function CompareVariantsPageStateSelector({
         );
 
         return {
-            datasetFilter: {
-                location,
-                dateRange,
-            },
+            datasetFilter: datasetFilterState,
             variants,
         };
-    }, [location, dateRange, variantConfigs]);
+    }, [datasetFilterState, variantConfigs]);
 
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.datasetFilterToLapisFilter(newPageState.datasetFilter);
     }, [newPageState]);
 
     return (
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-4'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
-                <BaselineSelector
-                    onLocationChange={setLocation}
-                    locationFilterConfig={{ ...locationFilterConfig, initialLocation: location }}
-                    onDateRangeChange={setDateRange}
-                    dateRangeFilterConfig={dateRangeFilterConfig}
-                    lapisFilter={currentLapisFilter}
-                />
+                <Inset className='p-2'>
+                    <BaselineSelector
+                        locationFilterConfig={locationFilterConfig}
+                        baselineFilterConfigs={baselineFilterConfigs}
+                        lapisFilter={currentLapisFilter}
+                        datasetFilter={datasetFilterState}
+                        setDatasetFilter={setDatasetFilterState}
+                    />
+                </Inset>
             </div>
             <div>
                 <SelectorHeadline>Variant Filters</SelectorHeadline>
-                <VariantsSelector
-                    variantFilterConfigs={variantConfigs}
-                    setVariantFilterConfigs={setVariantConfigs}
-                    emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
-                    lapisFilter={currentLapisFilter}
+                <Inset className='p-2'>
+                    <VariantsSelector
+                        variantFilterConfigs={variantConfigs}
+                        setVariantFilterConfigs={setVariantConfigs}
+                        emptyVariantFilterConfigProvider={() => view.pageStateHandler.getEmptyVariantFilterConfig()}
+                        lapisFilter={currentLapisFilter}
+                    />
+                </Inset>
+            </div>
+            <div className='sticky bottom-0 w-full pb-5 backdrop-blur-sm'>
+                <ApplyFilterButton
+                    className='w-full'
+                    pageStateHandler={view.pageStateHandler}
+                    newPageState={newPageState}
                 />
             </div>
-            <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={newPageState} />
         </div>
     );
 }

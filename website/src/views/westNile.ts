@@ -1,4 +1,4 @@
-import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -9,31 +9,20 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type ExtendedConstants } from './OrganismConstants.ts';
+import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
-import { GenericCompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+
+const earliestDate = '1930-01-01';
 
 class WestNileConstants implements ExtendedConstants {
     public readonly organism = Organisms.westNile;
-    public readonly earliestDate = '1930-01-01';
-    public readonly defaultDateRange = dateRangeOptionPresets.lastYear;
-    public readonly dateRangeOptions: DateRangeOption[] = [
-        dateRangeOptionPresets.lastMonth,
-        dateRangeOptionPresets.last2Months,
-        dateRangeOptionPresets.last3Months,
-        dateRangeOptionPresets.last6Months,
-        dateRangeOptionPresets.lastYear,
-        { label: 'Since 2020', dateFrom: '2020-01-01' },
-        { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-        { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-        { label: 'Since 2000', dateFrom: '2000-01-01' },
-        { label: 'Before 2000', dateFrom: this.earliestDate, dateTo: '1999-12-31' },
-        { label: 'All times', dateFrom: this.earliestDate },
-    ];
     public readonly mainDateField: string;
+    public readonly earliestDate = earliestDate;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
@@ -41,6 +30,28 @@ class WestNileConstants implements ExtendedConstants {
             placeholderText: 'Lineage',
             filterType: 'text' as const,
             initialValue: undefined,
+        },
+    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
+        {
+            type: 'date',
+            dateRangeOptions: [
+                dateRangeOptionPresets.lastMonth,
+                dateRangeOptionPresets.last2Months,
+                dateRangeOptionPresets.last3Months,
+                dateRangeOptionPresets.last6Months,
+                dateRangeOptionPresets.lastYear,
+                { label: 'Since 2020', dateFrom: '2020-01-01' },
+                { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
+                { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
+                { label: 'Since 2000', dateFrom: '2000-01-01' },
+                { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
+                { label: 'All times', dateFrom: earliestDate },
+            ],
+            earliestDate: '1999-01-01',
+            defaultDateRange: dateRangeOptionPresets.lastYear,
+            dateColumn: 'sampleCollectionDateRangeLower',
+            label: 'Sample collection date',
         },
     ];
     public readonly useAdvancedQuery = false;
@@ -76,7 +87,7 @@ export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<W
 export class WestNileCompareSideBySideView extends BaseView<
     CompareSideBySideData,
     WestNileConstants,
-    GenericCompareSideBySideStateHandler
+    CompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new WestNileConstants(organismsConfig);
@@ -87,20 +98,8 @@ export class WestNileCompareSideBySideView extends BaseView<
                     {
                         datasetFilter: {
                             location: {},
-                            dateRange: constants.defaultDateRange,
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateRange: constants.defaultDateRange,
+                            dateFilters: {},
+                            textFilters: {},
                         },
                         variantFilter: {
                             lineages: {
@@ -110,12 +109,26 @@ export class WestNileCompareSideBySideView extends BaseView<
                         },
                     },
                 ],
+                [
+                    1,
+                    {
+                        datasetFilter: {
+                            location: {},
+                            dateFilters: {},
+                            textFilters: {},
+                        },
+                        variantFilter: {
+                            lineages: {},
+                            mutations: {},
+                        },
+                    },
+                ],
             ]),
         };
 
         super(
             constants,
-            new GenericCompareSideBySideStateHandler(
+            new CompareSideBySideStateHandler(
                 constants,
                 defaultPageState,
                 organismConfig[constants.organism].pathFragment,

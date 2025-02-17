@@ -1,11 +1,14 @@
 ---
+import type { SequenceType } from '@genspectrum/dashboard-components/util';
+
 import { type RSVType } from '../types/wastewaterConfig';
 
 interface Props {
     reference: RSVType;
+    sequenceType: SequenceType;
 }
 
-const { reference } = Astro.props;
+const { reference, sequenceType } = Astro.props;
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const additionalInfo: Record<RSVType, { referenceSequence: string }> = {
@@ -22,6 +25,8 @@ const info = additionalInfo[reference];
 ---
 
 <span>
-    Mutations are provided in terms of nucleotide substitutions (minimum read depth 30x) of the {reference} subtype relative
-    to the reference {info.referenceSequence}.
+    Mutations are provided in terms of
+    {sequenceType === 'amino acid' ? 'amino acid' : 'nucleotide'} substitutions (minimum read depth 30x) of the {
+        reference
+    } subtype relative to the reference {info.referenceSequence}.
 </span>

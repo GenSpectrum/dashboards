@@ -24,10 +24,10 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange(
-    pageState.datasetFilter.dateRange,
-    new Date(view.organismConstants.earliestDate),
-);
+const timeGranularity = chooseGranularityBasedOnDateRange({
+    earliestDate: new Date(view.organismConstants.earliestDate),
+    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
+});
 
 const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageState);
 const baselineFilterConfig = view.pageStateHandler.toBaselineFilterConfig(pageState);
@@ -49,17 +49,12 @@ const downloadLinks = noVariantSelected
         slot='filters'
         locationFilterConfig={{
             locationFields: view.organismConstants.locationFields,
-            initialLocation: pageState.datasetFilter.location,
             placeholderText: 'Sampling location',
-        }}
-        dateRangeFilterConfig={{
-            initialDateRange: pageState.datasetFilter.dateRange,
-            dateRangeOptions: view.organismConstants.dateRangeOptions,
-            earliestDate: view.organismConstants.earliestDate,
-            dateColumn: view.organismConstants.mainDateField,
         }}
         baselineFilterConfig={baselineFilterConfig}
         variantFilterConfigs={variantFilterConfigs}
+        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+        datasetFilter={pageState.datasetFilter}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'
