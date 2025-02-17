@@ -8,6 +8,7 @@ export const Organisms = {
     rsvA: 'rsvA' as const,
     rsvB: 'rsvB' as const,
     mpox: 'mpox' as const,
+    ebolaZaire: 'ebolaZaire' as const,
 };
 
 export const organismConfig = {
@@ -73,6 +74,15 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-rose',
         menuListEntryDecoration: 'hover:decoration-rose',
         borderEntryDecoration: 'hover:border-rose',
+    },
+    [Organisms.ebolaZaire]: {
+        organism: Organisms.ebolaZaire,
+        pathFragment: 'ebola-zaire',
+        label: 'Ebola Zaire',
+        backgroundColor: 'bg-wineMuted',
+        backgroundColorFocus: 'group-hover:bg-wine',
+        menuListEntryDecoration: 'hover:decoration-wine',
+        borderEntryDecoration: 'hover:border-wine',
     },
 };
 export const allOrganisms = Object.keys(organismConfig) as Organism[];

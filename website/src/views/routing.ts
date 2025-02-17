@@ -7,6 +7,13 @@ import {
     CovidCompareVariantsView,
     CovidSequencingEffortsView,
 } from './covid.ts';
+import {
+    EbolaZaireAnalyzeSingleVariantView,
+    EbolaZaireCompareSideBySideView,
+    EbolaZaireCompareToBaselineView,
+    EbolaZaireCompareVariantsView,
+    EbolaZaireSequencingEffortsView,
+} from './ebolaZaire.ts';
 import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
 import {
     H5n1AnalyzeSingleVariantView,
@@ -122,6 +129,13 @@ export class Routing {
                 [compareVariantsViewKey]: new MpoxCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new MpoxCompareToBaselineView(organismsConfig),
             },
+            [Organisms.ebolaZaire]: {
+                [sequencingEffortsViewKey]: new EbolaZaireSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new EbolaZaireAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new EbolaZaireCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new EbolaZaireCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new EbolaZaireCompareSideBySideView(organismsConfig),
+            },
         } as const;
 
         this.externalPages = this.initializeExternalPages(organismsConfig);
@@ -143,6 +157,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.westNile]);
             case Organisms.mpox:
                 return Object.values(this.views[Organisms.mpox]);
+            case Organisms.ebolaZaire:
+                return Object.values(this.views[Organisms.ebolaZaire]);
         }
     }
 
