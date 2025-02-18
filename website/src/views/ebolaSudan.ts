@@ -17,28 +17,15 @@ import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
-const earliestDate = '1930-01-01';
+const earliestDate = '1975-01-01';
 
-class WestNileConstants implements ExtendedConstants {
-    public readonly organism = Organisms.westNile;
-    public readonly mainDateField: string;
-    public readonly earliestDate = earliestDate;
-    public readonly locationFields: string[];
-    public readonly lineageFilters: LineageFilterConfig[] = [
-        {
-            lapisField: 'lineage',
-            placeholderText: 'Lineage',
-            filterType: 'text' as const,
-            initialValue: undefined,
-        },
-    ];
+class EbolaSudanConstants implements ExtendedConstants {
+    public readonly organism = Organisms.ebolaSudan;
+    public readonly earliestDate = '1975-01-01';
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
             type: 'date',
             dateRangeOptions: [
-                dateRangeOptionPresets.lastMonth,
-                dateRangeOptionPresets.last2Months,
-                dateRangeOptionPresets.last3Months,
                 dateRangeOptionPresets.last6Months,
                 dateRangeOptionPresets.lastYear,
                 { label: 'Since 2020', dateFrom: '2020-01-01' },
@@ -48,12 +35,15 @@ class WestNileConstants implements ExtendedConstants {
                 { label: 'Before 2000', dateTo: '1999-12-31' },
                 dateRangeOptionPresets.allTimes,
             ],
-            earliestDate: '1999-01-01',
+            earliestDate,
             defaultDateRange: dateRangeOptionPresets.lastYear,
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
     ];
+    public readonly mainDateField: string;
+    public readonly locationFields: string[];
+    public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string;
     public readonly authorsField: string | undefined;
@@ -68,29 +58,29 @@ class WestNileConstants implements ExtendedConstants {
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
-        this.locationFields = organismsConfig.westNile.lapis.locationFields;
-        this.hostField = organismsConfig.westNile.lapis.hostField;
-        this.authorsField = organismsConfig.westNile.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
-        this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.westNile.lapis.accessionDownloadFields;
+        this.mainDateField = organismsConfig.ebolaSudan.lapis.mainDateField;
+        this.locationFields = organismsConfig.ebolaSudan.lapis.locationFields;
+        this.hostField = organismsConfig.ebolaSudan.lapis.hostField;
+        this.authorsField = organismsConfig.ebolaSudan.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.ebolaSudan.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.ebolaSudan.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.ebolaSudan.lapis.accessionDownloadFields;
     }
 }
 
-export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<WestNileConstants> {
+export class EbolaSudanAnalyzeSingleVariantView extends GenericSingleVariantView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig));
     }
 }
 
-export class WestNileCompareSideBySideView extends BaseView<
+export class EbolaSudanCompareSideBySideView extends BaseView<
     CompareSideBySideData,
-    WestNileConstants,
+    EbolaSudanConstants,
     CompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
-        const constants = new WestNileConstants(organismsConfig);
+        const constants = new EbolaSudanConstants(organismsConfig);
         const defaultPageState = {
             filters: new Map<Id, DatasetAndVariantData>([
                 [
@@ -102,9 +92,6 @@ export class WestNileCompareSideBySideView extends BaseView<
                             textFilters: {},
                         },
                         variantFilter: {
-                            lineages: {
-                                lineage: '2',
-                            },
                             mutations: {},
                         },
                     },
@@ -118,7 +105,6 @@ export class WestNileCompareSideBySideView extends BaseView<
                             textFilters: {},
                         },
                         variantFilter: {
-                            lineages: {},
                             mutations: {},
                         },
                     },
@@ -138,20 +124,20 @@ export class WestNileCompareSideBySideView extends BaseView<
     }
 }
 
-export class WestNileSequencingEffortsView extends GenericSequencingEffortsView<WestNileConstants> {
+export class EbolaSudanSequencingEffortsView extends GenericSequencingEffortsView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig));
     }
 }
 
-export class WestNileCompareVariantsView extends GenericCompareVariantsView<WestNileConstants> {
+export class EbolaSudanCompareVariantsView extends GenericCompareVariantsView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig));
     }
 }
 
-export class WestNileCompareToBaselineView extends GenericCompareToBaselineView<WestNileConstants> {
+export class EbolaSudanCompareToBaselineView extends GenericCompareToBaselineView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig));
     }
 }

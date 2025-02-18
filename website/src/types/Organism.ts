@@ -8,6 +8,9 @@ export const Organisms = {
     rsvA: 'rsvA' as const,
     rsvB: 'rsvB' as const,
     mpox: 'mpox' as const,
+    ebolaSudan: 'ebolaSudan' as const,
+    ebolaZaire: 'ebolaZaire' as const,
+    cchf: 'cchf' as const,
 };
 
 export const organismConfig = {
@@ -73,6 +76,33 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-rose',
         menuListEntryDecoration: 'hover:decoration-rose',
         borderEntryDecoration: 'hover:border-rose',
+    },
+    [Organisms.ebolaSudan]: {
+        organism: Organisms.ebolaSudan,
+        pathFragment: 'ebola-sudan',
+        label: 'Ebola Sudan',
+        backgroundColor: 'bg-wineMuted',
+        backgroundColorFocus: 'group-hover:bg-wine',
+        menuListEntryDecoration: 'hover:decoration-wine',
+        borderEntryDecoration: 'hover:border-wine',
+    },
+    [Organisms.ebolaZaire]: {
+        organism: Organisms.ebolaZaire,
+        pathFragment: 'ebola-zaire',
+        label: 'Ebola Zaire',
+        backgroundColor: 'bg-wineMuted',
+        backgroundColorFocus: 'group-hover:bg-wine',
+        menuListEntryDecoration: 'hover:decoration-wine',
+        borderEntryDecoration: 'hover:border-wine',
+    },
+    [Organisms.cchf]: {
+        organism: Organisms.cchf,
+        pathFragment: 'cchf',
+        label: 'Crimean-Congo Hemorrhagic Fever',
+        backgroundColor: 'bg-oliveMuted',
+        backgroundColorFocus: 'group-hover:bg-olive',
+        menuListEntryDecoration: 'hover:decoration-olive',
+        borderEntryDecoration: 'hover:border-olive',
     },
 };
 export const allOrganisms = Object.keys(organismConfig) as Organism[];

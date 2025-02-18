@@ -153,6 +153,75 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/rsv-b"
           label: "Browse data"
           menuIcon: "database"
+    ebolaSudan:
+      lapis:
+        url: "https://lapis.pathoplexus.org/ebola-sudan"
+        mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
+        hostField: "hostNameScientific"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
+          - "accessionVersion"
+          - "dataUseTerms"
+          - "dataUseTermsUrl"
+          - "dataUseTermsRestrictedUntil"
+      externalNavigationLinks:
+        - url: "https://pathoplexus.org/ebola-sudan"
+          label: "Browse data"
+          menuIcon: "database"
+    ebolaZaire:
+      lapis:
+        url: "https://lapis.pathoplexus.org/ebola-zaire"
+        mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
+        hostField: "hostNameScientific"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
+          - "accessionVersion"
+          - "dataUseTerms"
+          - "dataUseTermsUrl"
+          - "dataUseTermsRestrictedUntil"
+      externalNavigationLinks:
+        - url: "https://pathoplexus.org/ebola-zaire"
+          label: "Browse data"
+          menuIcon: "database"
+    cchf:
+      lapis:
+        url: "https://lapis.pathoplexus.org/cchf"
+        mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
+        hostField: "hostNameScientific"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull"
+          - "accessionVersion"
+          - "dataUseTerms"
+          - "dataUseTermsUrl"
+          - "dataUseTermsRestrictedUntil"
+      externalNavigationLinks:
+        - url: "https://pathoplexus.org/cchf"
+          label: "Browse data"
+          menuIcon: "database"
   auth:
     github:
       clientId: "Iv23li4tJm7xQ3VkM3OC"

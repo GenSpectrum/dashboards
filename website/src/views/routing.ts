@@ -1,12 +1,33 @@
 import type { OrganismConstants } from './OrganismConstants.ts';
 import type { View } from './View.ts';
 import {
+    CchfAnalyzeSingleVariantView,
+    CchfCompareSideBySideView,
+    CchfCompareToBaselineView,
+    CchfCompareVariantsView,
+    CchfSequencingEffortsView,
+} from './cchf.ts';
+import {
     CovidAnalyzeSingleVariantView,
     CovidCompareSideBySideView,
     CovidCompareToBaselineView,
     CovidCompareVariantsView,
     CovidSequencingEffortsView,
 } from './covid.ts';
+import {
+    EbolaSudanAnalyzeSingleVariantView,
+    EbolaSudanCompareSideBySideView,
+    EbolaSudanCompareToBaselineView,
+    EbolaSudanCompareVariantsView,
+    EbolaSudanSequencingEffortsView,
+} from './ebolaSudan.ts';
+import {
+    EbolaZaireAnalyzeSingleVariantView,
+    EbolaZaireCompareSideBySideView,
+    EbolaZaireCompareToBaselineView,
+    EbolaZaireCompareVariantsView,
+    EbolaZaireSequencingEffortsView,
+} from './ebolaZaire.ts';
 import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
 import {
     H5n1AnalyzeSingleVariantView,
@@ -22,6 +43,7 @@ import {
     MpoxCompareVariantsView,
     MpoxSequencingEffortsView,
 } from './mpox.ts';
+import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import type { PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import {
     RsvAAnalyzeSingleVariantView,
@@ -37,7 +59,6 @@ import {
     RsvBCompareVariantsView,
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
-import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
 import {
     compareSideBySideViewKey,
     compareToBaselineViewKey,
@@ -77,50 +98,71 @@ export class Routing {
     constructor(organismsConfig: OrganismsConfig) {
         this.views = {
             [Organisms.covid]: {
-                [singleVariantViewKey]: new CovidAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new CovidCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new CovidSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new CovidAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new CovidCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new CovidCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new CovidCompareSideBySideView(organismsConfig),
             },
             [Organisms.h5n1]: {
-                [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new H5n1SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H5n1AnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new H5n1CompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
             },
             [Organisms.flu]: {
-                [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new FluSequencingEffortsView(organismsConfig),
+                [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
             },
             [Organisms.rsvA]: {
-                [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new RsvACompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new RsvACompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new RsvACompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new RsvACompareSideBySideView(organismsConfig),
             },
             [Organisms.rsvB]: {
-                [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new RsvBCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new RsvBSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new RsvBAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new RsvBCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new RsvBCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new RsvBCompareSideBySideView(organismsConfig),
             },
             [Organisms.westNile]: {
-                [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new WestNileCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new WestNileSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new WestNileAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new WestNileCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new WestNileCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new WestNileCompareSideBySideView(organismsConfig),
             },
             [Organisms.mpox]: {
-                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
-                [compareSideBySideViewKey]: new MpoxCompareSideBySideView(organismsConfig),
                 [sequencingEffortsViewKey]: new MpoxSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new MpoxAnalyzeSingleVariantView(organismsConfig),
                 [compareVariantsViewKey]: new MpoxCompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new MpoxCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new MpoxCompareSideBySideView(organismsConfig),
+            },
+            [Organisms.ebolaSudan]: {
+                [sequencingEffortsViewKey]: new EbolaSudanSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new EbolaSudanAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new EbolaSudanCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new EbolaSudanCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new EbolaSudanCompareSideBySideView(organismsConfig),
+            },
+            [Organisms.ebolaZaire]: {
+                [sequencingEffortsViewKey]: new EbolaZaireSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new EbolaZaireAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new EbolaZaireCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new EbolaZaireCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new EbolaZaireCompareSideBySideView(organismsConfig),
+            },
+            [Organisms.cchf]: {
+                [sequencingEffortsViewKey]: new CchfSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new CchfAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new CchfCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new CchfCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new CchfCompareSideBySideView(organismsConfig),
             },
         } as const;
 
@@ -143,6 +185,12 @@ export class Routing {
                 return Object.values(this.views[Organisms.westNile]);
             case Organisms.mpox:
                 return Object.values(this.views[Organisms.mpox]);
+            case Organisms.ebolaZaire:
+                return Object.values(this.views[Organisms.ebolaZaire]);
+            case Organisms.ebolaSudan:
+                return Object.values(this.views[Organisms.ebolaSudan]);
+            case Organisms.cchf:
+                return Object.values(this.views[Organisms.cchf]);
         }
     }
 

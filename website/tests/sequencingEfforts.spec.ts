@@ -11,6 +11,9 @@ const organismOptions = {
     [Organisms.rsvA]: { location: 'USA' },
     [Organisms.rsvB]: { location: 'USA' },
     [Organisms.mpox]: { location: 'USA' },
+    [Organisms.ebolaSudan]: { location: 'Uganda' },
+    [Organisms.ebolaZaire]: { location: 'Gabon' },
+    [Organisms.cchf]: { location: 'Turkey' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
@@ -23,8 +26,8 @@ test.describe('The Sequencing Efforts Page', () => {
 
                 await sequencingEffortsPage.goto(organism);
                 await sequencingEffortsPage.expectToSeeNoComponentErrors();
-                await sequencingEffortsPage.selectLocation(options.location);
                 await sequencingEffortsPage.selectDateRange('All times');
+                await sequencingEffortsPage.selectLocation(options.location);
                 await sequencingEffortsPage.submitFilters();
 
                 await expect(sequencingEffortsPage.diagramTitle('Number Sequences')).toBeVisible();
