@@ -37,10 +37,15 @@ export function GsMutationFilter({
     }, [onMutationChange]);
 
     return (
-        <gs-mutation-filter
-            width={width}
-            initialValue={JSON.stringify(initialValue)}
-            ref={mutationFilterRef}
-        ></gs-mutation-filter>
+        <label className='form-control'>
+            <div className='label'>
+                <span className='label-text'>Mutations</span>
+            </div>
+            <gs-mutation-filter
+                width={width}
+                initialValue={JSON.stringify(initialValue)}
+                ref={mutationFilterRef}
+            ></gs-mutation-filter>
+        </label>
     );
 }
