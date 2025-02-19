@@ -36,7 +36,7 @@ class EbolaSudanConstants implements ExtendedConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
+            defaultDateRange: dateRangeOptionPresets.allTimes,
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
