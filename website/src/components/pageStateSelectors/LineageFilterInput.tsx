@@ -22,24 +22,34 @@ export function LineageFilterInput({
     switch (lineageFilterConfig.filterType) {
         case 'lineage':
             return (
-                <GsLineageFilter
-                    lapisField={lineageFilterConfig.lapisField}
-                    placeholderText={lineageFilterConfig.placeholderText}
-                    onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                    value={lineageFilterConfig.initialValue}
-                    lapisFilter={lapisFilter}
-                />
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>{lineageFilterConfig.placeholderText}</span>
+                    </div>
+                    <GsLineageFilter
+                        lapisField={lineageFilterConfig.lapisField}
+                        placeholderText={lineageFilterConfig.placeholderText}
+                        onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
+                        value={lineageFilterConfig.initialValue}
+                        lapisFilter={lapisFilter}
+                    />
+                </label>
             );
 
         case 'text':
             return (
-                <GsTextFilter
-                    lapisField={lineageFilterConfig.lapisField}
-                    placeholderText={lineageFilterConfig.placeholderText}
-                    onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                    value={lineageFilterConfig.initialValue}
-                    lapisFilter={lapisFilter}
-                />
+                <label className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>{lineageFilterConfig.placeholderText}</span>
+                    </div>
+                    <GsTextFilter
+                        lapisField={lineageFilterConfig.lapisField}
+                        placeholderText={lineageFilterConfig.placeholderText}
+                        onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
+                        value={lineageFilterConfig.initialValue}
+                        lapisFilter={lapisFilter}
+                    />
+                </label>
             );
     }
 }
