@@ -59,6 +59,17 @@ class WestNileConstants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            lineages: { lineage: '1A' },
+        },
+        {
+            lineages: { lineage: '1B' },
+        },
+        {
+            lineages: { lineage: '2' },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);

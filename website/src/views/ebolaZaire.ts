@@ -49,6 +49,23 @@ class EbolaZaireConstants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            mutations: {
+                aminoAcidMutations: ['VP35:A12V'],
+            },
+        },
+        {
+            mutations: {
+                aminoAcidMutations: ['VP35:A12V'],
+            },
+        },
+        {
+            mutations: {
+                nucleotideMutations: ['G11739A'],
+            },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);

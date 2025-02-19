@@ -69,6 +69,17 @@ class MpoxConstants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            lineages: { lineage: 'F.1' },
+        },
+        {
+            lineages: { lineage: 'F.2' },
+        },
+        {
+            lineages: { clade: 'Ia' },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);

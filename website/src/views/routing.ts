@@ -75,7 +75,7 @@ import {
 } from './westNile.ts';
 import { type Organism, Organisms } from '../types/Organism.ts';
 
-type ViewsMap = typeof Routing.prototype.views;
+export type ViewsMap = typeof Routing.prototype.views;
 
 const keySeparator = '.';
 type KeySeparator = typeof keySeparator;
