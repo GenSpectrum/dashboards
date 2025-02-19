@@ -82,11 +82,6 @@ function CollectionSelector({ collections, selectedId, onSelect }: CollectionSel
     );
 }
 
-type CollectionVariantListProps = {
-    collection: Collection;
-    organismsConfig: OrganismsConfig;
-};
-
 const querySchema = z.object({
     pangoLineage: z.string().optional(),
     nextcladePangoLineage: z.string().optional(),
@@ -97,81 +92,95 @@ const querySchema = z.object({
     variantQuery: z.string().optional(),
 });
 
+type CollectionVariantListProps = {
+    collection: Collection;
+    organismsConfig: OrganismsConfig;
+};
+
 function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
     const variants = collection.variants;
-
-    const selectVariant = useSelectVariant(organismsConfig, collection);
 
     return (
         <div className='flex flex-col'>
             {variants.map((variant, index) => (
-                <button
+                <VariantLink
                     key={`${variant.name}_${variant.query}_${index}`}
-                    className='border bg-white px-4 py-2 hover:bg-cyan'
-                    onClick={() => selectVariant(variant)}
-                >
-                    {variant.name}
-                </button>
+                    variant={variant}
+                    organismsConfig={organismsConfig}
+                    collectionId={collection.id}
+                />
             ))}
         </div>
     );
 }
 
+type VariantLinkProps = {
+    variant: CollectionVariant;
+    organismsConfig: OrganismsConfig;
+    collectionId: number;
+};
+
+function VariantLink({ variant, organismsConfig, collectionId }: VariantLinkProps) {
+    const variantLink = useVariantLink(organismsConfig, collectionId, variant);
+
+    return (
+        <a className='border bg-white px-4 py-2 hover:bg-cyan' href={variantLink}>
+            {variant.name}
+        </a>
+    );
+}
+
 const logger = getClientLogger('CollectionList');
 
-function useSelectVariant(organismsConfig: OrganismsConfig, collection: Collection) {
+function useVariantLink(organismsConfig: OrganismsConfig, collectionId: number, variant: CollectionVariant) {
     const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
 
     const { showErrorToast } = useErrorToast(logger);
 
-    return (variant: CollectionVariant) => {
-        const currentPageState = routing
-            .getOrganismView('covid.singleVariantView')
-            .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
-        let newPageState: CovidVariantData;
+    const currentPageState = routing
+        .getOrganismView('covid.singleVariantView')
+        .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    let newPageState: CovidVariantData;
 
-        const queryParseResult = querySchema.safeParse(JSON.parse(variant.query));
+    const queryParseResult = querySchema.safeParse(JSON.parse(variant.query));
 
-        if (!queryParseResult.success) {
-            showErrorToast({
-                error: queryParseResult.error,
-                logMessage: `Failed to parse query of variant ${variant.name} of collection ${collection.id}: ${queryParseResult.error.message}`,
-                errorToastMessages: [
-                    `The variant filter of the collection variant "${variant.name}" seems to be invalid.`,
-                ],
-            });
-            return;
-        }
+    if (!queryParseResult.success) {
+        showErrorToast({
+            error: queryParseResult.error,
+            logMessage: `Failed to parse query of variant ${variant.name} of collection ${collectionId}: ${queryParseResult.error.message}`,
+            errorToastMessages: [`The variant filter of the collection variant "${variant.name}" seems to be invalid.`],
+        });
+        return;
+    }
 
-        const query = queryParseResult.data;
+    const query = queryParseResult.data;
 
-        if (query.variantQuery !== undefined) {
-            newPageState = {
-                ...currentPageState,
-                collectionId: collection.id,
-                variantFilter: {
-                    lineages: {},
-                    mutations: {},
-                    variantQuery: query.variantQuery,
+    if (query.variantQuery !== undefined) {
+        newPageState = {
+            ...currentPageState,
+            collectionId: collectionId,
+            variantFilter: {
+                lineages: {},
+                mutations: {},
+                variantQuery: query.variantQuery,
+            },
+        };
+    } else {
+        newPageState = {
+            ...currentPageState,
+            collectionId: collectionId,
+            variantFilter: {
+                lineages: {
+                    nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
                 },
-            };
-        } else {
-            newPageState = {
-                ...currentPageState,
-                collectionId: collection.id,
-                variantFilter: {
-                    lineages: {
-                        nextcladePangoLineage: query.pangoLineage ?? query.nextcladePangoLineage,
-                    },
-                    mutations: {
-                        nucleotideMutations: query.nucMutations,
-                        aminoAcidMutations: query.aaMutations,
-                        nucleotideInsertions: query.nucInsertions,
-                        aminoAcidInsertions: query.aaInsertions,
-                    },
+                mutations: {
+                    nucleotideMutations: query.nucMutations,
+                    aminoAcidMutations: query.aaMutations,
+                    nucleotideInsertions: query.nucInsertions,
+                    aminoAcidInsertions: query.aaInsertions,
                 },
-            };
-        }
-        window.location.href = routing.getOrganismView('covid.singleVariantView').pageStateHandler.toUrl(newPageState);
-    };
+            },
+        };
+    }
+    return routing.getOrganismView('covid.singleVariantView').pageStateHandler.toUrl(newPageState);
 }
