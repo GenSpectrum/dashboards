@@ -49,6 +49,23 @@ class EbolaSudanConstants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            mutations: {
+                aminoAcidMutations: ['NP:R711C'],
+            },
+        },
+        {
+            mutations: {
+                aminoAcidMutations: ['VP35:N153S'],
+            },
+        },
+        {
+            mutations: {
+                nucleotideMutations: ['T5640C'],
+            },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);

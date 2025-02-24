@@ -61,6 +61,17 @@ class RsvBConstants implements ExtendedConstants {
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            lineages: { lineage: 'B.D.E.1' },
+        },
+        {
+            lineages: { lineage: 'B.D.E.1.1' },
+        },
+        {
+            lineages: { lineage: 'B.D.4.1.1' },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);

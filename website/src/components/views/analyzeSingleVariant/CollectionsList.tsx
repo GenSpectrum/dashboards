@@ -9,6 +9,8 @@ import { Routing } from '../../../views/routing.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
+export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan';
+
 type CollectionVariant = {
     name: string;
     query: string;
@@ -124,7 +126,7 @@ function VariantLink({ variant, organismsConfig, collectionId }: VariantLinkProp
     const variantLink = useVariantLink(organismsConfig, collectionId, variant);
 
     return (
-        <a className='border bg-white px-4 py-2 hover:bg-cyan' href={variantLink}>
+        <a className={collectionVariantClassName} href={variantLink}>
             {variant.name}
         </a>
     );

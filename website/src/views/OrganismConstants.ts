@@ -1,6 +1,6 @@
 import { views, type AggregateView } from '@genspectrum/dashboard-components/util';
 
-import { pathoplexusGroupNameField } from './View.ts';
+import { pathoplexusGroupNameField, type VariantFilter } from './View.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import type { Organism } from '../types/Organism.ts';
@@ -32,6 +32,7 @@ export interface ExtendedConstants extends OrganismConstants {
     readonly locationFields: string[];
     readonly baselineFilterConfigs: BaselineFilterConfig[];
     readonly lineageFilters: LineageFilterConfig[];
+    readonly predefinedVariants?: VariantFilter[];
 }
 
 export function getAuthorRelatedSequencingEffortsFields(constants: {

@@ -49,6 +49,23 @@ class CchfConstants implements ExtendedConstants {
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            mutations: {
+                aminoAcidMutations: ['RdRp:S1454A'],
+            },
+        },
+        {
+            mutations: {
+                aminoAcidMutations: ['GPC:A1046V'],
+            },
+        },
+        {
+            mutations: {
+                nucleotideMutations: ['L:G23T'],
+            },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
