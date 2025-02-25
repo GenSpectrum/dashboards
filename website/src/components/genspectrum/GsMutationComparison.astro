@@ -7,17 +7,19 @@ import ComponentWrapper from '../ComponentWrapper.astro';
 interface Props {
     lapisFilters: NamedLapisFilter[];
     sequenceType: SequenceType;
+    height?: string;
+    pageSize?: number;
 }
 
-const { lapisFilters, sequenceType } = Astro.props;
+const { lapisFilters, sequenceType, height, pageSize } = Astro.props;
 ---
 
-<ComponentWrapper title={sequenceType === 'nucleotide' ? 'Nucleotide changes' : 'Amino acid changes'}>
+<ComponentWrapper title={sequenceType === 'nucleotide' ? 'Nucleotide changes' : 'Amino acid changes'} height={height}>
     <gs-mutation-comparison
         lapisFilters={JSON.stringify(lapisFilters)}
         sequenceType={sequenceType}
         views='["venn", "table"]'
-        pageSize={defaultTablePageSize}
+        pageSize={pageSize ?? defaultTablePageSize}
         width='100%'
-        height='100%'></gs-mutation-comparison>
+        height={height ? '100%' : undefined}></gs-mutation-comparison>
 </ComponentWrapper>
