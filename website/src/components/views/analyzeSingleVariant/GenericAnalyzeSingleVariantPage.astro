@@ -107,16 +107,19 @@ const downloadLinks = noVariantSelected
                 denominatorFilter={datasetLapisFilter}
                 lapisDateField={view.organismConstants.mainDateField}
                 granularity={timeGranularity}
+                pageSize={10}
             />
             <GsMutations
                 lapisFilter={variantLapisFilter}
                 baselineLapisFilter={datasetLapisFilter}
                 sequenceType='nucleotide'
+                pageSize={10}
             />
             <GsMutations
                 lapisFilter={variantLapisFilter}
                 baselineLapisFilter={datasetLapisFilter}
                 sequenceType='amino acid'
+                pageSize={10}
             />
             {
                 subdivisionField !== undefined && (
@@ -125,6 +128,7 @@ const downloadLinks = noVariantSelected
                         fields={[subdivisionField]}
                         lapisFilter={variantLapisFilter}
                         views={[views.table, views.bar]}
+                        pageSize={10}
                     />
                 )
             }
@@ -136,6 +140,7 @@ const downloadLinks = noVariantSelected
                         fields={lineageFilterFields}
                         lapisFilter={variantLapisFilter}
                         views={[views.table, views.bar]}
+                        pageSize={10}
                     />
                 )
             }
@@ -144,6 +149,7 @@ const downloadLinks = noVariantSelected
                 fields={[view.organismConstants.hostField]}
                 lapisFilter={variantLapisFilter}
                 views={[views.table, views.bar]}
+                pageSize={10}
             />
         </ComponentsGrid>
         <GsMutationsOverTime

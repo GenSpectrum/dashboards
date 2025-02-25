@@ -20,7 +20,7 @@ export const ComponentHeight = {
 export interface AdditionalSequencingEffortsField {
     readonly label: string;
     readonly fields: string[];
-    readonly height: (typeof ComponentHeight)[keyof typeof ComponentHeight];
+    readonly height?: (typeof ComponentHeight)[keyof typeof ComponentHeight];
     readonly views: AggregateView[];
 }
 
@@ -46,7 +46,6 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
                   {
                       label: 'Author affiliations',
                       fields: [constants.authorAffiliationsField],
-                      height: ComponentHeight.large,
                       views: [views.table],
                   },
               ];
@@ -57,7 +56,6 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
                   {
                       label: 'Authors',
                       fields: [constants.authorsField, constants.authorAffiliationsField],
-                      height: ComponentHeight.large,
                       views: [views.table],
                   },
               ];
@@ -71,44 +69,37 @@ export function getPathoplexusAdditionalSequencingEffortsFields(
         {
             label: 'Pathoplexus submitting groups',
             fields: [pathoplexusGroupNameField],
-            height: ComponentHeight.small,
             views: [views.table],
         },
         ...getAuthorRelatedSequencingEffortsFields(constants),
         {
             label: 'Collection device',
             fields: ['collectionDevice'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Collection method',
             fields: ['collectionMethod'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Purpose of sampling',
             fields: ['purposeOfSampling'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Sample type',
             fields: ['sampleType'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Amplicon PCR primer scheme',
             fields: ['ampliconPcrPrimerScheme'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Sequencing protocol',
             fields: ['sequencingProtocol'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
     ];

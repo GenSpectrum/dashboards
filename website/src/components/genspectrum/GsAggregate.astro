@@ -6,13 +6,14 @@ import ComponentWrapper from '../ComponentWrapper.astro';
 
 interface Props {
     title: string;
-    height?: string;
     fields: string[];
     lapisFilter: LapisFilter;
     views: AggregateView[];
+    height?: string;
+    pageSize?: number;
 }
 
-const { title, height, fields, lapisFilter, views } = Astro.props;
+const { title, height, fields, lapisFilter, views, pageSize } = Astro.props;
 ---
 
 <ComponentWrapper title={title} height={height}>
@@ -20,7 +21,7 @@ const { title, height, fields, lapisFilter, views } = Astro.props;
         views={JSON.stringify(views)}
         fields={JSON.stringify(fields)}
         lapisFilter={JSON.stringify(lapisFilter)}
-        pageSize={defaultTablePageSize}
+        pageSize={pageSize ?? defaultTablePageSize}
         width='100%'
-        height='100%'></gs-aggregate>
+        height={height ? '100%' : undefined}></gs-aggregate>
 </ComponentWrapper>

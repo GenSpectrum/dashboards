@@ -7,13 +7,14 @@ import ComponentWrapper from '../ComponentWrapper.astro';
 
 interface Props {
     title: string;
-    height?: string;
     lapisLocationField: string;
     lapisFilter: LapisFilter;
+    height?: string;
     mapName?: string;
+    pageSize?: number;
 }
 
-const { title, height, lapisLocationField, lapisFilter, mapName } = Astro.props;
+const { title, height, lapisLocationField, lapisFilter, mapName, pageSize } = Astro.props;
 
 const mapData = getSequencesByLocationMapData(mapName, Astro.url);
 ---
@@ -24,20 +25,20 @@ const mapData = getSequencesByLocationMapData(mapName, Astro.url);
             <gs-sequences-by-location
                 lapisLocationField={lapisLocationField}
                 lapisFilter={JSON.stringify(lapisFilter)}
-                pageSize={defaultTablePageSize}
+                pageSize={pageSize ?? defaultTablePageSize}
                 views={JSON.stringify(['table'])}
                 width='100%'
-                height='100%'
+                height={height ? '100%' : undefined}
             />
         ) : (
             <gs-sequences-by-location
                 lapisLocationField={lapisLocationField}
                 lapisFilter={JSON.stringify(lapisFilter)}
-                pageSize={defaultTablePageSize}
+                pageSize={pageSize ?? defaultTablePageSize}
                 views={JSON.stringify(['map', 'table'])}
                 mapSource={JSON.stringify(mapData.mapSource)}
                 width='100%'
-                height='100%'
+                height={height ? '100%' : undefined}
                 zoom={mapData.zoom}
                 offsetX={mapData.offsetX}
                 offsetY={mapData.offsetY}

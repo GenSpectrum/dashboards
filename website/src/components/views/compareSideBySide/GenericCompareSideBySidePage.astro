@@ -5,6 +5,7 @@ import { toDownloadLink } from './toDownloadLink';
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { ComponentHeight } from '../../../views/OrganismConstants';
 import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
 import { toLapisFilterWithoutVariant } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -101,6 +102,8 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                 denominatorFilter={datasetLapisFilter}
                                 lapisDateField={view.organismConstants.mainDateField}
                                 granularity={timeGranularity}
+                                height={ComponentHeight.large}
+                                pageSize={10}
                             />
                             {!hideMutationComponents && (
                                 <>
@@ -108,11 +111,13 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                         lapisFilter={numeratorFilter}
                                         baselineLapisFilter={datasetLapisFilter}
                                         sequenceType='nucleotide'
+                                        pageSize={10}
                                     />
                                     <GsMutations
                                         lapisFilter={numeratorFilter}
                                         baselineLapisFilter={datasetLapisFilter}
                                         sequenceType='amino acid'
+                                        pageSize={10}
                                     />
                                 </>
                             )}
@@ -123,6 +128,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     fields={lineageFilterFields}
                                     lapisFilter={numeratorFilter}
                                     views={[views.table, views.bar]}
+                                    pageSize={10}
                                 />
                             )}
                             <GsAggregate
@@ -130,6 +136,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                 fields={[view.organismConstants.hostField]}
                                 lapisFilter={numeratorFilter}
                                 views={[views.table, views.bar]}
+                                pageSize={10}
                             />
                         </div>
                     );

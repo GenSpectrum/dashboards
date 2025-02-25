@@ -1,7 +1,6 @@
 ---
 import type { NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
-import { ComponentHeight } from '../../views/OrganismConstants';
 import { defaultTablePageSize } from '../../views/View';
 import ComponentWrapper from '../ComponentWrapper.astro';
 
@@ -9,18 +8,20 @@ interface Props {
     lapisFilters: NamedLapisFilter[];
     lapisDateField: string;
     granularity: string;
+    pageSize?: number;
+    height?: string;
 }
 
-const { lapisFilters, lapisDateField, granularity } = Astro.props;
+const { lapisFilters, lapisDateField, granularity, pageSize, height } = Astro.props;
 ---
 
-<ComponentWrapper title='Number sequences' height={ComponentHeight.large}>
+<ComponentWrapper title='Number sequences' height={height}>
     <gs-number-sequences-over-time
         lapisFilters={JSON.stringify(lapisFilters)}
         lapisDateField={lapisDateField}
         views='["bar", "line", "table"]'
-        pageSize={defaultTablePageSize}
+        pageSize={pageSize ?? defaultTablePageSize}
         width='100%'
-        height='100%'
+        height={height ? '100%' : undefined}
         granularity={granularity}></gs-number-sequences-over-time>
 </ComponentWrapper>

@@ -13,7 +13,7 @@ import {
     GenericCompareVariantsView,
     GenericSequencingEffortsView,
 } from './BaseView.ts';
-import { ComponentHeight, type ExtendedConstants } from './OrganismConstants.ts';
+import { type ExtendedConstants } from './OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from './View.ts';
 import { compareSideBySideViewConstants, singleVariantViewConstants } from './ViewConstants.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
@@ -82,7 +82,6 @@ class CovidConstants implements ExtendedConstants {
                       {
                           label: 'Originating lab',
                           fields: [this.originatingLabField],
-                          height: ComponentHeight.large,
                           views: [views.table],
                       },
                   ];
@@ -93,7 +92,6 @@ class CovidConstants implements ExtendedConstants {
                       {
                           label: 'Submitting lab ',
                           fields: [this.submittingLabField],
-                          height: ComponentHeight.large,
                           views: [views.table],
                       },
                   ];
