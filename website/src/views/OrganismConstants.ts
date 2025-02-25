@@ -10,6 +10,14 @@ export interface OrganismConstants {
     readonly organism: Organism;
     readonly dataOrigins: DataOrigin[];
     readonly accessionDownloadFields: string[];
+    readonly mainDateField: string;
+    readonly additionalFilters: Record<string, string> | undefined;
+    readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
+    readonly useAdvancedQuery: boolean;
+    readonly locationFields: string[];
+    readonly baselineFilterConfigs: BaselineFilterConfig[];
+    readonly lineageFilters: LineageFilterConfig[];
+    readonly predefinedVariants?: VariantFilter[];
 }
 
 export const ComponentHeight = {
@@ -22,17 +30,6 @@ export interface AdditionalSequencingEffortsField {
     readonly fields: string[];
     readonly height?: (typeof ComponentHeight)[keyof typeof ComponentHeight];
     readonly views: AggregateView[];
-}
-
-export interface ExtendedConstants extends OrganismConstants {
-    readonly mainDateField: string;
-    readonly additionalFilters: Record<string, string> | undefined;
-    readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
-    readonly useAdvancedQuery: boolean;
-    readonly locationFields: string[];
-    readonly baselineFilterConfigs: BaselineFilterConfig[];
-    readonly lineageFilters: LineageFilterConfig[];
-    readonly predefinedVariants?: VariantFilter[];
 }
 
 export function getAuthorRelatedSequencingEffortsFields(constants: {

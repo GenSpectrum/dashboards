@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -19,7 +19,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 
 const earliestDate = '1956-01-01';
 
-class RsvBConstants implements ExtendedConstants {
+class RsvBConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvB;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;

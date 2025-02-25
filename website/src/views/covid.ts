@@ -13,7 +13,7 @@ import {
     GenericCompareVariantsView,
     GenericSequencingEffortsView,
 } from './BaseView.ts';
-import { type ExtendedConstants } from './OrganismConstants.ts';
+import { type OrganismConstants } from './OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from './View.ts';
 import { compareSideBySideViewConstants, singleVariantViewConstants } from './ViewConstants.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
@@ -31,7 +31,7 @@ import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
 
-class CovidConstants implements ExtendedConstants {
+class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;

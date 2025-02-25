@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -19,7 +19,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 
 const earliestDate = '1960-01-01';
 
-class MpoxConstants implements ExtendedConstants {
+class MpoxConstants implements OrganismConstants {
     public readonly organism = Organisms.mpox;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
