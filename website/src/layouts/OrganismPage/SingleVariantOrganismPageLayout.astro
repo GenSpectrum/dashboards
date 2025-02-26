@@ -4,6 +4,7 @@ import type { ComponentProps } from 'astro/types';
 import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
 import OrganismViewPageLayout from './OrganismViewPageLayout.astro';
 import { getLapisUrl } from '../../config';
+import type { MutationAnnotation } from '../../types/annotations';
 import type { OrganismConstants } from '../../views/OrganismConstants';
 import type { View } from '../../views/View';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
@@ -11,13 +12,17 @@ import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHa
 interface Props {
     view: View<object, OrganismConstants, PageStateHandler<object>>;
     downloadLinks: ComponentProps<typeof AccessionsDownloadButton>['downloadLinks'];
+    mutationAnnotations?: MutationAnnotation[] | null;
 }
 
-const { view, downloadLinks } = Astro.props;
+const { view, downloadLinks, mutationAnnotations = undefined } = Astro.props;
 ---
 
 <OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
-    <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
+    <gs-app
+        lapis={getLapisUrl(view.organismConstants.organism)}
+        mutationAnnotations={JSON.stringify(mutationAnnotations)}
+    >
         <div class='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
             <div class='h-fit p-2 shadow-lg'>
                 <slot name='filters' />
