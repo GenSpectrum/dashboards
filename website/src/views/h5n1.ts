@@ -61,6 +61,19 @@ class H5n1Constants implements ExtendedConstants {
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            lineages: { clade: '2.3.4.4b' },
+        },
+        {
+            lineages: { clade: '2.3.2.1a' },
+        },
+        {
+            mutations: {
+                aminoAcidMutations: ['NA:V67I'],
+            },
+        },
+    ];
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);
