@@ -27,6 +27,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+import type { MutationAnnotation } from '../types/annotations.ts';
 import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
@@ -73,6 +74,7 @@ class CovidConstants implements OrganismConstants {
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
     public readonly accessionDownloadFields;
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         const originatingLab =

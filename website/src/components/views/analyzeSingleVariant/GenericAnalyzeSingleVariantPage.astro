@@ -6,7 +6,6 @@ import SelectVariant from './SelectVariant.astro';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { Organisms } from '../../../types/Organism';
-import type { MutationAnnotation } from '../../../types/annotations';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
 import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
@@ -28,10 +27,9 @@ import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof singleVariantViewKey>;
 interface Props {
     organism: Exclude<OrganismViewCompareVariant, typeof Organisms.covid>;
-    mutationAnnotations?: MutationAnnotation[] | null;
 }
 
-const { organism, mutationAnnotations = undefined } = Astro.props;
+const { organism } = Astro.props;
 const organismViewKey = `${organism}.${singleVariantViewKey}` satisfies OrganismViewKey;
 const view = ServerSide.routing.getOrganismView(organismViewKey);
 
@@ -71,7 +69,7 @@ const downloadLinks = noVariantSelected
       ];
 ---
 
-<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks} mutationAnnotations={mutationAnnotations}>
+<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <SingleVariantPageStateSelector
         slot='filters'
         locationFilterConfig={{

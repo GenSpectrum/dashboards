@@ -16,6 +16,7 @@ import type { LineageFilterConfig } from '../components/pageStateSelectors/Linea
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
+import type { MutationAnnotation } from '../types/annotations.ts';
 
 const earliestDate = '1905-01-01';
 
@@ -72,6 +73,47 @@ class H5n1Constants implements OrganismConstants {
             mutations: {
                 aminoAcidMutations: ['NA:V67I'],
             },
+        },
+    ];
+
+    // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
+    // Here mutations are in regard to this reference: https://www.ncbi.nlm.nih.gov/nuccore/EF619973.1
+    // Mutations from our reference to this reference have a deletion from NA:49-68. This means that to convert the mutations to our reference we add `20` to obtain the mutations listed below.
+    // TODO: Some mutations are only of interest when with other mutations but are now marked individually (listed here without `+20` correction):
+    // I97V+I294V, E99A+H255Y, E99D+H255Y, E99G+H255Y, I203L+S227N, I203M+H255Y, I203V+H255Y, N295S+T438N, K130N+I203L+S227N
+    public readonly mutationAnnotations: MutationAnnotation[] = [
+        {
+            name: 'NA amino acid substitution associated with reduced inhibition by NAIs',
+            description:
+                "This substitution has been associated with reduced NAI inhibition in subtype H5N1, for more details see the <a class='link' href='https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor'> Global Influenza Programme Report</a>",
+            symbol: '*',
+            nucleotideMutations: [],
+            aminoAcidMutations: [
+                'NA:I223V',
+                'NA:E119D',
+                'NA:S247N',
+                'NA:I117V',
+                'NA:T458N',
+                'NA:I223L',
+                'NA:Q136L',
+                'NA:I314V',
+                'NA:E119A',
+                'NA:H275Y',
+                'NA:V149A',
+                'NA:N295S',
+                'NA:V116A',
+                'NA:E119G',
+                'NA:K432T',
+                'NA:I223M',
+                'NA:I137T',
+                'NA:N315D',
+                'NA:D199G',
+                'NA:K150N',
+                'NA:N315S',
+                'NA:T458I',
+                'NA:I117T',
+                'NA:S267N',
+            ],
         },
     ];
 

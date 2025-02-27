@@ -16,6 +16,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+import type { MutationAnnotation } from '../types/annotations.ts';
 
 const earliestDate = '1930-01-01';
 
@@ -70,6 +71,7 @@ class WestNileConstants implements OrganismConstants {
             lineages: { lineage: '2' },
         },
     ];
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
