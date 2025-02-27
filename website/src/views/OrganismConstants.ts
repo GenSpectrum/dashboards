@@ -1,4 +1,4 @@
-import { views, type AggregateView } from '@genspectrum/dashboard-components/util';
+import { views, type AggregateView, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { pathoplexusGroupNameField, type VariantFilter } from './View.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
@@ -18,6 +18,7 @@ export interface OrganismConstants {
     readonly baselineFilterConfigs: BaselineFilterConfig[];
     readonly lineageFilters: LineageFilterConfig[];
     readonly predefinedVariants?: VariantFilter[];
+    readonly mutationAnnotations?: MutationAnnotation[];
 }
 
 export const ComponentHeight = {
