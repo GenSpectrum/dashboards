@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, views } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, views, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import {
     getIntegerFromSearch,
@@ -27,7 +27,6 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
-import type { MutationAnnotation } from '../types/annotations.ts';
 import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
