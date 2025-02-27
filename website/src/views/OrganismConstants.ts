@@ -6,9 +6,14 @@ import type { LineageFilterConfig } from '../components/pageStateSelectors/Linea
 import type { Organism } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
 
+/**
+ * Organism constants are values describing an organism, that are then used as parameters for setting up
+ * a view for that organism (XX how?).
+ */
 export interface OrganismConstants {
     readonly organism: Organism;
     readonly dataOrigins: DataOrigin[];
+    /** XX what is this? */
     readonly accessionDownloadFields: string[];
 }
 
@@ -17,6 +22,9 @@ export const ComponentHeight = {
     small: '300px',
 } as const;
 
+/**
+ * XX, used in mbox and westNile views
+ */
 export interface AdditionalSequencingEffortsField {
     readonly label: string;
     readonly fields: string[];
@@ -24,6 +32,9 @@ export interface AdditionalSequencingEffortsField {
     readonly views: AggregateView[];
 }
 
+/**
+ * XX, used in all(?) views
+ */
 export interface ExtendedConstants extends OrganismConstants {
     readonly mainDateField: string;
     readonly additionalFilters: Record<string, string> | undefined;

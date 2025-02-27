@@ -1,3 +1,7 @@
+/**
+ * Available data sources for data on an organism
+ */
+
 export const dataOrigins = {
     insdc: 'insdc' as const,
     pathoplexus: 'pathoplexus' as const,
