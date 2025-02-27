@@ -18,6 +18,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1960-01-01';
+const hostField = 'hostNameScientific';
 
 class MpoxConstants implements ExtendedConstants {
     public readonly organism = Organisms.mpox;
@@ -65,13 +66,13 @@ class MpoxConstants implements ExtendedConstants {
             label: 'Sample collection date',
         },
         {
-            lapisField: 'hostNameScientific',
+            lapisField: hostField,
             placeholderText: 'Host',
             type: 'text' as const,
             label: 'Host',
         },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
@@ -97,7 +98,6 @@ class MpoxConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
         this.locationFields = organismsConfig.mpox.lapis.locationFields;
-        this.hostField = organismsConfig.mpox.lapis.hostField;
         this.authorsField = organismsConfig.mpox.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;

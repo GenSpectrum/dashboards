@@ -12,6 +12,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1905-01-01';
+const hostField = 'hostNameScientific';
 
 class FluConstants implements ExtendedConstants {
     public readonly organism = Organisms.flu;
@@ -54,14 +55,14 @@ class FluConstants implements ExtendedConstants {
             label: 'Sample collection date',
         },
         {
-            lapisField: 'hostNameScientific',
+            lapisField: hostField,
             placeholderText: 'Host',
             type: 'text' as const,
             label: 'Host',
         },
     ];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -75,7 +76,6 @@ class FluConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.flu.lapis.mainDateField;
         this.locationFields = organismsConfig.flu.lapis.locationFields;
-        this.hostField = organismsConfig.flu.lapis.hostField;
         this.authorsField = organismsConfig.flu.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.flu.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.flu.lapis.additionalFilters;

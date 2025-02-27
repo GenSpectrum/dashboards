@@ -18,6 +18,7 @@ import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 const earliestDate = '1905-01-01';
+const hostField = 'hostNameScientific';
 
 class H5n1Constants implements ExtendedConstants {
     public readonly organism = Organisms.h5n1;
@@ -55,13 +56,13 @@ class H5n1Constants implements ExtendedConstants {
             label: 'Sample collection date',
         },
         {
-            lapisField: 'hostNameScientific',
+            lapisField: hostField,
             placeholderText: 'Host',
             type: 'text' as const,
             label: 'Host',
         },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -88,7 +89,6 @@ class H5n1Constants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.h5n1.lapis.mainDateField;
         this.locationFields = organismsConfig.h5n1.lapis.locationFields;
-        this.hostField = organismsConfig.h5n1.lapis.hostField;
         this.authorsField = organismsConfig.h5n1.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.h5n1.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.h5n1.lapis.additionalFilters;
