@@ -18,6 +18,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1975-01-01';
+const hostField = 'hostNameScientific';
 
 class EbolaSudanConstants implements OrganismConstants {
     public readonly organism = Organisms.ebolaSudan;
@@ -40,12 +41,18 @@ class EbolaSudanConstants implements OrganismConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
@@ -77,7 +84,6 @@ class EbolaSudanConstants implements OrganismConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.ebolaSudan.lapis.mainDateField;
         this.locationFields = organismsConfig.ebolaSudan.lapis.locationFields;
-        this.hostField = organismsConfig.ebolaSudan.lapis.hostField;
         this.authorsField = organismsConfig.ebolaSudan.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.ebolaSudan.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.ebolaSudan.lapis.additionalFilters;

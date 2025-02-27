@@ -18,6 +18,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1956-01-01';
+const hostField = 'hostNameScientific';
 
 class CchfConstants implements OrganismConstants {
     public readonly organism = Organisms.cchf;
@@ -40,12 +41,18 @@ class CchfConstants implements OrganismConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
@@ -77,7 +84,6 @@ class CchfConstants implements OrganismConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.cchf.lapis.mainDateField;
         this.locationFields = organismsConfig.cchf.lapis.locationFields;
-        this.hostField = organismsConfig.cchf.lapis.hostField;
         this.authorsField = organismsConfig.cchf.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.cchf.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.cchf.lapis.additionalFilters;

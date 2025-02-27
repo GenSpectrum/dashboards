@@ -18,6 +18,7 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1956-01-01';
+const hostField = 'hostNameScientific';
 
 class RsvAConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvA;
@@ -54,8 +55,14 @@ class RsvAConstants implements OrganismConstants {
             dateColumn: 'sampleCollectionDate',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -80,7 +87,6 @@ class RsvAConstants implements OrganismConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;
         this.locationFields = organismsConfig.rsvA.lapis.locationFields;
-        this.hostField = organismsConfig.rsvA.lapis.hostField;
         this.authorsField = organismsConfig.rsvA.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.rsvA.lapis.additionalFilters;

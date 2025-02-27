@@ -30,6 +30,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
+const hostField = 'host';
 
 class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
@@ -66,8 +67,14 @@ class CovidConstants implements OrganismConstants {
             dateColumn: 'date',
             label: 'Date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -101,7 +108,6 @@ class CovidConstants implements OrganismConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
         this.locationFields = organismsConfig.covid.lapis.locationFields;
-        this.hostField = organismsConfig.covid.lapis.hostField;
         this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
