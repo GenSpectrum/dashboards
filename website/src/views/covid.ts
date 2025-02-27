@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, views } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, views, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import {
     getIntegerFromSearch,
@@ -80,6 +80,7 @@ class CovidConstants implements OrganismConstants {
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
     public readonly accessionDownloadFields;
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         const originatingLab =

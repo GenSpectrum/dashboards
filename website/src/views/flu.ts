@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
@@ -68,6 +68,7 @@ class FluConstants implements OrganismConstants {
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
     public readonly accessionDownloadFields;
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);

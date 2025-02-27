@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -79,6 +79,7 @@ class RsvBConstants implements OrganismConstants {
             lineages: { lineage: 'B.D.4.1.1' },
         },
     ];
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);
