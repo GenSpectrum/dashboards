@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,8 +18,9 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1975-01-01';
+const hostField = 'hostNameScientific';
 
-class EbolaSudanConstants implements ExtendedConstants {
+class EbolaSudanConstants implements OrganismConstants {
     public readonly organism = Organisms.ebolaSudan;
     public readonly earliestDate = '1975-01-01';
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
@@ -40,12 +41,18 @@ class EbolaSudanConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
@@ -66,6 +73,7 @@ class EbolaSudanConstants implements ExtendedConstants {
             },
         },
     ];
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
@@ -77,7 +85,6 @@ class EbolaSudanConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.ebolaSudan.lapis.mainDateField;
         this.locationFields = organismsConfig.ebolaSudan.lapis.locationFields;
-        this.hostField = organismsConfig.ebolaSudan.lapis.hostField;
         this.authorsField = organismsConfig.ebolaSudan.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.ebolaSudan.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.ebolaSudan.lapis.additionalFilters;

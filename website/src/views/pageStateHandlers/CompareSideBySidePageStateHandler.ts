@@ -1,6 +1,6 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { ExtendedConstants } from '../OrganismConstants.ts';
+import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from '../View.ts';
 import { compareSideBySideViewConstants } from '../ViewConstants.ts';
 import {
@@ -25,7 +25,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
     protected readonly pathname;
 
     constructor(
-        protected readonly constants: ExtendedConstants,
+        protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: CompareSideBySideData,
         pathFragment: string,
     ) {

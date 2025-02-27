@@ -4,7 +4,6 @@ import { views } from '@genspectrum/dashboard-components/util';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { ComponentHeight } from '../../../views/OrganismConstants';
 import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
 import { getLocationDisplayConfig } from '../../../views/locationHelpers';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -83,24 +82,25 @@ const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineag
             ]}
             lapisDateField={view.organismConstants.mainDateField}
             granularity={timeGranularity}
+            pageSize={10}
         />
         {
             locationField !== undefined && (
                 <GsSequencesByLocation
                     title='Sequences by location'
-                    height={ComponentHeight.large}
                     lapisLocationField={locationField}
                     lapisFilter={lapisFilter}
                     mapName={mapName}
+                    pageSize={10}
                 />
             )
         }
         <GsAggregate
             title='Hosts'
-            height={ComponentHeight.large}
             fields={[view.organismConstants.hostField]}
             lapisFilter={lapisFilter}
             views={[views.table, views.bar]}
+            pageSize={10}
         />
         {
             lineageFilterFields.length > 0 && (
@@ -109,12 +109,13 @@ const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineag
                     fields={lineageFilterFields}
                     lapisFilter={lapisFilter}
                     views={[views.table, views.bar]}
+                    pageSize={10}
                 />
             )
         }
         {
-            view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, height, views }) => (
-                <GsAggregate title={label} height={height} fields={fields} lapisFilter={lapisFilter} views={views} />
+            view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, views }) => (
+                <GsAggregate title={label} fields={fields} lapisFilter={lapisFilter} views={views} pageSize={10} />
             ))
         }
     </ComponentsGrid>

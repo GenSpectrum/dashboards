@@ -115,6 +115,7 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                 denominatorFilter={datasetLapisFilter}
                 lapisDateField={view.organismConstants.mainDateField}
                 granularity={timeGranularity}
+                pageSize={10}
             />
             <GsRelativeGrowthAdvantage
                 numeratorFilter={variantFilter}
@@ -125,17 +126,20 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                 lapisFilter={variantFilter}
                 baselineLapisFilter={datasetLapisFilter}
                 sequenceType='nucleotide'
+                pageSize={10}
             />
             <GsMutations
                 lapisFilter={variantFilter}
                 baselineLapisFilter={datasetLapisFilter}
                 sequenceType='amino acid'
+                pageSize={10}
             />
             <GsAggregate
                 title='Sub-lineages'
                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
                 lapisFilter={variantFilter}
                 views={[views.table, views.bar]}
+                pageSize={10}
             />
             {
                 subdivisionField !== undefined && (
@@ -144,6 +148,7 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                         fields={[subdivisionField]}
                         lapisFilter={variantFilter}
                         views={[views.table, views.bar]}
+                        pageSize={10}
                     />
                 )
             }
@@ -152,6 +157,7 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                 fields={[view.organismConstants.hostField]}
                 lapisFilter={variantFilter}
                 views={[views.table, views.bar]}
+                pageSize={10}
             />
         </ComponentsGrid>
 

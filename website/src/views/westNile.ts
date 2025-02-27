@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,8 +18,9 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1930-01-01';
+const hostField = 'hostNameScientific';
 
-class WestNileConstants implements ExtendedConstants {
+class WestNileConstants implements OrganismConstants {
     public readonly organism = Organisms.westNile;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
@@ -53,9 +54,15 @@ class WestNileConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
@@ -70,6 +77,7 @@ class WestNileConstants implements ExtendedConstants {
             lineages: { lineage: '2' },
         },
     ];
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
@@ -81,7 +89,6 @@ class WestNileConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
         this.locationFields = organismsConfig.westNile.lapis.locationFields;
-        this.hostField = organismsConfig.westNile.lapis.hostField;
         this.authorsField = organismsConfig.westNile.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;

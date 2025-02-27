@@ -11,7 +11,6 @@ const lapisConfigSchema = z.object({
     url: z.string(),
     mainDateField: z.string(),
     locationFields: z.array(z.string()),
-    hostField: z.string(),
     authorsField: z.optional(z.string()),
     authorAffiliationsField: z.optional(z.string()),
     originatingLabField: z.optional(z.string()),

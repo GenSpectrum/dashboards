@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import { Organisms } from '../../types/Organism.ts';
-import type { ExtendedConstants } from '../OrganismConstants.ts';
+import type { OrganismConstants } from '../OrganismConstants.ts';
 import type { DatasetAndVariantData } from '../View.ts';
 import { SingleVariantPageStateHandler } from './SingleVariantPageStateHandler.ts';
 
 const mockDateRangeOption = { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' };
 
-const mockConstants: ExtendedConstants = {
+const mockConstants: OrganismConstants = {
     organism: Organisms.covid,
     dataOrigins: [],
     locationFields: ['country', 'region'],
