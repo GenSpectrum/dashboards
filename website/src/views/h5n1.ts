@@ -84,7 +84,7 @@ class H5n1Constants implements OrganismConstants {
         {
             name: 'NA amino acid substitution associated with reduced inhibition by NAIs',
             description:
-                "This substitution has been associated with reduced NAI inhibition in subtype H5N1, for more details see the <a class='link' href='https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor'> Global Influenza Programme Report</a>",
+                "This substitution has been associated with reduced NAI inhibition in subtype H5N1, for more details see the <a class='link' href='https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor'>Global Influenza Programme Report</a>.",
             symbol: '*',
             nucleotideMutations: [],
             aminoAcidMutations: [
