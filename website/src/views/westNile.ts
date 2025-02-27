@@ -53,6 +53,12 @@ class WestNileConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: 'hostNameScientific',
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string;

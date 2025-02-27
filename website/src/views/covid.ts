@@ -66,6 +66,12 @@ class CovidConstants implements ExtendedConstants {
             dateColumn: 'date',
             label: 'Date',
         },
+        {
+            lapisField: 'host',
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly hostField: string;
     public readonly originatingLabField: string | undefined;

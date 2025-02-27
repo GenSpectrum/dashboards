@@ -54,6 +54,12 @@ class RsvAConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDate',
             label: 'Sample collection date',
         },
+        {
+            lapisField: 'hostNameScientific',
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly hostField: string;
     public readonly authorsField: string | undefined;

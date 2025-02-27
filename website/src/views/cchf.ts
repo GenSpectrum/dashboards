@@ -40,6 +40,12 @@ class CchfConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: 'hostNameScientific',
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly mainDateField: string;
     public readonly locationFields: string[];
