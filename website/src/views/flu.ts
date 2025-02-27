@@ -3,7 +3,7 @@ import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
-import { type ExtendedConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -13,7 +13,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 
 const earliestDate = '1905-01-01';
 
-class FluConstants implements ExtendedConstants {
+class FluConstants implements OrganismConstants {
     public readonly organism = Organisms.flu;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;

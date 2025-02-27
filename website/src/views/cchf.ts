@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -19,7 +19,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 
 const earliestDate = '1956-01-01';
 
-class CchfConstants implements ExtendedConstants {
+class CchfConstants implements OrganismConstants {
     public readonly organism = Organisms.cchf;
     public readonly earliestDate = earliestDate;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
