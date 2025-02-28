@@ -27,8 +27,14 @@ class H3n2Constants implements OrganismConstants {
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'clade',
-            placeholderText: 'Clade',
+            lapisField: 'cladeHA',
+            placeholderText: 'Clade HA',
+            filterType: 'text' as const,
+            initialValue: undefined,
+        },
+        {
+            lapisField: 'cladeNA',
+            placeholderText: 'Clade NA',
             filterType: 'text' as const,
             initialValue: undefined,
         },
@@ -68,7 +74,11 @@ class H3n2Constants implements OrganismConstants {
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
     public readonly accessionDownloadFields;
-    public readonly predefinedVariants = []; // TODO
+    public readonly predefinedVariants = [
+        {
+            lineages: { clade: '3C.2a1b.2a.2a.3a.1' },
+        },
+    ]; // TODO
 
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     public readonly mutationAnnotations: MutationAnnotation[] = [];
@@ -126,7 +136,7 @@ export class H3n2CompareSideBySideView extends BaseView<
                         },
                         variantFilter: {
                             lineages: {
-                                clade: '2.3.4.4b', // TODO
+                                cladeHA: '3C.2a1b.2a.2a.3a.1', // TODO
                             },
                             mutations: {},
                         },

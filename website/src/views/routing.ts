@@ -30,13 +30,6 @@ import {
 } from './ebolaZaire.ts';
 import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
 import {
-    H5n1AnalyzeSingleVariantView,
-    H5n1CompareSideBySideView,
-    H5n1CompareToBaselineView,
-    H5n1CompareVariantsView,
-    H5n1SequencingEffortsView,
-} from './h5n1.ts';
-import {
     H1n1AnalyzeSingleVariantView,
     H1n1CompareSideBySideView,
     H1n1CompareToBaselineView,
@@ -50,6 +43,13 @@ import {
     H3n2CompareVariantsView,
     H3n2SequencingEffortsView,
 } from './h3n2.ts';
+import {
+    H5n1AnalyzeSingleVariantView,
+    H5n1CompareSideBySideView,
+    H5n1CompareToBaselineView,
+    H5n1CompareVariantsView,
+    H5n1SequencingEffortsView,
+} from './h5n1.ts';
 import {
     MpoxAnalyzeSingleVariantView,
     MpoxCompareSideBySideView,
@@ -203,6 +203,10 @@ export class Routing {
                 return Object.values(this.views[Organisms.covid]);
             case Organisms.h5n1:
                 return Object.values(this.views[Organisms.h5n1]);
+            case Organisms.h1n1:
+                return Object.values(this.views[Organisms.h1n1]);
+            case Organisms.h3n2:
+                return Object.values(this.views[Organisms.h3n2]);
             case Organisms.flu:
                 return Object.values(this.views[Organisms.flu]);
             case Organisms.rsvA:
