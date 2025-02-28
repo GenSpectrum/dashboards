@@ -1,10 +1,12 @@
 import { type AssertionError } from 'node:assert';
 
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { type DefaultBodyType, http, type StrictRequest } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, expect } from 'vitest';
 
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
+import type { LapisTotalCount } from './src/lapis/getTotalCount.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -28,6 +30,9 @@ function getError(assertionError: AssertionError) {
 export const lapisRequestMocks = {
     info: (response: LapisInfo, statusCode = 200) => {
         testServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver({ statusCode, response })));
+    },
+    postAggregated: (body: LapisFilter, response: LapisTotalCount, statusCode = 200) => {
+        testServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/aggregated`, resolver({ statusCode, body, response })));
     },
 };
 
