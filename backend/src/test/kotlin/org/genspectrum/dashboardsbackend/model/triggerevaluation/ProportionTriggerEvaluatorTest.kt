@@ -35,6 +35,8 @@ import org.springframework.boot.test.context.SpringBootTest
     properties = [
         "dashboards.organisms.covid.lapis.url=http://localhost:\${mockServerPort}/covid",
         "dashboards.organisms.h5n1.lapis.url=http://localhost:\${mockServerPort}/h5n1",
+        "dashboards.organisms.h1n1.lapis.url=http://localhost:\${mockServerPort}/h1n1",
+        "dashboards.organisms.h3n2.lapis.url=http://localhost:\${mockServerPort}/h3n2",
         "dashboards.organisms.mpox.lapis.url=http://localhost:\${mockServerPort}/mpox",
         "dashboards.organisms.westNile.lapis.url=http://localhost:\${mockServerPort}/westnile",
         "dashboards.organisms.rsvA.lapis.url=http://localhost:\${mockServerPort}/rsva",

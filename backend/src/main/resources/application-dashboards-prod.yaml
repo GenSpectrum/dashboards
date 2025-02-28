@@ -41,6 +41,56 @@ dashboards:
         - url: "https://loculus.genspectrum.org/h5n1"
           label: "Browse data"
           menuIcon: "database"
+    h1n1:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/h1n1"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull_seg1"
+          - "insdcAccessionFull_seg2"
+          - "insdcAccessionFull_seg3"
+          - "insdcAccessionFull_seg4"
+          - "insdcAccessionFull_seg5"
+          - "insdcAccessionFull_seg6"
+          - "insdcAccessionFull_seg7"
+          - "insdcAccessionFull_seg8"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/h1n1"
+          label: "Browse data"
+          menuIcon: "database"
+    h3n2:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/h3n2"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+        accessionDownloadFields:
+          - "insdcAccessionFull_seg1"
+          - "insdcAccessionFull_seg2"
+          - "insdcAccessionFull_seg3"
+          - "insdcAccessionFull_seg4"
+          - "insdcAccessionFull_seg5"
+          - "insdcAccessionFull_seg6"
+          - "insdcAccessionFull_seg7"
+          - "insdcAccessionFull_seg8"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/h3n2"
+          label: "Browse data"
+          menuIcon: "database"
     flu:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-a"
