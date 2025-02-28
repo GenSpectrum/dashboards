@@ -12,6 +12,8 @@ Currently, we support the following organisms:
 - SARS-CoV-2
 - Influenza A
 - Influenza A/H5N1
+- Influenza A/H3N2
+- Influenza A/H1N1
 - West Nile Virus
 - RSV-A
 - RSV-B

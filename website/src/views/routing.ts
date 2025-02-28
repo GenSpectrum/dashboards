@@ -30,6 +30,20 @@ import {
 } from './ebolaZaire.ts';
 import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
 import {
+    H1n1AnalyzeSingleVariantView,
+    H1n1CompareSideBySideView,
+    H1n1CompareToBaselineView,
+    H1n1CompareVariantsView,
+    H1n1SequencingEffortsView,
+} from './h1n1.ts';
+import {
+    H3n2AnalyzeSingleVariantView,
+    H3n2CompareSideBySideView,
+    H3n2CompareToBaselineView,
+    H3n2CompareVariantsView,
+    H3n2SequencingEffortsView,
+} from './h3n2.ts';
+import {
     H5n1AnalyzeSingleVariantView,
     H5n1CompareSideBySideView,
     H5n1CompareToBaselineView,
@@ -111,6 +125,20 @@ export class Routing {
                 [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
             },
+            [Organisms.h1n1]: {
+                [sequencingEffortsViewKey]: new H1n1SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H1n1AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H1n1CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H1n1CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H1n1CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.h3n2]: {
+                [sequencingEffortsViewKey]: new H3n2SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H3n2AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H3n2CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H3n2CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H3n2CompareSideBySideView(organismsConfig),
+            },
             [Organisms.flu]: {
                 [sequencingEffortsViewKey]: new FluSequencingEffortsView(organismsConfig),
                 [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
@@ -175,6 +203,10 @@ export class Routing {
                 return Object.values(this.views[Organisms.covid]);
             case Organisms.h5n1:
                 return Object.values(this.views[Organisms.h5n1]);
+            case Organisms.h1n1:
+                return Object.values(this.views[Organisms.h1n1]);
+            case Organisms.h3n2:
+                return Object.values(this.views[Organisms.h3n2]);
             case Organisms.flu:
                 return Object.values(this.views[Organisms.flu]);
             case Organisms.rsvA:
