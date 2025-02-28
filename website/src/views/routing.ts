@@ -37,6 +37,20 @@ import {
     H5n1SequencingEffortsView,
 } from './h5n1.ts';
 import {
+    H1n1AnalyzeSingleVariantView,
+    H1n1CompareSideBySideView,
+    H1n1CompareToBaselineView,
+    H1n1CompareVariantsView,
+    H1n1SequencingEffortsView,
+} from './h1n1.ts';
+import {
+    H3n2AnalyzeSingleVariantView,
+    H3n2CompareSideBySideView,
+    H3n2CompareToBaselineView,
+    H3n2CompareVariantsView,
+    H3n2SequencingEffortsView,
+} from './h3n2.ts';
+import {
     MpoxAnalyzeSingleVariantView,
     MpoxCompareSideBySideView,
     MpoxCompareToBaselineView,
@@ -110,6 +124,20 @@ export class Routing {
                 [compareVariantsViewKey]: new H5n1CompareVariantsView(organismsConfig),
                 [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.h1n1]: {
+                [sequencingEffortsViewKey]: new H1n1SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H1n1AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H1n1CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H1n1CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H1n1CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.h3n2]: {
+                [sequencingEffortsViewKey]: new H3n2SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H3n2AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H3n2CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H3n2CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H3n2CompareSideBySideView(organismsConfig),
             },
             [Organisms.flu]: {
                 [sequencingEffortsViewKey]: new FluSequencingEffortsView(organismsConfig),

@@ -32,6 +32,30 @@ dashboards:
         authorsField: "h5n1_authors"
         additionalFilters:
           someAdditionalFilter: "h5n1_additional_filter"
+    h1n1:
+      lapis:
+        url: "https://h1n1.lapis.dummy"
+        mainDateField: "h1n1_date"
+        locationFields:
+          - "h1n1_geo_loc_country"
+          - "h1n1_geo_loc_admin_1"
+        lineageField: "h1n1_lineage"
+        authorAffiliationsField: "h1n1_author_affiliations"
+        authorsField: "h1n1_authors"
+        additionalFilters:
+          someAdditionalFilter: "h1n1_additional_filter"
+    h3n2:
+      lapis:
+        url: "https://h3n2.lapis.dummy"
+        mainDateField: "h3n2_date"
+        locationFields:
+          - "h3n2_geo_loc_country"
+          - "h3n2_geo_loc_admin_1"
+        lineageField: "h3n2_lineage"
+        authorAffiliationsField: "h3n2_author_affiliations"
+        authorsField: "h3n2_authors"
+        additionalFilters:
+          someAdditionalFilter: "h3n2_additional_filter"
     mpox:
       lapis:
         url: "https://mpox.lapis.dummy"

@@ -2,7 +2,16 @@ import { expect, test } from '@playwright/test';
 
 import { nonBreakingHyphen } from '../src/views/ViewConstants.ts';
 
-const organisms = ['SARS-CoV-2', 'Influenza A/H5N1', 'West Nile', 'RSV-A', 'RSV-B', 'Mpox'];
+const organisms = [
+    'SARS-CoV-2',
+    'Influenza A/H5N1',
+    'Influenza A/H1N1',
+    'Influenza A/H3N2',
+    'West Nile',
+    'RSV-A',
+    'RSV-B',
+    'Mpox',
+];
 const views = [
     {
         linkName: 'Analyze a single variant',
