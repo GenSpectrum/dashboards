@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { type BaselineFilterConfig, BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantSelector } from './VariantSelector.tsx';
@@ -16,14 +16,12 @@ export function SingleVariantPageStateSelector({
     variantFilterConfig,
     organismViewKey,
     organismsConfig,
-    baselineFilterConfigs,
     datasetFilter,
 }: {
     locationFilterConfig: LocationFilterConfig;
     variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
-    baselineFilterConfigs?: BaselineFilterConfig[];
     datasetFilter: DatasetFilter;
 }) {
     const [datasetFilterState, setDatasetFilterState] = useState(datasetFilter);
@@ -31,6 +29,7 @@ export function SingleVariantPageStateSelector({
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
 
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const baselineFilterConfigs = view.organismConstants.baselineFilterConfigs;
 
     const newPageState = useMemo(() => {
         return {
