@@ -18,7 +18,7 @@ import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { getLineageFilterFields, getVariantFilterConfig } from '../../views/View';
+import { getLineageFilterFields } from '../../views/View';
 import { getLocationSubdivision } from '../../views/locationHelpers';
 import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey } from '../../views/routing';
@@ -38,12 +38,6 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
     pageState.datasetFilter.location,
-);
-
-const variantFilterConfig = getVariantFilterConfig(
-    view.organismConstants.lineageFilters,
-    pageState.variantFilter,
-    view.organismConstants.useAdvancedQuery,
 );
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
@@ -68,10 +62,9 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                 locationFields: view.organismConstants.locationFields,
                 placeholderText: 'Sampling location',
             }}
-            variantFilterConfig={variantFilterConfig}
             organismViewKey={organismViewKey}
             organismsConfig={organismConfig}
-            datasetFilter={pageState.datasetFilter}
+            pageState={pageState}
             client:only='react'
         >
             <AnalyzeSingleVariantSelectorFallback slot='fallback' />
