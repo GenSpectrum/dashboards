@@ -17,7 +17,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
-const earliestDate = 'TODO';
+const earliestDate = '1905-01-01';
 const hostField = 'hostNameScientific';
 
 class H3n2Constants implements OrganismConstants {
@@ -76,7 +76,7 @@ class H3n2Constants implements OrganismConstants {
     public readonly accessionDownloadFields;
     public readonly predefinedVariants = [
         {
-            lineages: { clade: '3C.2a1b.2a.2a.3a.1' },
+            lineages: { cladeHA: '3C.2a1b.2a.2a.3a.1' },
         },
     ]; // TODO
 
