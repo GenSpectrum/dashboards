@@ -1,0 +1,32 @@
+---
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+
+import { getTotalCount } from '../../../lapis/getTotalCount';
+
+type Props = {
+    lapisFilter: LapisFilter;
+    lapisUrl: string;
+};
+
+const { lapisFilter, lapisUrl } = Astro.props;
+
+const count = await getTotalCount(lapisUrl, lapisFilter);
+---
+
+<div class='flex min-w-[180px] flex-col rounded-md border-2 border-gray-100 sm:flex-row'>
+    <div class='stat'>
+        {
+            count === undefined ? (
+                <p class='font-bold text-red-700'>
+                    Error - Sorry, we were unable to compute the total count of sequences. Please try again later.
+                </p>
+            ) : (
+                <>
+                    <div class='stat-title'>Sequences</div>
+                    <div class='stat-value text-2xl sm:text-4xl'>{count.toLocaleString('en-us')}</div>
+                    <div class='stat-desc text-wrap'>The total number of sequenced samples</div>
+                </>
+            )
+        }
+    </div>
+</div>
