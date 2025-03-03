@@ -29,7 +29,7 @@ export function SingleVariantPageStateSelector({
             pageState.variantFilter,
             view.organismConstants.useAdvancedQuery,
         );
-    }, []);
+    }, [view, pageState]);
 
     const [datasetFilterState, setDatasetFilterState] = useState(pageState.datasetFilter);
 
@@ -47,7 +47,7 @@ export function SingleVariantPageStateSelector({
 
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.toLapisFilter(newPageState);
-    }, [newPageState]);
+    }, [newPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>

@@ -113,8 +113,7 @@ export default tseslint.config(
         },
         plugins: {
             react,
-            'import': importPlugin,
-            'react-hooks': reactHooks,
+            import: importPlugin,
         },
         rules: {
             ...react.configs.flat.recommended.rules,
@@ -152,4 +151,5 @@ export default tseslint.config(
             import: importPlugin,
         },
     },
+    { ...reactHooks.configs['recommended-latest'], ignores: ['**/*.fixture.ts'] },
 );
