@@ -11,6 +11,7 @@ import { toDownloadLink } from '../../components/views/compareSideBySide/toDownl
 import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismViewPageLayout from '../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
+import { ComponentHeight } from '../../views/OrganismConstants';
 import { getLineageFilterFields, getVariantFilterConfig } from '../../views/View';
 import { toLapisFilterWithoutVariant } from '../../views/pageStateHandlers/PageStateHandler';
 import type { OrganismViewKey } from '../../views/routing';
@@ -95,33 +96,40 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                 denominatorFilter={baselineLapisFilter}
                                 lapisDateField={view.organismConstants.mainDateField}
                                 granularity={timeGranularity}
+                                height={ComponentHeight.large}
+                                pageSize={10}
                             />
                             <GsRelativeGrowthAdvantage
                                 numeratorFilter={numeratorFilter}
                                 denominatorFilter={baselineLapisFilter}
                                 lapisDateField={view.organismConstants.mainDateField}
+                                height={ComponentHeight.large}
                             />
                             <GsMutations
                                 lapisFilter={numeratorFilter}
                                 baselineLapisFilter={baselineLapisFilter}
                                 sequenceType='nucleotide'
+                                pageSize={10}
                             />
                             <GsMutations
                                 lapisFilter={numeratorFilter}
                                 baselineLapisFilter={baselineLapisFilter}
                                 sequenceType='amino acid'
+                                pageSize={10}
                             />
                             <GsAggregate
                                 title='Sub-lineages'
                                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
                                 lapisFilter={numeratorFilter}
                                 views={[views.table, views.bar]}
+                                pageSize={10}
                             />
                             <GsAggregate
                                 title='Hosts'
                                 fields={[view.organismConstants.hostField]}
                                 lapisFilter={numeratorFilter}
                                 views={[views.table, views.bar]}
+                                pageSize={10}
                             />
                         </div>
                     );

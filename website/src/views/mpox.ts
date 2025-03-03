@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,8 +18,9 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1960-01-01';
+const hostField = 'hostNameScientific';
 
-class MpoxConstants implements ExtendedConstants {
+class MpoxConstants implements OrganismConstants {
     public readonly organism = Organisms.mpox;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
@@ -64,8 +65,14 @@ class MpoxConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDateRangeLower',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly accessionDownloadFields;
@@ -80,6 +87,7 @@ class MpoxConstants implements ExtendedConstants {
             lineages: { clade: 'Ia' },
         },
     ];
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getPathoplexusAdditionalSequencingEffortsFields(this);
@@ -91,7 +99,6 @@ class MpoxConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
         this.locationFields = organismsConfig.mpox.lapis.locationFields;
-        this.hostField = organismsConfig.mpox.lapis.hostField;
         this.authorsField = organismsConfig.mpox.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.mpox.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;

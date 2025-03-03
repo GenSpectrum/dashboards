@@ -43,6 +43,8 @@ const downloadLinks = notEnoughVariantsSelected
           filter: lapisFilter,
           downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
       }));
+
+const componentHeight = '540px'; // prevalence over time table with 10 rows
 ---
 
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
@@ -72,9 +74,21 @@ const downloadLinks = notEnoughVariantsSelected
                     lapisDateField={view.organismConstants.mainDateField}
                     granularity={timeGranularity}
                     views={['line', 'table', 'bar', 'bubble']}
+                    height={componentHeight}
+                    pageSize={10}
                 />
-                <GsMutationComparison lapisFilters={numeratorLapisFilters} sequenceType='nucleotide' />
-                <GsMutationComparison lapisFilters={numeratorLapisFilters} sequenceType='amino acid' />
+                <GsMutationComparison
+                    lapisFilters={numeratorLapisFilters}
+                    sequenceType='nucleotide'
+                    height={componentHeight}
+                    pageSize={10}
+                />
+                <GsMutationComparison
+                    lapisFilters={numeratorLapisFilters}
+                    sequenceType='amino acid'
+                    height={componentHeight}
+                    pageSize={10}
+                />
             </ComponentsGrid>
         )
     }

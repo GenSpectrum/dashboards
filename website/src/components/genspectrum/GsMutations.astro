@@ -8,18 +8,23 @@ interface Props {
     lapisFilter: LapisFilter;
     baselineLapisFilter?: LapisFilter;
     sequenceType: SequenceType;
+    pageSize?: number;
+    height?: string;
 }
 
-const { lapisFilter, baselineLapisFilter, sequenceType } = Astro.props;
+const { lapisFilter, baselineLapisFilter, sequenceType, pageSize, height } = Astro.props;
 ---
 
-<ComponentWrapper title={sequenceType === 'nucleotide' ? 'Nucleotide mutations' : 'Amino acid mutations'}>
+<ComponentWrapper
+    title={sequenceType === 'nucleotide' ? 'Nucleotide mutations' : 'Amino acid mutations'}
+    height={height}
+>
     <gs-mutations
         lapisFilter={JSON.stringify(lapisFilter)}
         baselineLapisFilter={JSON.stringify(baselineLapisFilter)}
         sequenceType={sequenceType}
         views='["grid", "table", "insertions"]'
-        pageSize={defaultTablePageSize}
+        pageSize={pageSize ?? defaultTablePageSize}
         width='100%'
-        height='100%'></gs-mutations>
+        height={height ? '100%' : undefined}></gs-mutations>
 </ComponentWrapper>

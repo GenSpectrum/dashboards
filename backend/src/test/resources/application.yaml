@@ -16,7 +16,6 @@ dashboards:
           - "covid_country"
           - "covid_division"
         lineageField: "covid_lineage"
-        hostField: "covid_host"
         originatingLabField: "covid_originating_lab"
         submittingLabField: "covid_submitting_lab"
         additionalFilters:
@@ -29,7 +28,6 @@ dashboards:
           - "h5n1_geo_loc_country"
           - "h5n1_geo_loc_admin_1"
         lineageField: "h5n1_lineage"
-        hostField: "h5n1_host_name_scientific"
         authorAffiliationsField: "h5n1_author_affiliations"
         authorsField: "h5n1_authors"
         additionalFilters:
@@ -42,7 +40,6 @@ dashboards:
           - "mpox_geo_loc_country"
           - "mpox_geo_loc_admin_1"
         lineageField: "mpox_lineage"
-        hostField: "mpox_host_name_scientific"
         authorAffiliationsField: "mpox_author_affiliations"
         authorsField: "mpox_authors"
         additionalFilters:
@@ -55,7 +52,6 @@ dashboards:
           - "westNile_geo_loc_country"
           - "westNile_geo_loc_admin_1"
         lineageField: "westNile_lineage"
-        hostField: "westNile_host_name_scientific"
         authorAffiliationsField: "westNile_author_affiliations"
         authorsField: "westNile_authors"
         additionalFilters:
@@ -68,7 +64,6 @@ dashboards:
           - "rsvA_geo_loc_country"
           - "rsvA_geo_loc_admin_1"
         lineageField: "rsvA_lineage"
-        hostField: "rsvA_host_name_scientific"
         authorAffiliationsField: "rsvA_author_affiliations"
         authorsField: "rsvA_authors"
         additionalFilters:
@@ -81,7 +76,6 @@ dashboards:
           - "rsvB_geo_loc_country"
           - "rsvB_geo_loc_admin_1"
         lineageField: "rsvB_lineage"
-        hostField: "rsvB_host_name_scientific"
         authorAffiliationsField: "rsvB_author_affiliations"
         authorsField: "rsvB_authors"
         additionalFilters:

@@ -8,7 +8,6 @@ dashboards:
           - "region"
           - "country"
           - "division"
-        hostField: "host"
         originatingLabField: "originatingLab"
         submittingLabField: "submittingLab"
         accessionDownloadFields:
@@ -24,7 +23,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -50,7 +48,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -76,7 +73,6 @@ dashboards:
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -99,7 +95,6 @@ dashboards:
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -122,7 +117,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -141,7 +135,6 @@ dashboards:
         locationFields:
           - "country"
           - "division"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -160,7 +153,6 @@ dashboards:
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -183,7 +175,6 @@ dashboards:
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
@@ -206,7 +197,6 @@ dashboards:
         locationFields:
           - "geoLocCountry"
           - "geoLocAdmin1"
-        hostField: "hostNameScientific"
         authorAffiliationsField: "authorAffiliations"
         authorsField: "authors"
         additionalFilters:
