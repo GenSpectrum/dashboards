@@ -42,7 +42,7 @@ export function SequencingEffortsPageStateSelector({
 
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.toLapisFilter(newPageState);
-    }, [newPageState]);
+    }, [newPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
