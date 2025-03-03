@@ -30,9 +30,6 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
     dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
 });
 
-const variantFilterConfigs = view.pageStateHandler.toVariantFilterConfigs(pageState);
-const baselineFilterConfig = view.pageStateHandler.toBaselineFilterConfig(pageState);
-
 const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
 const noVariantSelected = pageState.variants.size < 1;
 
@@ -52,10 +49,7 @@ const downloadLinks = noVariantSelected
             locationFields: view.organismConstants.locationFields,
             placeholderText: 'Sampling location',
         }}
-        baselineFilterConfig={baselineFilterConfig}
-        variantFilterConfigs={variantFilterConfigs}
-        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
-        datasetFilter={pageState.datasetFilter}
+        initialPageState={pageState}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         client:only='react'

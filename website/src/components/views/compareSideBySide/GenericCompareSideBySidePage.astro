@@ -6,7 +6,7 @@ import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
-import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
+import { getLineageFilterFields } from '../../../views/View';
 import { toLapisFilterWithoutVariant } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -49,12 +49,6 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                         datasetFilter,
                         variantFilter,
                     );
-                    const variantFilterConfig = getVariantFilterConfig(
-                        view.organismConstants.lineageFilters,
-                        variantFilter,
-                        view.organismConstants.useAdvancedQuery,
-                        hideMutationComponents,
-                    );
 
                     const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
 
@@ -76,13 +70,10 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                         locationFields: view.organismConstants.locationFields,
                                         placeholderText: 'Sampling location',
                                     }}
-                                    variantFilterConfig={variantFilterConfig}
                                     filterId={id}
-                                    pageState={pageState}
+                                    initialPageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
-                                    baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
-                                    datasetFilter={datasetFilter}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback
