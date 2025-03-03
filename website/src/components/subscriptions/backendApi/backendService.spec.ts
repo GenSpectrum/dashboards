@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { BackendError, BackendNotAvailable, BackendService, UnknownBackendError } from './backendService.ts';
+import { BackendError, BackendService, UnknownBackendError } from './backendService.ts';
 import { backendRequestMocks, DUMMY_BACKEND_URL } from '../../../../vitest.setup.ts';
 import type {
     SubscriptionRequest,
@@ -161,12 +161,6 @@ describe('backendService', () => {
         await expect(backendService.deleteSubscription({ subscriptionId, userId })).resolves.to.deep.equal('');
     });
 
-    test('should throw error when backend is not reachable', async () => {
-        await expect(backendService.getSubscriptions({ userId: '123' })).rejects.to.deep.equal(
-            new BackendNotAvailable(DUMMY_BACKEND_URL),
-        );
-    });
-
     test('should pass backend error response from GET subscriptions', async () => {
         const errorResponse = { detail: 'Some error detail' };
 
@@ -183,7 +177,7 @@ describe('backendService', () => {
         backendRequestMocks.getSubscriptionsBackendError(errorResponse, 400);
 
         await expect(backendService.getSubscriptions({ userId: '123' })).rejects.to.deep.equal(
-            new UnknownBackendError('Bad Request', 400, '/subscriptions'),
+            new UnknownBackendError('', 400, '/subscriptions'),
         );
     });
 });

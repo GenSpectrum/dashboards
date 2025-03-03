@@ -4,9 +4,10 @@ import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { type DefaultBodyType, http, type StrictRequest } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, expect } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
+import type { OrganismsConfig } from './src/config.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
-import type { LapisTotalCount } from './src/lapis/getTotalCount.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -27,12 +28,22 @@ function getError(assertionError: AssertionError) {
     return `${assertionError.message} - expected: ${JSON.stringify(assertionError.expected)} - actual ${JSON.stringify(assertionError.actual)}`;
 }
 
+type ReferenceSequence = { name: string; sequence: string };
+type ReferenceGenome = { nucleotideSequences: ReferenceSequence[]; genes: ReferenceSequence[] };
+
 export const lapisRequestMocks = {
     info: (response: LapisInfo, statusCode = 200) => {
         testServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver({ statusCode, response })));
     },
-    postAggregated: (body: LapisFilter, response: LapisTotalCount, statusCode = 200) => {
+    postAggregated: (
+        body: LapisFilter,
+        response: { data: Record<string, string | boolean | number>[] },
+        statusCode = 200,
+    ) => {
         testServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/aggregated`, resolver({ statusCode, body, response })));
+    },
+    referenceGenome: (response: ReferenceGenome, statusCode = 200) => {
+        testServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/referenceGenome`, resolver({ statusCode, response })));
     },
 };
 
@@ -148,3 +159,260 @@ beforeAll(() => testServer.listen({ onUnhandledRequest: 'warn' }));
 afterAll(() => testServer.close());
 
 afterEach(() => testServer.resetHandlers());
+
+export const testOrganismsConfig = {
+    covid: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'date',
+            locationFields: ['region', 'country', 'division'],
+            originatingLabField: 'originatingLab',
+            submittingLabField: 'submittingLab',
+            accessionDownloadFields: ['strain'],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://cov-spectrum.org',
+                label: 'CoV-Spectrum',
+                menuIcon: 'virus',
+            },
+        ],
+    },
+    flu: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull_seg1',
+                'insdcAccessionFull_seg2',
+                'insdcAccessionFull_seg3',
+                'insdcAccessionFull_seg4',
+                'insdcAccessionFull_seg5',
+                'insdcAccessionFull_seg6',
+                'insdcAccessionFull_seg7',
+                'insdcAccessionFull_seg8',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/influenza-a',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    h5n1: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull_seg1',
+                'insdcAccessionFull_seg2',
+                'insdcAccessionFull_seg3',
+                'insdcAccessionFull_seg4',
+                'insdcAccessionFull_seg5',
+                'insdcAccessionFull_seg6',
+                'insdcAccessionFull_seg7',
+                'insdcAccessionFull_seg8',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/h5n1',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    westNile: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDateRangeLower',
+            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull',
+                'accessionVersion',
+                'dataUseTerms',
+                'dataUseTermsUrl',
+                'dataUseTermsRestrictedUntil',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://pathoplexus.org/west-nile',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    rsvA: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: ['insdcAccessionFull'],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/rsv-a',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    rsvB: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: ['insdcAccessionFull'],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/rsv-b',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    mpox: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDateRangeLower',
+            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull',
+                'accessionVersion',
+                'dataUseTerms',
+                'dataUseTermsUrl',
+                'dataUseTermsRestrictedUntil',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://pathoplexus.org/mpox',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    ebolaSudan: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDateRangeLower',
+            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull',
+                'accessionVersion',
+                'dataUseTerms',
+                'dataUseTermsUrl',
+                'dataUseTermsRestrictedUntil',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://pathoplexus.org/ebola-sudan',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    ebolaZaire: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDateRangeLower',
+            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull',
+                'accessionVersion',
+                'dataUseTerms',
+                'dataUseTermsUrl',
+                'dataUseTermsRestrictedUntil',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://pathoplexus.org/ebola-zaire',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    cchf: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDateRangeLower',
+            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull',
+                'accessionVersion',
+                'dataUseTerms',
+                'dataUseTermsUrl',
+                'dataUseTermsRestrictedUntil',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://pathoplexus.org/cchf',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+} satisfies OrganismsConfig;

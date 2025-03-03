@@ -8,7 +8,7 @@ import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/Singl
 import { Organisms } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
-import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
+import { getLineageFilterFields } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/locationHelpers';
 import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -47,12 +47,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     pageState.datasetFilter.location,
 );
 
-const variantFilterConfig = getVariantFilterConfig(
-    view.organismConstants.lineageFilters,
-    pageState.variantFilter,
-    view.organismConstants.useAdvancedQuery,
-);
-
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 
 const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
@@ -77,11 +71,9 @@ const downloadLinks = noVariantSelected
             placeholderText: 'Sampling location',
             label: 'Sampling location',
         }}
-        variantFilterConfig={variantFilterConfig}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
-        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
-        datasetFilter={pageState.datasetFilter}
+        pageState={pageState}
         client:only='react'
     >
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />
