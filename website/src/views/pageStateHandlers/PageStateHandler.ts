@@ -181,11 +181,16 @@ export function encodeMultipleFiltersToUrlSearchParam(filters: Map<Id, Map<strin
         search.append(columnsKey, `${filters.size}`);
     }
 
-    for (const [id, filter] of filters) {
-        for (const [key, value] of filter) {
-            search.append(`${key}${variantFilterUrlDelimiter}${id}`, value);
-        }
-    }
+    filters
+        .entries()
+        .toArray()
+        .toSorted(([id1], [id2]) => id1 - id2)
+        .forEach(([_, filter], index) => {
+            for (const [key, value] of filter) {
+                search.append(`${key}${variantFilterUrlDelimiter}${index}`, value);
+            }
+        });
+
     return search;
 }
 

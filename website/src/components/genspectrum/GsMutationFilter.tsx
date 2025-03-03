@@ -43,7 +43,7 @@ export function GsMutationFilter({
             </div>
             <gs-mutation-filter
                 width={width}
-                initialValue={JSON.stringify(initialValue)}
+                initialValue={JSON.stringify(initialValue ?? [])}
                 ref={mutationFilterRef}
             ></gs-mutation-filter>
         </label>

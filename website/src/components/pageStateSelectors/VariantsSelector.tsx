@@ -1,40 +1,37 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import { type VariantFilterConfig } from './VariantFilterConfig.ts';
-import { VariantSelector } from './VariantSelector.tsx';
-import type { Id } from '../../views/View.ts';
+import { VariantSelector, type VariantFilterConfig } from './VariantSelector.tsx';
+import type { Id, VariantFilter } from '../../views/View.ts';
 
 export function VariantsSelector({
+    variantFilters,
     variantFilterConfigs,
-    setVariantFilterConfigs,
-    emptyVariantFilterConfigProvider,
+    setVariantFilters,
     lapisFilter,
 }: {
+    variantFilters: Map<Id, VariantFilter>;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
-    setVariantFilterConfigs: (variants: Map<Id, VariantFilterConfig>) => void;
-    emptyVariantFilterConfigProvider: () => VariantFilterConfig;
+    setVariantFilters: (variantFilters: Map<Id, VariantFilter>) => void;
     lapisFilter: LapisFilter;
 }) {
     const removeVariant = (id: Id) => {
-        setVariantFilterConfigs(new Map(Array.from(variantFilterConfigs).filter(([key]) => key !== id)));
+        setVariantFilters(new Map(Array.from(variantFilters).filter(([key]) => key !== id)));
     };
 
     const addVariant = () => {
-        const newVariantFilterConfigs = new Map(variantFilterConfigs);
+        const newVariantFilters = new Map(variantFilters);
 
-        const newId = variantFilterConfigs.size === 0 ? 0 : Math.max(...Array.from(variantFilterConfigs.keys())) + 1;
+        const newId = variantFilters.size === 0 ? 0 : Math.max(...Array.from(variantFilters.keys())) + 1;
+        newVariantFilters.set(newId, {});
 
-        newVariantFilterConfigs.set(newId, emptyVariantFilterConfigProvider());
-
-        setVariantFilterConfigs(newVariantFilterConfigs);
+        setVariantFilters(newVariantFilters);
     };
 
-    const updateVariantFilter = (id: Id, variantFilter: VariantFilterConfig) => {
-        const newVariantFilterConfigs = new Map(variantFilterConfigs);
+    const updateVariantFilter = (id: Id, variantFilter: VariantFilter) => {
+        const newVariantFilters = new Map(variantFilters);
+        newVariantFilters.set(id, variantFilter);
 
-        newVariantFilterConfigs.set(id, variantFilter);
-
-        setVariantFilterConfigs(newVariantFilterConfigs);
+        setVariantFilters(newVariantFilters);
     };
 
     return (
@@ -42,6 +39,7 @@ export function VariantsSelector({
             {Array.from(variantFilterConfigs).map(([id, filterConfig]) => (
                 <div key={id}>
                     <VariantSelector
+                        variantFilter={variantFilters.get(id) ?? {}}
                         variantFilterConfig={filterConfig}
                         onVariantFilterChange={(variantFilter) => updateVariantFilter(id, variantFilter)}
                         lapisFilter={lapisFilter}
