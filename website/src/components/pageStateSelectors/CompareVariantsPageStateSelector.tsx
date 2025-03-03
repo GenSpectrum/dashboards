@@ -3,54 +3,37 @@ import { useMemo, useState } from 'react';
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { type BaselineFilterConfig, BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
-import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantsSelector } from './VariantsSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
-import type { DatasetFilter, Id } from '../../views/View.ts';
+import type { CompareVariantsData, DatasetFilter, Id } from '../../views/View.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
 
 export function CompareVariantsPageStateSelector({
     locationFilterConfig,
-    variantFilterConfigs,
     organismViewKey,
     organismsConfig,
-    baselineFilterConfigs,
-    datasetFilter,
+    pageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    variantFilterConfigs: Map<Id, VariantFilterConfig>;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
-    baselineFilterConfigs?: BaselineFilterConfig[];
-    datasetFilter: DatasetFilter;
+    pageState: CompareVariantsData;
 }) {
-    const [datasetFilterState, setDatasetFilterState] = useState(datasetFilter);
-
-    const [variantConfigs, setVariantConfigs] = useState<Map<Id, VariantFilterConfig>>(variantFilterConfigs);
-
-    const view = useMemo(
-        () => new Routing(organismsConfig).getOrganismView(organismViewKey),
-        [organismsConfig, organismViewKey],
-    );
-
-    const newPageState = useMemo(() => {
-        const variants = new Map(
-            Array.from(variantConfigs).map(([id, variantFilterConfig]) => {
-                return [id, toVariantFilter(variantFilterConfig)];
-            }),
-        );
-
-        return {
-            datasetFilter: datasetFilterState,
-            variants,
-        };
-    }, [datasetFilterState, variantConfigs]);
+    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const variantFilterConfigs = useMemo(() => {
+        return pageState.variants.values().map((variantFilter) => ({
+            lineageFilterConfigs: view.organismConstants.lineageFilters,
+            mutationFilterConfig: { enabled: true },
+            isInVariantQueryMode: variantFilter.variantQuery !== undefined,
+        }));
+    }, [pageState.variants, view.organismConstants.lineageFilters]);
+    const [currentPageState, setCurrentPageState] = useState(pageState);
 
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.datasetFilterToLapisFilter(newPageState.datasetFilter);
-    }, [newPageState, view.pageStateHandler]);
+        return view.pageStateHandler.datasetFilterToLapisFilter(currentPageState.datasetFilter);
+    }, [currentPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -59,10 +42,15 @@ export function CompareVariantsPageStateSelector({
                 <Inset className='p-2'>
                     <BaselineSelector
                         locationFilterConfig={locationFilterConfig}
-                        baselineFilterConfigs={baselineFilterConfigs}
+                        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
-                        datasetFilter={datasetFilterState}
-                        setDatasetFilter={setDatasetFilterState}
+                        datasetFilter={currentPageState.datasetFilter}
+                        setDatasetFilter={(newDatasetFilter) => {
+                            setCurrentPageState((previousState) => ({
+                                ...previousState,
+                                datasetFilter: newDatasetFilter,
+                            }));
+                        }}
                     />
                 </Inset>
             </div>
@@ -81,7 +69,7 @@ export function CompareVariantsPageStateSelector({
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
-                    newPageState={newPageState}
+                    newPageState={currentPageState}
                 />
             </div>
         </div>

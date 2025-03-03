@@ -1,48 +1,40 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { type BaselineFilterConfig, BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
-import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
-import type { DatasetFilter } from '../../views/View.ts';
+import type { DatasetAndVariantData } from '../../views/View.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { sequencingEffortsViewKey } from '../../views/viewKeys.ts';
 
 export function SequencingEffortsPageStateSelector({
     locationFilterConfig,
-    variantFilterConfig,
     organismViewKey,
     organismsConfig,
-    baselineFilterConfigs,
-    datasetFilter,
+    pageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
-    baselineFilterConfigs?: BaselineFilterConfig[];
-    datasetFilter: DatasetFilter;
+    pageState: DatasetAndVariantData;
 }) {
-    const [datasetFilterState, setDatasetFilterState] = useState(datasetFilter);
-
-    const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
-
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
-
-    const newPageState = useMemo(
+    const variantFilterConfig = useMemo(
         () => ({
-            datasetFilter: datasetFilterState,
-            variantFilter: toVariantFilter(variantFilterConfigState),
+            lineageFilterConfigs: view.organismConstants.lineageFilters,
+            mutationFilterConfig: { enabled: false },
+            isInVariantQueryMode: null,
         }),
-        [datasetFilterState, variantFilterConfigState],
+        [view.organismConstants.lineageFilters],
     );
+    const [currentPageState, setCurrentPageState] = useState(pageState);
 
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.toLapisFilter(newPageState);
-    }, [newPageState, view.pageStateHandler]);
+        return view.pageStateHandler.toLapisFilter(currentPageState);
+    }, [currentPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -51,14 +43,25 @@ export function SequencingEffortsPageStateSelector({
                 <Inset className='flex flex-col gap-6 p-2'>
                     <BaselineSelector
                         locationFilterConfig={locationFilterConfig}
-                        baselineFilterConfigs={baselineFilterConfigs}
+                        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
-                        datasetFilter={datasetFilterState}
-                        setDatasetFilter={setDatasetFilterState}
+                        datasetFilter={currentPageState.datasetFilter}
+                        setDatasetFilter={(newDatasetFilter) => {
+                            setCurrentPageState((previousState) => ({
+                                ...previousState,
+                                datasetFilter: newDatasetFilter,
+                            }));
+                        }}
                     />
                     <VariantSelector
-                        onVariantFilterChange={setVariantFilterConfigState}
-                        variantFilterConfig={{ ...variantFilterConfigState, mutationFilterConfig: undefined }}
+                        onVariantFilterChange={(newVariantFilter) => {
+                            setCurrentPageState((previousState) => ({
+                                ...previousState,
+                                variantFilter: newVariantFilter,
+                            }));
+                        }}
+                        variantFilterConfig={variantFilterConfig}
+                        variantFilter={currentPageState.variantFilter}
                         lapisFilter={currentLapisFilter}
                     />
                 </Inset>
@@ -67,7 +70,7 @@ export function SequencingEffortsPageStateSelector({
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
-                    newPageState={newPageState}
+                    newPageState={currentPageState}
                 />
             </div>
         </div>
