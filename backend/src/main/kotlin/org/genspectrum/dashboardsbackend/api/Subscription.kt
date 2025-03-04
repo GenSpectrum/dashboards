@@ -20,6 +20,12 @@ enum class Organism {
     @JsonProperty("h5n1")
     H5N1,
 
+    @JsonProperty("h1n1")
+    H1N1,
+
+    @JsonProperty("h3n2")
+    H3N2,
+
     @JsonProperty("mpox")
     Mpox,
 
