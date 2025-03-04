@@ -1,87 +1,94 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { useState } from 'react';
 
-import { LineageFilterInput } from './LineageFilterInput.tsx';
-import type { VariantFilterConfig } from './VariantFilterConfig.ts';
+import { type LineageFilterConfig, LineageFilterInput } from './LineageFilterInput.tsx';
+import type { VariantFilter } from '../../views/View.ts';
 import { getMutationFilter } from '../../views/helpers.ts';
 import { AdvancedQueryFilter } from '../genspectrum/AdvancedQueryFilter.tsx';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter.tsx';
 
+export type VariantFilterConfig = {
+    lineageFilterConfigs?: LineageFilterConfig[];
+    mutationFilterConfig: {
+        enabled: boolean;
+    };
+    variantQueryConfig: {
+        enabled: boolean;
+    };
+};
+
 export function VariantSelector({
     onVariantFilterChange,
     variantFilterConfig,
+    variantFilter,
     lapisFilter,
 }: {
     variantFilterConfig: VariantFilterConfig;
-    onVariantFilterChange: (variantFilter: VariantFilterConfig) => void;
+    onVariantFilterChange: (variantFilter: VariantFilter) => void;
+    variantFilter: VariantFilter;
     lapisFilter: LapisFilter;
 }) {
+    const [isInVariantQueryMode, setIsInVariantQueryMode] = useState(
+        variantFilterConfig.variantQueryConfig.enabled && variantFilter.variantQuery !== undefined,
+    );
+
     return (
         <div>
-            <label
-                className={`mb-1 flex cursor-pointer items-center gap-1 text-sm ${variantFilterConfig.isInVariantQueryMode === undefined ? 'hidden' : ''}`}
-            >
-                Advanced
-                <input
-                    type='checkbox'
-                    className='checkbox checkbox-xs'
-                    onChange={() => {
-                        onVariantFilterChange({
-                            ...variantFilterConfig,
-                            isInVariantQueryMode: !variantFilterConfig.isInVariantQueryMode,
-                        });
-                    }}
-                    checked={variantFilterConfig.isInVariantQueryMode}
-                />
-            </label>
+            {variantFilterConfig.variantQueryConfig.enabled && (
+                <label className='mb-1 flex cursor-pointer items-center gap-1 text-sm'>
+                    Advanced
+                    <input
+                        type='checkbox'
+                        className='checkbox checkbox-xs'
+                        onChange={() => setIsInVariantQueryMode((value) => !value)}
+                        checked={isInVariantQueryMode}
+                    />
+                </label>
+            )}
 
-            <div className={variantFilterConfig.isInVariantQueryMode ? '' : 'hidden'}>
+            <div className={isInVariantQueryMode ? '' : 'hidden'}>
                 <AdvancedQueryFilter
                     onInput={(event) => {
-                        const newVariantQuery = {
-                            variantQueryConfig: event.target.value,
-                        };
-
-                        const newState = {
-                            ...variantFilterConfig,
-                            ...newVariantQuery,
-                        };
-
-                        onVariantFilterChange(newState);
+                        onVariantFilterChange({
+                            ...variantFilter,
+                            variantQuery: event.target.value,
+                        });
                     }}
-                    value={variantFilterConfig.variantQueryConfig ?? ''}
+                    value={variantFilter.variantQuery ?? ''}
                 />
             </div>
-            <div className={`flex flex-col gap-2 ${variantFilterConfig.isInVariantQueryMode ? 'hidden' : ''}`}>
+            <div className={`flex flex-col gap-2 ${isInVariantQueryMode ? 'hidden' : ''}`}>
                 {variantFilterConfig.lineageFilterConfigs?.map((lineageFilterConfig) => (
                     <LineageFilterInput
                         lineageFilterConfig={lineageFilterConfig}
                         onLineageChange={(lineage) => {
-                            const newVariantFilterConfig = {
-                                ...variantFilterConfig,
-                                lineageFilterConfigs: variantFilterConfig.lineageFilterConfigs?.map((config) =>
-                                    config.lapisField === lineageFilterConfig.lapisField
-                                        ? { ...config, initialValue: lineage }
-                                        : config,
-                                ),
-                            };
-                            onVariantFilterChange(newVariantFilterConfig);
+                            onVariantFilterChange({
+                                ...variantFilter,
+                                variantQuery: undefined,
+                                lineages: {
+                                    ...variantFilter.lineages,
+                                    [lineageFilterConfig.lapisField]: lineage,
+                                },
+                            });
                         }}
                         key={lineageFilterConfig.lapisField}
                         lapisFilter={lapisFilter}
+                        value={variantFilter.lineages?.[lineageFilterConfig.lapisField]}
                     />
                 ))}
-                {variantFilterConfig.mutationFilterConfig && (
+                {variantFilterConfig.mutationFilterConfig.enabled && (
                     <GsMutationFilter
-                        initialValue={getMutationFilter(variantFilterConfig.mutationFilterConfig)}
-                        onMutationChange={(mutation) => {
-                            if (mutation === undefined) {
-                                return;
-                            }
-                            const newVariantFilterConfig = {
-                                ...variantFilterConfig,
-                                mutationFilterConfig: mutation,
-                            };
-                            onVariantFilterChange(newVariantFilterConfig);
+                        initialValue={
+                            variantFilter.mutations === undefined
+                                ? undefined
+                                : getMutationFilter(variantFilter.mutations)
+                        }
+                        onMutationChange={(mutations) => {
+                            onVariantFilterChange({
+                                ...variantFilter,
+                                variantQuery: undefined,
+                                mutations,
+                            });
                         }}
                     />
                 )}
