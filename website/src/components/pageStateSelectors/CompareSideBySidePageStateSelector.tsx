@@ -47,7 +47,7 @@ export function CompareSideBySidePageStateSelector({
         const updatedFilters = new Map(pageState.filters);
         updatedFilters.set(filterId, filter);
         return { newPageState: { filters: updatedFilters }, currentLapisFilter };
-    }, [location, datasetFilterState, variantFilterConfigState, filterId, pageState]);
+    }, [datasetFilterState, variantFilterConfigState, filterId, pageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4 p-2 shadow-lg'>

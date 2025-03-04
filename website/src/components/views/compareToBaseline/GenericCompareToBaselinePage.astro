@@ -3,6 +3,7 @@ import SelectBaseline from './SelectBaseline.astro';
 import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
+import { ComponentHeight } from '../../../views/OrganismConstants';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
@@ -72,6 +73,8 @@ const downloadLinks = noVariantSelected
                     lapisDateField={view.organismConstants.mainDateField}
                     granularity={timeGranularity}
                     views={['line', 'table', 'bar']}
+                    height={ComponentHeight.large}
+                    pageSize={12}
                 />
             </ComponentsGrid>
         )

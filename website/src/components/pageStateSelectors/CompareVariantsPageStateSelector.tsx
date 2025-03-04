@@ -50,7 +50,7 @@ export function CompareVariantsPageStateSelector({
 
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.datasetFilterToLapisFilter(newPageState.datasetFilter);
-    }, [newPageState]);
+    }, [newPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>

@@ -1,9 +1,9 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
-import { type ExtendedConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -12,8 +12,9 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1905-01-01';
+const hostField = 'hostNameScientific';
 
-class FluConstants implements ExtendedConstants {
+class FluConstants implements OrganismConstants {
     public readonly organism = Organisms.flu;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
@@ -53,14 +54,21 @@ class FluConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDate',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
     public readonly accessionDownloadFields;
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);
@@ -69,7 +77,6 @@ class FluConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.flu.lapis.mainDateField;
         this.locationFields = organismsConfig.flu.lapis.locationFields;
-        this.hostField = organismsConfig.flu.lapis.hostField;
         this.authorsField = organismsConfig.flu.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.flu.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.flu.lapis.additionalFilters;

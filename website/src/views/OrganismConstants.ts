@@ -1,4 +1,4 @@
-import { views, type AggregateView } from '@genspectrum/dashboard-components/util';
+import { views, type AggregateView, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { pathoplexusGroupNameField, type VariantFilter } from './View.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
@@ -10,6 +10,15 @@ export interface OrganismConstants {
     readonly organism: Organism;
     readonly dataOrigins: DataOrigin[];
     readonly accessionDownloadFields: string[];
+    readonly mainDateField: string;
+    readonly additionalFilters: Record<string, string> | undefined;
+    readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
+    readonly useAdvancedQuery: boolean;
+    readonly locationFields: string[];
+    readonly baselineFilterConfigs: BaselineFilterConfig[];
+    readonly lineageFilters: LineageFilterConfig[];
+    readonly predefinedVariants?: VariantFilter[];
+    readonly mutationAnnotations?: MutationAnnotation[];
 }
 
 export const ComponentHeight = {
@@ -20,19 +29,8 @@ export const ComponentHeight = {
 export interface AdditionalSequencingEffortsField {
     readonly label: string;
     readonly fields: string[];
-    readonly height: (typeof ComponentHeight)[keyof typeof ComponentHeight];
+    readonly height?: (typeof ComponentHeight)[keyof typeof ComponentHeight];
     readonly views: AggregateView[];
-}
-
-export interface ExtendedConstants extends OrganismConstants {
-    readonly mainDateField: string;
-    readonly additionalFilters: Record<string, string> | undefined;
-    readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
-    readonly useAdvancedQuery: boolean;
-    readonly locationFields: string[];
-    readonly baselineFilterConfigs: BaselineFilterConfig[];
-    readonly lineageFilters: LineageFilterConfig[];
-    readonly predefinedVariants?: VariantFilter[];
 }
 
 export function getAuthorRelatedSequencingEffortsFields(constants: {
@@ -46,7 +44,6 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
                   {
                       label: 'Author affiliations',
                       fields: [constants.authorAffiliationsField],
-                      height: ComponentHeight.large,
                       views: [views.table],
                   },
               ];
@@ -57,7 +54,6 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
                   {
                       label: 'Authors',
                       fields: [constants.authorsField, constants.authorAffiliationsField],
-                      height: ComponentHeight.large,
                       views: [views.table],
                   },
               ];
@@ -71,44 +67,37 @@ export function getPathoplexusAdditionalSequencingEffortsFields(
         {
             label: 'Pathoplexus submitting groups',
             fields: [pathoplexusGroupNameField],
-            height: ComponentHeight.small,
             views: [views.table],
         },
         ...getAuthorRelatedSequencingEffortsFields(constants),
         {
             label: 'Collection device',
             fields: ['collectionDevice'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Collection method',
             fields: ['collectionMethod'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Purpose of sampling',
             fields: ['purposeOfSampling'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Sample type',
             fields: ['sampleType'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Amplicon PCR primer scheme',
             fields: ['ampliconPcrPrimerScheme'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
         {
             label: 'Sequencing protocol',
             fields: ['sequencingProtocol'],
-            height: ComponentHeight.small,
             views: [views.table, views.bar],
         },
     ];

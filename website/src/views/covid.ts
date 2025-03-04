@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, views } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, views, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import {
     getIntegerFromSearch,
@@ -13,7 +13,7 @@ import {
     GenericCompareVariantsView,
     GenericSequencingEffortsView,
 } from './BaseView.ts';
-import { ComponentHeight, type ExtendedConstants } from './OrganismConstants.ts';
+import { type OrganismConstants } from './OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from './View.ts';
 import { compareSideBySideViewConstants, singleVariantViewConstants } from './ViewConstants.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
@@ -30,8 +30,9 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
+const hostField = 'host';
 
-class CovidConstants implements ExtendedConstants {
+class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
@@ -66,13 +67,20 @@ class CovidConstants implements ExtendedConstants {
             dateColumn: 'date',
             label: 'Date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly originatingLabField: string | undefined;
     public readonly submittingLabField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
     public readonly accessionDownloadFields;
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         const originatingLab =
@@ -82,7 +90,6 @@ class CovidConstants implements ExtendedConstants {
                       {
                           label: 'Originating lab',
                           fields: [this.originatingLabField],
-                          height: ComponentHeight.large,
                           views: [views.table],
                       },
                   ];
@@ -93,7 +100,6 @@ class CovidConstants implements ExtendedConstants {
                       {
                           label: 'Submitting lab ',
                           fields: [this.submittingLabField],
-                          height: ComponentHeight.large,
                           views: [views.table],
                       },
                   ];
@@ -103,7 +109,6 @@ class CovidConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
         this.locationFields = organismsConfig.covid.lapis.locationFields;
-        this.hostField = organismsConfig.covid.lapis.hostField;
         this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
         this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;

@@ -8,7 +8,7 @@ import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/Singl
 import { Organisms } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
-import { getLineageFilterFields, getVariantFilterConfig } from '../../../views/View';
+import { getLineageFilterFields } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/locationHelpers';
 import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -47,12 +47,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
     pageState.datasetFilter.location,
 );
 
-const variantFilterConfig = getVariantFilterConfig(
-    view.organismConstants.lineageFilters,
-    pageState.variantFilter,
-    view.organismConstants.useAdvancedQuery,
-);
-
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 
 const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
@@ -77,11 +71,9 @@ const downloadLinks = noVariantSelected
             placeholderText: 'Sampling location',
             label: 'Sampling location',
         }}
-        variantFilterConfig={variantFilterConfig}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
-        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
-        datasetFilter={pageState.datasetFilter}
+        pageState={pageState}
         client:only='react'
     >
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />
@@ -107,16 +99,19 @@ const downloadLinks = noVariantSelected
                 denominatorFilter={datasetLapisFilter}
                 lapisDateField={view.organismConstants.mainDateField}
                 granularity={timeGranularity}
+                pageSize={10}
             />
             <GsMutations
                 lapisFilter={variantLapisFilter}
                 baselineLapisFilter={datasetLapisFilter}
                 sequenceType='nucleotide'
+                pageSize={10}
             />
             <GsMutations
                 lapisFilter={variantLapisFilter}
                 baselineLapisFilter={datasetLapisFilter}
                 sequenceType='amino acid'
+                pageSize={10}
             />
             {
                 subdivisionField !== undefined && (
@@ -125,6 +120,7 @@ const downloadLinks = noVariantSelected
                         fields={[subdivisionField]}
                         lapisFilter={variantLapisFilter}
                         views={[views.table, views.bar]}
+                        pageSize={10}
                     />
                 )
             }
@@ -136,6 +132,7 @@ const downloadLinks = noVariantSelected
                         fields={lineageFilterFields}
                         lapisFilter={variantLapisFilter}
                         views={[views.table, views.bar]}
+                        pageSize={10}
                     />
                 )
             }
@@ -144,6 +141,7 @@ const downloadLinks = noVariantSelected
                 fields={[view.organismConstants.hostField]}
                 lapisFilter={variantLapisFilter}
                 views={[views.table, views.bar]}
+                pageSize={10}
             />
         </ComponentsGrid>
         <GsMutationsOverTime

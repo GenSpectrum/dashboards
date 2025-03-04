@@ -1,47 +1,53 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { type BaselineFilterConfig, BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
 import { VariantSelector } from './VariantSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
-import type { DatasetFilter } from '../../views/View.ts';
+import { type DatasetAndVariantData, getVariantFilterConfig } from '../../views/View.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { singleVariantViewKey } from '../../views/viewKeys.ts';
 
 export function SingleVariantPageStateSelector({
     locationFilterConfig,
-    variantFilterConfig,
     organismViewKey,
     organismsConfig,
-    baselineFilterConfigs,
-    datasetFilter,
+    pageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
-    variantFilterConfig: VariantFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
-    baselineFilterConfigs?: BaselineFilterConfig[];
-    datasetFilter: DatasetFilter;
+    pageState: DatasetAndVariantData;
 }) {
-    const [datasetFilterState, setDatasetFilterState] = useState(datasetFilter);
+    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const variantFilterConfig = useMemo(() => {
+        return getVariantFilterConfig(
+            view.organismConstants.lineageFilters,
+            pageState.variantFilter,
+            view.organismConstants.useAdvancedQuery,
+        );
+    }, [view, pageState]);
+
+    const [datasetFilterState, setDatasetFilterState] = useState(pageState.datasetFilter);
 
     const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
 
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const baselineFilterConfigs = view.organismConstants.baselineFilterConfigs;
 
     const newPageState = useMemo(() => {
         return {
+            ...pageState, // preserve additional fields, e.g. the covid collection id
             datasetFilter: datasetFilterState,
             variantFilter: toVariantFilter(variantFilterConfigState),
         };
-    }, [variantFilterConfigState, datasetFilterState]);
+    }, [pageState, variantFilterConfigState, datasetFilterState]);
 
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.toLapisFilter(newPageState);
-    }, [newPageState]);
+    }, [newPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>

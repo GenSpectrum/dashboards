@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
@@ -9,7 +9,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type ExtendedConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,8 +18,9 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1956-01-01';
+const hostField = 'hostNameScientific';
 
-class RsvBConstants implements ExtendedConstants {
+class RsvBConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvB;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
@@ -54,8 +55,14 @@ class RsvBConstants implements ExtendedConstants {
             dateColumn: 'sampleCollectionDate',
             label: 'Sample collection date',
         },
+        {
+            lapisField: hostField,
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
     ];
-    public readonly hostField: string;
+    public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -72,6 +79,7 @@ class RsvBConstants implements ExtendedConstants {
             lineages: { lineage: 'B.D.4.1.1' },
         },
     ];
+    public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
         return getAuthorRelatedSequencingEffortsFields(this);
@@ -80,7 +88,6 @@ class RsvBConstants implements ExtendedConstants {
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvB.lapis.mainDateField;
         this.locationFields = organismsConfig.rsvB.lapis.locationFields;
-        this.hostField = organismsConfig.rsvB.lapis.hostField;
         this.authorsField = organismsConfig.rsvB.lapis.authorsField;
         this.authorAffiliationsField = organismsConfig.rsvB.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.rsvB.lapis.additionalFilters;
