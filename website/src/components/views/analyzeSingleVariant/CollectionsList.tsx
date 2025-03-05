@@ -9,7 +9,7 @@ import { Routing } from '../../../views/routing.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
-export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan';
+export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan border-gray-200';
 
 type CollectionVariant = {
     name: string;
@@ -71,7 +71,7 @@ type CollectionSelectorProps = {
 function CollectionSelector({ collections, selectedId, onSelect }: CollectionSelectorProps) {
     return (
         <select
-            className='mb-2 w-full border bg-white p-2'
+            className='select mb-2 w-full'
             value={selectedId}
             onChange={(event) => onSelect(Number.parseInt(event.target.value, 10))}
         >

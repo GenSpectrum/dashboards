@@ -97,7 +97,7 @@ export function ErrorReportInstruction({
                 . Describe what you did to trigger the error and include the following information so that we can track
                 down the issue.
                 <div className='mt-4 flex rounded-lg bg-gray-100 p-4'>
-                    <ul ref={errorInfoRef} className='ml-6 flex-grow list-inside list-disc overflow-scroll'>
+                    <ul ref={errorInfoRef} className='ml-6 grow list-inside list-disc overflow-scroll'>
                         <li>Error ID: {errorId}</li>
                         <li>Time: {new Date().toISOString()}</li>
                         <li>Current URL: {currentUrl}</li>
@@ -136,9 +136,9 @@ function CopyToClipboardButton({ getTextToCopy }: { getTextToCopy: () => string 
             data-tip={`${copiedRecently ? 'Copied' : 'Copy'} error information to clipboard`}
         >
             {copiedRecently ? (
-                <span className='iconify text-2xl text-green mdi--tick' />
+                <span className='iconify text-green mdi--tick text-2xl' />
             ) : (
-                <button className='iconify text-xl mdi--content-copy' onClick={() => void onCopy()} />
+                <button className='iconify mdi--content-copy text-xl' onClick={() => void onCopy()} />
             )}
         </div>
     );
