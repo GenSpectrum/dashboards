@@ -165,9 +165,9 @@ export function SubscriptionsCreateInner({
 function CreateSubscriptionButton({ isSuccess, onClick }: { isSuccess: boolean; onClick: () => void }) {
     if (isSuccess) {
         return (
-            <div className='flex h-12 items-center justify-center rounded-lg bg-success'>
+            <div className='bg-success flex h-12 items-center justify-center rounded-lg'>
                 Successfully created
-                <div className='iconify ml-2 size-4 mdi--check' />
+                <div className='iconify mdi--check ml-2 size-4' />
             </div>
         );
     }
