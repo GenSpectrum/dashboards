@@ -51,8 +51,8 @@ export function CompareSideBySidePageStateSelector({
 
     return (
         <div className='flex flex-col gap-4 p-2 shadow-lg'>
-            <div className='flex gap-8'>
-                <div className='flex-0'>
+            <div className='flex gap-4'>
+                <div className=''>
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <Inset className='p-2'>
                         <BaselineSelector
@@ -64,7 +64,7 @@ export function CompareSideBySidePageStateSelector({
                         />
                     </Inset>
                 </div>
-                <div className='flex-grow'>
+                <div className=''>
                     <SelectorHeadline>Variant Filter</SelectorHeadline>
                     <Inset className='p-2'>
                         <VariantSelector

@@ -52,7 +52,7 @@ export function SubscriptionEntry({
     return (
         <BorderedCard>
             <div className='flex flex-row'>
-                <details className='collapse collapse-arrow mr-4 overflow-visible'>
+                <details className='collapse-arrow collapse mr-4 overflow-visible'>
                     <summary className='collapse-title'>
                         <div className='flex items-center justify-between'>
                             <CardDescription
@@ -162,7 +162,7 @@ function MoreDropdown({
                 <div tabIndex={0} role='button' className='btn btn-xs'>
                     ...
                 </div>
-                <ul tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>
+                <ul tabIndex={0} className='menu dropdown-content rounded-box bg-base-100 z-10 w-52 p-2 shadow-sm'>
                     {/* TODO: #170 Page to edit subscription*/}
                     {/* <li>*/}
                     {/*    <EditButton />*/}

@@ -9,8 +9,8 @@ const { session } = Astro.props;
 ---
 
 <div class='dropdown dropdown-end dropdown-hover'>
-    <span role='button' tabindex='0' class='iconify text-4xl mdi--account'></span>
-    <ul tabindex='0' class='menu dropdown-content z-[1] w-52 rounded-box border-2 bg-base-100 p-2 shadow-2xl'>
+    <span role='button' tabindex='0' class='iconify mdi--account text-4xl'></span>
+    <ul tabindex='0' class='menu dropdown-content rounded-box bg-base-100 z-1 w-52 border-2 p-2 shadow-2xl'>
         <li class='menu-title text-black'><a>{session.user?.name}</a></li>
         <li class='divider m-1 h-0.5'></li>
         <li>

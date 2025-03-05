@@ -59,7 +59,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                     const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
 
                     return (
-                        <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 px-2'>
+                        <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'>
                             <div class='mb-4'>
                                 {pageState.filters.size > 1 && (
                                     <a
@@ -143,7 +143,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                 })
             }
             <a
-                class='px-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
+                class='py-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
                 href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
                 style='writing-mode: vertical-rl;'
             >

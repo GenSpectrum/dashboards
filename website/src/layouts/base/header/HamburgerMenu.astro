@@ -24,12 +24,12 @@ const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
     <input id='menu__toggle' class='peer hidden' type='checkbox' />
     <label
         for='menu__toggle'
-        class='iconify absolute right-5 top-4 cursor-pointer text-4xl mdi--hamburger-menu peer-checked:mdi--window-close'
+        class='iconify mdi--hamburger-menu peer-checked:mdi--window-close absolute top-4 right-5 cursor-pointer text-4xl'
     >
     </label>
 
     <ul
-        class='fixed left-full top-0 mt-16 h-[calc(100dvh-4rem)] w-full overflow-scroll border bg-white pl-4 duration-200 peer-checked:left-0'
+        class='fixed top-0 left-full mt-16 h-[calc(100dvh-4rem)] w-full overflow-scroll border border-gray-200 bg-white pl-4 duration-200 peer-checked:left-0'
     >
         {
             pathogenMegaMenuSections.map((section) => (
