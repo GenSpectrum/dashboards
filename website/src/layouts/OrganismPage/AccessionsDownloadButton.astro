@@ -23,9 +23,9 @@ const { accessionDownloadFields, downloadLinks, lapisUrl } = Astro.props;
 const modalId = 'accessionDownloadModal';
 ---
 
-<button class='flex items-center justify-center gap-1 p-2 text-xs' onclick={`${modalId}.showModal()`}>
+<button class='btn btn-ghost btn-xs' onclick={`${modalId}.showModal()`}>
     <span class='iconify mdi--download text-base'></span>
-    Download data
+    <span class="font-normal">Download data</span>
 </button>
 <Modal id={modalId}>
     <ModalHeader title='Download data' icon='mdi--download' />
