@@ -47,7 +47,7 @@ export function MegaMenuListEntry({
     return (
         <li>
             <a
-                className={`flex items-center p-2 hover:underline hover:decoration-4 ${className} ${externalLink ? 'after:iconify after:ml-0.5 after:mdi--external-link' : ''}`}
+                className={`flex items-center p-2 hover:underline hover:decoration-4 ${className} ${externalLink ? 'after:iconify after:mdi--external-link after:ml-0.5' : ''}`}
                 href={href}
             >
                 {label}
