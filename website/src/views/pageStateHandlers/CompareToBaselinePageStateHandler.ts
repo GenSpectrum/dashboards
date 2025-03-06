@@ -1,14 +1,7 @@
 import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { OrganismConstants } from '../OrganismConstants.ts';
-import {
-    type CompareToBaselineData,
-    type DatasetFilter,
-    getLineageFilterFields,
-    getVariantFilterConfig,
-    type Id,
-    type VariantFilter,
-} from '../View.ts';
+import { type CompareToBaselineData, type DatasetFilter, getLineageFilterFields, type VariantFilter } from '../View.ts';
 import { compareToBaselineViewConstants } from '../ViewConstants.ts';
 import {
     getLapisLocationFromSearch,
@@ -28,7 +21,6 @@ import {
     toLapisFilterFromVariant,
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
-import type { VariantFilterConfig } from '../../components/pageStateSelectors/VariantFilterConfig.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareToBaselineStateHandler implements PageStateHandler<CompareToBaselineData> {
@@ -109,34 +101,6 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
                 displayName: toDisplayName(variantFilter),
             };
         });
-    }
-
-    public getEmptyVariantFilterConfig(): VariantFilterConfig {
-        return getVariantFilterConfig(
-            this.constants.lineageFilters,
-            {
-                lineages: {},
-                mutations: {},
-            },
-            this.constants.useAdvancedQuery,
-        );
-    }
-
-    public toVariantFilterConfigs(pageState: CompareToBaselineData): Map<Id, VariantFilterConfig> {
-        return new Map<Id, VariantFilterConfig>(
-            Array.from(pageState.variants, ([key, variant]) => [
-                key,
-                getVariantFilterConfig(this.constants.lineageFilters, variant, this.constants.useAdvancedQuery),
-            ]),
-        );
-    }
-
-    public toBaselineFilterConfig(pageState: CompareToBaselineData): VariantFilterConfig {
-        return getVariantFilterConfig(
-            this.constants.lineageFilters,
-            pageState.baselineFilter,
-            this.constants.useAdvancedQuery,
-        );
     }
 
     private getFilter(filterParams: Map<string, string>): VariantFilter {
