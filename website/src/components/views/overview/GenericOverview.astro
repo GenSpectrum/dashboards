@@ -1,0 +1,44 @@
+---
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { getPathogenMegaMenuSections } from '../../../layouts/base/header/getPathogenMegaMenuSections';
+import { PageHeadline } from '../../../styles/containers/PageHeadline';
+import { iconMapping } from '../../iconCss';
+
+type Props = {
+    organism: keyof ReturnType<typeof getPathogenMegaMenuSections>;
+};
+
+const { organism } = Astro.props;
+
+const section = getPathogenMegaMenuSections()[organism];
+---
+
+<ContaineredPageLayout
+    title={section.headline}
+    breadcrumbs={[...defaultBreadcrumbs, { name: section.headline, href: section.href }]}
+>
+    <PageHeadline>{section.headline}</PageHeadline>
+    <div class='group flex flex-wrap justify-center gap-2'>
+        {
+            section.navigationEntries.map((entry) => {
+                return (
+                    <div class={`card card-border w-96 shadow ${section.borderEntryDecoration}`}>
+                        <a href={entry.href} class='card-body h-full'>
+                            <div class='card-title'>
+                                <h2 class={`iconify ${iconMapping[entry.iconType]}`} />
+                                <div>{entry.label}</div>
+                            </div>
+                            <p>{entry.description}</p>
+                            <div class='card-actions justify-end'>
+                                <span class={`btn btn-soft ${section.headlineBackgroundColor}`}>
+                                    Go to {entry.label}
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                );
+            })
+        }
+    </div>
+</ContaineredPageLayout>

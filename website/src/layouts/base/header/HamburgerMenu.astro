@@ -14,7 +14,7 @@ type Props = {
 
 const { forceLoggedOutState } = Astro.props;
 
-const pathogenMegaMenuSections = getPathogenMegaMenuSections();
+const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
 
 const session = await getSession(Astro.request);
 const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
@@ -34,11 +34,11 @@ const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
         {
             pathogenMegaMenuSections.map((section) => (
                 <HamburgerMenuSection navigationEntries={section.navigationEntries}>
-                    {section.headline}
+                    <a href={section.href}>{section.headline}</a>
                 </HamburgerMenuSection>
             ))
         }
-        <HamburgerMenuItem href={Page.dataSources} itemType='toplevel'>Data Sources </HamburgerMenuItem>
+        <HamburgerMenuItem href={Page.dataSources} itemType='toplevel'>Data Sources</HamburgerMenuItem>
         {
             isLoginEnabled() ? (
                 showLoggedInState ? (
