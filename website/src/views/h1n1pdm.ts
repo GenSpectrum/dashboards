@@ -2,35 +2,44 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
-import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
+import {
+    BaseView,
+    GenericCompareToBaselineView,
+    GenericCompareVariantsView,
+    GenericSequencingEffortsView,
+    GenericSingleVariantView,
+} from './BaseView.ts';
 import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
+import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
-import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
-const earliestDate = '1905-01-01';
+const earliestDate = '1900-01-01';
 const hostField = 'hostNameScientific';
 
-class FluConstants implements OrganismConstants {
-    public readonly organism = Organisms.flu;
+class H1n1pdmConstants implements OrganismConstants {
+    public readonly organism = Organisms.h1n1pdm;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'subtypeHA',
-            placeholderText: 'HA subtype',
+            lapisField: 'cladeHA',
+            placeholderText: 'Clade HA',
             filterType: 'text' as const,
+            initialValue: undefined,
         },
         {
-            lapisField: 'subtypeNA',
-            placeholderText: 'NA subtype',
+            lapisField: 'cladeNA',
+            placeholderText: 'Clade NA',
             filterType: 'text' as const,
+            initialValue: undefined,
         },
     ];
+    public readonly useAdvancedQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
             type: 'date',
@@ -47,7 +56,7 @@ class FluConstants implements OrganismConstants {
                 { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
-            earliestDate: earliestDate,
+            earliestDate,
             defaultDateRange: dateRangeOptionPresets.lastYear,
             dateColumn: 'sampleCollectionDate',
             label: 'Sample collection date',
@@ -59,13 +68,19 @@ class FluConstants implements OrganismConstants {
             label: 'Host',
         },
     ];
-    public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
     public readonly authorsField: string | undefined;
     public readonly authorAffiliationsField: string | undefined;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
     public readonly accessionDownloadFields;
+    public readonly predefinedVariants = [
+        {
+            lineages: { cladeHA: '6B.1A.5a.2a.1', cladeNA: 'C.5.3' },
+        },
+    ];
+
+    // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
@@ -73,22 +88,28 @@ class FluConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.flu.lapis.mainDateField;
-        this.locationFields = organismsConfig.flu.lapis.locationFields;
-        this.authorsField = organismsConfig.flu.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.flu.lapis.authorAffiliationsField;
-        this.additionalFilters = organismsConfig.flu.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.flu.lapis.accessionDownloadFields;
+        this.mainDateField = organismsConfig.h1n1pdm.lapis.mainDateField;
+        this.locationFields = organismsConfig.h1n1pdm.lapis.locationFields;
+        this.authorsField = organismsConfig.h1n1pdm.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.h1n1pdm.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.h1n1pdm.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.h1n1pdm.lapis.accessionDownloadFields;
     }
 }
 
-export class FluCompareSideBySideView extends BaseView<
+export class H1n1pdmAnalyzeSingleVariantView extends GenericSingleVariantView<H1n1pdmConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new H1n1pdmConstants(organismsConfig));
+    }
+}
+
+export class H1n1pdmCompareSideBySideView extends BaseView<
     CompareSideBySideData,
-    FluConstants,
+    H1n1pdmConstants,
     CompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
-        const constants = new FluConstants(organismsConfig);
+        const constants = new H1n1pdmConstants(organismsConfig);
         const defaultPageState = {
             filters: new Map<Id, DatasetAndVariantData>([
                 [
@@ -100,7 +121,7 @@ export class FluCompareSideBySideView extends BaseView<
                             textFilters: {},
                         },
                         variantFilter: {
-                            lineages: { subtypeHA: 'H5', subtypeNA: 'N1' },
+                            lineages: {},
                             mutations: {},
                         },
                     },
@@ -115,8 +136,8 @@ export class FluCompareSideBySideView extends BaseView<
                         },
                         variantFilter: {
                             lineages: {
-                                subtypeHA: 'H3',
-                                subtypeNA: 'N2',
+                                cladeHA: '6B.1A.5a.2a.1',
+                                cladeNA: 'C.5.3',
                             },
                             mutations: {},
                         },
@@ -137,8 +158,20 @@ export class FluCompareSideBySideView extends BaseView<
     }
 }
 
-export class FluSequencingEffortsView extends GenericSequencingEffortsView<FluConstants> {
+export class H1n1pdmSequencingEffortsView extends GenericSequencingEffortsView<H1n1pdmConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new FluConstants(organismsConfig));
+        super(new H1n1pdmConstants(organismsConfig));
+    }
+}
+
+export class H1n1pdmCompareVariantsView extends GenericCompareVariantsView<H1n1pdmConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new H1n1pdmConstants(organismsConfig));
+    }
+}
+
+export class H1n1pdmCompareToBaselineView extends GenericCompareToBaselineView<H1n1pdmConstants> {
+    constructor(organismsConfig: OrganismsConfig) {
+        super(new H1n1pdmConstants(organismsConfig));
     }
 }

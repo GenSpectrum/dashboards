@@ -41,9 +41,9 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/h5n1"
           label: "Browse data"
           menuIcon: "database"
-    h1n1:
+    h1n1pdm:
       lapis:
-        url: "https://api.loculus.staging.genspectrum.org/h1n1"
+        url: "https://api.loculus.staging.genspectrum.org/h1n1pdm"
         mainDateField: "sampleCollectionDate"
         locationFields:
           - "country"
@@ -63,7 +63,7 @@ dashboards:
           - "insdcAccessionFull_seg7"
           - "insdcAccessionFull_seg8"
       externalNavigationLinks:
-        - url: "https://loculus.staging.genspectrum.org/h1n1"
+        - url: "https://loculus.staging.genspectrum.org/h1n1pdm"
           label: "Browse data"
           menuIcon: "database"
     h3n2:
@@ -91,7 +91,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/h3n2"
           label: "Browse data"
           menuIcon: "database"
-    flu:
+    influenza-a:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-a"
         mainDateField: "sampleCollectionDate"
