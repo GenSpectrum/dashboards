@@ -7,7 +7,7 @@ export function useModalRef() {
 }
 
 const modalSize = {
-    large: 'max-w-screen-lg',
+    large: 'max-w-(--breakpoint-lg)',
 };
 
 type ModalProps = (

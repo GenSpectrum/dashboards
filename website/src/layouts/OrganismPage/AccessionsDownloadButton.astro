@@ -23,9 +23,9 @@ const { accessionDownloadFields, downloadLinks, lapisUrl } = Astro.props;
 const modalId = 'accessionDownloadModal';
 ---
 
-<button class='flex items-center justify-center gap-1 p-2 text-xs' onclick={`${modalId}.showModal()`}>
-    <span class='iconify text-base mdi--download'></span>
-    Download data
+<button class='btn btn-ghost btn-xs' onclick={`${modalId}.showModal()`}>
+    <span class='iconify mdi--download text-base'></span>
+    <span class='font-normal'>Download data</span>
 </button>
 <Modal id={modalId}>
     <ModalHeader title='Download data' icon='mdi--download' />
@@ -40,7 +40,7 @@ const modalId = 'accessionDownloadModal';
                     }))
                     .map(({ label, url }) => (
                         <a class='link m-2 flex items-center gap-1' href={url}>
-                            <span class='iconify text-xl mdi--download' />
+                            <span class='iconify mdi--download text-xl' />
                             {label}
                         </a>
                     ))

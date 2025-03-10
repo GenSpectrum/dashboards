@@ -63,7 +63,7 @@ export function SequencingEffortsPageStateSelector({
                     />
                 </Inset>
             </div>
-            <div className='sticky bottom-0 w-full pb-5 backdrop-blur-sm'>
+            <div className='sticky bottom-0 w-full pb-5 backdrop-blur-xs'>
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
