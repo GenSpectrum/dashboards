@@ -30,7 +30,6 @@ class H5n1Constants implements OrganismConstants {
             lapisField: 'clade',
             placeholderText: 'Clade',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
     ];
     public readonly useAdvancedQuery = false;

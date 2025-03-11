@@ -4,7 +4,6 @@ import { GsLineageFilter } from '../genspectrum/GsLineageFilter.tsx';
 import { GsTextFilter } from '../genspectrum/GsTextFilter.tsx';
 
 export type LineageFilterConfig = {
-    initialValue: string | undefined;
     placeholderText: string;
     lapisField: string;
     filterType: 'lineage' | 'text';
@@ -14,10 +13,12 @@ export function LineageFilterInput({
     lineageFilterConfig,
     onLineageChange,
     lapisFilter,
+    value,
 }: {
     lineageFilterConfig: LineageFilterConfig;
     onLineageChange: (lineage: string | undefined) => void;
     lapisFilter: LapisFilter;
+    value: string | undefined;
 }) {
     switch (lineageFilterConfig.filterType) {
         case 'lineage':
@@ -30,7 +31,7 @@ export function LineageFilterInput({
                         lapisField={lineageFilterConfig.lapisField}
                         placeholderText={lineageFilterConfig.placeholderText}
                         onLineageChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                        value={lineageFilterConfig.initialValue}
+                        value={value}
                         lapisFilter={lapisFilter}
                     />
                 </label>
@@ -46,7 +47,7 @@ export function LineageFilterInput({
                         lapisField={lineageFilterConfig.lapisField}
                         placeholderText={lineageFilterConfig.placeholderText}
                         onInputChange={(lineage) => onLineageChange(lineage[lineageFilterConfig.lapisField])}
-                        value={lineageFilterConfig.initialValue}
+                        value={value}
                         lapisFilter={lapisFilter}
                     />
                 </label>
