@@ -50,6 +50,7 @@ import {
     H5n1SequencingEffortsView,
 } from './h5n1.ts';
 import { InfluenzaACompareSideBySideView, InfluenzaASequencingEffortsView } from './influenza-a.ts';
+import { InfluenzaBCompareSideBySideView, InfluenzaBSequencingEffortsView } from './influenza-b.ts';
 import {
     MpoxAnalyzeSingleVariantView,
     MpoxCompareSideBySideView,
@@ -73,6 +74,13 @@ import {
     RsvBCompareVariantsView,
     RsvBSequencingEffortsView,
 } from './rsvB.ts';
+import {
+    VictoriaAnalyzeSingleVariantView,
+    VictoriaCompareSideBySideView,
+    VictoriaCompareToBaselineView,
+    VictoriaCompareVariantsView,
+    VictoriaSequencingEffortsView,
+} from './victoria.ts';
 import {
     compareSideBySideViewKey,
     compareToBaselineViewKey,
@@ -143,6 +151,17 @@ export class Routing {
                 [sequencingEffortsViewKey]: new InfluenzaASequencingEffortsView(organismsConfig),
                 [compareSideBySideViewKey]: new InfluenzaACompareSideBySideView(organismsConfig),
             },
+            [Organisms.influenzaB]: {
+                [sequencingEffortsViewKey]: new InfluenzaBSequencingEffortsView(organismsConfig),
+                [compareSideBySideViewKey]: new InfluenzaBCompareSideBySideView(organismsConfig),
+            },
+            [Organisms.victoria]: {
+                [sequencingEffortsViewKey]: new VictoriaSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new VictoriaAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new VictoriaCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new VictoriaCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new VictoriaCompareSideBySideView(organismsConfig),
+            },
             [Organisms.rsvA]: {
                 [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
                 [singleVariantViewKey]: new RsvAAnalyzeSingleVariantView(organismsConfig),
@@ -209,6 +228,10 @@ export class Routing {
                 return Object.values(this.views[Organisms.h3n2]);
             case Organisms.influenzaA:
                 return Object.values(this.views[Organisms.influenzaA]);
+            case Organisms.influenzaB:
+                return Object.values(this.views[Organisms.influenzaB]);
+            case Organisms.victoria:
+                return Object.values(this.views[Organisms.victoria]);
             case Organisms.rsvA:
                 return Object.values(this.views[Organisms.rsvA]);
             case Organisms.rsvB:

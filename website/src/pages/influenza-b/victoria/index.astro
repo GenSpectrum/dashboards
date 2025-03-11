@@ -1,0 +1,7 @@
+---
+import { ServerSide } from '../../../views/serverSideRouting';
+
+return Astro.redirect(
+    ServerSide.routing.getOrganismView('victoria.singleVariantView').pageStateHandler.getDefaultPageUrl(),
+);
+---
