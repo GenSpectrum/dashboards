@@ -1,0 +1,9 @@
+---
+import { ServerSide } from '../../views/serverSideRouting';
+
+// This serves as a catch-all route for the /flu/* path
+return Astro.redirect(
+    `${ServerSide.routing.getOrganismView('influenza-a.sequencingEffortsView').pageStateHandler.getDefaultPageUrl()}`,
+    301,
+);
+---
