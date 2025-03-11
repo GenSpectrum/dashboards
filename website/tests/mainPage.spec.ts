@@ -7,6 +7,7 @@ const organisms = [
     'Influenza A/H5N1',
     'Influenza A/H1N1pdm',
     'Influenza A/H3N2',
+    'Influenza B/Victoria',
     'West Nile',
     'RSV-A',
     'RSV-B',
