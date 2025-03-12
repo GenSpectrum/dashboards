@@ -6,7 +6,7 @@ import { headerHeight } from './headerConstants.ts';
 import { Page } from '../../../types/pages.ts';
 
 export function Navigation() {
-    const pathogenMegaMenuSections = getPathogenMegaMenuSections();
+    const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
 
     return (
         <nav>

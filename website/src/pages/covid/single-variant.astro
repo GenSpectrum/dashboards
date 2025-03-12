@@ -64,7 +64,7 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
             }}
             organismViewKey={organismViewKey}
             organismsConfig={organismConfig}
-            pageState={pageState}
+            initialPageState={pageState}
             client:only='react'
         >
             <AnalyzeSingleVariantSelectorFallback slot='fallback' />
@@ -127,8 +127,15 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                 pageSize={10}
             />
             <GsAggregate
-                title='Sub-lineages'
+                title='Nextclade pango lineage'
                 fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
+                lapisFilter={variantFilter}
+                views={[views.table, views.bar]}
+                pageSize={10}
+            />
+            <GsAggregate
+                title='Nextstrain Clade'
+                fields={getLineageFilterFields(view.organismConstants.nextstrainCladeLineageFilters)}
                 lapisFilter={variantFilter}
                 views={[views.table, views.bar]}
                 pageSize={10}

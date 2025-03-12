@@ -1,5 +1,5 @@
 ---
-import { wastewaterConfig } from '../../types/wastewaterConfig';
-
-return Astro.redirect(wastewaterConfig.pages.rsv);
+import GenericOverview from '../../components/views/overview/GenericOverview.astro';
 ---
+
+<GenericOverview organism={'swissWastewater'} />

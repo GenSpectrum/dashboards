@@ -18,7 +18,6 @@ const mockConstants: OrganismConstants = {
             lapisField: 'lineage',
             placeholderText: 'Lineage',
             filterType: 'text',
-            initialValue: undefined,
         },
     ],
     additionalSequencingEffortsFields: [],
@@ -82,7 +81,7 @@ describe('CompareSideBySideStateHandler', () => {
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
         expect(url).toBe(
-            '/testPath/compare-side-by-side?' + 'columns=2' + '&lineage%242=B.1.1.7' + '&date%242=Last+7+Days' + '&',
+            '/testPath/compare-side-by-side?' + 'columns=2' + '&lineage%241=B.1.1.7' + '&date%241=Last+7+Days' + '&',
         );
     });
 
@@ -182,8 +181,8 @@ describe('CompareSideBySideStateHandler', () => {
         expect(url).toBe(
             '/testPath/compare-side-by-side?' +
                 'columns=2' +
-                '&lineage%241=B.1.1.7&date%241=Last+7+Days' +
-                '&variantQuery%242=C234G&date%242=Last+7+Days' +
+                '&lineage%240=B.1.1.7&date%240=Last+7+Days' +
+                '&variantQuery%241=C234G&date%241=Last+7+Days' +
                 '&',
         );
     });

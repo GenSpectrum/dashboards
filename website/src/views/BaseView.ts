@@ -34,7 +34,10 @@ export abstract class BaseView<
         this.viewTitle = `${this.viewConstants.label} | ${organismConfig[this.organismConstants.organism].label} | GenSpectrum`;
         this.viewBreadcrumbEntries = [
             ...defaultBreadcrumbs,
-            { name: organismConfig[this.organismConstants.organism].label },
+            {
+                name: organismConfig[this.organismConstants.organism].label,
+                href: `/${organismConfig[this.organismConstants.organism].pathFragment}`,
+            },
             { name: this.viewConstants.label, href: this.pageStateHandler.getDefaultPageUrl() },
         ];
     }

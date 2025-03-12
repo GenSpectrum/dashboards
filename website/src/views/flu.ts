@@ -24,13 +24,11 @@ class FluConstants implements OrganismConstants {
             lapisField: 'subtypeHA',
             placeholderText: 'HA subtype',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
         {
             lapisField: 'subtypeNA',
             placeholderText: 'NA subtype',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [

@@ -9,7 +9,7 @@ describe('SingleVariantPageStateSelector', () => {
         lapisRequestMocks.postAggregated({}, { data: [] });
         lapisRequestMocks.referenceGenome({ nucleotideSequences: [{ name: 'main', sequence: 'ATGC' }], genes: [] });
 
-        const pageState = {
+        const initialPageState = {
             datasetFilter: {
                 location: {},
                 dateFilters: {},
@@ -28,7 +28,7 @@ describe('SingleVariantPageStateSelector', () => {
                     }}
                     organismViewKey='covid.singleVariantView'
                     organismsConfig={testOrganismsConfig}
-                    pageState={pageState}
+                    initialPageState={initialPageState}
                 />
             </gs-app>,
         );

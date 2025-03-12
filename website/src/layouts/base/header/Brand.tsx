@@ -2,7 +2,7 @@ export function Brand() {
     return (
         <div className='my-8 flex items-center'>
             <a href='/' className='flex'>
-                <img className='ml-4 mr-2' src='/virus-outline-colorful.svg' alt='icon' width='20' height='20' />
+                <img className='mr-2 ml-4' src='/virus-outline-colorful.svg' alt='icon' width='20' height='20' />
                 <BrandName />
             </a>
         </div>
