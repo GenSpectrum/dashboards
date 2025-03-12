@@ -1,11 +1,6 @@
 ---
+import GenericOverview from '../../components/views/overview/GenericOverview.astro';
 import { Organisms } from '../../types/Organism';
-import { ServerSide } from '../../views/serverSideRouting';
-import { singleVariantViewKey } from '../../views/viewKeys';
-
-return Astro.redirect(
-    ServerSide.routing
-        .getOrganismView(`${Organisms.cchf}.${singleVariantViewKey}`)
-        .pageStateHandler.getDefaultPageUrl(),
-);
 ---
+
+<GenericOverview organism={Organisms.cchf} />

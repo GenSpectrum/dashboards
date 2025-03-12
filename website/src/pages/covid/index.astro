@@ -1,7 +1,6 @@
 ---
-import { ServerSide } from '../../views/serverSideRouting';
-
-return Astro.redirect(
-    ServerSide.routing.getOrganismView('covid.singleVariantView').pageStateHandler.getDefaultPageUrl(),
-);
+import GenericOverview from '../../components/views/overview/GenericOverview.astro';
+import { Organisms } from '../../types/Organism';
 ---
+
+<GenericOverview organism={Organisms.covid} />

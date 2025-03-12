@@ -15,23 +15,31 @@ export function MegaMenu({ className, children }: PropsWithChildren<WithClassNam
 export interface MegaMenuSectionProps {
     headline: string;
     headlineBackgroundColor: string;
+    href: string;
 }
 
 export function MegaMenuSection({
     headline,
     children,
     headlineBackgroundColor,
+    href,
 }: PropsWithChildren<MegaMenuSectionProps>) {
     return (
         <li>
-            <MegaMenuSectionHeadline label={headline} className={headlineBackgroundColor} />
+            <MegaMenuSectionHeadline href={href} label={headline} className={headlineBackgroundColor} />
             <ul className='flex flex-col gap-2'>{children}</ul>
         </li>
     );
 }
 
-function MegaMenuSectionHeadline({ label, className }: WithClassName<{ label: string }>) {
-    return <h3 className={`mb-4 p-2 text-lg font-bold ${className}`}>{label}</h3>;
+function MegaMenuSectionHeadline({ label, className, href }: WithClassName<{ label: string; href: string }>) {
+    return (
+        <h3 className={`mb-4 ${className}`}>
+            <a className='block p-2 text-lg font-bold' href={href}>
+                {label}
+            </a>
+        </h3>
+    );
 }
 
 export function MegaMenuListEntry({
