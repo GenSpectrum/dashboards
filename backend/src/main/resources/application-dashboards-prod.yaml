@@ -91,7 +91,7 @@ dashboards:
         - url: "https://loculus.genspectrum.org/h3n2"
           label: "Browse data"
           menuIcon: "database"
-    influenza-a:
+    influenzaA:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-a"
         mainDateField: "sampleCollectionDate"

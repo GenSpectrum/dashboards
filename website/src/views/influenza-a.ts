@@ -73,12 +73,12 @@ class InfluenzaAConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig['influenza-a'].lapis.mainDateField;
-        this.locationFields = organismsConfig['influenza-a'].lapis.locationFields;
-        this.authorsField = organismsConfig['influenza-a'].lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig['influenza-a'].lapis.authorAffiliationsField;
-        this.additionalFilters = organismsConfig['influenza-a'].lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig['influenza-a'].lapis.accessionDownloadFields;
+        this.mainDateField = organismsConfig.influenzaA.lapis.mainDateField;
+        this.locationFields = organismsConfig.influenzaA.lapis.locationFields;
+        this.authorsField = organismsConfig.influenzaA.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.influenzaA.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.influenzaA.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.influenzaA.lapis.accessionDownloadFields;
     }
 }
 

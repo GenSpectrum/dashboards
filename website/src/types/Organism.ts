@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const Organisms = {
     covid: 'covid' as const,
-    influenzaA: 'influenza-a' as const,
+    influenzaA: 'influenzaA' as const,
     h5n1: 'h5n1' as const,
     h1n1pdm: 'h1n1pdm' as const,
     h3n2: 'h3n2' as const,
