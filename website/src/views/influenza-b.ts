@@ -14,20 +14,15 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 const earliestDate = '1905-01-01';
 const hostField = 'hostNameScientific';
 
-class FluConstants implements OrganismConstants {
-    public readonly organism = Organisms.flu;
+class InfluenzaBConstants implements OrganismConstants {
+    public readonly organism = Organisms.influenzaB;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'subtypeHA',
-            placeholderText: 'HA subtype',
-            filterType: 'text' as const,
-        },
-        {
-            lapisField: 'subtypeNA',
-            placeholderText: 'NA subtype',
+            lapisField: 'lineageHA',
+            placeholderText: 'lineage',
             filterType: 'text' as const,
         },
     ];
@@ -73,22 +68,22 @@ class FluConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig.flu.lapis.mainDateField;
-        this.locationFields = organismsConfig.flu.lapis.locationFields;
-        this.authorsField = organismsConfig.flu.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.flu.lapis.authorAffiliationsField;
-        this.additionalFilters = organismsConfig.flu.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.flu.lapis.accessionDownloadFields;
+        this.mainDateField = organismsConfig.influenzaB.lapis.mainDateField;
+        this.locationFields = organismsConfig.influenzaB.lapis.locationFields;
+        this.authorsField = organismsConfig.influenzaB.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.influenzaB.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.influenzaB.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.influenzaB.lapis.accessionDownloadFields;
     }
 }
 
-export class FluCompareSideBySideView extends BaseView<
+export class InfluenzaBCompareSideBySideView extends BaseView<
     CompareSideBySideData,
-    FluConstants,
+    InfluenzaBConstants,
     CompareSideBySideStateHandler
 > {
     constructor(organismsConfig: OrganismsConfig) {
-        const constants = new FluConstants(organismsConfig);
+        const constants = new InfluenzaBConstants(organismsConfig);
         const defaultPageState = {
             filters: new Map<Id, DatasetAndVariantData>([
                 [
@@ -100,7 +95,7 @@ export class FluCompareSideBySideView extends BaseView<
                             textFilters: {},
                         },
                         variantFilter: {
-                            lineages: { subtypeHA: 'H5', subtypeNA: 'N1' },
+                            lineages: { lineageHA: 'vic' },
                             mutations: {},
                         },
                     },
@@ -115,8 +110,7 @@ export class FluCompareSideBySideView extends BaseView<
                         },
                         variantFilter: {
                             lineages: {
-                                subtypeHA: 'H3',
-                                subtypeNA: 'N2',
+                                lineageHA: 'yam',
                             },
                             mutations: {},
                         },
@@ -137,8 +131,8 @@ export class FluCompareSideBySideView extends BaseView<
     }
 }
 
-export class FluSequencingEffortsView extends GenericSequencingEffortsView<FluConstants> {
+export class InfluenzaBSequencingEffortsView extends GenericSequencingEffortsView<InfluenzaBConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new FluConstants(organismsConfig));
+        super(new InfluenzaBConstants(organismsConfig));
     }
 }
