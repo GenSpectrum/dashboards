@@ -2,8 +2,10 @@ import { z } from 'zod';
 
 export const Organisms = {
     covid: 'covid' as const,
-    flu: 'flu' as const,
+    influenzaA: 'influenzaA' as const,
     h5n1: 'h5n1' as const,
+    h1n1pdm: 'h1n1pdm' as const,
+    h3n2: 'h3n2' as const,
     westNile: 'westNile' as const,
     rsvA: 'rsvA' as const,
     rsvB: 'rsvB' as const,
@@ -23,9 +25,9 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-sand',
         borderEntryDecoration: 'hover:border-sand',
     },
-    [Organisms.flu]: {
-        organism: Organisms.flu,
-        pathFragment: 'flu',
+    [Organisms.influenzaA]: {
+        organism: Organisms.influenzaA,
+        pathFragment: 'influenza-a',
         label: 'Influenza A',
         backgroundColor: 'bg-cyanMuted',
         backgroundColorFocus: 'group-hover:bg-cyan',
@@ -34,8 +36,26 @@ export const organismConfig = {
     },
     [Organisms.h5n1]: {
         organism: Organisms.h5n1,
-        pathFragment: 'flu/h5n1',
+        pathFragment: 'influenza-a/h5n1',
         label: 'Influenza A/H5N1',
+        backgroundColor: 'bg-cyanMuted',
+        backgroundColorFocus: 'group-hover:bg-cyan',
+        menuListEntryDecoration: 'decoration-cyan',
+        borderEntryDecoration: 'hover:border-cyan',
+    },
+    [Organisms.h1n1pdm]: {
+        organism: Organisms.h1n1pdm,
+        pathFragment: 'influenza-a/h1n1pdm',
+        label: 'Influenza A/H1N1pdm',
+        backgroundColor: 'bg-cyanMuted',
+        backgroundColorFocus: 'group-hover:bg-cyan',
+        menuListEntryDecoration: 'decoration-cyan',
+        borderEntryDecoration: 'hover:border-cyan',
+    },
+    [Organisms.h3n2]: {
+        organism: Organisms.h3n2,
+        pathFragment: 'influenza-a/h3n2',
+        label: 'Influenza A/H3N2',
         backgroundColor: 'bg-cyanMuted',
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',

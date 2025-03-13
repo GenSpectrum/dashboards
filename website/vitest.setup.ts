@@ -178,7 +178,7 @@ export const testOrganismsConfig = {
             },
         ],
     },
-    flu: {
+    influenzaA: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
@@ -203,6 +203,66 @@ export const testOrganismsConfig = {
         externalNavigationLinks: [
             {
                 url: 'https://loculus.genspectrum.org/influenza-a',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    h3n2: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull_seg1',
+                'insdcAccessionFull_seg2',
+                'insdcAccessionFull_seg3',
+                'insdcAccessionFull_seg4',
+                'insdcAccessionFull_seg5',
+                'insdcAccessionFull_seg6',
+                'insdcAccessionFull_seg7',
+                'insdcAccessionFull_seg8',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/h3n2',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    h1n1pdm: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull_seg1',
+                'insdcAccessionFull_seg2',
+                'insdcAccessionFull_seg3',
+                'insdcAccessionFull_seg4',
+                'insdcAccessionFull_seg5',
+                'insdcAccessionFull_seg6',
+                'insdcAccessionFull_seg7',
+                'insdcAccessionFull_seg8',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/h1n1pdm',
                 label: 'Browse data',
                 menuIcon: 'database',
             },

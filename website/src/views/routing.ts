@@ -28,7 +28,20 @@ import {
     EbolaZaireCompareVariantsView,
     EbolaZaireSequencingEffortsView,
 } from './ebolaZaire.ts';
-import { FluCompareSideBySideView, FluSequencingEffortsView } from './flu.ts';
+import {
+    H1n1pdmAnalyzeSingleVariantView,
+    H1n1pdmCompareSideBySideView,
+    H1n1pdmCompareToBaselineView,
+    H1n1pdmCompareVariantsView,
+    H1n1pdmSequencingEffortsView,
+} from './h1n1pdm.ts';
+import {
+    H3n2AnalyzeSingleVariantView,
+    H3n2CompareSideBySideView,
+    H3n2CompareToBaselineView,
+    H3n2CompareVariantsView,
+    H3n2SequencingEffortsView,
+} from './h3n2.ts';
 import {
     H5n1AnalyzeSingleVariantView,
     H5n1CompareSideBySideView,
@@ -36,6 +49,7 @@ import {
     H5n1CompareVariantsView,
     H5n1SequencingEffortsView,
 } from './h5n1.ts';
+import { InfluenzaACompareSideBySideView, InfluenzaASequencingEffortsView } from './influenza-a.ts';
 import {
     MpoxAnalyzeSingleVariantView,
     MpoxCompareSideBySideView,
@@ -111,9 +125,23 @@ export class Routing {
                 [compareToBaselineViewKey]: new H5n1CompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new H5n1CompareSideBySideView(organismsConfig),
             },
-            [Organisms.flu]: {
-                [sequencingEffortsViewKey]: new FluSequencingEffortsView(organismsConfig),
-                [compareSideBySideViewKey]: new FluCompareSideBySideView(organismsConfig),
+            [Organisms.h1n1pdm]: {
+                [sequencingEffortsViewKey]: new H1n1pdmSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H1n1pdmAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H1n1pdmCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H1n1pdmCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H1n1pdmCompareSideBySideView(organismsConfig),
+            },
+            [Organisms.h3n2]: {
+                [sequencingEffortsViewKey]: new H3n2SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new H3n2AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new H3n2CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new H3n2CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new H3n2CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.influenzaA]: {
+                [sequencingEffortsViewKey]: new InfluenzaASequencingEffortsView(organismsConfig),
+                [compareSideBySideViewKey]: new InfluenzaACompareSideBySideView(organismsConfig),
             },
             [Organisms.rsvA]: {
                 [sequencingEffortsViewKey]: new RsvASequencingEffortsView(organismsConfig),
@@ -175,8 +203,12 @@ export class Routing {
                 return Object.values(this.views[Organisms.covid]);
             case Organisms.h5n1:
                 return Object.values(this.views[Organisms.h5n1]);
-            case Organisms.flu:
-                return Object.values(this.views[Organisms.flu]);
+            case Organisms.h1n1pdm:
+                return Object.values(this.views[Organisms.h1n1pdm]);
+            case Organisms.h3n2:
+                return Object.values(this.views[Organisms.h3n2]);
+            case Organisms.influenzaA:
+                return Object.values(this.views[Organisms.influenzaA]);
             case Organisms.rsvA:
                 return Object.values(this.views[Organisms.rsvA]);
             case Organisms.rsvB:
