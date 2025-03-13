@@ -6,7 +6,7 @@ export const Organisms = {
     h5n1: 'h5n1' as const,
     h1n1pdm: 'h1n1pdm' as const,
     h3n2: 'h3n2' as const,
-    influenzaB: 'influenza-b' as const,
+    influenzaB: 'influenzaB' as const,
     victoria: 'victoria' as const,
     westNile: 'westNile' as const,
     rsvA: 'rsvA' as const,

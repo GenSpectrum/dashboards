@@ -24,7 +24,6 @@ class InfluenzaBConstants implements OrganismConstants {
             lapisField: 'lineageHA',
             placeholderText: 'lineage',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
@@ -69,12 +68,12 @@ class InfluenzaBConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
-        this.mainDateField = organismsConfig['influenza-b'].lapis.mainDateField;
-        this.locationFields = organismsConfig['influenza-b'].lapis.locationFields;
-        this.authorsField = organismsConfig['influenza-b'].lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig['influenza-b'].lapis.authorAffiliationsField;
-        this.additionalFilters = organismsConfig['influenza-b'].lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig['influenza-b'].lapis.accessionDownloadFields;
+        this.mainDateField = organismsConfig.influenzaB.lapis.mainDateField;
+        this.locationFields = organismsConfig.influenzaB.lapis.locationFields;
+        this.authorsField = organismsConfig.influenzaB.lapis.authorsField;
+        this.authorAffiliationsField = organismsConfig.influenzaB.lapis.authorAffiliationsField;
+        this.additionalFilters = organismsConfig.influenzaB.lapis.additionalFilters;
+        this.accessionDownloadFields = organismsConfig.influenzaB.lapis.accessionDownloadFields;
     }
 }
 

@@ -298,6 +298,66 @@ export const testOrganismsConfig = {
             },
         ],
     },
+    influenzaB: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull_seg1',
+                'insdcAccessionFull_seg2',
+                'insdcAccessionFull_seg3',
+                'insdcAccessionFull_seg4',
+                'insdcAccessionFull_seg5',
+                'insdcAccessionFull_seg6',
+                'insdcAccessionFull_seg7',
+                'insdcAccessionFull_seg8',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/influenza-b',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
+    victoria: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            locationFields: ['country', 'division'],
+            authorsField: 'authors',
+            authorAffiliationsField: 'authorAffiliations',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+            accessionDownloadFields: [
+                'insdcAccessionFull_seg1',
+                'insdcAccessionFull_seg2',
+                'insdcAccessionFull_seg3',
+                'insdcAccessionFull_seg4',
+                'insdcAccessionFull_seg5',
+                'insdcAccessionFull_seg6',
+                'insdcAccessionFull_seg7',
+                'insdcAccessionFull_seg8',
+            ],
+        },
+        externalNavigationLinks: [
+            {
+                url: 'https://loculus.genspectrum.org/b-victoria',
+                label: 'Browse data',
+                menuIcon: 'database',
+            },
+        ],
+    },
     westNile: {
         lapis: {
             url: DUMMY_LAPIS_URL,
