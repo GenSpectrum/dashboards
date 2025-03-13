@@ -116,7 +116,7 @@ dashboards:
         - url: "https://loculus.genspectrum.org/influenza-a"
           label: "Browse data"
           menuIcon: "database"
-    influenza-b:
+    influenzaB:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-b"
         mainDateField: "sampleCollectionDate"

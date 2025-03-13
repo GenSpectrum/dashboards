@@ -30,13 +30,11 @@ class VictoriaConstants implements OrganismConstants {
             lapisField: 'cladeHA',
             placeholderText: 'Clade HA',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
         {
             lapisField: 'cladeNA',
             placeholderText: 'Clade NA',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
     ];
     public readonly useAdvancedQuery = false;
