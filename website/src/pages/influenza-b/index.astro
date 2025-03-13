@@ -1,6 +1,13 @@
 ---
-import GenericOverview from '../../components/views/overview/GenericOverview.astro';
+import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
+import { getPathogenMegaMenuSections } from '../../layouts/base/header/getPathogenMegaMenuSections';
 import { Organisms } from '../../types/Organism';
+
+const lineages: (keyof ReturnType<typeof getPathogenMegaMenuSections>)[] = ['victoria'];
 ---
 
-<GenericOverview organism={Organisms.influenzaB} />
+<LinkedOverview
+    organism={Organisms.influenzaB}
+    linkedOrganismsTitle='Circulating Lineages'
+    linkedOrganisms={lineages}
+/>

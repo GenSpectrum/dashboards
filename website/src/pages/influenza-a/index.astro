@@ -1,6 +1,9 @@
 ---
-import GenericOverview from '../../components/views/overview/GenericOverview.astro';
+import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
+import { getPathogenMegaMenuSections } from '../../layouts/base/header/getPathogenMegaMenuSections';
 import { Organisms } from '../../types/Organism';
+
+const subtypes: (keyof ReturnType<typeof getPathogenMegaMenuSections>)[] = ['h5n1', 'h3n2', 'h1n1pdm'];
 ---
 
-<GenericOverview organism={Organisms.influenzaA} />
+<LinkedOverview organism={Organisms.influenzaA} linkedOrganismsTitle='Featured Subtypes' linkedOrganisms={subtypes} />
