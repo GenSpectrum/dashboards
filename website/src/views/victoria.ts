@@ -134,7 +134,7 @@ export class VictoriaCompareSideBySideView extends BaseView<
                         },
                         variantFilter: {
                             lineages: {
-                                cladeHA: 'V1A.3a.2', // TODO
+                                cladeHA: 'V1A.3a.2',
                             },
                             mutations: {},
                         },
