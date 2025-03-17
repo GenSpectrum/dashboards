@@ -14,6 +14,8 @@ Currently, we support the following organisms:
 - Influenza A/H5N1
 - Influenza A/H3N2
 - Influenza A/H1N1pdm
+- Influenza B
+- Influenza B/Victoria
 - West Nile Virus
 - RSV-A
 - RSV-B
