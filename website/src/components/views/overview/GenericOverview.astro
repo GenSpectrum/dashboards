@@ -1,6 +1,7 @@
 ---
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { getGenomeDataSections, type GenomeData } from '../../../layouts/base/header/getGenomeData';
 import { getPathogenMegaMenuSections } from '../../../layouts/base/header/getPathogenMegaMenuSections';
 import { PageHeadline } from '../../../styles/containers/PageHeadline';
 import { paths } from '../../../types/Organism';
@@ -15,10 +16,29 @@ const { organism } = Astro.props;
 const section = getPathogenMegaMenuSections()[organism];
 
 const breadcrumbs = [...defaultBreadcrumbs, ...paths[organism].breadcrumbs];
+const genome: GenomeData[] = getGenomeDataSections()[organism];
 ---
 
 <ContaineredPageLayout title={section.headline} breadcrumbs={breadcrumbs}>
     <PageHeadline>{section.headline}</PageHeadline>
+    <div>
+        {
+            genome.map((section) => {
+                return (
+                    <gs-genome-data-viewer
+                        gff3Source={section.url}
+                        genomeLength={section.genomeLength}
+                        width='100%'
+                        height='100%'
+                    >
+                        <span slot='infoText'>
+                            <slot name='infoText' />
+                        </span>
+                    </gs-genome-data-viewer>
+                );
+            })
+        }
+    </div>
     <slot name='pre-navigation' />
     <div class='group flex flex-wrap justify-center gap-2'>
         {

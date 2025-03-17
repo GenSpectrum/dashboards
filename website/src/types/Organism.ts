@@ -28,6 +28,13 @@ export const organismConfig = {
         backgroundColor: 'bg-sandMuted',
         backgroundColorFocus: 'group-hover:bg-sand',
         borderEntryDecoration: 'hover:border-sand',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/sars-cov-2/BA.2/genome_annotation.gff3',
+                genomeLength: 29903, // check this
+            },
+        ],
     },
     [Organisms.influenzaA]: {
         organism: Organisms.influenzaA,
@@ -37,6 +44,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [],
     },
     [Organisms.h5n1]: {
         organism: Organisms.h5n1,
@@ -46,6 +54,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [],
     },
     [Organisms.h1n1pdm]: {
         organism: Organisms.h1n1pdm,
@@ -55,6 +64,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [],
     },
     [Organisms.h3n2]: {
         organism: Organisms.h3n2,
@@ -64,6 +74,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [],
     },
     [Organisms.influenzaB]: {
         organism: Organisms.influenzaB,
@@ -73,6 +84,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
         borderEntryDecoration: 'hover:border-indigo',
+        genome: [],
     },
     [Organisms.victoria]: {
         organism: Organisms.victoria,
@@ -82,6 +94,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
         borderEntryDecoration: 'hover:border-indigo',
+        genome: [],
     },
     [Organisms.westNile]: {
         organism: Organisms.westNile,
@@ -91,6 +104,13 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-green',
         menuListEntryDecoration: 'hover:decoration-green',
         borderEntryDecoration: 'hover:border-green',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/8f2e791d3a59013ee88e1d1d7e83b486d39c4ecb/data/nextstrain/wnv/all-lineages/genome_annotation.gff3',
+                genomeLength: 11029,
+            },
+        ],
     },
     [Organisms.rsvA]: {
         organism: Organisms.rsvA,
@@ -100,6 +120,13 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/rsv/a/EPI_ISL_412866/genome_annotation.gff3',
+                genomeLength: 15225,
+            },
+        ],
     },
     [Organisms.rsvB]: {
         organism: Organisms.rsvB,
@@ -109,6 +136,13 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/rsv/b/EPI_ISL_1653999/genome_annotation.gff3',
+                genomeLength: 15222,
+            },
+        ],
     },
     [Organisms.mpox]: {
         organism: Organisms.mpox,
@@ -118,6 +152,13 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-rose',
         menuListEntryDecoration: 'hover:decoration-rose',
         borderEntryDecoration: 'hover:border-rose',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/mpox/all-clades/genome_annotation.gff3',
+                genomeLength: 197209,
+            },
+        ],
     },
     [Organisms.ebolaSudan]: {
         organism: Organisms.ebolaSudan,
@@ -127,6 +168,13 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-wine',
         menuListEntryDecoration: 'hover:decoration-wine',
         borderEntryDecoration: 'hover:border-wine',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/ebola/data/nextstrain/ebola/sudan/genome_annotation.gff3',
+                genomeLength: 18875,
+            },
+        ],
     },
     [Organisms.ebolaZaire]: {
         organism: Organisms.ebolaZaire,
@@ -136,6 +184,13 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-wine',
         menuListEntryDecoration: 'hover:decoration-wine',
         borderEntryDecoration: 'hover:border-wine',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/ebola/data/nextstrain/ebola/zaire/genome_annotation.gff3',
+                genomeLength: 18959,
+            },
+        ],
     },
     [Organisms.cchf]: {
         organism: Organisms.cchf,
@@ -145,6 +200,23 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-olive',
         menuListEntryDecoration: 'hover:decoration-olive',
         borderEntryDecoration: 'hover:border-olive',
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/L/genome_annotation.gff3',
+                genomeLength: 12108,
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/M/genome_annotation.gff3',
+                genomeLength: 5366,
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/S/genome_annotation.gff3',
+                genomeLength: 1672,
+            },
+        ],
     },
 };
 
