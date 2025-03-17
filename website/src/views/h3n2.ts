@@ -78,7 +78,7 @@ class H3n2Constants implements OrganismConstants {
         },
     ];
 
-    // TODO: add mutation annotations
+    // TODO(#478): add mutation annotations
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
