@@ -1,9 +1,8 @@
 ---
 import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
-import { getPathogenMegaMenuSections } from '../../layouts/base/header/getPathogenMegaMenuSections';
-import { Organisms } from '../../types/Organism';
+import { Organisms, type Organism } from '../../types/Organism';
 
-const lineages: (keyof ReturnType<typeof getPathogenMegaMenuSections>)[] = ['victoria'];
+const lineages: Organism[] = ['victoria'];
 ---
 
 <LinkedOverview

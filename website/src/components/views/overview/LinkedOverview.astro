@@ -14,9 +14,9 @@ type Props = {
 
 const { organism, linkedOrganismsTitle, linkedOrganisms } = Astro.props;
 
-const section = getPathogenMegaMenuSections()[organism];
-
 const allSections = getPathogenMegaMenuSections();
+const section = allSections[organism];
+
 const subsections = linkedOrganisms.map((key) => allSections[key]);
 ---
 
@@ -50,7 +50,7 @@ const subsections = linkedOrganisms.map((key) => allSections[key]);
     <h1 class='mt-10 mb-4 text-xl font-bold'>{linkedOrganismsTitle}</h1>
     <div class='items mx-auto mb-8 flex max-w-[1200px] flex-wrap justify-center gap-x-4 gap-y-8'>
         {
-            Object.values(subsections).map((section) => (
+            subsections.map((section) => (
                 <div class='group w-[260px]'>
                     <div class={`${section.borderEntryDecoration} rounded-md border-2 border-gray-100`}>
                         <h3
