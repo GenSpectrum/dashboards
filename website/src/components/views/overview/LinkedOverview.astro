@@ -2,7 +2,7 @@
 import GenericOverview from './GenericOverview.astro';
 import { getPathogenMegaMenuSections } from '../../../layouts/base/header/getPathogenMegaMenuSections';
 import { PageHeadline } from '../../../styles/containers/PageHeadline';
-import MainMenuItem from '../../MainMenuItem.astro';
+import MainMenu from '../../MainMenu.astro';
 
 type Props = {
     organism: keyof ReturnType<typeof getPathogenMegaMenuSections>;
@@ -22,34 +22,6 @@ const subsections = linkedOrganisms.map((key) => allSections[key]);
     <PageHeadline>{section.headline}</PageHeadline>
     <div slot='post-navigation'>
         <h1 class='mt-10 mb-4 text-xl font-bold'>{linkedOrganismsTitle}</h1>
-        <div class='items mx-auto mb-8 flex max-w-[1200px] flex-wrap justify-center gap-x-4 gap-y-8'>
-            {
-                subsections.map((section) => (
-                    <div class='group w-[260px]'>
-                        <div class={`${section.borderEntryDecoration} rounded-md border-2 border-gray-100`}>
-                            <h3
-                                class={`rounded-t-md ${section.headlineBackgroundColor} ${section.headlineBackgroundColorFocus}`}
-                            >
-                                <a class='block p-4 text-xl' href={section.href}>
-                                    {section.headline}
-                                </a>
-                            </h3>
-                            <ul class='mx-6 mb-4'>
-                                {section.navigationEntries.map((entry) => (
-                                    <MainMenuItem
-                                        iconType={entry.iconType}
-                                        menuListEntryDecoration={entry.underlineColor}
-                                        href={entry.href}
-                                        external={entry.externalLink}
-                                    >
-                                        {entry.label}
-                                    </MainMenuItem>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                ))
-            }
-        </div>
+        <MainMenu sections={subsections} />
     </div>
 </GenericOverview>
