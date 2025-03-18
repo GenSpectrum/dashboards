@@ -12,7 +12,7 @@ type MegaMenuSection = {
     description?: string;
 };
 
-type PathogenMegaMenuSection = {
+export type PathogenMegaMenuSection = {
     headline: string;
     headlineBackgroundColor: string;
     headlineBackgroundColorFocus: string;
