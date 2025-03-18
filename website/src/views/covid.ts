@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, views, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation, views } from '@genspectrum/dashboard-components/util';
 
 import {
     getIntegerFromSearch,
@@ -14,7 +14,16 @@ import {
     GenericSequencingEffortsView,
 } from './BaseView.ts';
 import { type OrganismConstants } from './OrganismConstants.ts';
-import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    getLineageFilterFields,
+    type Id,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import { compareSideBySideViewConstants, singleVariantViewConstants } from './ViewConstants.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import {
@@ -31,6 +40,8 @@ import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
 const hostField = 'host';
+
+const mainDateFilterColumn = 'date';
 
 class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
@@ -70,8 +81,7 @@ class CovidConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate: earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'date',
+            dateColumn: mainDateFilterColumn,
             label: 'Date',
         },
         {
@@ -123,6 +133,14 @@ class CovidConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [mainDateFilterColumn]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export type CovidVariantData = DatasetAndVariantData & { collectionId?: number };
 
 export class CovidAnalyzeSingleVariantView extends BaseView<
@@ -136,17 +154,7 @@ export class CovidAnalyzeSingleVariantView extends BaseView<
             constants,
             new CovidSingleVariantStateHandler(
                 constants,
-                {
-                    datasetFilter: {
-                        location: {},
-                        dateFilters: {},
-                        textFilters: {},
-                    },
-                    variantFilter: {
-                        lineages: {},
-                        mutations: {},
-                    },
-                },
+                makeDatasetAndVariantData(defaultDatasetFilter),
                 organismConfig[constants.organism].pathFragment,
             ),
             singleVariantViewConstants,
@@ -206,11 +214,7 @@ export class CovidCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {
                                 nextcladePangoLineage: 'JN.1*',
@@ -223,11 +227,7 @@ export class CovidCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {
                                 nextcladePangoLineage: 'XBB.1*',
@@ -254,18 +254,18 @@ export class CovidCompareSideBySideView extends BaseView<
 
 export class CovidSequencingEffortsView extends GenericSequencingEffortsView<CovidConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CovidConstants(organismsConfig));
+        super(new CovidConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class CovidCompareVariantsView extends GenericCompareVariantsView<CovidConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CovidConstants(organismsConfig));
+        super(new CovidConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class CovidCompareToBaselineView extends GenericCompareToBaselineView<CovidConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CovidConstants(organismsConfig));
+        super(new CovidConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

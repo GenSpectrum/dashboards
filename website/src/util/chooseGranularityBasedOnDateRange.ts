@@ -5,9 +5,9 @@ export const chooseGranularityBasedOnDateRange = ({
     dateRange,
 }: {
     earliestDate: Date;
-    dateRange?: DateRangeOption;
+    dateRange?: DateRangeOption | null;
 }): 'day' | 'week' | 'month' | 'year' => {
-    if (dateRange === undefined) {
+    if (dateRange === undefined || dateRange === null) {
         return 'year';
     }
 

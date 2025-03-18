@@ -48,22 +48,12 @@ export class GenericSingleVariantView<Constants extends OrganismConstants> exten
     Constants,
     SingleVariantPageStateHandler
 > {
-    constructor(constants: Constants) {
+    constructor(constants: Constants, defaultPageState: DatasetAndVariantData) {
         super(
             constants,
             new SingleVariantPageStateHandler(
                 constants,
-                {
-                    datasetFilter: {
-                        location: {},
-                        dateFilters: {},
-                        textFilters: {},
-                    },
-                    variantFilter: {
-                        mutations: {},
-                        lineages: {},
-                    },
-                },
+                defaultPageState,
                 organismConfig[constants.organism].pathFragment,
             ),
             singleVariantViewConstants,
@@ -76,22 +66,12 @@ export class GenericSequencingEffortsView<Constants extends OrganismConstants> e
     Constants,
     SequencingEffortsStateHandler
 > {
-    constructor(constants: Constants) {
+    constructor(constants: Constants, defaultPageState: DatasetAndVariantData) {
         super(
             constants,
             new SequencingEffortsStateHandler(
                 constants,
-                {
-                    datasetFilter: {
-                        location: {},
-                        dateFilters: {},
-                        textFilters: {},
-                    },
-                    variantFilter: {
-                        mutations: {},
-                        lineages: {},
-                    },
-                },
+                defaultPageState,
                 organismConfig[constants.organism].pathFragment,
             ),
             sequencingEffortsViewConstants,
@@ -104,19 +84,12 @@ export class GenericCompareVariantsView<Constants extends OrganismConstants> ext
     Constants,
     CompareVariantsPageStateHandler
 > {
-    constructor(constants: Constants) {
+    constructor(constants: Constants, defaultPageState: CompareVariantsData) {
         super(
             constants,
             new CompareVariantsPageStateHandler(
                 constants,
-                {
-                    datasetFilter: {
-                        location: {},
-                        dateFilters: {},
-                        textFilters: {},
-                    },
-                    variants: new Map(),
-                },
+                defaultPageState,
                 organismConfig[constants.organism].pathFragment,
             ),
             compareVariantsViewConstants,
@@ -129,23 +102,12 @@ export class GenericCompareToBaselineView<Constants extends OrganismConstants> e
     Constants,
     CompareToBaselineStateHandler
 > {
-    constructor(constants: Constants) {
+    constructor(constants: Constants, defaultPageState: CompareToBaselineData) {
         super(
             constants,
             new CompareToBaselineStateHandler(
                 constants,
-                {
-                    datasetFilter: {
-                        location: {},
-                        dateFilters: {},
-                        textFilters: {},
-                    },
-                    variants: new Map(),
-                    baselineFilter: {
-                        mutations: {},
-                        lineages: {},
-                    },
-                },
+                defaultPageState,
                 organismConfig[constants.organism].pathFragment,
             ),
             compareToBaselineViewConstants,

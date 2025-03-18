@@ -1,9 +1,16 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    type Id,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -43,8 +50,7 @@ class InfluenzaBConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate: earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -77,6 +83,14 @@ class InfluenzaBConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class InfluenzaBCompareSideBySideView extends BaseView<
     CompareSideBySideData,
     InfluenzaBConstants,
@@ -89,11 +103,7 @@ export class InfluenzaBCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: { lineageHA: 'vic' },
                             mutations: {},
@@ -103,11 +113,7 @@ export class InfluenzaBCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {
                                 lineageHA: 'yam',
@@ -133,6 +139,6 @@ export class InfluenzaBCompareSideBySideView extends BaseView<
 
 export class InfluenzaBSequencingEffortsView extends GenericSequencingEffortsView<InfluenzaBConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new InfluenzaBConstants(organismsConfig));
+        super(new InfluenzaBConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }

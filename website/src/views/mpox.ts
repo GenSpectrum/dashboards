@@ -1,6 +1,15 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    type Id,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +18,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { getPathoplexusAdditionalSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -59,8 +68,7 @@ class MpoxConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate: '1960-01-01',
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -104,9 +112,17 @@ class MpoxConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class MpoxAnalyzeSingleVariantView extends GenericSingleVariantView<MpoxConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new MpoxConstants(organismsConfig));
+        super(new MpoxConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -122,11 +138,7 @@ export class MpoxCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {
                                 lineage: 'F.1',
@@ -138,11 +150,7 @@ export class MpoxCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {
                                 lineage: 'F.2',
@@ -168,18 +176,18 @@ export class MpoxCompareSideBySideView extends BaseView<
 
 export class MpoxSequencingEffortsView extends GenericSequencingEffortsView<MpoxConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new MpoxConstants(organismsConfig));
+        super(new MpoxConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class MpoxCompareVariantsView extends GenericCompareVariantsView<MpoxConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new MpoxConstants(organismsConfig));
+        super(new MpoxConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class MpoxCompareToBaselineView extends GenericCompareToBaselineView<MpoxConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new MpoxConstants(organismsConfig));
+        super(new MpoxConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

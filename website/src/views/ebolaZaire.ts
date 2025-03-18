@@ -1,6 +1,15 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    type Id,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -37,8 +46,7 @@ class EbolaZaireConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.allTimes,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -92,9 +100,17 @@ class EbolaZaireConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
+    },
+};
+
 export class EbolaZaireAnalyzeSingleVariantView extends GenericSingleVariantView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -110,11 +126,7 @@ export class EbolaZaireCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             mutations: {},
                         },
@@ -123,11 +135,7 @@ export class EbolaZaireCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             mutations: {},
                         },
@@ -150,18 +158,18 @@ export class EbolaZaireCompareSideBySideView extends BaseView<
 
 export class EbolaZaireSequencingEffortsView extends GenericSequencingEffortsView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class EbolaZaireCompareVariantsView extends GenericCompareVariantsView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class EbolaZaireCompareToBaselineView extends GenericCompareToBaselineView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

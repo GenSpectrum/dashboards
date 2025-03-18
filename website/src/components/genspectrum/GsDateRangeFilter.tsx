@@ -13,8 +13,8 @@ export function GsDateRangeFilter({
     width,
 }: {
     lapisDateField: string;
-    onDateRangeChange?: (dateRange: DateRangeOption) => void;
-    value?: DateRangeOption;
+    onDateRangeChange?: (dateRange: DateRangeOption | null) => void;
+    value?: DateRangeOption | null;
     dateRangeOptions?: DateRangeOption[];
     earliestDate?: string;
     width?: string;
@@ -25,7 +25,9 @@ export function GsDateRangeFilter({
         const handleDateRangeOptionChange = (event: DateRangeOptionChangedEvent) => {
             const dateRange = event.detail;
 
-            if (typeof dateRange === 'string') {
+            if (dateRange === null) {
+                onDateRangeChange(null);
+            } else if (typeof dateRange === 'string') {
                 const dateRangeOption = dateRangeOptions?.find((option) => option.label === dateRange);
                 if (dateRangeOption !== undefined) {
                     onDateRangeChange(dateRangeOption);

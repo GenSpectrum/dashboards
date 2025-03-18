@@ -12,7 +12,6 @@ export type LocationFilterConfig = {
 };
 
 export type DateRangeFilterConfig = {
-    defaultDateRange?: DateRangeOption;
     dateRangeOptions: DateRangeOption[];
     earliestDate: string;
     dateColumn: string;

@@ -1,6 +1,15 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    type Id,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -55,8 +64,7 @@ class H3n2Constants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -96,9 +104,17 @@ class H3n2Constants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class H3n2AnalyzeSingleVariantView extends GenericSingleVariantView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -114,11 +130,7 @@ export class H3n2CompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {},
                             mutations: {},
@@ -128,11 +140,7 @@ export class H3n2CompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {
                                 cladeHA: '3C.2a1b.2a.2a.3a.1',
@@ -158,18 +166,18 @@ export class H3n2CompareSideBySideView extends BaseView<
 
 export class H3n2SequencingEffortsView extends GenericSequencingEffortsView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class H3n2CompareVariantsView extends GenericCompareVariantsView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class H3n2CompareToBaselineView extends GenericCompareToBaselineView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

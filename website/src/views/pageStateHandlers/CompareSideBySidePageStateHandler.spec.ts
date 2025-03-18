@@ -34,7 +34,6 @@ const mockConstants: OrganismConstants = {
             type: 'date',
             dateRangeOptions: [mockDateRangeOption],
             earliestDate: '1999-01-01',
-            defaultDateRange: mockDateRangeOption,
             dateColumn: 'date',
         },
     ],
@@ -101,9 +100,7 @@ describe('CompareSideBySideStateHandler', () => {
         expect(pageState.filters.get(0)).toEqual({
             datasetFilter: {
                 location: {},
-                dateFilters: {
-                    date: mockDateRangeOption,
-                },
+                dateFilters: {},
                 textFilters: {},
             },
             variantFilter: {
@@ -130,9 +127,7 @@ describe('CompareSideBySideStateHandler', () => {
 
         expect(pageState.filters.get(2)).toEqual({
             datasetFilter: {
-                dateFilters: {
-                    date: mockDateRangeOption,
-                },
+                dateFilters: {},
                 location: {},
                 textFilters: {},
             },

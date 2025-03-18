@@ -1,6 +1,15 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    type Id,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +18,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import { getPathoplexusAdditionalSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -37,8 +46,7 @@ class EbolaSudanConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.allTimes,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -92,9 +100,17 @@ class EbolaSudanConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
+    },
+};
+
 export class EbolaSudanAnalyzeSingleVariantView extends GenericSingleVariantView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaSudanConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -110,11 +126,7 @@ export class EbolaSudanCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             mutations: {},
                         },
@@ -123,11 +135,7 @@ export class EbolaSudanCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             mutations: {},
                         },
@@ -150,18 +158,18 @@ export class EbolaSudanCompareSideBySideView extends BaseView<
 
 export class EbolaSudanSequencingEffortsView extends GenericSequencingEffortsView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaSudanConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class EbolaSudanCompareVariantsView extends GenericCompareVariantsView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaSudanConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class EbolaSudanCompareToBaselineView extends GenericCompareToBaselineView<EbolaSudanConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaSudanConstants(organismsConfig));
+        super(new EbolaSudanConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

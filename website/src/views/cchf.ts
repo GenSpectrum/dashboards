@@ -1,6 +1,15 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    makeDatasetAndVariantData,
+    type CompareSideBySideData,
+    type DatasetAndVariantData,
+    type DatasetFilter,
+    type Id,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareVariantsData,
+    makeCompareToBaselineData,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -37,8 +46,7 @@ class CchfConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.allTimes,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -92,9 +100,17 @@ class CchfConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
+    },
+};
+
 export class CchfAnalyzeSingleVariantView extends GenericSingleVariantView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -152,18 +168,18 @@ export class CchfCompareSideBySideView extends BaseView<
 
 export class CchfSequencingEffortsView extends GenericSequencingEffortsView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class CchfCompareVariantsView extends GenericCompareVariantsView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class CchfCompareToBaselineView extends GenericCompareToBaselineView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }
