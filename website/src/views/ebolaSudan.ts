@@ -17,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getPathoplexusAdditionalSequencingEffortsFields,
+    PATHOPLEXUS_LOCATION_FIELDS,
+    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -56,13 +63,13 @@ class EbolaSudanConstants implements OrganismConstants {
         },
     ];
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
-    public readonly accessionDownloadFields;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
+    public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             mutations: {
@@ -91,11 +98,7 @@ class EbolaSudanConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.ebolaSudan.lapis.mainDateField;
-        this.locationFields = organismsConfig.ebolaSudan.lapis.locationFields;
-        this.authorsField = organismsConfig.ebolaSudan.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.ebolaSudan.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.ebolaSudan.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.ebolaSudan.lapis.accessionDownloadFields;
     }
 }
 

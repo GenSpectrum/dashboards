@@ -17,7 +17,13 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getAuthorRelatedSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getAuthorRelatedSequencingEffortsFields,
+    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -32,7 +38,7 @@ class RsvAConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvA;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields: string[];
+    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'lineage',
@@ -69,11 +75,11 @@ class RsvAConstants implements OrganismConstants {
         },
     ];
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = ['insdcAccessionFull'];
     public readonly predefinedVariants = [
         {
             lineages: { lineage: 'A.D.3' },
@@ -93,11 +99,7 @@ class RsvAConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.rsvA.lapis.mainDateField;
-        this.locationFields = organismsConfig.rsvA.lapis.locationFields;
-        this.authorsField = organismsConfig.rsvA.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.rsvA.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.rsvA.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.rsvA.lapis.accessionDownloadFields;
     }
 }
 

@@ -9,7 +9,14 @@ import {
 } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
-import { getAuthorRelatedSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getAuthorRelatedSequencingEffortsFields,
+    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+    INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -24,7 +31,7 @@ class InfluenzaAConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaA;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'subtypeHA',
@@ -66,11 +73,11 @@ class InfluenzaAConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
@@ -79,11 +86,7 @@ class InfluenzaAConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.influenzaA.lapis.mainDateField;
-        this.locationFields = organismsConfig.influenzaA.lapis.locationFields;
-        this.authorsField = organismsConfig.influenzaA.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.influenzaA.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.influenzaA.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.influenzaA.lapis.accessionDownloadFields;
     }
 }
 

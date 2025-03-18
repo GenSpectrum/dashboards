@@ -17,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
+import {
+    getPathoplexusAdditionalSequencingEffortsFields,
+    type OrganismConstants,
+    LOCULUS_AUTHORS_FIELD,
+    PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_LOCATION_FIELDS,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -56,13 +63,18 @@ class CchfConstants implements OrganismConstants {
         },
     ];
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
-    public readonly accessionDownloadFields;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
+    public readonly accessionDownloadFields = [
+        'insdcAccessionFull_L',
+        'insdcAccessionFull_M',
+        'insdcAccessionFull_S',
+        ...PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS,
+    ];
     public readonly predefinedVariants = [
         {
             mutations: {
@@ -91,11 +103,7 @@ class CchfConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.cchf.lapis.mainDateField;
-        this.locationFields = organismsConfig.cchf.lapis.locationFields;
-        this.authorsField = organismsConfig.cchf.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.cchf.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.cchf.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.cchf.lapis.accessionDownloadFields;
     }
 }
 
