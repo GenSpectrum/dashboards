@@ -1,0 +1,27 @@
+---
+import GenericOverview from './GenericOverview.astro';
+import { getPathogenMegaMenuSections } from '../../../layouts/base/header/getPathogenMegaMenuSections';
+import { PageHeadline } from '../../../styles/containers/PageHeadline';
+import MainMenu from '../../MainMenu.astro';
+
+type Props = {
+    organism: keyof ReturnType<typeof getPathogenMegaMenuSections>;
+    linkedOrganismsTitle: string;
+    linkedOrganisms: (keyof ReturnType<typeof getPathogenMegaMenuSections>)[];
+};
+
+const { organism, linkedOrganismsTitle, linkedOrganisms } = Astro.props;
+
+const allSections = getPathogenMegaMenuSections();
+const section = allSections[organism];
+
+const subsections = linkedOrganisms.map((key) => allSections[key]);
+---
+
+<GenericOverview organism={organism}>
+    <PageHeadline>{section.headline}</PageHeadline>
+    <div slot='post-navigation'>
+        <h1 class='mt-10 mb-4 text-xl font-bold'>{linkedOrganismsTitle}</h1>
+        <MainMenu sections={subsections} />
+    </div>
+</GenericOverview>

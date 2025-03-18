@@ -1,6 +1,8 @@
 ---
-import GenericOverview from '../../components/views/overview/GenericOverview.astro';
+import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
 import { Organisms } from '../../types/Organism';
+
+const subtypes = [Organisms.h5n1, Organisms.h3n2, Organisms.h1n1pdm];
 ---
 
-<GenericOverview organism={Organisms.influenzaA} />
+<LinkedOverview organism={Organisms.influenzaA} linkedOrganismsTitle='Featured Subtypes' linkedOrganisms={subtypes} />
