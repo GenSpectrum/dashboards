@@ -6,7 +6,7 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
-import { wastewaterConfig, RSVTypes } from '../../types/wastewaterConfig';
+import { wastewaterConfig, RSVTypes, wastewaterPathFragment } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
 ---
@@ -15,7 +15,7 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
     title='Swiss wastewater - RSV'
     breadcrumbs={[
         ...defaultBreadcrumbs,
-        { name: 'Swiss Wastewater' },
+        { name: 'Swiss Wastewater', href: `/${wastewaterPathFragment}` },
         {
             name: 'RSV',
             href: wastewaterConfig.pages.rsv,

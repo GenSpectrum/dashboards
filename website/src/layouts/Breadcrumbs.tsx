@@ -1,6 +1,6 @@
 export type BreadcrumbElement = {
     name: string;
-    href?: string;
+    href: string;
 };
 
 export const defaultBreadcrumbs: BreadcrumbElement[] = [{ name: 'Home', href: '/' }];
@@ -11,11 +11,7 @@ export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbElement[] 
             <ol>
                 {breadcrumbs.map((breadcrumb, index) => (
                     <li key={index}>
-                        {breadcrumb.href !== undefined ? (
-                            <a href={breadcrumb.href}>{breadcrumb.name}</a>
-                        ) : (
-                            <span>{breadcrumb.name}</span>
-                        )}
+                        <a href={breadcrumb.href}>{breadcrumb.name}</a>
                     </li>
                 ))}
             </ol>

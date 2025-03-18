@@ -6,7 +6,7 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
-import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { wastewaterConfig, wastewaterPathFragment } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
 const getReferencesUrl = `${lapisUrl}/sample/aggregated?fields=reference&versionStatus=LATEST_VERSION&isRevocation=false`;
@@ -19,7 +19,7 @@ const references = (await (await fetch(getReferencesUrl)).json()).data.map(
     title='Swiss wastewater - Influenza'
     breadcrumbs={[
         ...defaultBreadcrumbs,
-        { name: 'Swiss Wastewater' },
+        { name: 'Swiss Wastewater', href: `/${wastewaterPathFragment}` },
         {
             name: 'Influenza',
             href: wastewaterConfig.pages.influenza,
