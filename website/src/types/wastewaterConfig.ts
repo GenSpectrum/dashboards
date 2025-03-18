@@ -1,4 +1,4 @@
-const pathFragment = 'swiss-wastewater';
+export const wastewaterPathFragment = 'swiss-wastewater';
 
 export const wastewaterConfig = {
     menuListEntryDecoration: 'decoration-teal',
@@ -8,8 +8,8 @@ export const wastewaterConfig = {
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
     pages: {
-        rsv: `/${pathFragment}/rsv`,
-        influenza: `/${pathFragment}/flu`,
+        rsv: `/${wastewaterPathFragment}/rsv`,
+        influenza: `/${wastewaterPathFragment}/flu`,
     },
 };
 

@@ -1,6 +1,6 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
 import { type Organism, organismConfig } from '../../../types/Organism.ts';
-import { wastewaterConfig } from '../../../types/wastewaterConfig.ts';
+import { wastewaterConfig, wastewaterPathFragment } from '../../../types/wastewaterConfig.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 type MegaMenuSection = {
@@ -90,7 +90,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 externalLink: true,
             },
         ],
-        href: '/swiss-wastewater',
+        href: `/${wastewaterPathFragment}`,
     };
 
     return sections;
