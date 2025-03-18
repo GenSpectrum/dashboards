@@ -23,7 +23,7 @@ export function FilterDropdown({
                 <div className='iconify mdi--filter'></div>
                 Filter
             </div>
-            <div tabIndex={0} className='menu dropdown-content z-[10] w-52 rounded-box bg-base-100 p-2 shadow'>
+            <div tabIndex={0} className='menu dropdown-content rounded-box bg-base-100 z-10 w-52 p-2 shadow-sm'>
                 <SubscriptionFilter selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
             </div>
         </div>

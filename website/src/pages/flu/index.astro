@@ -1,7 +1,3 @@
 ---
-import { ServerSide } from '../../views/serverSideRouting';
-
-return Astro.redirect(
-    ServerSide.routing.getOrganismView('flu.sequencingEffortsView').pageStateHandler.getDefaultPageUrl(),
-);
+return Astro.redirect('/influenza-a', 301);
 ---

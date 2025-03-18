@@ -18,7 +18,6 @@ const mockConstants: OrganismConstants = {
             lapisField: 'lineage',
             placeholderText: 'Lineage',
             filterType: 'text',
-            initialValue: undefined,
         },
     ],
     additionalSequencingEffortsFields: [],
@@ -151,6 +150,49 @@ describe('CompareToBaselinePageStateHandler', () => {
         );
     });
 
+    it('should convert page state with deleted id to URL', () => {
+        const pageState: CompareToBaselineData = {
+            variants: new Map([
+                [
+                    0,
+                    {
+                        lineages: { lineage: 'B.1.1.7' },
+                        mutations: { nucleotideMutations: ['D614G'] },
+                    },
+                ],
+                [
+                    2,
+                    {
+                        variantQuery: 'C234G',
+                    },
+                ],
+            ]),
+            datasetFilter: {
+                location: { country: 'US' },
+                dateFilters: { date: mockDateRangeOption },
+                textFilters: {},
+            },
+            baselineFilter: {
+                lineages: {
+                    lineage: 'B.2.3.4',
+                },
+                mutations: {
+                    nucleotideMutations: ['C234G'],
+                },
+            },
+        };
+        const url = handler.toUrl(pageState);
+        expect(url).toBe(
+            '/testPath/compare-to-baseline?' +
+                'columns=2' +
+                '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
+                '&variantQuery%241=C234G' +
+                '&country=US&date=Last+7+Days' +
+                '&nucleotideMutations=C234G&lineage=B.2.3.4' +
+                '&',
+        );
+    });
+
     it('should convert dataset filter to Lapis filter', () => {
         const lapisFilter = handler.datasetFilterToLapisFilter({
             ...mockDefaultPageState.datasetFilter,
@@ -160,98 +202,6 @@ describe('CompareToBaselinePageStateHandler', () => {
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             country: 'US',
-        });
-    });
-
-    it('should return empty variant filter config', () => {
-        const variantFilterConfig = handler.getEmptyVariantFilterConfig();
-        expect(variantFilterConfig).toStrictEqual({
-            lineageFilterConfigs: [
-                {
-                    lapisField: 'lineage',
-                    placeholderText: 'Lineage',
-                    filterType: 'text',
-                    initialValue: undefined,
-                },
-            ],
-            mutationFilterConfig: {},
-            isInVariantQueryMode: false,
-            variantQueryConfig: undefined,
-        });
-    });
-
-    it('should convert pageState to variant filter configs', () => {
-        const pageState: CompareToBaselineData = {
-            ...mockDefaultPageState,
-            variants: new Map([
-                [
-                    1,
-                    {
-                        lineages: { lineage: 'B.1.1.7' },
-                        mutations: { nucleotideMutations: ['D614G'] },
-                    },
-                ],
-                [
-                    2,
-                    {
-                        lineages: { lineage: 'A.1.2.3' },
-                        mutations: { aminoAcidMutations: ['S:A123T'] },
-                    },
-                ],
-                [
-                    3,
-                    {
-                        variantQuery: 'C234G',
-                    },
-                ],
-            ]),
-        };
-        const variantFilterConfigs = handler.toVariantFilterConfigs(pageState);
-        expect(variantFilterConfigs.size).toBe(3);
-        expect(variantFilterConfigs.get(1)).toStrictEqual({
-            lineageFilterConfigs: [
-                {
-                    lapisField: 'lineage',
-                    placeholderText: 'Lineage',
-                    filterType: 'text',
-                    initialValue: 'B.1.1.7',
-                },
-            ],
-            mutationFilterConfig: {
-                nucleotideMutations: ['D614G'],
-            },
-            isInVariantQueryMode: false,
-            variantQueryConfig: undefined,
-        });
-
-        expect(variantFilterConfigs.get(2)).toStrictEqual({
-            lineageFilterConfigs: [
-                {
-                    lapisField: 'lineage',
-                    placeholderText: 'Lineage',
-                    filterType: 'text',
-                    initialValue: 'A.1.2.3',
-                },
-            ],
-            mutationFilterConfig: {
-                aminoAcidMutations: ['S:A123T'],
-            },
-            isInVariantQueryMode: false,
-            variantQueryConfig: undefined,
-        });
-
-        expect(variantFilterConfigs.get(3)).toStrictEqual({
-            lineageFilterConfigs: [
-                {
-                    lapisField: 'lineage',
-                    placeholderText: 'Lineage',
-                    filterType: 'text',
-                    initialValue: undefined,
-                },
-            ],
-            mutationFilterConfig: {},
-            isInVariantQueryMode: true,
-            variantQueryConfig: 'C234G',
         });
     });
 

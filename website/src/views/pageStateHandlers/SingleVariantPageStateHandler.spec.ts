@@ -18,7 +18,6 @@ const mockConstants: OrganismConstants = {
             lapisField: 'lineage',
             placeholderText: 'Lineage',
             filterType: 'text',
-            initialValue: undefined,
         },
     ],
     additionalSequencingEffortsFields: [],

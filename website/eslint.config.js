@@ -31,7 +31,7 @@ const enableFromEslint = {
     'no-console': 'error',
 };
 
-const disableFromTypescriptEsLint = {
+const typescriptEsLintOverwrites = {
     '@typescript-eslint/no-confusing-void-expression': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/no-unsafe-argument': 'off',
@@ -40,6 +40,18 @@ const disableFromTypescriptEsLint = {
     '@typescript-eslint/prefer-reduce-type-parameter': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/triple-slash-reference': 'off',
+    "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+            "args": "all",
+            "argsIgnorePattern": "^_",
+            "caughtErrors": "all",
+            "caughtErrorsIgnorePattern": "^_",
+            "destructuredArrayIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+        }
+    ]
 };
 
 const namingConvention = {
@@ -120,7 +132,7 @@ export default tseslint.config(
             ...importRules,
             ...namingConvention,
             ...restrictTemplateExpressions,
-            ...disableFromTypescriptEsLint,
+            ...typescriptEsLintOverwrites,
             ...disableFromReact,
             ...enableFromEslint,
         },
@@ -140,7 +152,7 @@ export default tseslint.config(
         ],
         rules: {
             ...namingConvention,
-            ...disableFromTypescriptEsLint,
+            ...typescriptEsLintOverwrites,
             ...enableFromEslint,
             ...importRulesAstro,
         },

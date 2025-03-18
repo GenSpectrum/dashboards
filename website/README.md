@@ -71,7 +71,7 @@ and add the icon selector to the `tailwind.config.mjs` file.
 You can use the icons in the code via
 
 ```html
-<span class="iconify text-4xl mdi--account"></span>
+<span class="iconify mdi--account text-4xl"></span>
 ```
 
 ### Using Your Local Components Copy

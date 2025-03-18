@@ -1,40 +1,68 @@
-import { organismConfig } from '../../../types/Organism.ts';
+import type { MenuIconType } from '../../../components/iconCss.ts';
+import { type Organism, organismConfig } from '../../../types/Organism.ts';
 import { wastewaterConfig } from '../../../types/wastewaterConfig.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
-export function getPathogenMegaMenuSections() {
-    const sections = Object.values(organismConfig).map((organism) => {
-        const megaMenuSections = ServerSide.routing.getAllViewsForOrganism(organism.organism).map((view) => {
-            const href = view.pageStateHandler.getDefaultPageUrl();
-            return {
-                label: view.viewConstants.labelLong,
-                href,
-                underlineColor: organism.menuListEntryDecoration,
-                iconType: view.viewConstants.iconType,
-                externalLink: false,
-            };
-        });
+type MegaMenuSection = {
+    label: string;
+    href: string;
+    underlineColor: string;
+    iconType: MenuIconType;
+    externalLink: boolean;
+    description?: string;
+};
+
+export type PathogenMegaMenuSection = {
+    headline: string;
+    headlineBackgroundColor: string;
+    headlineBackgroundColorFocus: string;
+    borderEntryDecoration: string;
+    navigationEntries: MegaMenuSection[];
+    href: string;
+};
+
+type PathogenMegaMenuSections = {
+    [key in Organism | 'swissWastewater']: PathogenMegaMenuSection;
+};
+
+export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
+    const sections = Object.values(organismConfig).reduce((acc, config) => {
+        const megaMenuSections: MegaMenuSection[] = ServerSide.routing
+            .getAllViewsForOrganism(config.organism)
+            .map((view) => {
+                const href = view.pageStateHandler.getDefaultPageUrl();
+                return {
+                    label: view.viewConstants.labelLong,
+                    href,
+                    underlineColor: config.menuListEntryDecoration,
+                    iconType: view.viewConstants.iconType,
+                    externalLink: false,
+                    description: view.viewConstants.description,
+                };
+            });
 
         megaMenuSections.push(
-            ...ServerSide.routing.externalPages[organism.organism].map((externalPage) => ({
+            ...ServerSide.routing.externalPages[config.organism].map((externalPage) => ({
                 label: externalPage.label,
                 href: externalPage.url,
-                underlineColor: organism.menuListEntryDecoration,
+                underlineColor: config.menuListEntryDecoration,
                 iconType: externalPage.menuIcon,
                 externalLink: true,
             })),
         );
 
-        return {
-            headline: organism.label,
-            headlineBackgroundColor: organism.backgroundColor,
-            headlineBackgroundColorFocus: organism.backgroundColorFocus,
-            borderEntryDecoration: organism.borderEntryDecoration,
+        acc[config.organism] = {
+            headline: config.label,
+            headlineBackgroundColor: config.backgroundColor,
+            headlineBackgroundColorFocus: config.backgroundColorFocus,
+            borderEntryDecoration: config.borderEntryDecoration,
             navigationEntries: megaMenuSections,
+            href: `/${config.pathFragment}`,
         };
-    });
+        return acc;
+    }, {} as PathogenMegaMenuSections);
 
-    sections.push({
+    sections.swissWastewater = {
         headline: 'Swiss Wastewater',
         headlineBackgroundColor: wastewaterConfig.backgroundColor,
         headlineBackgroundColorFocus: wastewaterConfig.backgroundColorFocus,
@@ -62,7 +90,8 @@ export function getPathogenMegaMenuSections() {
                 externalLink: true,
             },
         ],
-    });
+        href: '/swiss-wastewater',
+    };
 
     return sections;
 }

@@ -3,11 +3,10 @@ import { useMemo, useState } from 'react';
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
-import { toVariantFilter, type VariantFilterConfig } from './VariantFilterConfig.ts';
-import { VariantSelector } from './VariantSelector.tsx';
+import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
-import { type DatasetAndVariantData, getVariantFilterConfig } from '../../views/View.ts';
+import { type DatasetAndVariantData } from '../../views/View.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { singleVariantViewKey } from '../../views/viewKeys.ts';
 
@@ -15,39 +14,25 @@ export function SingleVariantPageStateSelector({
     locationFilterConfig,
     organismViewKey,
     organismsConfig,
-    pageState,
+    initialPageState,
 }: {
     locationFilterConfig: LocationFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
-    pageState: DatasetAndVariantData;
+    initialPageState: DatasetAndVariantData;
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
-    const variantFilterConfig = useMemo(() => {
-        return getVariantFilterConfig(
-            view.organismConstants.lineageFilters,
-            pageState.variantFilter,
-            view.organismConstants.useAdvancedQuery,
-        );
-    }, [view, pageState]);
-
-    const [datasetFilterState, setDatasetFilterState] = useState(pageState.datasetFilter);
-
-    const [variantFilterConfigState, setVariantFilterConfigState] = useState<VariantFilterConfig>(variantFilterConfig);
+    const variantFilterConfig = useMemo(
+        () => makeVariantFilterConfig(view.organismConstants, { enableMutationFilter: true }),
+        [view.organismConstants],
+    );
+    const [pageState, setPageState] = useState(initialPageState);
 
     const baselineFilterConfigs = view.organismConstants.baselineFilterConfigs;
 
-    const newPageState = useMemo(() => {
-        return {
-            ...pageState, // preserve additional fields, e.g. the covid collection id
-            datasetFilter: datasetFilterState,
-            variantFilter: toVariantFilter(variantFilterConfigState),
-        };
-    }, [pageState, variantFilterConfigState, datasetFilterState]);
-
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.toLapisFilter(newPageState);
-    }, [newPageState, view.pageStateHandler]);
+        return view.pageStateHandler.toLapisFilter(pageState);
+    }, [pageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -58,8 +43,13 @@ export function SingleVariantPageStateSelector({
                         locationFilterConfig={locationFilterConfig}
                         baselineFilterConfigs={baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
-                        datasetFilter={datasetFilterState}
-                        setDatasetFilter={setDatasetFilterState}
+                        datasetFilter={pageState.datasetFilter}
+                        setDatasetFilter={(newDatasetFilter) => {
+                            setPageState((previousState) => ({
+                                ...previousState,
+                                datasetFilter: newDatasetFilter,
+                            }));
+                        }}
                     />
                 </Inset>
             </div>
@@ -68,18 +58,24 @@ export function SingleVariantPageStateSelector({
                 <SelectorHeadline>Variant Filter</SelectorHeadline>
                 <Inset className={'p-2'}>
                     <VariantSelector
-                        onVariantFilterChange={setVariantFilterConfigState}
-                        variantFilterConfig={variantFilterConfigState}
+                        onVariantFilterChange={(newVariantFilter) => {
+                            setPageState((previousState) => ({
+                                ...previousState,
+                                variantFilter: newVariantFilter,
+                            }));
+                        }}
+                        variantFilterConfig={variantFilterConfig}
+                        variantFilter={pageState.variantFilter}
                         lapisFilter={currentLapisFilter}
                     />
                 </Inset>
             </div>
 
-            <div className='sticky bottom-0 w-full pb-5 backdrop-blur-sm'>
+            <div className='sticky bottom-0 w-full pb-5 backdrop-blur-xs'>
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
-                    newPageState={newPageState}
+                    newPageState={pageState}
                 />
             </div>
         </div>

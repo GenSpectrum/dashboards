@@ -42,7 +42,14 @@ class CovidConstants implements OrganismConstants {
             lapisField: 'nextcladePangoLineage',
             placeholderText: 'Nextclade pango lineage',
             filterType: 'lineage' as const,
-            initialValue: undefined,
+        },
+    ];
+    // Same as `lineageFilters` but for Nextstrain Clade, used for 'Sub-lineages Nextstrain Clade'
+    public readonly nextstrainCladeLineageFilters: LineageFilterConfig[] = [
+        {
+            lapisField: 'nextstrainClade',
+            placeholderText: 'Nextstrain clade',
+            filterType: 'lineage' as const,
         },
     ];
     public readonly useAdvancedQuery = true;

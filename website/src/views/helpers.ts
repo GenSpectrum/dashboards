@@ -113,7 +113,7 @@ export type LapisMutationQuery = {
     aminoAcidInsertions?: string[];
 };
 
-export function getMutationFilter(mutationFilter: LapisMutationQuery): MutationFilter {
+export function getMutationFilter(mutationFilter: Partial<LapisMutationQuery>): MutationFilter {
     return {
         nucleotideMutations: mutationFilter.nucleotideMutations ?? [],
         aminoAcidMutations: mutationFilter.aminoAcidMutations ?? [],

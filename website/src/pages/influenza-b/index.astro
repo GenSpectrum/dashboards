@@ -1,0 +1,12 @@
+---
+import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
+import { Organisms } from '../../types/Organism';
+
+const lineages = [Organisms.victoria];
+---
+
+<LinkedOverview
+    organism={Organisms.influenzaB}
+    linkedOrganismsTitle='Circulating Lineages'
+    linkedOrganisms={lineages}
+/>

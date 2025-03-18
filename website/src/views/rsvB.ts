@@ -30,7 +30,6 @@ class RsvBConstants implements OrganismConstants {
             lapisField: 'lineage',
             placeholderText: 'Lineage',
             filterType: 'text' as const,
-            initialValue: undefined,
         },
     ];
     public readonly useAdvancedQuery = false;
