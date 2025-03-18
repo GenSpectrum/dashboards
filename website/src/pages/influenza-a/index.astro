@@ -1,8 +1,8 @@
 ---
 import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
-import { Organisms, type Organism } from '../../types/Organism';
+import { Organisms } from '../../types/Organism';
 
-const subtypes: Organism[] = ['h5n1', 'h3n2', 'h1n1pdm'];
+const subtypes = [Organisms.h5n1, Organisms.h3n2, Organisms.h1n1pdm];
 ---
 
 <LinkedOverview organism={Organisms.influenzaA} linkedOrganismsTitle='Featured Subtypes' linkedOrganisms={subtypes} />
