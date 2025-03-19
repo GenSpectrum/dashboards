@@ -126,11 +126,7 @@ export class CchfCompareSideBySideView extends BaseView<
                 [
                     0,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {},
                             mutations: {},
@@ -140,11 +136,7 @@ export class CchfCompareSideBySideView extends BaseView<
                 [
                     1,
                     {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
+                        datasetFilter: defaultDatasetFilter,
                         variantFilter: {
                             lineages: {},
                             mutations: {},
