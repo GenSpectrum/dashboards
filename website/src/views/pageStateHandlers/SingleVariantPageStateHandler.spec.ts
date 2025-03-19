@@ -34,7 +34,6 @@ const mockConstants: OrganismConstants = {
             type: 'date',
             dateRangeOptions: [mockDateRangeOption],
             earliestDate: '1999-01-01',
-            defaultDateRange: mockDateRangeOption,
             dateColumn: 'date',
         },
     ],
@@ -104,6 +103,19 @@ describe('SingleVariantPageStateHandler', () => {
                 '&nucleotideMutations=D614G&lineage=B.1.1.7' +
                 '&',
         );
+    });
+
+    it('should ignore date filters that are null when converting page state to URL', () => {
+        const pageState: DatasetAndVariantData = {
+            variantFilter: {},
+            datasetFilter: {
+                location: {},
+                dateFilters: { date: null },
+                textFilters: {},
+            },
+        };
+        const url = handler.toUrl(pageState);
+        expect(url).toBe('/testPath/single-variant');
     });
 
     it('should convert pageState to Lapis filter', () => {

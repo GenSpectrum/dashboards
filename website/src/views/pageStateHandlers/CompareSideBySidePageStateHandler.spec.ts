@@ -34,7 +34,6 @@ const mockConstants: OrganismConstants = {
             type: 'date',
             dateRangeOptions: [mockDateRangeOption],
             earliestDate: '1999-01-01',
-            defaultDateRange: mockDateRangeOption,
             dateColumn: 'date',
         },
     ],
@@ -101,9 +100,7 @@ describe('CompareSideBySideStateHandler', () => {
         expect(pageState.filters.get(0)).toEqual({
             datasetFilter: {
                 location: {},
-                dateFilters: {
-                    date: mockDateRangeOption,
-                },
+                dateFilters: {},
                 textFilters: {},
             },
             variantFilter: {
@@ -130,9 +127,7 @@ describe('CompareSideBySideStateHandler', () => {
 
         expect(pageState.filters.get(2)).toEqual({
             datasetFilter: {
-                dateFilters: {
-                    date: mockDateRangeOption,
-                },
+                dateFilters: {},
                 location: {},
                 textFilters: {},
             },
@@ -185,6 +180,27 @@ describe('CompareSideBySideStateHandler', () => {
                 '&variantQuery%241=C234G&date%241=Last+7+Days' +
                 '&',
         );
+    });
+
+    it('should ignore date filters that are null when converting page state to URL', () => {
+        const pageState: CompareSideBySideData = {
+            filters: new Map<number, DatasetAndVariantData>([
+                [
+                    1,
+                    {
+                        datasetFilter: {
+                            location: {},
+                            dateFilters: { date: null },
+                            textFilters: {},
+                        },
+                        variantFilter: {},
+                    },
+                ],
+            ]),
+        };
+
+        const url = handler.toUrl(pageState);
+        expect(url).toBe('/testPath/compare-side-by-side?columns=1&');
     });
 
     it('should convert variant filter to Lapis filter', () => {

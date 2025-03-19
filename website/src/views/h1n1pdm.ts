@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -55,8 +63,7 @@ class H1n1pdmConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -96,9 +103,17 @@ class H1n1pdmConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class H1n1pdmAnalyzeSingleVariantView extends GenericSingleVariantView<H1n1pdmConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H1n1pdmConstants(organismsConfig));
+        super(new H1n1pdmConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -109,41 +124,15 @@ export class H1n1pdmCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new H1n1pdmConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                cladeHA: '6B.1A.5a.2a.1',
-                                cladeNA: 'C.5.3',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {},
+            {
+                lineages: {
+                    cladeHA: '6B.1A.5a.2a.1',
+                    cladeNA: 'C.5.3',
+                },
+            },
+        ]);
 
         super(
             constants,
@@ -159,18 +148,18 @@ export class H1n1pdmCompareSideBySideView extends BaseView<
 
 export class H1n1pdmSequencingEffortsView extends GenericSequencingEffortsView<H1n1pdmConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H1n1pdmConstants(organismsConfig));
+        super(new H1n1pdmConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class H1n1pdmCompareVariantsView extends GenericCompareVariantsView<H1n1pdmConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H1n1pdmConstants(organismsConfig));
+        super(new H1n1pdmConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class H1n1pdmCompareToBaselineView extends GenericCompareToBaselineView<H1n1pdmConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H1n1pdmConstants(organismsConfig));
+        super(new H1n1pdmConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

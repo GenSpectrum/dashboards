@@ -24,7 +24,7 @@ export function toLapisFilterWithoutVariant(
 ): LapisFilter & LapisLocation {
     const dateFilters = Object.entries(pageState.datasetFilter.dateFilters).reduce(
         (acc, [lapisField, dateRange]) => {
-            if (dateRange === undefined) {
+            if (dateRange === undefined || dateRange === null) {
                 return acc;
             }
 
@@ -79,9 +79,7 @@ export function parseDateRangesFromUrl(
     return (
         dateRangeFilterConfigs?.reduce(
             (acc, config) => {
-                const dateRange =
-                    getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions) ??
-                    config.defaultDateRange;
+                const dateRange = getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions);
                 return {
                     ...acc,
                     [config.dateColumn]: dateRange,

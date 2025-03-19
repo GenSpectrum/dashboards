@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -50,8 +58,7 @@ class RsvAConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: earliestDate },
             ],
             earliestDate: '1956-01-01',
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -94,9 +101,17 @@ class RsvAConstants implements OrganismConstants {
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class RsvAAnalyzeSingleVariantView extends GenericSingleVariantView<RsvAConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new RsvAConstants(organismsConfig));
+        super(new RsvAConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -107,40 +122,14 @@ export class RsvACompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new RsvAConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                lineage: 'A.D.5.2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {},
+            {
+                lineages: {
+                    lineage: 'A.D.5.2',
+                },
+            },
+        ]);
 
         super(
             constants,
@@ -156,18 +145,18 @@ export class RsvACompareSideBySideView extends BaseView<
 
 export class RsvASequencingEffortsView extends GenericSequencingEffortsView<RsvAConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new RsvAConstants(organismsConfig));
+        super(new RsvAConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class RsvACompareVariantsView extends GenericCompareVariantsView<RsvAConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new RsvAConstants(organismsConfig));
+        super(new RsvAConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class RsvACompareToBaselineView extends GenericCompareToBaselineView<RsvAConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new RsvAConstants(organismsConfig));
+        super(new RsvAConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

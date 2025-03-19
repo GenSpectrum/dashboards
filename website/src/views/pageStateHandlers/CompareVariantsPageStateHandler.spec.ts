@@ -34,7 +34,6 @@ const mockConstants: OrganismConstants = {
             type: 'date',
             dateRangeOptions: [mockDateRangeOption],
             earliestDate: '1999-01-01',
-            defaultDateRange: mockDateRangeOption,
             dateColumn: 'date',
         },
     ],
@@ -163,6 +162,21 @@ describe('CompareVariantsPageStateHandler', () => {
                 '&date=Last+7+Days' +
                 '&',
         );
+    });
+
+    it('should ignore date filters that are null when converting page state to URL', () => {
+        const pageState: CompareVariantsData = {
+            variants: new Map(),
+            datasetFilter: {
+                location: {},
+                dateFilters: { date: null },
+                textFilters: {},
+            },
+        };
+
+        const url = handler.toUrl(pageState);
+
+        expect(url).toBe('/testPath/compare-variants');
     });
 
     it('should convert dataset filter to Lapis filter', () => {
