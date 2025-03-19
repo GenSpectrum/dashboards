@@ -42,4 +42,12 @@ describe('chooseGranularityBasedOnDateRange', () => {
 
         expect(chooseGranularityBasedOnDateRange({ earliestDate: earliestDate, dateRange: dateRange })).toBe('year');
     });
+
+    it('should use year when date range is undefined', () => {
+        expect(chooseGranularityBasedOnDateRange({ earliestDate: earliestDate, dateRange: undefined })).toBe('year');
+    });
+
+    it('should use year when date range is null', () => {
+        expect(chooseGranularityBasedOnDateRange({ earliestDate: earliestDate, dateRange: null })).toBe('year');
+    });
 });
