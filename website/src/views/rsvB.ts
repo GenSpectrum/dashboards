@@ -2,10 +2,9 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import {
     type CompareSideBySideData,
-    type DatasetAndVariantData,
     type DatasetFilter,
     GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
-    type Id,
+    makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
@@ -18,7 +17,7 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import { getAuthorRelatedSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -123,32 +122,14 @@ export class RsvBCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new RsvBConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                lineage: 'B.D.E.1',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {},
+            {
+                lineages: {
+                    lineage: 'B.D.E.1',
+                },
+            },
+        ]);
 
         super(
             constants,

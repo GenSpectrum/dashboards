@@ -2,9 +2,8 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import {
     type CompareSideBySideData,
-    type DatasetAndVariantData,
     type DatasetFilter,
-    type Id,
+    makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
@@ -121,28 +120,7 @@ export class EbolaSudanCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new EbolaSudanConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [{}, {}]);
 
         super(
             constants,

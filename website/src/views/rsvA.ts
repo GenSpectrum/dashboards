@@ -2,10 +2,9 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import {
     type CompareSideBySideData,
-    type DatasetAndVariantData,
     type DatasetFilter,
     GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
-    type Id,
+    makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
@@ -123,32 +122,14 @@ export class RsvACompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new RsvAConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                lineage: 'A.D.5.2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {},
+            {
+                lineages: {
+                    lineage: 'A.D.5.2',
+                },
+            },
+        ]);
 
         super(
             constants,

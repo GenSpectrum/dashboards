@@ -2,9 +2,8 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import {
     type CompareSideBySideData,
-    type DatasetAndVariantData,
     type DatasetFilter,
-    type Id,
+    makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
@@ -133,34 +132,18 @@ export class MpoxCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new MpoxConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                lineage: 'F.1',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                lineage: 'F.2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    lineage: 'F.1',
+                },
+            },
+            {
+                lineages: {
+                    lineage: 'F.2',
+                },
+            },
+        ]);
 
         super(
             constants,

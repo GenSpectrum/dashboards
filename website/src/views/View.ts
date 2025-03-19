@@ -54,6 +54,25 @@ export type CompareSideBySideData<ColumnData extends DatasetAndVariantData = Dat
     filters: Map<Id, ColumnData>;
 };
 
+export function makeCompareSideBySideData(
+    datasetFilter: DatasetFilter,
+    variantFilters: VariantFilter[],
+): CompareSideBySideData {
+    const filters = new Map(
+        variantFilters.map((variantFilter, index) => [
+            index,
+            {
+                datasetFilter,
+                variantFilter,
+            },
+        ]),
+    );
+
+    return {
+        filters,
+    };
+}
+
 export type CompareVariantsData = {
     variants: Map<Id, VariantFilter>;
 } & Dataset;

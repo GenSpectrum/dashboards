@@ -2,9 +2,8 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import {
     type CompareSideBySideData,
-    type DatasetAndVariantData,
     type DatasetFilter,
-    type Id,
+    makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
@@ -124,32 +123,14 @@ export class WestNileCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new WestNileConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                lineage: '2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    lineage: '2',
+                },
+            },
+            {},
+        ]);
 
         super(
             constants,

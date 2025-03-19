@@ -19,7 +19,7 @@ import {
     type DatasetAndVariantData,
     type DatasetFilter,
     getLineageFilterFields,
-    type Id,
+    makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
@@ -43,6 +43,8 @@ const hostField = 'host';
 
 const mainDateFilterColumn = 'date';
 
+const nextcladePangoLineage = 'nextcladePangoLineage';
+
 class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
@@ -50,7 +52,7 @@ class CovidConstants implements OrganismConstants {
     public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'nextcladePangoLineage',
+            lapisField: nextcladePangoLineage,
             placeholderText: 'Nextclade pango lineage',
             filterType: 'lineage' as const,
         },
@@ -209,36 +211,18 @@ export class CovidCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new CovidConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                nextcladePangoLineage: 'JN.1*',
-                            },
-                            mutations: {},
-                            variantQuery: undefined,
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                nextcladePangoLineage: 'XBB.1*',
-                            },
-                            mutations: {},
-                            variantQuery: undefined,
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    [nextcladePangoLineage]: 'JN.1*',
+                },
+            },
+            {
+                lineages: {
+                    [nextcladePangoLineage]: 'XBB.1*',
+                },
+            },
+        ]);
 
         super(
             constants,

@@ -2,10 +2,9 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 
 import {
     type CompareSideBySideData,
-    type DatasetAndVariantData,
     type DatasetFilter,
     GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
-    type Id,
+    makeCompareSideBySideData,
     makeDatasetAndVariantData,
 } from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
@@ -103,33 +102,20 @@ export class InfluenzaACompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new InfluenzaAConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: { subtypeHA: 'H5', subtypeNA: 'N1' },
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: defaultDatasetFilter,
-                        variantFilter: {
-                            lineages: {
-                                subtypeHA: 'H3',
-                                subtypeNA: 'N2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    subtypeHA: 'H5',
+                    subtypeNA: 'N1',
+                },
+            },
+            {
+                lineages: {
+                    subtypeHA: 'H3',
+                    subtypeNA: 'N2',
+                },
+            },
+        ]);
 
         super(
             constants,
