@@ -17,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { getPathoplexusAdditionalSequencingEffortsFields, type OrganismConstants } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getPathoplexusAdditionalSequencingEffortsFields,
+    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_LOCATION_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -32,7 +39,7 @@ class WestNileConstants implements OrganismConstants {
     public readonly organism = Organisms.westNile;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields: string[];
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'lineage',
@@ -69,9 +76,9 @@ class WestNileConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
-    public readonly accessionDownloadFields;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
+    public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             lineages: { lineage: '1A' },
@@ -94,11 +101,7 @@ class WestNileConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
-        this.locationFields = organismsConfig.westNile.lapis.locationFields;
-        this.authorsField = organismsConfig.westNile.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.westNile.lapis.accessionDownloadFields;
     }
 }
 

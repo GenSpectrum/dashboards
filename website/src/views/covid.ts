@@ -49,7 +49,7 @@ class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = ['region', 'country', 'division'];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: nextcladePangoLineage,
@@ -94,44 +94,31 @@ class CovidConstants implements OrganismConstants {
         },
     ];
     public readonly hostField: string = hostField;
-    public readonly originatingLabField: string | undefined;
-    public readonly submittingLabField: string | undefined;
+    public readonly originatingLabField = 'originatingLab';
+    public readonly submittingLabField = 'submittingLab';
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.nextstrain];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = ['strain'];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
-        const originatingLab =
-            this.originatingLabField === undefined
-                ? []
-                : [
-                      {
-                          label: 'Originating lab',
-                          fields: [this.originatingLabField],
-                          views: [views.table],
-                      },
-                  ];
-        const submittingLab =
-            this.submittingLabField === undefined
-                ? []
-                : [
-                      {
-                          label: 'Submitting lab ',
-                          fields: [this.submittingLabField],
-                          views: [views.table],
-                      },
-                  ];
-        return [...originatingLab, ...submittingLab];
+        return [
+            {
+                label: 'Originating lab',
+                fields: [this.originatingLabField],
+                views: [views.table],
+            },
+            {
+                label: 'Submitting lab ',
+                fields: [this.submittingLabField],
+                views: [views.table],
+            },
+        ];
     }
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
-        this.locationFields = organismsConfig.covid.lapis.locationFields;
-        this.originatingLabField = organismsConfig.covid.lapis.originatingLabField;
-        this.submittingLabField = organismsConfig.covid.lapis.submittingLabField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.covid.lapis.accessionDownloadFields;
     }
 }
 

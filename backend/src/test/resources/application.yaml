@@ -11,72 +11,35 @@ dashboards:
       lapis:
         url: "https://covid.lapis.dummy"
         mainDateField: "covid_date"
-        locationFields:
-          - "covid_region"
-          - "covid_country"
-          - "covid_division"
-        lineageField: "covid_lineage"
-        originatingLabField: "covid_originating_lab"
-        submittingLabField: "covid_submitting_lab"
         additionalFilters:
           someAdditionalFilter: "covid_additional_filter"
     h5n1:
       lapis:
         url: "https://h5n1.lapis.dummy"
         mainDateField: "h5n1_date"
-        locationFields:
-          - "h5n1_geo_loc_country"
-          - "h5n1_geo_loc_admin_1"
-        lineageField: "h5n1_lineage"
-        authorAffiliationsField: "h5n1_author_affiliations"
-        authorsField: "h5n1_authors"
         additionalFilters:
           someAdditionalFilter: "h5n1_additional_filter"
     mpox:
       lapis:
         url: "https://mpox.lapis.dummy"
         mainDateField: "mpox_date"
-        locationFields:
-          - "mpox_geo_loc_country"
-          - "mpox_geo_loc_admin_1"
-        lineageField: "mpox_lineage"
-        authorAffiliationsField: "mpox_author_affiliations"
-        authorsField: "mpox_authors"
         additionalFilters:
           someAdditionalFilter: "mpox_additional_filter"
     westNile:
       lapis:
         url: "https://westNile.lapis.dummy"
         mainDateField: "westnile_date"
-        locationFields:
-          - "westNile_geo_loc_country"
-          - "westNile_geo_loc_admin_1"
-        lineageField: "westNile_lineage"
-        authorAffiliationsField: "westNile_author_affiliations"
-        authorsField: "westNile_authors"
         additionalFilters:
           someAdditionalFilter: "westnile_additional_filter"
     rsvA:
       lapis:
         url: "https://rsvA.lapis.dummy"
         mainDateField: "rsva_date"
-        locationFields:
-          - "rsvA_geo_loc_country"
-          - "rsvA_geo_loc_admin_1"
-        lineageField: "rsvA_lineage"
-        authorAffiliationsField: "rsvA_author_affiliations"
-        authorsField: "rsvA_authors"
         additionalFilters:
           someAdditionalFilter: "rsva_additional_filter"
     rsvB:
       lapis:
         url: "https://rsvB.lapis.dummy"
         mainDateField: "rsvb_date"
-        locationFields:
-          - "rsvB_geo_loc_country"
-          - "rsvB_geo_loc_admin_1"
-        lineageField: "rsvB_lineage"
-        authorAffiliationsField: "rsvB_author_affiliations"
-        authorsField: "rsvB_authors"
         additionalFilters:
           someAdditionalFilter: "rsvb_additional_filter"

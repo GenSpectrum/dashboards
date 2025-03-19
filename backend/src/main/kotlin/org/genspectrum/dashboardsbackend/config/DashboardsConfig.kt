@@ -19,11 +19,6 @@ data class OrganismConfig(
 data class LapisConfig(
     val url: String,
     val mainDateField: String,
-    val locationFields: List<String>,
-    val authorsField: String?,
-    val authorAffiliationsField: String?,
-    val originatingLabField: String?,
-    val submittingLabField: String?,
     val additionalFilters: Map<String, String>?,
 )
 
