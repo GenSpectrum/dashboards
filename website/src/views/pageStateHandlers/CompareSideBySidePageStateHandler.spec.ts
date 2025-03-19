@@ -182,6 +182,27 @@ describe('CompareSideBySideStateHandler', () => {
         );
     });
 
+    it('should ignore date filters that are null when converting page state to URL', () => {
+        const pageState: CompareSideBySideData = {
+            filters: new Map<number, DatasetAndVariantData>([
+                [
+                    1,
+                    {
+                        datasetFilter: {
+                            location: {},
+                            dateFilters: { date: null },
+                            textFilters: {},
+                        },
+                        variantFilter: {},
+                    },
+                ],
+            ]),
+        };
+
+        const url = handler.toUrl(pageState);
+        expect(url).toBe('/testPath/compare-side-by-side?columns=1&');
+    });
+
     it('should convert variant filter to Lapis filter', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {

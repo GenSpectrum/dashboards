@@ -149,6 +149,22 @@ describe('CompareToBaselinePageStateHandler', () => {
         );
     });
 
+    it('should ignore date filters that are null when converting page state to URL', () => {
+        const pageState: CompareToBaselineData = {
+            variants: new Map(),
+            datasetFilter: {
+                location: {},
+                dateFilters: { date: null },
+                textFilters: {},
+            },
+            baselineFilter: {},
+        };
+
+        const url = handler.toUrl(pageState);
+
+        expect(url).toBe('/testPath/compare-to-baseline');
+    });
+
     it('should convert page state with deleted id to URL', () => {
         const pageState: CompareToBaselineData = {
             variants: new Map([
