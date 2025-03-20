@@ -45,6 +45,20 @@ const mainDateFilterColumn = 'date';
 
 const nextcladePangoLineage = 'nextcladePangoLineage';
 
+const dateRangeOptions = [
+    dateRangeOptionPresets.lastMonth,
+    dateRangeOptionPresets.last2Months,
+    dateRangeOptionPresets.last3Months,
+    dateRangeOptionPresets.last6Months,
+    dateRangeOptionPresets.lastYear,
+    { label: '2024', dateFrom: '2024-01-01', dateTo: '2024-12-31' },
+    { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
+    { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
+    { label: '2021', dateFrom: '2021-01-04', dateTo: '2022-01-02' },
+    { label: '2020', dateFrom: earliestDate, dateTo: '2021-01-03' },
+    dateRangeOptionPresets.allTimes,
+];
+
 class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
@@ -69,20 +83,8 @@ class CovidConstants implements OrganismConstants {
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
             type: 'date',
-            dateRangeOptions: [
-                dateRangeOptionPresets.lastMonth,
-                dateRangeOptionPresets.last2Months,
-                dateRangeOptionPresets.last3Months,
-                dateRangeOptionPresets.last6Months,
-                dateRangeOptionPresets.lastYear,
-                { label: '2024', dateFrom: '2024-01-01', dateTo: '2024-12-31' },
-                { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
-                { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
-                { label: '2021', dateFrom: '2021-01-04', dateTo: '2022-01-02' },
-                { label: '2020', dateFrom: earliestDate, dateTo: '2021-01-03' },
-                { label: 'All times', dateFrom: this.earliestDate },
-            ],
-            earliestDate: earliestDate,
+            dateRangeOptions,
+            earliestDate,
             dateColumn: mainDateFilterColumn,
             label: 'Date',
         },
@@ -91,6 +93,37 @@ class CovidConstants implements OrganismConstants {
             placeholderText: 'Host',
             type: 'text' as const,
             label: 'Host',
+        },
+        {
+            lapisField: 'samplingStrategy',
+            placeholderText: 'Sampling strategy',
+            type: 'text' as const,
+            label: 'Sampling strategy',
+        },
+        {
+            type: 'date',
+            dateRangeOptions,
+            earliestDate,
+            dateColumn: 'dateSubmitted',
+            label: 'Date submitted',
+        },
+        {
+            lapisField: 'regionExposure',
+            placeholderText: 'Region exposure',
+            type: 'text' as const,
+            label: 'Region exposure',
+        },
+        {
+            lapisField: 'countryExposure',
+            placeholderText: 'Country exposure',
+            type: 'text' as const,
+            label: 'Country exposure',
+        },
+        {
+            lapisField: 'divisionExposure',
+            placeholderText: 'Division exposure',
+            type: 'text' as const,
+            label: 'Division exposure',
         },
     ];
     public readonly hostField: string = hostField;

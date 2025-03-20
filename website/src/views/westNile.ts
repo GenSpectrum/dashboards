@@ -24,6 +24,8 @@ import {
     PATHOPLEXUS_LOCATION_FIELDS,
     LOCULUS_AUTHORS_FIELD,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+    getPathoplexusFilters,
+    PATHOPLEXUS_HOST_FIELD,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -33,7 +35,6 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1930-01-01';
-const hostField = 'hostNameScientific';
 
 class WestNileConstants implements OrganismConstants {
     public readonly organism = Organisms.westNile;
@@ -48,8 +49,7 @@ class WestNileConstants implements OrganismConstants {
         },
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        {
-            type: 'date',
+        ...getPathoplexusFilters({
             dateRangeOptions: [
                 dateRangeOptionPresets.lastMonth,
                 dateRangeOptionPresets.last2Months,
@@ -63,19 +63,17 @@ class WestNileConstants implements OrganismConstants {
                 { label: 'Before 2000', dateTo: '1999-12-31' },
                 dateRangeOptionPresets.allTimes,
             ],
-            earliestDate: '1999-01-01',
-            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
-            label: 'Sample collection date',
-        },
+            earliestDate,
+        }),
         {
-            lapisField: hostField,
-            placeholderText: 'Host',
+            lapisField: 'collectionDevice',
+            placeholderText: 'Collection device',
             type: 'text' as const,
-            label: 'Host',
+            label: 'Collection device',
         },
     ];
     public readonly useAdvancedQuery = false;
-    public readonly hostField: string = hostField;
+    public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
