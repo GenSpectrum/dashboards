@@ -26,6 +26,19 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 
 const earliestDate = '1905-01-01';
 const hostField = 'hostNameScientific';
+const dateRangeOptions = [
+    dateRangeOptionPresets.lastMonth,
+    dateRangeOptionPresets.last2Months,
+    dateRangeOptionPresets.last3Months,
+    dateRangeOptionPresets.last6Months,
+    dateRangeOptionPresets.lastYear,
+    { label: 'Since 2020', dateFrom: '2020-01-01' },
+    { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
+    { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
+    { label: 'Since 2000', dateFrom: '2000-01-01' },
+    { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
+    { label: 'All times', dateFrom: earliestDate },
+];
 
 class InfluenzaBConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaB;
@@ -42,19 +55,7 @@ class InfluenzaBConstants implements OrganismConstants {
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
             type: 'date',
-            dateRangeOptions: [
-                dateRangeOptionPresets.lastMonth,
-                dateRangeOptionPresets.last2Months,
-                dateRangeOptionPresets.last3Months,
-                dateRangeOptionPresets.last6Months,
-                dateRangeOptionPresets.lastYear,
-                { label: 'Since 2020', dateFrom: '2020-01-01' },
-                { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-                { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-                { label: 'Since 2000', dateFrom: '2000-01-01' },
-                { label: 'Before 2000', dateFrom: earliestDate, dateTo: '1999-12-31' },
-                { label: 'All times', dateFrom: this.earliestDate },
-            ],
+            dateRangeOptions,
             earliestDate: earliestDate,
             dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
@@ -64,6 +65,13 @@ class InfluenzaBConstants implements OrganismConstants {
             placeholderText: 'Host',
             type: 'text' as const,
             label: 'Host',
+        },
+        {
+            type: 'date',
+            dateRangeOptions,
+            earliestDate,
+            dateColumn: 'ncbiReleaseDate',
+            label: 'NCBI release date',
         },
     ];
     public readonly useAdvancedQuery = false;

@@ -1,6 +1,11 @@
-import { views, type AggregateView, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
+import {
+    type AggregateView,
+    type DateRangeOption,
+    type MutationAnnotation,
+    views,
+} from '@genspectrum/dashboard-components/util';
 
-import { pathoplexusGroupNameField, type VariantFilter } from './View.ts';
+import { PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN, pathoplexusGroupNameField, type VariantFilter } from './View.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import type { Organism } from '../types/Organism.ts';
@@ -127,3 +132,48 @@ export const INFLUENZA_ACCESSION_DOWNLOAD_FIELDS = [
     'insdcAccessionFull_seg7',
     'insdcAccessionFull_seg8',
 ];
+
+export const PATHOPLEXUS_HOST_FIELD = 'hostNameScientific';
+
+export function getPathoplexusFilters({
+    dateRangeOptions,
+    earliestDate,
+}: {
+    dateRangeOptions: DateRangeOption[];
+    earliestDate: string;
+}): BaselineFilterConfig[] {
+    return [
+        {
+            type: 'date',
+            dateRangeOptions,
+            earliestDate,
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+            label: 'Sample collection date',
+        },
+        {
+            lapisField: 'hostNameScientific',
+            placeholderText: 'Host',
+            type: 'text' as const,
+            label: 'Host',
+        },
+        {
+            lapisField: 'groupName',
+            placeholderText: 'Group name',
+            type: 'text' as const,
+            label: 'Group name',
+        },
+        {
+            type: 'date',
+            dateRangeOptions,
+            earliestDate: '1956-01-01',
+            dateColumn: 'earliestReleaseDate',
+            label: 'Earliest release date',
+        },
+        {
+            lapisField: 'dataUseTerms',
+            placeholderText: 'Data use terms',
+            type: 'text' as const,
+            label: 'Data use terms',
+        },
+    ];
+}
