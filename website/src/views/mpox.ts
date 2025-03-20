@@ -24,6 +24,8 @@ import {
     PATHOPLEXUS_LOCATION_FIELDS,
     LOCULUS_AUTHORS_FIELD,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+    PATHOPLEXUS_HOST_FIELD,
+    getPathoplexusFilters,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -33,7 +35,6 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 
 const earliestDate = '1960-01-01';
-const hostField = 'hostNameScientific';
 
 class MpoxConstants implements OrganismConstants {
     public readonly organism = Organisms.mpox;
@@ -54,8 +55,7 @@ class MpoxConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        {
-            type: 'date',
+        ...getPathoplexusFilters({
             dateRangeOptions: [
                 dateRangeOptionPresets.lastMonth,
                 dateRangeOptionPresets.last2Months,
@@ -74,17 +74,9 @@ class MpoxConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate: '1960-01-01',
-            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
-            label: 'Sample collection date',
-        },
-        {
-            lapisField: hostField,
-            placeholderText: 'Host',
-            type: 'text' as const,
-            label: 'Host',
-        },
+        }),
     ];
-    public readonly hostField: string = hostField;
+    public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
