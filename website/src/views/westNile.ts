@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getPathoplexusAdditionalSequencingEffortsFields,
+    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_LOCATION_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -24,7 +39,7 @@ class WestNileConstants implements OrganismConstants {
     public readonly organism = Organisms.westNile;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields: string[];
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'lineage',
@@ -49,8 +64,7 @@ class WestNileConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate: '1999-01-01',
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -62,9 +76,9 @@ class WestNileConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
-    public readonly accessionDownloadFields;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
+    public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             lineages: { lineage: '1A' },
@@ -87,17 +101,21 @@ class WestNileConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
-        this.locationFields = organismsConfig.westNile.lapis.locationFields;
-        this.authorsField = organismsConfig.westNile.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.westNile.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.westNile.lapis.accessionDownloadFields;
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new WestNileConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -108,40 +126,14 @@ export class WestNileCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new WestNileConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                lineage: '2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    lineage: '2',
+                },
+            },
+            {},
+        ]);
 
         super(
             constants,
@@ -157,18 +149,18 @@ export class WestNileCompareSideBySideView extends BaseView<
 
 export class WestNileSequencingEffortsView extends GenericSequencingEffortsView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new WestNileConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class WestNileCompareVariantsView extends GenericCompareVariantsView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new WestNileConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class WestNileCompareToBaselineView extends GenericCompareToBaselineView<WestNileConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new WestNileConstants(organismsConfig));
+        super(new WestNileConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

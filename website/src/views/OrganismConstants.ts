@@ -102,3 +102,28 @@ export function getPathoplexusAdditionalSequencingEffortsFields(
         },
     ];
 }
+
+export const PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS = [
+    'accessionVersion',
+    'dataUseTerms',
+    'dataUseTermsUrl',
+    'dataUseTermsRestrictedUntil',
+];
+export const PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS = ['insdcAccessionFull', ...PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS];
+
+export const LOCULUS_AUTHORS_FIELD = 'authors';
+export const LOCULUS_AUTHORS_AFFILIATIONS_FIELD = 'authorAffiliations';
+
+export const PATHOPLEXUS_LOCATION_FIELDS = ['geoLocCountry', 'geoLocAdmin1'];
+export const GENSPECTRUM_LOCULUS_LOCATION_FIELDS = ['country', 'division'];
+
+export const INFLUENZA_ACCESSION_DOWNLOAD_FIELDS = [
+    'insdcAccessionFull_seg1',
+    'insdcAccessionFull_seg2',
+    'insdcAccessionFull_seg3',
+    'insdcAccessionFull_seg4',
+    'insdcAccessionFull_seg5',
+    'insdcAccessionFull_seg6',
+    'insdcAccessionFull_seg7',
+    'insdcAccessionFull_seg8',
+];

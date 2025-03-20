@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    getPathoplexusAdditionalSequencingEffortsFields,
+    type OrganismConstants,
+    LOCULUS_AUTHORS_FIELD,
+    PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_LOCATION_FIELDS,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -37,8 +52,7 @@ class CchfConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.allTimes,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -49,13 +63,18 @@ class CchfConstants implements OrganismConstants {
         },
     ];
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
-    public readonly accessionDownloadFields;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
+    public readonly accessionDownloadFields = [
+        'insdcAccessionFull_L',
+        'insdcAccessionFull_M',
+        'insdcAccessionFull_S',
+        ...PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS,
+    ];
     public readonly predefinedVariants = [
         {
             mutations: {
@@ -84,17 +103,21 @@ class CchfConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.cchf.lapis.mainDateField;
-        this.locationFields = organismsConfig.cchf.lapis.locationFields;
-        this.authorsField = organismsConfig.cchf.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.cchf.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.cchf.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.cchf.lapis.accessionDownloadFields;
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
+    },
+};
+
 export class CchfAnalyzeSingleVariantView extends GenericSingleVariantView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -105,38 +128,7 @@ export class CchfCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new CchfConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [{}, {}]);
 
         super(
             constants,
@@ -152,18 +144,18 @@ export class CchfCompareSideBySideView extends BaseView<
 
 export class CchfSequencingEffortsView extends GenericSequencingEffortsView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class CchfCompareVariantsView extends GenericCompareVariantsView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class CchfCompareToBaselineView extends GenericCompareToBaselineView<CchfConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new CchfConstants(organismsConfig));
+        super(new CchfConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

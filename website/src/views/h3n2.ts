@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getAuthorRelatedSequencingEffortsFields,
+    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+    INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -24,7 +39,7 @@ class H3n2Constants implements OrganismConstants {
     public readonly organism = Organisms.h3n2;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'cladeHA',
@@ -55,8 +70,7 @@ class H3n2Constants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -67,11 +81,11 @@ class H3n2Constants implements OrganismConstants {
         },
     ];
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             lineages: { cladeHA: '3C.2a1b.2a.2a.3a.1' },
@@ -88,17 +102,21 @@ class H3n2Constants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.h3n2.lapis.mainDateField;
-        this.locationFields = organismsConfig.h3n2.lapis.locationFields;
-        this.authorsField = organismsConfig.h3n2.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.h3n2.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.h3n2.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.h3n2.lapis.accessionDownloadFields;
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class H3n2AnalyzeSingleVariantView extends GenericSingleVariantView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -109,40 +127,14 @@ export class H3n2CompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new H3n2Constants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                cladeHA: '3C.2a1b.2a.2a.3a.1',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {},
+            {
+                lineages: {
+                    cladeHA: '3C.2a1b.2a.2a.3a.1',
+                },
+            },
+        ]);
 
         super(
             constants,
@@ -158,18 +150,18 @@ export class H3n2CompareSideBySideView extends BaseView<
 
 export class H3n2SequencingEffortsView extends GenericSequencingEffortsView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class H3n2CompareVariantsView extends GenericCompareVariantsView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class H3n2CompareToBaselineView extends GenericCompareToBaselineView<H3n2Constants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new H3n2Constants(organismsConfig));
+        super(new H3n2Constants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

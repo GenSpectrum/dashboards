@@ -4,14 +4,6 @@ dashboards:
       lapis:
         url: "https://lapis.cov-spectrum.org/open/v2"
         mainDateField: "date"
-        locationFields:
-          - "region"
-          - "country"
-          - "division"
-        originatingLabField: "originatingLab"
-        submittingLabField: "submittingLab"
-        accessionDownloadFields:
-          - "strain"
       externalNavigationLinks:
         - url: "https://cov-spectrum.org"
           label: "CoV-Spectrum"
@@ -20,23 +12,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/h5n1"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull_seg1"
-          - "insdcAccessionFull_seg2"
-          - "insdcAccessionFull_seg3"
-          - "insdcAccessionFull_seg4"
-          - "insdcAccessionFull_seg5"
-          - "insdcAccessionFull_seg6"
-          - "insdcAccessionFull_seg7"
-          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/h5n1"
           label: "Browse data"
@@ -45,23 +23,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/h1n1pdm"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull_seg1"
-          - "insdcAccessionFull_seg2"
-          - "insdcAccessionFull_seg3"
-          - "insdcAccessionFull_seg4"
-          - "insdcAccessionFull_seg5"
-          - "insdcAccessionFull_seg6"
-          - "insdcAccessionFull_seg7"
-          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/h1n1pdm"
           label: "Browse data"
@@ -70,23 +34,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/h3n2"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull_seg1"
-          - "insdcAccessionFull_seg2"
-          - "insdcAccessionFull_seg3"
-          - "insdcAccessionFull_seg4"
-          - "insdcAccessionFull_seg5"
-          - "insdcAccessionFull_seg6"
-          - "insdcAccessionFull_seg7"
-          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/h3n2"
           label: "Browse data"
@@ -95,23 +45,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-a"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull_seg1"
-          - "insdcAccessionFull_seg2"
-          - "insdcAccessionFull_seg3"
-          - "insdcAccessionFull_seg4"
-          - "insdcAccessionFull_seg5"
-          - "insdcAccessionFull_seg6"
-          - "insdcAccessionFull_seg7"
-          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/influenza-a"
           label: "Browse data"
@@ -120,23 +56,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-b"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull_seg1"
-          - "insdcAccessionFull_seg2"
-          - "insdcAccessionFull_seg3"
-          - "insdcAccessionFull_seg4"
-          - "insdcAccessionFull_seg5"
-          - "insdcAccessionFull_seg6"
-          - "insdcAccessionFull_seg7"
-          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/influenza-b"
           label: "Browse data"
@@ -145,23 +67,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/b-victoria"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull_seg1"
-          - "insdcAccessionFull_seg2"
-          - "insdcAccessionFull_seg3"
-          - "insdcAccessionFull_seg4"
-          - "insdcAccessionFull_seg5"
-          - "insdcAccessionFull_seg6"
-          - "insdcAccessionFull_seg7"
-          - "insdcAccessionFull_seg8"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/b-victoria"
           label: "Browse data"
@@ -170,20 +78,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/mpox"
         mainDateField: "sampleCollectionDateRangeLower"
-        locationFields:
-          - "geoLocCountry"
-          - "geoLocAdmin1"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
-          - "accessionVersion"
-          - "dataUseTerms"
-          - "dataUseTermsUrl"
-          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/mpox"
           label: "Browse data"
@@ -192,20 +89,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
         mainDateField: "sampleCollectionDateRangeLower"
-        locationFields:
-          - "geoLocCountry"
-          - "geoLocAdmin1"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
-          - "accessionVersion"
-          - "dataUseTerms"
-          - "dataUseTermsUrl"
-          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/west-nile"
           label: "Browse data"
@@ -214,16 +100,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/rsv-a"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/rsv-a"
           label: "Browse data"
@@ -232,16 +111,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/rsv-b"
         mainDateField: "sampleCollectionDate"
-        locationFields:
-          - "country"
-          - "division"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
       externalNavigationLinks:
         - url: "https://loculus.genspectrum.org/rsv-b"
           label: "Browse data"
@@ -250,20 +122,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-sudan"
         mainDateField: "sampleCollectionDateRangeLower"
-        locationFields:
-          - "geoLocCountry"
-          - "geoLocAdmin1"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
-          - "accessionVersion"
-          - "dataUseTerms"
-          - "dataUseTermsUrl"
-          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/ebola-sudan"
           label: "Browse data"
@@ -272,20 +133,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-zaire"
         mainDateField: "sampleCollectionDateRangeLower"
-        locationFields:
-          - "geoLocCountry"
-          - "geoLocAdmin1"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
-          - "accessionVersion"
-          - "dataUseTerms"
-          - "dataUseTermsUrl"
-          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/ebola-zaire"
           label: "Browse data"
@@ -294,20 +144,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/cchf"
         mainDateField: "sampleCollectionDateRangeLower"
-        locationFields:
-          - "geoLocCountry"
-          - "geoLocAdmin1"
-        authorAffiliationsField: "authorAffiliations"
-        authorsField: "authors"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
-        accessionDownloadFields:
-          - "insdcAccessionFull"
-          - "accessionVersion"
-          - "dataUseTerms"
-          - "dataUseTermsUrl"
-          - "dataUseTermsRestrictedUntil"
       externalNavigationLinks:
         - url: "https://pathoplexus.org/cchf"
           label: "Browse data"

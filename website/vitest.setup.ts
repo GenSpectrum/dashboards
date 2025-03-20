@@ -165,374 +165,136 @@ export const testOrganismsConfig = {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'date',
-            locationFields: ['region', 'country', 'division'],
-            originatingLabField: 'originatingLab',
-            submittingLabField: 'submittingLab',
-            accessionDownloadFields: ['strain'],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://cov-spectrum.org',
-                label: 'CoV-Spectrum',
-                menuIcon: 'virus',
-            },
-        ],
     },
     influenzaA: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull_seg1',
-                'insdcAccessionFull_seg2',
-                'insdcAccessionFull_seg3',
-                'insdcAccessionFull_seg4',
-                'insdcAccessionFull_seg5',
-                'insdcAccessionFull_seg6',
-                'insdcAccessionFull_seg7',
-                'insdcAccessionFull_seg8',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/influenza-a',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     h3n2: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull_seg1',
-                'insdcAccessionFull_seg2',
-                'insdcAccessionFull_seg3',
-                'insdcAccessionFull_seg4',
-                'insdcAccessionFull_seg5',
-                'insdcAccessionFull_seg6',
-                'insdcAccessionFull_seg7',
-                'insdcAccessionFull_seg8',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/h3n2',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     h1n1pdm: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull_seg1',
-                'insdcAccessionFull_seg2',
-                'insdcAccessionFull_seg3',
-                'insdcAccessionFull_seg4',
-                'insdcAccessionFull_seg5',
-                'insdcAccessionFull_seg6',
-                'insdcAccessionFull_seg7',
-                'insdcAccessionFull_seg8',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/h1n1pdm',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     h5n1: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull_seg1',
-                'insdcAccessionFull_seg2',
-                'insdcAccessionFull_seg3',
-                'insdcAccessionFull_seg4',
-                'insdcAccessionFull_seg5',
-                'insdcAccessionFull_seg6',
-                'insdcAccessionFull_seg7',
-                'insdcAccessionFull_seg8',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/h5n1',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     influenzaB: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull_seg1',
-                'insdcAccessionFull_seg2',
-                'insdcAccessionFull_seg3',
-                'insdcAccessionFull_seg4',
-                'insdcAccessionFull_seg5',
-                'insdcAccessionFull_seg6',
-                'insdcAccessionFull_seg7',
-                'insdcAccessionFull_seg8',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/influenza-b',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     victoria: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull_seg1',
-                'insdcAccessionFull_seg2',
-                'insdcAccessionFull_seg3',
-                'insdcAccessionFull_seg4',
-                'insdcAccessionFull_seg5',
-                'insdcAccessionFull_seg6',
-                'insdcAccessionFull_seg7',
-                'insdcAccessionFull_seg8',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/b-victoria',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     westNile: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
-            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull',
-                'accessionVersion',
-                'dataUseTerms',
-                'dataUseTermsUrl',
-                'dataUseTermsRestrictedUntil',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://pathoplexus.org/west-nile',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     rsvA: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: ['insdcAccessionFull'],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/rsv-a',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     rsvB: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDate',
-            locationFields: ['country', 'division'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: ['insdcAccessionFull'],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://loculus.genspectrum.org/rsv-b',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     mpox: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
-            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull',
-                'accessionVersion',
-                'dataUseTerms',
-                'dataUseTermsUrl',
-                'dataUseTermsRestrictedUntil',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://pathoplexus.org/mpox',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     ebolaSudan: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
-            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull',
-                'accessionVersion',
-                'dataUseTerms',
-                'dataUseTermsUrl',
-                'dataUseTermsRestrictedUntil',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://pathoplexus.org/ebola-sudan',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     ebolaZaire: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
-            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull',
-                'accessionVersion',
-                'dataUseTerms',
-                'dataUseTermsUrl',
-                'dataUseTermsRestrictedUntil',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://pathoplexus.org/ebola-zaire',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
     cchf: {
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
-            locationFields: ['geoLocCountry', 'geoLocAdmin1'],
-            authorsField: 'authors',
-            authorAffiliationsField: 'authorAffiliations',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
             },
-            accessionDownloadFields: [
-                'insdcAccessionFull',
-                'accessionVersion',
-                'dataUseTerms',
-                'dataUseTermsUrl',
-                'dataUseTermsRestrictedUntil',
-            ],
         },
-        externalNavigationLinks: [
-            {
-                url: 'https://pathoplexus.org/cchf',
-                label: 'Browse data',
-                menuIcon: 'database',
-            },
-        ],
     },
 } satisfies OrganismsConfig;

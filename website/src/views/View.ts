@@ -14,7 +14,7 @@ export type DatasetFilter = {
 };
 
 export type DateFilterState = {
-    [key: string]: DateRangeOption | undefined;
+    [key: string]: DateRangeOption | null | undefined;
 };
 
 export type TextFilterState = {
@@ -41,20 +41,61 @@ export type BaselineData = {
 
 export type DatasetAndVariantData = Dataset & VariantData;
 
+export function makeDatasetAndVariantData(datasetFilter: DatasetFilter): DatasetAndVariantData {
+    return {
+        datasetFilter,
+        variantFilter: {},
+    };
+}
+
 export type Id = number;
 
 export type CompareSideBySideData<ColumnData extends DatasetAndVariantData = DatasetAndVariantData> = {
     filters: Map<Id, ColumnData>;
 };
 
+export function makeCompareSideBySideData(
+    datasetFilter: DatasetFilter,
+    variantFilters: VariantFilter[],
+): CompareSideBySideData {
+    const filters = new Map(
+        variantFilters.map((variantFilter, index) => [
+            index,
+            {
+                datasetFilter,
+                variantFilter,
+            },
+        ]),
+    );
+
+    return {
+        filters,
+    };
+}
+
 export type CompareVariantsData = {
     variants: Map<Id, VariantFilter>;
 } & Dataset;
+
+export function makeCompareVariantsData(datasetFilter: DatasetFilter): CompareVariantsData {
+    return {
+        datasetFilter,
+        variants: new Map(),
+    };
+}
 
 export type CompareToBaselineData = {
     variants: Map<Id, VariantFilter>;
 } & Dataset &
     BaselineData;
+
+export function makeCompareToBaselineData(datasetFilter: DatasetFilter): CompareToBaselineData {
+    return {
+        datasetFilter,
+        baselineFilter: {},
+        variants: new Map(),
+    };
+}
 
 /**
  * PageState is the state of the organism pages. It:
@@ -83,3 +124,6 @@ export const pathoplexusGroupNameField = 'groupName';
 export function getLineageFilterFields(lineageFilters: LineageFilterConfig[]) {
     return lineageFilters.map((filter) => filter.lapisField);
 }
+
+export const PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN = 'sampleCollectionDateRangeLower';
+export const GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN = 'sampleCollectionDate';

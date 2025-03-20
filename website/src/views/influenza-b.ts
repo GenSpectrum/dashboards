@@ -1,9 +1,22 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareSideBySideData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getAuthorRelatedSequencingEffortsFields,
+    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+    INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,7 +31,7 @@ class InfluenzaBConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaB;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'lineageHA',
@@ -43,8 +56,7 @@ class InfluenzaBConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate: earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -56,11 +68,11 @@ class InfluenzaBConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
@@ -69,13 +81,17 @@ class InfluenzaBConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.influenzaB.lapis.mainDateField;
-        this.locationFields = organismsConfig.influenzaB.lapis.locationFields;
-        this.authorsField = organismsConfig.influenzaB.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.influenzaB.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.influenzaB.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.influenzaB.lapis.accessionDownloadFields;
     }
 }
+
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
 
 export class InfluenzaBCompareSideBySideView extends BaseView<
     CompareSideBySideData,
@@ -84,40 +100,18 @@ export class InfluenzaBCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new InfluenzaBConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: { lineageHA: 'vic' },
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                lineageHA: 'yam',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    lineageHA: 'vic',
+                },
+            },
+            {
+                lineages: {
+                    lineageHA: 'yam',
+                },
+            },
+        ]);
 
         super(
             constants,
@@ -133,6 +127,6 @@ export class InfluenzaBCompareSideBySideView extends BaseView<
 
 export class InfluenzaBSequencingEffortsView extends GenericSequencingEffortsView<InfluenzaBConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new InfluenzaBConstants(organismsConfig));
+        super(new InfluenzaBConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }

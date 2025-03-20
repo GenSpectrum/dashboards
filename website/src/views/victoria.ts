@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getAuthorRelatedSequencingEffortsFields,
+    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+    INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -24,7 +39,7 @@ class VictoriaConstants implements OrganismConstants {
     public readonly organism = Organisms.victoria;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'cladeHA',
@@ -55,8 +70,7 @@ class VictoriaConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -67,11 +81,11 @@ class VictoriaConstants implements OrganismConstants {
         },
     ];
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             lineages: { cladeHA: 'V1A.3a.2' },
@@ -87,17 +101,21 @@ class VictoriaConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.victoria.lapis.mainDateField;
-        this.locationFields = organismsConfig.victoria.lapis.locationFields;
-        this.authorsField = organismsConfig.victoria.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.victoria.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.victoria.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.victoria.lapis.accessionDownloadFields;
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
+
 export class VictoriaAnalyzeSingleVariantView extends GenericSingleVariantView<VictoriaConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new VictoriaConstants(organismsConfig));
+        super(new VictoriaConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -108,40 +126,14 @@ export class VictoriaCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new VictoriaConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {},
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                cladeHA: 'V1A.3a.2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {},
+            {
+                lineages: {
+                    cladeHA: 'V1A.3a.2',
+                },
+            },
+        ]);
 
         super(
             constants,
@@ -157,18 +149,18 @@ export class VictoriaCompareSideBySideView extends BaseView<
 
 export class VictoriaSequencingEffortsView extends GenericSequencingEffortsView<VictoriaConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new VictoriaConstants(organismsConfig));
+        super(new VictoriaConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class VictoriaCompareVariantsView extends GenericCompareVariantsView<VictoriaConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new VictoriaConstants(organismsConfig));
+        super(new VictoriaConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class VictoriaCompareToBaselineView extends GenericCompareToBaselineView<VictoriaConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new VictoriaConstants(organismsConfig));
+        super(new VictoriaConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }

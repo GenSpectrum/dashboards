@@ -1,9 +1,22 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
+    makeCompareSideBySideData,
+    makeDatasetAndVariantData,
+} from './View.ts';
 import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
-import { type OrganismConstants, getAuthorRelatedSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getAuthorRelatedSequencingEffortsFields,
+    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+    INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -18,7 +31,7 @@ class InfluenzaAConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaA;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: 'subtypeHA',
@@ -48,8 +61,7 @@ class InfluenzaAConstants implements OrganismConstants {
                 { label: 'All times', dateFrom: this.earliestDate },
             ],
             earliestDate: earliestDate,
-            defaultDateRange: dateRangeOptionPresets.lastYear,
-            dateColumn: 'sampleCollectionDate',
+            dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -61,11 +73,11 @@ class InfluenzaAConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields;
+    public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get additionalSequencingEffortsFields() {
@@ -74,13 +86,17 @@ class InfluenzaAConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.influenzaA.lapis.mainDateField;
-        this.locationFields = organismsConfig.influenzaA.lapis.locationFields;
-        this.authorsField = organismsConfig.influenzaA.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.influenzaA.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.influenzaA.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.influenzaA.lapis.accessionDownloadFields;
     }
 }
+
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+    },
+};
 
 export class InfluenzaACompareSideBySideView extends BaseView<
     CompareSideBySideData,
@@ -89,41 +105,20 @@ export class InfluenzaACompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new InfluenzaAConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: { subtypeHA: 'H5', subtypeNA: 'N1' },
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            lineages: {
-                                subtypeHA: 'H3',
-                                subtypeNA: 'N2',
-                            },
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
+            {
+                lineages: {
+                    subtypeHA: 'H5',
+                    subtypeNA: 'N1',
+                },
+            },
+            {
+                lineages: {
+                    subtypeHA: 'H3',
+                    subtypeNA: 'N2',
+                },
+            },
+        ]);
 
         super(
             constants,
@@ -139,6 +134,6 @@ export class InfluenzaACompareSideBySideView extends BaseView<
 
 export class InfluenzaASequencingEffortsView extends GenericSequencingEffortsView<InfluenzaAConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new InfluenzaAConstants(organismsConfig));
+        super(new InfluenzaAConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }

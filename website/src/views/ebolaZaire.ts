@@ -1,6 +1,14 @@
 import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { type CompareSideBySideData, type DatasetAndVariantData, type Id } from './View.ts';
+import {
+    type CompareSideBySideData,
+    type DatasetFilter,
+    makeCompareSideBySideData,
+    makeCompareToBaselineData,
+    makeCompareVariantsData,
+    makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
+} from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -9,7 +17,14 @@ import {
     GenericSequencingEffortsView,
     GenericSingleVariantView,
 } from './BaseView.ts';
-import { type OrganismConstants, getPathoplexusAdditionalSequencingEffortsFields } from './OrganismConstants.ts';
+import {
+    type OrganismConstants,
+    getPathoplexusAdditionalSequencingEffortsFields,
+    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_LOCATION_FIELDS,
+    LOCULUS_AUTHORS_FIELD,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+} from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { organismConfig, Organisms } from '../types/Organism.ts';
@@ -37,8 +52,7 @@ class EbolaZaireConstants implements OrganismConstants {
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate,
-            defaultDateRange: dateRangeOptionPresets.allTimes,
-            dateColumn: 'sampleCollectionDateRangeLower',
+            dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
         {
@@ -49,13 +63,13 @@ class EbolaZaireConstants implements OrganismConstants {
         },
     ];
     public readonly mainDateField: string;
-    public readonly locationFields: string[];
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = hostField;
-    public readonly authorsField: string | undefined;
-    public readonly authorAffiliationsField: string | undefined;
-    public readonly accessionDownloadFields;
+    public readonly authorsField = LOCULUS_AUTHORS_FIELD;
+    public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
+    public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             mutations: {
@@ -84,17 +98,21 @@ class EbolaZaireConstants implements OrganismConstants {
 
     constructor(organismsConfig: OrganismsConfig) {
         this.mainDateField = organismsConfig.ebolaZaire.lapis.mainDateField;
-        this.locationFields = organismsConfig.ebolaZaire.lapis.locationFields;
-        this.authorsField = organismsConfig.ebolaZaire.lapis.authorsField;
-        this.authorAffiliationsField = organismsConfig.ebolaZaire.lapis.authorAffiliationsField;
         this.additionalFilters = organismsConfig.ebolaZaire.lapis.additionalFilters;
-        this.accessionDownloadFields = organismsConfig.ebolaZaire.lapis.accessionDownloadFields;
     }
 }
 
+const defaultDatasetFilter: DatasetFilter = {
+    location: {},
+    textFilters: {},
+    dateFilters: {
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
+    },
+};
+
 export class EbolaZaireAnalyzeSingleVariantView extends GenericSingleVariantView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
@@ -105,36 +123,7 @@ export class EbolaZaireCompareSideBySideView extends BaseView<
 > {
     constructor(organismsConfig: OrganismsConfig) {
         const constants = new EbolaZaireConstants(organismsConfig);
-        const defaultPageState = {
-            filters: new Map<Id, DatasetAndVariantData>([
-                [
-                    0,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            mutations: {},
-                        },
-                    },
-                ],
-                [
-                    1,
-                    {
-                        datasetFilter: {
-                            location: {},
-                            dateFilters: {},
-                            textFilters: {},
-                        },
-                        variantFilter: {
-                            mutations: {},
-                        },
-                    },
-                ],
-            ]),
-        };
+        const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [{}, {}]);
 
         super(
             constants,
@@ -150,18 +139,18 @@ export class EbolaZaireCompareSideBySideView extends BaseView<
 
 export class EbolaZaireSequencingEffortsView extends GenericSequencingEffortsView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeDatasetAndVariantData(defaultDatasetFilter));
     }
 }
 
 export class EbolaZaireCompareVariantsView extends GenericCompareVariantsView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeCompareVariantsData(defaultDatasetFilter));
     }
 }
 
 export class EbolaZaireCompareToBaselineView extends GenericCompareToBaselineView<EbolaZaireConstants> {
     constructor(organismsConfig: OrganismsConfig) {
-        super(new EbolaZaireConstants(organismsConfig));
+        super(new EbolaZaireConstants(organismsConfig), makeCompareToBaselineData(defaultDatasetFilter));
     }
 }
