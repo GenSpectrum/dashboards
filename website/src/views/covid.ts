@@ -36,6 +36,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 import { formatUrl } from '../util/formatUrl.ts';
 
 const earliestDate = '2020-01-06';
@@ -51,11 +52,11 @@ const dateRangeOptions = [
     dateRangeOptionPresets.last3Months,
     dateRangeOptionPresets.last6Months,
     dateRangeOptionPresets.lastYear,
-    { label: '2024', dateFrom: '2024-01-01', dateTo: '2024-12-31' },
-    { label: '2023', dateFrom: '2023-01-02', dateTo: '2023-12-31' },
-    { label: '2022', dateFrom: '2022-01-03', dateTo: '2023-01-01' },
-    { label: '2021', dateFrom: '2021-01-04', dateTo: '2022-01-02' },
-    { label: '2020', dateFrom: earliestDate, dateTo: '2021-01-03' },
+    defaultDateRangeOption.year2024,
+    defaultDateRangeOption.year2023,
+    defaultDateRangeOption.year2022,
+    defaultDateRangeOption.year2021,
+    defaultDateRangeOption.year2020,
     dateRangeOptionPresets.allTimes,
 ];
 

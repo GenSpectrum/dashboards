@@ -33,6 +33,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 
 const earliestDate = '1960-01-01';
 
@@ -62,15 +63,15 @@ class MpoxConstants implements OrganismConstants {
                 dateRangeOptionPresets.last3Months,
                 dateRangeOptionPresets.last6Months,
                 dateRangeOptionPresets.lastYear,
-                { label: '2024', dateFrom: '2024-01-01' },
-                { label: '2023', dateFrom: '2023-01-01', dateTo: '2023-12-31' },
-                { label: '2022', dateFrom: '2022-01-01', dateTo: '2022-12-31' },
-                { label: '2021', dateFrom: '2021-01-01', dateTo: '2021-12-31' },
-                { label: 'Since 2021', dateFrom: '2021-01-01' },
-                { label: 'Before 2021', dateTo: '2020-12-31' },
-                { label: 'Since 2017', dateFrom: '2017-01-01' },
-                { label: '2017-2020', dateFrom: '2017-01-01', dateTo: '2020-12-31' },
-                { label: 'Before 2017', dateTo: '2016-12-31' },
+                defaultDateRangeOption.year2024,
+                defaultDateRangeOption.year2023,
+                defaultDateRangeOption.year2022,
+                defaultDateRangeOption.year2021,
+                defaultDateRangeOption.since2021,
+                defaultDateRangeOption.before2021,
+                defaultDateRangeOption.since2017,
+                defaultDateRangeOption.from2017to2020,
+                defaultDateRangeOption.before2017,
                 dateRangeOptionPresets.allTimes,
             ],
             earliestDate: '1960-01-01',

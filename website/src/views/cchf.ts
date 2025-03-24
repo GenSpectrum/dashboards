@@ -33,6 +33,7 @@ import { organismConfig, Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
+import { defaultDateRangeOptions } from '../util/defaultDateRangeOption.ts';
 
 const earliestDate = '1956-01-01';
 
@@ -41,16 +42,7 @@ class CchfConstants implements OrganismConstants {
     public readonly earliestDate = earliestDate;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getPathoplexusFilters({
-            dateRangeOptions: [
-                dateRangeOptionPresets.last6Months,
-                dateRangeOptionPresets.lastYear,
-                { label: 'Since 2020', dateFrom: '2020-01-01' },
-                { label: '2010-2019', dateFrom: '2010-01-01', dateTo: '2019-12-31' },
-                { label: '2000-2009', dateFrom: '2000-01-01', dateTo: '2009-12-31' },
-                { label: 'Since 2000', dateFrom: '2000-01-01' },
-                { label: 'Before 2000', dateTo: '1999-12-31' },
-                dateRangeOptionPresets.allTimes,
-            ],
+            dateRangeOptions: defaultDateRangeOptions,
             earliestDate,
         }),
     ];
