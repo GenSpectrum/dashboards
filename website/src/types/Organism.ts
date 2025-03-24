@@ -54,7 +54,56 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
-        genome: [],
+        genome: [
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg1/unreleased/genome_annotation.gff3',
+                genomeLength: 2341,
+                name: 'PB2 (seg1)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg2/unreleased/genome_annotation.gff3',
+                genomeLength: 2341,
+                name: 'PB1 (seg2)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg3/unreleased/genome_annotation.gff3',
+                genomeLength: 2233,
+                name: 'PA (seg3)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg4/unreleased/genome_annotation.gff3',
+                genomeLength: 1760,
+                name: 'HA (seg4)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg5/unreleased/genome_annotation.gff3',
+                genomeLength: 1565,
+                name: 'NP (seg5)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg6/unreleased/genome_annotation.gff3',
+                genomeLength: 1458,
+                name: 'NA (seg6)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg7/unreleased/genome_annotation.gff3',
+                genomeLength: 1027,
+                name: 'M (seg7)',
+            },
+            {
+                gff3Source:
+                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/blob/main/data/flu/h5n1/seg8/unreleased/genome_annotation.gff3',
+                genomeLength: 865,
+                name: 'NS (seg8)',
+            },
+        ],
     },
     [Organisms.h1n1pdm]: {
         organism: Organisms.h1n1pdm,
@@ -205,16 +254,19 @@ export const organismConfig = {
                 gff3Source:
                     'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/L/genome_annotation.gff3',
                 genomeLength: 12108,
+                name: 'L',
             },
             {
                 gff3Source:
                     'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/M/genome_annotation.gff3',
                 genomeLength: 5366,
+                name: 'M',
             },
             {
                 gff3Source:
                     'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/S/genome_annotation.gff3',
                 genomeLength: 1672,
+                name: 'S',
             },
         ],
     },
