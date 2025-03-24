@@ -6,11 +6,7 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
-import {
-    getMutationAnnotation,
-    wastewaterConfig,
-    wastewaterPathFragment,
-} from '../../types/wastewaterConfig';
+import { getMutationAnnotation, wastewaterConfig, wastewaterPathFragment } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
 const getReferencesUrl = `${lapisUrl}/sample/aggregated?fields=reference&versionStatus=LATEST_VERSION&isRevocation=false`;
