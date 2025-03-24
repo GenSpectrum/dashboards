@@ -7,8 +7,7 @@ import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import {
-    mutationAnnotationsN1,
-    mutationAnnotationsN2,
+    getMutationAnnotation,
     wastewaterConfig,
     wastewaterPathFragment,
 } from '../../types/wastewaterConfig';
@@ -35,7 +34,7 @@ const references = (await (await fetch(getReferencesUrl)).json()).data.map(
 >
     {
         references.map((reference) => {
-            const mutationAnnotations = reference === 'N2' ? mutationAnnotationsN2 : mutationAnnotationsN1;
+            const mutationAnnotations = getMutationAnnotation(reference);
             return (
                 <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(mutationAnnotations)}>
                     <div class='m-4 flex flex-col gap-4'>

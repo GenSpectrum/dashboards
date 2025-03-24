@@ -19,9 +19,20 @@ export const RSVTypes = ['RSV-A', 'RSV-B'] as const;
 
 export type RSVType = (typeof RSVTypes)[number];
 
+export function getMutationAnnotation(reference: string): MutationAnnotation[] {
+    switch (reference) {
+        case 'N1':
+            return mutationAnnotationsN1;
+        case 'N2':
+            return mutationAnnotationsN2;
+        default:
+            return [];
+    }
+}
+
 // See https://github.com/anna-parker/NAIMutations/tree/main for calculation details
 // TODO: Some mutations are only of interest when with other mutations (e.g. deletions) but are now marked individually
-export const mutationAnnotationsN1: MutationAnnotation[] = [
+const mutationAnnotationsN1: MutationAnnotation[] = [
     {
         name: 'Laninamivir resistance mutations',
         description:
@@ -134,7 +145,7 @@ export const mutationAnnotationsN1: MutationAnnotation[] = [
 // Therefore, we can use CY114383.1 as the reference for the mutations
 // See https://github.com/anna-parker/NAIMutations/tree/main for calculation details
 // TODO: Some mutations are only of interest when with other mutations (e.g. deletions) but are now marked individually
-export const mutationAnnotationsN2: MutationAnnotation[] = [
+const mutationAnnotationsN2: MutationAnnotation[] = [
     {
         name: 'Laninamivir resistance mutations',
         description:
