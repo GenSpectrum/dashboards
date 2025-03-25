@@ -6,13 +6,9 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
-import { getMutationAnnotation, wastewaterConfig, wastewaterPathFragment } from '../../types/wastewaterConfig';
+import { getMutationAnnotation, InfluenzaTypes, wastewaterConfig, wastewaterPathFragment } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
-const getReferencesUrl = `${lapisUrl}/sample/aggregated?fields=reference&versionStatus=LATEST_VERSION&isRevocation=false`;
-const references = (await (await fetch(getReferencesUrl)).json()).data.map(
-    (d: { reference: string }) => d.reference,
-) as string[];
 ---
 
 <DataPageLayout
@@ -29,7 +25,7 @@ const references = (await (await fetch(getReferencesUrl)).json()).data.map(
     lapisUrl={lapisUrl}
 >
     {
-        references.map((reference) => {
+        InfluenzaTypes.map((reference) => {
             const mutationAnnotations = getMutationAnnotation(reference);
             return (
                 <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(mutationAnnotations)}>

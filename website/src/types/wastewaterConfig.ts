@@ -19,6 +19,10 @@ export const RSVTypes = ['RSV-A', 'RSV-B'] as const;
 
 export type RSVType = (typeof RSVTypes)[number];
 
+export const InfluenzaTypes = ['H1', 'N1', 'H3', 'N2'] as const;
+
+export type InfluenzaType = (typeof InfluenzaTypes)[number];
+
 export function getMutationAnnotation(reference: string): MutationAnnotation[] {
     switch (reference) {
         case 'N1':
@@ -31,7 +35,7 @@ export function getMutationAnnotation(reference: string): MutationAnnotation[] {
 }
 
 // See https://github.com/anna-parker/NAIMutations/tree/main for calculation details
-// TODO: Some mutations are only of interest when with other mutations (e.g. deletions) but are now marked individually
+// TODO(#650): Some mutations are only of interest when with other mutations (e.g. deletions) but are now marked individually
 const mutationAnnotationsN1: MutationAnnotation[] = [
     {
         name: 'Laninamivir resistance mutations',
@@ -144,7 +148,7 @@ const mutationAnnotationsN1: MutationAnnotation[] = [
 // When KJ609208.1 and AB124658.1 are aligned to CY114383.1 using nextclade we see no insertions/deletions only mutations
 // Therefore, we can use CY114383.1 as the reference for the mutations
 // See https://github.com/anna-parker/NAIMutations/tree/main for calculation details
-// TODO: Some mutations are only of interest when with other mutations (e.g. deletions) but are now marked individually
+// TODO(#650): Some mutations are only of interest when with other mutations (e.g. deletions) but are now marked individually
 const mutationAnnotationsN2: MutationAnnotation[] = [
     {
         name: 'Laninamivir resistance mutations',
@@ -158,7 +162,7 @@ const mutationAnnotationsN2: MutationAnnotation[] = [
         name: 'Oseltamivir resistance mutations',
         description:
             "This mutation is associated with reduced inhibition by Oseltamivir, for more details see the <a class='link' href='https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor'>Global Influenza Programme Report</a>.",
-        symbol: '*',
+        symbol: '!',
         nucleotideMutations: [],
         aminoAcidMutations: [
             'E276D',
@@ -189,7 +193,7 @@ const mutationAnnotationsN2: MutationAnnotation[] = [
         name: 'Peramivir resistance mutations',
         description:
             "This mutation is associated with reduced inhibition by Peramivir, for more details see the <a class='link' href='https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor'>Global Influenza Programme Report</a>.",
-        symbol: '*',
+        symbol: '^',
         nucleotideMutations: [],
         aminoAcidMutations: ['N142S', 'E119V', 'R292K', 'D151A', 'T148I'],
     },
@@ -197,7 +201,7 @@ const mutationAnnotationsN2: MutationAnnotation[] = [
         name: 'Zanamivir resistance mutations',
         description:
             "This mutation is associated with reduced inhibition by Zanamivir, for more details see the <a class='link' href='https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor'>Global Influenza Programme Report</a>.",
-        symbol: '*',
+        symbol: '+',
         nucleotideMutations: [],
         aminoAcidMutations: [
             'E276D',
