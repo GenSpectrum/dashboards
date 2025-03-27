@@ -22,7 +22,7 @@ export interface OrganismConstants {
     readonly accessionDownloadFields: string[];
     readonly mainDateField: string;
     readonly additionalFilters: Record<string, string> | undefined;
-    readonly additionalSequencingEffortsFields: AdditionalSequencingEffortsField[];
+    readonly sequencingEffortsAggregatedVisualizations: GsAggregatedConfig[];
     readonly useAdvancedQuery: boolean;
     readonly locationFields: string[];
     readonly baselineFilterConfigs: BaselineFilterConfig[];
@@ -36,17 +36,25 @@ export const ComponentHeight = {
     small: '300px',
 } as const;
 
-export interface AdditionalSequencingEffortsField {
+export interface GsAggregatedConfig {
     readonly label: string;
     readonly fields: string[];
     readonly height?: (typeof ComponentHeight)[keyof typeof ComponentHeight];
     readonly views: AggregateView[];
 }
 
-export function getAuthorRelatedSequencingEffortsFields(constants: {
+export function getHostsAggregatedVisualization(constants: { hostField: string }): GsAggregatedConfig {
+    return {
+        label: 'Hosts',
+        fields: [constants.hostField],
+        views: [views.table, views.bar],
+    };
+}
+
+export function getAuthorRelatedAggregatedVisualizations(constants: {
     authorsField: string | undefined;
     authorAffiliationsField: string | undefined;
-}): AdditionalSequencingEffortsField[] {
+}): GsAggregatedConfig[] {
     const authorAffiliations =
         constants.authorAffiliationsField === undefined
             ? []
@@ -70,16 +78,39 @@ export function getAuthorRelatedSequencingEffortsFields(constants: {
     return [...authorAffiliations, ...authors];
 }
 
-export function getPathoplexusAdditionalSequencingEffortsFields(
-    constants: Parameters<typeof getAuthorRelatedSequencingEffortsFields>[0],
-): AdditionalSequencingEffortsField[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- we need to use the type restriction that Parameters also uses
+type FirstParameter<T extends (...args: any) => any> = Parameters<T>[0];
+
+export function getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(
+    constants: FirstParameter<typeof getAuthorRelatedAggregatedVisualizations> &
+        FirstParameter<typeof getHostsAggregatedVisualization>,
+    options: {
+        sublineages?: FirstParameter<typeof getLineagesAggregatedVisualizations>;
+    } = {},
+) {
     return [
+        getHostsAggregatedVisualization(constants),
+        ...getLineagesAggregatedVisualizations(options.sublineages),
+        ...getAuthorRelatedAggregatedVisualizations(constants),
+    ];
+}
+
+export function getPathoplexusSequencingEffortsAggregatedVisualizations(
+    constants: FirstParameter<typeof getAuthorRelatedAggregatedVisualizations> &
+        FirstParameter<typeof getHostsAggregatedVisualization>,
+    options: {
+        sublineages?: FirstParameter<typeof getLineagesAggregatedVisualizations>;
+    } = {},
+): GsAggregatedConfig[] {
+    return [
+        getHostsAggregatedVisualization(constants),
+        ...getLineagesAggregatedVisualizations(options.sublineages),
         {
             label: 'Pathoplexus submitting groups',
             fields: [pathoplexusGroupNameField],
             views: [views.table],
         },
-        ...getAuthorRelatedSequencingEffortsFields(constants),
+        ...getAuthorRelatedAggregatedVisualizations(constants),
         {
             label: 'Collection device',
             fields: ['collectionDevice'],
@@ -111,6 +142,22 @@ export function getPathoplexusAdditionalSequencingEffortsFields(
             views: [views.table, views.bar],
         },
     ];
+}
+
+export function getLineagesAggregatedVisualizations(
+    sublineagesConfig?: Partial<GsAggregatedConfig> & {
+        fields: string[];
+    },
+): GsAggregatedConfig[] {
+    return sublineagesConfig === undefined
+        ? []
+        : [
+              {
+                  label: sublineagesConfig.label ?? 'Sublineages',
+                  fields: sublineagesConfig.fields,
+                  views: sublineagesConfig.views ?? [views.table, views.bar],
+              },
+          ];
 }
 
 export const PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS = [

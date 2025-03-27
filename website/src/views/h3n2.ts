@@ -20,8 +20,8 @@ import {
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getAuthorRelatedSequencingEffortsFields,
     getGenspectrumLoculusFilters,
+    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -37,6 +37,9 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1905-01-01';
 
+const CLADE_HA_FIELD_NAME = 'cladeHA';
+const CLADE_NA_FIELD_NAME = 'cladeNA';
+
 class H3n2Constants implements OrganismConstants {
     public readonly organism = Organisms.h3n2;
     public readonly earliestDate = earliestDate;
@@ -44,12 +47,12 @@ class H3n2Constants implements OrganismConstants {
     public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'cladeHA',
+            lapisField: CLADE_HA_FIELD_NAME,
             placeholderText: 'Clade HA',
             filterType: 'text' as const,
         },
         {
-            lapisField: 'cladeNA',
+            lapisField: CLADE_NA_FIELD_NAME,
             placeholderText: 'Clade NA',
             filterType: 'text' as const,
         },
@@ -77,8 +80,13 @@ class H3n2Constants implements OrganismConstants {
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getAuthorRelatedSequencingEffortsFields(this);
+    public get sequencingEffortsAggregatedVisualizations() {
+        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Clades',
+                fields: [CLADE_HA_FIELD_NAME, CLADE_NA_FIELD_NAME],
+            },
+        });
     }
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -112,7 +120,7 @@ export class H3n2CompareSideBySideView extends BaseView<
             {},
             {
                 lineages: {
-                    cladeHA: '3C.2a1b.2a.2a.3a.1',
+                    [CLADE_HA_FIELD_NAME]: '3C.2a1b.2a.2a.3a.1',
                 },
             },
         ]);

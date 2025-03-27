@@ -1,11 +1,8 @@
 ---
-import { views } from '@genspectrum/dashboard-components/util';
-
 import CountStatistics from './CountStatistics.astro';
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { getLineageFilterFields } from '../../../views/View';
 import { getLocationDisplayConfig } from '../../../views/locationHelpers';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -37,8 +34,6 @@ const { locationField, mapName } = getLocationDisplayConfig(
     view.organismConstants.locationFields,
     pageState.datasetFilter.location,
 );
-
-const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
 ---
 
 <SingleVariantOrganismPageLayout
@@ -91,26 +86,8 @@ const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineag
                     />
                 )
             }
-            <GsAggregate
-                title='Hosts'
-                fields={[view.organismConstants.hostField]}
-                lapisFilter={lapisFilter}
-                views={[views.table, views.bar]}
-                pageSize={10}
-            />
             {
-                lineageFilterFields.length > 0 && (
-                    <GsAggregate
-                        title='Sub-lineages'
-                        fields={lineageFilterFields}
-                        lapisFilter={lapisFilter}
-                        views={[views.table, views.bar]}
-                        pageSize={10}
-                    />
-                )
-            }
-            {
-                view.organismConstants.additionalSequencingEffortsFields.map(({ label, fields, views }) => (
+                view.organismConstants.sequencingEffortsAggregatedVisualizations.map(({ label, fields, views }) => (
                     <GsAggregate title={label} fields={fields} lapisFilter={lapisFilter} views={views} pageSize={10} />
                 ))
             }

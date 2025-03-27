@@ -12,8 +12,8 @@ import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getAuthorRelatedSequencingEffortsFields,
     getGenspectrumLoculusFilters,
+    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -29,6 +29,8 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1905-01-01';
 
+const LINEAGE_HA_FIELD_NAME = 'lineageHA';
+
 class InfluenzaBConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaB;
     public readonly earliestDate = earliestDate;
@@ -36,8 +38,8 @@ class InfluenzaBConstants implements OrganismConstants {
     public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'lineageHA',
-            placeholderText: 'lineage',
+            lapisField: LINEAGE_HA_FIELD_NAME,
+            placeholderText: 'Lineage',
             filterType: 'text' as const,
         },
     ];
@@ -56,8 +58,13 @@ class InfluenzaBConstants implements OrganismConstants {
     public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getAuthorRelatedSequencingEffortsFields(this);
+    public get sequencingEffortsAggregatedVisualizations() {
+        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Lineages',
+                fields: [LINEAGE_HA_FIELD_NAME],
+            },
+        });
     }
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -84,12 +91,12 @@ export class InfluenzaBCompareSideBySideView extends BaseView<
         const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
             {
                 lineages: {
-                    lineageHA: 'vic',
+                    [LINEAGE_HA_FIELD_NAME]: 'vic',
                 },
             },
             {
                 lineages: {
-                    lineageHA: 'yam',
+                    [LINEAGE_HA_FIELD_NAME]: 'yam',
                 },
             },
         ]);

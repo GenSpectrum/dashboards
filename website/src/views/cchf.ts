@@ -18,7 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    getPathoplexusAdditionalSequencingEffortsFields,
+    getPathoplexusSequencingEffortsAggregatedVisualizations,
     getPathoplexusFilters,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -78,8 +78,8 @@ class CchfConstants implements OrganismConstants {
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getPathoplexusAdditionalSequencingEffortsFields(this);
+    public get sequencingEffortsAggregatedVisualizations() {
+        return getPathoplexusSequencingEffortsAggregatedVisualizations(this);
     }
 
     public readonly additionalFilters: Record<string, string> | undefined;

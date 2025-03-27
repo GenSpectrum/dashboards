@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets, type MutationAnnotation, views } from '@genspectrum/dashboard-components/util';
 
 import {
     type CompareSideBySideData,
@@ -12,8 +12,8 @@ import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getAuthorRelatedSequencingEffortsFields,
     getGenspectrumLoculusFilters,
+    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -29,6 +29,9 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1905-01-01';
 
+const SUBTYPE_HA_FIELD_NAME = 'subtypeHA';
+const SUBTYPE_NA_FIELD_NAME = 'subtypeNA';
+
 class InfluenzaAConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaA;
     public readonly earliestDate = earliestDate;
@@ -36,12 +39,12 @@ class InfluenzaAConstants implements OrganismConstants {
     public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'subtypeHA',
+            lapisField: SUBTYPE_HA_FIELD_NAME,
             placeholderText: 'HA subtype',
             filterType: 'text' as const,
         },
         {
-            lapisField: 'subtypeNA',
+            lapisField: SUBTYPE_NA_FIELD_NAME,
             placeholderText: 'NA subtype',
             filterType: 'text' as const,
         },
@@ -61,8 +64,14 @@ class InfluenzaAConstants implements OrganismConstants {
     public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getAuthorRelatedSequencingEffortsFields(this);
+    public get sequencingEffortsAggregatedVisualizations() {
+        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Subtypes',
+                fields: [SUBTYPE_HA_FIELD_NAME, SUBTYPE_NA_FIELD_NAME],
+                views: [views.bar, views.table],
+            },
+        });
     }
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -89,14 +98,14 @@ export class InfluenzaACompareSideBySideView extends BaseView<
         const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
             {
                 lineages: {
-                    subtypeHA: 'H5',
-                    subtypeNA: 'N1',
+                    [SUBTYPE_HA_FIELD_NAME]: 'H5',
+                    [SUBTYPE_NA_FIELD_NAME]: 'N1',
                 },
             },
             {
                 lineages: {
-                    subtypeHA: 'H3',
-                    subtypeNA: 'N2',
+                    [SUBTYPE_HA_FIELD_NAME]: 'H3',
+                    [SUBTYPE_NA_FIELD_NAME]: 'N2',
                 },
             },
         ]);

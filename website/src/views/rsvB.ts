@@ -20,8 +20,8 @@ import {
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getAuthorRelatedSequencingEffortsFields,
     getGenspectrumLoculusFilters,
+    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
     type OrganismConstants,
@@ -36,6 +36,8 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1956-01-01';
 
+const LINEAGE_FIELD_NAME = 'lineage';
+
 class RsvBConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvB;
     public readonly mainDateField: string;
@@ -43,7 +45,7 @@ class RsvBConstants implements OrganismConstants {
     public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'lineage',
+            lapisField: LINEAGE_FIELD_NAME,
             placeholderText: 'Lineage',
             filterType: 'text' as const,
         },
@@ -63,19 +65,24 @@ class RsvBConstants implements OrganismConstants {
     public readonly accessionDownloadFields = ['insdcAccessionFull'];
     public readonly predefinedVariants = [
         {
-            lineages: { lineage: 'B.D.E.1' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'B.D.E.1' },
         },
         {
-            lineages: { lineage: 'B.D.E.1.1' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'B.D.E.1.1' },
         },
         {
-            lineages: { lineage: 'B.D.4.1.1' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'B.D.4.1.1' },
         },
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getAuthorRelatedSequencingEffortsFields(this);
+    public get sequencingEffortsAggregatedVisualizations() {
+        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Lineages',
+                fields: [LINEAGE_FIELD_NAME],
+            },
+        });
     }
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -109,7 +116,7 @@ export class RsvBCompareSideBySideView extends BaseView<
             {},
             {
                 lineages: {
-                    lineage: 'B.D.E.1',
+                    [LINEAGE_FIELD_NAME]: 'B.D.E.1',
                 },
             },
         ]);

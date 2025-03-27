@@ -18,7 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    getPathoplexusAdditionalSequencingEffortsFields,
+    getPathoplexusSequencingEffortsAggregatedVisualizations,
     getPathoplexusFilters,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -37,6 +37,8 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1930-01-01';
 
+const LINEAGE_FIELD_NAME = 'lineage';
+
 class WestNileConstants implements OrganismConstants {
     public readonly organism = Organisms.westNile;
     public readonly mainDateField: string;
@@ -44,7 +46,7 @@ class WestNileConstants implements OrganismConstants {
     public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'lineage',
+            lapisField: LINEAGE_FIELD_NAME,
             placeholderText: 'Lineage',
             filterType: 'text' as const,
         },
@@ -79,8 +81,13 @@ class WestNileConstants implements OrganismConstants {
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getPathoplexusAdditionalSequencingEffortsFields(this);
+    public get sequencingEffortsAggregatedVisualizations() {
+        return getPathoplexusSequencingEffortsAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Lineages',
+                fields: [LINEAGE_FIELD_NAME],
+            },
+        });
     }
 
     public readonly additionalFilters: Record<string, string> | undefined;
