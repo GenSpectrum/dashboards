@@ -77,14 +77,6 @@ class CovidConstants implements OrganismConstants {
             filterType: 'lineage' as const,
         },
     ];
-    // Same as `lineageFilters` but for Nextstrain Clade, used for 'Sub-lineages Nextstrain Clade'
-    public readonly nextstrainCladeLineageFilters: LineageFilterConfig[] = [
-        {
-            lapisField: NEXTSTRAIN_CLADE_FIELD_NAME,
-            placeholderText: 'Nextstrain clade',
-            filterType: 'lineage' as const,
-        },
-    ];
     public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
@@ -140,9 +132,9 @@ class CovidConstants implements OrganismConstants {
     public readonly accessionDownloadFields = ['strain'];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get sequencingEffortsAggregatedVisualizations() {
-        return [
-            getHostsAggregatedVisualization(this),
+    public get aggregatedVisualizations() {
+        const hosts = getHostsAggregatedVisualization(this);
+        const lineages = [
             ...getLineagesAggregatedVisualizations({
                 label: 'Nextclade pango lineage',
                 fields: [NEXTCLADE_PANGO_LINEAGE_FIELD_NAME],
@@ -151,17 +143,26 @@ class CovidConstants implements OrganismConstants {
                 label: 'Nextstrain clade',
                 fields: [NEXTSTRAIN_CLADE_FIELD_NAME],
             }),
-            {
-                label: 'Originating lab',
-                fields: [this.originatingLabField],
-                views: [views.table],
-            },
-            {
-                label: 'Submitting lab ',
-                fields: [this.submittingLabField],
-                views: [views.table],
-            },
         ];
+
+        return {
+            sequencingEfforts: [
+                hosts,
+                ...lineages,
+                {
+                    label: 'Originating lab',
+                    fields: [this.originatingLabField],
+                    views: [views.table],
+                },
+                {
+                    label: 'Submitting lab',
+                    fields: [this.submittingLabField],
+                    views: [views.table],
+                },
+            ],
+            singleVariant: [...lineages, hosts],
+            compareSideBySide: [...lineages, hosts],
+        };
     }
 
     constructor(organismsConfig: OrganismsConfig) {

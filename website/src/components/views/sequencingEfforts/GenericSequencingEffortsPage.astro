@@ -87,7 +87,7 @@ const { locationField, mapName } = getLocationDisplayConfig(
                 )
             }
             {
-                view.organismConstants.sequencingEffortsAggregatedVisualizations.map(({ label, fields, views }) => (
+                view.organismConstants.aggregatedVisualizations.sequencingEfforts.map(({ label, fields, views }) => (
                     <GsAggregate title={label} fields={fields} lapisFilter={lapisFilter} views={views} pageSize={10} />
                 ))
             }

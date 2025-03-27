@@ -21,7 +21,7 @@ import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenspectrumLoculusFilters,
-    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
+    getGenSpectrumLoculusAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
     type OrganismConstants,
@@ -76,8 +76,8 @@ class RsvBConstants implements OrganismConstants {
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get sequencingEffortsAggregatedVisualizations() {
-        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+    public get aggregatedVisualizations() {
+        return getGenSpectrumLoculusAggregatedVisualizations(this, {
             sublineages: {
                 label: 'Lineages',
                 fields: [LINEAGE_FIELD_NAME],

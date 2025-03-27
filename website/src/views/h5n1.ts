@@ -21,7 +21,7 @@ import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenspectrumLoculusFilters,
-    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
+    getGenSpectrumLoculusAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -119,8 +119,8 @@ class H5n1Constants implements OrganismConstants {
         },
     ];
 
-    public get sequencingEffortsAggregatedVisualizations() {
-        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+    public get aggregatedVisualizations() {
+        return getGenSpectrumLoculusAggregatedVisualizations(this, {
             sublineages: {
                 label: 'Clades',
                 fields: [CLADE_FIELD_NAME],

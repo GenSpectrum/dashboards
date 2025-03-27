@@ -74,7 +74,7 @@ class EbolaZaireConstants implements OrganismConstants {
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get sequencingEffortsAggregatedVisualizations() {
+    public get aggregatedVisualizations() {
         return getPathoplexusSequencingEffortsAggregatedVisualizations(this);
     }
 

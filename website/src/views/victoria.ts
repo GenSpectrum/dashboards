@@ -21,7 +21,7 @@ import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenspectrumLoculusFilters,
-    getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations,
+    getGenSpectrumLoculusAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -76,8 +76,8 @@ class VictoriaConstants implements OrganismConstants {
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get sequencingEffortsAggregatedVisualizations() {
-        return getGenSpectrumLoculusSequencingEffortsAggregatedVisualizations(this, {
+    public get aggregatedVisualizations() {
+        return getGenSpectrumLoculusAggregatedVisualizations(this, {
             sublineages: {
                 label: 'Clades',
                 fields: [CLADE_HA_FIELD_NAME, CLADE_NA_FIELD_NAME],

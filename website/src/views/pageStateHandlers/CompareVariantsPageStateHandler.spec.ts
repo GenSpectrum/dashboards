@@ -20,7 +20,11 @@ const mockConstants: OrganismConstants = {
             filterType: 'text',
         },
     ],
-    sequencingEffortsAggregatedVisualizations: [],
+    aggregatedVisualizations: {
+        sequencingEfforts: [],
+        singleVariant: [],
+        compareSideBySide: [],
+    },
     accessionDownloadFields: [],
     useAdvancedQuery: true,
     baselineFilterConfigs: [
