@@ -1,12 +1,9 @@
 ---
-import { views } from '@genspectrum/dashboard-components/util';
-
 import { toDownloadLink } from './toDownloadLink';
 import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
-import { getLineageFilterFields } from '../../../views/View';
 import { toLapisFilterWithoutVariant } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -49,8 +46,6 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                         datasetFilter,
                         variantFilter,
                     );
-
-                    const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
 
                     return (
                         <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'>
@@ -113,22 +108,17 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                 </>
                             )}
 
-                            {lineageFilterFields.length > 0 && (
-                                <GsAggregate
-                                    title='Sub-lineages'
-                                    fields={lineageFilterFields}
-                                    lapisFilter={numeratorFilter}
-                                    views={[views.table, views.bar]}
-                                    pageSize={10}
-                                />
+                            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(
+                                ({ label, fields, views }) => (
+                                    <GsAggregate
+                                        title={label}
+                                        fields={fields}
+                                        lapisFilter={numeratorFilter}
+                                        views={views}
+                                        pageSize={10}
+                                    />
+                                ),
                             )}
-                            <GsAggregate
-                                title='Hosts'
-                                fields={[view.organismConstants.hostField]}
-                                lapisFilter={numeratorFilter}
-                                views={[views.table, views.bar]}
-                                pageSize={10}
-                            />
                         </div>
                     );
                 })

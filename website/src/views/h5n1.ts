@@ -20,8 +20,8 @@ import {
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getAuthorRelatedSequencingEffortsFields,
     getGenspectrumLoculusFilters,
+    getGenSpectrumLoculusAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -37,6 +37,8 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1905-01-01';
 
+const CLADE_FIELD_NAME = 'clade';
+
 class H5n1Constants implements OrganismConstants {
     public readonly organism = Organisms.h5n1;
     public readonly earliestDate = earliestDate;
@@ -44,7 +46,7 @@ class H5n1Constants implements OrganismConstants {
     public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'clade',
+            lapisField: CLADE_FIELD_NAME,
             placeholderText: 'Clade',
             filterType: 'text' as const,
         },
@@ -64,10 +66,10 @@ class H5n1Constants implements OrganismConstants {
     public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
-            lineages: { clade: '2.3.4.4b' },
+            lineages: { [CLADE_FIELD_NAME]: '2.3.4.4b' },
         },
         {
-            lineages: { clade: '2.3.2.1a' },
+            lineages: { [CLADE_FIELD_NAME]: '2.3.2.1a' },
         },
         {
             mutations: {
@@ -117,8 +119,13 @@ class H5n1Constants implements OrganismConstants {
         },
     ];
 
-    public get additionalSequencingEffortsFields() {
-        return getAuthorRelatedSequencingEffortsFields(this);
+    public get aggregatedVisualizations() {
+        return getGenSpectrumLoculusAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Clades',
+                fields: [CLADE_FIELD_NAME],
+            },
+        });
     }
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -152,7 +159,7 @@ export class H5n1CompareSideBySideView extends BaseView<
             {},
             {
                 lineages: {
-                    clade: '2.3.4.4b',
+                    [CLADE_FIELD_NAME]: '2.3.4.4b',
                 },
             },
         ]);
