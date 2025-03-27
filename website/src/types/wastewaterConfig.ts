@@ -23,7 +23,7 @@ export const InfluenzaTypes = ['H1', 'N1', 'H3', 'N2'] as const;
 
 export type InfluenzaType = (typeof InfluenzaTypes)[number];
 
-export function getMutationAnnotation(reference: string): MutationAnnotation[] {
+export function getMutationAnnotation(reference: InfluenzaType): MutationAnnotation[] {
     switch (reference) {
         case 'N1':
             return mutationAnnotationsN1;
