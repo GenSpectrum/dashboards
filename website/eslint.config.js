@@ -40,18 +40,18 @@ const typescriptEsLintOverwrites = {
     '@typescript-eslint/prefer-reduce-type-parameter': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/triple-slash-reference': 'off',
-    "@typescript-eslint/no-unused-vars": [
-        "error",
+    '@typescript-eslint/no-unused-vars': [
+        'error',
         {
-            "args": "all",
-            "argsIgnorePattern": "^_",
-            "caughtErrors": "all",
-            "caughtErrorsIgnorePattern": "^_",
-            "destructuredArrayIgnorePattern": "^_",
-            "varsIgnorePattern": "^_",
-            "ignoreRestSiblings": true
-        }
-    ]
+            args: 'all',
+            argsIgnorePattern: '^_',
+            caughtErrors: 'all',
+            caughtErrorsIgnorePattern: '^_',
+            destructuredArrayIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
+            ignoreRestSiblings: true,
+        },
+    ],
 };
 
 const namingConvention = {
