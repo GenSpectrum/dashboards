@@ -1,32 +1,31 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-indigo: rgba(51, 34, 136, 0.9);
-  --color-green: rgba(17, 119, 51, 1.0);
-  --color-cyan: rgba(53, 166, 222, 1.0);
-  --color-teal: rgba(68, 170, 153, 1.0);
-  --color-olive: rgba(153, 153, 51, 1.0);
-  --color-sand: rgba(187, 170, 85, 1.0);
-  --color-rose: rgba(204, 102, 119, 1.0);
-  --color-wine: rgba(136, 34, 85, 1.0);
-  --color-purple: rgba(170, 68, 153, 1.0);
+    --color-indigo: rgba(51, 34, 136, 0.9);
+    --color-green: rgba(17, 119, 51, 1);
+    --color-cyan: rgba(53, 166, 222, 1);
+    --color-teal: rgba(68, 170, 153, 1);
+    --color-olive: rgba(153, 153, 51, 1);
+    --color-sand: rgba(187, 170, 85, 1);
+    --color-rose: rgba(204, 102, 119, 1);
+    --color-wine: rgba(136, 34, 85, 1);
+    --color-purple: rgba(170, 68, 153, 1);
 
-  --color-indigoMuted: rgba(51, 34, 136, 0.3);
-  --color-greenMuted: rgba(17, 119, 51, 0.3);
-  --color-cyanMuted: rgba(53, 166, 222, 0.3);
-  --color-tealMuted: rgba(68, 170, 153, 0.3);
-  --color-oliveMuted: rgba(153, 153, 51, 0.3);
-  --color-sandMuted: rgba(187, 170, 85, 0.3);
-  --color-roseMuted: rgba(204, 102, 119, 0.3);
-  --color-wineMuted: rgba(136, 34, 85, 0.3);
-  --color-purpleMuted: rgba(170, 68, 153, 0.3);
+    --color-indigoMuted: rgba(51, 34, 136, 0.3);
+    --color-greenMuted: rgba(17, 119, 51, 0.3);
+    --color-cyanMuted: rgba(53, 166, 222, 0.3);
+    --color-tealMuted: rgba(68, 170, 153, 0.3);
+    --color-oliveMuted: rgba(153, 153, 51, 0.3);
+    --color-sandMuted: rgba(187, 170, 85, 0.3);
+    --color-roseMuted: rgba(204, 102, 119, 0.3);
+    --color-wineMuted: rgba(136, 34, 85, 0.3);
+    --color-purpleMuted: rgba(170, 68, 153, 0.3);
 }
 
 @plugin "daisyui" {
-  themes: light --default;
+    themes: light --default;
 }
 
 @plugin "@iconify/tailwind4" {
-  prefixes: mdi, mdi-light;
+    prefixes: mdi, mdi-light;
 }
-

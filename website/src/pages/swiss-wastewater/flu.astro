@@ -6,13 +6,14 @@ import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastew
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
-import { wastewaterConfig, wastewaterPathFragment } from '../../types/wastewaterConfig';
+import {
+    getMutationAnnotation,
+    InfluenzaTypes,
+    wastewaterConfig,
+    wastewaterPathFragment,
+} from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
-const getReferencesUrl = `${lapisUrl}/sample/aggregated?fields=reference&versionStatus=LATEST_VERSION&isRevocation=false`;
-const references = (await (await fetch(getReferencesUrl)).json()).data.map(
-    (d: { reference: string }) => d.reference,
-) as string[];
 ---
 
 <DataPageLayout
@@ -28,32 +29,35 @@ const references = (await (await fetch(getReferencesUrl)).json()).data.map(
     dataOrigins={[dataOrigins.wise]}
     lapisUrl={lapisUrl}
 >
-    <gs-app lapis={lapisUrl}>
-        <div class='m-4 flex flex-col gap-4'>
-            {
-                references.map((reference) => (
-                    <>
-                        <h2 class='text-2xl'>{reference}</h2>
-                        {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
-                            <GsWastewaterMutationsOverTime
-                                title={`${sequenceType} mutations`}
-                                lapisFilter={{
-                                    reference,
-                                    versionStatus: 'LATEST_VERSION',
-                                    isRevocation: false,
-                                }}
-                                sequenceType={sequenceType}
-                            >
-                                <InfluenzaWastewaterInfo
-                                    slot='infoText'
-                                    reference={reference}
+    {
+        InfluenzaTypes.map((reference) => {
+            const mutationAnnotations = getMutationAnnotation(reference);
+            return (
+                <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(mutationAnnotations)}>
+                    <div class='m-4 flex flex-col gap-4'>
+                        <>
+                            <h2 class='text-2xl'>{reference}</h2>
+                            {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                                <GsWastewaterMutationsOverTime
+                                    title={`${sequenceType} mutations`}
+                                    lapisFilter={{
+                                        reference,
+                                        versionStatus: 'LATEST_VERSION',
+                                        isRevocation: false,
+                                    }}
                                     sequenceType={sequenceType}
-                                />
-                            </GsWastewaterMutationsOverTime>
-                        ))}
-                    </>
-                ))
-            }
-        </div>
-    </gs-app>
+                                >
+                                    <InfluenzaWastewaterInfo
+                                        slot='infoText'
+                                        reference={reference}
+                                        sequenceType={sequenceType}
+                                    />
+                                </GsWastewaterMutationsOverTime>
+                            ))}
+                        </>
+                    </div>
+                </gs-app>
+            );
+        })
+    }
 </DataPageLayout>

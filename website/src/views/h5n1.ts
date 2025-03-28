@@ -79,7 +79,7 @@ class H5n1Constants implements OrganismConstants {
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     // Here mutations are in regard to this reference: https://www.ncbi.nlm.nih.gov/nuccore/EF619973.1
     // Mutations from our reference to this reference have a deletion from NA:49-68. This means that to convert the mutations to our reference we add `20` to obtain the mutations listed below.
-    // TODO: Some mutations are only of interest when with other mutations but are now marked individually (listed here without `+20` correction):
+    // TODO(#650): Some mutations are only of interest when with other mutations but are now marked individually (listed here without `+20` correction):
     // I97V+I294V, E99A+H255Y, E99D+H255Y, E99G+H255Y, I203L+S227N, I203M+H255Y, I203V+H255Y, N295S+T438N, K130N+I203L+S227N
     public readonly mutationAnnotations: MutationAnnotation[] = [
         {
