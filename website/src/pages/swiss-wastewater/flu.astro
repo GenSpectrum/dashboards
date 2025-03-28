@@ -1,6 +1,4 @@
 ---
-import type { SequenceType } from '@genspectrum/dashboard-components/util';
-
 import InfluenzaWastewaterInfo from '../../components/InfluenzaWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
@@ -37,23 +35,41 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
                     <div class='m-4 flex flex-col gap-4'>
                         <>
                             <h2 class='text-2xl'>{reference}</h2>
-                            {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
-                                <GsWastewaterMutationsOverTime
-                                    title={`${sequenceType} mutations`}
-                                    lapisFilter={{
-                                        reference,
-                                        versionStatus: 'LATEST_VERSION',
-                                        isRevocation: false,
-                                    }}
-                                    sequenceType={sequenceType}
-                                >
-                                    <InfluenzaWastewaterInfo
-                                        slot='infoText'
-                                        reference={reference}
-                                        sequenceType={sequenceType}
-                                    />
-                                </GsWastewaterMutationsOverTime>
-                            ))}
+                            <details>
+                                <summary class='cursor-pointer font-bold'> Nucleotide Mutations </summary>
+                                <p>
+                                    <GsWastewaterMutationsOverTime
+                                        title=''
+                                        lapisFilter={{
+                                            reference,
+                                            versionStatus: 'LATEST_VERSION',
+                                            isRevocation: false,
+                                        }}
+                                        sequenceType='nucleotide'
+                                    >
+                                        <InfluenzaWastewaterInfo
+                                            slot='infoText'
+                                            reference={reference}
+                                            sequenceType='nucleotide'
+                                        />
+                                    </GsWastewaterMutationsOverTime>
+                                </p>
+                            </details>
+                            <GsWastewaterMutationsOverTime
+                                title='amino acid mutations'
+                                lapisFilter={{
+                                    reference,
+                                    versionStatus: 'LATEST_VERSION',
+                                    isRevocation: false,
+                                }}
+                                sequenceType='amino acid'
+                            >
+                                <InfluenzaWastewaterInfo
+                                    slot='infoText'
+                                    reference={reference}
+                                    sequenceType='amino acid'
+                                />
+                            </GsWastewaterMutationsOverTime>
                         </>
                     </div>
                 </gs-app>
