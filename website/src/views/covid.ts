@@ -13,7 +13,11 @@ import {
     GenericCompareVariantsView,
     GenericSequencingEffortsView,
 } from './BaseView.ts';
-import { type OrganismConstants } from './OrganismConstants.ts';
+import {
+    getHostsAggregatedVisualization,
+    getLineagesAggregatedVisualizations,
+    type OrganismConstants,
+} from './OrganismConstants.ts';
 import {
     type CompareSideBySideData,
     type DatasetAndVariantData,
@@ -44,7 +48,8 @@ const hostField = 'host';
 
 const mainDateFilterColumn = 'date';
 
-const nextcladePangoLineage = 'nextcladePangoLineage';
+const NEXTCLADE_PANGO_LINEAGE_FIELD_NAME = 'nextcladePangoLineage';
+const NEXTSTRAIN_CLADE_FIELD_NAME = 'nextstrainClade';
 
 const dateRangeOptions = [
     dateRangeOptionPresets.lastMonth,
@@ -67,16 +72,8 @@ class CovidConstants implements OrganismConstants {
     public readonly locationFields = ['region', 'country', 'division'];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: nextcladePangoLineage,
+            lapisField: NEXTCLADE_PANGO_LINEAGE_FIELD_NAME,
             placeholderText: 'Nextclade pango lineage',
-            filterType: 'lineage' as const,
-        },
-    ];
-    // Same as `lineageFilters` but for Nextstrain Clade, used for 'Sub-lineages Nextstrain Clade'
-    public readonly nextstrainCladeLineageFilters: LineageFilterConfig[] = [
-        {
-            lapisField: 'nextstrainClade',
-            placeholderText: 'Nextstrain clade',
             filterType: 'lineage' as const,
         },
     ];
@@ -135,19 +132,37 @@ class CovidConstants implements OrganismConstants {
     public readonly accessionDownloadFields = ['strain'];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return [
-            {
-                label: 'Originating lab',
-                fields: [this.originatingLabField],
-                views: [views.table],
-            },
-            {
-                label: 'Submitting lab ',
-                fields: [this.submittingLabField],
-                views: [views.table],
-            },
+    public get aggregatedVisualizations() {
+        const hosts = getHostsAggregatedVisualization(this);
+        const lineages = [
+            ...getLineagesAggregatedVisualizations({
+                label: 'Nextclade pango lineage',
+                fields: [NEXTCLADE_PANGO_LINEAGE_FIELD_NAME],
+            }),
+            ...getLineagesAggregatedVisualizations({
+                label: 'Nextstrain clade',
+                fields: [NEXTSTRAIN_CLADE_FIELD_NAME],
+            }),
         ];
+
+        return {
+            sequencingEfforts: [
+                hosts,
+                ...lineages,
+                {
+                    label: 'Originating lab',
+                    fields: [this.originatingLabField],
+                    views: [views.table],
+                },
+                {
+                    label: 'Submitting lab',
+                    fields: [this.submittingLabField],
+                    views: [views.table],
+                },
+            ],
+            singleVariant: [...lineages, hosts],
+            compareSideBySide: [...lineages, hosts],
+        };
     }
 
     constructor(organismsConfig: OrganismsConfig) {
@@ -235,12 +250,12 @@ export class CovidCompareSideBySideView extends BaseView<
         const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
             {
                 lineages: {
-                    [nextcladePangoLineage]: 'JN.1*',
+                    [NEXTCLADE_PANGO_LINEAGE_FIELD_NAME]: 'JN.1*',
                 },
             },
             {
                 lineages: {
-                    [nextcladePangoLineage]: 'XBB.1*',
+                    [NEXTCLADE_PANGO_LINEAGE_FIELD_NAME]: 'XBB.1*',
                 },
             },
         ]);

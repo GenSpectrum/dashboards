@@ -20,8 +20,8 @@ import {
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getAuthorRelatedSequencingEffortsFields,
     getGenspectrumLoculusFilters,
+    getGenSpectrumLoculusAggregatedVisualizations,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -37,6 +37,9 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1905-01-01';
 
+const CLADE_HA_FIELD_NAME = 'cladeHA';
+const CLADE_NA_FIELD_NAME = 'cladeNA';
+
 class VictoriaConstants implements OrganismConstants {
     public readonly organism = Organisms.victoria;
     public readonly earliestDate = earliestDate;
@@ -44,12 +47,12 @@ class VictoriaConstants implements OrganismConstants {
     public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'cladeHA',
+            lapisField: CLADE_HA_FIELD_NAME,
             placeholderText: 'Clade HA',
             filterType: 'text' as const,
         },
         {
-            lapisField: 'cladeNA',
+            lapisField: CLADE_NA_FIELD_NAME,
             placeholderText: 'Clade NA',
             filterType: 'text' as const,
         },
@@ -73,8 +76,13 @@ class VictoriaConstants implements OrganismConstants {
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getAuthorRelatedSequencingEffortsFields(this);
+    public get aggregatedVisualizations() {
+        return getGenSpectrumLoculusAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Clades',
+                fields: [CLADE_HA_FIELD_NAME, CLADE_NA_FIELD_NAME],
+            },
+        });
     }
 
     constructor(organismsConfig: OrganismsConfig) {
