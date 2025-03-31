@@ -1,17 +1,15 @@
 ---
-import { fragmentLinkScrollMargin } from '../layouts/base/header/headerConstants';
 interface Props {
     title: string;
+    linkPrefix?: string;
 }
 
-const { title } = Astro.props;
+const { title, linkPrefix } = Astro.props;
 
-const fragmentId = title.toLowerCase().replace(/ /g, '-');
+const fragmentId = title.toLowerCase().replace(/ /g, '-') + (linkPrefix ? `-${linkPrefix}` : '');
 ---
 
-<h2 class={`font-bold ${fragmentLinkScrollMargin} `} id={fragmentId}>
-    <a href={`#${fragmentId}`} class='group flex items-center gap-1 capitalize'>
-        {title}
-        <span class='iconify mdi--link-variant font-normal opacity-0 group-hover:opacity-100'></span>
-    </a>
-</h2>
+<a href={`#${fragmentId}`} class='group items-center gap-1 capitalize'>
+    {title}
+    <span class='iconify mdi--link-variant font-normal opacity-0 group-hover:opacity-100'></span>
+</a>

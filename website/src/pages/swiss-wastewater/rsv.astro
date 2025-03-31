@@ -1,4 +1,6 @@
 ---
+import type { SequenceType } from '@genspectrum/dashboard-components/util';
+
 import RsvWastewaterInfo from '../../components/RsvWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
@@ -27,32 +29,28 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
             {
                 RSVTypes.map((reference) => (
                     <>
-                        <h2 class='text-2xl'>{reference}</h2>
-                        <details>
-                            <summary class='cursor-pointer font-bold'> Nucleotide Mutations </summary>
-                            <GsWastewaterMutationsOverTime
-                                title=''
-                                lapisFilter={{
-                                    reference,
-                                    versionStatus: 'LATEST_VERSION',
-                                    isRevocation: false,
-                                }}
-                                sequenceType='nucleotide'
-                            >
-                                <RsvWastewaterInfo slot='infoText' reference={reference} sequenceType='nucleotide' />
-                            </GsWastewaterMutationsOverTime>
-                        </details>
-                        <GsWastewaterMutationsOverTime
-                            title='amino acid mutations'
-                            lapisFilter={{
-                                reference,
-                                versionStatus: 'LATEST_VERSION',
-                                isRevocation: false,
-                            }}
-                            sequenceType='amino acid'
-                        >
-                            <RsvWastewaterInfo slot='infoText' reference={reference} sequenceType='amino acid' />
-                        </GsWastewaterMutationsOverTime>
+                        <div class='m-4 flex flex-col gap-4'>
+                            <h2 class='text-2xl'>{reference}</h2>
+                            {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                                <GsWastewaterMutationsOverTime
+                                    title={`${sequenceType} mutations`}
+                                    lapisFilter={{
+                                        reference,
+                                        versionStatus: 'LATEST_VERSION',
+                                        isRevocation: false,
+                                    }}
+                                    sequenceType={sequenceType}
+                                    collapsible={sequenceType === 'nucleotide'}
+                                    linkPrefix={reference}
+                                >
+                                    <RsvWastewaterInfo
+                                        slot='infoText'
+                                        reference={reference}
+                                        sequenceType={sequenceType}
+                                    />
+                                </GsWastewaterMutationsOverTime>
+                            ))}
+                        </div>
                     </>
                 ))
             }

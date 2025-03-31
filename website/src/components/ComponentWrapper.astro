@@ -1,15 +1,21 @@
 ---
 import ComponentHeadline from './ComponentHeadline.astro';
+import { fragmentLinkScrollMargin } from '../layouts/base/header/headerConstants';
 interface Props {
     title: string;
     height?: string;
+    linkPrefix?: string;
 }
 
-const { title, height } = Astro.props;
+const { title, height, linkPrefix } = Astro.props;
+
+const fragmentId = title.toLowerCase().replace(/ /g, '-') + (linkPrefix ? `-${linkPrefix}` : '');
 ---
 
 <div>
-    <ComponentHeadline title={title} />
+    <h2 class={`font-bold ${fragmentLinkScrollMargin} `} id={fragmentId}>
+        <ComponentHeadline title={title} linkPrefix={linkPrefix} />
+    </h2>
     <div style={{ height }}>
         <slot />
     </div>
