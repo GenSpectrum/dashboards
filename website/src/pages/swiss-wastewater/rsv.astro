@@ -30,23 +30,17 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
                         <h2 class='text-2xl'>{reference}</h2>
                         <details>
                             <summary class='cursor-pointer font-bold'> Nucleotide Mutations </summary>
-                            <p>
-                                <GsWastewaterMutationsOverTime
-                                    title=''
-                                    lapisFilter={{
-                                        reference,
-                                        versionStatus: 'LATEST_VERSION',
-                                        isRevocation: false,
-                                    }}
-                                    sequenceType='nucleotide'
-                                >
-                                    <RsvWastewaterInfo
-                                        slot='infoText'
-                                        reference={reference}
-                                        sequenceType='nucleotide'
-                                    />
-                                </GsWastewaterMutationsOverTime>
-                            </p>
+                            <GsWastewaterMutationsOverTime
+                                title=''
+                                lapisFilter={{
+                                    reference,
+                                    versionStatus: 'LATEST_VERSION',
+                                    isRevocation: false,
+                                }}
+                                sequenceType='nucleotide'
+                            >
+                                <RsvWastewaterInfo slot='infoText' reference={reference} sequenceType='nucleotide' />
+                            </GsWastewaterMutationsOverTime>
                         </details>
                         <GsWastewaterMutationsOverTime
                             title='amino acid mutations'

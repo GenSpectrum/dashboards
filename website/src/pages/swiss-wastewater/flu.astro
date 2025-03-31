@@ -37,23 +37,21 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
                             <h2 class='text-2xl'>{reference}</h2>
                             <details>
                                 <summary class='cursor-pointer font-bold'> Nucleotide Mutations </summary>
-                                <p>
-                                    <GsWastewaterMutationsOverTime
-                                        title=''
-                                        lapisFilter={{
-                                            reference,
-                                            versionStatus: 'LATEST_VERSION',
-                                            isRevocation: false,
-                                        }}
+                                <GsWastewaterMutationsOverTime
+                                    title=''
+                                    lapisFilter={{
+                                        reference,
+                                        versionStatus: 'LATEST_VERSION',
+                                        isRevocation: false,
+                                    }}
+                                    sequenceType='nucleotide'
+                                >
+                                    <InfluenzaWastewaterInfo
+                                        slot='infoText'
+                                        reference={reference}
                                         sequenceType='nucleotide'
-                                    >
-                                        <InfluenzaWastewaterInfo
-                                            slot='infoText'
-                                            reference={reference}
-                                            sequenceType='nucleotide'
-                                        />
-                                    </GsWastewaterMutationsOverTime>
-                                </p>
+                                    />
+                                </GsWastewaterMutationsOverTime>
                             </details>
                             <GsWastewaterMutationsOverTime
                                 title='amino acid mutations'
