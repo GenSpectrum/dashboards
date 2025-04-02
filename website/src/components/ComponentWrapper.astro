@@ -4,17 +4,17 @@ import { fragmentLinkScrollMargin } from '../layouts/base/header/headerConstants
 interface Props {
     title: string;
     height?: string;
-    linkPrefix?: string;
+    linkSuffix?: string;
 }
 
-const { title, height, linkPrefix } = Astro.props;
+const { title, height, linkSuffix } = Astro.props;
 
-const fragmentId = title.toLowerCase().replace(/ /g, '-') + (linkPrefix ? `-${linkPrefix}` : '');
+const fragmentId = title.toLowerCase().replace(/ /g, '-') + (linkSuffix ? `-${linkSuffix}` : '');
 ---
 
 <div>
     <h2 class={`font-bold ${fragmentLinkScrollMargin} `} id={fragmentId}>
-        <ComponentHeadline title={title} linkPrefix={linkPrefix} />
+        <ComponentHeadline title={title} linkSuffix={linkSuffix} />
     </h2>
     <div style={{ height }}>
         <slot />

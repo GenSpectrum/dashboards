@@ -9,17 +9,17 @@ interface Props {
     lapisFilter: LapisFilter;
     sequenceType: SequenceType;
     collapsible?: boolean;
-    linkPrefix?: string;
+    linkSuffix?: string;
 }
 
-const { title, lapisFilter, sequenceType, collapsible = false, linkPrefix } = Astro.props;
+const { title, lapisFilter, sequenceType, collapsible = false, linkSuffix } = Astro.props;
 ---
 
 {
     collapsible ? (
         <details>
             <summary class='cursor-pointer font-bold'>
-                <ComponentHeadline title={title} linkPrefix={linkPrefix} />
+                <ComponentHeadline title={title} linkSuffix={linkSuffix} />
             </summary>
             <gs-wastewater-mutations-over-time
                 lapisFilter={JSON.stringify(lapisFilter)}
@@ -34,7 +34,7 @@ const { title, lapisFilter, sequenceType, collapsible = false, linkPrefix } = As
             </gs-wastewater-mutations-over-time>
         </details>
     ) : (
-        <ComponentWrapper title={title} linkPrefix={linkPrefix}>
+        <ComponentWrapper title={title} linkSuffix={linkSuffix}>
             <gs-wastewater-mutations-over-time
                 lapisFilter={JSON.stringify(lapisFilter)}
                 sequenceType={sequenceType}
