@@ -14,7 +14,7 @@ export class CompareVariantsPage extends ViewPage {
     constructor(page: Page) {
         super(page);
         this.selectVariantsMessage = this.page.getByText('please select two or more variants', { exact: false });
-        this.mutationField = this.page.getByRole('textbox', { name: 'Enter a mutation', exact: false });
+        this.mutationField = this.page.getByRole('combobox', { name: 'Enter a mutation', exact: false });
     }
 
     public async goto(organism: OrganismViewCompareVariant) {
