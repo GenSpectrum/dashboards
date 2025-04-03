@@ -9,6 +9,7 @@ const Configuration = {
         "scope-empty": [RuleConfigSeverity.Disabled],
         "header-max-length": [RuleConfigSeverity.Disabled],
         "body-max-line-length": [RuleConfigSeverity.Disabled],
+        "footer-max-line-length": [RuleConfigSeverity.Disabled],
     },
     defaultIgnores: false,
     ignores: [(c) => c.startsWith('Merge'),],
