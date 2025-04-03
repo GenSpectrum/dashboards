@@ -1,7 +1,6 @@
 ---
 import type { LapisFilter, SequenceType } from '@genspectrum/dashboard-components/util';
 
-import ComponentHeadline from '../ComponentHeadline.astro';
 import ComponentWrapper from '../ComponentWrapper.astro';
 
 interface Props {
@@ -15,37 +14,14 @@ interface Props {
 const { title, lapisFilter, sequenceType, collapsible = false, linkSuffix } = Astro.props;
 ---
 
-{
-    collapsible ? (
-        <details>
-            <summary class='cursor-pointer font-bold'>
-                <ComponentHeadline title={title} linkSuffix={linkSuffix} />
-            </summary>
-            <gs-wastewater-mutations-over-time
-                lapisFilter={JSON.stringify(lapisFilter)}
-                sequenceType={sequenceType}
-                width='100%'
-                height='100%'
-                maxNumberOfGridRows='700'
-            >
-                <span slot='infoText'>
-                    <slot name='infoText' />
-                </span>
-            </gs-wastewater-mutations-over-time>
-        </details>
-    ) : (
-        <ComponentWrapper title={title} linkSuffix={linkSuffix}>
-            <gs-wastewater-mutations-over-time
-                lapisFilter={JSON.stringify(lapisFilter)}
-                sequenceType={sequenceType}
-                width='100%'
-                height='100%'
-                maxNumberOfGridRows='700'
-            >
-                <span slot='infoText'>
-                    <slot name='infoText' />
-                </span>
-            </gs-wastewater-mutations-over-time>
-        </ComponentWrapper>
-    )
-}
+<ComponentWrapper title={title} collapsible={collapsible} linkSuffix={linkSuffix}>
+    <gs-wastewater-mutations-over-time
+        lapisFilter={JSON.stringify(lapisFilter)}
+        sequenceType={sequenceType}
+        width='100%'
+        height='100%'
+        maxNumberOfGridRows='700'
+    >
+        <span slot='infoText'><slot name='infoText' /></span>
+    </gs-wastewater-mutations-over-time>
+</ComponentWrapper>

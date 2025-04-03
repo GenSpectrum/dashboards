@@ -1,22 +1,29 @@
 ---
 import ComponentHeadline from './ComponentHeadline.astro';
-import { fragmentLinkScrollMargin } from '../layouts/base/header/headerConstants';
 interface Props {
     title: string;
     height?: string;
+    collapsible?: boolean;
     linkSuffix?: string;
 }
 
-const { title, height, linkSuffix } = Astro.props;
-
-const fragmentId = title.toLowerCase().replace(/ /g, '-') + (linkSuffix ? `-${linkSuffix}` : '');
+const { title, height, linkSuffix, collapsible} = Astro.props;
 ---
 
-<div>
-    <h2 class={`font-bold ${fragmentLinkScrollMargin} `} id={fragmentId}>
-        <ComponentHeadline title={title} linkSuffix={linkSuffix} />
-    </h2>
+{
+    collapsible ? (
+        <details>
+            <summary class='cursor-pointer font-bold'>
+                <ComponentHeadline title={title} linkSuffix={linkSuffix} collapsible={collapsible} />
+            </summary>
+            <div style={{ height }}>
+                <slot />
+            </div>
+        </details>
+    ) : (
+    <ComponentHeadline title={title} linkSuffix={linkSuffix} collapsible={collapsible} />
     <div style={{ height }}>
         <slot />
     </div>
-</div>
+    )
+}

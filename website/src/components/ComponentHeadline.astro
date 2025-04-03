@@ -1,15 +1,28 @@
 ---
+import { fragmentLinkScrollMargin } from '../layouts/base/header/headerConstants';
 interface Props {
     title: string;
     linkSuffix?: string;
+    collapsible?: boolean;
 }
 
-const { title, linkSuffix } = Astro.props;
+const { title, linkSuffix, collapsible } = Astro.props;
 
 const fragmentId = title.toLowerCase().replace(/ /g, '-') + (linkSuffix ? `-${linkSuffix}` : '');
 ---
 
-<a href={`#${fragmentId}`} class='group items-center gap-1 capitalize'>
-    {title}
-    <span class='iconify mdi--link-variant font-normal opacity-0 group-hover:opacity-100'></span>
-</a>
+{
+    collapsible ? (
+        <a href={`#${fragmentId}`} class='group items-center gap-1 capitalize'>
+            {title}
+            <span class='iconify mdi--link-variant font-normal opacity-0 group-hover:opacity-100' />
+        </a>
+    ) : (
+        <h2 class={`font-bold ${fragmentLinkScrollMargin} `} id={fragmentId}>
+            <a href={`#${fragmentId}`} class='group flex items-center gap-1 capitalize'>
+                {title}
+                <span class='iconify mdi--link-variant font-normal opacity-0 group-hover:opacity-100' />
+            </a>
+        </h2>
+    )
+}
