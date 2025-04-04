@@ -18,7 +18,6 @@ import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { getLineageFilterFields } from '../../views/View';
 import { getLocationSubdivision } from '../../views/locationHelpers';
 import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey } from '../../views/routing';
@@ -126,20 +125,6 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                 sequenceType='amino acid'
                 pageSize={10}
             />
-            <GsAggregate
-                title='Nextclade pango lineage'
-                fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
-                lapisFilter={variantFilter}
-                views={[views.table, views.bar]}
-                pageSize={10}
-            />
-            <GsAggregate
-                title='Nextstrain Clade'
-                fields={getLineageFilterFields(view.organismConstants.nextstrainCladeLineageFilters)}
-                lapisFilter={variantFilter}
-                views={[views.table, views.bar]}
-                pageSize={10}
-            />
             {
                 subdivisionField !== undefined && (
                     <GsAggregate
@@ -151,13 +136,18 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
                     />
                 )
             }
-            <GsAggregate
-                title='Hosts'
-                fields={[view.organismConstants.hostField]}
-                lapisFilter={variantFilter}
-                views={[views.table, views.bar]}
-                pageSize={10}
-            />
+
+            {
+                view.organismConstants.aggregatedVisualizations.singleVariant.map(({ label, fields, views }) => (
+                    <GsAggregate
+                        title={label}
+                        fields={fields}
+                        lapisFilter={variantFilter}
+                        views={views}
+                        pageSize={10}
+                    />
+                ))
+            }
         </ComponentsGrid>
 
         <GsMutationsOverTime

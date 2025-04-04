@@ -19,7 +19,7 @@ import {
 } from './BaseView.ts';
 import {
     type OrganismConstants,
-    getPathoplexusAdditionalSequencingEffortsFields,
+    getPathoplexusSequencingEffortsAggregatedVisualizations,
     PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
     PATHOPLEXUS_LOCATION_FIELDS,
     LOCULUS_AUTHORS_FIELD,
@@ -37,6 +37,9 @@ import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 
 const earliestDate = '1960-01-01';
 
+const LINEAGE_FIELD_NAME = 'lineage';
+const CLADE_FIELD_NAME = 'clade';
+
 class MpoxConstants implements OrganismConstants {
     public readonly organism = Organisms.mpox;
     public readonly mainDateField: string;
@@ -44,12 +47,12 @@ class MpoxConstants implements OrganismConstants {
     public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
-            lapisField: 'lineage',
+            lapisField: LINEAGE_FIELD_NAME,
             placeholderText: 'Lineage',
             filterType: 'text' as const,
         },
         {
-            lapisField: 'clade',
+            lapisField: CLADE_FIELD_NAME,
             placeholderText: 'Clade',
             filterType: 'text' as const,
         },
@@ -83,19 +86,24 @@ class MpoxConstants implements OrganismConstants {
     public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
-            lineages: { lineage: 'F.1' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'F.1' },
         },
         {
-            lineages: { lineage: 'F.2' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'F.2' },
         },
         {
-            lineages: { clade: 'Ia' },
+            lineages: { [CLADE_FIELD_NAME]: 'Ia' },
         },
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
-    public get additionalSequencingEffortsFields() {
-        return getPathoplexusAdditionalSequencingEffortsFields(this);
+    public get aggregatedVisualizations() {
+        return getPathoplexusSequencingEffortsAggregatedVisualizations(this, {
+            sublineages: {
+                label: 'Sub-Lineages',
+                fields: [LINEAGE_FIELD_NAME, CLADE_FIELD_NAME],
+            },
+        });
     }
 
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -131,12 +139,12 @@ export class MpoxCompareSideBySideView extends BaseView<
         const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
             {
                 lineages: {
-                    lineage: 'F.1',
+                    [LINEAGE_FIELD_NAME]: 'F.1',
                 },
             },
             {
                 lineages: {
-                    lineage: 'F.2',
+                    [LINEAGE_FIELD_NAME]: 'F.2',
                 },
             },
         ]);
