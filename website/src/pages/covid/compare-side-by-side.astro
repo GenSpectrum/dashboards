@@ -1,6 +1,4 @@
 ---
-import { views } from '@genspectrum/dashboard-components/util';
-
 import GsAggregate from '../../components/genspectrum/GsAggregate.astro';
 import GsMutations from '../../components/genspectrum/GsMutations.astro';
 import GsPrevalenceOverTime from '../../components/genspectrum/GsPrevalenceOverTime.astro';
@@ -12,7 +10,6 @@ import { getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismViewPageLayout from '../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../views/OrganismConstants';
-import { getLineageFilterFields } from '../../views/View';
 import { toLapisFilterWithoutVariant } from '../../views/pageStateHandlers/PageStateHandler';
 import type { OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
@@ -109,20 +106,17 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                 sequenceType='amino acid'
                                 pageSize={10}
                             />
-                            <GsAggregate
-                                title='Sub-lineages'
-                                fields={getLineageFilterFields(view.organismConstants.lineageFilters)}
-                                lapisFilter={numeratorFilter}
-                                views={[views.table, views.bar]}
-                                pageSize={10}
-                            />
-                            <GsAggregate
-                                title='Hosts'
-                                fields={[view.organismConstants.hostField]}
-                                lapisFilter={numeratorFilter}
-                                views={[views.table, views.bar]}
-                                pageSize={10}
-                            />
+                            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(
+                                ({ label, fields, views }) => (
+                                    <GsAggregate
+                                        title={label}
+                                        fields={fields}
+                                        lapisFilter={numeratorFilter}
+                                        views={views}
+                                        pageSize={10}
+                                    />
+                                ),
+                            )}
                         </div>
                     );
                 })

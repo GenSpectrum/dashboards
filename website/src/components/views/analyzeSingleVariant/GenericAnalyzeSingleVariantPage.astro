@@ -8,7 +8,6 @@ import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/Singl
 import { Organisms } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
-import { getLineageFilterFields } from '../../../views/View';
 import { getLocationSubdivision } from '../../../views/locationHelpers';
 import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -48,8 +47,6 @@ const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivis
 );
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
-
-const lineageFilterFields = getLineageFilterFields(view.organismConstants.lineageFilters);
 
 const displayName = toDisplayName(pageState.variantFilter);
 const downloadLinks = noVariantSelected
@@ -126,23 +123,16 @@ const downloadLinks = noVariantSelected
             }
 
             {
-                lineageFilterFields.length > 0 && (
+                view.organismConstants.aggregatedVisualizations.singleVariant.map(({ label, fields, views }) => (
                     <GsAggregate
-                        title='Sub-lineages'
-                        fields={lineageFilterFields}
+                        title={label}
+                        fields={fields}
                         lapisFilter={variantLapisFilter}
-                        views={[views.table, views.bar]}
+                        views={views}
                         pageSize={10}
                     />
-                )
+                ))
             }
-            <GsAggregate
-                title='Hosts'
-                fields={[view.organismConstants.hostField]}
-                lapisFilter={variantLapisFilter}
-                views={[views.table, views.bar]}
-                pageSize={10}
-            />
         </ComponentsGrid>
         <GsMutationsOverTime
             lapisFilter={variantLapisFilter}
