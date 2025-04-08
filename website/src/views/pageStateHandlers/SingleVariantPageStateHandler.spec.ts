@@ -40,12 +40,18 @@ const mockConstants: OrganismConstants = {
             earliestDate: '1999-01-01',
             dateColumn: 'date',
         },
+        {
+            type: 'location',
+            placeholderText: 'Some location',
+            label: 'Some location',
+            locationFields: ['country', 'region'],
+        },
     ],
 };
 
 const mockDefaultPageState: DatasetAndVariantData = {
     datasetFilter: {
-        location: {},
+        locationFilters: {},
         dateFilters: {
             date: mockDateRangeOption,
         },
@@ -75,7 +81,8 @@ describe('SingleVariantPageStateHandler', () => {
 
         const pageState = handler.parsePageStateFromUrl(url);
 
-        expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        expect(pageState.datasetFilter.locationFilters).toEqual({ 'country,region': { country: 'US' } });
         expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
 
         expect(pageState.variantFilter).toEqual({
@@ -94,7 +101,8 @@ describe('SingleVariantPageStateHandler', () => {
                 mutations: { nucleotideMutations: ['D614G'] },
             },
             datasetFilter: {
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
             },
@@ -113,7 +121,7 @@ describe('SingleVariantPageStateHandler', () => {
         const pageState: DatasetAndVariantData = {
             variantFilter: {},
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
             },

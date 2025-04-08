@@ -92,7 +92,7 @@ class CchfConstants implements OrganismConstants {
 }
 
 const defaultDatasetFilter: DatasetFilter = {
-    location: {},
+    locationFilters: {},
     textFilters: {},
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,

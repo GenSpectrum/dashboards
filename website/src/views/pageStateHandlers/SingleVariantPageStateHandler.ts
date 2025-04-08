@@ -3,18 +3,14 @@ import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { singleVariantViewConstants } from '../ViewConstants.ts';
-import {
-    getLapisLocationFromSearch,
-    getLapisVariantQuery,
-    type LapisLocation,
-    setSearchFromLapisVariantQuery,
-    setSearchFromLocation,
-} from '../helpers.ts';
+import { getLapisVariantQuery, type LapisLocation, setSearchFromLapisVariantQuery } from '../helpers.ts';
 import {
     type PageStateHandler,
     parseDateRangesFromUrl,
+    parseLocationFiltersFromUrl,
     parseTextFiltersFromUrl,
     setSearchFromDateFilters,
+    setSearchFromLocationFilters,
     setSearchFromTextFilters,
     toLapisFilterFromVariant,
     toLapisFilterWithoutVariant,
@@ -39,7 +35,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
 
         return {
             datasetFilter: {
-                location: getLapisLocationFromSearch(search, this.constants.locationFields),
+                locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
             },
@@ -49,7 +45,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
 
     public toUrl(pageState: DatasetAndVariantData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.datasetFilter.location);
+        setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
 
