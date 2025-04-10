@@ -26,9 +26,9 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: CompareVariantsData,
-        pathFragment: string,
+        basePath: string,
     ) {
-        this.pathname = `/${pathFragment}/${compareVariantsViewConstants.pathFragment}`;
+        this.pathname = `${basePath}/${compareVariantsViewConstants.pathFragment}`;
     }
 
     public getDefaultPageUrl() {

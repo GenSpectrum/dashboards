@@ -26,9 +26,9 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: CompareToBaselineData,
-        pathFragment: string,
+        basePath: string,
     ) {
-        this.pathname = `/${pathFragment}/${compareToBaselineViewConstants.pathFragment}`;
+        this.pathname = `${basePath}/${compareToBaselineViewConstants.pathFragment}`;
     }
 
     public getDefaultPageUrl() {

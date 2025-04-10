@@ -85,7 +85,7 @@ const mockDefaultPageState: CompareSideBySideData = {
 };
 
 describe('CompareSideBySideStateHandler', () => {
-    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState, '/testPath');
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();

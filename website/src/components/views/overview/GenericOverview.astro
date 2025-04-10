@@ -3,6 +3,7 @@ import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { getPathogenMegaMenuSections } from '../../../layouts/base/header/getPathogenMegaMenuSections';
 import { PageHeadline } from '../../../styles/containers/PageHeadline';
+import { paths } from '../../../types/Organism';
 import { iconMapping } from '../../iconCss';
 
 type Props = {
@@ -12,12 +13,11 @@ type Props = {
 const { organism } = Astro.props;
 
 const section = getPathogenMegaMenuSections()[organism];
+
+const breadcrumbs = [...defaultBreadcrumbs, ...paths[organism].breadcrumbs];
 ---
 
-<ContaineredPageLayout
-    title={section.headline}
-    breadcrumbs={[...defaultBreadcrumbs, { name: section.headline, href: section.href }]}
->
+<ContaineredPageLayout title={section.headline} breadcrumbs={breadcrumbs}>
     <PageHeadline>{section.headline}</PageHeadline>
     <slot name='pre-navigation' />
     <div class='group flex flex-wrap justify-center gap-2'>

@@ -25,9 +25,9 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: PageState,
-        pathFragment: string,
+        basePath: string,
     ) {
-        this.pathname = `/${pathFragment}/${singleVariantViewConstants.pathFragment}`;
+        this.pathname = `${basePath}/${singleVariantViewConstants.pathFragment}`;
     }
 
     public parsePageStateFromUrl(url: URL): DatasetAndVariantData {

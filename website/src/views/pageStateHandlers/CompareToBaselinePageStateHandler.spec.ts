@@ -63,7 +63,7 @@ const mockDefaultPageState: CompareToBaselineData = {
 };
 
 describe('CompareToBaselinePageStateHandler', () => {
-    const handler = new CompareToBaselineStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareToBaselineStateHandler(mockConstants, mockDefaultPageState, '/testPath');
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();

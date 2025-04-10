@@ -64,7 +64,7 @@ const mockDefaultPageState: DatasetAndVariantData = {
 };
 
 describe('SingleVariantPageStateHandler', () => {
-    const handler = new SingleVariantPageStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new SingleVariantPageStateHandler(mockConstants, mockDefaultPageState, '/testPath');
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
