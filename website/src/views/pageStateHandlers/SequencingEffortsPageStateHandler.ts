@@ -23,9 +23,9 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: PageState,
-        pathFragment: string,
+        basePath: string,
     ) {
-        this.pathname = `/${pathFragment}/${sequencingEffortsViewConstants.pathFragment}`;
+        this.pathname = `${basePath}/${sequencingEffortsViewConstants.pathFragment}`;
     }
 
     public parsePageStateFromUrl(url: URL): DatasetAndVariantData {

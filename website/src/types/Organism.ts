@@ -38,8 +38,8 @@ export const organismConfig = {
     },
     [Organisms.h5n1]: {
         organism: Organisms.h5n1,
-        pathFragment: 'influenza-a/h5n1',
-        label: 'Influenza A/H5N1',
+        pathFragment: 'h5n1',
+        label: 'H5N1',
         backgroundColor: 'bg-cyanMuted',
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
@@ -47,8 +47,8 @@ export const organismConfig = {
     },
     [Organisms.h1n1pdm]: {
         organism: Organisms.h1n1pdm,
-        pathFragment: 'influenza-a/h1n1pdm',
-        label: 'Influenza A/H1N1pdm',
+        pathFragment: 'h1n1pdm',
+        label: 'H1N1pdm',
         backgroundColor: 'bg-cyanMuted',
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
@@ -56,8 +56,8 @@ export const organismConfig = {
     },
     [Organisms.h3n2]: {
         organism: Organisms.h3n2,
-        pathFragment: 'influenza-a/h3n2',
-        label: 'Influenza A/H3N2',
+        pathFragment: 'h3n2',
+        label: 'H3N2',
         backgroundColor: 'bg-cyanMuted',
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
@@ -74,8 +74,8 @@ export const organismConfig = {
     },
     [Organisms.victoria]: {
         organism: Organisms.victoria,
-        pathFragment: 'influenza-b/victoria',
-        label: 'Influenza B/Victoria',
+        pathFragment: 'victoria',
+        label: 'Victoria',
         backgroundColor: 'bg-indigoMuted',
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
@@ -145,6 +145,161 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-olive',
     },
 };
+
+export const paths = {
+    [Organisms.h5n1]: {
+        basePath: `/${organismConfig[Organisms.influenzaA].pathFragment}/${organismConfig[Organisms.h5n1].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.influenzaA].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}`,
+            },
+            {
+                name: organismConfig[Organisms.h5n1].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}/${organismConfig[Organisms.h5n1].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.covid]: {
+        basePath: `/${organismConfig[Organisms.covid].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.covid].label,
+                href: `/${organismConfig[Organisms.covid].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.influenzaA]: {
+        basePath: `/${organismConfig[Organisms.influenzaA].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.influenzaA].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.h1n1pdm]: {
+        basePath: `/${organismConfig[Organisms.influenzaA].pathFragment}/${organismConfig[Organisms.h1n1pdm].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.influenzaA].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}`,
+            },
+            {
+                name: organismConfig[Organisms.h1n1pdm].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}/${organismConfig[Organisms.h1n1pdm].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.h3n2]: {
+        basePath: `/${organismConfig[Organisms.influenzaA].pathFragment}/${organismConfig[Organisms.h3n2].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.influenzaA].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}`,
+            },
+            {
+                name: organismConfig[Organisms.h3n2].label,
+                href: `/${organismConfig[Organisms.influenzaA].pathFragment}/${organismConfig[Organisms.h3n2].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.influenzaB]: {
+        basePath: `/${organismConfig[Organisms.influenzaB].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.influenzaB].label,
+                href: `/${organismConfig[Organisms.influenzaB].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.victoria]: {
+        basePath: `/${organismConfig[Organisms.influenzaB].pathFragment}/${organismConfig[Organisms.victoria].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.influenzaB].label,
+                href: `/${organismConfig[Organisms.influenzaB].pathFragment}`,
+            },
+            {
+                name: organismConfig[Organisms.victoria].label,
+                href: `/${organismConfig[Organisms.influenzaB].pathFragment}/${organismConfig[Organisms.victoria].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.westNile]: {
+        basePath: `/${organismConfig[Organisms.westNile].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.westNile].label,
+                href: `/${organismConfig[Organisms.westNile].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.rsvA]: {
+        basePath: `/${organismConfig[Organisms.rsvA].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.rsvA].label,
+                href: `/${organismConfig[Organisms.rsvA].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.rsvB]: {
+        basePath: `/${organismConfig[Organisms.rsvB].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.rsvB].label,
+                href: `/${organismConfig[Organisms.rsvB].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.mpox]: {
+        basePath: `/${organismConfig[Organisms.mpox].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.mpox].label,
+                href: `/${organismConfig[Organisms.mpox].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.ebolaSudan]: {
+        basePath: `/${organismConfig[Organisms.ebolaSudan].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.ebolaSudan].label,
+                href: `/${organismConfig[Organisms.ebolaSudan].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.ebolaZaire]: {
+        basePath: `/${organismConfig[Organisms.ebolaZaire].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.ebolaZaire].label,
+                href: `/${organismConfig[Organisms.ebolaZaire].pathFragment}`,
+            },
+        ],
+    },
+    [Organisms.cchf]: {
+        basePath: `/${organismConfig[Organisms.cchf].pathFragment}`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.cchf].label,
+                href: `/${organismConfig[Organisms.cchf].pathFragment}`,
+            },
+        ],
+    },
+    swissWastewater: {
+        basePath: `/swiss-wastewater`,
+        breadcrumbs: [
+            {
+                name: organismConfig[Organisms.cchf].label,
+                href: `/swiss-wastewater`,
+            },
+        ],
+    },
+};
+
 export const allOrganisms = Object.keys(organismConfig) as Organism[];
 export type Organism = keyof typeof organismConfig;
 

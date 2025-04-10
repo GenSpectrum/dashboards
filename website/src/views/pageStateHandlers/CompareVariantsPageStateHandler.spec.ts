@@ -59,7 +59,7 @@ const mockDefaultPageState: CompareVariantsData = {
 };
 
 describe('CompareVariantsPageStateHandler', () => {
-    const handler = new CompareVariantsPageStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareVariantsPageStateHandler(mockConstants, mockDefaultPageState, '/testPath');
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();

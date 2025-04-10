@@ -24,9 +24,9 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: CompareSideBySideData,
-        pathFragment: string,
+        basePath: string,
     ) {
-        this.pathname = `/${pathFragment}/${compareSideBySideViewConstants.pathFragment}`;
+        this.pathname = `${basePath}/${compareSideBySideViewConstants.pathFragment}`;
     }
 
     public getDefaultPageUrl() {

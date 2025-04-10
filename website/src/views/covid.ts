@@ -32,7 +32,7 @@ import {
     setSearchFromTextFilters,
 } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import { Organisms, paths } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
@@ -184,7 +184,7 @@ export class CovidAnalyzeSingleVariantView extends BaseView<
             new CovidSingleVariantStateHandler(
                 constants,
                 makeDatasetAndVariantData(defaultDatasetFilter),
-                organismConfig[constants.organism].pathFragment,
+                paths[constants.organism].basePath,
             ),
             singleVariantViewConstants,
         );
@@ -253,11 +253,7 @@ export class CovidCompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new CompareSideBySideStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareSideBySideStateHandler(constants, defaultPageState, paths[constants.organism].basePath),
             compareSideBySideViewConstants,
         );
     }
