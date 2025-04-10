@@ -9,8 +9,8 @@ import { dataOrigins } from '../../types/dataOrigins';
 import {
     getMutationAnnotation,
     InfluenzaTypes,
+    wastewaterBreadcrumb,
     wastewaterConfig,
-    wastewaterPathFragment,
 } from '../../types/wastewaterConfig';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
@@ -20,7 +20,7 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
     title='Swiss wastewater - Influenza'
     breadcrumbs={[
         ...defaultBreadcrumbs,
-        { name: 'Swiss Wastewater', href: `/${wastewaterPathFragment}` },
+        wastewaterBreadcrumb,
         {
             name: 'Influenza',
             href: wastewaterConfig.pages.influenza,

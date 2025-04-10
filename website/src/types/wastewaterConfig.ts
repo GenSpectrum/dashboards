@@ -15,6 +15,11 @@ export const wastewaterConfig = {
     },
 };
 
+export const wastewaterBreadcrumb = {
+    name: 'Swiss Wastewater',
+    href: `/${wastewaterPathFragment}`,
+};
+
 export const RSVTypes = ['RSV-A', 'RSV-B'] as const;
 
 export type RSVType = (typeof RSVTypes)[number];

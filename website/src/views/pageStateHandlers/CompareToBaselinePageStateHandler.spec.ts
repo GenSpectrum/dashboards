@@ -63,16 +63,16 @@ const mockDefaultPageState: CompareToBaselineData = {
 };
 
 describe('CompareToBaselinePageStateHandler', () => {
-    const handler = new CompareToBaselineStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareToBaselineStateHandler(mockConstants, mockDefaultPageState);
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/testPath/compare-to-baseline?date=Last+7+Days&');
+        expect(url).toBe('/covid/compare-to-baseline?date=Last+7+Days&');
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
-            'http://example.com/testPath/compare-to-baseline?' +
+            'http://example.com/covid/compare-to-baseline?' +
                 'columns=3' +
                 '&country=US&date=Last 7 Days' +
                 '&lineage=B.2.3.4&nucleotideMutations=C234G' +
@@ -150,7 +150,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-to-baseline?' +
+            '/covid/compare-to-baseline?' +
                 'columns=3' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
                 '&aminoAcidMutations%241=S%3AA123T&lineage%241=A.1.2.3' +
@@ -174,7 +174,7 @@ describe('CompareToBaselinePageStateHandler', () => {
 
         const url = handler.toUrl(pageState);
 
-        expect(url).toBe('/testPath/compare-to-baseline');
+        expect(url).toBe('/covid/compare-to-baseline');
     });
 
     it('should convert page state with deleted id to URL', () => {
@@ -211,7 +211,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-to-baseline?' +
+            '/covid/compare-to-baseline?' +
                 'columns=2' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
                 '&variantQuery%241=C234G' +

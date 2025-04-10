@@ -64,16 +64,16 @@ const mockDefaultPageState: DatasetAndVariantData = {
 };
 
 describe('SingleVariantPageStateHandler', () => {
-    const handler = new SingleVariantPageStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new SingleVariantPageStateHandler(mockConstants, mockDefaultPageState);
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/testPath/single-variant?date=Last+7+Days&');
+        expect(url).toBe('/covid/single-variant?date=Last+7+Days&');
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
-            'http://example.com/testPath/single-variant?' +
+            'http://example.com/covid/single-variant?' +
                 'country=US&date=Last 7 Days' +
                 '&lineage=B.2.3.4&nucleotideMutations=C234G' +
                 '&',
@@ -109,7 +109,7 @@ describe('SingleVariantPageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/single-variant?' +
+            '/covid/single-variant?' +
                 'country=US' +
                 '&date=Last+7+Days' +
                 '&nucleotideMutations=D614G&lineage=B.1.1.7' +
@@ -127,7 +127,7 @@ describe('SingleVariantPageStateHandler', () => {
             },
         };
         const url = handler.toUrl(pageState);
-        expect(url).toBe('/testPath/single-variant');
+        expect(url).toBe('/covid/single-variant');
     });
 
     it('should convert pageState to Lapis filter', () => {

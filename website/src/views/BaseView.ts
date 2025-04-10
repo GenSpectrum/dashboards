@@ -9,7 +9,7 @@ import {
 } from './ViewConstants.ts';
 import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import { defaultBreadcrumbs } from '../layouts/Breadcrumbs.tsx';
-import { organismConfig } from '../types/Organism.ts';
+import { organismConfig, paths } from '../types/Organism.ts';
 import { CompareToBaselineStateHandler } from './pageStateHandlers/CompareToBaselinePageStateHandler.ts';
 import { CompareVariantsPageStateHandler } from './pageStateHandlers/CompareVariantsPageStateHandler.ts';
 import { SequencingEffortsStateHandler } from './pageStateHandlers/SequencingEffortsPageStateHandler.ts';
@@ -30,14 +30,11 @@ export abstract class BaseView<
         public readonly pageStateHandler: StateHandler,
         public readonly viewConstants: ViewConstants,
     ) {
-        this.pathname = `/${organismConfig[this.organismConstants.organism].pathFragment}/${this.viewConstants.pathFragment}`;
+        this.pathname = `${paths[this.organismConstants.organism].basePath}/${this.viewConstants.pathFragment}`;
         this.viewTitle = `${this.viewConstants.label} | ${organismConfig[this.organismConstants.organism].label} | GenSpectrum`;
         this.viewBreadcrumbEntries = [
             ...defaultBreadcrumbs,
-            {
-                name: organismConfig[this.organismConstants.organism].label,
-                href: `/${organismConfig[this.organismConstants.organism].pathFragment}`,
-            },
+            ...paths[this.organismConstants.organism].breadcrumbs,
             { name: this.viewConstants.label, href: this.pageStateHandler.getDefaultPageUrl() },
         ];
     }
@@ -49,15 +46,7 @@ export class GenericSingleVariantView<Constants extends OrganismConstants> exten
     SingleVariantPageStateHandler
 > {
     constructor(constants: Constants, defaultPageState: DatasetAndVariantData) {
-        super(
-            constants,
-            new SingleVariantPageStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
-            singleVariantViewConstants,
-        );
+        super(constants, new SingleVariantPageStateHandler(constants, defaultPageState), singleVariantViewConstants);
     }
 }
 
@@ -69,11 +58,7 @@ export class GenericSequencingEffortsView<Constants extends OrganismConstants> e
     constructor(constants: Constants, defaultPageState: DatasetAndVariantData) {
         super(
             constants,
-            new SequencingEffortsStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new SequencingEffortsStateHandler(constants, defaultPageState),
             sequencingEffortsViewConstants,
         );
     }
@@ -87,11 +72,7 @@ export class GenericCompareVariantsView<Constants extends OrganismConstants> ext
     constructor(constants: Constants, defaultPageState: CompareVariantsData) {
         super(
             constants,
-            new CompareVariantsPageStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareVariantsPageStateHandler(constants, defaultPageState),
             compareVariantsViewConstants,
         );
     }
@@ -105,11 +86,7 @@ export class GenericCompareToBaselineView<Constants extends OrganismConstants> e
     constructor(constants: Constants, defaultPageState: CompareToBaselineData) {
         super(
             constants,
-            new CompareToBaselineStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareToBaselineStateHandler(constants, defaultPageState),
             compareToBaselineViewConstants,
         );
     }

@@ -1,5 +1,6 @@
 import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
+import { paths } from '../../types/Organism.ts';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareVariantsData, type DatasetFilter, getLineageFilterFields, type VariantFilter } from '../View.ts';
 import { compareVariantsViewConstants } from '../ViewConstants.ts';
@@ -26,9 +27,8 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: CompareVariantsData,
-        pathFragment: string,
     ) {
-        this.pathname = `/${pathFragment}/${compareVariantsViewConstants.pathFragment}`;
+        this.pathname = `${paths[constants.organism].basePath}/${compareVariantsViewConstants.pathFragment}`;
     }
 
     public getDefaultPageUrl() {
