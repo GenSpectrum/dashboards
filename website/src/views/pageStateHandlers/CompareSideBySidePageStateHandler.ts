@@ -3,19 +3,16 @@ import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from '../View.ts';
 import { compareSideBySideViewConstants } from '../ViewConstants.ts';
-import {
-    getLapisLocationFromSearch,
-    getLapisVariantQuery,
-    setSearchFromLapisVariantQuery,
-    setSearchFromLocation,
-} from '../helpers.ts';
+import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
 import {
     decodeFiltersFromSearch,
     type PageStateHandler,
     parseDateRangesFromUrl,
+    parseLocationFiltersFromUrl,
     parseTextFiltersFromUrl,
     searchParamsFromFilterMap,
     setSearchFromDateFilters,
+    setSearchFromLocationFilters,
     setSearchFromTextFilters,
     toLapisFilterWithoutVariant,
 } from './PageStateHandler.ts';
@@ -108,7 +105,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
             filter.variantFilter,
             getLineageFilterFields(this.constants.lineageFilters),
         );
-        setSearchFromLocation(searchOfFilter, filter.datasetFilter.location);
+        setSearchFromLocationFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
     }
@@ -116,7 +113,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
     protected getEmptyColumnData(): DatasetAndVariantData {
         return {
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 textFilters: {},
                 dateFilters: {},
             },
@@ -130,7 +127,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
     protected getFilter(filterParams: Map<string, string>): DatasetAndVariantData {
         return {
             datasetFilter: {
-                location: getLapisLocationFromSearch(filterParams, this.constants.locationFields),
+                locationFilters: parseLocationFiltersFromUrl(filterParams, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(filterParams, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(filterParams, this.constants.baselineFilterConfigs),
             },

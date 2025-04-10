@@ -9,7 +9,7 @@ import { Organisms } from '../../../types/Organism';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
 import { getLocationSubdivision } from '../../../views/locationHelpers';
-import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
+import { locationFieldsToFilterIdentifier, toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
@@ -43,7 +43,7 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
 
 const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
     view.organismConstants.locationFields,
-    pageState.datasetFilter.location,
+    pageState.datasetFilter.locationFilters[locationFieldsToFilterIdentifier(view.organismConstants.locationFields)],
 );
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
@@ -63,11 +63,6 @@ const downloadLinks = noVariantSelected
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <SingleVariantPageStateSelector
         slot='filters'
-        locationFilterConfig={{
-            locationFields: view.organismConstants.locationFields,
-            placeholderText: 'Sampling location',
-            label: 'Sampling location',
-        }}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         initialPageState={pageState}

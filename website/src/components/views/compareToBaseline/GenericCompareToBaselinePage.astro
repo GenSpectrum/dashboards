@@ -45,10 +45,6 @@ const downloadLinks = noVariantSelected
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <CompareVariantsToBaselineStateSelector
         slot='filters'
-        locationFilterConfig={{
-            locationFields: view.organismConstants.locationFields,
-            placeholderText: 'Sampling location',
-        }}
         initialPageState={pageState}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}

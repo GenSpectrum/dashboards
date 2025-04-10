@@ -4,6 +4,7 @@ import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { getLocationDisplayConfig } from '../../../views/locationHelpers';
+import { locationFieldsToFilterIdentifier } from '../../../views/pageStateHandlers/PageStateHandler';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
@@ -30,9 +31,10 @@ const timeGranularity = chooseGranularityBasedOnDateRange({
     earliestDate: new Date(view.organismConstants.earliestDate),
     dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
 });
+
 const { locationField, mapName } = getLocationDisplayConfig(
     view.organismConstants.locationFields,
-    pageState.datasetFilter.location,
+    pageState.datasetFilter.locationFilters[locationFieldsToFilterIdentifier(view.organismConstants.locationFields)],
 );
 ---
 
@@ -48,11 +50,6 @@ const { locationField, mapName } = getLocationDisplayConfig(
 >
     <SequencingEffortsPageStateSelector
         slot='filters'
-        locationFilterConfig={{
-            locationFields: view.organismConstants.locationFields,
-            placeholderText: 'Sampling location',
-            label: 'Sampling location',
-        }}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         initialPageState={pageState}

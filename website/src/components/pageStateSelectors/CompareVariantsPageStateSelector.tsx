@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig } from './VariantSelector.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
@@ -12,12 +12,10 @@ import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareVariantsViewKey } from '../../views/viewKeys.ts';
 
 export function CompareVariantsPageStateSelector({
-    locationFilterConfig,
     organismViewKey,
     organismsConfig,
     initialPageState,
 }: {
-    locationFilterConfig: LocationFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
     initialPageState: CompareVariantsData;
@@ -43,7 +41,6 @@ export function CompareVariantsPageStateSelector({
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <Inset className='p-2'>
                     <BaselineSelector
-                        locationFilterConfig={locationFilterConfig}
                         baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
                         datasetFilter={pageState.datasetFilter}

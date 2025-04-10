@@ -3,19 +3,16 @@ import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-compo
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareToBaselineData, type DatasetFilter, getLineageFilterFields, type VariantFilter } from '../View.ts';
 import { compareToBaselineViewConstants } from '../ViewConstants.ts';
-import {
-    getLapisLocationFromSearch,
-    getLapisVariantQuery,
-    setSearchFromLapisVariantQuery,
-    setSearchFromLocation,
-} from '../helpers.ts';
+import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
 import {
     decodeFiltersFromSearch,
     type PageStateHandler,
     parseDateRangesFromUrl,
+    parseLocationFiltersFromUrl,
     parseTextFiltersFromUrl,
     searchParamsFromFilterMap,
     setSearchFromDateFilters,
+    setSearchFromLocationFilters,
     setSearchFromTextFilters,
     toDisplayName,
     toLapisFilterFromVariant,
@@ -49,7 +46,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
 
         return {
             datasetFilter: {
-                location: getLapisLocationFromSearch(search, this.constants.locationFields),
+                locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
             },
@@ -63,7 +60,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
             setSearchFromLapisVariantQuery(search, variant, getLineageFilterFields(this.constants.lineageFilters)),
         );
 
-        setSearchFromLocation(search, pageState.datasetFilter.location);
+        setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
 
