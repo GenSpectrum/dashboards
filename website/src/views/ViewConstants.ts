@@ -5,7 +5,7 @@ export interface ViewConstants {
     labelLong: string;
     pathFragment: string;
     iconType: MenuIconType;
-    description?: string;
+    description: string;
 }
 
 export const singleVariantViewConstants = {

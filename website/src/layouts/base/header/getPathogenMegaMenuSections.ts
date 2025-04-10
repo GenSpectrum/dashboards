@@ -9,7 +9,7 @@ type MegaMenuSection = {
     underlineColor: string;
     iconType: MenuIconType;
     externalLink: boolean;
-    description?: string;
+    description: string;
 };
 
 export type PathogenMegaMenuSection = {
@@ -48,6 +48,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: config.menuListEntryDecoration,
                 iconType: externalPage.menuIcon,
                 externalLink: true,
+                description: externalPage.description,
             })),
         );
 
@@ -71,16 +72,18 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             {
                 label: 'RSV',
                 iconType: 'table',
-                href: wastewaterConfig.pages.rsv,
+                href: wastewaterConfig.pages.rsv.path,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
+                description: wastewaterConfig.pages.rsv.description,
             },
             {
                 label: 'Influenza',
                 iconType: 'table',
-                href: wastewaterConfig.pages.influenza,
+                href: wastewaterConfig.pages.influenza.path,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
+                description: wastewaterConfig.pages.influenza.description,
             },
             {
                 label: 'Browse data',
@@ -88,6 +91,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 href: wastewaterConfig.browseDataUrl,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
+                description: wastewaterConfig.browseDataDescription,
             },
         ],
         href: `/${wastewaterPathFragment}`,
