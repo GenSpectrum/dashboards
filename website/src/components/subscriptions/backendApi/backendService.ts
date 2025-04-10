@@ -173,8 +173,6 @@ export class BackendService extends ApiService {
 let backendServiceForClientside: BackendService | null = null;
 
 export function getBackendServiceForClientside(): BackendService {
-    if (!backendServiceForClientside) {
-        backendServiceForClientside = new BackendService(`${new URL(window.location.href).origin}/api`);
-    }
+    backendServiceForClientside ??= new BackendService(`${new URL(window.location.href).origin}/api`);
     return backendServiceForClientside;
 }
