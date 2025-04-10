@@ -8,6 +8,7 @@ dashboards:
         - url: "https://cov-spectrum.org"
           label: "CoV-Spectrum"
           menuIcon: "virus"
+          description: "Analyze the data on CoV-Spectrum."
     h5n1:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h5n1"
@@ -19,6 +20,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/h5n1"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     h1n1pdm:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h1n1pdm"
@@ -30,6 +32,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/h1n1pdm"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     h3n2:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h3n2"
@@ -41,6 +44,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/h3n2"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     influenzaA:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-a"
@@ -52,6 +56,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/influenza-a"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     influenzaB:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-b"
@@ -63,6 +68,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/influenza-b"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     victoria:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/b-victoria"
@@ -79,6 +85,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/b-victoria"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     mpox:
       lapis:
         url: "https://lapis.pathoplexus.org/mpox"
@@ -90,6 +97,7 @@ dashboards:
         - url: "https://pathoplexus.org/mpox"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data on Pathoplexus."
     westNile:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
@@ -101,6 +109,7 @@ dashboards:
         - url: "https://pathoplexus.org/west-nile"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data on Pathoplexus."
     rsvA:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/rsv-a"
@@ -112,6 +121,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/rsv-a"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     rsvB:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/rsv-b"
@@ -123,6 +133,7 @@ dashboards:
         - url: "https://loculus.staging.genspectrum.org/rsv-b"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
     ebolaSudan:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-sudan"
@@ -134,6 +145,7 @@ dashboards:
         - url: "https://pathoplexus.org/ebola-sudan"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data on Pathoplexus."
     ebolaZaire:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-zaire"
@@ -145,6 +157,7 @@ dashboards:
         - url: "https://pathoplexus.org/ebola-zaire"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data on Pathoplexus."
     cchf:
       lapis:
         url: "https://lapis.pathoplexus.org/cchf"
@@ -156,6 +169,7 @@ dashboards:
         - url: "https://pathoplexus.org/cchf"
           label: "Browse data"
           menuIcon: "database"
+          description: "Browse the underlying data on Pathoplexus."
   auth:
     github:
       clientId: "Iv23li4tJm7xQ3VkM3OC"

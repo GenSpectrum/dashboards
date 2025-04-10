@@ -8,10 +8,17 @@ export const wastewaterConfig = {
     backgroundColorFocus: 'group-hover:bg-teal',
     borderEntryDecoration: 'hover:border-teal',
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
+    browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
     pages: {
-        rsv: `/${wastewaterPathFragment}/rsv`,
-        influenza: `/${wastewaterPathFragment}/flu`,
+        rsv: {
+            path: `/${wastewaterPathFragment}/rsv`,
+            description: 'Analyze RSV data that was collected by the WISE project.',
+        },
+        influenza: {
+            path: `/${wastewaterPathFragment}/flu`,
+            description: 'Analyze Influenza data that was collected by the WISE project.',
+        },
     },
 };
 
