@@ -48,10 +48,6 @@ const componentHeight = '540px'; // prevalence over time table with 10 rows
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
     <CompareVariantsPageStateSelector
         slot='filters'
-        locationFilterConfig={{
-            locationFields: view.organismConstants.locationFields,
-            placeholderText: 'Sampling location',
-        }}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         initialPageState={pageState}

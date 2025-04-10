@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
@@ -11,12 +11,10 @@ import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { sequencingEffortsViewKey } from '../../views/viewKeys.ts';
 
 export function SequencingEffortsPageStateSelector({
-    locationFilterConfig,
     organismViewKey,
     organismsConfig,
     initialPageState,
 }: {
-    locationFilterConfig: LocationFilterConfig;
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
     initialPageState: DatasetAndVariantData;
@@ -42,7 +40,6 @@ export function SequencingEffortsPageStateSelector({
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <Inset className='flex flex-col gap-6 p-2'>
                     <BaselineSelector
-                        locationFilterConfig={locationFilterConfig}
                         baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
                         datasetFilter={pageState.datasetFilter}

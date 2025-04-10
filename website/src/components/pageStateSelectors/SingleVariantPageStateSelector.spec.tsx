@@ -11,7 +11,7 @@ describe('SingleVariantPageStateSelector', () => {
 
         const initialPageState = {
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
             },
@@ -22,10 +22,6 @@ describe('SingleVariantPageStateSelector', () => {
         const { getByRole } = render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <SingleVariantPageStateSelector
-                    locationFilterConfig={{
-                        locationFields: ['region', 'country', 'division'],
-                        placeholderText: 'Location',
-                    }}
                     organismViewKey='covid.singleVariantView'
                     organismsConfig={testOrganismsConfig}
                     initialPageState={initialPageState}

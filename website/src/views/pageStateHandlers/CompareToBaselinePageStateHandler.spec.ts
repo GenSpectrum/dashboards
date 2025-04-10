@@ -40,13 +40,19 @@ const mockConstants: OrganismConstants = {
             earliestDate: '1999-01-01',
             dateColumn: 'date',
         },
+        {
+            type: 'location',
+            placeholderText: 'Some location',
+            label: 'Some location',
+            locationFields: ['country', 'region'],
+        },
     ],
 };
 
 const mockDefaultPageState: CompareToBaselineData = {
     variants: new Map(),
     datasetFilter: {
-        location: {},
+        locationFilters: {},
         dateFilters: { date: mockDateRangeOption },
         textFilters: {},
     },
@@ -78,7 +84,8 @@ describe('CompareToBaselinePageStateHandler', () => {
 
         const pageState = handler.parsePageStateFromUrl(url);
 
-        expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        expect(pageState.datasetFilter.locationFilters).toEqual({ 'country,region': { country: 'US' } });
         expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
 
         expect(pageState.baselineFilter).toEqual({
@@ -127,7 +134,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 ],
             ]),
             datasetFilter: {
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
             },
@@ -157,7 +165,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         const pageState: CompareToBaselineData = {
             variants: new Map(),
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
             },
@@ -187,7 +195,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 ],
             ]),
             datasetFilter: {
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
             },
@@ -215,7 +224,8 @@ describe('CompareToBaselinePageStateHandler', () => {
     it('should convert dataset filter to Lapis filter', () => {
         const lapisFilter = handler.datasetFilterToLapisFilter({
             ...mockDefaultPageState.datasetFilter,
-            location: { country: 'US' },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            locationFilters: { 'country,region': { country: 'US' } },
         });
         expect(lapisFilter).toStrictEqual({
             dateFrom: '2024-11-22',

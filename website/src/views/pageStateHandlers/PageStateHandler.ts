@@ -4,6 +4,7 @@ import type { BaselineFilterConfig } from '../../components/pageStateSelectors/B
 import { type Dataset, type Id, type VariantFilter } from '../View.ts';
 import {
     getDateRangeFromSearch,
+    getLapisLocationFromSearch,
     getStringFromSearch,
     type LapisLocation,
     setSearchFromDateRange,
@@ -51,8 +52,22 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: string | undefined },
     );
 
+    const locationFilters = Object.values(pageState.datasetFilter.locationFilters).reduce(
+        (acc, lapisLocation) => {
+            if (lapisLocation === undefined) {
+                return acc;
+            }
+
+            return {
+                ...acc,
+                ...lapisLocation,
+            };
+        },
+        {} as { [key: string]: string | undefined },
+    );
+
     return {
-        ...pageState.datasetFilter.location,
+        ...locationFilters,
         ...dateFilters,
         ...textFilters,
         ...additionalFilters,
@@ -113,6 +128,37 @@ export function parseTextFiltersFromUrl(
     );
 }
 
+export function locationFieldsToFilterIdentifier(locationFields: string[]) {
+    return locationFields.join(',');
+}
+
+export function parseLocationFiltersFromUrl(
+    search: URLSearchParams | Map<string, string>,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const locationFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'location');
+
+    return (
+        locationFilterConfigs?.reduce(
+            (acc, config) => {
+                const location = getLapisLocationFromSearch(search, config.locationFields);
+
+                if (Object.keys(location).length === 0) {
+                    return acc;
+                }
+
+                return {
+                    ...acc,
+                    [locationFieldsToFilterIdentifier(config.locationFields)]: location,
+                };
+            },
+            {} as {
+                [key: string]: LapisLocation | undefined;
+            },
+        ) ?? {}
+    );
+}
+
 export function setSearchFromDateFilters(
     search: URLSearchParams,
     pageState: Dataset,
@@ -136,6 +182,25 @@ export function setSearchFromTextFilters(
     textFilterConfigs?.forEach((config) => {
         const value = pageState.datasetFilter.textFilters[config.lapisField];
         setSearchFromString(search, config.lapisField, value);
+    });
+}
+
+export function setSearchFromLocationFilters(
+    search: URLSearchParams,
+    pageState: Dataset,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const locationFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'location');
+
+    locationFilterConfigs?.forEach((config) => {
+        const locationIdentifier = locationFieldsToFilterIdentifier(config.locationFields);
+
+        config.locationFields.forEach((locationField) => {
+            const datasetFilter = pageState.datasetFilter.locationFilters[locationIdentifier];
+            const value = datasetFilter?.[locationField];
+
+            setSearchFromString(search, locationField, value);
+        });
     });
 }
 

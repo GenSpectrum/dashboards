@@ -40,6 +40,12 @@ const mockConstants: OrganismConstants = {
             earliestDate: '1999-01-01',
             dateColumn: 'date',
         },
+        {
+            type: 'location',
+            placeholderText: 'Some location',
+            label: 'Some location',
+            locationFields: ['country', 'region'],
+        },
     ],
 };
 
@@ -49,7 +55,7 @@ const mockDefaultPageState: CompareSideBySideData = {
             1,
             {
                 datasetFilter: {
-                    location: {},
+                    locationFilters: {},
                     dateFilters: {},
                     textFilters: {},
                 },
@@ -63,7 +69,7 @@ const mockDefaultPageState: CompareSideBySideData = {
             2,
             {
                 datasetFilter: {
-                    location: {},
+                    locationFilters: {},
                     dateFilters: {
                         date: mockDateRangeOption,
                     },
@@ -103,7 +109,7 @@ describe('CompareSideBySideStateHandler', () => {
 
         expect(pageState.filters.get(0)).toEqual({
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
             },
@@ -119,7 +125,7 @@ describe('CompareSideBySideStateHandler', () => {
                     date: mockDateRangeOption,
                 },
                 textFilters: {},
-                location: {},
+                locationFilters: {},
             },
             variantFilter: {
                 lineages: {
@@ -132,7 +138,7 @@ describe('CompareSideBySideStateHandler', () => {
         expect(pageState.filters.get(2)).toEqual({
             datasetFilter: {
                 dateFilters: {},
-                location: {},
+                locationFilters: {},
                 textFilters: {},
             },
             variantFilter: {
@@ -148,7 +154,7 @@ describe('CompareSideBySideStateHandler', () => {
                     1,
                     {
                         datasetFilter: {
-                            location: {},
+                            locationFilters: {},
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
                         },
@@ -162,7 +168,7 @@ describe('CompareSideBySideStateHandler', () => {
                     2,
                     {
                         datasetFilter: {
-                            location: {},
+                            locationFilters: {},
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
                         },
@@ -193,7 +199,7 @@ describe('CompareSideBySideStateHandler', () => {
                     1,
                     {
                         datasetFilter: {
-                            location: {},
+                            locationFilters: {},
                             dateFilters: { date: null },
                             textFilters: {},
                         },
@@ -211,7 +217,8 @@ describe('CompareSideBySideStateHandler', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {
                 dateFilters: { date: mockDateRangeOption },
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 textFilters: {
                     someTextField: 'SomeText',
                 },
@@ -235,7 +242,8 @@ describe('CompareSideBySideStateHandler', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {
                 dateFilters: { date: mockDateRangeOption },
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 textFilters: {
                     someTextField: 'SomeText',
                 },

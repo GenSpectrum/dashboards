@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector, type LocationFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import type { OrganismsConfig } from '../../config.ts';
@@ -11,13 +11,11 @@ import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
 
 export function CompareSideBySidePageStateSelector({
-    locationFilterConfig,
     filterId,
     initialPageState,
     organismViewKey,
     organismsConfig,
 }: {
-    locationFilterConfig: LocationFilterConfig;
     filterId: number;
     initialPageState: CompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
@@ -33,7 +31,7 @@ export function CompareSideBySidePageStateSelector({
     const { filterOfCurrentId, currentLapisFilter } = useMemo(() => {
         const filterOfCurrentId = pageState.filters.get(filterId) ?? {
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
             },
@@ -55,7 +53,6 @@ export function CompareSideBySidePageStateSelector({
                     <SelectorHeadline>Filter dataset</SelectorHeadline>
                     <Inset className='p-2'>
                         <BaselineSelector
-                            locationFilterConfig={locationFilterConfig}
                             baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                             lapisFilter={currentLapisFilter}
                             datasetFilter={filterOfCurrentId.datasetFilter}
