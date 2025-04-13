@@ -17,6 +17,7 @@ const externalNavigationLinkSchema = z.object({
     url: z.string(),
     label: z.string(),
     menuIcon: menuIconTypeSchema,
+    description: z.string(),
 });
 export type ExternalNavigationLink = z.infer<typeof externalNavigationLinkSchema>;
 const externalNavigationLinksSchema = z.optional(z.array(externalNavigationLinkSchema));
