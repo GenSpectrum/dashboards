@@ -1,7 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
 import { ViewPage } from './ViewPage.ts';
-import { organismConfig } from '../src/types/Organism.ts';
+import { paths } from '../src/types/Organism.ts';
 import { type OrganismWithViewKey } from '../src/views/routing';
 import { compareVariantsViewKey } from '../src/views/viewKeys';
 
@@ -18,7 +18,7 @@ export class CompareVariantsPage extends ViewPage {
     }
 
     public async goto(organism: OrganismViewCompareVariant) {
-        await this.page.goto(`/${organismConfig[organism].pathFragment}/compare-variants`);
+        await this.page.goto(`${paths[organism].basePath}/compare-variants`);
     }
 
     public async addVariant(options: { lineage?: string; lineageFieldPlaceholder?: string; mutation?: string }) {

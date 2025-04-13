@@ -85,18 +85,18 @@ const mockDefaultPageState: CompareSideBySideData = {
 };
 
 describe('CompareSideBySideStateHandler', () => {
-    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState);
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
         expect(url).toBe(
-            '/testPath/compare-side-by-side?' + 'columns=2' + '&lineage%241=B.1.1.7' + '&date%241=Last+7+Days' + '&',
+            '/covid/compare-side-by-side?' + 'columns=2' + '&lineage%241=B.1.1.7' + '&date%241=Last+7+Days' + '&',
         );
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
-            'http://example.com/testPath/compare-side-by-side?' +
+            'http://example.com/covid/compare-side-by-side?' +
                 'columns=3' +
                 '&lineage%241=B.1.1.7&date%241=Last+7+Days' +
                 '&variantQuery%242=C234G' +
@@ -184,7 +184,7 @@ describe('CompareSideBySideStateHandler', () => {
 
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-side-by-side?' +
+            '/covid/compare-side-by-side?' +
                 'columns=2' +
                 '&lineage%240=B.1.1.7&date%240=Last+7+Days' +
                 '&variantQuery%241=C234G&date%241=Last+7+Days' +
@@ -210,7 +210,7 @@ describe('CompareSideBySideStateHandler', () => {
         };
 
         const url = handler.toUrl(pageState);
-        expect(url).toBe('/testPath/compare-side-by-side?columns=1&');
+        expect(url).toBe('/covid/compare-side-by-side?columns=1&');
     });
 
     it('should convert variant filter to Lapis filter', () => {

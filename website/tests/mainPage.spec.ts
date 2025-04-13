@@ -1,32 +1,43 @@
 import { expect, test } from '@playwright/test';
 
+import { allOrganisms, organismConfig } from '../src/types/Organism.ts';
 import { nonBreakingHyphen } from '../src/views/ViewConstants.ts';
+import { ServerSide } from '../src/views/serverSideRouting.ts';
+import {
+    compareSideBySideViewKey,
+    compareToBaselineViewKey,
+    compareVariantsViewKey,
+    sequencingEffortsViewKey,
+    singleVariantViewKey,
+} from '../src/views/viewKeys.ts';
 
-const organisms = [
-    'SARS-CoV-2',
-    'Influenza A/H5N1',
-    'Influenza A/H1N1pdm',
-    'Influenza A/H3N2',
-    'Influenza B/Victoria',
-    'West Nile',
-    'RSV-A',
-    'RSV-B',
-    'Mpox',
-];
 const views = [
     {
+        viewKey: singleVariantViewKey,
         linkName: 'Analyze a single variant',
         title: 'Single variant',
         expectedHeadline: 'Analyze a single variant',
     },
     {
+        viewKey: compareSideBySideViewKey,
         linkName: `Compare variants side${nonBreakingHyphen}by${nonBreakingHyphen}side`,
         title: `Compare side${nonBreakingHyphen}by${nonBreakingHyphen}side`,
         expectedHeadline: 'Prevalence over time',
     },
-    { linkName: 'Sequencing efforts', title: 'Sequencing efforts', expectedHeadline: 'Number sequences' },
-    { linkName: 'Compare variants', title: 'Compare variants', expectedHeadline: 'Compare Variants' },
     {
+        viewKey: sequencingEffortsViewKey,
+        linkName: 'Sequencing efforts',
+        title: 'Sequencing efforts',
+        expectedHeadline: 'Number sequences',
+    },
+    {
+        viewKey: compareVariantsViewKey,
+        linkName: 'Compare variants',
+        title: 'Compare variants',
+        expectedHeadline: 'Compare Variants',
+    },
+    {
+        viewKey: compareToBaselineViewKey,
         linkName: 'Compare to baseline',
         title: 'Compare to baseline',
         expectedHeadline: 'Analyze a variant compared to a baseline',
@@ -42,18 +53,24 @@ test.describe('Main page', () => {
         await expect(page.getByRole('heading', { name: 'Inspect pathogen genomic data' })).toBeVisible();
     });
 
-    organisms.forEach((organism) => {
+    allOrganisms.forEach((organism) => {
         test(`should navigate to all views for ${organism}`, async ({ page }) => {
-            for (const { linkName, title, expectedHeadline } of views) {
+            for (const { viewKey, linkName, title, expectedHeadline } of views) {
+                if (!ServerSide.routing.isOrganismWithViewKey(organism, viewKey)) {
+                    continue;
+                }
+
+                const organismName = organismConfig[organism].label;
+
                 await page.goto('/');
                 await page
-                    .getByRole('heading', { name: organism })
+                    .getByRole('heading', { name: organismName })
                     .locator('..')
                     .getByText(linkName, { exact: true })
                     .click();
                 await expect(page.locator('text=Error -')).not.toBeVisible();
                 await expect(page.locator('text=Something went wrong')).not.toBeVisible();
-                await expect(page).toHaveTitle(`${title} | ${organism} | GenSpectrum`);
+                await expect(page).toHaveTitle(`${title} | ${organismName} | GenSpectrum`);
                 await expect(page.getByRole('heading', { name: expectedHeadline }).first()).toBeVisible();
             }
         });

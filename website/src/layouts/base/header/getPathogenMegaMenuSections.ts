@@ -1,5 +1,5 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
-import { type Organism, organismConfig } from '../../../types/Organism.ts';
+import { type Organism, organismConfig, paths } from '../../../types/Organism.ts';
 import { wastewaterConfig, wastewaterPathFragment } from '../../../types/wastewaterConfig.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
@@ -58,7 +58,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             headlineBackgroundColorFocus: config.backgroundColorFocus,
             borderEntryDecoration: config.borderEntryDecoration,
             navigationEntries: megaMenuSections,
-            href: `/${config.pathFragment}`,
+            href: paths[config.organism].basePath,
         };
         return acc;
     }, {} as PathogenMegaMenuSections);

@@ -59,16 +59,16 @@ const mockDefaultPageState: CompareVariantsData = {
 };
 
 describe('CompareVariantsPageStateHandler', () => {
-    const handler = new CompareVariantsPageStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareVariantsPageStateHandler(mockConstants, mockDefaultPageState);
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/testPath/compare-variants?date=Last+7+Days&');
+        expect(url).toBe('/covid/compare-variants?date=Last+7+Days&');
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
-            'http://example.com/testPath/compareVariants?' +
+            'http://example.com/covid/compareVariants?' +
                 'columns=3' +
                 '&country=US&date=Last 7 Days' +
                 '&lineage$0=B.1.1.7&nucleotideMutations$0=D614G' +
@@ -130,7 +130,7 @@ describe('CompareVariantsPageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-variants?' +
+            '/covid/compare-variants?' +
                 'columns=3' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
                 '&aminoAcidMutations%241=S%3AA123T&lineage%241=A.1.2.3' +
@@ -167,7 +167,7 @@ describe('CompareVariantsPageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-variants?' +
+            '/covid/compare-variants?' +
                 'columns=2' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
                 '&variantQuery%241=C234G' +
@@ -189,7 +189,7 @@ describe('CompareVariantsPageStateHandler', () => {
 
         const url = handler.toUrl(pageState);
 
-        expect(url).toBe('/testPath/compare-variants');
+        expect(url).toBe('/covid/compare-variants');
     });
 
     it('should convert dataset filter to Lapis filter', () => {

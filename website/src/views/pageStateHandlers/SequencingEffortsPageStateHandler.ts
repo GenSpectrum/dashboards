@@ -1,3 +1,4 @@
+import { paths } from '../../types/Organism.ts';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { sequencingEffortsViewConstants } from '../ViewConstants.ts';
@@ -23,9 +24,8 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
     constructor(
         protected readonly constants: OrganismConstants,
         protected readonly defaultPageState: PageState,
-        pathFragment: string,
     ) {
-        this.pathname = `/${pathFragment}/${sequencingEffortsViewConstants.pathFragment}`;
+        this.pathname = `${paths[constants.organism].basePath}/${sequencingEffortsViewConstants.pathFragment}`;
     }
 
     public parsePageStateFromUrl(url: URL): DatasetAndVariantData {
