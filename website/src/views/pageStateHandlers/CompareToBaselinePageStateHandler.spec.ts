@@ -40,13 +40,19 @@ const mockConstants: OrganismConstants = {
             earliestDate: '1999-01-01',
             dateColumn: 'date',
         },
+        {
+            type: 'location',
+            placeholderText: 'Some location',
+            label: 'Some location',
+            locationFields: ['country', 'region'],
+        },
     ],
 };
 
 const mockDefaultPageState: CompareToBaselineData = {
     variants: new Map(),
     datasetFilter: {
-        location: {},
+        locationFilters: {},
         dateFilters: { date: mockDateRangeOption },
         textFilters: {},
     },
@@ -57,16 +63,16 @@ const mockDefaultPageState: CompareToBaselineData = {
 };
 
 describe('CompareToBaselinePageStateHandler', () => {
-    const handler = new CompareToBaselineStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareToBaselineStateHandler(mockConstants, mockDefaultPageState);
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/testPath/compare-to-baseline?date=Last+7+Days&');
+        expect(url).toBe('/covid/compare-to-baseline?date=Last+7+Days&');
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
-            'http://example.com/testPath/compare-to-baseline?' +
+            'http://example.com/covid/compare-to-baseline?' +
                 'columns=3' +
                 '&country=US&date=Last 7 Days' +
                 '&lineage=B.2.3.4&nucleotideMutations=C234G' +
@@ -78,7 +84,8 @@ describe('CompareToBaselinePageStateHandler', () => {
 
         const pageState = handler.parsePageStateFromUrl(url);
 
-        expect(pageState.datasetFilter.location).toEqual({ country: 'US' });
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        expect(pageState.datasetFilter.locationFilters).toEqual({ 'country,region': { country: 'US' } });
         expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
 
         expect(pageState.baselineFilter).toEqual({
@@ -127,7 +134,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 ],
             ]),
             datasetFilter: {
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
             },
@@ -142,7 +150,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-to-baseline?' +
+            '/covid/compare-to-baseline?' +
                 'columns=3' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
                 '&aminoAcidMutations%241=S%3AA123T&lineage%241=A.1.2.3' +
@@ -157,7 +165,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         const pageState: CompareToBaselineData = {
             variants: new Map(),
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
             },
@@ -166,7 +174,7 @@ describe('CompareToBaselinePageStateHandler', () => {
 
         const url = handler.toUrl(pageState);
 
-        expect(url).toBe('/testPath/compare-to-baseline');
+        expect(url).toBe('/covid/compare-to-baseline');
     });
 
     it('should convert page state with deleted id to URL', () => {
@@ -187,7 +195,8 @@ describe('CompareToBaselinePageStateHandler', () => {
                 ],
             ]),
             datasetFilter: {
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
             },
@@ -202,7 +211,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         };
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-to-baseline?' +
+            '/covid/compare-to-baseline?' +
                 'columns=2' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
                 '&variantQuery%241=C234G' +
@@ -215,7 +224,8 @@ describe('CompareToBaselinePageStateHandler', () => {
     it('should convert dataset filter to Lapis filter', () => {
         const lapisFilter = handler.datasetFilterToLapisFilter({
             ...mockDefaultPageState.datasetFilter,
-            location: { country: 'US' },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            locationFilters: { 'country,region': { country: 'US' } },
         });
         expect(lapisFilter).toStrictEqual({
             dateFrom: '2024-11-22',

@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test';
 
 import { ViewPage } from './ViewPage.ts';
-import { type Organism, organismConfig } from '../src/types/Organism.ts';
+import { type Organism, paths } from '../src/types/Organism.ts';
 
 export class SequencingEffortsPage extends ViewPage {
     public async goto(organism: Organism) {
-        await this.page.goto(`/${organismConfig[organism].pathFragment}/sequencing-efforts`);
+        await this.page.goto(`${paths[organism].basePath}/sequencing-efforts`);
     }
 
     public async selectLocation(location: string) {

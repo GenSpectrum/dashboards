@@ -18,18 +18,18 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    type OrganismConstants,
-    getPathoplexusSequencingEffortsAggregatedVisualizations,
-    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
-    PATHOPLEXUS_LOCATION_FIELDS,
-    LOCULUS_AUTHORS_FIELD,
-    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
-    PATHOPLEXUS_HOST_FIELD,
     getPathoplexusFilters,
+    getPathoplexusSequencingEffortsAggregatedVisualizations,
+    LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
+    LOCULUS_AUTHORS_FIELD,
+    type OrganismConstants,
+    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_HOST_FIELD,
+    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
@@ -116,7 +116,7 @@ class MpoxConstants implements OrganismConstants {
 }
 
 const defaultDatasetFilter: DatasetFilter = {
-    location: {},
+    locationFilters: {},
     textFilters: {},
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
@@ -151,11 +151,7 @@ export class MpoxCompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new CompareSideBySideStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareSideBySideStateHandler(constants, defaultPageState),
             compareSideBySideViewConstants,
         );
     }

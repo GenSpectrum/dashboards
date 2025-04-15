@@ -8,9 +8,13 @@ import type { LineageFilterConfig } from '../components/pageStateSelectors/Linea
 import { type BreadcrumbElement } from '../layouts/Breadcrumbs.tsx';
 
 export type DatasetFilter = {
-    location: LapisLocation;
+    locationFilters: LocationFilterState;
     textFilters: TextFilterState;
     dateFilters: DateFilterState;
+};
+
+export type LocationFilterState = {
+    [key: string]: LapisLocation | undefined;
 };
 
 export type DateFilterState = {

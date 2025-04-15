@@ -40,6 +40,12 @@ const mockConstants: OrganismConstants = {
             earliestDate: '1999-01-01',
             dateColumn: 'date',
         },
+        {
+            type: 'location',
+            placeholderText: 'Some location',
+            label: 'Some location',
+            locationFields: ['country', 'region'],
+        },
     ],
 };
 
@@ -49,7 +55,7 @@ const mockDefaultPageState: CompareSideBySideData = {
             1,
             {
                 datasetFilter: {
-                    location: {},
+                    locationFilters: {},
                     dateFilters: {},
                     textFilters: {},
                 },
@@ -63,7 +69,7 @@ const mockDefaultPageState: CompareSideBySideData = {
             2,
             {
                 datasetFilter: {
-                    location: {},
+                    locationFilters: {},
                     dateFilters: {
                         date: mockDateRangeOption,
                     },
@@ -79,18 +85,18 @@ const mockDefaultPageState: CompareSideBySideData = {
 };
 
 describe('CompareSideBySideStateHandler', () => {
-    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState, 'testPath');
+    const handler = new CompareSideBySideStateHandler(mockConstants, mockDefaultPageState);
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
         expect(url).toBe(
-            '/testPath/compare-side-by-side?' + 'columns=2' + '&lineage%241=B.1.1.7' + '&date%241=Last+7+Days' + '&',
+            '/covid/compare-side-by-side?' + 'columns=2' + '&lineage%241=B.1.1.7' + '&date%241=Last+7+Days' + '&',
         );
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
-            'http://example.com/testPath/compare-side-by-side?' +
+            'http://example.com/covid/compare-side-by-side?' +
                 'columns=3' +
                 '&lineage%241=B.1.1.7&date%241=Last+7+Days' +
                 '&variantQuery%242=C234G' +
@@ -103,7 +109,7 @@ describe('CompareSideBySideStateHandler', () => {
 
         expect(pageState.filters.get(0)).toEqual({
             datasetFilter: {
-                location: {},
+                locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
             },
@@ -119,7 +125,7 @@ describe('CompareSideBySideStateHandler', () => {
                     date: mockDateRangeOption,
                 },
                 textFilters: {},
-                location: {},
+                locationFilters: {},
             },
             variantFilter: {
                 lineages: {
@@ -132,7 +138,7 @@ describe('CompareSideBySideStateHandler', () => {
         expect(pageState.filters.get(2)).toEqual({
             datasetFilter: {
                 dateFilters: {},
-                location: {},
+                locationFilters: {},
                 textFilters: {},
             },
             variantFilter: {
@@ -148,7 +154,7 @@ describe('CompareSideBySideStateHandler', () => {
                     1,
                     {
                         datasetFilter: {
-                            location: {},
+                            locationFilters: {},
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
                         },
@@ -162,7 +168,7 @@ describe('CompareSideBySideStateHandler', () => {
                     2,
                     {
                         datasetFilter: {
-                            location: {},
+                            locationFilters: {},
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
                         },
@@ -178,7 +184,7 @@ describe('CompareSideBySideStateHandler', () => {
 
         const url = handler.toUrl(pageState);
         expect(url).toBe(
-            '/testPath/compare-side-by-side?' +
+            '/covid/compare-side-by-side?' +
                 'columns=2' +
                 '&lineage%240=B.1.1.7&date%240=Last+7+Days' +
                 '&variantQuery%241=C234G&date%241=Last+7+Days' +
@@ -193,7 +199,7 @@ describe('CompareSideBySideStateHandler', () => {
                     1,
                     {
                         datasetFilter: {
-                            location: {},
+                            locationFilters: {},
                             dateFilters: { date: null },
                             textFilters: {},
                         },
@@ -204,14 +210,15 @@ describe('CompareSideBySideStateHandler', () => {
         };
 
         const url = handler.toUrl(pageState);
-        expect(url).toBe('/testPath/compare-side-by-side?columns=1&');
+        expect(url).toBe('/covid/compare-side-by-side?columns=1&');
     });
 
     it('should convert variant filter to Lapis filter', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {
                 dateFilters: { date: mockDateRangeOption },
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 textFilters: {
                     someTextField: 'SomeText',
                 },
@@ -235,7 +242,8 @@ describe('CompareSideBySideStateHandler', () => {
         const lapisFilter = handler.variantFilterToLapisFilter(
             {
                 dateFilters: { date: mockDateRangeOption },
-                location: { country: 'US' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
                 textFilters: {
                     someTextField: 'SomeText',
                 },

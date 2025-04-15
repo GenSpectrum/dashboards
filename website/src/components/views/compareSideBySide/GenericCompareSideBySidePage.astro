@@ -61,10 +61,6 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     </a>
                                 )}
                                 <CompareSideBySidePageStateSelector
-                                    locationFilterConfig={{
-                                        locationFields: view.organismConstants.locationFields,
-                                        placeholderText: 'Sampling location',
-                                    }}
                                     filterId={id}
                                     initialPageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}

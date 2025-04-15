@@ -20,8 +20,8 @@ import {
 import {
     GENPSECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getGenspectrumLoculusFilters,
     getGenSpectrumLoculusAggregatedVisualizations,
+    getGenspectrumLoculusFilters,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -30,7 +30,7 @@ import {
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOption.ts';
@@ -135,7 +135,7 @@ class H5n1Constants implements OrganismConstants {
 }
 
 const defaultDatasetFilter: DatasetFilter = {
-    location: {},
+    locationFilters: {},
     textFilters: {},
     dateFilters: {
         [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
@@ -166,11 +166,7 @@ export class H5n1CompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new CompareSideBySideStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareSideBySideStateHandler(constants, defaultPageState),
             compareSideBySideViewConstants,
         );
     }

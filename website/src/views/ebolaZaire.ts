@@ -18,8 +18,8 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    getPathoplexusSequencingEffortsAggregatedVisualizations,
     getPathoplexusFilters,
+    getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
     type OrganismConstants,
@@ -29,7 +29,7 @@ import {
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
@@ -88,7 +88,7 @@ class EbolaZaireConstants implements OrganismConstants {
 }
 
 const defaultDatasetFilter: DatasetFilter = {
-    location: {},
+    locationFilters: {},
     textFilters: {},
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
@@ -112,11 +112,7 @@ export class EbolaZaireCompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new CompareSideBySideStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareSideBySideStateHandler(constants, defaultPageState),
             compareSideBySideViewConstants,
         );
     }

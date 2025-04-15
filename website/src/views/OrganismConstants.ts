@@ -211,6 +211,12 @@ export function getPathoplexusFilters({
 }): BaselineFilterConfig[] {
     return [
         {
+            type: 'location',
+            locationFields: PATHOPLEXUS_LOCATION_FIELDS,
+            label: 'Sampling location',
+            placeholderText: 'Sampling location',
+        },
+        {
             type: 'date',
             dateRangeOptions,
             earliestDate,
@@ -255,6 +261,12 @@ export function getGenspectrumLoculusFilters({
     earliestDate: string;
 }): BaselineFilterConfig[] {
     return [
+        {
+            type: 'location',
+            locationFields: GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+            placeholderText: 'Sampling location',
+            label: 'Sampling location',
+        },
         {
             type: 'date',
             dateRangeOptions,

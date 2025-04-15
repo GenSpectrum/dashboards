@@ -1,11 +1,6 @@
 import { dateRangeOptionPresets, type MutationAnnotation, views } from '@genspectrum/dashboard-components/util';
 
-import {
-    getIntegerFromSearch,
-    getLapisVariantQuery,
-    setSearchFromLapisVariantQuery,
-    setSearchFromLocation,
-} from './helpers.ts';
+import { getIntegerFromSearch, getLapisVariantQuery, setSearchFromLapisVariantQuery } from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -33,10 +28,11 @@ import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBy
 import {
     type PageStateHandler,
     setSearchFromDateFilters,
+    setSearchFromLocationFilters,
     setSearchFromTextFilters,
 } from './pageStateHandlers/PageStateHandler.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
-import { organismConfig, Organisms } from '../types/Organism.ts';
+import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
@@ -47,6 +43,7 @@ const earliestDate = '2020-01-06';
 const hostField = 'host';
 
 const mainDateFilterColumn = 'date';
+const mainLocationFields = ['region', 'country', 'division'];
 
 const NEXTCLADE_PANGO_LINEAGE_FIELD_NAME = 'nextcladePangoLineage';
 const NEXTSTRAIN_CLADE_FIELD_NAME = 'nextstrainClade';
@@ -69,7 +66,7 @@ class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields = ['region', 'country', 'division'];
+    public readonly locationFields = mainLocationFields;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: NEXTCLADE_PANGO_LINEAGE_FIELD_NAME,
@@ -79,6 +76,12 @@ class CovidConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
+        {
+            type: 'location',
+            locationFields: mainLocationFields,
+            placeholderText: 'Sampling location',
+            label: 'Sampling location',
+        },
         {
             type: 'date',
             dateRangeOptions,
@@ -106,22 +109,10 @@ class CovidConstants implements OrganismConstants {
             label: 'Date submitted',
         },
         {
-            lapisField: 'regionExposure',
-            placeholderText: 'Region exposure',
-            type: 'text' as const,
-            label: 'Region exposure',
-        },
-        {
-            lapisField: 'countryExposure',
-            placeholderText: 'Country exposure',
-            type: 'text' as const,
-            label: 'Country exposure',
-        },
-        {
-            lapisField: 'divisionExposure',
-            placeholderText: 'Division exposure',
-            type: 'text' as const,
-            label: 'Division exposure',
+            type: 'location',
+            locationFields: ['regionExposure', 'countryExposure', 'divisionExposure'],
+            placeholderText: 'Exposure location',
+            label: 'Exposure location',
         },
     ];
     public readonly hostField: string = hostField;
@@ -172,7 +163,7 @@ class CovidConstants implements OrganismConstants {
 }
 
 const defaultDatasetFilter: DatasetFilter = {
-    location: {},
+    locationFilters: {},
     textFilters: {},
     dateFilters: {
         [mainDateFilterColumn]: dateRangeOptionPresets.lastYear,
@@ -190,11 +181,7 @@ export class CovidAnalyzeSingleVariantView extends BaseView<
         const constants = new CovidConstants(organismsConfig);
         super(
             constants,
-            new CovidSingleVariantStateHandler(
-                constants,
-                makeDatasetAndVariantData(defaultDatasetFilter),
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CovidSingleVariantStateHandler(constants, makeDatasetAndVariantData(defaultDatasetFilter)),
             singleVariantViewConstants,
         );
     }
@@ -207,9 +194,8 @@ class CovidSingleVariantStateHandler
     constructor(
         protected readonly constants: CovidConstants,
         defaultPageState: CovidVariantData,
-        pathname: string,
     ) {
-        super(constants, defaultPageState, pathname);
+        super(constants, defaultPageState);
     }
 
     public override parsePageStateFromUrl(url: URL): CovidVariantData {
@@ -224,7 +210,7 @@ class CovidSingleVariantStateHandler
 
     public override toUrl(pageState: CovidVariantData): string {
         const search = new URLSearchParams();
-        setSearchFromLocation(search, pageState.datasetFilter.location);
+        setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
 
@@ -262,11 +248,7 @@ export class CovidCompareSideBySideView extends BaseView<
 
         super(
             constants,
-            new CompareSideBySideStateHandler(
-                constants,
-                defaultPageState,
-                organismConfig[constants.organism].pathFragment,
-            ),
+            new CompareSideBySideStateHandler(constants, defaultPageState),
             compareSideBySideViewConstants,
         );
     }
