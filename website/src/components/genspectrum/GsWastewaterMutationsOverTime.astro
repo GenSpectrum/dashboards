@@ -7,12 +7,14 @@ interface Props {
     title: string;
     lapisFilter: LapisFilter;
     sequenceType: SequenceType;
+    collapsible?: boolean;
+    linkSuffix?: string;
 }
 
-const { title, lapisFilter, sequenceType } = Astro.props;
+const { title, lapisFilter, sequenceType, collapsible = false, linkSuffix } = Astro.props;
 ---
 
-<ComponentWrapper title={title}>
+<ComponentWrapper title={title} collapsible={collapsible} linkSuffix={linkSuffix}>
     <gs-wastewater-mutations-over-time
         lapisFilter={JSON.stringify(lapisFilter)}
         sequenceType={sequenceType}
