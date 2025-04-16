@@ -21,11 +21,11 @@ const { title, height, linkSuffix, collapsible } = Astro.props;
             </div>
         </details>
     ) : (
-        <>
+        <div>
             <ComponentHeadline title={title} linkSuffix={linkSuffix} collapsible={collapsible} />
             <div style={{ height }}>
                 <slot />
             </div>
-        </>
+        </div>
     )
 }
