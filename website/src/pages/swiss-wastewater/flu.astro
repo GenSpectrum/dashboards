@@ -35,26 +35,26 @@ const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
             return (
                 <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(mutationAnnotations)}>
                     <div class='m-4 flex flex-col gap-4'>
-                        <>
-                            <h2 class='text-2xl'>{reference}</h2>
-                            {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
-                                <GsWastewaterMutationsOverTime
-                                    title={`${sequenceType} mutations`}
-                                    lapisFilter={{
-                                        reference,
-                                        versionStatus: 'LATEST_VERSION',
-                                        isRevocation: false,
-                                    }}
+                        <h2 class='text-2xl'>{reference}</h2>
+                        {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                            <GsWastewaterMutationsOverTime
+                                title={`${sequenceType} mutations`}
+                                lapisFilter={{
+                                    reference,
+                                    versionStatus: 'LATEST_VERSION',
+                                    isRevocation: false,
+                                }}
+                                sequenceType={sequenceType}
+                                collapsible={sequenceType === 'nucleotide'}
+                                linkSuffix={reference}
+                            >
+                                <InfluenzaWastewaterInfo
+                                    slot='infoText'
+                                    reference={reference}
                                     sequenceType={sequenceType}
-                                >
-                                    <InfluenzaWastewaterInfo
-                                        slot='infoText'
-                                        reference={reference}
-                                        sequenceType={sequenceType}
-                                    />
-                                </GsWastewaterMutationsOverTime>
-                            ))}
-                        </>
+                                />
+                            </GsWastewaterMutationsOverTime>
+                        ))}
                     </div>
                 </gs-app>
             );

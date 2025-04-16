@@ -3,14 +3,29 @@ import ComponentHeadline from './ComponentHeadline.astro';
 interface Props {
     title: string;
     height?: string;
+    collapsible?: boolean;
+    linkSuffix?: string;
 }
 
-const { title, height } = Astro.props;
+const { title, height, linkSuffix, collapsible } = Astro.props;
 ---
 
-<div>
-    <ComponentHeadline title={title} />
-    <div style={{ height }}>
-        <slot />
-    </div>
-</div>
+{
+    collapsible ? (
+        <details>
+            <summary class='cursor-pointer font-bold'>
+                <ComponentHeadline title={title} linkSuffix={linkSuffix} collapsible={collapsible} />
+            </summary>
+            <div style={{ height }}>
+                <slot />
+            </div>
+        </details>
+    ) : (
+        <div>
+            <ComponentHeadline title={title} linkSuffix={linkSuffix} collapsible={collapsible} />
+            <div style={{ height }}>
+                <slot />
+            </div>
+        </div>
+    )
+}
