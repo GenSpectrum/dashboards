@@ -78,9 +78,7 @@ export function getLapisUrl(organism: Organism): string {
 let backendHost: string | null = null;
 
 export function getBackendHost(): string {
-    if (backendHost === null) {
-        backendHost = processEnvOrMetaEnv('BACKEND_URL', z.string().min(1));
-    }
+    backendHost = backendHost ?? processEnvOrMetaEnv('BACKEND_URL', z.string().min(1));
     return backendHost;
 }
 
