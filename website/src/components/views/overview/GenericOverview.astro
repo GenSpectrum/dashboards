@@ -5,40 +5,54 @@ import { getGenomeDataSections, type GenomeData } from '../../../layouts/base/he
 import { getPathogenMegaMenuSections } from '../../../layouts/base/header/getPathogenMegaMenuSections';
 import { PageHeadline } from '../../../styles/containers/PageHeadline';
 import { paths } from '../../../types/Organism';
+import ComponentWrapper from '../../ComponentWrapper.astro';
 import { iconMapping } from '../../iconCss';
 
 type Props = {
     organism: keyof ReturnType<typeof getPathogenMegaMenuSections>;
+    lengthScaleFactor?: number;
 };
 
-const { organism } = Astro.props;
+const { organism, lengthScaleFactor } = Astro.props;
 
 const section = getPathogenMegaMenuSections()[organism];
+const lengthFactor = lengthScaleFactor ?? 1;
 
 const breadcrumbs = [...defaultBreadcrumbs, ...paths[organism].breadcrumbs];
 const genome: GenomeData[] = getGenomeDataSections()[organism];
+const maxLength = Math.max(...genome.map((gene) => gene.genomeLength));
 ---
 
 <ContaineredPageLayout title={section.headline} breadcrumbs={breadcrumbs}>
     <PageHeadline>{section.headline}</PageHeadline>
-    <div>
-        {
-            genome.map((section) => {
-                return (
-                    <gs-genome-data-viewer
-                        gff3Source={section.url}
-                        genomeLength={section.genomeLength}
-                        width='100%'
-                        height='100%'
+    <ComponentWrapper title='Genome Data Viewer'>
+        <div class='flex flex-wrap gap-4'>
+            {
+                genome.map((gene) => (
+                    <div
+                        class='flex flex-col'
+                        style={{
+                            width: (gene.genomeLength / maxLength / lengthFactor) * 100 + '%',
+                            height: '100%',
+                        }}
                     >
-                        <span slot='infoText'>
-                            <slot name='infoText' />
-                        </span>
-                    </gs-genome-data-viewer>
-                );
-            })
-        }
-    </div>
+                        <h2 class='mt-3 text-justify text-base'>{gene.name}</h2>
+                        <gs-genome-data-viewer
+                            gff3Source={gene.url}
+                            genomeLength={gene.genomeLength}
+                            width='100%'
+                            height='100%'
+                        >
+                            <span slot='infoText'>
+                                <slot name='infoText' />
+                            </span>
+                        </gs-genome-data-viewer>
+                    </div>
+                ))
+            }
+        </div>
+    </ComponentWrapper>
+
     <slot name='pre-navigation' />
     <div class='group flex flex-wrap justify-center gap-2'>
         {

@@ -3,6 +3,7 @@ import { type Organism, organismConfig } from '../../../types/Organism.ts';
 export type GenomeData = {
     url: string;
     genomeLength: number;
+    name?: string;
 };
 
 type GenomeDataSections = {
@@ -15,6 +16,7 @@ export function getGenomeDataSections(): GenomeDataSections {
             return {
                 url: genome.gff3Source,
                 genomeLength: genome.genomeLength,
+                name: 'name' in genome ? genome.name : undefined,
             };
         });
         acc[config.organism] = genomeMap;
