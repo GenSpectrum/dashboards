@@ -10,22 +10,48 @@ import { iconMapping } from '../../iconCss';
 
 type Props = {
     organism: keyof ReturnType<typeof getPathogenMegaMenuSections>;
+    addGenomeDataViewer?: boolean;
     lengthScaleFactor?: number;
 };
 
-const { organism, lengthScaleFactor } = Astro.props;
+const { organism, addGenomeDataViewer = true, lengthScaleFactor } = Astro.props;
 
 const section = getPathogenMegaMenuSections()[organism];
 const lengthFactor = lengthScaleFactor ?? 1;
 
 const breadcrumbs = [...defaultBreadcrumbs, ...paths[organism].breadcrumbs];
 const genome: GenomeData[] = getGenomeDataSections()[organism];
-const maxLength = Math.max(...genome.map((gene) => gene.genomeLength));
+const maxLength = addGenomeDataViewer? Math.max(...genome.map((gene) => gene.genomeLength)): 1;
 ---
 
 <ContaineredPageLayout title={section.headline} breadcrumbs={breadcrumbs}>
     <PageHeadline>{section.headline}</PageHeadline>
-    <ComponentWrapper title='Genome Data Viewer'>
+
+    <slot name='pre-navigation' />
+    <div class='group flex flex-wrap justify-center gap-2'>
+        {
+            section.navigationEntries.map((entry) => {
+                return (
+                    <div class={`card card-border w-96 shadow ${section.borderEntryDecoration}`}>
+                        <a href={entry.href} class='card-body h-full'>
+                            <div class='card-title'>
+                                <h2 class={`iconify ${iconMapping[entry.iconType]}`} />
+                                <div>{entry.label}</div>
+                            </div>
+                            <p>{entry.description}</p>
+                            <div class='card-actions justify-end'>
+                                <span class={`btn btn-soft ${section.headlineBackgroundColor}`}>
+                                    Go to {entry.label}
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                );
+            })
+        }
+    </div>
+    <div class='mt-8'>
+    {addGenomeDataViewer && <ComponentWrapper title='Genome Data Viewer'>
         <div class='flex flex-wrap gap-4'>
             {
                 genome.map((gene) => (
@@ -51,30 +77,7 @@ const maxLength = Math.max(...genome.map((gene) => gene.genomeLength));
                 ))
             }
         </div>
-    </ComponentWrapper>
-
-    <slot name='pre-navigation' />
-    <div class='group flex flex-wrap justify-center gap-2'>
-        {
-            section.navigationEntries.map((entry) => {
-                return (
-                    <div class={`card card-border w-96 shadow ${section.borderEntryDecoration}`}>
-                        <a href={entry.href} class='card-body h-full'>
-                            <div class='card-title'>
-                                <h2 class={`iconify ${iconMapping[entry.iconType]}`} />
-                                <div>{entry.label}</div>
-                            </div>
-                            <p>{entry.description}</p>
-                            <div class='card-actions justify-end'>
-                                <span class={`btn btn-soft ${section.headlineBackgroundColor}`}>
-                                    Go to {entry.label}
-                                </span>
-                            </div>
-                        </a>
-                    </div>
-                );
-            })
-        }
+    </ComponentWrapper>}
     </div>
     <slot name='post-navigation' />
 </ContaineredPageLayout>
