@@ -1,7 +1,7 @@
 import { type Organism, organismConfig } from '../../../types/Organism.ts';
 
 export type GenomeData = {
-    url: string;
+    gff3Source: string;
     genomeLength: number;
     name?: string;
 };
@@ -12,9 +12,13 @@ type GenomeDataSections = {
 
 export function getGenomeDataSections(): GenomeDataSections {
     const sections = Object.values(organismConfig).reduce((acc, config) => {
+        if (!('genome' in config)) {
+            acc[config.organism] = [];
+            return acc;
+        }
         const genomeMap: GenomeData[] = config.genome.map((genome) => {
             return {
-                url: genome.gff3Source,
+                gff3Source: genome.gff3Source,
                 genomeLength: genome.genomeLength,
                 name: 'name' in genome ? genome.name : undefined,
             };

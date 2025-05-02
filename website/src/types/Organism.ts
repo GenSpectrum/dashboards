@@ -31,8 +31,8 @@ export const organismConfig = {
         genome: [
             {
                 gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/sars-cov-2/BA.2/genome_annotation.gff3',
-                genomeLength: 29903, // check this
+                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/sars-cov-2/wuhan-hu-1/orfs/genome_annotation.gff3',
+                genomeLength: 29903,
             },
         ],
     },
@@ -44,7 +44,6 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
-        genome: [],
     },
     [Organisms.h5n1]: {
         organism: Organisms.h5n1,
@@ -231,7 +230,6 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
         borderEntryDecoration: 'hover:border-indigo',
-        genome: [],
     },
     [Organisms.victoria]: {
         organism: Organisms.victoria,
