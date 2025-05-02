@@ -55,6 +55,7 @@ const mockDefaultPageState: CompareVariantsData = {
         locationFilters: {},
         dateFilters: { date: mockDateRangeOption },
         textFilters: {},
+        numberFilters: {},
     },
 };
 
@@ -126,6 +127,7 @@ describe('CompareVariantsPageStateHandler', () => {
                 locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
+                numberFilters: {},
             },
         };
         const url = handler.toUrl(pageState);
@@ -163,6 +165,7 @@ describe('CompareVariantsPageStateHandler', () => {
                 locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
+                numberFilters: {},
             },
         };
         const url = handler.toUrl(pageState);
@@ -184,6 +187,7 @@ describe('CompareVariantsPageStateHandler', () => {
                 locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
+                numberFilters: {},
             },
         };
 

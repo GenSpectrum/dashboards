@@ -10,10 +10,12 @@ import {
     type PageStateHandler,
     parseDateRangesFromUrl,
     parseLocationFiltersFromUrl,
+    parseNumberRangeFilterFromUrl,
     parseTextFiltersFromUrl,
     searchParamsFromFilterMap,
     setSearchFromDateFilters,
     setSearchFromLocationFilters,
+    setSearchFromNumberRangeFilters,
     setSearchFromTextFilters,
     toDisplayName,
     toLapisFilterFromVariant,
@@ -50,6 +52,7 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
                 locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
+                numberFilters: parseNumberRangeFilterFromUrl(search, this.constants.baselineFilterConfigs),
             },
             variants,
         };
@@ -63,6 +66,7 @@ export class CompareVariantsPageStateHandler implements PageStateHandler<Compare
         setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromNumberRangeFilters(search, pageState, this.constants.baselineFilterConfigs);
 
         return formatUrl(this.pathname, search);
     }

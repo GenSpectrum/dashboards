@@ -7,9 +7,11 @@ import {
     type PageStateHandler,
     parseDateRangesFromUrl,
     parseLocationFiltersFromUrl,
+    parseNumberRangeFilterFromUrl,
     parseTextFiltersFromUrl,
     setSearchFromDateFilters,
     setSearchFromLocationFilters,
+    setSearchFromNumberRangeFilters,
     setSearchFromTextFilters,
     toLapisFilterFromVariant,
     toLapisFilterWithoutVariant,
@@ -36,6 +38,7 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
                 locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
+                numberFilters: parseNumberRangeFilterFromUrl(search, this.constants.baselineFilterConfigs),
             },
             variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
         };
@@ -46,6 +49,7 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
         setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromNumberRangeFilters(search, pageState, this.constants.baselineFilterConfigs);
 
         setSearchFromLapisVariantQuery(
             search,

@@ -58,6 +58,7 @@ const mockDefaultPageState: CompareSideBySideData = {
                     locationFilters: {},
                     dateFilters: {},
                     textFilters: {},
+                    numberFilters: {},
                 },
                 variantFilter: {
                     lineages: {},
@@ -74,6 +75,7 @@ const mockDefaultPageState: CompareSideBySideData = {
                         date: mockDateRangeOption,
                     },
                     textFilters: {},
+                    numberFilters: {},
                 },
                 variantFilter: {
                     lineages: { lineage: 'B.1.1.7' },
@@ -112,6 +114,7 @@ describe('CompareSideBySideStateHandler', () => {
                 locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
+                numberFilters: {},
             },
             variantFilter: {
                 lineages: {},
@@ -126,6 +129,7 @@ describe('CompareSideBySideStateHandler', () => {
                 },
                 textFilters: {},
                 locationFilters: {},
+                numberFilters: {},
             },
             variantFilter: {
                 lineages: {
@@ -140,6 +144,7 @@ describe('CompareSideBySideStateHandler', () => {
                 dateFilters: {},
                 locationFilters: {},
                 textFilters: {},
+                numberFilters: {},
             },
             variantFilter: {
                 variantQuery: 'C234G',
@@ -157,6 +162,7 @@ describe('CompareSideBySideStateHandler', () => {
                             locationFilters: {},
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
+                            numberFilters: {},
                         },
                         variantFilter: {
                             lineages: { lineage: 'B.1.1.7' },
@@ -171,6 +177,7 @@ describe('CompareSideBySideStateHandler', () => {
                             locationFilters: {},
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
+                            numberFilters: {},
                         },
                         variantFilter: {
                             lineages: { lineage: 'B.1.1.7' },
@@ -202,6 +209,7 @@ describe('CompareSideBySideStateHandler', () => {
                             locationFilters: {},
                             dateFilters: { date: null },
                             textFilters: {},
+                            numberFilters: {},
                         },
                         variantFilter: {},
                     },
@@ -222,6 +230,7 @@ describe('CompareSideBySideStateHandler', () => {
                 textFilters: {
                     someTextField: 'SomeText',
                 },
+                numberFilters: {},
             },
             {
                 lineages: { lineage: 'B.1.1.7' },
@@ -247,6 +256,7 @@ describe('CompareSideBySideStateHandler', () => {
                 textFilters: {
                     someTextField: 'SomeText',
                 },
+                numberFilters: {},
             },
             {
                 lineages: { lineage: 'B.1.1.7' },

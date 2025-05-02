@@ -101,6 +101,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export class H3n2AnalyzeSingleVariantView extends GenericSingleVariantView<H3n2Constants> {

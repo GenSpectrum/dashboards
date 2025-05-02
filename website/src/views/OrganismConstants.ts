@@ -251,6 +251,15 @@ export function getPathoplexusFilters({
     ];
 }
 
+export const COMPLETENESS_FILTER = {
+    lapisField: 'completeness',
+    type: 'number' as const,
+    label: 'Completeness',
+    sliderMin: 0,
+    sliderMax: 1,
+    sliderStep: 0.01,
+};
+
 export const GENPSECTRUM_LOCULUS_HOST_FIELD = 'hostNameScientific';
 
 export function getGenspectrumLoculusFilters({

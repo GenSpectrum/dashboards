@@ -56,6 +56,7 @@ const mockDefaultPageState: DatasetAndVariantData = {
             date: mockDateRangeOption,
         },
         textFilters: {},
+        numberFilters: {},
     },
     variantFilter: {
         lineages: {},
@@ -105,6 +106,7 @@ describe('SingleVariantPageStateHandler', () => {
                 locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
+                numberFilters: {},
             },
         };
         const url = handler.toUrl(pageState);
@@ -124,6 +126,7 @@ describe('SingleVariantPageStateHandler', () => {
                 locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
+                numberFilters: {},
             },
         };
         const url = handler.toUrl(pageState);

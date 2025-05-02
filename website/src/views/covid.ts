@@ -168,6 +168,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [mainDateFilterColumn]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export type CovidVariantData = DatasetAndVariantData & { collectionId?: number };
