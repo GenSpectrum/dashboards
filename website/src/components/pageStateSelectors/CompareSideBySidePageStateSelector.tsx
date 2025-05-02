@@ -34,6 +34,7 @@ export function CompareSideBySidePageStateSelector({
                 locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
+                numberFilters: {},
             },
             variantFilter: {},
         };

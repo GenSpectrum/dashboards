@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './PageStateHandler.ts';
+import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
 import type { BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector.tsx';
 import type { Dataset } from '../View.ts';
 
@@ -65,6 +65,7 @@ describe('setSearchFromLocationFilters', () => {
                 },
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
         } satisfies Dataset;
 
@@ -96,6 +97,7 @@ describe('setSearchFromLocationFilters', () => {
                 },
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
         } satisfies Dataset;
 
@@ -134,6 +136,7 @@ describe('setSearchFromLocationFilters', () => {
                 },
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
         } satisfies Dataset;
 
@@ -156,5 +159,43 @@ describe('setSearchFromLocationFilters', () => {
 
         expect(search.get('country')).toEqual('someCountry');
         expect(search.keys().toArray().length).toEqual(1);
+    });
+
+    it('should get input after a round trip over the url params', () => {
+        const search = new URLSearchParams();
+
+        const pageState = {
+            datasetFilter: {
+                locationFilters: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    'country,region': { country: 'someCountry' },
+                },
+                textFilters: {},
+                dateFilters: {},
+                numberFilters: {},
+            },
+        } satisfies Dataset;
+
+        const configs = [
+            {
+                type: 'location',
+                placeholderText: 'Some location',
+                label: 'Some location',
+                locationFields: ['country', 'region'],
+            },
+            {
+                type: 'location',
+                placeholderText: 'Some other location',
+                label: 'Some other location',
+                locationFields: ['someOtherCountry', 'someOtherRegion'],
+            },
+        ] satisfies BaselineFilterConfig[];
+
+        setSearchFromLocationFilters(search, pageState, configs);
+
+        const result = parseLocationFiltersFromUrl(search, configs);
+
+        expect(result['country,region']).toEqual({ country: 'someCountry' });
+        expect(result['someOtherCountry,someOtherRegion']).toEqual(undefined);
     });
 });

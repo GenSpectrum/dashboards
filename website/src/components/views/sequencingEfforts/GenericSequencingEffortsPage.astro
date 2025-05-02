@@ -4,7 +4,7 @@ import { getDashboardsConfig, getLapisUrl } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { getLocationDisplayConfig } from '../../../views/locationHelpers';
-import { locationFieldsToFilterIdentifier } from '../../../views/pageStateHandlers/PageStateHandler';
+import { locationFieldsToFilterIdentifier } from '../../../views/pageStateHandlers/locationFilterFromToUrl';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';

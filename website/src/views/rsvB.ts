@@ -18,7 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    GENPSECTRUM_LOCULUS_HOST_FIELD,
+    GENSPECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenSpectrumLoculusAggregatedVisualizations,
     getGenspectrumLoculusFilters,
@@ -57,7 +57,7 @@ class RsvBConstants implements OrganismConstants {
             earliestDate,
         }),
     ];
-    public readonly hostField: string = GENPSECTRUM_LOCULUS_HOST_FIELD;
+    public readonly hostField: string = GENSPECTRUM_LOCULUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -97,6 +97,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export class RsvBAnalyzeSingleVariantView extends GenericSingleVariantView<RsvBConstants> {

@@ -18,11 +18,12 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    GENPSECTRUM_LOCULUS_HOST_FIELD,
+    GENSPECTRUM_LOCULUS_HOST_FIELD,
     GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenSpectrumLoculusAggregatedVisualizations,
     getGenspectrumLoculusFilters,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
+    INFLUENZA_COMPLETENESS_SUFFIXES,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
     type OrganismConstants,
@@ -62,9 +63,10 @@ class H3n2Constants implements OrganismConstants {
         ...getGenspectrumLoculusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions,
             earliestDate,
+            completenessSuffixes: INFLUENZA_COMPLETENESS_SUFFIXES,
         }),
     ];
-    public readonly hostField: string = GENPSECTRUM_LOCULUS_HOST_FIELD;
+    public readonly hostField: string = GENSPECTRUM_LOCULUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
@@ -101,6 +103,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export class H3n2AnalyzeSingleVariantView extends GenericSingleVariantView<H3n2Constants> {
