@@ -65,6 +65,7 @@ describe('setSearchFromLocationFilters', () => {
                 },
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
         } satisfies Dataset;
 
@@ -96,6 +97,7 @@ describe('setSearchFromLocationFilters', () => {
                 },
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
         } satisfies Dataset;
 
@@ -134,6 +136,7 @@ describe('setSearchFromLocationFilters', () => {
                 },
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
         } satisfies Dataset;
 

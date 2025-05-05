@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, NumberRange } from '@genspectrum/dashboard-components/util';
 
 import type { VariantFilter } from './View.ts';
 import type { MutationFilter } from '../components/genspectrum/GsMutationFilter.tsx';
@@ -41,6 +41,17 @@ export const setSearchFromDateRange = (
         search.set(name, serializedValue);
     }
 };
+
+export function setSearchFromNumberRange(search: URLSearchParams, name: string, numberRange: NumberRange | undefined) {
+    if (numberRange !== undefined) {
+        if (numberRange.min) {
+            search.set(`${name}From`, String(numberRange.min));
+        }
+        if (numberRange.max) {
+            search.set(`${name}To`, String(numberRange.max));
+        }
+    }
+}
 
 export const getStringFromSearch = (
     search: URLSearchParams | Map<string, string>,
@@ -85,6 +96,23 @@ export const getDateRangeFromSearch = (
     }
     return undefined;
 };
+
+export function getNumberRangeFromSearch(
+    search: URLSearchParams | Map<string, string>,
+    name: string,
+): NumberRange | undefined {
+    const minString = search.get(`${name}From`);
+    const maxString = search.get(`${name}To`);
+
+    const min = minString ? Number(minString) : undefined;
+    const max = maxString ? Number(maxString) : undefined;
+
+    if (min || max) {
+        return { min, max };
+    }
+
+    return undefined;
+}
 
 export type LapisLocation = Record<string, string | undefined>;
 

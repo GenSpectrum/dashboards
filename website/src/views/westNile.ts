@@ -18,6 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
+    COMPLETENESS_FILTER,
     getPathoplexusFilters,
     getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
@@ -62,6 +63,7 @@ class WestNileConstants implements OrganismConstants {
             type: 'text' as const,
             label: 'Collection device',
         },
+        COMPLETENESS_FILTER,
     ];
     public readonly useAdvancedQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
@@ -105,6 +107,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<WestNileConstants> {

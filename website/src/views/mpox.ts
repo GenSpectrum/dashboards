@@ -18,6 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
+    COMPLETENESS_FILTER,
     getPathoplexusFilters,
     getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
@@ -79,6 +80,7 @@ class MpoxConstants implements OrganismConstants {
             ],
             earliestDate: '1960-01-01',
         }),
+        COMPLETENESS_FILTER,
     ];
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
@@ -121,6 +123,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export class MpoxAnalyzeSingleVariantView extends GenericSingleVariantView<MpoxConstants> {

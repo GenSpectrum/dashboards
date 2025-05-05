@@ -1,13 +1,15 @@
-import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, LapisFilter, NumberRange } from '@genspectrum/dashboard-components/util';
 
 import type { BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector.tsx';
 import { type Dataset, type Id, type VariantFilter } from '../View.ts';
 import {
     getDateRangeFromSearch,
     getLapisLocationFromSearch,
+    getNumberRangeFromSearch,
     getStringFromSearch,
     type LapisLocation,
     setSearchFromDateRange,
+    setSearchFromNumberRange,
     setSearchFromString,
 } from '../helpers.ts';
 
@@ -66,10 +68,37 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: string | undefined },
     );
 
+    const numberRangeFilters = Object.entries(pageState.datasetFilter.numberFilters).reduce(
+        (acc, [lapisField, numberRange]) => {
+            if (numberRange === undefined) {
+                return acc;
+            }
+
+            const fromValue = numberRange.min
+                ? {
+                      [`${lapisField}From`]: String(numberRange.min),
+                  }
+                : {};
+            const toValue = numberRange.max
+                ? {
+                      [`${lapisField}To`]: String(numberRange.max),
+                  }
+                : {};
+
+            return {
+                ...acc,
+                ...fromValue,
+                ...toValue,
+            };
+        },
+        {} as { [key: string]: string | undefined },
+    );
+
     return {
         ...locationFilters,
         ...dateFilters,
         ...textFilters,
+        ...numberRangeFilters,
         ...additionalFilters,
     };
 }
@@ -123,6 +152,28 @@ export function parseTextFiltersFromUrl(
             },
             {} as {
                 [key: string]: string | undefined;
+            },
+        ) ?? {}
+    );
+}
+
+export function parseNumberRangeFilterFromUrl(
+    search: URLSearchParams | Map<string, string>,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const numberRangeFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'number');
+
+    return (
+        numberRangeFilterConfigs?.reduce(
+            (acc, config) => {
+                const numberRange = getNumberRangeFromSearch(search, config.lapisField);
+                return {
+                    ...acc,
+                    [config.lapisField]: numberRange,
+                };
+            },
+            {} as {
+                [key: string]: NumberRange | undefined;
             },
         ) ?? {}
     );
@@ -201,6 +252,19 @@ export function setSearchFromLocationFilters(
 
             setSearchFromString(search, locationField, value);
         });
+    });
+}
+
+export function setSearchFromNumberRangeFilters(
+    search: URLSearchParams,
+    pageState: Dataset,
+    baselineFilterConfigs: BaselineFilterConfig[] | undefined,
+) {
+    const numberRangeFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'number');
+
+    numberRangeFilterConfigs?.forEach((config) => {
+        const value = pageState.datasetFilter.numberFilters[config.lapisField];
+        setSearchFromNumberRange(search, config.lapisField, value);
     });
 }
 

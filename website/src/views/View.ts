@@ -1,4 +1,4 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, NumberRange } from '@genspectrum/dashboard-components/util';
 
 import type { OrganismConstants } from './OrganismConstants.ts';
 import { type ViewConstants } from './ViewConstants';
@@ -11,6 +11,7 @@ export type DatasetFilter = {
     locationFilters: LocationFilterState;
     textFilters: TextFilterState;
     dateFilters: DateFilterState;
+    numberFilters: NumberFilterState;
 };
 
 export type LocationFilterState = {
@@ -23,6 +24,10 @@ export type DateFilterState = {
 
 export type TextFilterState = {
     [key: string]: string | undefined;
+};
+
+export type NumberFilterState = {
+    [key: string]: NumberRange | undefined;
 };
 
 export type Dataset = {

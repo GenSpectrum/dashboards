@@ -18,6 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
+    COMPLETENESS_FILTER,
     getPathoplexusFilters,
     getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
@@ -45,6 +46,7 @@ class EbolaZaireConstants implements OrganismConstants {
             dateRangeOptions: defaultDateRangeOptions,
             earliestDate,
         }),
+        COMPLETENESS_FILTER,
     ];
 
     public readonly mainDateField: string;
@@ -93,6 +95,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
     },
+    numberFilters: {},
 };
 
 export class EbolaZaireAnalyzeSingleVariantView extends GenericSingleVariantView<EbolaZaireConstants> {

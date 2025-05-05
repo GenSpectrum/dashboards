@@ -10,10 +10,12 @@ import {
     type PageStateHandler,
     parseDateRangesFromUrl,
     parseLocationFiltersFromUrl,
+    parseNumberRangeFilterFromUrl,
     parseTextFiltersFromUrl,
     searchParamsFromFilterMap,
     setSearchFromDateFilters,
     setSearchFromLocationFilters,
+    setSearchFromNumberRangeFilters,
     setSearchFromTextFilters,
     toDisplayName,
     toLapisFilterFromVariant,
@@ -49,6 +51,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
                 locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
+                numberFilters: parseNumberRangeFilterFromUrl(search, this.constants.baselineFilterConfigs),
             },
             variants,
             baselineFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
@@ -63,6 +66,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
         setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromNumberRangeFilters(search, pageState, this.constants.baselineFilterConfigs);
 
         setSearchFromLapisVariantQuery(
             search,
