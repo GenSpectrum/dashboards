@@ -77,9 +77,7 @@ export function getSequencesByLocationMapData(mapName: string | undefined, curre
         return undefined;
     }
 
-    if (knownMapFiles === null) {
-        knownMapFiles = loadKnownMapFiles();
-    }
+    knownMapFiles = knownMapFiles ?? loadKnownMapFiles();
 
     const mapData = knownMapFiles.get(mapName);
 
