@@ -13,12 +13,12 @@ type Props = {
 const { organism } = Astro.props;
 
 const section = getPathogenMegaMenuSections()[organism];
-
 const breadcrumbs = [...defaultBreadcrumbs, ...paths[organism].breadcrumbs];
 ---
 
 <ContaineredPageLayout title={section.headline} breadcrumbs={breadcrumbs}>
     <PageHeadline>{section.headline}</PageHeadline>
+
     <slot name='pre-navigation' />
     <div class='group flex flex-wrap justify-center gap-2'>
         {

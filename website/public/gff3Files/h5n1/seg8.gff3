@@ -1,0 +1,3 @@
+.	.	CDS	15	707	.	+	.	gene="NS1"
+.	.	CDS	15	44	.	+	.	gene=NS2;ID=cds-NS2
+.	.	CDS	517	852	.	+	.	gene=NS2;ID=cds-NS2
