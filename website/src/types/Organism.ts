@@ -30,8 +30,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-sand',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/sars-cov-2/wuhan-hu-1/orfs/genome_annotation.gff3',
+                gff3Source: '/gff3Files/sars-cov-2.gff3',
                 genomeLength: 29903,
             },
         ],
@@ -55,50 +54,42 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-cyan',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg1/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg1.gff3',
                 genomeLength: 2341,
                 name: 'PB2 (seg1)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg2/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg2.gff3',
                 genomeLength: 2341,
                 name: 'PB1 (seg2)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg3/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg3.gff3',
                 genomeLength: 2233,
                 name: 'PA (seg3)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg4/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg4.gff3',
                 genomeLength: 1760,
                 name: 'HA (seg4)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg5/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg5.gff3',
                 genomeLength: 1565,
                 name: 'NP (seg5)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg6/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg6.gff3',
                 genomeLength: 1458,
                 name: 'NA (seg6)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg7/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg7.gff3',
                 genomeLength: 1027,
                 name: 'MP (seg7)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h5n1/seg8/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h5n1/seg8.gff3',
                 genomeLength: 865,
                 name: 'NS (seg8)',
             },
@@ -114,50 +105,42 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-cyan',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/pb2/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg1.gff3',
                 genomeLength: 2280,
                 name: 'PB2 (seg1)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/pb1/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg2.gff3',
                 genomeLength: 2274,
                 name: 'PB1 (seg2)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/pa/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg3.gff3',
                 genomeLength: 2151,
                 name: 'PA (seg3)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/ha/CY121680/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg4.gff3',
                 genomeLength: 1752,
                 name: 'HA (seg4)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/np/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg5.gff3',
                 genomeLength: 1497,
                 name: 'NP (seg5)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/na/MW626056/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg6.gff3',
                 genomeLength: 1433,
                 name: 'NA (seg6)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/mp/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg7.gff3',
                 genomeLength: 982,
                 name: 'MP (seg7)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h1n1pdm/ns/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h1n1pdm/seg8.gff3',
                 genomeLength: 863,
                 name: 'NS (seg8)',
             },
@@ -173,50 +156,42 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-cyan',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/pb2/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg1.gff3',
                 genomeLength: 2341,
                 name: 'PB2 (seg1)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/pb1/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg2.gff3',
                 genomeLength: 2341,
                 name: 'PB1 (seg2)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/pa/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg3.gff3',
                 genomeLength: 2233,
                 name: 'PA (seg3)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/ha/CY163680/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg4.gff3',
                 genomeLength: 1737,
                 name: 'HA (seg4)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/np/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg5.gff3',
                 genomeLength: 1566,
                 name: 'NP (seg5)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/GenSpectrum/nextclade-datasets/refs/heads/main/data/flu/h3n2/seg6/CY114383/unreleased/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg6.gff3',
                 genomeLength: 1436,
                 name: 'NA (seg6)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/mp/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg7.gff3',
                 genomeLength: 1027,
                 name: 'MP (seg7)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/ns/genome_annotation.gff3',
+                gff3Source: '/gff3Files/h3n2/seg8.gff3',
                 genomeLength: 890,
                 name: 'NS (seg8)',
             },
@@ -241,50 +216,42 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-indigo',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/pb2/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg1.gff3',
                 genomeLength: 2358,
                 name: 'PB2 (seg1)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/pb1/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg2.gff3',
                 genomeLength: 2334,
                 name: 'PB1 (seg2)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/pa/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg3.gff3',
                 genomeLength: 2245,
                 name: 'PA (seg3)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/ha/KX058884/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg4.gff3',
                 genomeLength: 1885,
                 name: 'HA (seg4)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/np/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg5.gff3',
                 genomeLength: 1750,
                 name: 'NP (seg5)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/na/CY073894/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg6.gff3',
                 genomeLength: 1401,
                 name: 'NA (seg6)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/mp/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg7.gff3',
                 genomeLength: 1147,
                 name: 'MP (seg7)',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/ns/genome_annotation.gff3',
+                gff3Source: '/gff3Files/vic/seg8.gff3',
                 genomeLength: 1066,
                 name: 'NS (seg8)',
             },
@@ -300,8 +267,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-green',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/8f2e791d3a59013ee88e1d1d7e83b486d39c4ecb/data/nextstrain/wnv/all-lineages/genome_annotation.gff3',
+                gff3Source: '/gff3Files/west-nile.gff3',
                 genomeLength: 11029,
             },
         ],
@@ -316,8 +282,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-purple',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/rsv/a/EPI_ISL_412866/genome_annotation.gff3',
+                gff3Source: '/gff3Files/rsv-a.gff3',
                 genomeLength: 15225,
             },
         ],
@@ -332,8 +297,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-purple',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/rsv/b/EPI_ISL_1653999/genome_annotation.gff3',
+                gff3Source: '/gff3Files/rsv-b.gff3',
                 genomeLength: 15222,
             },
         ],
@@ -348,8 +312,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-rose',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/mpox/all-clades/genome_annotation.gff3',
+                gff3Source: '/gff3Files/mpox.gff3',
                 genomeLength: 197209,
             },
         ],
@@ -364,8 +327,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-wine',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/ebola/data/nextstrain/ebola/sudan/genome_annotation.gff3',
+                gff3Source: '/gff3Files/ebola-sudan.gff3',
                 genomeLength: 18875,
             },
         ],
@@ -380,8 +342,7 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-wine',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/ebola/data/nextstrain/ebola/zaire/genome_annotation.gff3',
+                gff3Source: '/gff3Files/ebola-zaire.gff3',
                 genomeLength: 18959,
             },
         ],
@@ -396,20 +357,17 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-olive',
         genome: [
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/L/genome_annotation.gff3',
+                gff3Source: '/gff3Files/cchf/L.gff3',
                 genomeLength: 12108,
                 name: 'L',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/M/genome_annotation.gff3',
+                gff3Source: '/gff3Files/cchf/M.gff3',
                 genomeLength: 5366,
                 name: 'M',
             },
             {
-                gff3Source:
-                    'https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/S/genome_annotation.gff3',
+                gff3Source: '/gff3Files/cchf/S.gff3',
                 genomeLength: 1672,
                 name: 'S',
             },

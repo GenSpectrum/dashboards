@@ -12,6 +12,8 @@ const { organism, lengthScaleFactor = 1 } = Astro.props;
 
 const genome: GenomeData[] = getGenomeDataSections()[organism];
 const maxLength = Math.max(...genome.map((gene) => gene.genomeLength));
+
+const currentUrl = Astro.url;
 ---
 
 <ComponentWrapper title='Genome Data Viewer'>
@@ -26,7 +28,7 @@ const maxLength = Math.max(...genome.map((gene) => gene.genomeLength));
                 >
                     <h2 class='mt-3 text-justify text-base'>{gene.name}</h2>
                     <gs-genome-data-viewer
-                        gff3Source={gene.gff3Source}
+                        gff3Source={new URL(gene.gff3Source, currentUrl)}
                         genomeLength={gene.genomeLength}
                         width='100%'
                         height='100%'
