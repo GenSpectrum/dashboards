@@ -216,42 +216,42 @@ export const organismConfig = {
         borderEntryDecoration: 'hover:border-indigo',
         genome: [
             {
-                gff3Source: '/gff3Files/vic/seg1.gff3',
+                gff3Source: '/gff3Files/victoria/seg1.gff3',
                 genomeLength: 2358,
                 name: 'PB2 (seg1)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg2.gff3',
+                gff3Source: '/gff3Files/victoria/seg2.gff3',
                 genomeLength: 2334,
                 name: 'PB1 (seg2)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg3.gff3',
+                gff3Source: '/gff3Files/victoria/seg3.gff3',
                 genomeLength: 2245,
                 name: 'PA (seg3)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg4.gff3',
+                gff3Source: '/gff3Files/victoria/seg4.gff3',
                 genomeLength: 1885,
                 name: 'HA (seg4)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg5.gff3',
+                gff3Source: '/gff3Files/victoria/seg5.gff3',
                 genomeLength: 1750,
                 name: 'NP (seg5)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg6.gff3',
+                gff3Source: '/gff3Files/victoria/seg6.gff3',
                 genomeLength: 1401,
                 name: 'NA (seg6)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg7.gff3',
+                gff3Source: '/gff3Files/victoria/seg7.gff3',
                 genomeLength: 1147,
                 name: 'MP (seg7)',
             },
             {
-                gff3Source: '/gff3Files/vic/seg8.gff3',
+                gff3Source: '/gff3Files/victoria/seg8.gff3',
                 genomeLength: 1066,
                 name: 'NS (seg8)',
             },

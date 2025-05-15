@@ -48,21 +48,21 @@
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/mp/genome_annotation.gff3
 - name: h3n2/seg8
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/h3n2/ns/genome_annotation.gff3
-- name: vic/seg1
+- name: victoria/seg1
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/pb2/genome_annotation.gff3
-- name: vic/seg2
+- name: victoria/seg2
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/pb1/genome_annotation.gff3
-- name: vic/seg3
+- name: victoria/seg3
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/pa/genome_annotation.gff3
-- name: vic/seg4
+- name: victoria/seg4
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/ha/KX058884/genome_annotation.gff3
-- name: vic/seg5
+- name: victoria/seg5
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/np/genome_annotation.gff3
-- name: vic/seg6
+- name: victoria/seg6
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/na/CY073894/genome_annotation.gff3
-- name: vic/seg7
+- name: victoria/seg7
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/mp/genome_annotation.gff3
-- name: vic/seg8
+- name: victoria/seg8
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/flu/vic/ns/genome_annotation.gff3
 - name: west-nile
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/8f2e791d3a59013ee88e1d1d7e83b486d39c4ecb/data/nextstrain/wnv/all-lineages/genome_annotation.gff3
