@@ -28,6 +28,12 @@ export const organismConfig = {
         backgroundColor: 'bg-sandMuted',
         backgroundColorFocus: 'group-hover:bg-sand',
         borderEntryDecoration: 'hover:border-sand',
+        genome: [
+            {
+                gff3Source: '/gff3Files/sars-cov-2.gff3',
+                genomeLength: 29903,
+            },
+        ],
     },
     [Organisms.influenzaA]: {
         organism: Organisms.influenzaA,
@@ -46,6 +52,48 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [
+            {
+                gff3Source: '/gff3Files/h5n1/seg1.gff3',
+                genomeLength: 2341,
+                name: 'PB2 (seg1)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg2.gff3',
+                genomeLength: 2341,
+                name: 'PB1 (seg2)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg3.gff3',
+                genomeLength: 2233,
+                name: 'PA (seg3)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg4.gff3',
+                genomeLength: 1760,
+                name: 'HA (seg4)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg5.gff3',
+                genomeLength: 1565,
+                name: 'NP (seg5)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg6.gff3',
+                genomeLength: 1458,
+                name: 'NA (seg6)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg7.gff3',
+                genomeLength: 1027,
+                name: 'MP (seg7)',
+            },
+            {
+                gff3Source: '/gff3Files/h5n1/seg8.gff3',
+                genomeLength: 865,
+                name: 'NS (seg8)',
+            },
+        ],
     },
     [Organisms.h1n1pdm]: {
         organism: Organisms.h1n1pdm,
@@ -55,6 +103,48 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg1.gff3',
+                genomeLength: 2280,
+                name: 'PB2 (seg1)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg2.gff3',
+                genomeLength: 2274,
+                name: 'PB1 (seg2)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg3.gff3',
+                genomeLength: 2151,
+                name: 'PA (seg3)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg4.gff3',
+                genomeLength: 1752,
+                name: 'HA (seg4)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg5.gff3',
+                genomeLength: 1497,
+                name: 'NP (seg5)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg6.gff3',
+                genomeLength: 1433,
+                name: 'NA (seg6)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg7.gff3',
+                genomeLength: 982,
+                name: 'MP (seg7)',
+            },
+            {
+                gff3Source: '/gff3Files/h1n1pdm/seg8.gff3',
+                genomeLength: 863,
+                name: 'NS (seg8)',
+            },
+        ],
     },
     [Organisms.h3n2]: {
         organism: Organisms.h3n2,
@@ -64,6 +154,48 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        genome: [
+            {
+                gff3Source: '/gff3Files/h3n2/seg1.gff3',
+                genomeLength: 2341,
+                name: 'PB2 (seg1)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg2.gff3',
+                genomeLength: 2341,
+                name: 'PB1 (seg2)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg3.gff3',
+                genomeLength: 2233,
+                name: 'PA (seg3)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg4.gff3',
+                genomeLength: 1737,
+                name: 'HA (seg4)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg5.gff3',
+                genomeLength: 1566,
+                name: 'NP (seg5)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg6.gff3',
+                genomeLength: 1436,
+                name: 'NA (seg6)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg7.gff3',
+                genomeLength: 1027,
+                name: 'MP (seg7)',
+            },
+            {
+                gff3Source: '/gff3Files/h3n2/seg8.gff3',
+                genomeLength: 890,
+                name: 'NS (seg8)',
+            },
+        ],
     },
     [Organisms.influenzaB]: {
         organism: Organisms.influenzaB,
@@ -82,6 +214,48 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
         borderEntryDecoration: 'hover:border-indigo',
+        genome: [
+            {
+                gff3Source: '/gff3Files/victoria/seg1.gff3',
+                genomeLength: 2358,
+                name: 'PB2 (seg1)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg2.gff3',
+                genomeLength: 2334,
+                name: 'PB1 (seg2)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg3.gff3',
+                genomeLength: 2245,
+                name: 'PA (seg3)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg4.gff3',
+                genomeLength: 1885,
+                name: 'HA (seg4)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg5.gff3',
+                genomeLength: 1750,
+                name: 'NP (seg5)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg6.gff3',
+                genomeLength: 1401,
+                name: 'NA (seg6)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg7.gff3',
+                genomeLength: 1147,
+                name: 'MP (seg7)',
+            },
+            {
+                gff3Source: '/gff3Files/victoria/seg8.gff3',
+                genomeLength: 1066,
+                name: 'NS (seg8)',
+            },
+        ],
     },
     [Organisms.westNile]: {
         organism: Organisms.westNile,
@@ -91,6 +265,12 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-green',
         menuListEntryDecoration: 'hover:decoration-green',
         borderEntryDecoration: 'hover:border-green',
+        genome: [
+            {
+                gff3Source: '/gff3Files/west-nile.gff3',
+                genomeLength: 11029,
+            },
+        ],
     },
     [Organisms.rsvA]: {
         organism: Organisms.rsvA,
@@ -100,6 +280,12 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+        genome: [
+            {
+                gff3Source: '/gff3Files/rsv-a.gff3',
+                genomeLength: 15225,
+            },
+        ],
     },
     [Organisms.rsvB]: {
         organism: Organisms.rsvB,
@@ -109,6 +295,12 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+        genome: [
+            {
+                gff3Source: '/gff3Files/rsv-b.gff3',
+                genomeLength: 15222,
+            },
+        ],
     },
     [Organisms.mpox]: {
         organism: Organisms.mpox,
@@ -118,6 +310,12 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-rose',
         menuListEntryDecoration: 'hover:decoration-rose',
         borderEntryDecoration: 'hover:border-rose',
+        genome: [
+            {
+                gff3Source: '/gff3Files/mpox.gff3',
+                genomeLength: 197209,
+            },
+        ],
     },
     [Organisms.ebolaSudan]: {
         organism: Organisms.ebolaSudan,
@@ -127,6 +325,12 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-wine',
         menuListEntryDecoration: 'hover:decoration-wine',
         borderEntryDecoration: 'hover:border-wine',
+        genome: [
+            {
+                gff3Source: '/gff3Files/ebola-sudan.gff3',
+                genomeLength: 18875,
+            },
+        ],
     },
     [Organisms.ebolaZaire]: {
         organism: Organisms.ebolaZaire,
@@ -136,6 +340,12 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-wine',
         menuListEntryDecoration: 'hover:decoration-wine',
         borderEntryDecoration: 'hover:border-wine',
+        genome: [
+            {
+                gff3Source: '/gff3Files/ebola-zaire.gff3',
+                genomeLength: 18959,
+            },
+        ],
     },
     [Organisms.cchf]: {
         organism: Organisms.cchf,
@@ -145,6 +355,23 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-olive',
         menuListEntryDecoration: 'hover:decoration-olive',
         borderEntryDecoration: 'hover:border-olive',
+        genome: [
+            {
+                gff3Source: '/gff3Files/cchf/L.gff3',
+                genomeLength: 12108,
+                name: 'L',
+            },
+            {
+                gff3Source: '/gff3Files/cchf/M.gff3',
+                genomeLength: 5366,
+                name: 'M',
+            },
+            {
+                gff3Source: '/gff3Files/cchf/S.gff3',
+                genomeLength: 1672,
+                name: 'S',
+            },
+        ],
     },
 };
 
