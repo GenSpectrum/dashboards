@@ -14,6 +14,7 @@ import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/r
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
 import ComponentsGrid from '../../ComponentsGrid.astro';
+import LoadingListener from '../../LoadingListener.astro';
 import GsAggregate from '../../genspectrum/GsAggregate.astro';
 import GsMutations from '../../genspectrum/GsMutations.astro';
 import GsMutationsOverTime from '../../genspectrum/GsMutationsOverTime.astro';
@@ -58,6 +59,9 @@ const downloadLinks = noVariantSelected
               downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
           },
       ];
+
+const count =
+    view.organismConstants.aggregatedVisualizations.singleVariant.length + 6 + (subdivisionField !== undefined ? 1 : 0);
 ---
 
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
@@ -71,75 +75,77 @@ const downloadLinks = noVariantSelected
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />
     </SingleVariantPageStateSelector>
 
-    <div class='mx-[8px] flex flex-col gap-y-6' slot='dataDisplay'>
-        {
-            noVariantSelected && (
-                <SelectVariant>
-                    <QuickstartLinks view={view} />
-                </SelectVariant>
-            )
-        }
-        <GsStatistics numeratorFilter={variantLapisFilter} denominatorFilter={datasetLapisFilter} />
-        <ComponentsGrid>
-            <GsPrevalenceOverTime
-                numeratorFilters={[
-                    {
-                        displayName: '',
-                        lapisFilter: variantLapisFilter,
-                    },
-                ]}
-                denominatorFilter={datasetLapisFilter}
-                lapisDateField={view.organismConstants.mainDateField}
-                granularity={timeGranularity}
-                pageSize={10}
-            />
-            <GsMutations
-                lapisFilter={variantLapisFilter}
-                baselineLapisFilter={datasetLapisFilter}
-                sequenceType='nucleotide'
-                pageSize={10}
-            />
-            <GsMutations
-                lapisFilter={variantLapisFilter}
-                baselineLapisFilter={datasetLapisFilter}
-                sequenceType='amino acid'
-                pageSize={10}
-            />
+    <LoadingListener count={count} slot='dataDisplay'>
+        <div class='mx-[8px] flex flex-col gap-y-6'>
             {
-                subdivisionField !== undefined && (
-                    <GsAggregate
-                        title={subdivisionLabel}
-                        fields={[subdivisionField]}
-                        lapisFilter={variantLapisFilter}
-                        views={[views.table, views.bar]}
-                        pageSize={10}
-                    />
+                noVariantSelected && (
+                    <SelectVariant>
+                        <QuickstartLinks view={view} />
+                    </SelectVariant>
                 )
             }
+            <GsStatistics numeratorFilter={variantLapisFilter} denominatorFilter={datasetLapisFilter} />
+            <ComponentsGrid>
+                <GsPrevalenceOverTime
+                    numeratorFilters={[
+                        {
+                            displayName: '',
+                            lapisFilter: variantLapisFilter,
+                        },
+                    ]}
+                    denominatorFilter={datasetLapisFilter}
+                    lapisDateField={view.organismConstants.mainDateField}
+                    granularity={timeGranularity}
+                    pageSize={10}
+                />
+                <GsMutations
+                    lapisFilter={variantLapisFilter}
+                    baselineLapisFilter={datasetLapisFilter}
+                    sequenceType='nucleotide'
+                    pageSize={10}
+                />
+                <GsMutations
+                    lapisFilter={variantLapisFilter}
+                    baselineLapisFilter={datasetLapisFilter}
+                    sequenceType='amino acid'
+                    pageSize={10}
+                />
+                {
+                    subdivisionField !== undefined && (
+                        <GsAggregate
+                            title={subdivisionLabel}
+                            fields={[subdivisionField]}
+                            lapisFilter={variantLapisFilter}
+                            views={[views.table, views.bar]}
+                            pageSize={10}
+                        />
+                    )
+                }
 
-            {
-                view.organismConstants.aggregatedVisualizations.singleVariant.map(({ label, fields, views }) => (
-                    <GsAggregate
-                        title={label}
-                        fields={fields}
-                        lapisFilter={variantLapisFilter}
-                        views={views}
-                        pageSize={10}
-                    />
-                ))
-            }
-        </ComponentsGrid>
-        <GsMutationsOverTime
-            lapisFilter={variantLapisFilter}
-            sequenceType='nucleotide'
-            granularity={timeGranularity}
-            lapisDateField={view.organismConstants.mainDateField}
-        />
-        <GsMutationsOverTime
-            lapisFilter={variantLapisFilter}
-            sequenceType='amino acid'
-            granularity={timeGranularity}
-            lapisDateField={view.organismConstants.mainDateField}
-        />
-    </div>
+                {
+                    view.organismConstants.aggregatedVisualizations.singleVariant.map(({ label, fields, views }) => (
+                        <GsAggregate
+                            title={label}
+                            fields={fields}
+                            lapisFilter={variantLapisFilter}
+                            views={views}
+                            pageSize={10}
+                        />
+                    ))
+                }
+            </ComponentsGrid>
+            <GsMutationsOverTime
+                lapisFilter={variantLapisFilter}
+                sequenceType='nucleotide'
+                granularity={timeGranularity}
+                lapisDateField={view.organismConstants.mainDateField}
+            />
+            <GsMutationsOverTime
+                lapisFilter={variantLapisFilter}
+                sequenceType='amino acid'
+                granularity={timeGranularity}
+                lapisDateField={view.organismConstants.mainDateField}
+            />
+        </div>
+    </LoadingListener>
 </SingleVariantOrganismPageLayout>

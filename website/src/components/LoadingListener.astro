@@ -1,0 +1,62 @@
+---
+interface Props {
+    count: number;
+}
+
+const { count } = Astro.props;
+---
+
+<div id='loading-listener'>
+    <div class='loading-element'>
+        <div class='flex flex-col gap-2'>
+            <div>Loading data</div>
+            <progress class='progress progress-primary w-56' value='0' max={count}></progress>
+        </div>
+    </div>
+    <div class='loading-content hidden'>
+        <slot />
+    </div>
+</div>
+
+<script define:vars={{ count }} is:inline>
+    let received = 0;
+    const element = document.getElementById('loading-listener');
+    element?.scrollIntoView({ behavior: 'smooth' }); // prevent default scrolling to the wrong position of the anker
+    const loadingElement = element.querySelector('.loading-element');
+    const loadingContent = element.querySelector('.loading-content');
+    const progressBar = element.querySelector('.progress');
+
+    function handleFinishedLoading() {
+        received++;
+        progressBar.value = received;
+
+        setTimeout(() => {
+            // Also show finished loading
+            if (received === count) {
+                const hash = window.location.hash.substring(1);
+
+                if (hash) {
+                    const target = document.getElementById(hash);
+
+                    loadingElement.classList.add('hidden');
+                    loadingContent.classList.remove('hidden');
+                    setTimeout(() => {
+                        // wait for rendering
+                        target?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+
+                    if (element) {
+                        element.removeEventListener('gs-component-finished-loading', handleFinishedLoading);
+                    }
+                } else {
+                    loadingElement.classList.add('hidden');
+                    loadingContent.classList.remove('hidden');
+                }
+            }
+        }, 1000);
+    }
+
+    if (element) {
+        element.addEventListener('gs-component-finished-loading', handleFinishedLoading);
+    }
+</script>
