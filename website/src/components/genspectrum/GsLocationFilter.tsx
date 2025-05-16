@@ -2,7 +2,8 @@ import { gsEventNames, type LapisFilter } from '@genspectrum/dashboard-component
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
-import type { LapisLocation } from '../../views/helpers.ts';
+
+import type { LapisLocation } from '../../views/pageStateHandlers/locationFilterFromToUrl.ts';
 
 export function GsLocationFilter<Field extends string>({
     onLocationChange = () => {},

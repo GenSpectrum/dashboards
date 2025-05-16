@@ -1,5 +1,5 @@
-import type { LapisLocation } from './helpers.ts';
 import { hasOnlyUndefinedValues } from '../util/hasOnlyUndefinedValues.ts';
+import type { LapisLocation } from './pageStateHandlers/locationFilterFromToUrl.ts';
 
 export function getLocationDisplayConfig(locationFields: string[], locationFilter: LapisLocation | undefined) {
     if (locationFilter === undefined || hasOnlyUndefinedValues(locationFilter)) {

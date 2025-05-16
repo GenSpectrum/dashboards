@@ -25,19 +25,17 @@ import {
 } from './View.ts';
 import { compareSideBySideViewConstants, singleVariantViewConstants } from './ViewConstants.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
-import {
-    type PageStateHandler,
-    setSearchFromDateFilters,
-    setSearchFromLocationFilters,
-    setSearchFromTextFilters,
-} from './pageStateHandlers/PageStateHandler.ts';
+import { type PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
+import { setSearchFromDateFilters } from './pageStateHandlers/dateFilterFromToUrl.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
+import { setSearchFromLocationFilters } from './pageStateHandlers/locationFilterFromToUrl.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 import { formatUrl } from '../util/formatUrl.ts';
+import { setSearchFromTextFilters } from './pageStateHandlers/textFilterFromToUrl.ts';
 
 const earliestDate = '2020-01-06';
 const hostField = 'host';
@@ -168,6 +166,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [mainDateFilterColumn]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export type CovidVariantData = DatasetAndVariantData & { collectionId?: number };

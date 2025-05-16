@@ -14,6 +14,7 @@ describe('SingleVariantPageStateSelector', () => {
                 locationFilters: {},
                 dateFilters: {},
                 textFilters: {},
+                numberFilters: {},
             },
             variantFilter: {},
             collectionId: 5,

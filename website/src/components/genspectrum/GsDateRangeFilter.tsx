@@ -3,21 +3,24 @@ import {
     type DateRangeOption,
     type DateRangeOptionChangedEvent,
     gsEventNames,
+    type LapisFilter,
 } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
 
 export function GsDateRangeFilter({
+    lapisDateField,
     onDateRangeChange = () => {},
+    onLapisFilterChange = () => {},
     value,
     dateRangeOptions,
     earliestDate,
-    lapisDateField,
     width,
 }: {
     lapisDateField: string;
     onDateRangeChange?: (dateRange: DateRangeOption | null) => void;
+    onLapisFilterChange?: (lapisFilter: LapisFilter) => void;
     value?: DateRangeOption | null;
     dateRangeOptions?: DateRangeOption[];
     earliestDate?: string;
@@ -48,15 +51,24 @@ export function GsDateRangeFilter({
             }
         };
 
+        const handleLapisFilterChanged = (event: CustomEvent<Record<string, string>>) => {
+            onLapisFilterChange(event.detail);
+        };
+
         currentDateRangeSelectorRef.addEventListener(gsEventNames.dateRangeOptionChanged, handleDateRangeOptionChange);
+        currentDateRangeSelectorRef.addEventListener(gsEventNames.dateRangeFilterChanged, handleLapisFilterChanged);
 
         return () => {
             currentDateRangeSelectorRef.removeEventListener(
                 gsEventNames.dateRangeOptionChanged,
                 handleDateRangeOptionChange,
             );
+            currentDateRangeSelectorRef.removeEventListener(
+                gsEventNames.dateRangeFilterChanged,
+                handleLapisFilterChanged,
+            );
         };
-    }, [dateRangeOptions, lapisDateField, onDateRangeChange, dateRangeSelectorRef]);
+    }, [dateRangeOptions, lapisDateField, onDateRangeChange, dateRangeSelectorRef, onLapisFilterChange]);
 
     const isCustom = value?.label === CustomDateRangeLabel;
 

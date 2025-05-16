@@ -93,6 +93,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
     },
+    numberFilters: {},
 };
 
 export class EbolaZaireAnalyzeSingleVariantView extends GenericSingleVariantView<EbolaZaireConstants> {

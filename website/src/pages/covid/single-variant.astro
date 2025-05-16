@@ -19,7 +19,8 @@ import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVa
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
 import { getLocationSubdivision } from '../../views/locationHelpers';
-import { locationFieldsToFilterIdentifier, toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
+import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
+import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/locationFilterFromToUrl';
 import { type OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 

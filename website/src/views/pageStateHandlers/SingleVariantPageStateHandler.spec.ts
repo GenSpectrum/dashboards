@@ -46,6 +46,11 @@ const mockConstants: OrganismConstants = {
             label: 'Some location',
             locationFields: ['country', 'region'],
         },
+        {
+            type: 'number',
+            lapisField: 'someLapisNumberField',
+            label: 'Some number',
+        },
     ],
 };
 
@@ -56,6 +61,11 @@ const mockDefaultPageState: DatasetAndVariantData = {
             date: mockDateRangeOption,
         },
         textFilters: {},
+        numberFilters: {
+            someLapisNumberField: {
+                min: 123,
+            },
+        },
     },
     variantFilter: {
         lineages: {},
@@ -68,14 +78,14 @@ describe('SingleVariantPageStateHandler', () => {
 
     it('should return the default page URL', () => {
         const url = handler.getDefaultPageUrl();
-        expect(url).toBe('/covid/single-variant?date=Last+7+Days&');
+        expect(url).toBe('/covid/single-variant?date=Last+7+Days&someLapisNumberFieldFrom=123&');
     });
 
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
             'http://example.com/covid/single-variant?' +
                 'country=US&date=Last 7 Days' +
-                '&lineage=B.2.3.4&nucleotideMutations=C234G' +
+                '&lineage=B.2.3.4&nucleotideMutations=C234G&' +
                 '&',
         );
 
@@ -105,6 +115,7 @@ describe('SingleVariantPageStateHandler', () => {
                 locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
+                numberFilters: {},
             },
         };
         const url = handler.toUrl(pageState);
@@ -124,6 +135,7 @@ describe('SingleVariantPageStateHandler', () => {
                 locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
+                numberFilters: {},
             },
         };
         const url = handler.toUrl(pageState);
@@ -141,6 +153,7 @@ describe('SingleVariantPageStateHandler', () => {
         expect(lapisFilter).toStrictEqual({
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
+            someLapisNumberFieldFrom: 123,
             lineage: 'B.1.1.7',
             nucleotideMutations: ['D614G'],
         });
@@ -158,6 +171,7 @@ describe('SingleVariantPageStateHandler', () => {
         expect(lapisFilter).toStrictEqual({
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
+            someLapisNumberFieldFrom: 123,
             variantQuery: 'C234G',
         });
     });
@@ -173,6 +187,7 @@ describe('SingleVariantPageStateHandler', () => {
         expect(lapisFilter).toStrictEqual({
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
+            someLapisNumberFieldFrom: 123,
         });
     });
 });

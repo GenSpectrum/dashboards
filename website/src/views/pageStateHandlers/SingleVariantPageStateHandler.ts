@@ -4,18 +4,13 @@ import { paths } from '../../types/Organism.ts';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { singleVariantViewConstants } from '../ViewConstants.ts';
-import { getLapisVariantQuery, type LapisLocation, setSearchFromLapisVariantQuery } from '../helpers.ts';
-import {
-    type PageStateHandler,
-    parseDateRangesFromUrl,
-    parseLocationFiltersFromUrl,
-    parseTextFiltersFromUrl,
-    setSearchFromDateFilters,
-    setSearchFromLocationFilters,
-    setSearchFromTextFilters,
-    toLapisFilterFromVariant,
-    toLapisFilterWithoutVariant,
-} from './PageStateHandler.ts';
+import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
+import { type PageStateHandler, toLapisFilterFromVariant } from './PageStateHandler.ts';
+import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
+import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
+import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
+import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
+import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
@@ -38,6 +33,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
                 locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
+                numberFilters: parseNumberRangeFilterFromUrl(search, this.constants.baselineFilterConfigs),
             },
             variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
         };
@@ -48,6 +44,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
         setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromNumberRangeFilters(search, pageState, this.constants.baselineFilterConfigs);
 
         setSearchFromLapisVariantQuery(
             search,
@@ -64,7 +61,7 @@ export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantDa
         };
     }
 
-    public toLapisFilterWithoutVariant(pageState: DatasetAndVariantData): LapisFilter & LapisLocation {
+    public toLapisFilterWithoutVariant(pageState: DatasetAndVariantData): LapisFilter {
         return toLapisFilterWithoutVariant(pageState, this.constants.additionalFilters);
     }
 

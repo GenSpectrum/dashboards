@@ -44,6 +44,11 @@ class CchfConstants implements OrganismConstants {
         ...getPathoplexusFilters({
             dateRangeOptions: defaultDateRangeOptions,
             earliestDate,
+            completenessSuffixes: [
+                { suffix: 'M', suffixLabel: 'M' },
+                { suffix: 'L', suffixLabel: 'L' },
+                { suffix: 'S', suffixLabel: 'S' },
+            ],
         }),
     ];
     public readonly mainDateField: string;
@@ -97,6 +102,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.allTimes,
     },
+    numberFilters: {},
 };
 
 export class CchfAnalyzeSingleVariantView extends GenericSingleVariantView<CchfConstants> {

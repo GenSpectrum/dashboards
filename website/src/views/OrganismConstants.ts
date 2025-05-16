@@ -202,13 +202,17 @@ export const INFLUENZA_ACCESSION_DOWNLOAD_FIELDS = [
 
 export const PATHOPLEXUS_HOST_FIELD = 'hostNameScientific';
 
+type FiltersConfig = {
+    dateRangeOptions: DateRangeOption[];
+    earliestDate: string;
+    completenessSuffixes?: SuffixConfig[];
+};
+
 export function getPathoplexusFilters({
     dateRangeOptions,
     earliestDate,
-}: {
-    dateRangeOptions: DateRangeOption[];
-    earliestDate: string;
-}): BaselineFilterConfig[] {
+    completenessSuffixes,
+}: FiltersConfig): BaselineFilterConfig[] {
     return [
         {
             type: 'location',
@@ -248,18 +252,48 @@ export function getPathoplexusFilters({
             type: 'text' as const,
             label: 'Data use terms',
         },
+        ...getCompletenessFilters(completenessSuffixes),
     ];
 }
 
-export const GENPSECTRUM_LOCULUS_HOST_FIELD = 'hostNameScientific';
+type SuffixConfig = { suffix: string; suffixLabel: string };
+
+function getCompletenessFilters(completenessSuffixConfig?: SuffixConfig[]) {
+    return completenessSuffixConfig === undefined
+        ? [COMPLETENESS_FILTER]
+        : completenessSuffixConfig.map((config) => {
+              return {
+                  ...COMPLETENESS_FILTER,
+                  lapisField: `completeness_${config.suffix}`,
+                  label: `Completeness ${config.suffixLabel}`,
+              };
+          });
+}
+
+export const COMPLETENESS_FILTER = {
+    lapisField: 'completeness',
+    type: 'number' as const,
+    label: 'Completeness',
+    sliderMin: 0,
+    sliderMax: 1,
+    sliderStep: 0.01,
+};
+
+export const INFLUENZA_COMPLETENESS_SUFFIXES = [
+    { suffix: 'seg4', suffixLabel: 'segment 4' },
+    {
+        suffix: 'seg6',
+        suffixLabel: 'segment 6',
+    },
+];
+
+export const GENSPECTRUM_LOCULUS_HOST_FIELD = 'hostNameScientific';
 
 export function getGenspectrumLoculusFilters({
     dateRangeOptions,
     earliestDate,
-}: {
-    dateRangeOptions: DateRangeOption[];
-    earliestDate: string;
-}): BaselineFilterConfig[] {
+    completenessSuffixes,
+}: FiltersConfig): BaselineFilterConfig[] {
     return [
         {
             type: 'location',
@@ -275,7 +309,7 @@ export function getGenspectrumLoculusFilters({
             label: 'Sample collection date',
         },
         {
-            lapisField: GENPSECTRUM_LOCULUS_HOST_FIELD,
+            lapisField: GENSPECTRUM_LOCULUS_HOST_FIELD,
             placeholderText: 'Host',
             type: 'text' as const,
             label: 'Host',
@@ -287,5 +321,6 @@ export function getGenspectrumLoculusFilters({
             dateColumn: 'ncbiReleaseDate',
             label: 'NCBI release date',
         },
+        ...getCompletenessFilters(completenessSuffixes),
     ];
 }

@@ -1,12 +1,6 @@
-import type { DateRangeOption } from '@genspectrum/dashboard-components/util';
-
 import type { VariantFilter } from './View.ts';
 import type { MutationFilter } from '../components/genspectrum/GsMutationFilter.tsx';
-import { CustomDateRangeLabel } from '../types/DateWindow.ts';
 
-/**
- * Sets the value to the search params if the value is not empty, not undefined and not null
- */
 export const setSearchFromString = (
     search: URLSearchParams,
     name: string,
@@ -17,28 +11,9 @@ export const setSearchFromString = (
     }
 };
 
-/**
- * Sets the array to the search params via comma-separation if the array is not empty, not undefined and not null
- */
 export const setSearchFromStringArray = (search: URLSearchParams, name: string, array: string[] | undefined | null) => {
     if (array && array.length > 0) {
         search.set(name, array.join(','));
-    }
-};
-
-export const setSearchFromDateRange = (
-    search: URLSearchParams,
-    name: string,
-    dateRange: DateRangeOption | undefined | null,
-) => {
-    if (dateRange !== null && dateRange !== undefined) {
-        let serializedValue: string;
-        if (dateRange.label === CustomDateRangeLabel) {
-            serializedValue = `${dateRange.dateFrom ?? ''}--${dateRange.dateTo ?? ''}`;
-        } else {
-            serializedValue = dateRange.label;
-        }
-        search.set(name, serializedValue);
     }
 };
 
@@ -59,51 +34,6 @@ export const getStringArrayFromSearch = (
 export const getIntegerFromSearch = (search: URLSearchParams, name: string): number | undefined => {
     const value = search.get(name);
     return value !== null ? Number.parseInt(value, 10) : undefined;
-};
-
-export const getDateRangeFromSearch = (
-    search: URLSearchParams | Map<string, string>,
-    name: string,
-    dateRangeOptions: DateRangeOption[],
-): DateRangeOption | undefined => {
-    const value = search.get(name);
-    if (value === null || value === undefined) {
-        return undefined;
-    }
-    const customDateRange = dateRangeOptions.find((option) => option.label === value);
-    if (customDateRange !== undefined) {
-        return customDateRange;
-    }
-
-    if (value.includes('--')) {
-        const split = value.split('--');
-        return {
-            label: CustomDateRangeLabel,
-            dateFrom: split[0],
-            dateTo: split[1],
-        };
-    }
-    return undefined;
-};
-
-export type LapisLocation = Record<string, string | undefined>;
-
-export const getLapisLocationFromSearch = (
-    search: URLSearchParams | Map<string, string>,
-    locationFields: string[],
-): LapisLocation => {
-    const location: Record<string, string> = {};
-    locationFields.forEach((field) => {
-        const value = getStringFromSearch(search, field);
-        if (value !== undefined) {
-            location[field] = value;
-        }
-    });
-    return location;
-};
-
-export const setSearchFromLocation = (search: URLSearchParams, location: LapisLocation) => {
-    Object.entries(location).forEach(([field, value]) => setSearchFromString(search, field, value));
 };
 
 export type LapisMutationQuery = {

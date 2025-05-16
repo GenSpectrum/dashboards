@@ -1,9 +1,10 @@
 import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
 import type { DatasetFilter } from '../../views/View.ts';
-import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/PageStateHandler.ts';
+import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/locationFilterFromToUrl.ts';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter.tsx';
 import { GsLocationFilter } from '../genspectrum/GsLocationFilter.tsx';
+import { GsNumerRangeFilter } from '../genspectrum/GsNumerRangeFilter.tsx';
 import { GsTextFilter } from '../genspectrum/GsTextFilter.tsx';
 
 export type LocationFilterConfig = {
@@ -25,12 +26,21 @@ export type TextInputConfig = {
     label?: string;
 };
 
+export type NumberRangeFilterConfig = {
+    lapisField: string;
+    label?: string;
+    sliderMin?: number;
+    sliderMax?: number;
+    sliderStep?: number;
+};
+
 export type BaselineFilterConfig =
     | ({
           type: 'date';
       } & DateRangeFilterConfig)
     | ({ type: 'text' } & TextInputConfig)
-    | ({ type: 'location' } & LocationFilterConfig);
+    | ({ type: 'location' } & LocationFilterConfig)
+    | ({ type: 'number' } & NumberRangeFilterConfig);
 
 export function BaselineSelector({
     baselineFilterConfigs,
@@ -118,6 +128,31 @@ export function BaselineSelector({
                                     placeholderText={config.placeholderText}
                                     lapisFilter={lapisFilter}
                                 ></GsLocationFilter>
+                            </label>
+                        );
+                    }
+                    case 'number': {
+                        return (
+                            <label className='form-control' key={`$label${config.lapisField}`}>
+                                <div className='label'>
+                                    <span className='label-text'>{config.label ?? config.lapisField}</span>
+                                </div>
+                                <GsNumerRangeFilter
+                                    lapisField={config.lapisField}
+                                    sliderMin={config.sliderMin}
+                                    sliderMax={config.sliderMax}
+                                    sliderStep={config.sliderStep}
+                                    value={datasetFilter.numberFilters[config.lapisField]}
+                                    onNumberRangeChanged={(newRange) => {
+                                        setDatasetFilter({
+                                            ...datasetFilter,
+                                            numberFilters: {
+                                                ...datasetFilter.numberFilters,
+                                                [config.lapisField]: newRange,
+                                            },
+                                        });
+                                    }}
+                                />
                             </label>
                         );
                     }

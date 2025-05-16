@@ -5,18 +5,13 @@ import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from '../View.ts';
 import { compareSideBySideViewConstants } from '../ViewConstants.ts';
 import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
-import {
-    decodeFiltersFromSearch,
-    type PageStateHandler,
-    parseDateRangesFromUrl,
-    parseLocationFiltersFromUrl,
-    parseTextFiltersFromUrl,
-    searchParamsFromFilterMap,
-    setSearchFromDateFilters,
-    setSearchFromLocationFilters,
-    setSearchFromTextFilters,
-    toLapisFilterWithoutVariant,
-} from './PageStateHandler.ts';
+import { type PageStateHandler } from './PageStateHandler.ts';
+import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
+import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
+import { decodeFiltersFromSearch, searchParamsFromFilterMap } from './multipleFiltersFromToUrl.ts';
+import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
+import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
+import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareSideBySideStateHandler implements PageStateHandler<CompareSideBySideData> {
@@ -108,6 +103,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
         setSearchFromLocationFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
+        setSearchFromNumberRangeFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
     }
 
     protected getEmptyColumnData(): DatasetAndVariantData {
@@ -116,6 +112,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
                 locationFilters: {},
                 textFilters: {},
                 dateFilters: {},
+                numberFilters: {},
             },
             variantFilter: {
                 lineages: {},
@@ -130,6 +127,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
                 locationFilters: parseLocationFiltersFromUrl(filterParams, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(filterParams, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(filterParams, this.constants.baselineFilterConfigs),
+                numberFilters: parseNumberRangeFilterFromUrl(filterParams, this.constants.baselineFilterConfigs),
             },
             variantFilter: getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
         };

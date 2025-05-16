@@ -55,6 +55,7 @@ const mockDefaultPageState: CompareToBaselineData = {
         locationFilters: {},
         dateFilters: { date: mockDateRangeOption },
         textFilters: {},
+        numberFilters: {},
     },
     baselineFilter: {
         lineages: {},
@@ -138,6 +139,7 @@ describe('CompareToBaselinePageStateHandler', () => {
                 locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
+                numberFilters: {},
             },
             baselineFilter: {
                 lineages: {
@@ -168,6 +170,7 @@ describe('CompareToBaselinePageStateHandler', () => {
                 locationFilters: {},
                 dateFilters: { date: null },
                 textFilters: {},
+                numberFilters: {},
             },
             baselineFilter: {},
         };
@@ -199,6 +202,7 @@ describe('CompareToBaselinePageStateHandler', () => {
                 locationFilters: { 'country,region': { country: 'US' } },
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
+                numberFilters: {},
             },
             baselineFilter: {
                 lineages: {
