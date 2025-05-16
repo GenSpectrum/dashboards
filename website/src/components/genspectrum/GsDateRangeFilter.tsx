@@ -1,19 +1,26 @@
 import '@genspectrum/dashboard-components/components';
-import { type DateRangeOption, type DateRangeOptionChangedEvent } from '@genspectrum/dashboard-components/util';
+import {
+    type DateRangeOption,
+    type DateRangeOptionChangedEvent,
+    gsEventNames,
+    type LapisFilter,
+} from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
 
 export function GsDateRangeFilter({
+    lapisDateField,
     onDateRangeChange = () => {},
+    onLapisFilterChange = () => {},
     value,
     dateRangeOptions,
     earliestDate,
-    lapisDateField,
     width,
 }: {
     lapisDateField: string;
     onDateRangeChange?: (dateRange: DateRangeOption | null) => void;
+    onLapisFilterChange?: (lapisFilter: LapisFilter) => void;
     value?: DateRangeOption | null;
     dateRangeOptions?: DateRangeOption[];
     earliestDate?: string;
@@ -22,6 +29,11 @@ export function GsDateRangeFilter({
     const dateRangeSelectorRef = useRef<HTMLElement>();
 
     useEffect(() => {
+        const currentDateRangeSelectorRef = dateRangeSelectorRef.current;
+        if (!currentDateRangeSelectorRef) {
+            return;
+        }
+
         const handleDateRangeOptionChange = (event: DateRangeOptionChangedEvent) => {
             const dateRange = event.detail;
 
@@ -39,20 +51,24 @@ export function GsDateRangeFilter({
             }
         };
 
-        const currentDateRangeSelectorRef = dateRangeSelectorRef.current;
-        if (currentDateRangeSelectorRef) {
-            currentDateRangeSelectorRef.addEventListener('gs-date-range-option-changed', handleDateRangeOptionChange);
-        }
+        const handleLapisFilterChanged = (event: CustomEvent<Record<string, string>>) => {
+            onLapisFilterChange(event.detail);
+        };
+
+        currentDateRangeSelectorRef.addEventListener(gsEventNames.dateRangeOptionChanged, handleDateRangeOptionChange);
+        currentDateRangeSelectorRef.addEventListener(gsEventNames.dateRangeFilterChanged, handleLapisFilterChanged);
 
         return () => {
-            if (currentDateRangeSelectorRef) {
-                currentDateRangeSelectorRef.removeEventListener(
-                    'gs-date-range-option-changed',
-                    handleDateRangeOptionChange,
-                );
-            }
+            currentDateRangeSelectorRef.removeEventListener(
+                gsEventNames.dateRangeOptionChanged,
+                handleDateRangeOptionChange,
+            );
+            currentDateRangeSelectorRef.removeEventListener(
+                gsEventNames.dateRangeFilterChanged,
+                handleLapisFilterChanged,
+            );
         };
-    }, [dateRangeOptions, lapisDateField, onDateRangeChange, dateRangeSelectorRef]);
+    }, [dateRangeOptions, lapisDateField, onDateRangeChange, dateRangeSelectorRef, onLapisFilterChange]);
 
     const isCustom = value?.label === CustomDateRangeLabel;
 

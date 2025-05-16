@@ -105,6 +105,7 @@ const defaultDatasetFilter: DatasetFilter = {
     dateFilters: {
         [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
+    numberFilters: {},
 };
 
 export class WestNileAnalyzeSingleVariantView extends GenericSingleVariantView<WestNileConstants> {

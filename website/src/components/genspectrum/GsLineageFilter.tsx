@@ -1,4 +1,4 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { gsEventNames, type LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
@@ -21,19 +21,19 @@ export function GsLineageFilter<Lineage extends string>({
     const lineageFilterRef = useRef<HTMLElement>();
 
     useEffect(() => {
+        const currentLineageFilterRef = lineageFilterRef.current;
+        if (!currentLineageFilterRef) {
+            return;
+        }
+
         const handleLineageChange = (event: CustomEvent) => {
             onLineageChange(event.detail);
         };
 
-        const currentLineageFilterRef = lineageFilterRef.current;
-        if (currentLineageFilterRef) {
-            currentLineageFilterRef.addEventListener('gs-lineage-filter-changed', handleLineageChange);
-        }
+        currentLineageFilterRef.addEventListener(gsEventNames.lineageFilterChanged, handleLineageChange);
 
         return () => {
-            if (currentLineageFilterRef) {
-                currentLineageFilterRef.removeEventListener('gs-lineage-filter-changed', handleLineageChange);
-            }
+            currentLineageFilterRef.removeEventListener(gsEventNames.lineageFilterChanged, handleLineageChange);
         };
     }, [onLineageChange]);
 

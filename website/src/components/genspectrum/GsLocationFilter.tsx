@@ -1,8 +1,9 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { gsEventNames, type LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
-import type { LapisLocation } from '../../views/helpers.ts';
+
+import type { LapisLocation } from '../../views/pageStateHandlers/locationFilterFromToUrl.ts';
 
 export function GsLocationFilter<Field extends string>({
     onLocationChange = () => {},
@@ -22,19 +23,18 @@ export function GsLocationFilter<Field extends string>({
     const locationFilterRef = useRef<HTMLElement>();
 
     useEffect(() => {
+        const currentLocationFilterRef = locationFilterRef.current;
+        if (!currentLocationFilterRef) {
+            return;
+        }
         const handleLocationChange = (event: CustomEvent) => {
             onLocationChange(event.detail);
         };
 
-        const currentLocationFilterRef = locationFilterRef.current;
-        if (currentLocationFilterRef) {
-            currentLocationFilterRef.addEventListener('gs-location-changed', handleLocationChange);
-        }
+        currentLocationFilterRef.addEventListener(gsEventNames.locationChanged, handleLocationChange);
 
         return () => {
-            if (currentLocationFilterRef) {
-                currentLocationFilterRef.removeEventListener('gs-location-changed', handleLocationChange);
-            }
+            currentLocationFilterRef.removeEventListener(gsEventNames.locationChanged, handleLocationChange);
         };
     }, [onLocationChange]);
 

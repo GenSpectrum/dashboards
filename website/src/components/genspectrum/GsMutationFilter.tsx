@@ -1,4 +1,5 @@
 import '@genspectrum/dashboard-components/components';
+import { gsEventNames } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 export type MutationFilter = {
@@ -20,19 +21,21 @@ export function GsMutationFilter({
     const mutationFilterRef = useRef<HTMLElement>();
 
     useEffect(() => {
+        const currentMutationFilterRef = mutationFilterRef.current;
+        if (!currentMutationFilterRef) {
+            return;
+        }
+
         const handleMutationFilterChange = (event: CustomEvent) => {
             onMutationChange(event.detail);
         };
-
-        const currentMutationFilterRef = mutationFilterRef.current;
-        if (currentMutationFilterRef) {
-            currentMutationFilterRef.addEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
-        }
+        currentMutationFilterRef.addEventListener(gsEventNames.mutationFilterChanged, handleMutationFilterChange);
 
         return () => {
-            if (currentMutationFilterRef) {
-                currentMutationFilterRef.removeEventListener('gs-mutation-filter-changed', handleMutationFilterChange);
-            }
+            currentMutationFilterRef.removeEventListener(
+                gsEventNames.mutationFilterChanged,
+                handleMutationFilterChange,
+            );
         };
     }, [onMutationChange]);
 

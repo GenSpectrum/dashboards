@@ -5,20 +5,13 @@ import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareToBaselineData, type DatasetFilter, getLineageFilterFields, type VariantFilter } from '../View.ts';
 import { compareToBaselineViewConstants } from '../ViewConstants.ts';
 import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
-import {
-    decodeFiltersFromSearch,
-    type PageStateHandler,
-    parseDateRangesFromUrl,
-    parseLocationFiltersFromUrl,
-    parseTextFiltersFromUrl,
-    searchParamsFromFilterMap,
-    setSearchFromDateFilters,
-    setSearchFromLocationFilters,
-    setSearchFromTextFilters,
-    toDisplayName,
-    toLapisFilterFromVariant,
-    toLapisFilterWithoutVariant,
-} from './PageStateHandler.ts';
+import { type PageStateHandler, toDisplayName, toLapisFilterFromVariant } from './PageStateHandler.ts';
+import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
+import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
+import { decodeFiltersFromSearch, searchParamsFromFilterMap } from './multipleFiltersFromToUrl.ts';
+import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
+import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
+import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareToBaselineStateHandler implements PageStateHandler<CompareToBaselineData> {
@@ -49,6 +42,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
                 locationFilters: parseLocationFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
+                numberFilters: parseNumberRangeFilterFromUrl(search, this.constants.baselineFilterConfigs),
             },
             variants,
             baselineFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
@@ -63,6 +57,7 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
         setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromNumberRangeFilters(search, pageState, this.constants.baselineFilterConfigs);
 
         setSearchFromLapisVariantQuery(
             search,

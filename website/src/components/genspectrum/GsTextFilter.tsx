@@ -1,4 +1,4 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { gsEventNames, type LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 import '@genspectrum/dashboard-components/components';
@@ -21,19 +21,18 @@ export function GsTextFilter<LapisField extends string>({
     const textInputRef = useRef<HTMLElement>();
 
     useEffect(() => {
+        const currentInputRef = textInputRef.current;
+        if (!currentInputRef) {
+            return;
+        }
+
         const handleTextInputChange = (event: CustomEvent) => {
             onInputChange(event.detail);
         };
-
-        const currentInputRef = textInputRef.current;
-        if (currentInputRef !== undefined) {
-            currentInputRef.addEventListener('gs-text-filter-changed', handleTextInputChange);
-        }
+        currentInputRef.addEventListener(gsEventNames.textFilterChanged, handleTextInputChange);
 
         return () => {
-            if (currentInputRef !== undefined) {
-                currentInputRef.removeEventListener('gs-text-filter-changed', handleTextInputChange);
-            }
+            currentInputRef.removeEventListener(gsEventNames.textFilterChanged, handleTextInputChange);
         };
     }, [onInputChange]);
 
