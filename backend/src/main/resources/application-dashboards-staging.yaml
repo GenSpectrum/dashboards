@@ -2,7 +2,7 @@ dashboards:
   organisms:
     covid:
       lapis:
-        url: "https://lapis.cov-spectrum.org/open/v2"
+        url: "https://gs-staging-1.int.genspectrum.org/open/v2"
         mainDateField: "date"
       externalNavigationLinks:
         - url: "https://cov-spectrum.org"
