@@ -54,10 +54,12 @@ test.describe('Main page', () => {
     });
 
     allOrganisms.forEach((organism) => {
-        test(`should navigate to all views for ${organism}`, async ({ page }) => {
-            for (const { viewKey, linkName, title, expectedHeadline } of views) {
+        views.forEach((view) => {
+            const { viewKey, linkName, title, expectedHeadline } = view;
+            test(`should navigate to views ${title} for ${organism}`, async ({ page }) => {
                 if (!ServerSide.routing.isOrganismWithViewKey(organism, viewKey)) {
-                    continue;
+                    test.skip();
+                    return;
                 }
 
                 const organismName = organismConfig[organism].label;
@@ -68,11 +70,16 @@ test.describe('Main page', () => {
                     .locator('..')
                     .getByText(linkName, { exact: true })
                     .click();
+                // wait for the page to load
+                await page.waitForSelector('[aria-label="Loading"]', { state: 'detached' });
+                await page.waitForSelector('text="Loading data"', { state: 'hidden' });
+                await page.waitForTimeout(10);
+
                 await expect(page.locator('text=Error -')).not.toBeVisible();
                 await expect(page.locator('text=Something went wrong')).not.toBeVisible();
                 await expect(page).toHaveTitle(`${title} | ${organismName} | GenSpectrum`);
                 await expect(page.getByRole('heading', { name: expectedHeadline }).first()).toBeVisible();
-            }
+            });
         });
     });
 });
