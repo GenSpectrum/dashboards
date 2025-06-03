@@ -29,7 +29,8 @@ export interface OrganismConstants {
     readonly mainDateField: string;
     readonly additionalFilters: Record<string, string> | undefined;
     readonly aggregatedVisualizations: AggregatedVisualizations;
-    readonly useAdvancedQuery: boolean;
+    readonly useVariantQuery: boolean;
+    readonly useAdvancedFilter: boolean;
     readonly locationFields: string[];
     readonly baselineFilterConfigs: BaselineFilterConfig[];
     readonly lineageFilters: LineageFilterConfig[];
