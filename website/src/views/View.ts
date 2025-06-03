@@ -13,6 +13,7 @@ export type DatasetFilter = {
     textFilters: TextFilterState;
     dateFilters: DateFilterState;
     numberFilters: NumberFilterState;
+    advancedQuery?: string;
 };
 
 export type LocationFilterState = {
@@ -39,6 +40,7 @@ export type VariantFilter = {
     mutations?: LapisMutationQuery;
     lineages?: LapisLineageQuery;
     variantQuery?: string;
+    advancedQuery?: string;
 };
 
 export type VariantData<VariantFilterType = VariantFilter> = {

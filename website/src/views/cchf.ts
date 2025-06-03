@@ -54,7 +54,7 @@ class CchfConstants implements OrganismConstants {
     public readonly mainDateField: string;
     public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [];
-    public readonly useAdvancedQuery = false;
+    public readonly useVariantQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;

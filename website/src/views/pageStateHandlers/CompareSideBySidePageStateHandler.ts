@@ -4,14 +4,19 @@ import { paths } from '../../types/Organism.ts';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type CompareSideBySideData, type DatasetAndVariantData, getLineageFilterFields, type Id } from '../View.ts';
 import { compareSideBySideViewConstants } from '../ViewConstants.ts';
-import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
-import { type PageStateHandler } from './PageStateHandler.ts';
+import {
+    getLapisVariantQuery,
+    getStringFromSearch,
+    setSearchFromLapisVariantQuery,
+    setSearchFromString,
+} from '../helpers.ts';
+import { type PageStateHandler, toLapisFilterWithVariant } from './PageStateHandler.ts';
 import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
 import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
 import { decodeFiltersFromSearch, searchParamsFromFilterMap } from './multipleFiltersFromToUrl.ts';
 import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
 import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
-import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
+import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareSideBySideStateHandler implements PageStateHandler<CompareSideBySideData> {
@@ -80,18 +85,11 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
         datasetFilter: DatasetAndVariantData['datasetFilter'],
         variantFilter: DatasetAndVariantData['variantFilter'],
     ): LapisFilter {
-        if (variantFilter.variantQuery) {
-            return {
-                variantQuery: variantFilter.variantQuery,
-                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants.additionalFilters),
-            };
-        } else {
-            return {
-                ...variantFilter.lineages,
-                ...variantFilter.mutations,
-                ...toLapisFilterWithoutVariant({ datasetFilter }, this.constants.additionalFilters),
-            };
-        }
+        return toLapisFilterWithVariant({
+            datasetFilter,
+            variantFilter,
+            additionalFilters: this.constants.additionalFilters,
+        });
     }
 
     protected writeColumnDataToSearchParams(searchOfFilter: URLSearchParams, filter: DatasetAndVariantData): void {
@@ -104,6 +102,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
         setSearchFromDateFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
         setSearchFromNumberRangeFilters(searchOfFilter, filter, this.constants.baselineFilterConfigs);
+        setSearchFromString(searchOfFilter, advancedQueryUrlParam, filter.datasetFilter.advancedQuery);
     }
 
     protected getEmptyColumnData(): DatasetAndVariantData {
@@ -128,6 +127,7 @@ export class CompareSideBySideStateHandler implements PageStateHandler<CompareSi
                 dateFilters: parseDateRangesFromUrl(filterParams, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(filterParams, this.constants.baselineFilterConfigs),
                 numberFilters: parseNumberRangeFilterFromUrl(filterParams, this.constants.baselineFilterConfigs),
+                advancedQuery: getStringFromSearch(filterParams, advancedQueryUrlParam),
             },
             variantFilter: getLapisVariantQuery(filterParams, getLineageFilterFields(this.constants.lineageFilters)),
         };
