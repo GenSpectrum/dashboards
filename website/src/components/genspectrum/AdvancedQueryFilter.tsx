@@ -1,12 +1,20 @@
-import type { ChangeEventHandler } from 'react';
+import { type ChangeEvent, type FC, useEffect, useState } from 'react';
 
-export function AdvancedQueryFilter({
-    value,
-    onInput,
-}: {
+export const advancedQueryUrlParamForVariant = 'advancedQueryVariant';
+export const advancedQueryUrlParam = 'advancedQuery';
+
+type AdvancedQueryFilterProps = {
     value?: string;
-    onInput?: ChangeEventHandler<HTMLInputElement>;
-}) {
+    onInput?: (newValue: string | undefined) => void;
+};
+
+export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput }) => {
+    const [inputValue, setInputValue] = useState(value);
+
+    useEffect(() => {
+        setInputValue(value);
+    }, [value]);
+
     return (
         <label className='form-control'>
             <div className='label'>
@@ -15,9 +23,15 @@ export function AdvancedQueryFilter({
             <input
                 className='input input-bordered w-full'
                 placeholder={'Advanced query: A123T & ins_123:TA'}
-                value={value}
-                onInput={onInput}
+                value={inputValue}
+                onInput={(event: ChangeEvent<HTMLInputElement>) => {
+                    const newValue = event.target.value;
+                    setInputValue(newValue === '' ? undefined : newValue);
+                }}
+                onBlur={() => {
+                    onInput?.(inputValue);
+                }}
             ></input>
         </label>
     );
-}
+};

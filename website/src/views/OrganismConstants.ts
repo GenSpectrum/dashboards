@@ -29,7 +29,7 @@ export interface OrganismConstants {
     readonly mainDateField: string;
     readonly additionalFilters: Record<string, string> | undefined;
     readonly aggregatedVisualizations: AggregatedVisualizations;
-    readonly useAdvancedQuery: boolean;
+    readonly useVariantQuery: boolean;
     readonly locationFields: string[];
     readonly baselineFilterConfigs: BaselineFilterConfig[];
     readonly lineageFilters: LineageFilterConfig[];
@@ -253,6 +253,7 @@ export function getPathoplexusFilters({
             label: 'Data use terms',
         },
         ...getCompletenessFilters(completenessSuffixes),
+        { type: 'advancedQuery' },
     ];
 }
 
@@ -322,5 +323,6 @@ export function getGenspectrumLoculusFilters({
             label: 'NCBI release date',
         },
         ...getCompletenessFilters(completenessSuffixes),
+        { type: 'advancedQuery' },
     ];
 }

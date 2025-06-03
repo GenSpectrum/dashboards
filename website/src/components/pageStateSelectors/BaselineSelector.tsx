@@ -2,6 +2,7 @@ import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-compon
 
 import type { DatasetFilter } from '../../views/View.ts';
 import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/locationFilterFromToUrl.ts';
+import { AdvancedQueryFilter } from '../genspectrum/AdvancedQueryFilter.tsx';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter.tsx';
 import { GsLocationFilter } from '../genspectrum/GsLocationFilter.tsx';
 import { GsNumerRangeFilter } from '../genspectrum/GsNumerRangeFilter.tsx';
@@ -40,7 +41,8 @@ export type BaselineFilterConfig =
       } & DateRangeFilterConfig)
     | ({ type: 'text' } & TextInputConfig)
     | ({ type: 'location' } & LocationFilterConfig)
-    | ({ type: 'number' } & NumberRangeFilterConfig);
+    | ({ type: 'number' } & NumberRangeFilterConfig)
+    | { type: 'advancedQuery' };
 
 export function BaselineSelector({
     baselineFilterConfigs,
@@ -154,6 +156,20 @@ export function BaselineSelector({
                                     }}
                                 />
                             </label>
+                        );
+                    }
+                    case 'advancedQuery': {
+                        return (
+                            <AdvancedQueryFilter
+                                key={'advancedQuery'}
+                                onInput={(newValue) => {
+                                    setDatasetFilter({
+                                        ...datasetFilter,
+                                        advancedQuery: newValue,
+                                    });
+                                }}
+                                value={datasetFilter.advancedQuery ?? ''}
+                            />
                         );
                     }
                 }

@@ -26,7 +26,7 @@ const mockConstants: OrganismConstants = {
         compareSideBySide: [],
     },
     accessionDownloadFields: [],
-    useAdvancedQuery: false,
+    useVariantQuery: false,
     baselineFilterConfigs: [
         {
             type: 'text',
@@ -100,7 +100,8 @@ describe('CompareSideBySideStateHandler', () => {
         const url = new URL(
             'http://example.com/covid/compare-side-by-side?' +
                 'columns=3' +
-                '&lineage%241=B.1.1.7&date%241=Last+7+Days' +
+                '&lineage%241=B.1.1.7&advancedQuery%241=country%3DUS&date%241=Last+7+Days' +
+                '&advancedQueryVariant%241=123T' +
                 '&variantQuery%242=C234G' +
                 '&',
         );
@@ -130,12 +131,14 @@ describe('CompareSideBySideStateHandler', () => {
                 textFilters: {},
                 locationFilters: {},
                 numberFilters: {},
+                advancedQuery: 'country=US',
             },
             variantFilter: {
                 lineages: {
                     lineage: 'B.1.1.7',
                 },
                 mutations: {},
+                advancedQuery: '123T',
             },
         });
 
@@ -163,10 +166,12 @@ describe('CompareSideBySideStateHandler', () => {
                             dateFilters: { date: mockDateRangeOption },
                             textFilters: {},
                             numberFilters: {},
+                            advancedQuery: 'country=US',
                         },
                         variantFilter: {
                             lineages: { lineage: 'B.1.1.7' },
                             mutations: {},
+                            advancedQuery: '123T',
                         },
                     },
                 ],
@@ -193,7 +198,8 @@ describe('CompareSideBySideStateHandler', () => {
         expect(url).toBe(
             '/covid/compare-side-by-side?' +
                 'columns=2' +
-                '&lineage%240=B.1.1.7&date%240=Last+7+Days' +
+                '&lineage%240=B.1.1.7&advancedQueryVariant%240=123T' +
+                '&date%240=Last+7+Days&advancedQuery%240=country%3DUS' +
                 '&variantQuery%241=C234G&date%241=Last+7+Days' +
                 '&',
         );
@@ -238,6 +244,7 @@ describe('CompareSideBySideStateHandler', () => {
             },
         );
         expect(lapisFilter).toStrictEqual({
+            advancedQuery: undefined,
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             country: 'US',
@@ -270,6 +277,34 @@ describe('CompareSideBySideStateHandler', () => {
             country: 'US',
             someTextField: 'SomeText',
             variantQuery: 'C234G',
+        });
+    });
+
+    it('should convert variant filter with advancedQuery to Lapis filter', () => {
+        const lapisFilter = handler.variantFilterToLapisFilter(
+            {
+                dateFilters: { date: mockDateRangeOption },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                locationFilters: { 'country,region': { country: 'US' } },
+                textFilters: {
+                    someTextField: 'SomeText',
+                },
+                numberFilters: {},
+                advancedQuery: 'country = US',
+            },
+            {
+                lineages: { lineage: 'B.1.1.7' },
+                mutations: {},
+                advancedQuery: '123T',
+            },
+        );
+        expect(lapisFilter).toStrictEqual({
+            dateFrom: '2024-11-22',
+            dateTo: '2024-11-29',
+            country: 'US',
+            someTextField: 'SomeText',
+            lineage: 'B.1.1.7',
+            advancedQuery: '(country = US) and (123T)',
         });
     });
 });
