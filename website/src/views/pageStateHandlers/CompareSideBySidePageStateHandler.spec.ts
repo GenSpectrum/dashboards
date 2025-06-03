@@ -26,7 +26,8 @@ const mockConstants: OrganismConstants = {
         compareSideBySide: [],
     },
     accessionDownloadFields: [],
-    useAdvancedQuery: false,
+    useVariantQuery: false,
+    useAdvancedQuery: true,
     baselineFilterConfigs: [
         {
             type: 'text',

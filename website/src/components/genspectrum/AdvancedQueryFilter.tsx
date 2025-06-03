@@ -1,11 +1,14 @@
-import type { ChangeEventHandler } from 'react';
+import type { ChangeEvent } from 'react';
+
+export const advancedQueryUrlParamForVariant = 'advancedQueryVariant';
+export const advancedQueryUrlParam = 'advancedQuery';
 
 export function AdvancedQueryFilter({
     value,
     onInput,
 }: {
     value?: string;
-    onInput?: ChangeEventHandler<HTMLInputElement>;
+    onInput?: (newValue: string | undefined) => void;
 }) {
     return (
         <label className='form-control'>
@@ -16,7 +19,10 @@ export function AdvancedQueryFilter({
                 className='input input-bordered w-full'
                 placeholder={'Advanced query: A123T & ins_123:TA'}
                 value={value}
-                onInput={onInput}
+                onInput={(event: ChangeEvent<HTMLInputElement>) => {
+                    const newValue = event.target.value;
+                    onInput?.(newValue === '' ? undefined : newValue);
+                }}
             ></input>
         </label>
     );

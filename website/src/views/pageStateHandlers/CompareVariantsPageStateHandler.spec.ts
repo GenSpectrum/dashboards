@@ -26,6 +26,7 @@ const mockConstants: OrganismConstants = {
         compareSideBySide: [],
     },
     accessionDownloadFields: [],
+    useVariantQuery: true,
     useAdvancedQuery: true,
     baselineFilterConfigs: [
         {
@@ -233,6 +234,7 @@ describe('CompareVariantsPageStateHandler', () => {
             {
                 displayName: 'B.1.1.7 + D614G + S:A123T',
                 lapisFilter: {
+                    advancedQuery: undefined,
                     aminoAcidMutations: ['S:A123T'],
                     dateFrom: '2024-11-22',
                     dateTo: '2024-11-29',

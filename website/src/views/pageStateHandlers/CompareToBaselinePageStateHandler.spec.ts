@@ -26,6 +26,7 @@ const mockConstants: OrganismConstants = {
         compareSideBySide: [],
     },
     accessionDownloadFields: [],
+    useVariantQuery: true,
     useAdvancedQuery: true,
     baselineFilterConfigs: [
         {
@@ -256,6 +257,7 @@ describe('CompareToBaselinePageStateHandler', () => {
             {
                 displayName: 'B.1.1.7 + D614G + S:A123T',
                 lapisFilter: {
+                    advancedQuery: undefined,
                     aminoAcidMutations: ['S:A123T'],
                     dateFrom: '2024-11-22',
                     dateTo: '2024-11-29',
@@ -278,6 +280,7 @@ describe('CompareToBaselinePageStateHandler', () => {
         const baselineLapisFilter = handler.baselineFilterToLapisFilter(pageState);
 
         expect(baselineLapisFilter).toStrictEqual({
+            advancedQuery: undefined,
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             lineage: 'B.1.1.7',

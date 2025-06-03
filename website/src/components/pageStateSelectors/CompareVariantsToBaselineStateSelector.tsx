@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector } from './BaselineSelector.tsx';
+import { BaselineSelector, makeBaselineFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
@@ -32,6 +32,8 @@ export function CompareVariantsToBaselineStateSelector({
         return new Map(pageState.variants.entries().map(([id]) => [id, { ...variantFilterConfig }]));
     }, [pageState.variants, variantFilterConfig]);
 
+    const baselineFilterConfigs = makeBaselineFilterConfig(view.organismConstants);
+
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.baselineFilterToLapisFilter(pageState);
     }, [pageState, view.pageStateHandler]);
@@ -43,7 +45,7 @@ export function CompareVariantsToBaselineStateSelector({
                 <Inset>
                     <div className='px-2'>
                         <BaselineSelector
-                            baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+                            baselineFilterConfigs={baselineFilterConfigs}
                             lapisFilter={currentLapisFilter}
                             datasetFilter={pageState.datasetFilter}
                             setDatasetFilter={(newDatasetFilter) => {

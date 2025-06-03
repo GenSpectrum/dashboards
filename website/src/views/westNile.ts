@@ -63,7 +63,8 @@ class WestNileConstants implements OrganismConstants {
             label: 'Collection device',
         },
     ];
-    public readonly useAdvancedQuery = false;
+    public readonly useVariantQuery = false;
+    public readonly useAdvancedQuery = true;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;

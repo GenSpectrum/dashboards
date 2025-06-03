@@ -58,7 +58,8 @@ class H3n2Constants implements OrganismConstants {
             filterType: 'text' as const,
         },
     ];
-    public readonly useAdvancedQuery = false;
+    public readonly useVariantQuery = false;
+    public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions,

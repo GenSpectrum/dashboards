@@ -26,7 +26,8 @@ const mockConstants: OrganismConstants = {
         compareSideBySide: [],
     },
     accessionDownloadFields: [],
-    useAdvancedQuery: false,
+    useVariantQuery: false,
+    useAdvancedQuery: true,
     baselineFilterConfigs: [
         {
             type: 'text',
@@ -151,6 +152,7 @@ describe('SingleVariantPageStateHandler', () => {
             },
         });
         expect(lapisFilter).toStrictEqual({
+            advancedQuery: undefined,
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             someLapisNumberFieldFrom: 123,

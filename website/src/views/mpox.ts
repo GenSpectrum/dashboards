@@ -57,7 +57,8 @@ class MpoxConstants implements OrganismConstants {
             filterType: 'text' as const,
         },
     ];
-    public readonly useAdvancedQuery = false;
+    public readonly useVariantQuery = false;
+    public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getPathoplexusFilters({
             dateRangeOptions: () => {

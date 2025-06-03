@@ -70,11 +70,16 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: number | undefined },
     );
 
+    const advancedQuery = pageState.datasetFilter.advancedQuery
+        ? { advancedQuery: pageState.datasetFilter.advancedQuery }
+        : {};
+
     return {
         ...locationFilters,
         ...dateFilters,
         ...textFilters,
         ...numberRangeFilters,
         ...additionalFilters,
+        ...advancedQuery,
     };
 }
