@@ -3,11 +3,11 @@ import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/da
 import {
     type CompareSideBySideData,
     type DatasetFilter,
-    GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
     makeCompareSideBySideData,
     makeCompareToBaselineData,
     makeCompareVariantsData,
     makeDatasetAndVariantData,
+    PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
 } from './View.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
@@ -18,18 +18,19 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    GENSPECTRUM_LOCULUS_HOST_FIELD,
-    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
-    getGenSpectrumLoculusAggregatedVisualizations,
-    getGenspectrumLoculusFilters,
+    getPathoplexusFilters,
+    getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
     type OrganismConstants,
+    PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
+    PATHOPLEXUS_HOST_FIELD,
+    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import { Organisms } from '../types/Organism.ts';
-import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
+import { dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOption.ts';
@@ -42,7 +43,7 @@ class RsvBConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvB;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
+    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
@@ -52,17 +53,17 @@ class RsvBConstants implements OrganismConstants {
     ];
     public readonly useAdvancedQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getGenspectrumLoculusFilters({
+        ...getPathoplexusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions,
             earliestDate,
         }),
     ];
-    public readonly hostField: string = GENSPECTRUM_LOCULUS_HOST_FIELD;
+    public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
     public readonly additionalFilters: Record<string, string> | undefined;
-    public readonly dataOrigins: DataOrigin[] = [dataOrigins.insdc];
-    public readonly accessionDownloadFields = ['insdcAccessionFull'];
+    public readonly dataOrigins = [dataOrigins.pathoplexus];
+    public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
             lineages: { [LINEAGE_FIELD_NAME]: 'B.D.E.1' },
@@ -77,7 +78,7 @@ class RsvBConstants implements OrganismConstants {
     public readonly mutationAnnotations: MutationAnnotation[] = [];
 
     public get aggregatedVisualizations() {
-        return getGenSpectrumLoculusAggregatedVisualizations(this, {
+        return getPathoplexusSequencingEffortsAggregatedVisualizations(this, {
             sublineages: {
                 label: 'Lineages',
                 fields: [LINEAGE_FIELD_NAME],
@@ -95,7 +96,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
     },
     numberFilters: {},
 };

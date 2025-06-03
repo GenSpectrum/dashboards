@@ -112,28 +112,28 @@ dashboards:
           description: "Browse the underlying data on Pathoplexus."
     rsvA:
       lapis:
-        url: "https://api.loculus.staging.genspectrum.org/rsv-a"
-        mainDateField: "sampleCollectionDate"
+        url: "https://lapis.pathoplexus.org/rsv-a"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
       externalNavigationLinks:
-        - url: "https://loculus.staging.genspectrum.org/rsv-a"
+        - url: "https://pathoplexus.org/rsv-a"
           label: "Browse data"
           menuIcon: "database"
-          description: "Browse the underlying data in the Loculus database."
+          description: "Browse the underlying data on Pathoplexus."
     rsvB:
       lapis:
-        url: "https://api.loculus.staging.genspectrum.org/rsv-b"
-        mainDateField: "sampleCollectionDate"
+        url: "https://lapis.pathoplexus.org/rsv-b"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
       externalNavigationLinks:
-        - url: "https://loculus.staging.genspectrum.org/rsv-b"
+        - url: "https://pathoplexus.org/rsv-b"
           label: "Browse data"
           menuIcon: "database"
-          description: "Browse the underlying data in the Loculus database."
+          description: "Browse the underlying data on Pathoplexus."
     ebolaSudan:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-sudan"
