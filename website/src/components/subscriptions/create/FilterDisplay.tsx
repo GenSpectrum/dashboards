@@ -61,7 +61,7 @@ export function FilterDisplay({
                         <h2 className='component-title'>Prevalence over time</h2>
                         <div className='h-[400px]'>
                             <GsPrevalenceOverTime
-                                numeratorFilter={[
+                                numeratorFilters={[
                                     {
                                         displayName: 'Your variant',
                                         lapisFilter: addDateWindowToFilter(
