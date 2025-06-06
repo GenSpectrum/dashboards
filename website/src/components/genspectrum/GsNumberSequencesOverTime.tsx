@@ -7,7 +7,7 @@ type TemporalGranularity = 'day' | 'week' | 'month' | 'year';
 
 export function GsNumberSequencesOverTime({
     lapisDateField,
-    lapisFilter,
+    lapisFilters,
     views,
     width,
     height,
@@ -16,7 +16,7 @@ export function GsNumberSequencesOverTime({
     pageSize,
 }: {
     lapisDateField: string;
-    lapisFilter: NamedLapisFilter[];
+    lapisFilters: NamedLapisFilter[];
     views?: Views[];
     width?: string;
     height?: string;
@@ -26,7 +26,7 @@ export function GsNumberSequencesOverTime({
 }) {
     return (
         <gs-number-sequences-over-time
-            lapisFilter={JSON.stringify(lapisFilter)}
+            lapisFilters={JSON.stringify(lapisFilters)}
             lapisDateField={lapisDateField}
             views={JSON.stringify(views)}
             width={width}
