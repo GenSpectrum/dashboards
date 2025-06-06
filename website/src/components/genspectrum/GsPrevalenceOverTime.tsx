@@ -1,12 +1,31 @@
-import '@genspectrum/dashboard-components/components';
-import type { LapisFilter, NamedLapisFilter } from '@genspectrum/dashboard-components/util';
+import type {
+    AxisMax,
+    ConfidenceIntervalMethod,
+    LapisFilter,
+    NamedLapisFilter,
+    PrevalenceOverTimeView,
+    TemporalGranularity,
+} from '@genspectrum/dashboard-components/util';
+import type { FC } from 'react';
 
-type Views = 'bar' | 'line' | 'bubble' | 'table';
-type ConfidenceIntervalMethod = 'none' | 'wilson';
-type AxisMax = 'maxInData' | 'limitTo1' | number;
+import { ComponentWrapper } from '../ComponentWrapper.tsx';
 
-export function GsPrevalenceOverTime({
-    numeratorFilter,
+export type GsPrevalenceOverTimeProps = {
+    numeratorFilters: NamedLapisFilter[];
+    denominatorFilter: LapisFilter;
+    views?: PrevalenceOverTimeView[];
+    granularity?: TemporalGranularity;
+    smoothingWindow?: number;
+    width?: string;
+    height?: string;
+    confidenceIntervalMethods?: ConfidenceIntervalMethod[];
+    lapisDateField: string;
+    pageSize?: boolean | number;
+    yAxisMaxLinear?: AxisMax;
+};
+
+export const GsPrevalenceOverTime: FC<GsPrevalenceOverTimeProps> = ({
+    numeratorFilters,
     denominatorFilter,
     lapisDateField,
     granularity,
@@ -17,32 +36,22 @@ export function GsPrevalenceOverTime({
     confidenceIntervalMethods,
     pageSize,
     yAxisMaxLinear,
-}: {
-    numeratorFilter: NamedLapisFilter[];
-    denominatorFilter: LapisFilter;
-    views?: Views[];
-    granularity?: 'day' | 'week' | 'month' | 'year';
-    smoothingWindow?: number;
-    width?: string;
-    height?: string;
-    confidenceIntervalMethods?: ConfidenceIntervalMethod[];
-    lapisDateField: string;
-    pageSize?: boolean | number;
-    yAxisMaxLinear?: AxisMax;
-}) {
+}) => {
     return (
-        <gs-prevalence-over-time
-            numeratorFilter={JSON.stringify(numeratorFilter)}
-            denominatorFilter={JSON.stringify(denominatorFilter)}
-            granularity={granularity}
-            smoothingWindow={smoothingWindow}
-            views={JSON.stringify(views)}
-            confidenceIntervalMethods={JSON.stringify(confidenceIntervalMethods)}
-            width={width}
-            height={height}
-            lapisDateField={lapisDateField}
-            pageSize={pageSize}
-            yAxisMaxLinear={yAxisMaxLinear}
-        ></gs-prevalence-over-time>
+        <ComponentWrapper title='Prevalence over time' height={height}>
+            <gs-prevalence-over-time
+                numeratorFilters={JSON.stringify(numeratorFilters)}
+                denominatorFilter={JSON.stringify(denominatorFilter)}
+                granularity={granularity}
+                smoothingWindow={smoothingWindow}
+                views={JSON.stringify(views)}
+                confidenceIntervalMethods={JSON.stringify(confidenceIntervalMethods)}
+                width={width}
+                height={height ? '100%' : undefined}
+                lapisDateField={lapisDateField}
+                pageSize={pageSize}
+                yAxisMaxLinear={yAxisMaxLinear}
+            ></gs-prevalence-over-time>
+        </ComponentWrapper>
     );
-}
+};
