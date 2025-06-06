@@ -2,14 +2,14 @@ import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import axios from 'axios';
 import { z } from 'zod';
 
-import { getInstanceLogger } from '../logger.ts';
+import { getClientLogger } from '../clientLogger.ts';
 
 const lapisTotalCountSchema = z.object({
     data: z.tuple([z.object({ count: z.number() })]),
 });
 export type LapisTotalCount = z.infer<typeof lapisTotalCountSchema>;
 
-const logger = getInstanceLogger('getTotalCount');
+const logger = getClientLogger('getTotalCount');
 
 export async function getTotalCount(lapisUrl: string, lapisFilter: LapisFilter) {
     try {
