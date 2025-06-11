@@ -1,6 +1,11 @@
 import { dateRangeOptionPresets, type MutationAnnotation, views } from '@genspectrum/dashboard-components/util';
 
-import { getIntegerFromSearch, getLapisVariantQuery, setSearchFromLapisVariantQuery } from './helpers.ts';
+import {
+    getIntegerFromSearch,
+    getLapisVariantQuery,
+    setSearchFromLapisVariantQuery,
+    setSearchFromString,
+} from './helpers.ts';
 import { type OrganismsConfig } from '../config.ts';
 import {
     BaseView,
@@ -36,6 +41,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 import { formatUrl } from '../util/formatUrl.ts';
 import { setSearchFromTextFilters } from './pageStateHandlers/textFilterFromToUrl.ts';
+import { advancedQueryUrlParam } from '../components/genspectrum/AdvancedQueryFilter.tsx';
 
 const earliestDate = '2020-01-06';
 const hostField = 'host';
@@ -72,7 +78,8 @@ class CovidConstants implements OrganismConstants {
             filterType: 'lineage' as const,
         },
     ];
-    public readonly useAdvancedQuery = true;
+    public readonly useVariantQuery = true;
+    public readonly useAdvancedFilter = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
             type: 'location',
@@ -212,6 +219,7 @@ class CovidSingleVariantStateHandler
         setSearchFromLocationFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromString(search, advancedQueryUrlParam, pageState.datasetFilter.advancedQuery);
 
         setSearchFromLapisVariantQuery(
             search,
