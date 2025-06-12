@@ -1,6 +1,8 @@
 import '@genspectrum/dashboard-components/components';
 import type { NamedLapisFilter } from '@genspectrum/dashboard-components/util';
 
+import { ComponentWrapper } from '../ComponentWrapper.tsx';
+
 type Views = 'bar' | 'line' | 'table';
 
 type TemporalGranularity = 'day' | 'week' | 'month' | 'year';
@@ -25,15 +27,17 @@ export function GsNumberSequencesOverTime({
     pageSize?: boolean | number;
 }) {
     return (
-        <gs-number-sequences-over-time
-            lapisFilters={JSON.stringify(lapisFilters)}
-            lapisDateField={lapisDateField}
-            views={JSON.stringify(views)}
-            width={width}
-            height={height}
-            granularity={granularity}
-            smoothingWindow={smoothingWindow}
-            pageSize={pageSize}
-        ></gs-number-sequences-over-time>
+        <ComponentWrapper title='Number sequences' height={height}>
+            <gs-number-sequences-over-time
+                lapisFilters={JSON.stringify(lapisFilters)}
+                lapisDateField={lapisDateField}
+                views={JSON.stringify(views)}
+                width={width}
+                height={height}
+                granularity={granularity}
+                smoothingWindow={smoothingWindow}
+                pageSize={pageSize}
+            ></gs-number-sequences-over-time>
+        </ComponentWrapper>
     );
 }
