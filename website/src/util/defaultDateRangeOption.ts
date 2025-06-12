@@ -18,27 +18,33 @@ export const defaultDateRangeOption = {
     before2017: { label: 'Before 2017', dateTo: '2016-12-31' },
 } satisfies { [key: string]: DateRangeOption };
 
-export const defaultDateRangeOptions = [
-    dateRangeOptionPresets.last6Months,
-    dateRangeOptionPresets.lastYear,
-    defaultDateRangeOption.since2020,
-    defaultDateRangeOption.from2010to2019,
-    defaultDateRangeOption.from2000to2009,
-    defaultDateRangeOption.since2000,
-    defaultDateRangeOption.before2000,
-    dateRangeOptionPresets.allTimes,
-];
+export const defaultDateRangeOptions = () => {
+    const presets = dateRangeOptionPresets();
+    return [
+        presets.last6Months,
+        presets.lastYear,
+        defaultDateRangeOption.since2020,
+        defaultDateRangeOption.from2010to2019,
+        defaultDateRangeOption.from2000to2009,
+        defaultDateRangeOption.since2000,
+        defaultDateRangeOption.before2000,
+        presets.allTimes,
+    ];
+};
 
-export const fineGrainedDefaultDateRangeOptions = [
-    dateRangeOptionPresets.lastMonth,
-    dateRangeOptionPresets.last2Months,
-    dateRangeOptionPresets.last3Months,
-    dateRangeOptionPresets.last6Months,
-    dateRangeOptionPresets.lastYear,
-    defaultDateRangeOption.since2020,
-    defaultDateRangeOption.from2010to2019,
-    defaultDateRangeOption.from2000to2009,
-    defaultDateRangeOption.since2000,
-    defaultDateRangeOption.before2000,
-    dateRangeOptionPresets.allTimes,
-];
+export const fineGrainedDefaultDateRangeOptions = () => {
+    const presets = dateRangeOptionPresets();
+    return [
+        presets.lastMonth,
+        presets.last2Months,
+        presets.last3Months,
+        presets.last6Months,
+        presets.lastYear,
+        defaultDateRangeOption.since2020,
+        defaultDateRangeOption.from2010to2019,
+        defaultDateRangeOption.from2000to2009,
+        defaultDateRangeOption.since2000,
+        defaultDateRangeOption.before2000,
+        presets.allTimes,
+    ];
+};

@@ -203,7 +203,7 @@ export const INFLUENZA_ACCESSION_DOWNLOAD_FIELDS = [
 export const PATHOPLEXUS_HOST_FIELD = 'hostNameScientific';
 
 type FiltersConfig = {
-    dateRangeOptions: DateRangeOption[];
+    dateRangeOptions: () => DateRangeOption[];
     earliestDate: string;
     completenessSuffixes?: SuffixConfig[];
 };
