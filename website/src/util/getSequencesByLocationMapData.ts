@@ -1,5 +1,3 @@
-import path from 'path';
-
 import type { MapSource } from '@genspectrum/dashboard-components/util';
 import type { Topology } from 'topojson-specification';
 
@@ -39,7 +37,7 @@ function loadKnownMapFiles() {
     const topoJsonFiles = import.meta.glob<Topology>('../../public/mapData/*.topo.json', { eager: true }); // For reference: https://vite.dev/guide/features.html#glob-import
 
     const mapSpecs = Object.entries(topoJsonFiles).map(([relativeMapFilePath, map]) => {
-        const mapName = path.basename(relativeMapFilePath, '.topo.json');
+        const mapName = getBasename(relativeMapFilePath, '.topo.json');
         const topologyObjectsKey = Object.keys(map.objects)[0];
 
         return { mapName, topologyObjectsKey };
@@ -48,6 +46,13 @@ function loadKnownMapFiles() {
     return new Map<string, MapData>(
         mapSpecs.map(({ mapName, topologyObjectsKey }) => [mapName, getMapData(mapName, topologyObjectsKey)]),
     );
+}
+
+function getBasename(path: string, suffix: string) {
+    const lastSlashIndex = path.lastIndexOf('/');
+    const fileName = lastSlashIndex === -1 ? path : path.substring(lastSlashIndex + 1);
+
+    return fileName.endsWith(suffix) ? fileName.slice(0, -suffix.length) : fileName;
 }
 
 function getMapData(mapName: string, topologyObjectsKey: string): MapData {
@@ -72,7 +77,7 @@ export type MapData = {
     readonly offsetY: number;
 };
 
-export function getSequencesByLocationMapData(mapName: string | undefined, currentUrl: URL): MapData | undefined {
+export function getSequencesByLocationMapData(mapName: string | undefined, baseUrl: string): MapData | undefined {
     if (mapName === undefined) {
         return undefined;
     }
@@ -85,7 +90,7 @@ export function getSequencesByLocationMapData(mapName: string | undefined, curre
         return undefined;
     }
 
-    const absoluteMapUrl = new URL(mapData.mapSource.url, currentUrl);
+    const absoluteMapUrl = new URL(mapData.mapSource.url, baseUrl);
     return {
         ...mapData,
         mapSource: {

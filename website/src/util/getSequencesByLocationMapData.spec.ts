@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { getSequencesByLocationMapData } from './getSequencesByLocationMapData';
 
-const testUrl = new URL('https://my.host/page?query=1');
+const testUrl = 'https://my.host/page?query=1';
 
 describe('getSequencesByLocationMapData', () => {
     test('should return the correct map data for World', () => {
