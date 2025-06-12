@@ -122,7 +122,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets().lastYear,
     },
     numberFilters: {},
 };

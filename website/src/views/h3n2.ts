@@ -101,7 +101,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+        [GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets().lastYear,
     },
     numberFilters: {},
 };

@@ -167,7 +167,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [mainDateFilterColumn]: dateRangeOptionPresets.lastYear,
+        [mainDateFilterColumn]: dateRangeOptionPresets().lastYear,
     },
     numberFilters: {},
 };

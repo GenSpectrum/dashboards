@@ -13,7 +13,7 @@ export function parseDateRangesFromUrl(
     return (
         dateRangeFilterConfigs?.reduce(
             (acc, config) => {
-                const dateRange = getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions);
+                const dateRange = getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions());
                 if (dateRange === undefined) {
                     return acc;
                 }
