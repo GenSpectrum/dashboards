@@ -10,13 +10,13 @@ const dateConfigs = [
     {
         type: 'date',
         dateColumn: 'someDateField',
-        dateRangeOptions: [mockDateRangeOption],
+        dateRangeOptions: () => [mockDateRangeOption],
         earliestDate: '1999-01-01',
     },
     {
         type: 'date',
         dateColumn: 'someOtherDateField',
-        dateRangeOptions: [mockDateRangeOption],
+        dateRangeOptions: () => [mockDateRangeOption],
         earliestDate: '1999-01-01',
     },
     {
