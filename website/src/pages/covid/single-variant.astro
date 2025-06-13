@@ -1,26 +1,14 @@
 ---
-import { views } from '@genspectrum/dashboard-components/util';
-
-import ComponentsGrid from '../../components/ComponentsGrid.astro';
-import GsAggregate from '../../components/genspectrum/GsAggregate.astro';
-import GsMutations from '../../components/genspectrum/GsMutations.astro';
-import GsMutationsOverTime from '../../components/genspectrum/GsMutationsOverTime.astro';
-import GsPrevalenceOverTime from '../../components/genspectrum/GsPrevalenceOverTime.astro';
-import GsRelativeGrowthAdvantage from '../../components/genspectrum/GsRelativeGrowthAdvantage.astro';
-import GsStatistics from '../../components/genspectrum/GsStatistics.astro';
 import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { SelectorHeadline } from '../../components/pageStateSelectors/SelectorHeadline';
 import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
-import SelectVariant from '../../components/views/analyzeSingleVariant/SelectVariant.astro';
+import { CovidSingleVariantDataDisplay } from '../../components/views/analyzeSingleVariant/CovidSingleVariantDataDisplay';
 import { sanitizeForFilename } from '../../components/views/compareSideBySide/toDownloadLink';
 import { getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { getLocationSubdivision } from '../../views/locationHelpers';
 import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
-import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/locationFilterFromToUrl';
 import { type OrganismViewKey } from '../../views/routing';
 import { ServerSide } from '../../views/serverSideRouting';
 
@@ -29,16 +17,6 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
-const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    earliestDate: new Date(view.organismConstants.earliestDate),
-    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
-});
-
-const { label: subdivisionLabel, field: subdivisionField } = getLocationSubdivision(
-    view.organismConstants.locationFields,
-    pageState.datasetFilter.locationFilters[locationFieldsToFilterIdentifier(view.organismConstants.locationFields)],
-);
 
 const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 
@@ -76,89 +54,12 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
         </div>
     </div>
 
-    <div class='mx-[8px] flex flex-col gap-y-6' slot='dataDisplay'>
-        {
-            noVariantSelected && (
-                <SelectVariant slot='dataDisplay'>
-                    <p class='mx-auto mt-4'>To get started you can choose one a variant from one of our collections:</p>
-                    <div class='max-w-md'>
-                        <CollectionsList
-                            initialCollectionId={pageState.collectionId}
-                            organismsConfig={organismConfig}
-                            client:load
-                        />
-                    </div>
-                </SelectVariant>
-            )
-        }
-        <GsStatistics numeratorFilter={variantFilter} denominatorFilter={datasetLapisFilter} />
-        <ComponentsGrid>
-            <GsPrevalenceOverTime
-                numeratorFilters={[
-                    {
-                        displayName: '',
-                        lapisFilter: variantFilter,
-                    },
-                ]}
-                denominatorFilter={datasetLapisFilter}
-                lapisDateField={view.organismConstants.mainDateField}
-                granularity={timeGranularity}
-                pageSize={10}
-            />
-            <GsRelativeGrowthAdvantage
-                numeratorFilter={variantFilter}
-                denominatorFilter={datasetLapisFilter}
-                lapisDateField={view.organismConstants.mainDateField}
-            />
-            <GsMutations
-                lapisFilter={variantFilter}
-                baselineLapisFilter={datasetLapisFilter}
-                sequenceType='nucleotide'
-                pageSize={10}
-            />
-            <GsMutations
-                lapisFilter={variantFilter}
-                baselineLapisFilter={datasetLapisFilter}
-                sequenceType='amino acid'
-                pageSize={10}
-            />
-            {
-                subdivisionField !== undefined && (
-                    <GsAggregate
-                        title={subdivisionLabel}
-                        fields={[subdivisionField]}
-                        lapisFilter={variantFilter}
-                        views={[views.table, views.bar]}
-                        pageSize={10}
-                    />
-                )
-            }
-
-            {
-                view.organismConstants.aggregatedVisualizations.singleVariant.map(({ label, fields, views }) => (
-                    <GsAggregate
-                        title={label}
-                        fields={fields}
-                        lapisFilter={variantFilter}
-                        views={views}
-                        pageSize={10}
-                    />
-                ))
-            }
-        </ComponentsGrid>
-
-        <GsMutationsOverTime
-            lapisFilter={variantFilter}
-            sequenceType='nucleotide'
-            granularity={timeGranularity}
-            lapisDateField={view.organismConstants.mainDateField}
-        />
-
-        <GsMutationsOverTime
-            lapisFilter={variantFilter}
-            sequenceType='amino acid'
-            granularity={timeGranularity}
-            lapisDateField={view.organismConstants.mainDateField}
+    <div slot='dataDisplay'>
+        <CovidSingleVariantDataDisplay
+            organismViewKey={organismViewKey}
+            organismsConfig={organismConfig}
+            pageState={pageState}
+            client:load
         />
     </div>
 </SingleVariantOrganismPageLayout>

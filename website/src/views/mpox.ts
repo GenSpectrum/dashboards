@@ -60,23 +60,26 @@ class MpoxConstants implements OrganismConstants {
     public readonly useAdvancedQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getPathoplexusFilters({
-            dateRangeOptions: [
-                dateRangeOptionPresets.lastMonth,
-                dateRangeOptionPresets.last2Months,
-                dateRangeOptionPresets.last3Months,
-                dateRangeOptionPresets.last6Months,
-                dateRangeOptionPresets.lastYear,
-                defaultDateRangeOption.year2024,
-                defaultDateRangeOption.year2023,
-                defaultDateRangeOption.year2022,
-                defaultDateRangeOption.year2021,
-                defaultDateRangeOption.since2021,
-                defaultDateRangeOption.before2021,
-                defaultDateRangeOption.since2017,
-                defaultDateRangeOption.from2017to2020,
-                defaultDateRangeOption.before2017,
-                dateRangeOptionPresets.allTimes,
-            ],
+            dateRangeOptions: () => {
+                const presets = dateRangeOptionPresets();
+                return [
+                    presets.lastMonth,
+                    presets.last2Months,
+                    presets.last3Months,
+                    presets.last6Months,
+                    presets.lastYear,
+                    defaultDateRangeOption.year2024,
+                    defaultDateRangeOption.year2023,
+                    defaultDateRangeOption.year2022,
+                    defaultDateRangeOption.year2021,
+                    defaultDateRangeOption.since2021,
+                    defaultDateRangeOption.before2021,
+                    defaultDateRangeOption.since2017,
+                    defaultDateRangeOption.from2017to2020,
+                    defaultDateRangeOption.before2017,
+                    presets.allTimes,
+                ];
+            },
             earliestDate: '1960-01-01',
         }),
     ];
@@ -119,7 +122,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets.lastYear,
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets().lastYear,
     },
     numberFilters: {},
 };

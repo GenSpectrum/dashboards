@@ -46,19 +46,22 @@ const mainLocationFields = ['region', 'country', 'division'];
 const NEXTCLADE_PANGO_LINEAGE_FIELD_NAME = 'nextcladePangoLineage';
 const NEXTSTRAIN_CLADE_FIELD_NAME = 'nextstrainClade';
 
-const dateRangeOptions = [
-    dateRangeOptionPresets.lastMonth,
-    dateRangeOptionPresets.last2Months,
-    dateRangeOptionPresets.last3Months,
-    dateRangeOptionPresets.last6Months,
-    dateRangeOptionPresets.lastYear,
-    defaultDateRangeOption.year2024,
-    defaultDateRangeOption.year2023,
-    defaultDateRangeOption.year2022,
-    defaultDateRangeOption.year2021,
-    defaultDateRangeOption.year2020,
-    dateRangeOptionPresets.allTimes,
-];
+const dateRangeOptions = () => {
+    const presets = dateRangeOptionPresets();
+    return [
+        presets.lastMonth,
+        presets.last2Months,
+        presets.last3Months,
+        presets.last6Months,
+        presets.lastYear,
+        defaultDateRangeOption.year2024,
+        defaultDateRangeOption.year2023,
+        defaultDateRangeOption.year2022,
+        defaultDateRangeOption.year2021,
+        defaultDateRangeOption.year2020,
+        presets.allTimes,
+    ];
+};
 
 class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
@@ -164,7 +167,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [mainDateFilterColumn]: dateRangeOptionPresets.lastYear,
+        [mainDateFilterColumn]: dateRangeOptionPresets().lastYear,
     },
     numberFilters: {},
 };
