@@ -23,4 +23,8 @@ export abstract class ViewPage {
     public async selectDateRange(dateRangeOption: string) {
         await this.page.locator('gs-date-range-filter').getByRole('combobox').first().selectOption(dateRangeOption);
     }
+
+    public async waitForLoading() {
+        await this.page.waitForSelector('[aria-label="Loading"]', { state: 'detached' });
+    }
 }
