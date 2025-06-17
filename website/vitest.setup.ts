@@ -19,6 +19,7 @@ import setupDayjs from './src/util/setupDayjs.ts';
 
 setupDayjs();
 
+export const ASTRO_SERVER_URL = '/api';
 export const DUMMY_BACKEND_URL = 'http://backend.dummy';
 export const DUMMY_LAPIS_URL = 'http://lapis.dummy';
 
@@ -30,6 +31,12 @@ function getError(assertionError: AssertionError) {
 
 type ReferenceSequence = { name: string; sequence: string };
 type ReferenceGenome = { nucleotideSequences: ReferenceSequence[]; genes: ReferenceSequence[] };
+
+export const astroApiMocks = {
+    log: () => {
+        testServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
+    },
+};
 
 export const lapisRequestMocks = {
     info: (response: LapisInfo, statusCode = 200) => {
