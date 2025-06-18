@@ -19,6 +19,10 @@ Currently, we support the following organisms:
 - West Nile Virus
 - RSV-A
 - RSV-B
+- Mpox
+- Ebola Sudan
+- Ebola Zaire
+- Crimean-Congo Hemorrhagic Fever (CCHF)
 
 The dashboards also allow users to create subscriptions to receive notifications
 when there is new data above a configurable threshold for certain variant of an organism.

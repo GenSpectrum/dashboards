@@ -1,0 +1,21 @@
+@startuml
+title "Covid LAPIS instances"
+
+actor User as user
+
+node "Dashboards" {
+    component Website as website
+    component Backend as backend
+    component PostgresDB as db
+}
+
+collections "LAPIS instances" as lapis
+component "GitHub App" as gh
+
+user -> website : "Access dashboards"
+website ~~> backend : "subscriptions data"
+backend ~~> db : "subscriptions data"
+website -r-> lapis : "Query genomic data"
+website ~~> gh : "Login"
+
+@enduml
