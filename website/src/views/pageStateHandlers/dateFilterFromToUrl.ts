@@ -45,15 +45,20 @@ export const getDateRangeFromSearch = (
     }
 
     if (value.includes('--')) {
-        const split = value.split('--');
+        const [from, to] = value.split('--');
         return {
             label: CustomDateRangeLabel,
-            dateFrom: split[0],
-            dateTo: split[1],
+            dateFrom: emptyToUndefined(from),
+            dateTo: emptyToUndefined(to),
         };
     }
     return undefined;
 };
+
+function emptyToUndefined(value: string) {
+    const trimmedValue = value.trim();
+    return trimmedValue === '' ? undefined : trimmedValue;
+}
 
 export function setSearchFromDateFilters(
     search: URLSearchParams,

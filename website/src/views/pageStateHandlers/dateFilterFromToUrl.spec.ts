@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
 import type { BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector.tsx';
+import { CustomDateRangeLabel } from '../../types/DateWindow.ts';
 import type { Dataset } from '../View.ts';
 
 const mockDateRangeOption = { label: 'Last 7 Days', dateFrom: '2024-11-22', dateTo: '2024-11-29' };
@@ -26,7 +27,7 @@ const dateConfigs = [
 ] satisfies BaselineFilterConfig[];
 
 describe('parseDateRangesFromUrl', () => {
-    it('should parse url to date range filter', () => {
+    it('should parse url to date range filter predefined option', () => {
         const search = new Map<string, string>([
             ['someDateField', 'Last 7 Days'],
             ['notADateFilter', 'notADateFilter'],
@@ -43,6 +44,48 @@ describe('parseDateRangesFromUrl', () => {
         const result = parseDateRangesFromUrl(search, dateConfigs);
 
         expect(result).toStrictEqual({});
+    });
+
+    it('should parse a date range', () => {
+        const search = new Map<string, string>([['someDateField', '2020-01-01--2020-01-31']]);
+
+        const result = parseDateRangesFromUrl(search, dateConfigs);
+
+        expect(result).toStrictEqual({
+            someDateField: {
+                dateFrom: '2020-01-01',
+                dateTo: '2020-01-31',
+                label: CustomDateRangeLabel,
+            },
+        });
+    });
+
+    it('should parse a date range with missing date to', () => {
+        const search = new Map<string, string>([['someDateField', '2020-01-01--']]);
+
+        const result = parseDateRangesFromUrl(search, dateConfigs);
+
+        expect(result).toStrictEqual({
+            someDateField: {
+                dateFrom: '2020-01-01',
+                dateTo: undefined,
+                label: CustomDateRangeLabel,
+            },
+        });
+    });
+
+    it('should parse a date range with missing date from', () => {
+        const search = new Map<string, string>([['someDateField', '--2020-01-31']]);
+
+        const result = parseDateRangesFromUrl(search, dateConfigs);
+
+        expect(result).toStrictEqual({
+            someDateField: {
+                dateFrom: undefined,
+                dateTo: '2020-01-31',
+                label: CustomDateRangeLabel,
+            },
+        });
     });
 });
 
