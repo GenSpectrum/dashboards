@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector } from './BaselineSelector.tsx';
+import { BaselineSelector, makeBaselineFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig } from './VariantSelector.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
@@ -35,13 +35,15 @@ export function CompareVariantsPageStateSelector({
         return view.pageStateHandler.datasetFilterToLapisFilter(pageState.datasetFilter);
     }, [pageState, view.pageStateHandler]);
 
+    const baselineFilterConfigs = makeBaselineFilterConfig(view.organismConstants);
+
     return (
         <div className='flex flex-col gap-4'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <Inset className='p-2'>
                     <BaselineSelector
-                        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+                        baselineFilterConfigs={baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
                         datasetFilter={pageState.datasetFilter}
                         setDatasetFilter={(newDatasetFilter) => {

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector } from './BaselineSelector.tsx';
+import { BaselineSelector, makeBaselineFilterConfig } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { type OrganismsConfig } from '../../config.ts';
@@ -26,7 +26,7 @@ export function SingleVariantPageStateSelector({
     );
     const [pageState, setPageState] = useState(initialPageState);
 
-    const baselineFilterConfigs = view.organismConstants.baselineFilterConfigs;
+    const baselineFilterConfigs = makeBaselineFilterConfig(view.organismConstants);
 
     const currentLapisFilter = useMemo(() => {
         return view.pageStateHandler.toLapisFilter(pageState);
