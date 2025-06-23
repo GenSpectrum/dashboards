@@ -5,6 +5,7 @@
 The GenSpectrum dashboards visualize pathogen genomic data obtained from [LAPIS](https://github.com/GenSpectrum/LAPIS) instances.
 
 Important requirements are:
+
 * **interactive**: 
   Users can set filters on the data (such as restricting the data to a certain date range, region, or mutation).
   This allows users to explore the data in a flexible way.

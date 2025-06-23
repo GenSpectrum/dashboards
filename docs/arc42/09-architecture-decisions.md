@@ -9,6 +9,7 @@ Every user should be able to manage their subscriptions and see their data.
 We also need a way to notify users in case the subscription triggers (via e-mail or Slack hook).
 
 We considered several options for authentication:
+
 * Using Keycloak
 * Using GitHub OAuth
 * Using a managed service

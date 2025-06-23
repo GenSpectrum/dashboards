@@ -7,6 +7,7 @@
   as much as possible.
 
 Non-constraints:
+
 * In contrast to other GenSpectrum applications, the dashboards do not need to be reusable.
   It is not intended to be hosted by anyone else (although of course it is possible to do so).
   It is not intended to be configurable by the user.
