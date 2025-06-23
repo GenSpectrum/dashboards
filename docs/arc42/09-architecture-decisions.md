@@ -23,4 +23,8 @@ We also decided to use [auth-astro](https://github.com/nowaythatworked/auth-astr
 to handle the authentication flow in the Astro application.
 It supports GitHub OAuth out of the box.
 
-We refrained from using Keycloak since setting it up is more effort, and it can easily be misconfigured to be insecure.
+We refrained from using Keycloak since setting it up is more effort.
+We would have needed to host it on one of our servers and configure it properly.
+Although is it relatively easy to get a Keycloak Docker image running,
+it is still difficult to get the configuration right.
+None of the team members was an expert in Keycloak and misconfigurations can lead to security issues.
