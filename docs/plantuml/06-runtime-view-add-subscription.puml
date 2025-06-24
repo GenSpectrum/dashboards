@@ -1,0 +1,22 @@
+@startuml
+
+Participant User
+Participant Website
+Participant GitHubApp as gh
+Participant Backend
+Participant PostgresDB as db
+
+User -> Website : log in
+Website -> gh : request GitHub login
+gh -> User : redirect to GitHub login
+User --> gh : authorize access
+gh --> Website : login token, user info
+Website --> User : store login token in cookies
+User -> Website : create new subscription
+Website -> Backend : create new subscription
+Backend -> PostgresDB : store subscription
+PostgresDB --> Backend : ok
+Backend --> Website : subscription created
+Website --> User : show created subscription
+
+@enduml
