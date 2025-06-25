@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
-import { BaselineSelector, makeBaselineFilterConfig } from './BaselineSelector.tsx';
+import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
@@ -28,15 +28,13 @@ export function SequencingEffortsPageStateSelector({
         return view.pageStateHandler.toLapisFilter(pageState);
     }, [pageState, view.pageStateHandler]);
 
-    const baselineFilterConfigs = makeBaselineFilterConfig(view.organismConstants);
-
     return (
         <div className='flex flex-col gap-4'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <Inset className='flex flex-col gap-2 p-2'>
                     <BaselineSelector
-                        baselineFilterConfigs={baselineFilterConfigs}
+                        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
                         datasetFilter={pageState.datasetFilter}
                         setDatasetFilter={(newDatasetFilter) => {

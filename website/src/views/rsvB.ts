@@ -52,7 +52,6 @@ class RsvBConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getPathoplexusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions,

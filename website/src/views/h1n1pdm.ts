@@ -59,7 +59,6 @@ class H1n1pdmConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions,

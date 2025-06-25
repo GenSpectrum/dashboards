@@ -27,7 +27,6 @@ const mockConstants: OrganismConstants = {
     },
     accessionDownloadFields: [],
     useVariantQuery: false,
-    useAdvancedQuery: true,
     baselineFilterConfigs: [
         {
             type: 'text',

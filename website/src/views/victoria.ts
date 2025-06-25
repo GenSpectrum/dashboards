@@ -59,7 +59,6 @@ class VictoriaConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions,

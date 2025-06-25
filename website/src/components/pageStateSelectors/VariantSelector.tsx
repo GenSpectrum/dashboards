@@ -38,7 +38,7 @@ export function makeVariantFilterConfig(
             enabled: enableVariantQuery ?? organismConstants.useVariantQuery,
         },
         advancedFilterConfig: {
-            enabled: organismConstants.useAdvancedQuery,
+            enabled: true,
         },
     };
 }

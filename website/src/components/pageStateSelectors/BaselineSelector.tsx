@@ -1,6 +1,5 @@
 import type { DateRangeOption, LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { OrganismConstants } from '../../views/OrganismConstants.ts';
 import type { DatasetFilter } from '../../views/View.ts';
 import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/locationFilterFromToUrl.ts';
 import { AdvancedQueryFilter } from '../genspectrum/AdvancedQueryFilter.tsx';
@@ -44,12 +43,6 @@ export type BaselineFilterConfig =
     | ({ type: 'location' } & LocationFilterConfig)
     | ({ type: 'number' } & NumberRangeFilterConfig)
     | { type: 'advancedQuery' };
-
-export function makeBaselineFilterConfig(organismConstants: OrganismConstants): BaselineFilterConfig[] {
-    return organismConstants.useAdvancedQuery
-        ? [...organismConstants.baselineFilterConfigs, { type: 'advancedQuery' }]
-        : [...organismConstants.baselineFilterConfigs];
-}
 
 export function BaselineSelector({
     baselineFilterConfigs,

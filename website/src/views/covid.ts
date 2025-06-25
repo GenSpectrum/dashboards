@@ -82,7 +82,6 @@ class CovidConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = true;
-    public readonly useAdvancedQuery = true;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         {
             type: 'location',
@@ -122,6 +121,7 @@ class CovidConstants implements OrganismConstants {
             placeholderText: 'Exposure location',
             label: 'Exposure location',
         },
+        { type: 'advancedQuery' },
     ];
     public readonly hostField: string = hostField;
     public readonly originatingLabField = 'originatingLab';
