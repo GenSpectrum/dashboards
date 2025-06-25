@@ -10,7 +10,7 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromString,
 } from '../helpers.ts';
-import { type PageStateHandler, toDisplayName, toLapisFilterFromVariant } from './PageStateHandler.ts';
+import { type PageStateHandler, toDisplayName, toLapisFilterWithVariant } from './PageStateHandler.ts';
 import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
 import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
 import { decodeFiltersFromSearch, searchParamsFromFilterMap } from './multipleFiltersFromToUrl.ts';
@@ -76,28 +76,26 @@ export class CompareToBaselineStateHandler implements PageStateHandler<CompareTo
         return formatUrl(this.pathname, search);
     }
 
-    public datasetFilterToLapisFilter(baselineFilter: DatasetFilter): LapisFilter {
-        return toLapisFilterWithoutVariant({ datasetFilter: baselineFilter }, this.constants.additionalFilters);
+    public datasetFilterToLapisFilter(datasetFilter: DatasetFilter): LapisFilter {
+        return toLapisFilterWithoutVariant(datasetFilter, this.constants.additionalFilters);
     }
 
     public baselineFilterToLapisFilter(pageState: CompareToBaselineData): LapisFilter {
-        const datasetFilter = this.datasetFilterToLapisFilter(pageState.datasetFilter);
-
-        return {
-            ...datasetFilter,
-            ...toLapisFilterFromVariant(pageState.baselineFilter),
-        };
+        return toLapisFilterWithVariant({
+            datasetFilter: pageState.datasetFilter,
+            variantFilter: pageState.baselineFilter,
+            additionalFilters: this.constants.additionalFilters,
+        });
     }
 
     public variantFiltersToNamedLapisFilters(pageState: CompareToBaselineData): NamedLapisFilter[] {
-        const datasetFilter = this.datasetFilterToLapisFilter(pageState.datasetFilter);
-
         return Array.from(pageState.variants.values()).map((variantFilter) => {
             return {
-                lapisFilter: {
-                    ...datasetFilter,
-                    ...toLapisFilterFromVariant(variantFilter),
-                },
+                lapisFilter: toLapisFilterWithVariant({
+                    datasetFilter: pageState.datasetFilter,
+                    variantFilter,
+                    additionalFilters: this.constants.additionalFilters,
+                }),
                 displayName: toDisplayName(variantFilter),
             };
         });

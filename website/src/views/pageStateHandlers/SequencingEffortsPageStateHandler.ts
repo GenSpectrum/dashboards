@@ -8,12 +8,11 @@ import {
     setSearchFromLapisVariantQuery,
     setSearchFromString,
 } from '../helpers.ts';
-import { type PageStateHandler, toLapisFilterFromVariant } from './PageStateHandler.ts';
+import { type PageStateHandler, toLapisFilterWithVariant } from './PageStateHandler.ts';
 import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
 import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
 import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
 import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
-import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
 import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
 import { formatUrl } from '../../util/formatUrl.ts';
 
@@ -61,10 +60,11 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
     }
 
     public toLapisFilter(pageState: DatasetAndVariantData) {
-        return {
-            ...toLapisFilterWithoutVariant(pageState, this.constants.additionalFilters),
-            ...toLapisFilterFromVariant(pageState.variantFilter),
-        };
+        return toLapisFilterWithVariant({
+            datasetFilter: pageState.datasetFilter,
+            variantFilter: pageState.variantFilter,
+            additionalFilters: this.constants.additionalFilters,
+        });
     }
 
     public getDefaultPageUrl(): string {

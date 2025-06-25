@@ -84,23 +84,34 @@ describe('SingleVariantPageStateHandler', () => {
     it('should parse page state from URL, including variants', () => {
         const url = new URL(
             'http://example.com/covid/single-variant?' +
-                'country=US&date=Last 7 Days' +
-                '&lineage=B.2.3.4&nucleotideMutations=C234G&' +
+                'country=US' +
+                '&date=Last 7 Days' +
+                '&lineage=B.2.3.4' +
+                '&nucleotideMutations=C234G' +
+                '&advancedQuery=123T' +
+                '&advancedQueryVariant=345G+%26+567C' +
                 '&',
         );
 
         const pageState = handler.parsePageStateFromUrl(url);
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        expect(pageState.datasetFilter.locationFilters).toEqual({ 'country,region': { country: 'US' } });
-        expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
+        expect(pageState.datasetFilter).toEqual({
+            locationFilters: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'country,region': { country: 'US' },
+            },
+            dateFilters: { date: mockDateRangeOption },
+            advancedQuery: '123T',
+            numberFilters: {},
+            textFilters: {},
+        });
 
         expect(pageState.variantFilter).toEqual({
             lineages: { lineage: 'B.2.3.4' },
             mutations: {
                 nucleotideMutations: ['C234G'],
             },
-            variantQuery: undefined,
+            advancedQuery: '345G & 567C',
         });
     });
 
@@ -109,6 +120,7 @@ describe('SingleVariantPageStateHandler', () => {
             variantFilter: {
                 lineages: { lineage: 'B.1.1.7' },
                 mutations: { nucleotideMutations: ['D614G'] },
+                advancedQuery: '345G & 567C',
             },
             datasetFilter: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -116,6 +128,7 @@ describe('SingleVariantPageStateHandler', () => {
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
                 numberFilters: {},
+                advancedQuery: 'country = Germany & 123T',
             },
         };
         const url = handler.toUrl(pageState);
@@ -123,7 +136,10 @@ describe('SingleVariantPageStateHandler', () => {
             '/covid/single-variant?' +
                 'country=US' +
                 '&date=Last+7+Days' +
-                '&nucleotideMutations=D614G&lineage=B.1.1.7' +
+                '&advancedQuery=country+%3D+Germany+%26+123T' +
+                '&nucleotideMutations=D614G' +
+                '&lineage=B.1.1.7' +
+                '&advancedQueryVariant=345G+%26+567C' +
                 '&',
         );
     });
@@ -144,14 +160,27 @@ describe('SingleVariantPageStateHandler', () => {
 
     it('should convert pageState to Lapis filter', () => {
         const lapisFilter = handler.toLapisFilter({
-            ...mockDefaultPageState,
+            datasetFilter: {
+                locationFilters: {},
+                dateFilters: {
+                    date: mockDateRangeOption,
+                },
+                textFilters: {},
+                numberFilters: {
+                    someLapisNumberField: {
+                        min: 123,
+                    },
+                },
+                advancedQuery: 'country = Germany & 123T',
+            },
             variantFilter: {
                 lineages: { lineage: 'B.1.1.7' },
                 mutations: { nucleotideMutations: ['D614G'] },
+                advancedQuery: '345G & 567C',
             },
         });
         expect(lapisFilter).toStrictEqual({
-            advancedQuery: undefined,
+            advancedQuery: '(country = Germany & 123T) and (345G & 567C)',
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             someLapisNumberFieldFrom: 123,

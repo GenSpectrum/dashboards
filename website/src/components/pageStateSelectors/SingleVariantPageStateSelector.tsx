@@ -30,13 +30,15 @@ export function SingleVariantPageStateSelector({
         return view.pageStateHandler.toLapisFilter(pageState);
     }, [pageState, view.pageStateHandler]);
 
+    const baselineFilterConfigs = view.organismConstants.baselineFilterConfigs;
+
     return (
         <div className='flex flex-col gap-4'>
             <div>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <Inset className={'p-2'}>
                     <BaselineSelector
-                        baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
+                        baselineFilterConfigs={baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
                         datasetFilter={pageState.datasetFilter}
                         setDatasetFilter={(newDatasetFilter) => {

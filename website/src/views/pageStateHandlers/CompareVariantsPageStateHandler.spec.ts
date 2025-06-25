@@ -71,18 +71,23 @@ describe('CompareVariantsPageStateHandler', () => {
         const url = new URL(
             'http://example.com/covid/compareVariants?' +
                 'columns=3' +
-                '&country=US&date=Last 7 Days' +
+                '&country=US&date=Last 7 Days&advancedQuery=country%3DUS' +
                 '&lineage$0=B.1.1.7&nucleotideMutations$0=D614G' +
-                '&lineage$1=A.1.2.3&aminoAcidMutations$1=S:A123T' +
+                '&lineage$1=A.1.2.3&aminoAcidMutations$1=S:A123T&advancedQueryVariant$1=123T' +
                 '&variantQuery$2=C234G' +
                 '&',
         );
 
         const pageState = handler.parsePageStateFromUrl(url);
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        expect(pageState.datasetFilter.locationFilters).toEqual({ 'country,region': { country: 'US' } });
-        expect(pageState.datasetFilter.dateFilters).toEqual({ date: mockDateRangeOption });
+        expect(pageState.datasetFilter).toEqual({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            locationFilters: { 'country,region': { country: 'US' } },
+            dateFilters: { date: mockDateRangeOption },
+            numberFilters: {},
+            textFilters: {},
+            advancedQuery: 'country=US',
+        });
 
         expect(pageState.variants.size).toBe(3);
         expect(pageState.variants.get(0)).toEqual({
@@ -92,6 +97,7 @@ describe('CompareVariantsPageStateHandler', () => {
         expect(pageState.variants.get(1)).toEqual({
             lineages: { lineage: 'A.1.2.3' },
             mutations: { aminoAcidMutations: ['S:A123T'] },
+            advancedQuery: '123T',
         });
         expect(pageState.variants.get(2)).toEqual({
             variantQuery: 'C234G',
@@ -113,6 +119,7 @@ describe('CompareVariantsPageStateHandler', () => {
                     {
                         lineages: { lineage: 'A.1.2.3' },
                         mutations: { aminoAcidMutations: ['S:A123T'] },
+                        advancedQuery: '123T',
                     },
                 ],
                 [
@@ -128,6 +135,7 @@ describe('CompareVariantsPageStateHandler', () => {
                 dateFilters: { date: mockDateRangeOption },
                 textFilters: {},
                 numberFilters: {},
+                advancedQuery: 'country=US',
             },
         };
         const url = handler.toUrl(pageState);
@@ -135,10 +143,11 @@ describe('CompareVariantsPageStateHandler', () => {
             '/covid/compare-variants?' +
                 'columns=3' +
                 '&nucleotideMutations%240=D614G&lineage%240=B.1.1.7' +
-                '&aminoAcidMutations%241=S%3AA123T&lineage%241=A.1.2.3' +
+                '&aminoAcidMutations%241=S%3AA123T&lineage%241=A.1.2.3&advancedQueryVariant%241=123T' +
                 '&variantQuery%242=C234G' +
                 '&country=US' +
                 '&date=Last+7+Days' +
+                '&advancedQuery=country%3DUS' +
                 '&',
         );
     });
@@ -201,23 +210,32 @@ describe('CompareVariantsPageStateHandler', () => {
             ...mockDefaultPageState.datasetFilter,
             // eslint-disable-next-line @typescript-eslint/naming-convention
             locationFilters: { 'country,region': { country: 'US' } },
+            advancedQuery: 'country=US',
         });
         expect(lapisFilter).toStrictEqual({
             dateFrom: '2024-11-22',
             dateTo: '2024-11-29',
             country: 'US',
+            advancedQuery: 'country=US',
         });
     });
 
     it('should convert the page state to a named variant filter', () => {
         const pageState: CompareVariantsData = {
-            ...mockDefaultPageState,
+            datasetFilter: {
+                locationFilters: {},
+                dateFilters: { date: mockDateRangeOption },
+                textFilters: {},
+                numberFilters: {},
+                advancedQuery: 'country=US',
+            },
             variants: new Map([
                 [
                     1,
                     {
                         lineages: { lineage: 'B.1.1.7' },
                         mutations: { nucleotideMutations: ['D614G'], aminoAcidMutations: ['S:A123T'] },
+                        advancedQuery: '123T',
                     },
                 ],
                 [
@@ -231,9 +249,9 @@ describe('CompareVariantsPageStateHandler', () => {
         const namedVariantFilter = handler.variantFiltersToNamedLapisFilters(pageState);
         expect(namedVariantFilter).deep.equal([
             {
-                displayName: 'B.1.1.7 + D614G + S:A123T',
+                displayName: 'B.1.1.7 + D614G + S:A123T + 123T',
                 lapisFilter: {
-                    advancedQuery: undefined,
+                    advancedQuery: '(country=US) and (123T)',
                     aminoAcidMutations: ['S:A123T'],
                     dateFrom: '2024-11-22',
                     dateTo: '2024-11-29',
@@ -244,6 +262,7 @@ describe('CompareVariantsPageStateHandler', () => {
             {
                 displayName: 'C234G',
                 lapisFilter: {
+                    advancedQuery: 'country=US',
                     dateFrom: '2024-11-22',
                     dateTo: '2024-11-29',
                     variantQuery: 'C234G',
