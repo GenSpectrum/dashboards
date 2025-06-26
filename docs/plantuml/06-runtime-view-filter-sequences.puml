@@ -1,0 +1,15 @@
+@startuml
+
+Participant User
+Participant Website
+Participant "Dashboard components" as components
+Participant LAPIS
+
+User -> Website : specify filters on the data
+Website -> Website : store filters in URL
+Website -> components : pass LAPIS filter
+components -> LAPIS : query genomic data
+LAPIS --> components : return genomic data
+components --> User : visualize genomic data
+
+@enduml

@@ -34,7 +34,7 @@ Every view has a section that lets the user set filters on the sequence data tha
 - selecting a region (sequences from Germany, the US or Asia),
 - considering only sequences with a certain mutation.
 
-Every view also has a section that shows a number of diagrams that visualize the data that match the filters that the user set.
+Every view also has a section that shows diagrams that visualize the data that match the filters that the user set.
 
 The currently set filters are considered the "state" of the view.
 
@@ -59,7 +59,7 @@ Think: `prevalence = count(variant in Germany) / count(all sequences in Germany)
 
 ### Basic guidelines
 
-We make use of some major libraries: Astro, React, Daisyui, and Tailwindcss.
+We make use of some major libraries: Astro, React, DaisyUI, and Tailwindcss.
 
 - Render pages using Astro when possible
     - Astro render HTML on the server, which is faster than rendering on the client.

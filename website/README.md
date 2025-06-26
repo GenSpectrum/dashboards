@@ -23,11 +23,9 @@ npm run dev
 ### Setting up a GitHub App for Authentication
 
 1. Create a new GitHub App: https://github.com/settings/apps/new
-
     1. Add a homepage URL to a page which describes the login/app. For testing this can be `http://localhost:4321`.
     2. Add the callback URL `http://localhost:4321`, because the website runs on this port in development mode.
     3. Add account permission: read-only access to the user's email address.
-
     - (Optionally) disable webhooks
     - The name of the GitHub app will be shown to the user when they log in.
       If you intend to use it in production, you should choose a descriptive name.
@@ -97,3 +95,9 @@ npm i ../../dashboard-components/components
 > `npm i ../../dashboard-components/components` only has to be executed once, though.
 
 This makes use of https://docs.npmjs.com/cli/v9/configuring-npm/package-json#local-paths.
+
+### Deployments
+
+[Genspectrum staging](https://staging.genspectrum.org/) reflects the state of the `main` branch.
+Merging changes into the `prod` branch will update [Genspectrum](https://genspectrum.org/).
+A [dependabot workflow](https://github.com/GenSpectrum/dashboards/blob/main/.github/workflows/rebaseProd.yml) will produce a PR to update the prod branch. Please be sure to merge the PR, do not squash-merge, or rebase and merge.

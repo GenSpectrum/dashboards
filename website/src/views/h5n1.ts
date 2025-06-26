@@ -78,6 +78,11 @@ class H5n1Constants implements OrganismConstants {
                 aminoAcidMutations: ['NA:V67I'],
             },
         },
+        {
+            mutations: {
+                aminoAcidMutations: ['PB2:D701N'],
+            },
+        },
     ];
 
     // Antiviral susceptibility mutations have been compiled here: https://www.who.int/teams/global-influenza-programme/laboratory-network/quality-assurance/antiviral-susceptibility-influenza/neuraminidase-inhibitor.
