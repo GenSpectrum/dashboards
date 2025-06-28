@@ -1,0 +1,9 @@
+---
+import GenomeView from '../../components/views/genomeView/GenomeView.astro';
+import GenericOverview from '../../components/views/overview/GenericOverview.astro';
+import { Organisms } from '../../types/Organism';
+---
+
+<GenericOverview organism={Organisms.denv2}>
+    <GenomeView slot='post-navigation' organism={Organisms.denv2} />
+</GenericOverview>
