@@ -182,6 +182,7 @@ export const PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS = [
     'dataUseTermsRestrictedUntil',
 ];
 export const PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS = ['insdcAccessionFull', ...PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS];
+export const INSDC_ACCESSION_DOWNLOAD_FILES = ['insdcAccessionFull'];
 
 export const LOCULUS_AUTHORS_FIELD = 'authors';
 export const LOCULUS_AUTHORS_AFFILIATIONS_FIELD = 'authorAffiliations';

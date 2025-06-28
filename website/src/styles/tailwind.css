@@ -10,6 +10,7 @@
     --color-rose: rgba(204, 102, 119, 1);
     --color-wine: rgba(136, 34, 85, 1);
     --color-purple: rgba(170, 68, 153, 1);
+    --color-lime: rgba(136, 204, 34, 1);
 
     --color-indigoMuted: rgba(51, 34, 136, 0.3);
     --color-greenMuted: rgba(17, 119, 51, 0.3);
@@ -20,6 +21,7 @@
     --color-roseMuted: rgba(204, 102, 119, 0.3);
     --color-wineMuted: rgba(136, 34, 85, 0.3);
     --color-purpleMuted: rgba(170, 68, 153, 0.3);
+    --color-limeMuted: rgba(136, 204, 34, 0.3);
 }
 
 @plugin "daisyui" {
