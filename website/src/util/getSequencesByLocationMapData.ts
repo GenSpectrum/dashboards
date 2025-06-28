@@ -1,67 +1,71 @@
-import path from 'path';
-
 import type { MapSource } from '@genspectrum/dashboard-components/util';
-import type { Topology } from 'topojson-specification';
 
 let knownMapFiles: ReturnType<typeof loadKnownMapFiles> | null = null;
 
+type MapMetadatum = {
+    additionalInfo: Omit<MapData, 'mapSource'>;
+    topologyObjectsKey: string;
+};
+
 /* eslint-disable @typescript-eslint/naming-convention -- the keys must match the country names */
-const mapMetadata: Record<string, Omit<MapData, 'mapSource'>> = {
+const mapMetadata: Record<string, MapMetadatum> = {
     'Germany': {
-        zoom: 5.8,
-        offsetX: 10,
-        offsetY: 51.4,
+        additionalInfo: {
+            zoom: 5.8,
+            offsetX: 10,
+            offsetY: 51.4,
+        },
+        topologyObjectsKey: 'deu',
     },
     'Switzerland': {
-        zoom: 7.7,
-        offsetX: 8.2,
-        offsetY: 46.8,
+        additionalInfo: {
+            zoom: 7.7,
+            offsetX: 8.2,
+            offsetY: 46.8,
+        },
+        topologyObjectsKey: 'che',
     },
     'USA': {
-        zoom: 4.1,
-        offsetX: -98,
-        offsetY: 38,
+        additionalInfo: {
+            zoom: 4.1,
+            offsetX: -98,
+            offsetY: 38,
+        },
+        topologyObjectsKey: 'usa',
     },
     'World': {
-        zoom: 1.5,
-        offsetX: 0,
-        offsetY: 10,
+        additionalInfo: {
+            zoom: 1.5,
+            offsetX: 0,
+            offsetY: 10,
+        },
+        topologyObjectsKey: 'countries',
     },
     'Democratic Republic of the Congo': {
-        zoom: 5,
-        offsetX: 20,
-        offsetY: -5,
+        additionalInfo: {
+            zoom: 5,
+            offsetX: 20,
+            offsetY: -5,
+        },
+        topologyObjectsKey: 'cd',
     },
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
 function loadKnownMapFiles() {
-    const topoJsonFiles = import.meta.glob<Topology>('../../public/mapData/*.topo.json', { eager: true }); // For reference: https://vite.dev/guide/features.html#glob-import
-
-    const mapSpecs = Object.entries(topoJsonFiles).map(([relativeMapFilePath, map]) => {
-        const mapName = path.basename(relativeMapFilePath, '.topo.json');
-        const topologyObjectsKey = Object.keys(map.objects)[0];
-
-        return { mapName, topologyObjectsKey };
-    });
-
     return new Map<string, MapData>(
-        mapSpecs.map(({ mapName, topologyObjectsKey }) => [mapName, getMapData(mapName, topologyObjectsKey)]),
+        Object.entries(mapMetadata).map(([mapName, mapMetadatum]) => [mapName, getMapData(mapName, mapMetadatum)]),
     );
 }
 
-function getMapData(mapName: string, topologyObjectsKey: string): MapData {
-    if (!(mapName in mapMetadata)) {
-        throw new Error(`Map for '${mapName}' is missing metadata configuration.`);
-    }
-
+function getMapData(mapName: string, mapMetadatum: MapMetadatum): MapData {
     return {
         mapSource: {
             type: 'topojson',
             url: `/mapData/${mapName}.topo.json`,
-            topologyObjectsKey: topologyObjectsKey,
+            topologyObjectsKey: mapMetadatum.topologyObjectsKey,
         },
-        ...mapMetadata[mapName],
+        ...mapMetadatum.additionalInfo,
     };
 }
 
@@ -72,7 +76,7 @@ export type MapData = {
     readonly offsetY: number;
 };
 
-export function getSequencesByLocationMapData(mapName: string | undefined, currentUrl: URL): MapData | undefined {
+export function getSequencesByLocationMapData(mapName: string | undefined, baseUrl: string): MapData | undefined {
     if (mapName === undefined) {
         return undefined;
     }
@@ -85,7 +89,7 @@ export function getSequencesByLocationMapData(mapName: string | undefined, curre
         return undefined;
     }
 
-    const absoluteMapUrl = new URL(mapData.mapSource.url, currentUrl);
+    const absoluteMapUrl = new URL(mapData.mapSource.url, baseUrl);
     return {
         ...mapData,
         mapSource: {
