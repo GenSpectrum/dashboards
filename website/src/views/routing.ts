@@ -15,6 +15,34 @@ import {
     CovidSequencingEffortsView,
 } from './covid.ts';
 import {
+    Denv1AnalyzeSingleVariantView,
+    Denv1CompareSideBySideView,
+    Denv1CompareToBaselineView,
+    Denv1CompareVariantsView,
+    Denv1SequencingEffortsView,
+} from './denv1.ts';
+import {
+    Denv2AnalyzeSingleVariantView,
+    Denv2CompareSideBySideView,
+    Denv2CompareToBaselineView,
+    Denv2CompareVariantsView,
+    Denv2SequencingEffortsView,
+} from './denv2.ts';
+import {
+    Denv3AnalyzeSingleVariantView,
+    Denv3CompareSideBySideView,
+    Denv3CompareToBaselineView,
+    Denv3CompareVariantsView,
+    Denv3SequencingEffortsView,
+} from './denv3.ts';
+import {
+    Denv4AnalyzeSingleVariantView,
+    Denv4CompareSideBySideView,
+    Denv4CompareToBaselineView,
+    Denv4CompareVariantsView,
+    Denv4SequencingEffortsView,
+} from './denv4.ts';
+import {
     EbolaSudanAnalyzeSingleVariantView,
     EbolaSudanCompareSideBySideView,
     EbolaSudanCompareToBaselineView,
@@ -213,6 +241,34 @@ export class Routing {
                 [compareToBaselineViewKey]: new CchfCompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new CchfCompareSideBySideView(organismsConfig),
             },
+            [Organisms.denv1]: {
+                [sequencingEffortsViewKey]: new Denv1SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new Denv1AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new Denv1CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new Denv1CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new Denv1CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.denv2]: {
+                [sequencingEffortsViewKey]: new Denv2SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new Denv2AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new Denv2CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new Denv2CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new Denv2CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.denv3]: {
+                [sequencingEffortsViewKey]: new Denv3SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new Denv3AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new Denv3CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new Denv3CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new Denv3CompareSideBySideView(organismsConfig),
+            },
+            [Organisms.denv4]: {
+                [sequencingEffortsViewKey]: new Denv4SequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new Denv4AnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new Denv4CompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new Denv4CompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new Denv4CompareSideBySideView(organismsConfig),
+            },
         } as const;
 
         this.externalPages = this.initializeExternalPages(organismsConfig);
@@ -248,6 +304,14 @@ export class Routing {
                 return Object.values(this.views[Organisms.ebolaSudan]);
             case Organisms.cchf:
                 return Object.values(this.views[Organisms.cchf]);
+            case Organisms.denv1:
+                return Object.values(this.views[Organisms.denv1]);
+            case Organisms.denv2:
+                return Object.values(this.views[Organisms.denv2]);
+            case Organisms.denv3:
+                return Object.values(this.views[Organisms.denv3]);
+            case Organisms.denv4:
+                return Object.values(this.views[Organisms.denv4]);
         }
     }
 
