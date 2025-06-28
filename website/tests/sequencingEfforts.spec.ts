@@ -18,6 +18,10 @@ const organismOptions = {
     [Organisms.ebolaSudan]: { location: 'Uganda' },
     [Organisms.ebolaZaire]: { location: 'Gabon' },
     [Organisms.cchf]: { location: 'Turkey' },
+    [Organisms.denv1]: { location: 'China' },
+    [Organisms.denv2]: { location: 'India' },
+    [Organisms.denv3]: { location: 'Brazil' },
+    [Organisms.denv4]: { location: 'USA' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
