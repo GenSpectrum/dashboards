@@ -1,5 +1,5 @@
 ---
-import InfluenzaAInformation from '../../../components/InfluenzaAInformation.astro';
+import InfluenzaAInformation from '../../../components/InfluenzaInformation.astro';
 import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
@@ -8,7 +8,7 @@ import { Organisms } from '../../../types/Organism';
 
 <GenericOverview organism={Organisms.h3n2}>
     <div slot='post-navigation'>
-        <p class='mb-4'>
+        <p class='my-4'>
             H3N2 is one of the two major subtypes of influenza circulating in humans. Major outbreaks of A/H3N2 strains
             in humans include Hong Kong Flu (1968-1969), and Fujian flu (2003-2004).
         </p>
@@ -27,7 +27,7 @@ import { Organisms } from '../../../types/Organism';
             >. We have converted nextclade's clade assignments that are based on a non-open GISAID sequence to use a
             similar INSDC-available reference sequence.
         </p>
-        <InfluenzaAInformation slot='infoText' />
+        <InfluenzaAInformation type='A' slot='infoText' />
         <GenomeView organism={Organisms.h3n2} lengthScaleFactor={2.2} />
     </div>
 </GenericOverview>

@@ -1,9 +1,23 @@
 ---
+import InfluenzaInformation from '../../../components/InfluenzaInformation.astro';
+import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
 import { Organisms } from '../../../types/Organism';
 ---
 
 <GenericOverview organism={Organisms.victoria}>
-    <GenomeView slot='post-navigation' organism={Organisms.victoria} lengthScaleFactor={2.2} />
+    <div slot='post-navigation'>
+        <p class='my-4'>
+            Until 2020 both B/Yamagata and B/Victoria circled in the population but now only Victoria is circulating.
+        </p>
+        <p class='mb-4'>
+            We use the official nextclade dataset for sequence alignment and HA and NA clade assignment: <Link
+                href='https://github.com/nextstrain/nextclade_data/tree/master/data/nextstrain/flu/vic'
+                >/nextstrain/flu/vic</Link
+            >
+        </p>
+        <InfluenzaInformation type='B' slot='infoText' />
+        <GenomeView organism={Organisms.victoria} lengthScaleFactor={2.2} />
+    </div>
 </GenericOverview>

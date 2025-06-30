@@ -1,5 +1,5 @@
 ---
-import InfluenzaAInformation from '../../../components/InfluenzaAInformation.astro';
+import InfluenzaAInformation from '../../../components/InfluenzaInformation.astro';
 import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
@@ -8,7 +8,7 @@ import { Organisms } from '../../../types/Organism';
 
 <GenericOverview organism={Organisms.h1n1pdm}>
     <div slot='post-navigation'>
-        <p class='mb-4'>
+        <p class='my-4'>
             The pandemic H1N1/09 virus (also called H1N1pdm) is a swine origin influenza A virus subtype H1N1 strain
             that was responsible for the 2009 swine flu pandemic. It is an ancestor of most H1N1 viruses now in
             circulation in humans.
@@ -24,7 +24,7 @@ import { Organisms } from '../../../types/Organism';
                 >GCF_001343785.1</Link
             > assembly).
         </p>
-        <InfluenzaAInformation slot='infoText' />
+        <InfluenzaAInformation type='A' slot='infoText' />
         <GenomeView organism={Organisms.h1n1pdm} lengthScaleFactor={2.2} />
     </div>
 </GenericOverview>

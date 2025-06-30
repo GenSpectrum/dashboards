@@ -1,4 +1,5 @@
 ---
+import InfluenzaInformation from '../../components/InfluenzaInformation.astro';
 import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
 import { Organisms } from '../../types/Organism';
 
@@ -9,4 +10,17 @@ const lineages = [Organisms.victoria];
     organism={Organisms.influenzaB}
     linkedOrganismsTitle='Circulating Lineages'
     linkedOrganisms={lineages}
-/>
+>
+<div slot='post-navigation'>
+        <p class='my-4'>
+            Influenza B viruses have segmented genomes consisting of eight negative-sense, single-stranded RNA segments.
+        </p>
+        <p class='mb-4'>
+            Influenza B lineages are determined by the two viral envelope proteins HA and NA, on segments 4 and 6 respectively. The two main influenza lineages circulating in humans are victoria and yamagata. However, the B/Yamagata-lineage viruses have not been identified since the covid19 pandemic in 2020. The primary host for most influenza B is mammals, including humans, ferrets, pigs, and seals. More fine grained clades are also determined based on the HA (and sometimes NA) segments.
+        </p>
+        <p class='mb-4'>
+            The HA protein (on segment 4) is the primary target of neutralizing antibodies, and NA is often used as an antiviral drug target.
+        </p>
+        <InfluenzaInformation type='B' slot='infoText' />
+    </div>
+</LinkedOverview>

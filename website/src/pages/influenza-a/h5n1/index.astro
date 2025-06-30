@@ -1,5 +1,5 @@
 ---
-import InfluenzaAInformation from '../../../components/InfluenzaAInformation.astro';
+import InfluenzaAInformation from '../../../components/InfluenzaInformation.astro';
 import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
@@ -25,7 +25,7 @@ import { Organisms } from '../../../types/Organism';
                 >genspectrum/flu/h5n1</Link
             >
         </p>
-        <InfluenzaAInformation slot='infoText' />
+        <InfluenzaAInformation type='A' slot='infoText' />
         <GenomeView organism={Organisms.h5n1} lengthScaleFactor={2.2} />
     </div>
 </GenericOverview>
