@@ -1,9 +1,31 @@
 ---
+import InfluenzaAInformation from '../../../components/InfluenzaAInformation.astro';
+import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
 import { Organisms } from '../../../types/Organism';
 ---
 
 <GenericOverview organism={Organisms.h5n1}>
-    <GenomeView slot='post-navigation' organism={Organisms.h5n1} lengthScaleFactor={2.2} />
+    <div slot='post-navigation'>
+        <p class='my-4'>
+            The H5N1 influenza subtype is enzootic in birds and can also infect other animals. Since 2018 the highly
+            pathogenic subtype HPAI A(H5N1) has become the dominant strain in bird populations worldwide and has also
+            caused widespread disease in cattle.
+        </p>
+        <p class='mb-4'>
+            We assign clades based on the <Link href='https://www.ncbi.nlm.nih.gov/nuccore/AF144305.1'>AF144305.1</Link>
+            HA segment, as defined in the community dataset: <Link
+                href='https://github.com/nextstrain/nextclade_data/tree/master/data/community/moncla-lab/iav-h5/ha/all-clades'
+                >community/moncla-lab/iav-h5/ha/all-clades</Link
+            >. For the other segments we use our own custom dataset based the
+            <Link href='https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000864105.1/'>GCF_000864105.1</Link>
+            assembly:
+            <Link href='https://github.com/GenSpectrum/nextclade-datasets/tree/main/data/flu/h5n1'
+                >genspectrum/flu/h5n1</Link
+            >
+        </p>
+        <InfluenzaAInformation slot='infoText' />
+        <GenomeView organism={Organisms.h5n1} lengthScaleFactor={2.2} />
+    </div>
 </GenericOverview>

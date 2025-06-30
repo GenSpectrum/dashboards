@@ -1,8 +1,27 @@
 ---
+import InfluenzaAInformation from '../../components/InfluenzaAInformation.astro';
 import LinkedOverview from '../../components/views/overview/LinkedOverview.astro';
 import { Organisms } from '../../types/Organism';
 
 const subtypes = [Organisms.h5n1, Organisms.h3n2, Organisms.h1n1pdm];
 ---
 
-<LinkedOverview organism={Organisms.influenzaA} linkedOrganismsTitle='Featured Subtypes' linkedOrganisms={subtypes} />
+<LinkedOverview organism={Organisms.influenzaA} linkedOrganismsTitle='Featured Subtypes' linkedOrganisms={subtypes}>
+    <div slot='pre-navigation-linked'>
+        <p class='mb-4'>
+            Influenza A viruses have segmented genomes consisting of eight negative-sense, single-stranded RNA segments.
+        </p>
+        <p class='mb-4'>
+            Influenza A subtypes are determined by the two viral envelope proteins HA and NA, on segments 4 and 6
+            respectively. The two main influenza A subtypes circulating in humans are H1N1 and H3N2. The primary host
+            for most influenza A subtypes is birds, but they can also infect other animal species such as pigs and
+            cattle. For the major subtypes, more fine grained clades are also determined based on the HA (and sometimes
+            NA) segments.
+        </p>
+        <p class='mb-4'>
+            The HA protein (on segment 4) is the primary target of neutralizing antibodies, and NA is often used as an
+            antiviral drug target
+        </p>
+        <InfluenzaAInformation slot='infoText' />
+    </div>
+</LinkedOverview>
