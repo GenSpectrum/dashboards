@@ -37,14 +37,14 @@ jobs:
       run: echo "branchTag=${TAG##*:}" >> $GITHUB_OUTPUT
 
     - name: Wait for website Docker image
-      uses: lewagon/wait-on-check-action@v1.3.4
+      uses: lewagon/wait-on-check-action@v1.4.0
       with:
         ref: ${{ github.sha }}
         check-name: Build Website Docker Image
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 10
     - name: Wait for backend Docker image
-      uses: lewagon/wait-on-check-action@v1.3.4
+      uses: lewagon/wait-on-check-action@v1.4.0
       with:
         ref: ${{ github.sha }}
         check-name: Build Backend Docker Image
