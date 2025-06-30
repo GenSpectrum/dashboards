@@ -1,11 +1,11 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.spring") version "2.0.21"
-    id("org.springframework.boot") version "3.4.0"
-    id("io.spring.dependency-management") version "1.1.6"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
+    kotlin("jvm") version "2.2.0"
+    kotlin("plugin.spring") version "2.2.0"
+    id("org.springframework.boot") version "3.5.3"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
 }
 
@@ -27,19 +27,19 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
-    implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
-    implementation("org.postgresql:postgresql:42.7.4")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.56.0")
-    implementation("org.jetbrains.exposed:exposed-json:0.56.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+    implementation("org.flywaydb:flyway-database-postgresql:11.10.0")
+    implementation("org.postgresql:postgresql:42.7.7")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-json:0.61.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.0-0.6.x-compat")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.mockito")
     }
     testImplementation("com.ninja-squad:springmockk:4.0.2")
-    testImplementation("org.testcontainers:postgresql:1.20.4")
+    testImplementation("org.testcontainers:postgresql:1.21.3")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
 }
