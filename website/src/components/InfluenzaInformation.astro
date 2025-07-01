@@ -14,8 +14,9 @@ const { type } = Astro.props;
         {
             type === 'A' && (
                 <p class='mb-4'>
-                    Genspectrum uses all open influenza A data that is available on the INSDC (taxonid: 197911). To classify influenza segments and subtypes we use
-                    nextclade sort (using half of all k-mers for each subtype defined in{' '}
+                    Genspectrum uses all open influenza A data that is available on the INSDC (taxonid: 197911). To
+                    classify influenza segments and subtypes we use nextclade sort (using half of all k-mers for each
+                    subtype defined in{' '}
                     <Link href='https://github.com/anna-parker/InfluenzaAReferenceDB/blob/main/config/config.yaml'>
                         https://github.com/anna-parker/InfluenzaAReferenceDB
                     </Link>
@@ -28,8 +29,9 @@ const { type } = Astro.props;
         {
             type === 'B' && (
                 <p class='mb-4'>
-                    Genspectrum uses all open influenza B data that is available on the INSDC (taxonid: 11520). To classify influenza segments and lineages we use
-                    nextclade sort (using half off all k-mers for each lineage defined in
+                    Genspectrum uses all open influenza B data that is available on the INSDC (taxonid: 11520). To
+                    classify influenza segments and lineages we use nextclade sort (using half off all k-mers for each
+                    lineage defined in
                     https://github.com/anna-parker/InfluenzaAReferenceDB/blob/main/influenza-b/config/config.yaml).
                     Where available we use the assembly information to group segments that are from the same
                     sample/isolate. For all remaining segments we use a heuristic grouping algorithm to group all
