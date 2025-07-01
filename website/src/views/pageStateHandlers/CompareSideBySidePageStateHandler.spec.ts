@@ -37,7 +37,6 @@ const mockConstants: OrganismConstants = {
         {
             type: 'date',
             dateRangeOptions: () => [mockDateRangeOption],
-            earliestDate: '1999-01-01',
             dateColumn: 'date',
         },
         {

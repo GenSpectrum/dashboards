@@ -33,7 +33,7 @@ import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
-import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
+import { ALL_TIMES_LABEL, defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 
 const earliestDate = '1960-01-01';
 
@@ -77,10 +77,9 @@ class MpoxConstants implements OrganismConstants {
                     defaultDateRangeOption.since2017,
                     defaultDateRangeOption.from2017to2020,
                     defaultDateRangeOption.before2017,
-                    presets.allTimes,
+                    { label: ALL_TIMES_LABEL, dateFrom: earliestDate },
                 ];
             },
-            earliestDate: '1960-01-01',
         }),
     ];
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;

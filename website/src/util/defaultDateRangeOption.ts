@@ -1,5 +1,7 @@
 import { type DateRangeOption, dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
+export const ALL_TIMES_LABEL = 'All times';
+
 export const defaultDateRangeOption = {
     since2000: { label: 'Since 2000', dateFrom: '2000-01-01' },
     since2020: { label: 'Since 2020', dateFrom: '2020-01-01' },
@@ -18,33 +20,37 @@ export const defaultDateRangeOption = {
     before2017: { label: 'Before 2017', dateTo: '2016-12-31' },
 } satisfies { [key: string]: DateRangeOption };
 
-export const defaultDateRangeOptions = () => {
-    const presets = dateRangeOptionPresets();
-    return [
-        presets.last6Months,
-        presets.lastYear,
-        defaultDateRangeOption.since2020,
-        defaultDateRangeOption.from2010to2019,
-        defaultDateRangeOption.from2000to2009,
-        defaultDateRangeOption.since2000,
-        defaultDateRangeOption.before2000,
-        presets.allTimes,
-    ];
-};
+export function defaultDateRangeOptions(earliestDate: string) {
+    return () => {
+        const presets = dateRangeOptionPresets();
+        return [
+            presets.last6Months,
+            presets.lastYear,
+            defaultDateRangeOption.since2020,
+            defaultDateRangeOption.from2010to2019,
+            defaultDateRangeOption.from2000to2009,
+            defaultDateRangeOption.since2000,
+            defaultDateRangeOption.before2000,
+            { label: ALL_TIMES_LABEL, dateFrom: earliestDate },
+        ];
+    };
+}
 
-export const fineGrainedDefaultDateRangeOptions = () => {
-    const presets = dateRangeOptionPresets();
-    return [
-        presets.lastMonth,
-        presets.last2Months,
-        presets.last3Months,
-        presets.last6Months,
-        presets.lastYear,
-        defaultDateRangeOption.since2020,
-        defaultDateRangeOption.from2010to2019,
-        defaultDateRangeOption.from2000to2009,
-        defaultDateRangeOption.since2000,
-        defaultDateRangeOption.before2000,
-        presets.allTimes,
-    ];
-};
+export function fineGrainedDefaultDateRangeOptions(earliestDate: string) {
+    return () => {
+        const presets = dateRangeOptionPresets();
+        return [
+            presets.lastMonth,
+            presets.last2Months,
+            presets.last3Months,
+            presets.last6Months,
+            presets.lastYear,
+            defaultDateRangeOption.since2020,
+            defaultDateRangeOption.from2010to2019,
+            defaultDateRangeOption.from2000to2009,
+            defaultDateRangeOption.since2000,
+            defaultDateRangeOption.before2000,
+            { label: ALL_TIMES_LABEL, dateFrom: earliestDate },
+        ];
+    };
+}

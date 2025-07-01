@@ -15,7 +15,6 @@ export function GsDateRangeFilter({
     onLapisFilterChange = () => {},
     value,
     dateRangeOptions,
-    earliestDate,
     width,
 }: {
     lapisDateField: string;
@@ -23,7 +22,6 @@ export function GsDateRangeFilter({
     onLapisFilterChange?: (lapisFilter: LapisFilter) => void;
     value?: DateRangeOption | null;
     dateRangeOptions?: DateRangeOption[];
-    earliestDate?: string;
     width?: string;
 }) {
     const dateRangeSelectorRef = useRef<HTMLElement>();
@@ -76,7 +74,6 @@ export function GsDateRangeFilter({
         <gs-date-range-filter
             ref={dateRangeSelectorRef}
             dateRangeOptions={JSON.stringify(dateRangeOptions)}
-            earliestDate={earliestDate}
             value={JSON.stringify(isCustom ? value : value?.label)}
             lapisDateField={lapisDateField}
             width={width}
