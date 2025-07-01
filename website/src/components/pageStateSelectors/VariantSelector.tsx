@@ -91,7 +91,7 @@ export function VariantSelector({
                                 });
                             }}
                             key={lineageFilterConfig.lapisField}
-                            lapisFilter={lapisFilter}
+                            lapisFilter={{ ...lapisFilter, [lineageFilterConfig.lapisField]: undefined }}
                             value={variantFilter.lineages?.[lineageFilterConfig.lapisField]}
                         />
                     ))}
