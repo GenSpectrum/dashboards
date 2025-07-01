@@ -28,9 +28,7 @@ const { type } = Astro.props;
         {
             type === 'B' && (
                 <p class='mb-4'>
-                    Genspectrum uses all open influenza B data that is available on the INSDC (taxonid: 11520). Sadly
-                    the INSDC does not annotate all sequences with segment, subtype and additionally does not by default
-                    group all segments from the same sample/isolate. To classify influenza segments and lineages we use
+                    Genspectrum uses all open influenza B data that is available on the INSDC (taxonid: 11520). To classify influenza segments and lineages we use
                     nextclade sort (using half off all k-mers for each lineage defined in
                     https://github.com/anna-parker/InfluenzaAReferenceDB/blob/main/influenza-b/config/config.yaml).
                     Where available we use the assembly information to group segments that are from the same
