@@ -1,17 +1,10 @@
 ---
-import CountStatistics from './CountStatistics.astro';
-import { getDashboardsConfig, getLapisUrl } from '../../../config';
+import { GenericSequencingEffortsDataDisplay } from './GenericSequencingEffortsDataDisplay';
+import { getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { getLocationDisplayConfig } from '../../../views/locationHelpers';
-import { locationFieldsToFilterIdentifier } from '../../../views/pageStateHandlers/locationFilterFromToUrl';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
-import ComponentsGrid from '../../ComponentsGrid.astro';
-import GsAggregate from '../../genspectrum/GsAggregate.astro';
-import GsNumberSequencesOverTime from '../../genspectrum/GsNumberSequencesOverTime.astro';
-import GsSequencesByLocation from '../../genspectrum/GsSequencesByLocation.astro';
 import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
@@ -27,15 +20,8 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
 const lapisFilter = view.pageStateHandler.toLapisFilter(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    earliestDate: new Date(view.organismConstants.earliestDate),
-    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
-});
 
-const { locationField, mapName } = getLocationDisplayConfig(
-    view.organismConstants.locationFields,
-    pageState.datasetFilter.locationFilters[locationFieldsToFilterIdentifier(view.organismConstants.locationFields)],
-);
+const organismConfig = getDashboardsConfig().dashboards.organisms;
 ---
 
 <SingleVariantOrganismPageLayout
@@ -51,43 +37,19 @@ const { locationField, mapName } = getLocationDisplayConfig(
     <SequencingEffortsPageStateSelector
         slot='filters'
         organismViewKey={organismViewKey}
-        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        organismsConfig={organismConfig}
         initialPageState={pageState}
         client:only='react'
     >
         <SequencingEffortsSelectorFallback slot='fallback' />
     </SequencingEffortsPageStateSelector>
 
-    <div class='mx-2 flex flex-col gap-y-6' slot='dataDisplay'>
-        <CountStatistics lapisFilter={lapisFilter} lapisUrl={getLapisUrl(view.organismConstants.organism)} />
-        <ComponentsGrid>
-            <GsNumberSequencesOverTime
-                lapisFilters={[
-                    {
-                        displayName: 'count',
-                        lapisFilter: lapisFilter,
-                    },
-                ]}
-                lapisDateField={view.organismConstants.mainDateField}
-                granularity={timeGranularity}
-                pageSize={10}
-            />
-            {
-                locationField !== undefined && (
-                    <GsSequencesByLocation
-                        title='Sequences by location'
-                        lapisLocationField={locationField}
-                        lapisFilter={lapisFilter}
-                        mapName={mapName}
-                        pageSize={10}
-                    />
-                )
-            }
-            {
-                view.organismConstants.aggregatedVisualizations.sequencingEfforts.map(({ label, fields, views }) => (
-                    <GsAggregate title={label} fields={fields} lapisFilter={lapisFilter} views={views} pageSize={10} />
-                ))
-            }
-        </ComponentsGrid>
+    <div slot='dataDisplay'>
+        <GenericSequencingEffortsDataDisplay
+            organismViewKey={organismViewKey}
+            organismsConfig={organismConfig}
+            pageState={pageState}
+            client:only='react'
+        />
     </div>
 </SingleVariantOrganismPageLayout>
