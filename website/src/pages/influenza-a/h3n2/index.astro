@@ -1,9 +1,33 @@
 ---
+import InfluenzaAInformation from '../../../components/InfluenzaInformation.astro';
+import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
 import { Organisms } from '../../../types/Organism';
 ---
 
 <GenericOverview organism={Organisms.h3n2}>
-    <GenomeView slot='post-navigation' organism={Organisms.h3n2} lengthScaleFactor={2.2} />
+    <div slot='post-navigation'>
+        <p class='my-4'>
+            H3N2 is one of the two major subtypes of influenza circulating in humans. Major outbreaks of A/H3N2 strains
+            in humans include Hong Kong Flu (1968-1969), and Fujian flu (2003-2004).
+        </p>
+        <p class='mb-4'>
+            We use the official nextclade dataset for sequence alignment and HA and NA clade assignment:
+            <Link href='https://github.com/nextstrain/nextclade_data/tree/master/data/nextstrain/flu/h3n2'
+                >nextstrain/flu/h3n2</Link
+            >
+            (more specifically we use the <Link href='https://www.ncbi.nlm.nih.gov/nuccore/CY121680.1'>CY121680.1</Link>
+            HA reference and our custom dataset
+            <Link
+                href='https://github.com/GenSpectrum/nextclade-datasets/tree/main/data/flu/h3n2/seg6/CY114383/unreleased'
+                >genspectrum/h3n2/seg6/CY114383</Link
+            > for NA, for all other sequences we use the <Link
+                href='https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000865085.1/'>GCF_000865085.1</Link
+            >. We have converted nextclade's clade assignments that are based on a non-open GISAID sequence to use a
+            similar INSDC-available reference sequence.
+        </p>
+        <InfluenzaAInformation type='A' slot='infoText' />
+        <GenomeView organism={Organisms.h3n2} lengthScaleFactor={2.2} />
+    </div>
 </GenericOverview>
