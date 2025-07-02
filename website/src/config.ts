@@ -98,7 +98,7 @@ function getConfigDir(): string {
 }
 
 function getEnvironment() {
-    return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
+    return processEnvOrMetaEnv('PUBLIC_DASHBOARDS_ENVIRONMENT', environmentSchema);
 }
 
 export function isLoginEnabled() {

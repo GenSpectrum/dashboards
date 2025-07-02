@@ -15,6 +15,10 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
         setInputValue(value);
     }, [value]);
 
+    if (import.meta.env.PUBLIC_DASHBOARDS_ENVIRONMENT !== 'dashboards-staging') {
+        return null;
+    }
+
     return (
         <label className='form-control'>
             <div className='label'>
