@@ -51,8 +51,7 @@ class InfluenzaAConstants implements OrganismConstants {
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions,
-            earliestDate,
+            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
             completenessSuffixes: [],
         }),
     ];
