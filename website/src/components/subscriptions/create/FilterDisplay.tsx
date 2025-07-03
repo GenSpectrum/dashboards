@@ -38,7 +38,7 @@ export function FilterDisplay({
                         <h2 className='component-title'>Count over time</h2>
                         <div className='h-[400px]'>
                             <GsNumberSequencesOverTime
-                                lapisFilter={[
+                                lapisFilters={[
                                     {
                                         displayName: 'Your variant',
                                         lapisFilter: addDateWindowToFilter(

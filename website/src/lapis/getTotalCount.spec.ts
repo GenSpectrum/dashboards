@@ -1,9 +1,13 @@
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 
 import { getTotalCount } from './getTotalCount.ts';
-import { DUMMY_LAPIS_URL, lapisRequestMocks } from '../../vitest.setup.ts';
+import { astroApiMocks, DUMMY_LAPIS_URL, lapisRequestMocks } from '../../vitest.setup.ts';
 
 describe('getTotalCount', () => {
+    beforeEach(() => {
+        astroApiMocks.log();
+    });
+
     test('should return the total count', async () => {
         const lapisFilter = { country: 'Germany' };
 
@@ -19,9 +23,9 @@ describe('getTotalCount', () => {
 
         lapisRequestMocks.postAggregated(lapisFilter, { data: [{ count: 42 }] }, 500);
 
-        const result = await getTotalCount(DUMMY_LAPIS_URL, lapisFilter);
-
-        expect(result).toBeUndefined();
+        await expect(getTotalCount(DUMMY_LAPIS_URL, lapisFilter)).rejects.toThrow(
+            /Failed to fetch lapis aggregated data/,
+        );
     });
 
     test('should return undefined when LAPIS returns unexpected data', async () => {
@@ -30,8 +34,8 @@ describe('getTotalCount', () => {
         // @ts-expect-error -- intentionally passing wrong data
         lapisRequestMocks.postAggregated(lapisFilter, { data: 'something unexpected' });
 
-        const result = await getTotalCount(DUMMY_LAPIS_URL, lapisFilter);
-
-        expect(result).toBeUndefined();
+        await expect(getTotalCount(DUMMY_LAPIS_URL, lapisFilter)).rejects.toThrow(
+            /Failed to parse lapis aggregated data/,
+        );
     });
 });

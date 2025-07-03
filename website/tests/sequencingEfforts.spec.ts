@@ -39,4 +39,24 @@ test.describe('The Sequencing Efforts Page', () => {
             });
         });
     }
+
+    test('should let me change the location without committing the deletion of the old location', async ({
+        sequencingEffortsPage,
+    }) => {
+        await sequencingEffortsPage.goto(Organisms.h5n1);
+        await sequencingEffortsPage.expectToSeeNoComponentErrors();
+        await sequencingEffortsPage.selectDateRange('All times');
+        await sequencingEffortsPage.selectLocation('Austria');
+        await expect(sequencingEffortsPage.locationField).toHaveValue('Austria');
+
+        await sequencingEffortsPage.locationField.click();
+        await sequencingEffortsPage.page.keyboard.press('Backspace');
+        await sequencingEffortsPage.page.keyboard.press('Backspace');
+        await sequencingEffortsPage.page
+            .getByRole('option', { name: /^Australia/i, exact: true })
+            .first()
+            .click();
+
+        await expect(sequencingEffortsPage.locationField).toHaveValue('Australia');
+    });
 });

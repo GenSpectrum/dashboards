@@ -1,9 +1,30 @@
 ---
+import InfluenzaAInformation from '../../../components/InfluenzaInformation.astro';
+import Link from '../../../components/Link.astro';
 import GenomeView from '../../../components/views/genomeView/GenomeView.astro';
 import GenericOverview from '../../../components/views/overview/GenericOverview.astro';
 import { Organisms } from '../../../types/Organism';
 ---
 
 <GenericOverview organism={Organisms.h1n1pdm}>
-    <GenomeView slot='post-navigation' organism={Organisms.h1n1pdm} lengthScaleFactor={2.2} />
+    <div slot='post-navigation'>
+        <p class='my-4'>
+            The pandemic H1N1/09 virus (also called H1N1pdm) is a swine origin influenza A virus subtype H1N1 strain
+            that was responsible for the 2009 swine flu pandemic. It is an ancestor of most H1N1 viruses now in
+            circulation in humans.
+        </p>
+        <p class='mb-4'>
+            We use the official nextclade dataset for sequence alignment and HA and NA clade assignment:
+            <Link href=' https://github.com/nextstrain/nextclade_data/tree/master/data/nextstrain/flu/h1n1pdm'
+                >nextstrain/flu/h1n1pdm</Link
+            >
+            (more specifically we use the <Link href='https://www.ncbi.nlm.nih.gov/nuccore/CY121680.1'>CY121680.1</Link>
+            HA reference, the <Link href='https://www.ncbi.nlm.nih.gov/nuccore/MW626056'>MW626056</Link> Na reference and
+            otherwise the references from the <Link href='https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_001343785.1/'
+                >GCF_001343785.1</Link
+            > assembly).
+        </p>
+        <InfluenzaAInformation type='A' slot='infoText' />
+        <GenomeView organism={Organisms.h1n1pdm} lengthScaleFactor={2.2} />
+    </div>
 </GenericOverview>

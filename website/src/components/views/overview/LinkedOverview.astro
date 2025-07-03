@@ -20,8 +20,12 @@ const subsections = linkedOrganisms.map((key) => allSections[key]);
 
 <GenericOverview organism={organism}>
     <PageHeadline>{section.headline}</PageHeadline>
+    <div slot='pre-navigation'>
+        <slot name='pre-navigation-linked' />
+    </div>
     <div slot='post-navigation'>
         <h1 class='mt-10 mb-4 text-xl font-bold'>{linkedOrganismsTitle}</h1>
         <MainMenu sections={subsections} />
+        <slot name='post-navigation-linked' />
     </div>
 </GenericOverview>

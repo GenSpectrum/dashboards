@@ -100,13 +100,17 @@ export function BaselineSelector({
                                             },
                                         });
                                     }}
-                                    lapisFilter={lapisFilter}
+                                    lapisFilter={{ ...lapisFilter, [config.lapisField]: undefined }}
                                 />
                             </label>
                         );
                     }
                     case 'location': {
                         const filterIdentifier = locationFieldsToFilterIdentifier(config.locationFields);
+
+                        const lapisFilerWithoutLocationFields = Object.fromEntries(
+                            Object.entries(lapisFilter).filter(([key]) => !config.locationFields.includes(key)),
+                        );
 
                         return (
                             <label className='form-control' key={`label${filterIdentifier}`}>
@@ -126,7 +130,7 @@ export function BaselineSelector({
                                     }}
                                     value={datasetFilter.locationFilters[filterIdentifier]}
                                     placeholderText={config.placeholderText}
-                                    lapisFilter={lapisFilter}
+                                    lapisFilter={lapisFilerWithoutLocationFields}
                                 ></GsLocationFilter>
                             </label>
                         );
