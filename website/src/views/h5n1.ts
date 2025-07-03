@@ -55,8 +55,7 @@ class H5n1Constants implements OrganismConstants {
     public readonly useAdvancedQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions,
-            earliestDate,
+            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
             completenessSuffixes: INFLUENZA_COMPLETENESS_SUFFIXES,
         }),
     ];

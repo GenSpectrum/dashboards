@@ -15,7 +15,6 @@ export type LocationFilterConfig = {
 
 export type DateRangeFilterConfig = {
     dateRangeOptions: () => DateRangeOption[];
-    earliestDate: string;
     dateColumn: string;
     label?: string;
 };
@@ -74,7 +73,6 @@ export function BaselineSelector({
                                             },
                                         });
                                     }}
-                                    earliestDate={config.earliestDate}
                                     value={datasetFilter.dateFilters[config.dateColumn]}
                                     dateRangeOptions={config.dateRangeOptions()}
                                 />

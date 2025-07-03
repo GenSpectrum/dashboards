@@ -204,13 +204,11 @@ export const PATHOPLEXUS_HOST_FIELD = 'hostNameScientific';
 
 type FiltersConfig = {
     dateRangeOptions: () => DateRangeOption[];
-    earliestDate: string;
     completenessSuffixes?: SuffixConfig[];
 };
 
 export function getPathoplexusFilters({
     dateRangeOptions,
-    earliestDate,
     completenessSuffixes,
 }: FiltersConfig): BaselineFilterConfig[] {
     return [
@@ -223,7 +221,6 @@ export function getPathoplexusFilters({
         {
             type: 'date',
             dateRangeOptions,
-            earliestDate,
             dateColumn: PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
@@ -242,7 +239,6 @@ export function getPathoplexusFilters({
         {
             type: 'date',
             dateRangeOptions,
-            earliestDate: '1956-01-01',
             dateColumn: 'earliestReleaseDate',
             label: 'Earliest release date',
         },
@@ -291,7 +287,6 @@ export const GENSPECTRUM_LOCULUS_HOST_FIELD = 'hostNameScientific';
 
 export function getGenspectrumLoculusFilters({
     dateRangeOptions,
-    earliestDate,
     completenessSuffixes,
 }: FiltersConfig): BaselineFilterConfig[] {
     return [
@@ -304,7 +299,6 @@ export function getGenspectrumLoculusFilters({
         {
             type: 'date',
             dateRangeOptions,
-            earliestDate,
             dateColumn: GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN,
             label: 'Sample collection date',
         },
@@ -317,7 +311,6 @@ export function getGenspectrumLoculusFilters({
         {
             type: 'date',
             dateRangeOptions,
-            earliestDate,
             dateColumn: 'ncbiReleaseDate',
             label: 'NCBI release date',
         },

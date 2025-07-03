@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
+import { type MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import {
     type CompareSideBySideData,
@@ -33,17 +33,17 @@ import { Organisms } from '../types/Organism.ts';
 import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
-import { defaultDateRangeOptions } from '../util/defaultDateRangeOption.ts';
+import { ALL_TIMES_LABEL, defaultDateRangeOptions } from '../util/defaultDateRangeOption.ts';
 
 const earliestDate = '1975-01-01';
+const dateRangeOptions = defaultDateRangeOptions(earliestDate);
 
 class EbolaZaireConstants implements OrganismConstants {
     public readonly organism = Organisms.ebolaZaire;
     public readonly earliestDate = earliestDate;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getPathoplexusFilters({
-            dateRangeOptions: defaultDateRangeOptions,
-            earliestDate,
+            dateRangeOptions,
         }),
     ];
 
@@ -91,7 +91,7 @@ const defaultDatasetFilter: DatasetFilter = {
     locationFilters: {},
     textFilters: {},
     dateFilters: {
-        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptionPresets().allTimes,
+        [PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN]: dateRangeOptions().find((option) => option.label === ALL_TIMES_LABEL),
     },
     numberFilters: {},
 };

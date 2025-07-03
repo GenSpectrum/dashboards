@@ -33,7 +33,7 @@ import { type DataOrigin, dataOrigins } from '../types/dataOrigins.ts';
 import { SingleVariantPageStateHandler } from './pageStateHandlers/SingleVariantPageStateHandler.ts';
 import { setSearchFromLocationFilters } from './pageStateHandlers/locationFilterFromToUrl.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
-import { defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
+import { ALL_TIMES_LABEL, defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 import { formatUrl } from '../util/formatUrl.ts';
 import { setSearchFromTextFilters } from './pageStateHandlers/textFilterFromToUrl.ts';
 
@@ -59,7 +59,7 @@ const dateRangeOptions = () => {
         defaultDateRangeOption.year2022,
         defaultDateRangeOption.year2021,
         defaultDateRangeOption.year2020,
-        presets.allTimes,
+        { label: ALL_TIMES_LABEL, dateFrom: earliestDate },
     ];
 };
 
@@ -86,7 +86,6 @@ class CovidConstants implements OrganismConstants {
         {
             type: 'date',
             dateRangeOptions,
-            earliestDate,
             dateColumn: mainDateFilterColumn,
             label: 'Date',
         },
@@ -105,7 +104,6 @@ class CovidConstants implements OrganismConstants {
         {
             type: 'date',
             dateRangeOptions,
-            earliestDate,
             dateColumn: 'dateSubmitted',
             label: 'Date submitted',
         },
