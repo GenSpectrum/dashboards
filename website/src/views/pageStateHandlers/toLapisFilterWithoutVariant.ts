@@ -1,12 +1,12 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 
-import type { Dataset } from '../View.ts';
+import type { DatasetFilter } from '../View.ts';
 
 export function toLapisFilterWithoutVariant(
-    pageState: Dataset,
+    datasetFilter: DatasetFilter,
     additionalFilters: Record<string, string> | undefined,
 ): LapisFilter {
-    const dateFilters = Object.entries(pageState.datasetFilter.dateFilters).reduce(
+    const dateFilters = Object.entries(datasetFilter.dateFilters).reduce(
         (acc, [lapisField, dateRange]) => {
             if (dateRange === undefined || dateRange === null) {
                 return acc;
@@ -24,7 +24,7 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: string | undefined },
     );
 
-    const textFilters = Object.entries(pageState.datasetFilter.textFilters).reduce(
+    const textFilters = Object.entries(datasetFilter.textFilters).reduce(
         (acc, [lapisField, text]) => {
             if (text === undefined) {
                 return acc;
@@ -38,7 +38,7 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: string | undefined },
     );
 
-    const locationFilters = Object.values(pageState.datasetFilter.locationFilters).reduce(
+    const locationFilters = Object.values(datasetFilter.locationFilters).reduce(
         (acc, lapisLocation) => {
             if (lapisLocation === undefined) {
                 return acc;
@@ -52,7 +52,7 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: string | undefined },
     );
 
-    const numberRangeFilters = Object.entries(pageState.datasetFilter.numberFilters).reduce(
+    const numberRangeFilters = Object.entries(datasetFilter.numberFilters).reduce(
         (acc, [lapisField, numberRange]) => {
             if (numberRange === undefined) {
                 return acc;
@@ -70,11 +70,14 @@ export function toLapisFilterWithoutVariant(
         {} as { [key: string]: number | undefined },
     );
 
+    const advancedQuery = datasetFilter.advancedQuery ? { advancedQuery: datasetFilter.advancedQuery } : {};
+
     return {
         ...locationFilters,
         ...dateFilters,
         ...textFilters,
         ...numberRangeFilters,
         ...additionalFilters,
+        ...advancedQuery,
     };
 }
