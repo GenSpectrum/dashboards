@@ -48,7 +48,7 @@ class Denv2Constants implements OrganismConstants {
         {
             lapisField: LINEAGE_FIELD_NAME,
             placeholderText: 'Clade',
-            filterType: 'text' as const,
+            filterType: 'lineage' as const,
         },
     ];
     public readonly useAdvancedQuery = false;
