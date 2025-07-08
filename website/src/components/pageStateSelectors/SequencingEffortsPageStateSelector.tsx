@@ -2,14 +2,13 @@ import { useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
+import { LineageFilterInput } from './LineageFilterInput.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import type { OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
 import type { DatasetAndVariantData } from '../../views/View.ts';
-import { getMutationFilter } from '../../views/helpers.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
 import type { sequencingEffortsViewKey } from '../../views/viewKeys.ts';
-import { GsMutationFilter } from '../genspectrum/GsMutationFilter.tsx';
 
 export function SequencingEffortsPageStateSelector({
     organismViewKey,
@@ -44,22 +43,25 @@ export function SequencingEffortsPageStateSelector({
                             }));
                         }}
                     />
-                    <GsMutationFilter
-                        initialValue={
-                            pageState.variantFilter.mutations === undefined
-                                ? undefined
-                                : getMutationFilter(pageState.variantFilter.mutations)
-                        }
-                        onMutationChange={(mutations) => {
-                            setPageState((previousState) => ({
-                                ...previousState,
-                                variantFilter: {
-                                    ...previousState.variantFilter,
-                                    mutations,
-                                },
-                            }));
-                        }}
-                    />
+                    {view.organismConstants.lineageFilters.map((lineageFilterConfig) => (
+                        <LineageFilterInput
+                            lineageFilterConfig={lineageFilterConfig}
+                            onLineageChange={(lineage) => {
+                                setPageState((previousState) => ({
+                                    ...previousState,
+                                    variantFilter: {
+                                        lineages: {
+                                            ...previousState.variantFilter.lineages,
+                                            [lineageFilterConfig.lapisField]: lineage,
+                                        },
+                                    },
+                                }));
+                            }}
+                            key={lineageFilterConfig.lapisField}
+                            lapisFilter={currentLapisFilter}
+                            value={pageState.variantFilter.lineages?.[lineageFilterConfig.lapisField]}
+                        />
+                    ))}
                 </Inset>
             </div>
             <div className='sticky bottom-0 w-full pb-5 backdrop-blur-xs'>

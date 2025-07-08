@@ -11,28 +11,20 @@ import { VariantQueryFilter } from '../genspectrum/VariantQueryFilter.tsx';
 
 export type VariantFilterConfig = {
     lineageFilterConfigs?: LineageFilterConfig[];
-    mutationFilterConfig: {
-        enabled: boolean;
-    };
     variantQueryConfig: {
         enabled: boolean;
     };
 };
 
 type Options = {
-    enableMutationFilter: boolean;
     enableVariantQuery?: boolean;
 };
 
-export function makeVariantFilterConfig(
-    organismConstants: OrganismConstants,
-    { enableMutationFilter, enableVariantQuery }: Options,
-) {
+export function makeVariantFilterConfig(organismConstants: OrganismConstants, options?: Options): VariantFilterConfig {
     return {
         lineageFilterConfigs: organismConstants.lineageFilters,
-        mutationFilterConfig: { enabled: enableMutationFilter },
         variantQueryConfig: {
-            enabled: enableVariantQuery ?? organismConstants.useVariantQuery,
+            enabled: options?.enableVariantQuery ?? organismConstants.useVariantQuery,
         },
     };
 }
@@ -96,22 +88,20 @@ export function VariantSelector({
                             value={variantFilter.lineages?.[lineageFilterConfig.lapisField]}
                         />
                     ))}
-                    {variantFilterConfig.mutationFilterConfig.enabled && (
-                        <GsMutationFilter
-                            initialValue={
-                                variantFilter.mutations === undefined
-                                    ? undefined
-                                    : getMutationFilter(variantFilter.mutations)
-                            }
-                            onMutationChange={(mutations) => {
-                                onVariantFilterChange({
-                                    ...variantFilter,
-                                    variantQuery: undefined,
-                                    mutations,
-                                });
-                            }}
-                        />
-                    )}
+                    <GsMutationFilter
+                        initialValue={
+                            variantFilter.mutations === undefined
+                                ? undefined
+                                : getMutationFilter(variantFilter.mutations)
+                        }
+                        onMutationChange={(mutations) => {
+                            onVariantFilterChange({
+                                ...variantFilter,
+                                variantQuery: undefined,
+                                mutations,
+                            });
+                        }}
+                    />
                     <AdvancedQueryFilter
                         onInput={(newValue) => {
                             onVariantFilterChange({
