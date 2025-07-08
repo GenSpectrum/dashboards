@@ -18,6 +18,10 @@ const organismOptions = {
     [Organisms.ebolaSudan]: { mutation: 'G5902T' },
     [Organisms.ebolaZaire]: { mutation: 'T18365C' },
     [Organisms.cchf]: { mutation: 'M:G3565A' },
+    [Organisms.denv1]: { lineage: '1I_K.1.1', lineageFieldPlaceholder: 'Clade' },
+    [Organisms.denv2]: { lineage: '2II_F.1.1', lineageFieldPlaceholder: 'Clade' },
+    [Organisms.denv3]: { lineage: '3III_B.3.2', lineageFieldPlaceholder: 'Clade' },
+    [Organisms.denv4]: { lineage: '4II_B.1.2', lineageFieldPlaceholder: 'Clade' },
 };
 
 test.describe('The Compare Variants page', () => {

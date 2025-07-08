@@ -304,4 +304,44 @@ export const testOrganismsConfig = {
             },
         },
     },
+    denv1: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+        },
+    },
+    denv2: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+        },
+    },
+    denv3: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+        },
+    },
+    denv4: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+        },
+    },
 } satisfies OrganismsConfig;

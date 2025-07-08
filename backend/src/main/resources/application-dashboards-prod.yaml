@@ -165,6 +165,74 @@ dashboards:
           label: "Browse data"
           menuIcon: "database"
           description: "Browse the underlying data on Pathoplexus."
+    denv1:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/denv1"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/denv1"
+          label: "Browse data"
+          menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
+    denv2:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/denv2"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/denv2"
+          label: "Browse data"
+          menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
+    denv3:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/denv3"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/denv3"
+          label: "Browse data"
+          menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
+    denv4:
+      lapis:
+        url: "https://api.loculus.genspectrum.org/denv4"
+        mainDateField: "sampleCollectionDate"
+        locationFields:
+          - "country"
+          - "division"
+        authorAffiliationsField: "authorAffiliations"
+        authorsField: "authors"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://loculus.genspectrum.org/denv4"
+          label: "Browse data"
+          menuIcon: "database"
+          description: "Browse the underlying data in the Loculus database."
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"

@@ -53,8 +53,7 @@ class WestNileConstants implements OrganismConstants {
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getPathoplexusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions,
-            earliestDate,
+            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
         }),
         {
             lapisField: 'collectionDevice',

@@ -17,6 +17,10 @@ export const Organisms = {
     ebolaSudan: 'ebolaSudan' as const,
     ebolaZaire: 'ebolaZaire' as const,
     cchf: 'cchf' as const,
+    denv1: 'denv1' as const,
+    denv2: 'denv2' as const,
+    denv3: 'denv3' as const,
+    denv4: 'denv4' as const,
 };
 
 export const organismConfig = {
@@ -373,6 +377,66 @@ export const organismConfig = {
             },
         ],
     },
+    [Organisms.denv1]: {
+        organism: Organisms.denv1,
+        pathFragment: 'denv1',
+        label: 'Dengue 1',
+        backgroundColor: 'bg-limeMuted',
+        backgroundColorFocus: 'group-hover:bg-lime',
+        menuListEntryDecoration: 'hover:decoration-lime',
+        borderEntryDecoration: 'hover:border-lime',
+        genome: [
+            {
+                gff3Source: '/gff3Files/denv1.gff3',
+                genomeLength: 10735,
+            },
+        ],
+    },
+    [Organisms.denv2]: {
+        organism: Organisms.denv2,
+        pathFragment: 'denv2',
+        label: 'Dengue 2',
+        backgroundColor: 'bg-limeMuted',
+        backgroundColorFocus: 'group-hover:bg-lime',
+        menuListEntryDecoration: 'hover:decoration-lime',
+        borderEntryDecoration: 'hover:border-lime',
+        genome: [
+            {
+                gff3Source: '/gff3Files/denv2.gff3',
+                genomeLength: 10723,
+            },
+        ],
+    },
+    [Organisms.denv3]: {
+        organism: Organisms.denv3,
+        pathFragment: 'denv3',
+        label: 'Dengue 3',
+        backgroundColor: 'bg-limeMuted',
+        backgroundColorFocus: 'group-hover:bg-lime',
+        menuListEntryDecoration: 'hover:decoration-lime',
+        borderEntryDecoration: 'hover:border-lime',
+        genome: [
+            {
+                gff3Source: '/gff3Files/denv3.gff3',
+                genomeLength: 10707,
+            },
+        ],
+    },
+    [Organisms.denv4]: {
+        organism: Organisms.denv4,
+        pathFragment: 'denv4',
+        label: 'Dengue 4',
+        backgroundColor: 'bg-limeMuted',
+        backgroundColorFocus: 'group-hover:bg-lime',
+        menuListEntryDecoration: 'hover:decoration-lime',
+        borderEntryDecoration: 'hover:border-lime',
+        genome: [
+            {
+                gff3Source: '/gff3Files/denv4.gff3',
+                genomeLength: 10649,
+            },
+        ],
+    },
 };
 
 export const paths = {
@@ -432,6 +496,10 @@ export const paths = {
     [Organisms.ebolaSudan]: getDefaultPathConfig(Organisms.ebolaSudan),
     [Organisms.ebolaZaire]: getDefaultPathConfig(Organisms.ebolaZaire),
     [Organisms.cchf]: getDefaultPathConfig(Organisms.cchf),
+    [Organisms.denv1]: getDefaultPathConfig(Organisms.denv1),
+    [Organisms.denv2]: getDefaultPathConfig(Organisms.denv2),
+    [Organisms.denv3]: getDefaultPathConfig(Organisms.denv3),
+    [Organisms.denv4]: getDefaultPathConfig(Organisms.denv4),
     swissWastewater: {
         basePath: `/${wastewaterPathFragment}`,
         breadcrumbs: [wastewaterBreadcrumb],
