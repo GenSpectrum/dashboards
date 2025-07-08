@@ -17,9 +17,6 @@ export type VariantFilterConfig = {
     variantQueryConfig: {
         enabled: boolean;
     };
-    advancedFilterConfig: {
-        enabled: boolean;
-    };
 };
 
 type Options = {
@@ -36,9 +33,6 @@ export function makeVariantFilterConfig(
         mutationFilterConfig: { enabled: enableMutationFilter },
         variantQueryConfig: {
             enabled: enableVariantQuery ?? organismConstants.useVariantQuery,
-        },
-        advancedFilterConfig: {
-            enabled: true,
         },
     };
 }
@@ -118,17 +112,15 @@ export function VariantSelector({
                             }}
                         />
                     )}
-                    {variantFilterConfig.advancedFilterConfig.enabled && (
-                        <AdvancedQueryFilter
-                            onInput={(newValue) => {
-                                onVariantFilterChange({
-                                    ...variantFilter,
-                                    advancedQuery: newValue,
-                                });
-                            }}
-                            value={variantFilter.advancedQuery ?? ''}
-                        />
-                    )}
+                    <AdvancedQueryFilter
+                        onInput={(newValue) => {
+                            onVariantFilterChange({
+                                ...variantFilter,
+                                advancedQuery: newValue,
+                            });
+                        }}
+                        value={variantFilter.advancedQuery ?? ''}
+                    />
                 </div>
             )}
         </div>
