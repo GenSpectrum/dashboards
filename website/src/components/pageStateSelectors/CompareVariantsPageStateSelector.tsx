@@ -25,9 +25,7 @@ export function CompareVariantsPageStateSelector({
 
     const variantFilterConfigs = useMemo(() => {
         return new Map(
-            pageState.variants
-                .entries()
-                .map(([id]) => [id, makeVariantFilterConfig(view.organismConstants, { enableMutationFilter: true })]),
+            pageState.variants.entries().map(([id]) => [id, makeVariantFilterConfig(view.organismConstants)]),
         );
     }, [pageState.variants, view.organismConstants]);
 

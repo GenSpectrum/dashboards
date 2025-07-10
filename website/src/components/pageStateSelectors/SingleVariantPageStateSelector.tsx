@@ -21,7 +21,7 @@ export function SingleVariantPageStateSelector({
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
     const variantFilterConfig = useMemo(
-        () => makeVariantFilterConfig(view.organismConstants, { enableMutationFilter: true }),
+        () => makeVariantFilterConfig(view.organismConstants),
         [view.organismConstants],
     );
     const [pageState, setPageState] = useState(initialPageState);
