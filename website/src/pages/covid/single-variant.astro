@@ -22,7 +22,13 @@ const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
 
 const displayName = toDisplayName(pageState.variantFilter);
 const downloadLinks = noVariantSelected
-    ? []
+    ? [
+          {
+              label: 'Download all accessions',
+              filter: variantFilter,
+              downloadFileBasename: `${view.organismConstants.organism}_accessions`,
+          },
+      ]
     : [
           {
               label: `Download accessions of ${displayName}`,
