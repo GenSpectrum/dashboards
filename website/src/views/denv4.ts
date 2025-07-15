@@ -51,7 +51,7 @@ class Denv4Constants implements OrganismConstants {
             filterType: 'lineage' as const,
         },
     ];
-    public readonly useAdvancedQuery = false;
+    public readonly useVariantQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
