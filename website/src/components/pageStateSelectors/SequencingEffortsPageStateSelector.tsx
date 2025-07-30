@@ -4,7 +4,7 @@ import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
 import { LineageFilterInput } from './LineageFilterInput.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
-import type { OrganismsConfig } from '../../config.ts';
+import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
 import type { DatasetAndVariantData } from '../../views/View.ts';
 import { type OrganismViewKey, Routing } from '../../views/routing.ts';
@@ -14,10 +14,12 @@ export function SequencingEffortsPageStateSelector({
     organismViewKey,
     organismsConfig,
     initialPageState,
+    enableAdvancedQueryFilter,
 }: {
     organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
     organismsConfig: OrganismsConfig;
     initialPageState: DatasetAndVariantData;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
 
@@ -42,6 +44,7 @@ export function SequencingEffortsPageStateSelector({
                                 datasetFilter: newDatasetFilter,
                             }));
                         }}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                     {view.organismConstants.lineageFilters.map((lineageFilterConfig) => (
                         <LineageFilterInput

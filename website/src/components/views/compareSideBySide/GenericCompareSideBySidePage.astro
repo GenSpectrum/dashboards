@@ -1,6 +1,6 @@
 ---
 import { toDownloadLink } from './toDownloadLink';
-import { getDashboardsConfig, getLapisUrl } from '../../../config';
+import { enableAdvancedQueryFilter, getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
@@ -65,6 +65,7 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
                                     initialPageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback

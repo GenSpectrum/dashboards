@@ -14,10 +14,12 @@ export function SingleVariantPageStateSelector({
     organismViewKey,
     organismsConfig,
     initialPageState,
+    enableAdvancedQueryFilter,
 }: {
     organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
     organismsConfig: OrganismsConfig;
     initialPageState: DatasetAndVariantData;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
     const variantFilterConfig = useMemo(
@@ -47,6 +49,7 @@ export function SingleVariantPageStateSelector({
                                 datasetFilter: newDatasetFilter,
                             }));
                         }}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                 </Inset>
             </div>
@@ -64,6 +67,7 @@ export function SingleVariantPageStateSelector({
                         variantFilterConfig={variantFilterConfig}
                         variantFilter={pageState.variantFilter}
                         lapisFilter={currentLapisFilter}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                 </Inset>
             </div>

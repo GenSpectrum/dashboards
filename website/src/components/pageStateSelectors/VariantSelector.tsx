@@ -34,11 +34,13 @@ export function VariantSelector({
     variantFilterConfig,
     variantFilter,
     lapisFilter,
+    enableAdvancedQueryFilter,
 }: {
     variantFilterConfig: VariantFilterConfig;
     onVariantFilterChange: (variantFilter: VariantFilter) => void;
     variantFilter: VariantFilter;
     lapisFilter: LapisFilter;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const [isInVariantQueryMode, setIsInVariantQueryMode] = useState(
         variantFilterConfig.variantQueryConfig.enabled && variantFilter.variantQuery !== undefined,
@@ -110,6 +112,7 @@ export function VariantSelector({
                             });
                         }}
                         value={variantFilter.advancedQuery ?? ''}
+                        enabled={enableAdvancedQueryFilter}
                     />
                 </div>
             )}

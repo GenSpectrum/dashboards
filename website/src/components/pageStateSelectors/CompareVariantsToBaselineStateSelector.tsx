@@ -15,10 +15,12 @@ export function CompareVariantsToBaselineStateSelector({
     organismViewKey,
     organismsConfig,
     initialPageState,
+    enableAdvancedQueryFilter,
 }: {
     organismViewKey: OrganismViewKey & `${string}.${typeof compareToBaselineViewKey}`;
     organismsConfig: OrganismsConfig;
     initialPageState: CompareToBaselineData;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
     const [pageState, setPageState] = useState(initialPageState);
@@ -52,6 +54,7 @@ export function CompareVariantsToBaselineStateSelector({
                                     datasetFilter: newDatasetFilter,
                                 }));
                             }}
+                            enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                         />
                     </div>
                 </Inset>
@@ -69,6 +72,7 @@ export function CompareVariantsToBaselineStateSelector({
                         variantFilterConfig={variantFilterConfig}
                         variantFilter={pageState.baselineFilter}
                         lapisFilter={currentLapisFilter}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                 </Inset>
             </div>
@@ -86,6 +90,7 @@ export function CompareVariantsToBaselineStateSelector({
                             }));
                         }}
                         lapisFilter={currentLapisFilter}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                 </Inset>
             </div>
