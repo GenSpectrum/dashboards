@@ -7,7 +7,7 @@ services:
       - "127.0.0.1:4321:4321"
     environment:
       BACKEND_URL: http://backend:8080
-      DASHBOARDS_ENVIRONMENT: dashboards-prod
+      PUBLIC_DASHBOARDS_ENVIRONMENT: dashboards-prod
       GITHUB_CLIENT_ID: "dummy"
       GITHUB_CLIENT_SECRET: "dummy"
 

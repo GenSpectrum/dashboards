@@ -42,7 +42,7 @@ The website needs the following environment variables:
   Actually there should only be two reasonable values:
     - `../backend/src/main/resources/` for local development (reusing the backend configuration)
     - `/config` in the Docker container (which contains copies of the backend configuration files)
-- `DASHBOARDS_ENVIRONMENT`: Toggle between different configurations.
+- `PUBLIC_DASHBOARDS_ENVIRONMENT`: Toggle between different configurations.
   This will read the corresponding configuration yaml files from the directory specified in the `CONFIG_DIR` environment
   variable.
 - `BACKEND_URL`: The URL of the backend server (typically the corresponding Docker compose service).

@@ -2,13 +2,18 @@ import { paths } from '../../types/Organism.ts';
 import type { OrganismConstants } from '../OrganismConstants.ts';
 import { type DatasetAndVariantData, getLineageFilterFields } from '../View.ts';
 import { sequencingEffortsViewConstants } from '../ViewConstants.ts';
-import { getLapisVariantQuery, setSearchFromLapisVariantQuery } from '../helpers.ts';
-import { type PageStateHandler, toLapisFilterFromVariant } from './PageStateHandler.ts';
+import {
+    getLapisVariantQuery,
+    getStringFromSearch,
+    setSearchFromLapisVariantQuery,
+    setSearchFromString,
+} from '../helpers.ts';
+import { type PageStateHandler, toLapisFilterWithVariant } from './PageStateHandler.ts';
 import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFromToUrl.ts';
 import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
 import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
 import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
-import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
+import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
@@ -32,6 +37,7 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
                 dateFilters: parseDateRangesFromUrl(search, this.constants.baselineFilterConfigs),
                 textFilters: parseTextFiltersFromUrl(search, this.constants.baselineFilterConfigs),
                 numberFilters: parseNumberRangeFilterFromUrl(search, this.constants.baselineFilterConfigs),
+                advancedQuery: getStringFromSearch(search, advancedQueryUrlParam),
             },
             variantFilter: getLapisVariantQuery(search, getLineageFilterFields(this.constants.lineageFilters)),
         };
@@ -43,6 +49,7 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
         setSearchFromDateFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromTextFilters(search, pageState, this.constants.baselineFilterConfigs);
         setSearchFromNumberRangeFilters(search, pageState, this.constants.baselineFilterConfigs);
+        setSearchFromString(search, advancedQueryUrlParam, pageState.datasetFilter.advancedQuery);
 
         setSearchFromLapisVariantQuery(
             search,
@@ -53,10 +60,11 @@ export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantDa
     }
 
     public toLapisFilter(pageState: DatasetAndVariantData) {
-        return {
-            ...toLapisFilterWithoutVariant(pageState, this.constants.additionalFilters),
-            ...toLapisFilterFromVariant(pageState.variantFilter),
-        };
+        return toLapisFilterWithVariant({
+            datasetFilter: pageState.datasetFilter,
+            variantFilter: pageState.variantFilter,
+            additionalFilters: this.constants.additionalFilters,
+        });
     }
 
     public getDefaultPageUrl(): string {

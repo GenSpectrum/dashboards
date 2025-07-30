@@ -24,7 +24,7 @@ export function CompareVariantsToBaselineStateSelector({
     const [pageState, setPageState] = useState(initialPageState);
 
     const variantFilterConfig = useMemo(
-        () => makeVariantFilterConfig(view.organismConstants, { enableMutationFilter: true }),
+        () => makeVariantFilterConfig(view.organismConstants),
         [view.organismConstants],
     );
 

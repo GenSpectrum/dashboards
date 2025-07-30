@@ -30,7 +30,7 @@ const downloadLinks = [...pageState.filters.entries()].map(
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
                     const baselineLapisFilter = toLapisFilterWithoutVariant(
-                        { datasetFilter },
+                        datasetFilter,
                         view.organismConstants.additionalFilters,
                     );
                     const timeGranularity = chooseGranularityBasedOnDateRange({
