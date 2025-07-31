@@ -5,7 +5,7 @@ import { SingleVariantPageStateSelector } from '../../components/pageStateSelect
 import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
 import { CovidSingleVariantDataDisplay } from '../../components/views/analyzeSingleVariant/CovidSingleVariantDataDisplay';
 import { sanitizeForFilename } from '../../components/views/compareSideBySide/toDownloadLink';
-import { getDashboardsConfig } from '../../config';
+import { enableAdvancedQueryFilter, getDashboardsConfig } from '../../config';
 import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
 import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
@@ -45,6 +45,7 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
             organismViewKey={organismViewKey}
             organismsConfig={organismConfig}
             initialPageState={pageState}
+            enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
             client:only='react'
         >
             <AnalyzeSingleVariantSelectorFallback slot='fallback' />

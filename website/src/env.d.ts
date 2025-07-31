@@ -6,7 +6,7 @@ declare module 'set-cookie-parser';
 
 interface ImportMetaEnv {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    readonly PUBLIC_DASHBOARDS_ENVIRONMENT: 'dashboards-staging' | 'dashboards-prod';
+    readonly DASHBOARDS_ENVIRONMENT: 'dashboards-staging' | 'dashboards-prod';
 }
 
 interface ImportMeta {

@@ -6,16 +6,17 @@ export const advancedQueryUrlParam = 'advancedQuery';
 type AdvancedQueryFilterProps = {
     value?: string;
     onInput?: (newValue: string | undefined) => void;
+    enabled: boolean;
 };
 
-export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput }) => {
+export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled }) => {
     const [inputValue, setInputValue] = useState(value);
 
     useEffect(() => {
         setInputValue(value);
     }, [value]);
 
-    if (import.meta.env.PUBLIC_DASHBOARDS_ENVIRONMENT !== 'dashboards-staging') {
+    if (!enabled) {
         return null;
     }
 

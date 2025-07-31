@@ -8,11 +8,13 @@ export function VariantsSelector({
     variantFilterConfigs,
     setVariantFilters,
     lapisFilter,
+    enableAdvancedQueryFilter,
 }: {
     variantFilters: Map<Id, VariantFilter>;
     variantFilterConfigs: Map<Id, VariantFilterConfig>;
     setVariantFilters: (variantFilters: Map<Id, VariantFilter>) => void;
     lapisFilter: LapisFilter;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const removeVariant = (id: Id) => {
         setVariantFilters(new Map(Array.from(variantFilters).filter(([key]) => key !== id)));
@@ -43,6 +45,7 @@ export function VariantsSelector({
                         variantFilterConfig={filterConfig}
                         onVariantFilterChange={(variantFilter) => updateVariantFilter(id, variantFilter)}
                         lapisFilter={lapisFilter}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                     <button className='text-sm hover:text-gray-500' onClick={() => removeVariant(id)}>
                         Remove

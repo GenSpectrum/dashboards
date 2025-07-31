@@ -1,6 +1,6 @@
 ---
 import SelectVariants from './SelectVariants.astro';
-import { getDashboardsConfig } from '../../../config';
+import { enableAdvancedQueryFilter, getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
@@ -52,6 +52,7 @@ const componentHeight = '540px'; // prevalence over time table with 10 rows
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         initialPageState={pageState}
         client:only='react'
+        enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
     >
         <CompareVariantsSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
     </CompareVariantsPageStateSelector>

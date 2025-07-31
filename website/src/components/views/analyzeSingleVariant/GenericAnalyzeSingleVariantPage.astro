@@ -1,6 +1,6 @@
 ---
 import { GenericAnalyseSingleVariantDataDisplay } from './GenericAnalyseSingleVariantDataDisplay';
-import { getDashboardsConfig } from '../../../config';
+import { enableAdvancedQueryFilter, getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { Organisms } from '../../../types/Organism';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
@@ -53,6 +53,7 @@ const downloadLinks = noVariantSelected
         organismViewKey={organismViewKey}
         organismsConfig={organismConfig}
         initialPageState={pageState}
+        enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
         client:only='react'
     >
         <AnalyzeSingleVariantSelectorFallback slot='fallback' />

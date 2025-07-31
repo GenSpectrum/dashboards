@@ -97,8 +97,12 @@ function getConfigDir(): string {
     return processEnvOrMetaEnv('CONFIG_DIR', z.string().min(1));
 }
 
+export function enableAdvancedQueryFilter() {
+    return getEnvironment() === 'dashboards-staging';
+}
+
 function getEnvironment() {
-    return processEnvOrMetaEnv('PUBLIC_DASHBOARDS_ENVIRONMENT', environmentSchema);
+    return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
 }
 
 export function isLoginEnabled() {
