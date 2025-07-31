@@ -1,6 +1,6 @@
 ---
 import SelectBaseline from './SelectBaseline.astro';
-import { getDashboardsConfig } from '../../../config';
+import { enableAdvancedQueryFilter, getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../../views/OrganismConstants';
@@ -48,6 +48,7 @@ const downloadLinks = noVariantSelected
         initialPageState={pageState}
         organismViewKey={organismViewKey}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
+        enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
         client:only='react'
     >
         <CompareToBaselineSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />

@@ -6,7 +6,7 @@ import GsRelativeGrowthAdvantage from '../../components/genspectrum/GsRelativeGr
 import { CompareSideBySidePageStateSelector } from '../../components/pageStateSelectors/CompareSideBySidePageStateSelector';
 import { CompareSideBySideSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
 import { toDownloadLink } from '../../components/views/compareSideBySide/toDownloadLink';
-import { getDashboardsConfig, getLapisUrl } from '../../config';
+import { enableAdvancedQueryFilter, getDashboardsConfig, getLapisUrl } from '../../config';
 import OrganismViewPageLayout from '../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { chooseGranularityBasedOnDateRange } from '../../util/chooseGranularityBasedOnDateRange';
 import { ComponentHeight } from '../../views/OrganismConstants';
@@ -30,7 +30,7 @@ const downloadLinks = [...pageState.filters.entries()].map(
             {
                 Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
                     const baselineLapisFilter = toLapisFilterWithoutVariant(
-                        { datasetFilter },
+                        datasetFilter,
                         view.organismConstants.additionalFilters,
                     );
                     const timeGranularity = chooseGranularityBasedOnDateRange({
@@ -62,6 +62,7 @@ const downloadLinks = [...pageState.filters.entries()].map(
                                     initialPageState={pageState}
                                     organismsConfig={getDashboardsConfig().dashboards.organisms}
                                     organismViewKey={organismViewKey}
+                                    enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
                                     client:only='react'
                                 >
                                     <CompareSideBySideSelectorFallback

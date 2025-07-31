@@ -15,19 +15,19 @@ export function CompareVariantsPageStateSelector({
     organismViewKey,
     organismsConfig,
     initialPageState,
+    enableAdvancedQueryFilter,
 }: {
     organismViewKey: OrganismViewKey & `${string}.${typeof compareVariantsViewKey}`;
     organismsConfig: OrganismsConfig;
     initialPageState: CompareVariantsData;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
     const [pageState, setPageState] = useState(initialPageState);
 
     const variantFilterConfigs = useMemo(() => {
         return new Map(
-            pageState.variants
-                .entries()
-                .map(([id]) => [id, makeVariantFilterConfig(view.organismConstants, { enableMutationFilter: true })]),
+            pageState.variants.entries().map(([id]) => [id, makeVariantFilterConfig(view.organismConstants)]),
         );
     }, [pageState.variants, view.organismConstants]);
 
@@ -50,6 +50,7 @@ export function CompareVariantsPageStateSelector({
                                 datasetFilter: newDatasetFilter,
                             }));
                         }}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                 </Inset>
             </div>
@@ -66,6 +67,7 @@ export function CompareVariantsPageStateSelector({
                             }));
                         }}
                         lapisFilter={currentLapisFilter}
+                        enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
                 </Inset>
             </div>

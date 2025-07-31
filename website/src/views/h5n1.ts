@@ -52,7 +52,7 @@ class H5n1Constants implements OrganismConstants {
             filterType: 'text' as const,
         },
     ];
-    public readonly useAdvancedQuery = false;
+    public readonly useVariantQuery = false;
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
         ...getGenspectrumLoculusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),

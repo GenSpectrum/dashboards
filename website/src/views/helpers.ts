@@ -1,4 +1,5 @@
 import type { VariantFilter } from './View.ts';
+import { advancedQueryUrlParamForVariant } from '../components/genspectrum/AdvancedQueryFilter.tsx';
 import type { MutationFilter } from '../components/genspectrum/GsMutationFilter.tsx';
 
 export const setSearchFromString = (
@@ -81,9 +82,12 @@ export const getLapisVariantQuery = (
         })
         .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
+    const advancedQuery = getStringFromSearch(search, advancedQueryUrlParamForVariant);
+
     return {
         mutations: { ...getLapisMutationsQueryFromSearch(search) },
         lineages: { ...lineageQuery },
+        advancedQuery,
     };
 };
 
@@ -108,5 +112,6 @@ export const setSearchFromLapisVariantQuery = (
                 setSearchFromString(search, filter, query.lineages[filter]);
             }
         });
+        setSearchFromString(search, advancedQueryUrlParamForVariant, query.advancedQuery);
     }
 };

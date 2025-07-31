@@ -15,15 +15,17 @@ export function CompareSideBySidePageStateSelector({
     initialPageState,
     organismViewKey,
     organismsConfig,
+    enableAdvancedQueryFilter,
 }: {
     filterId: number;
     initialPageState: CompareSideBySideData;
     organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
     const variantFilterConfig = useMemo(
-        () => makeVariantFilterConfig(view.organismConstants, { enableMutationFilter: true }),
+        () => makeVariantFilterConfig(view.organismConstants),
         [view.organismConstants],
     );
     const [pageState, setPageState] = useState(initialPageState);
@@ -67,6 +69,7 @@ export function CompareSideBySidePageStateSelector({
                                     return { ...previousState, filters: updatedFilters };
                                 });
                             }}
+                            enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                         />
                     </Inset>
                 </div>
@@ -87,6 +90,7 @@ export function CompareSideBySidePageStateSelector({
                             variantFilterConfig={variantFilterConfig}
                             variantFilter={filterOfCurrentId.variantFilter}
                             lapisFilter={currentLapisFilter}
+                            enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                         />
                     </Inset>
                 </div>

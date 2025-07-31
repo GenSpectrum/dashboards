@@ -7,31 +7,24 @@ import type { VariantFilter } from '../../views/View.ts';
 import { getMutationFilter } from '../../views/helpers.ts';
 import { AdvancedQueryFilter } from '../genspectrum/AdvancedQueryFilter.tsx';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter.tsx';
+import { VariantQueryFilter } from '../genspectrum/VariantQueryFilter.tsx';
 
 export type VariantFilterConfig = {
     lineageFilterConfigs?: LineageFilterConfig[];
-    mutationFilterConfig: {
-        enabled: boolean;
-    };
     variantQueryConfig: {
         enabled: boolean;
     };
 };
 
 type Options = {
-    enableMutationFilter: boolean;
     enableVariantQuery?: boolean;
 };
 
-export function makeVariantFilterConfig(
-    organismConstants: OrganismConstants,
-    { enableMutationFilter, enableVariantQuery }: Options,
-) {
+export function makeVariantFilterConfig(organismConstants: OrganismConstants, options?: Options): VariantFilterConfig {
     return {
         lineageFilterConfigs: organismConstants.lineageFilters,
-        mutationFilterConfig: { enabled: enableMutationFilter },
         variantQueryConfig: {
-            enabled: enableVariantQuery ?? organismConstants.useAdvancedQuery,
+            enabled: options?.enableVariantQuery ?? organismConstants.useVariantQuery,
         },
     };
 }
@@ -41,11 +34,13 @@ export function VariantSelector({
     variantFilterConfig,
     variantFilter,
     lapisFilter,
+    enableAdvancedQueryFilter,
 }: {
     variantFilterConfig: VariantFilterConfig;
     onVariantFilterChange: (variantFilter: VariantFilter) => void;
     variantFilter: VariantFilter;
     lapisFilter: LapisFilter;
+    enableAdvancedQueryFilter: boolean;
 }) {
     const [isInVariantQueryMode, setIsInVariantQueryMode] = useState(
         variantFilterConfig.variantQueryConfig.enabled && variantFilter.variantQuery !== undefined,
@@ -55,7 +50,7 @@ export function VariantSelector({
         <div>
             {variantFilterConfig.variantQueryConfig.enabled && (
                 <label className='mb-1 flex cursor-pointer items-center gap-1 text-sm'>
-                    Advanced
+                    Variant query mode
                     <input
                         type='checkbox'
                         className='checkbox checkbox-xs'
@@ -66,7 +61,7 @@ export function VariantSelector({
             )}
 
             {isInVariantQueryMode ? (
-                <AdvancedQueryFilter
+                <VariantQueryFilter
                     onInput={(event) => {
                         onVariantFilterChange({
                             ...variantFilter,
@@ -95,22 +90,30 @@ export function VariantSelector({
                             value={variantFilter.lineages?.[lineageFilterConfig.lapisField]}
                         />
                     ))}
-                    {variantFilterConfig.mutationFilterConfig.enabled && (
-                        <GsMutationFilter
-                            initialValue={
-                                variantFilter.mutations === undefined
-                                    ? undefined
-                                    : getMutationFilter(variantFilter.mutations)
-                            }
-                            onMutationChange={(mutations) => {
-                                onVariantFilterChange({
-                                    ...variantFilter,
-                                    variantQuery: undefined,
-                                    mutations,
-                                });
-                            }}
-                        />
-                    )}
+                    <GsMutationFilter
+                        initialValue={
+                            variantFilter.mutations === undefined
+                                ? undefined
+                                : getMutationFilter(variantFilter.mutations)
+                        }
+                        onMutationChange={(mutations) => {
+                            onVariantFilterChange({
+                                ...variantFilter,
+                                variantQuery: undefined,
+                                mutations,
+                            });
+                        }}
+                    />
+                    <AdvancedQueryFilter
+                        onInput={(newValue) => {
+                            onVariantFilterChange({
+                                ...variantFilter,
+                                advancedQuery: newValue,
+                            });
+                        }}
+                        value={variantFilter.advancedQuery ?? ''}
+                        enabled={enableAdvancedQueryFilter}
+                    />
                 </div>
             )}
         </div>
