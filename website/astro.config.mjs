@@ -9,7 +9,7 @@ export default defineConfig({
     integrations: [react(), auth({ configFile: './src/auth.config' })],
     output: 'server',
     adapter: process.env.VERCEL
-        ? (await import('@astrojs/vercel/serverless')).default()
+        ? (await import('@astrojs/vercel/serverless')).default({ edgeMiddleware: true })
         : (await import('@astrojs/node')).default({ mode: 'standalone' }),
     vite: { plugins: [tailwindcss()] },
 });
