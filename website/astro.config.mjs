@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import auth from 'auth-astro';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -8,8 +8,8 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     integrations: [react(), auth({ configFile: './src/auth.config' })],
     output: 'server',
-    adapter: process.env.VERCEL
-        ? (await import('@astrojs/vercel/serverless')).default({ edgeMiddleware: true })
-        : (await import('@astrojs/node')).default({ mode: 'standalone' }),
+    adapter: vercel({
+        edgeMiddleware: true,
+    }),
     vite: { plugins: [tailwindcss()] },
 });
