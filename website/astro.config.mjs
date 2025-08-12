@@ -8,8 +8,8 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     integrations: [react(), auth({ configFile: './src/auth.config' })],
     output: 'server',
-    adapter: node({
-        mode: 'standalone',
-    }),
+    adapter: process.env.VERCEL
+        ? (await import('@astrojs/vercel/serverless')).default()
+        : (await import('@astrojs/node')).default({ mode: 'standalone' }),
     vite: { plugins: [tailwindcss()] },
 });
