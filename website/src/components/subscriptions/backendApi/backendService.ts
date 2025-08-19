@@ -131,7 +131,7 @@ export class BackendService extends ApiService {
     public async getEvaluateTrigger({ subscriptionId, userId }: { subscriptionId: string; userId: string }) {
         const url = `/subscriptions/evaluateTrigger`;
         return this.get({
-            url: url.toString(),
+            url,
             requestParams: { userId, id: subscriptionId },
             schema: triggerEvaluationResponseSchema,
         });
