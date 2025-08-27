@@ -9,6 +9,7 @@ export type GsMutationsOverTimeProps = {
     granularity: TemporalGranularity;
     lapisDateField: string;
     height?: string;
+    pageSizes?: number[];
 };
 
 export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
@@ -17,6 +18,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     granularity,
     lapisDateField,
     height,
+    pageSizes,
 }) => {
     return (
         <ComponentWrapper
@@ -31,6 +33,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 views='["grid"]'
                 granularity={granularity}
                 lapisDateField={lapisDateField}
+                pageSizes={pageSizes}
             ></gs-mutations-over-time>
         </ComponentWrapper>
     );
