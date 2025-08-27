@@ -33,7 +33,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 views='["grid"]'
                 granularity={granularity}
                 lapisDateField={lapisDateField}
-                pageSizes={pageSizes}
+                pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
             ></gs-mutations-over-time>
         </ComponentWrapper>
     );
