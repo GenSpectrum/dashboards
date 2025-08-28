@@ -10,6 +10,7 @@ export const wastewaterConfig = {
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
+    wasapLapisBaseUrl: 'https://lapis.wasap.genspectrum.org/',
     pages: {
         rsv: {
             path: `/${wastewaterPathFragment}/rsv`,
@@ -18,6 +19,10 @@ export const wastewaterConfig = {
         influenza: {
             path: `/${wastewaterPathFragment}/flu`,
             description: 'Analyze Influenza data that was collected by the WISE project.',
+        },
+        covid: {
+            path: `/${wastewaterPathFragment}/covid`,
+            description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
         },
     },
 };

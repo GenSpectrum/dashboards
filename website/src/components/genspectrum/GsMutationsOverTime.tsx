@@ -1,5 +1,6 @@
 import type { TemporalGranularity, LapisFilter, SequenceType } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
+import React from 'react';
 
 import { ComponentWrapper } from '../ComponentWrapper';
 
@@ -8,6 +9,7 @@ export type GsMutationsOverTimeProps = {
     sequenceType: SequenceType;
     granularity: TemporalGranularity;
     lapisDateField: string;
+    displayMutations?: string[];
     height?: string;
     pageSizes?: number[];
 };
@@ -17,6 +19,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     sequenceType,
     granularity,
     lapisDateField,
+    displayMutations,
     height,
     pageSizes,
 }) => {
@@ -33,6 +36,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 views='["grid"]'
                 granularity={granularity}
                 lapisDateField={lapisDateField}
+                displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
                 pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
             ></gs-mutations-over-time>
         </ComponentWrapper>
