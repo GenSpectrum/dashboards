@@ -142,7 +142,36 @@ function VariantExplorerFilter({
                 value={pageState.sequenceType}
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
-            {/* TODO - add a range control for the proportion */}
+            <LabeledField label="Min. proportion">
+                <div className='w-full mb-2'>
+                    <input
+                        className='w-full'
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={pageState.minProportion}
+                        onChange={(e) => {
+                            setPageState({...pageState, minProportion: parseFloat(e.target.value)})
+                        }}
+                    />
+                </div>
+            </LabeledField>
+            <LabeledField label="Min count">
+            <div className='w-full mb-2'>
+                    <input
+                        className='w-full'
+                        type="range"
+                        min="1"
+                        max="250"
+                        step="1"
+                        value={pageState.minCount}
+                        onChange={(e) => {
+                            setPageState({...pageState, minCount: parseInt(e.target.value)})  
+                        }}
+                    />
+                </div>
+            </LabeledField>
         </>
     );
 }

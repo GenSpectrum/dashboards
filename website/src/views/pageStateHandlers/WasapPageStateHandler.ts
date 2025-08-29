@@ -37,6 +37,14 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     {
         type: 'text',
         lapisField: 'variant',
+    },
+    {
+        type: 'text',
+        lapisField: 'minProportion'
+    },
+    {
+        type: 'text',
+        lapisField: 'minCount'
     }
 ];
 
@@ -48,7 +56,9 @@ export type WasapFilter = {
     analysisMode: WasapAnalysisMode;
     sequenceType: SequenceType;
     mutations?: string[];
-    variant?: string;
+    variant: string;
+    minProportion: number;
+    minCount: number;
 };
 
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
@@ -62,7 +72,9 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             analysisMode: (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual',
             sequenceType: (texts.sequenceType as SequenceType | undefined) ?? 'nucleotide',
             mutations: texts.mutations?.split('|'),
-            variant: texts.variant
+            variant: texts.variant ?? "JN.8",
+            minProportion: Number(texts.minProportion ?? "0.05"),
+            minCount: Number(texts.minCount ?? "5")
         };
     }
 
@@ -74,6 +86,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         setSearchFromString(search, 'sequenceType', pageState.sequenceType);
         setSearchFromString(search, 'mutations', pageState.mutations?.join('|'));
         setSearchFromString(search, 'variant', pageState.variant);
+        setSearchFromString(search, 'minProportion', String(pageState.minProportion))
+        setSearchFromString(search, 'minCount', String(pageState.minCount));
         return formatUrl(wastewaterConfig.pages.covid.path, search);
     }
 

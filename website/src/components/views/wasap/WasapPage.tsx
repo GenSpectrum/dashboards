@@ -22,12 +22,12 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
             if (pageState.variant === undefined) {
                 setVariantMutations(["A1T"])
             } else {
-                fetchMutations(pageState.sequenceType, pageState.variant, 0.05)
+                fetchMutations(pageState.sequenceType, pageState.variant, pageState.minProportion, pageState.minCount)
                     .then(setVariantMutations)
                     .catch(console.error);
             }
         }
-    }, [pageState.analysisMode, pageState.sequenceType, pageState.variant]);
+    }, [pageState.analysisMode, pageState.sequenceType, pageState.variant, pageState.minProportion, pageState.minCount]);
 
     const displayMutations =
     pageState.analysisMode === 'manual'
@@ -53,7 +53,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                     granularity='week'
                     lapisDateField='sampling_date'
                     sequenceType={pageState.sequenceType}
-                    displayMutations={displayMutations}
+                    displayMutations={displayMutations?.concat(["A1T"])}
                     height='100%'
                     pageSizes={[20, 50, 100, 250]}
                 />
@@ -65,7 +65,8 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
 async function fetchMutations(
     mutationType: SequenceType,
     pangoLineage: string,
-    minProportion: number
+    minProportion: number,
+    minCount: number
 ): Promise<string[]> {
     const endpoint =
         mutationType === "nucleotide"
@@ -80,5 +81,7 @@ async function fetchMutations(
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const json = await res.json();
 
-    return json.data.map((item: { mutation: string }) => item.mutation);
+    return json.data
+        .filter((item: { count: number}) => item.count >= minCount)
+        .map((item: { mutation: string }) => item.mutation);
 }
