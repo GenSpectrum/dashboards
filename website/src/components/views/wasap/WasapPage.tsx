@@ -15,24 +15,24 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
     const pageStateHandler = new WasapPageStateHandler();
     const pageState = pageStateHandler.parsePageStateFromUrl(currentUrl);
 
-    const [variantMutations, setVariantMutations] = useState<string[] | null>(null);
+    const [variantMutations, setVariantMutations] = useState<string[]>(["A1T"]);
 
     useEffect(() => {
         if (pageState.analysisMode === 'variant') {
-            fetchMutations(pageState.sequenceType, "B.1.1.7", 0.05)
-                .then(setVariantMutations)
-                .catch(console.error);
+            if (pageState.variant === undefined) {
+                setVariantMutations(["A1T"])
+            } else {
+                fetchMutations(pageState.sequenceType, pageState.variant, 0.05)
+                    .then(setVariantMutations)
+                    .catch(console.error);
+            }
         }
-    }, [pageState.analysisMode, pageState.sequenceType]);
+    }, [pageState.analysisMode, pageState.sequenceType, pageState.variant]);
 
     const displayMutations =
     pageState.analysisMode === 'manual'
         ? pageState.mutations
         : variantMutations;
-
-    if (pageState.analysisMode === 'variant' && variantMutations === null) {
-        return <div>Loading mutations…</div>;
-    }
 
     const lapisFilter = {
         /* eslint-disable @typescript-eslint/naming-convention */

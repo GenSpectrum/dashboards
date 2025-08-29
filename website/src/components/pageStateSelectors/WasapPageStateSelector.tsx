@@ -125,7 +125,14 @@ function VariantExplorerFilter({
     return (
         <>
             <LabeledField label='Variant'>
-                <input className='input input-bordered mb-2' placeholder='Variant' />
+                <input
+                    className='input input-bordered mb-2'
+                    placeholder='Variant'
+                    value={pageState.variant ?? ""}
+                    onChange={(e) => {
+                        setPageState({...pageState, variant: e.target.value})
+                    }}
+                />
                 {/**
                  * The variant can be a freeform text field, but we can also get the variants from
                  * GET /open/v2/sample/aggregated?fields=pangoLineage

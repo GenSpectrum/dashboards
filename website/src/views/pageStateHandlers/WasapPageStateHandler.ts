@@ -34,6 +34,10 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
         type: 'text',
         lapisField: 'mutations',
     },
+    {
+        type: 'text',
+        lapisField: 'variant',
+    }
 ];
 
 export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
@@ -44,6 +48,7 @@ export type WasapFilter = {
     analysisMode: WasapAnalysisMode;
     sequenceType: SequenceType;
     mutations?: string[];
+    variant?: string;
 };
 
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
@@ -57,6 +62,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             analysisMode: (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual',
             sequenceType: (texts.sequenceType as SequenceType | undefined) ?? 'nucleotide',
             mutations: texts.mutations?.split('|'),
+            variant: texts.variant
         };
     }
 
@@ -67,6 +73,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         setSearchFromString(search, 'analysisMode', pageState.analysisMode);
         setSearchFromString(search, 'sequenceType', pageState.sequenceType);
         setSearchFromString(search, 'mutations', pageState.mutations?.join('|'));
+        setSearchFromString(search, 'variant', pageState.variant);
         return formatUrl(wastewaterConfig.pages.covid.path, search);
     }
 
