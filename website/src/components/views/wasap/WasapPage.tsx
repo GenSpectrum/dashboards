@@ -15,12 +15,12 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
     const pageStateHandler = new WasapPageStateHandler();
     const pageState = pageStateHandler.parsePageStateFromUrl(currentUrl);
 
-    const [variantMutations, setVariantMutations] = useState<string[]>(["A1T"]);
+    const [variantMutations, setVariantMutations] = useState<string[]>([]);
 
     useEffect(() => {
         if (pageState.analysisMode === 'variant') {
             if (pageState.variant === undefined) {
-                setVariantMutations(["A1T"])
+                setVariantMutations([])
             } else {
                 fetchMutations(pageState.sequenceType, pageState.variant, pageState.minProportion, pageState.minCount)
                     .then(setVariantMutations)
@@ -53,9 +53,10 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                     granularity='week'
                     lapisDateField='sampling_date'
                     sequenceType={pageState.sequenceType}
-                    displayMutations={displayMutations?.concat(["A1T"])}
+                    displayMutations={displayMutations}
                     height='100%'
                     pageSizes={[20, 50, 100, 250]}
+                    useNewEndpoint={true}
                 />
             </div>
         </gs-app>

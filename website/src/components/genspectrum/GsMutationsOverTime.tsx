@@ -12,6 +12,7 @@ export type GsMutationsOverTimeProps = {
     displayMutations?: string[];
     height?: string;
     pageSizes?: number[];
+    useNewEndpoint?: boolean;
 };
 
 export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
@@ -22,6 +23,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     displayMutations,
     height,
     pageSizes,
+    useNewEndpoint,
 }) => {
     return (
         <ComponentWrapper
@@ -37,6 +39,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 granularity={granularity}
                 lapisDateField={lapisDateField}
                 displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
+                useNewEndpoint={useNewEndpoint === undefined ? false : useNewEndpoint}
                 pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
             ></gs-mutations-over-time>
         </ComponentWrapper>
