@@ -5,7 +5,7 @@ import { type FC } from 'react';
 import { RESISTANCE_MUTATIONS } from './resistanceMutations';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
+import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
 
 export type WasapPageProps = {
@@ -38,8 +38,12 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
         default:
             displayMutations = variantMutations;
     }
-    
 
+    let initialMeanProportionInterval: InitialMeanProportionInterval = {min: 0.0, max: 1.0};
+    if (pageState.analysisMode === 'manual' && pageState.mutations === undefined) {
+        initialMeanProportionInterval = {min: 0.05, max: 0.95}
+    }
+    
     const lapisFilter = {
         /* eslint-disable @typescript-eslint/naming-convention */
         ...(pageState.locationName && { location_name: pageState.locationName }),
@@ -63,6 +67,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                     height='100%'
                     pageSizes={[20, 50, 100, 250]}
                     useNewEndpoint={true}
+                    initialMeanProportionInterval={initialMeanProportionInterval}
                 />
             </div>
         </gs-app>

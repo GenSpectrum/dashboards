@@ -4,6 +4,11 @@ import React from 'react';
 
 import { ComponentWrapper } from '../ComponentWrapper';
 
+export type InitialMeanProportionInterval = {
+    min: number;
+    max: number;
+}
+
 export type GsMutationsOverTimeProps = {
     lapisFilter: LapisFilter;
     sequenceType: SequenceType;
@@ -13,6 +18,7 @@ export type GsMutationsOverTimeProps = {
     height?: string;
     pageSizes?: number[];
     useNewEndpoint?: boolean;
+    initialMeanProportionInterval?: InitialMeanProportionInterval;
 };
 
 export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
@@ -24,6 +30,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     height,
     pageSizes,
     useNewEndpoint,
+    initialMeanProportionInterval,
 }) => {
     return (
         <ComponentWrapper
@@ -41,7 +48,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
                 useNewEndpoint={useNewEndpoint ?? false}
                 pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
-
+                initialMeanProportionInterval={JSON.stringify(initialMeanProportionInterval ?? {min: 0.05, max: 0.95})}
             ></gs-mutations-over-time>
         </ComponentWrapper>
     );
