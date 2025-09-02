@@ -98,17 +98,34 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
 
     toUrl(pageState: WasapFilter): string {
         const search = new URLSearchParams();
+        // general dataset settings
         setSearchFromString(search, 'location_name', pageState.locationName);
         setSearchFromDateRange(search, 'sampling_date', pageState.samplingDate);
         setSearchFromString(search, 'granularity', pageState.granularity);
-        setSearchFromString(search, 'excludeEmpty', String(pageState.excludeEmpty));
+        if (!pageState.excludeEmpty) {
+            search['excludeEmpty'] = false;
+        }
+        // analyis mode dependent settings
         setSearchFromString(search, 'analysisMode', pageState.analysisMode);
-        setSearchFromString(search, 'sequenceType', pageState.sequenceType);
-        setSearchFromString(search, 'mutations', pageState.mutations?.join('|'));
-        setSearchFromString(search, 'variant', pageState.variant);
-        setSearchFromString(search, 'minProportion', String(pageState.minProportion))
-        setSearchFromString(search, 'minCount', String(pageState.minCount));
-        setSearchFromString(search, 'resistanceSet', pageState.resistanceSet);
+        switch (pageState.analysisMode) {
+            case 'manual':
+                setSearchFromString(search, 'sequenceType', pageState.sequenceType);
+                setSearchFromString(search, 'mutations', pageState.mutations?.join('|'));
+                break;
+            case 'variant':
+                setSearchFromString(search, 'sequenceType', pageState.sequenceType);
+                setSearchFromString(search, 'variant', pageState.variant);
+                setSearchFromString(search, 'minProportion', String(pageState.minProportion))
+                setSearchFromString(search, 'minCount', String(pageState.minCount));
+                break;
+            case 'resistance':
+                setSearchFromString(search, 'resistanceSet', pageState.resistanceSet);
+                break;
+            case 'untracked':
+                setSearchFromString(search, 'sequenceType', pageState.sequenceType);
+                break;
+        }
+        
         return formatUrl(wastewaterConfig.pages.covid.path, search);
     }
 

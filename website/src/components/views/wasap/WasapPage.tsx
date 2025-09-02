@@ -32,6 +32,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
             displayMutations = pageState.mutations;
             break;
         case 'resistance':
+            pageState.sequenceType = 'amino acid'; // resistence muts are always amino acid
             displayMutations = RESISTANCE_MUTATIONS[pageState.resistanceSet];
             break;
         default:

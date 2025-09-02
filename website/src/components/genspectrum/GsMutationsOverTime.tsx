@@ -41,6 +41,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
                 useNewEndpoint={useNewEndpoint ?? false}
                 pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
+
             ></gs-mutations-over-time>
         </ComponentWrapper>
     );
