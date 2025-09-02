@@ -54,12 +54,15 @@ export function WasapPageStateSelector({
             <select
                 className='select select-bordered'
                 value={pageState.analysisMode}
-                onChange={(e) =>
+                onChange={(e) => {
+                    const analysisMode = e.target.value as WasapAnalysisMode;
+                    const sequenceType = analysisMode === 'resistance' ? 'amino acid' : pageState.sequenceType;
                     setPageState({
                         ...pageState,
-                        analysisMode: e.target.value as WasapAnalysisMode,
-                    })
-                }
+                        analysisMode,
+                        sequenceType,
+                    });
+                }}
             >
                 <option value='manual'>Manual</option>
                 <option value='variant'>Variant Explorer</option>
@@ -74,9 +77,9 @@ export function WasapPageStateSelector({
                         case 'variant':
                             return <VariantExplorerFilter pageState={pageState} setPageState={setPageState} />;
                         case 'resistance':
-                            return <ResistanceMutationsFilter />;
+                            return <ResistanceMutationsFilter pageState={pageState} setPageState={setPageState} />;
                         case 'untracked':
-                            return <UntrackedFilter />;
+                            return <UntrackedFilter _pageState={pageState} _setPageState={setPageState} />;
                     }
                 })()}
             </Inset>
@@ -128,9 +131,9 @@ function VariantExplorerFilter({
                 <input
                     className='input input-bordered mb-2'
                     placeholder='Variant'
-                    value={pageState.variant ?? ""}
+                    value={pageState.variant}
                     onChange={(e) => {
-                        setPageState({...pageState, variant: e.target.value})
+                        setPageState({ ...pageState, variant: e.target.value });
                     }}
                 />
                 {/**
@@ -142,32 +145,32 @@ function VariantExplorerFilter({
                 value={pageState.sequenceType}
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
-            <LabeledField label="Min. proportion">
-                <div className='w-full mb-2'>
+            <LabeledField label='Min. proportion'>
+                <div className='mb-2 w-full'>
                     <input
                         className='w-full'
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.01"
+                        type='range'
+                        min='0'
+                        max='1'
+                        step='0.01'
                         value={pageState.minProportion}
                         onChange={(e) => {
-                            setPageState({...pageState, minProportion: parseFloat(e.target.value)})
+                            setPageState({ ...pageState, minProportion: parseFloat(e.target.value) });
                         }}
                     />
                 </div>
             </LabeledField>
-            <LabeledField label="Min count">
-            <div className='w-full mb-2'>
+            <LabeledField label='Min count'>
+                <div className='mb-2 w-full'>
                     <input
                         className='w-full'
-                        type="range"
-                        min="1"
-                        max="250"
-                        step="1"
+                        type='range'
+                        min='1'
+                        max='250'
+                        step='1'
                         value={pageState.minCount}
                         onChange={(e) => {
-                            setPageState({...pageState, minCount: parseInt(e.target.value)})  
+                            setPageState({ ...pageState, minCount: parseInt(e.target.value) });
                         }}
                     />
                 </div>
@@ -176,18 +179,35 @@ function VariantExplorerFilter({
     );
 }
 
-function ResistanceMutationsFilter() {
+function ResistanceMutationsFilter({
+    pageState,
+    setPageState,
+}: {
+    pageState: WasapFilter;
+    setPageState: (newState: WasapFilter) => void;
+}) {
     return (
         <LabeledField label='Resistance mutation set'>
-            <select className='select select-bordered'>
-                <option>Foo</option> {/* TODO */}
-                <option>Bar</option>
+            <select
+                className='select select-bordered'
+                value={pageState.resistanceSet}
+                onChange={(e) => setPageState({ ...pageState, resistanceSet: e.target.value })}
+            >
+                <option value='3CLpro'>3CLpro</option>
+                <option value='RdRp'>RdRp</option>
+                <option value='Spike'>Spike</option>
             </select>
         </LabeledField>
     );
 }
 
-function UntrackedFilter() {
+function UntrackedFilter({
+    _pageState,
+    _setPageState,
+}: {
+    _pageState: WasapFilter;
+    _setPageState: (newState: WasapFilter) => void;
+}) {
     return (
         <LabeledField label='Known variants to exclude'>
             <input className='input input-bordered' />

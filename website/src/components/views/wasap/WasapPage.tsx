@@ -2,6 +2,7 @@ import { type SequenceType } from '@genspectrum/dashboard-components/util';
 import React, { useEffect, useState } from 'react';
 import { type FC } from 'react';
 
+import { RESISTANCE_MUTATIONS } from './resistanceMutations';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
@@ -19,20 +20,24 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
 
     useEffect(() => {
         if (pageState.analysisMode === 'variant') {
-            if (pageState.variant === undefined) {
-                setVariantMutations([])
-            } else {
-                fetchMutations(pageState.sequenceType, pageState.variant, pageState.minProportion, pageState.minCount)
-                    .then(setVariantMutations)
-                    .catch(console.error);
-            }
+            fetchMutations(pageState.sequenceType, pageState.variant, pageState.minProportion, pageState.minCount)
+                .then(setVariantMutations)
+                .catch(console.error);
         }
     }, [pageState.analysisMode, pageState.sequenceType, pageState.variant, pageState.minProportion, pageState.minCount]);
 
-    const displayMutations =
-    pageState.analysisMode === 'manual'
-        ? pageState.mutations
-        : variantMutations;
+    let displayMutations: string[] | undefined;
+    switch (pageState.analysisMode) {
+        case 'manual':
+            displayMutations = pageState.mutations;
+            break;
+        case 'resistance':
+            displayMutations = RESISTANCE_MUTATIONS[pageState.resistanceSet];
+            break;
+        default:
+            displayMutations = variantMutations;
+    }
+    
 
     const lapisFilter = {
         /* eslint-disable @typescript-eslint/naming-convention */
