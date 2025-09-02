@@ -55,7 +55,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                 </div>
                 <GsMutationsOverTime
                     lapisFilter={lapisFilter}
-                    granularity='day'
+                    granularity={pageState.granularity as 'day' | 'week'}
                     lapisDateField='sampling_date'
                     sequenceType={pageState.sequenceType}
                     displayMutations={displayMutations}

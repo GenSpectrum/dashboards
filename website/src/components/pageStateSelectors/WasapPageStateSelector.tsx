@@ -48,6 +48,54 @@ export function WasapPageStateSelector({
                         dateRangeOptions={wasapDateRangeOptions()}
                     />
                 </LabeledField>
+                <div className='h-2' />
+                <LabeledField label='Granularity'>
+                    <div className='mb-2 flex gap-2 text-sm'>
+                        <input
+                            type='radio'
+                            id='day'
+                            name='interval'
+                            value='day'
+                            className='peer/day hidden'
+                            checked={pageState.granularity === 'day'}
+                            onChange={() => setPageState({ ...pageState, granularity: 'day' })}
+                        />
+                        <label
+                            htmlFor='day'
+                            className='peer-checked/day:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
+                        >
+                            Day
+                        </label>
+
+                        <input
+                            type='radio'
+                            id='week'
+                            name='interval'
+                            value='week'
+                            className='peer/week hidden'
+                            checked={pageState.granularity === 'week'}
+                            onChange={() => setPageState({ ...pageState, granularity: 'week' })}
+                        />
+                        <label
+                            htmlFor='week'
+                            className='peer-checked/week:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
+                        >
+                            Week
+                        </label>
+                    </div>
+                </LabeledField>
+
+                <div className='text-sm'>
+                    <input
+                        type='checkbox'
+                        id='excludeEmpty'
+                        checked={pageState.excludeEmpty}
+                        onChange={(e) => setPageState({ ...pageState, excludeEmpty: e.target.checked })}
+                    />
+                    <label htmlFor='excludeEmpty' className='pl-2'>
+                        Exclude empty date ranges
+                    </label>
+                </div>
             </Inset>
             <SelectorHeadline>Mutation selection</SelectorHeadline>
 

@@ -24,6 +24,14 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     // below are not really LAPIS fields, but we still want to use the URL parsing mechanism
     {
         type: 'text',
+        lapisField: 'granularity',
+    },
+    {
+        type: 'text',
+        lapisField: 'excludeEmpty',
+    },
+    {
+        type: 'text',
         lapisField: 'analysisMode',
     },
     {
@@ -57,6 +65,8 @@ export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked
 export type WasapFilter = {
     locationName?: string;
     samplingDate?: DateRangeOption;
+    granularity: string;
+    excludeEmpty: boolean;
     analysisMode: WasapAnalysisMode;
     sequenceType: SequenceType;
     mutations?: string[];
@@ -74,6 +84,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         return {
             locationName: texts.location_name,
             samplingDate: dateRanges.sampling_date,
+            granularity: texts.granularity ?? 'day',
+            excludeEmpty: texts.excludeEmpty === 'false' ? false : true,
             analysisMode: (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual',
             sequenceType: (texts.sequenceType as SequenceType | undefined) ?? 'nucleotide',
             mutations: texts.mutations?.split('|'),
@@ -88,6 +100,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const search = new URLSearchParams();
         setSearchFromString(search, 'location_name', pageState.locationName);
         setSearchFromDateRange(search, 'sampling_date', pageState.samplingDate);
+        setSearchFromString(search, 'granularity', pageState.granularity);
+        setSearchFromString(search, 'excludeEmpty', String(pageState.excludeEmpty));
         setSearchFromString(search, 'analysisMode', pageState.analysisMode);
         setSearchFromString(search, 'sequenceType', pageState.sequenceType);
         setSearchFromString(search, 'mutations', pageState.mutations?.join('|'));
