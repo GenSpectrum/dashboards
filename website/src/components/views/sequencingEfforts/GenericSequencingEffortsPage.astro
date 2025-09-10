@@ -1,6 +1,6 @@
 ---
 import { GenericSequencingEffortsDataDisplay } from './GenericSequencingEffortsDataDisplay';
-import { enableAdvancedQueryFilter, getDashboardsConfig } from '../../../config';
+import { isStaging, getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -39,7 +39,7 @@ const organismConfig = getDashboardsConfig().dashboards.organisms;
         organismViewKey={organismViewKey}
         organismsConfig={organismConfig}
         initialPageState={pageState}
-        enableAdvancedQueryFilter={enableAdvancedQueryFilter()}
+        enableAdvancedQueryFilter={isStaging()}
         client:only='react'
     >
         <SequencingEffortsSelectorFallback slot='fallback' />
