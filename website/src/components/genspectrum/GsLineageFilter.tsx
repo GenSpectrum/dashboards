@@ -10,6 +10,7 @@ export function GsLineageFilter<Lineage extends string>({
     placeholderText,
     width,
     onLineageChange = () => {},
+    hideCounts,
 }: {
     lapisField: Lineage;
     value?: string;
@@ -17,6 +18,7 @@ export function GsLineageFilter<Lineage extends string>({
     placeholderText?: string;
     width?: string;
     onLineageChange?: (lineage: { [key in Lineage]: string | undefined }) => void;
+    hideCounts?: true;
 }) {
     const lineageFilterRef = useRef<HTMLElement>();
 
@@ -45,6 +47,7 @@ export function GsLineageFilter<Lineage extends string>({
             width={width}
             ref={lineageFilterRef}
             lapisFilter={JSON.stringify(lapisFilter)}
+            hideCounts={hideCounts}
         ></gs-lineage-filter>
     );
 }
