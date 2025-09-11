@@ -1,10 +1,17 @@
 import { type MutationAnnotations } from '@genspectrum/dashboard-components/util';
 
-export type ResistanceSetName = '3CLpro' | 'RdRp' | 'Spike';
+/* eslint-disable @typescript-eslint/naming-convention */
+export const resistanceSetNames = {
+    ThreeCLPro: '3CLpro',
+    RdRp: 'RdRp',
+    Spike: 'Spike',
+} as const;
+/* eslint-enable @typescript-eslint/naming-convention */
+
+export type ResistanceSetName = (typeof resistanceSetNames)[keyof typeof resistanceSetNames];
 
 export const RESISTANCE_MUTATIONS = {
-    //eslint-disable-next-line @typescript-eslint/naming-convention
-    '3CLpro': [
+    [resistanceSetNames.ThreeCLPro]: [
         'ORF1a:T3284I',
         'ORF1a:T3288A',
         'ORF1a:T3288N',
@@ -77,8 +84,7 @@ export const RESISTANCE_MUTATIONS = {
         'ORF1a:T3567I',
         'ORF1a:F3568L',
     ],
-    //eslint-disable-next-line @typescript-eslint/naming-convention
-    'RdRp': [
+    [resistanceSetNames.RdRp]: [
         'ORF1b:V157A',
         'ORF1b:V157L',
         'ORF1b:N189S',
@@ -99,8 +105,7 @@ export const RESISTANCE_MUTATIONS = {
         'ORF1b:E793D',
         'ORF1b:M915R',
     ],
-    //eslint-disable-next-line @typescript-eslint/naming-convention
-    'Spike': [
+    [resistanceSetNames.Spike]: [
         'S:P337H',
         'S:P337L',
         'S:P337R',
@@ -273,19 +278,19 @@ const fetchSnippet =
 
 export const resistanceMutationAannotations: MutationAnnotations = [
     {
-        name: '3CLpro',
+        name: resistanceSetNames.ThreeCLPro,
         symbol: 'c',
         description: `SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation ${fetchSnippet}`,
         aminoAcidMutations: RESISTANCE_MUTATIONS['3CLpro'],
     },
     {
-        name: 'RdRp',
+        name: resistanceSetNames.RdRp,
         symbol: 'r',
         description: `SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation ${fetchSnippet}`,
         aminoAcidMutations: RESISTANCE_MUTATIONS.RdRp,
     },
     {
-        name: 'Spike',
+        name: resistanceSetNames.Spike,
         symbol: 's',
         description: `SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation ${fetchSnippet}`,
         aminoAcidMutations: RESISTANCE_MUTATIONS.Spike,

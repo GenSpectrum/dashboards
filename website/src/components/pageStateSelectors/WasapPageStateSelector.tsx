@@ -1,9 +1,10 @@
 import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { SelectorHeadline } from './SelectorHeadline';
 import { Inset } from '../../styles/Inset';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type WasapFilter,
@@ -14,8 +15,7 @@ import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
-import { type ResistanceSetName } from '../views/wasap/resistanceMutations';
-import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { resistanceSetNames, type ResistanceSetName } from '../views/wasap/resistanceMutations';
 
 export function WasapPageStateSelector({
     pageStateHandler,
@@ -51,43 +51,7 @@ export function WasapPageStateSelector({
                         dateRangeOptions={wasapDateRangeOptions()}
                     />
                 </LabeledField>
-                <div className='h-2' />
-                <LabeledField label='Granularity'>
-                    <div className='mb-2 flex gap-2 text-sm'>
-                        <input
-                            type='radio'
-                            id='day'
-                            name='interval'
-                            value='day'
-                            className='peer/day hidden'
-                            checked={pageState.granularity === 'day'}
-                            onChange={() => setPageState({ ...pageState, granularity: 'day' })}
-                        />
-                        <label
-                            htmlFor='day'
-                            className='peer-checked/day:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
-                        >
-                            Day
-                        </label>
-
-                        <input
-                            type='radio'
-                            id='week'
-                            name='interval'
-                            value='week'
-                            className='peer/week hidden'
-                            checked={pageState.granularity === 'week'}
-                            onChange={() => setPageState({ ...pageState, granularity: 'week' })}
-                        />
-                        <label
-                            htmlFor='week'
-                            className='peer-checked/week:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
-                        >
-                            Week
-                        </label>
-                    </div>
-                </LabeledField>
-
+                <GranularityFilter pageState={pageState} setPageState={setPageState} />
                 <div className='text-sm'>
                     <input
                         type='checkbox'
@@ -136,6 +100,57 @@ export function WasapPageStateSelector({
             </Inset>
             <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={pageState} />
         </div>
+    );
+}
+
+function GranularityFilter({
+    pageState,
+    setPageState,
+}: {
+    pageState: WasapFilter;
+    setPageState: (newState: WasapFilter) => void;
+}) {
+    const id = useId();
+
+    return (
+        <>
+            <div className='h-2' />
+            <LabeledField label='Granularity'>
+                <div className='mb-2 flex gap-2 text-sm'>
+                    <input
+                        type='radio'
+                        id={`${id}-day`}
+                        name={`${id}-interval`}
+                        value='day'
+                        className='peer/day hidden'
+                        checked={pageState.granularity === 'day'}
+                        onChange={() => setPageState({ ...pageState, granularity: 'day' })}
+                    />
+                    <label
+                        htmlFor={`${id}-day`}
+                        className='peer-checked/day:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
+                    >
+                        Day
+                    </label>
+
+                    <input
+                        type='radio'
+                        id={`${id}-week`}
+                        name={`${id}-interval`}
+                        value='week'
+                        className='peer/week hidden'
+                        checked={pageState.granularity === 'week'}
+                        onChange={() => setPageState({ ...pageState, granularity: 'week' })}
+                    />
+                    <label
+                        htmlFor={`${id}-week`}
+                        className='peer-checked/week:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
+                    >
+                        Week
+                    </label>
+                </div>
+            </LabeledField>
+        </>
     );
 }
 
@@ -244,9 +259,9 @@ function ResistanceMutationsFilter({
                 value={pageState.resistanceSet}
                 onChange={(e) => setPageState({ ...pageState, resistanceSet: e.target.value as ResistanceSetName })}
             >
-                <option value='3CLpro'>3CLpro</option>
-                <option value='RdRp'>RdRp</option>
-                <option value='Spike'>Spike</option>
+                <option value={resistanceSetNames.ThreeCLPro}>{resistanceSetNames.ThreeCLPro}</option>
+                <option value={resistanceSetNames.RdRp}>{resistanceSetNames.RdRp}</option>
+                <option value={resistanceSetNames.Spike}>{resistanceSetNames.Spike}</option>
             </select>
         </LabeledField>
     );
