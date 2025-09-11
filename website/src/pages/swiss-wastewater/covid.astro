@@ -1,0 +1,26 @@
+---
+import { WasapPage } from '../../components/views/wasap/WasapPage';
+import { isStaging } from '../../config';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
+import { dataOrigins } from '../../types/dataOrigins';
+import { wastewaterConfig, wastewaterBreadcrumb } from '../../types/wastewaterConfig';
+
+const url = Astro.url;
+---
+
+<DataPageLayout
+    title='Swiss wastewater - SARS-CoV-2'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        wastewaterBreadcrumb,
+        {
+            name: 'SARS-CoV-2',
+            href: wastewaterConfig.pages.covid.path,
+        },
+    ]}
+    dataOrigins={[dataOrigins.wise]}
+    lapisUrl={wastewaterConfig.wasapLapisBaseUrl}
+>
+    {isStaging() ? <WasapPage currentUrl={url} client:only='react' /> : <span>coming soon!</span>}
+</DataPageLayout>

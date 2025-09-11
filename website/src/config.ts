@@ -97,7 +97,7 @@ function getConfigDir(): string {
     return processEnvOrMetaEnv('CONFIG_DIR', z.string().min(1));
 }
 
-export function enableAdvancedQueryFilter() {
+export function isStaging() {
     return getEnvironment() === 'dashboards-staging';
 }
 
