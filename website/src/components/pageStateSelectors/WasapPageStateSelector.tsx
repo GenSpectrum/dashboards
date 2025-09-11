@@ -14,8 +14,8 @@ import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
-import { COV_SPECTRUM_LAPIS } from '../views/wasap/WasapPage';
 import { type ResistanceSetName } from '../views/wasap/resistanceMutations';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
 
 export function WasapPageStateSelector({
     pageStateHandler,
@@ -179,7 +179,7 @@ function VariantExplorerFilter({
     return (
         <>
             <LabeledField label='Variant'>
-                <gs-app lapis={COV_SPECTRUM_LAPIS}>
+                <gs-app lapis={wastewaterConfig.covSpectrumLapisBaseUrl}>
                     <GsLineageFilter
                         lapisField='pangoLineage'
                         lapisFilter={{}}

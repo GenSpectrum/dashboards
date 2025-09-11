@@ -11,6 +11,7 @@ export const wastewaterConfig = {
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
     wasapLapisBaseUrl: 'https://lapis.wasap.genspectrum.org/',
+    covSpectrumLapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
     pages: {
         rsv: {
             path: `/${wastewaterPathFragment}/rsv`,

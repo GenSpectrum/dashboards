@@ -11,8 +11,6 @@ import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPag
 import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
 
-export const COV_SPECTRUM_LAPIS = 'https://lapis.cov-spectrum.org/open/v2';
-
 export type WasapPageProps = {
     currentUrl: URL;
 };
@@ -30,7 +28,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
         if (pageState.analysisMode === 'variant' && pageState.variant) {
             setLoading(true);
             fetchMutations(
-                COV_SPECTRUM_LAPIS,
+                wastewaterConfig.covSpectrumLapisBaseUrl,
                 pageState.sequenceType,
                 pageState.variant,
                 pageState.minProportion,
@@ -44,7 +42,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
             Promise.all([
                 Promise.all(
                     pageState.excludeVariants.map((variant) =>
-                        fetchMutations(COV_SPECTRUM_LAPIS, 'nucleotide', variant, 0.05, 5),
+                        fetchMutations(wastewaterConfig.covSpectrumLapisBaseUrl, 'nucleotide', variant, 0.05, 5),
                     ),
                 ).then((r) => r.flat()),
                 fetchMutations(wastewaterConfig.wasapLapisBaseUrl, 'nucleotide', undefined, 0.05, 5),
