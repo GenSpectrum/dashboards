@@ -1,14 +1,18 @@
 import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
-import React, { useState } from 'react';
+import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
+import React, { useEffect, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { SelectorHeadline } from './SelectorHeadline';
 import { Inset } from '../../styles/Inset';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { Loading } from '../../util/Loading';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type WasapFilter,
-    wasapDateRangeOptions,
     type WasapAnalysisMode,
+    wasapDateRangeOptions,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
@@ -16,6 +20,9 @@ import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
 import { COV_SPECTRUM_LAPIS } from '../views/wasap/WasapPage';
 import { type ResistanceSetName } from '../views/wasap/resistanceMutations';
+
+// TODO - put this somewhere cleaner
+dayjs.extend(isoWeek);
 
 export function WasapPageStateSelector({
     pageStateHandler,
@@ -41,16 +48,10 @@ export function WasapPageStateSelector({
                         value={pageState.locationName}
                     />
                 </LabeledField>
-                <LabeledField label='Sampling date'>
-                    <GsDateRangeFilter
-                        lapisDateField='sampling_date'
-                        onDateRangeChange={(dateRange: DateRangeOption | null) => {
-                            setPageState({ ...pageState, samplingDate: dateRange ?? undefined });
-                        }}
-                        value={pageState.samplingDate}
-                        dateRangeOptions={wasapDateRangeOptions()}
-                    />
-                </LabeledField>
+                <SamplingDateFilter
+                    value={pageState.samplingDate}
+                    onChange={(newDateRange?) => setPageState({ ...pageState, samplingDate: newDateRange })}
+                />
                 <div className='h-2' />
                 <LabeledField label='Granularity'>
                     <div className='mb-2 flex gap-2 text-sm'>
@@ -270,6 +271,48 @@ function UntrackedFilter({
     );
 }
 
+function SamplingDateFilter({
+    value,
+    onChange,
+}: {
+    value: DateRangeOption | undefined;
+    onChange: (newValue: DateRangeOption | undefined) => void;
+}) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | undefined>(undefined);
+    const [dateRange, setDateRange] = useState<{ start: string; end: string } | undefined>(undefined);
+
+    useEffect(() => {
+        fetchSamplingDateRange(wastewaterConfig.wasapLapisBaseUrl)
+            .then((range) => setDateRange(range))
+            .catch((err: unknown) => {
+                setError(err instanceof Error ? err.message : String(err));
+            })
+            .finally(() => setIsLoading(false));
+    }, []);
+
+    return (
+        <LabeledField label='Sampling date'>
+            {isLoading ? (
+                <div className='h-20'>
+                    <Loading />
+                </div>
+            ) : error ? (
+                <div className='flex h-20 items-center'>Failed to load date range: {error}</div>
+            ) : (
+                <GsDateRangeFilter
+                    lapisDateField='sampling_date'
+                    onDateRangeChange={(dateRange: DateRangeOption | null) => {
+                        onChange(dateRange ?? undefined);
+                    }}
+                    value={value}
+                    dateRangeOptions={dateRange && dateRangeOptions(dateRange.start, dateRange.end)}
+                />
+            )}
+        </LabeledField>
+    );
+}
+
 // Shared UI helpers
 
 function SequenceTypeSelector({ value, onChange }: { value: SequenceType; onChange: (newType: SequenceType) => void }) {
@@ -296,4 +339,40 @@ function LabeledField({ label, children }: { label: string; children: React.Reac
             {children}
         </label>
     );
+}
+
+async function fetchSamplingDateRange(baseUrl: string): Promise<{ start: string; end: string }> {
+    const url = new URL(`${baseUrl.replace(/\/$/, '')}/sample/aggregated`);
+    url.search = new URLSearchParams({
+        fields: 'sampling_date',
+        orderBy: 'sampling_date',
+        dataFormat: 'JSON',
+        downloadAsFile: 'false',
+    }).toString();
+
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const json: { data: { sampling_date: string }[] } = await res.json();
+
+    if (!json.data.length) throw new Error('No data returned');
+
+    return {
+        start: json.data[0].sampling_date,
+        end: json.data[json.data.length - 1].sampling_date,
+    };
+}
+
+export function dateRangeOptions(start: string, end: string) {
+    const options: { label: string; dateFrom: string; dateTo: string }[] = wasapDateRangeOptions();
+
+    const startDate = dayjs(start);
+    const endDate = dayjs(end);
+
+    return options.filter(({ dateFrom, dateTo }) => {
+        const from = dayjs(dateFrom);
+        const to = dayjs(dateTo);
+        return !(to.isBefore(startDate) || from.isAfter(endDate));
+    });
 }

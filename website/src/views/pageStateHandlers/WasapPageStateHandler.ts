@@ -6,11 +6,11 @@ import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import { type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
-import { fineGrainedDefaultDateRangeOptions } from '../../util/defaultDateRangeOption';
 import { formatUrl } from '../../util/formatUrl';
+import { weeklyAndMonthlyDateRangeOptions } from '../../util/wasapDateRangeOption';
 import { setSearchFromString } from '../helpers';
 
-export const wasapDateRangeOptions = fineGrainedDefaultDateRangeOptions('2020-01-01');
+export const wasapDateRangeOptions = weeklyAndMonthlyDateRangeOptions('2025-06-01');
 
 const defaultExcludeVariants = [
     'JN.1',
