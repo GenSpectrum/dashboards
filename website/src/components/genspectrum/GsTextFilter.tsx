@@ -10,6 +10,7 @@ export function GsTextFilter<LapisField extends string>({
     width,
     onInputChange = () => {},
     value,
+    hideCounts,
 }: {
     lapisField: LapisField;
     placeholderText?: string;
@@ -17,6 +18,7 @@ export function GsTextFilter<LapisField extends string>({
     width?: string;
     onInputChange?: (input: { [key in LapisField]: string | undefined }) => void;
     value?: string | undefined;
+    hideCounts?: true;
 }) {
     const textInputRef = useRef<HTMLElement>();
 
@@ -44,6 +46,7 @@ export function GsTextFilter<LapisField extends string>({
             lapisFilter={JSON.stringify(lapisFilter)}
             width={width}
             value={value ?? ''}
+            hideCounts={hideCounts}
         ></gs-text-filter>
     );
 }

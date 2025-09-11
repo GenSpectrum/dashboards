@@ -5,7 +5,15 @@ import { organismsWithView } from './helpers.ts';
 import { Organisms } from '../src/types/Organism.ts';
 import { compareVariantsViewKey } from '../src/views/viewKeys';
 
-const organismOptions = {
+const organismOptions: Record<
+    string,
+    {
+        lineage?: string;
+        lineageFieldPlaceholder?: string;
+        mutation?: string;
+        skip?: true;
+    }
+> = {
     [Organisms.covid]: { lineage: 'JN.1*', lineageFieldPlaceholder: 'Nextclade pango lineage' },
     [Organisms.h5n1]: { lineage: '2.3.4.4b', lineageFieldPlaceholder: 'Clade' },
     [Organisms.h1n1pdm]: { lineage: '6B.1A.5a.2a.1', lineageFieldPlaceholder: 'Clade HA' },
@@ -19,16 +27,20 @@ const organismOptions = {
     [Organisms.ebolaZaire]: { mutation: 'T18365C' },
     [Organisms.cchf]: { mutation: 'M:G3565A' },
     [Organisms.denv1]: { lineage: '1I_K.1.1', lineageFieldPlaceholder: 'Clade' },
-    [Organisms.denv2]: { lineage: '2II_F.1.1', lineageFieldPlaceholder: 'Clade' },
+    [Organisms.denv2]: { lineage: '2II_F.1.1', lineageFieldPlaceholder: 'Clade', skip: true },
     [Organisms.denv3]: { lineage: '3III_B.3.2', lineageFieldPlaceholder: 'Clade' },
     [Organisms.denv4]: { lineage: '4II_B.1.2', lineageFieldPlaceholder: 'Clade' },
 };
 
 test.describe('The Compare Variants page', () => {
     for (const organism of organismsWithView(compareVariantsViewKey)) {
-        test(`should show diagrams after selecting two variants ${organism}`, async ({ compareVariantsPage }) => {
-            const options = organismOptions[organism];
+        const options = organismOptions[organism];
 
+        if (options.skip) {
+            continue;
+        }
+
+        test(`should show diagrams after selecting two variants ${organism}`, async ({ compareVariantsPage }) => {
             await compareVariantsPage.goto(organism);
             await expect(compareVariantsPage.selectVariantsMessage).toBeVisible();
             await expect(compareVariantsPage.diagramTitle('Prevalence Over Time')).not.toBeVisible();

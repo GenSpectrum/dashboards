@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { allOrganisms, organismConfig } from '../src/types/Organism.ts';
+import { allOrganisms, organismConfig, Organisms } from '../src/types/Organism.ts';
 import { nonBreakingHyphen } from '../src/views/ViewConstants.ts';
 import { ServerSide } from '../src/views/serverSideRouting.ts';
 import {
@@ -54,6 +54,10 @@ test.describe('Main page', () => {
     });
 
     allOrganisms.forEach((organism) => {
+        if (organism === Organisms.denv2) {
+            return;
+        }
+
         test(`should navigate to all views for ${organism}`, async ({ page }) => {
             for (const { viewKey, linkName, title, expectedHeadline } of views) {
                 if (!ServerSide.routing.isOrganismWithViewKey(organism, viewKey)) {

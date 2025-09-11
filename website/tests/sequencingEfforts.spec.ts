@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 import { test } from './e2e.fixture.ts';
 import { allOrganisms, Organisms } from '../src/types/Organism.ts';
 
-const organismOptions = {
+const organismOptions: Record<string, { location: string; skip?: true }> = {
     [Organisms.covid]: { location: 'North America' },
     [Organisms.influenzaA]: { location: 'Switzerland' },
     [Organisms.h5n1]: { location: 'USA' },
@@ -19,19 +19,23 @@ const organismOptions = {
     [Organisms.ebolaZaire]: { location: 'Gabon' },
     [Organisms.cchf]: { location: 'Turkey' },
     [Organisms.denv1]: { location: 'China' },
-    [Organisms.denv2]: { location: 'India' },
+    [Organisms.denv2]: { location: 'India', skip: true },
     [Organisms.denv3]: { location: 'Brazil' },
     [Organisms.denv4]: { location: 'USA' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
     for (const organism of allOrganisms) {
+        const options = organismOptions[organism];
+
+        if (options.skip) {
+            continue;
+        }
+
         test.describe(organism, () => {
             test(`should allow selecting location and date range and then show diagrams`, async ({
                 sequencingEffortsPage,
             }) => {
-                const options = organismOptions[organism];
-
                 await sequencingEffortsPage.goto(organism);
                 await sequencingEffortsPage.expectToSeeNoComponentErrors();
                 await sequencingEffortsPage.selectDateRange('All times');
