@@ -1,5 +1,6 @@
 import { type SequenceType } from '@genspectrum/dashboard-components/util';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import React, { useMemo } from 'react';
 import { type FC } from 'react';
 
 import {
@@ -7,73 +8,27 @@ import {
     resistanceMutationAannotations as resistanceMutationAnnotations,
 } from './resistanceMutations';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
-import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
+import { type WasapFilter, WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
+import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
 export type WasapPageProps = {
     currentUrl: URL;
 };
 
-export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(), []);
     const pageState = useMemo(() => pageStateHandler.parsePageStateFromUrl(currentUrl), [pageStateHandler, currentUrl]);
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | undefined>(undefined);
-    const [variantMutations, setVariantMutations] = useState<string[]>([]);
-    const [untrackedMutations, setUntrackedMutations] = useState<string[]>([]);
-
-    useEffect(() => {
-        if (pageState.analysisMode === 'variant' && pageState.variant) {
-            setLoading(true);
-            fetchMutations(
-                wastewaterConfig.covSpectrumLapisBaseUrl,
-                pageState.sequenceType,
-                pageState.variant,
-                pageState.minProportion,
-                pageState.minCount,
-            )
-                .then(setVariantMutations)
-                .catch((err: unknown) => setError(String(err)))
-                .finally(() => setLoading(false));
-        } else if (pageState.analysisMode === 'untracked' && pageState.excludeVariants !== undefined) {
-            setLoading(true);
-            Promise.all([
-                Promise.all(
-                    pageState.excludeVariants.map((variant) =>
-                        fetchMutations(wastewaterConfig.covSpectrumLapisBaseUrl, 'nucleotide', variant, 0.05, 5),
-                    ),
-                ).then((r) => r.flat()),
-                fetchMutations(wastewaterConfig.wasapLapisBaseUrl, 'nucleotide', undefined, 0.05, 5),
-            ])
-                .then(([excludeMutations, allMuts]) => {
-                    setUntrackedMutations(allMuts.filter((m) => !excludeMutations.includes(m)));
-                })
-                .catch((err: unknown) => setError(String(err)))
-                .finally(() => setLoading(false));
-        }
-    }, [
-        pageState.analysisMode,
-        pageState.sequenceType,
-        pageState.variant,
-        pageState.minProportion,
-        pageState.minCount,
-        pageState.excludeVariants,
-    ]);
-
-    const displayMutations = useMemo(() => {
-        switch (pageState.analysisMode) {
-            case 'manual':
-                return pageState.mutations;
-            case 'variant':
-                return variantMutations;
-            case 'resistance':
-                return RESISTANCE_MUTATIONS[pageState.resistanceSet];
-            case 'untracked':
-                return untrackedMutations;
-        }
-    }, [pageState.analysisMode, pageState.mutations, variantMutations, untrackedMutations, pageState.resistanceSet]);
+    const {
+        data: displayMutations,
+        isPending,
+        isError,
+    } = useQuery({
+        queryKey: [pageState],
+        queryFn: () => fetchDisplayMutations(pageState),
+    });
 
     let initialMeanProportionInterval: InitialMeanProportionInterval = { min: 0.0, max: 1.0 };
     if (pageState.analysisMode === 'manual' && pageState.mutations === undefined) {
@@ -97,9 +52,9 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                 <div className='h-fit p-2 shadow-lg'>
                     <WasapPageStateSelector pageStateHandler={pageStateHandler} initialPageState={pageState} />
                 </div>
-                {error ? (
-                    <span>{error}</span>
-                ) : loading ? (
+                {isError ? (
+                    <span>There was an error fetching the mutations to display.</span>
+                ) : isPending ? (
                     <span>Loading mutations to display ...</span>
                 ) : (
                     <div className='h-full pr-4'>
@@ -108,7 +63,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                             granularity={pageState.granularity as 'day' | 'week'}
                             lapisDateField='sampling_date'
                             sequenceType={pageState.sequenceType}
-                            displayMutations={displayMutations}
+                            displayMutations={displayMutations === 'all' ? undefined : displayMutations}
                             pageSizes={[20, 50, 100, 250]}
                             useNewEndpoint={true}
                             initialMeanProportionInterval={initialMeanProportionInterval}
@@ -120,6 +75,47 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
         </gs-app>
     );
 };
+
+export const WasapPage = withQueryProvider(WasapPageInner);
+
+async function fetchDisplayMutations({
+    analysisMode,
+    mutations,
+    sequenceType,
+    variant,
+    minProportion,
+    minCount,
+    excludeVariants,
+    resistanceSet,
+}: WasapFilter): Promise<string[] | 'all'> {
+    switch (analysisMode) {
+        case 'manual':
+            return mutations ?? 'all';
+        case 'variant':
+            if (!variant) return [];
+            return fetchMutations(
+                wastewaterConfig.covSpectrumLapisBaseUrl,
+                sequenceType,
+                variant,
+                minProportion,
+                minCount,
+            );
+        case 'resistance':
+            return RESISTANCE_MUTATIONS[resistanceSet];
+        case 'untracked': {
+            if (!excludeVariants) return [];
+            const [excludeMutations, allMuts] = await Promise.all([
+                Promise.all(
+                    excludeVariants.map((v) =>
+                        fetchMutations(wastewaterConfig.covSpectrumLapisBaseUrl, 'nucleotide', v, 0.05, 5),
+                    ),
+                ).then((r) => r.flat()),
+                fetchMutations(wastewaterConfig.wasapLapisBaseUrl, 'nucleotide', undefined, 0.05, 5),
+            ]);
+            return allMuts.filter((m) => !excludeMutations.includes(m));
+        }
+    }
+}
 
 async function fetchMutations(
     baseUrl: string,
