@@ -1,13 +1,18 @@
 import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
+import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
 import React, { useEffect, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { SelectorHeadline } from './SelectorHeadline';
 import { Inset } from '../../styles/Inset';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { Loading } from '../../util/Loading';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type WasapFilter,
     type WasapAnalysisMode,
+    wasapDateRangeOptions,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
@@ -15,12 +20,8 @@ import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
 import { COV_SPECTRUM_LAPIS } from '../views/wasap/WasapPage';
 import { type ResistanceSetName } from '../views/wasap/resistanceMutations';
-import { Loading } from '../../util/Loading';
-import { wastewaterConfig } from '../../types/wastewaterConfig';
-import dayjs from 'dayjs';
 
 // TODO - put this somewhere cleaner
-import isoWeek from "dayjs/plugin/isoWeek";
 dayjs.extend(isoWeek);
 
 export function WasapPageStateSelector({
@@ -272,41 +273,44 @@ function UntrackedFilter({
 
 function SamplingDateFilter({
     value,
-    onChange
-} : {
-    value: DateRangeOption | undefined,
-    onChange: (newValue: DateRangeOption | undefined) => void,
+    onChange,
+}: {
+    value: DateRangeOption | undefined;
+    onChange: (newValue: DateRangeOption | undefined) => void;
 }) {
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | undefined>(undefined);
     const [dateRange, setDateRange] = useState<{ start: string; end: string } | undefined>(undefined);
 
     useEffect(() => {
         fetchSamplingDateRange(wastewaterConfig.wasapLapisBaseUrl)
             .then((range) => setDateRange(range))
-            .catch((err) => console.error(err))
+            .catch((err: unknown) => {
+                setError(err instanceof Error ? err.message : String(err));
+            })
             .finally(() => setIsLoading(false));
     }, []);
 
-    // TODO - if I generate the options on the fly, I'm getting issues with setting the value beforehand, I think
-
     return (
-        <LabeledField label="Sampling date">
+        <LabeledField label='Sampling date'>
             {isLoading ? (
                 <div className='h-20'>
                     <Loading />
                 </div>
+            ) : error ? (
+                <div className='flex h-20 items-center'>Failed to load date range: {error}</div>
             ) : (
                 <GsDateRangeFilter
-                    lapisDateField="sampling_date"
+                    lapisDateField='sampling_date'
                     onDateRangeChange={(dateRange: DateRangeOption | null) => {
                         onChange(dateRange ?? undefined);
                     }}
                     value={value}
-                    dateRangeOptions={dateRange && dateRangeOptions(dateRange?.start, dateRange?.end)}
+                    dateRangeOptions={dateRange && dateRangeOptions(dateRange.start, dateRange.end)}
                 />
             )}
         </LabeledField>
-    )
+    );
 }
 
 // Shared UI helpers
@@ -349,6 +353,7 @@ async function fetchSamplingDateRange(baseUrl: string): Promise<{ start: string;
     const res = await fetch(url.toString());
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const json: { data: { sampling_date: string }[] } = await res.json();
 
     if (!json.data.length) throw new Error('No data returned');
@@ -360,36 +365,14 @@ async function fetchSamplingDateRange(baseUrl: string): Promise<{ start: string;
 }
 
 export function dateRangeOptions(start: string, end: string) {
+    const options: { label: string; dateFrom: string; dateTo: string }[] = wasapDateRangeOptions();
+
     const startDate = dayjs(start);
     const endDate = dayjs(end);
 
-    const options: { label: string; dateFrom: string; dateTo: string }[] = [];
-
-    // Weeks
-    let current = startDate.startOf("week");
-    while (current.isBefore(endDate)) {
-        const weekStart = current.startOf("week");
-        const weekEnd = current.endOf("week");
-        options.push({
-            label: `${current.year()}-W${String(current.isoWeek()).padStart(2, "0")}`,
-            dateFrom: weekStart.format("YYYY-MM-DD"),
-            dateTo: weekEnd.format("YYYY-MM-DD"),
-        });
-        current = current.add(1, "week");
-    }
-
-    // Months
-    current = startDate.startOf("month");
-    while (current.isBefore(endDate)) {
-        options.push({
-            label: current.format("YYYY-MM"),
-            dateFrom: current.startOf("month").format("YYYY-MM-DD"),
-            dateTo: current.endOf("month").format("YYYY-MM-DD"),
-        });
-        current = current.add(1, "month");
-    }
-
-    options.push({ label: "All", dateFrom: start, dateTo: end });
-
-    return options;
+    return options.filter(({ dateFrom, dateTo }) => {
+        const from = dayjs(dateFrom);
+        const to = dayjs(dateTo);
+        return !(to.isBefore(startDate) || from.isAfter(endDate));
+    });
 }

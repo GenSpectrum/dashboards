@@ -7,10 +7,10 @@ import {
     resistanceMutationAannotations as resistanceMutationAnnotations,
 } from './resistanceMutations';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
+import { Loading } from '../../../util/Loading';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
-import { Loading } from '../../../util/Loading';
 
 export const COV_SPECTRUM_LAPIS = 'https://lapis.cov-spectrum.org/open/v2';
 
