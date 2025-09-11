@@ -274,7 +274,7 @@ export const RESISTANCE_MUTATIONS = {
 };
 
 const fetchSnippet =
-    'as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> fetched on XX.YY.ZZ.';
+    'as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).';
 
 export const resistanceMutationAannotations: MutationAnnotations = [
     {

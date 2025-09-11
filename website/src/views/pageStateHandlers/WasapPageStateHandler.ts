@@ -4,7 +4,7 @@ import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
-import { type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
+import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { fineGrainedDefaultDateRangeOptions } from '../../util/defaultDateRangeOption';
 import { formatUrl } from '../../util/formatUrl';
@@ -140,7 +140,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             variant: texts.variant ?? 'JN.8',
             minProportion: Number(texts.minProportion ?? '0.05'),
             minCount: Number(texts.minCount ?? '5'),
-            resistanceSet: (texts.resistanceSet as ResistanceSetName | undefined) ?? '3CLpro',
+            resistanceSet: (texts.resistanceSet as ResistanceSetName | undefined) ?? resistanceSetNames.ThreeCLPro,
             excludeVariants: texts.excludeVariants?.split('|') ?? defaultExcludeVariants,
         };
     }
