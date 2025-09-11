@@ -10,6 +10,7 @@ import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
+import { Loading } from '../../../util/Loading';
 
 export const COV_SPECTRUM_LAPIS = 'https://lapis.cov-spectrum.org/open/v2';
 
@@ -102,7 +103,7 @@ export const WasapPage: FC<WasapPageProps> = ({ currentUrl }) => {
                 {error ? (
                     <span>{error}</span>
                 ) : loading ? (
-                    <span>Loading mutations to display ...</span>
+                    <Loading />
                 ) : (
                     <div className='h-full pr-4'>
                         <GsMutationsOverTime

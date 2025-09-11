@@ -1,5 +1,5 @@
 import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { SelectorHeadline } from './SelectorHeadline';
@@ -7,7 +7,6 @@ import { Inset } from '../../styles/Inset';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type WasapFilter,
-    wasapDateRangeOptions,
     type WasapAnalysisMode,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
@@ -16,6 +15,13 @@ import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
 import { COV_SPECTRUM_LAPIS } from '../views/wasap/WasapPage';
 import { type ResistanceSetName } from '../views/wasap/resistanceMutations';
+import { Loading } from '../../util/Loading';
+import { wastewaterConfig } from '../../types/wastewaterConfig';
+import dayjs from 'dayjs';
+
+// TODO - put this somewhere cleaner
+import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek);
 
 export function WasapPageStateSelector({
     pageStateHandler,
@@ -41,16 +47,10 @@ export function WasapPageStateSelector({
                         value={pageState.locationName}
                     />
                 </LabeledField>
-                <LabeledField label='Sampling date'>
-                    <GsDateRangeFilter
-                        lapisDateField='sampling_date'
-                        onDateRangeChange={(dateRange: DateRangeOption | null) => {
-                            setPageState({ ...pageState, samplingDate: dateRange ?? undefined });
-                        }}
-                        value={pageState.samplingDate}
-                        dateRangeOptions={wasapDateRangeOptions()}
-                    />
-                </LabeledField>
+                <SamplingDateFilter
+                    value={pageState.samplingDate}
+                    onChange={(newDateRange?) => setPageState({ ...pageState, samplingDate: newDateRange })}
+                />
                 <div className='h-2' />
                 <LabeledField label='Granularity'>
                     <div className='mb-2 flex gap-2 text-sm'>
@@ -270,6 +270,45 @@ function UntrackedFilter({
     );
 }
 
+function SamplingDateFilter({
+    value,
+    onChange
+} : {
+    value: DateRangeOption | undefined,
+    onChange: (newValue: DateRangeOption | undefined) => void,
+}) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [dateRange, setDateRange] = useState<{ start: string; end: string } | undefined>(undefined);
+
+    useEffect(() => {
+        fetchSamplingDateRange(wastewaterConfig.wasapLapisBaseUrl)
+            .then((range) => setDateRange(range))
+            .catch((err) => console.error(err))
+            .finally(() => setIsLoading(false));
+    }, []);
+
+    // TODO - if I generate the options on the fly, I'm getting issues with setting the value beforehand, I think
+
+    return (
+        <LabeledField label="Sampling date">
+            {isLoading ? (
+                <div className='h-20'>
+                    <Loading />
+                </div>
+            ) : (
+                <GsDateRangeFilter
+                    lapisDateField="sampling_date"
+                    onDateRangeChange={(dateRange: DateRangeOption | null) => {
+                        onChange(dateRange ?? undefined);
+                    }}
+                    value={value}
+                    dateRangeOptions={dateRange && dateRangeOptions(dateRange?.start, dateRange?.end)}
+                />
+            )}
+        </LabeledField>
+    )
+}
+
 // Shared UI helpers
 
 function SequenceTypeSelector({ value, onChange }: { value: SequenceType; onChange: (newType: SequenceType) => void }) {
@@ -296,4 +335,61 @@ function LabeledField({ label, children }: { label: string; children: React.Reac
             {children}
         </label>
     );
+}
+
+async function fetchSamplingDateRange(baseUrl: string): Promise<{ start: string; end: string }> {
+    const url = new URL(`${baseUrl.replace(/\/$/, '')}/sample/aggregated`);
+    url.search = new URLSearchParams({
+        fields: 'sampling_date',
+        orderBy: 'sampling_date',
+        dataFormat: 'JSON',
+        downloadAsFile: 'false',
+    }).toString();
+
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+    const json: { data: { sampling_date: string }[] } = await res.json();
+
+    if (!json.data.length) throw new Error('No data returned');
+
+    return {
+        start: json.data[0].sampling_date,
+        end: json.data[json.data.length - 1].sampling_date,
+    };
+}
+
+export function dateRangeOptions(start: string, end: string) {
+    const startDate = dayjs(start);
+    const endDate = dayjs(end);
+
+    const options: { label: string; dateFrom: string; dateTo: string }[] = [];
+
+    // Weeks
+    let current = startDate.startOf("week");
+    while (current.isBefore(endDate)) {
+        const weekStart = current.startOf("week");
+        const weekEnd = current.endOf("week");
+        options.push({
+            label: `${current.year()}-W${String(current.isoWeek()).padStart(2, "0")}`,
+            dateFrom: weekStart.format("YYYY-MM-DD"),
+            dateTo: weekEnd.format("YYYY-MM-DD"),
+        });
+        current = current.add(1, "week");
+    }
+
+    // Months
+    current = startDate.startOf("month");
+    while (current.isBefore(endDate)) {
+        options.push({
+            label: current.format("YYYY-MM"),
+            dateFrom: current.startOf("month").format("YYYY-MM-DD"),
+            dateTo: current.endOf("month").format("YYYY-MM-DD"),
+        });
+        current = current.add(1, "month");
+    }
+
+    options.push({ label: "All", dateFrom: start, dateTo: end });
+
+    return options;
 }
