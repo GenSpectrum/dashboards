@@ -85,6 +85,16 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 externalLink: false,
                 description: wastewaterConfig.pages.influenza.description,
             },
+            /** -- menu entry hidden for now --
+            {
+                label: 'SARS-CoV-2',
+                iconType: 'table',
+                href: wastewaterConfig.pages.covid.path,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: false,
+                description: wastewaterConfig.pages.covid.description,
+            },
+            */
             {
                 label: 'Browse data',
                 iconType: 'database',
