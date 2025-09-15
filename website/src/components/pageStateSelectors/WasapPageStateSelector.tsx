@@ -1,17 +1,13 @@
-import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { type SequenceType } from '@genspectrum/dashboard-components/util';
 import React, { useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
+import { DynamicWeekMonthDateFilter } from './DynamicDateFilter';
 import { SelectorHeadline } from './SelectorHeadline';
 import { Inset } from '../../styles/Inset';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
-import {
-    type WasapFilter,
-    wasapDateRangeOptions,
-    type WasapAnalysisMode,
-} from '../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
+import { type WasapFilter, type WasapAnalysisMode } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
@@ -41,16 +37,12 @@ export function WasapPageStateSelector({
                         value={pageState.locationName}
                     />
                 </LabeledField>
-                <LabeledField label='Sampling date'>
-                    <GsDateRangeFilter
-                        lapisDateField='sampling_date'
-                        onDateRangeChange={(dateRange: DateRangeOption | null) => {
-                            setPageState({ ...pageState, samplingDate: dateRange ?? undefined });
-                        }}
-                        value={pageState.samplingDate}
-                        dateRangeOptions={wasapDateRangeOptions()}
-                    />
-                </LabeledField>
+                <DynamicWeekMonthDateFilter
+                    lapis={wastewaterConfig.wasapLapisBaseUrl}
+                    dateFieldName='sampling_date'
+                    value={pageState.samplingDate}
+                    onChange={(newDateRange?) => setPageState({ ...pageState, samplingDate: newDateRange })}
+                />
                 <GranularityFilter pageState={pageState} setPageState={setPageState} />
                 <div className='text-sm'>
                     <input
@@ -302,7 +294,7 @@ function SequenceTypeSelector({ value, onChange }: { value: SequenceType; onChan
     );
 }
 
-function LabeledField({ label, children }: { label: string; children: React.ReactNode }) {
+export function LabeledField({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <label className='form-control'>
             <div className='label'>
