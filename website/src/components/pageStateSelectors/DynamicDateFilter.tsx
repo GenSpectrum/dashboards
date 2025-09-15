@@ -5,7 +5,6 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 
 import { LabeledField } from './WasapPageStateSelector';
-import { wasapDateRangeOptions } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 
 dayjs.extend(isoWeek);
@@ -17,11 +16,13 @@ dayjs.extend(isoWeek);
 export function DynamicWeekMonthDateFilter({
     lapis,
     dateFieldName,
+    baselineOptions,
     value,
     onChange,
 }: {
     lapis: string;
     dateFieldName: string;
+    baselineOptions: DateRangeOption[];
     value: DateRangeOption | undefined;
     onChange: (newValue: DateRangeOption | undefined) => void;
 }) {
@@ -36,7 +37,7 @@ export function DynamicWeekMonthDateFilter({
                 setError(err instanceof Error ? err.message : String(err));
             })
             .finally(() => setIsLoading(false));
-    }, []);
+    }, [lapis, dateFieldName]);
 
     return (
         <LabeledField label='Sampling date'>
@@ -51,7 +52,7 @@ export function DynamicWeekMonthDateFilter({
                         onChange(dateRange ?? undefined);
                     }}
                     value={value}
-                    dateRangeOptions={dateRange && dateRangeOptions(dateRange.start, dateRange.end)}
+                    dateRangeOptions={dateRange && filteredOptions(baselineOptions, dateRange.start, dateRange.end)}
                 />
             )}
         </LabeledField>
@@ -59,19 +60,24 @@ export function DynamicWeekMonthDateFilter({
 }
 
 async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ start: string; end: string }> {
-    const url = new URL(`${baseUrl.replace(/\/$/, '')}/sample/aggregated`);
-    url.search = new URLSearchParams({
-        fields: fieldName,
-        orderBy: fieldName,
-        dataFormat: 'JSON',
-        downloadAsFile: 'false',
-    }).toString();
+    const url = `${baseUrl.replace(/\/$/, '')}/sample/aggregated`;
 
-    const res = await fetch(url.toString());
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            'Content-Type': 'application/json',
+            accept: 'application/json',
+        },
+        body: JSON.stringify({
+            fields: [fieldName],
+            orderBy: [fieldName],
+        }),
+    });
+
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 
     const json: { data: Record<string, string>[] } = await res.json();
-
     if (!json.data.length) throw new Error('No data returned');
 
     return {
@@ -80,15 +86,18 @@ async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ sta
     };
 }
 
-function dateRangeOptions(start: string, end: string) {
-    const options: { label: string; dateFrom: string; dateTo: string }[] = wasapDateRangeOptions();
-
+/**
+ * Returns only the options from the given list of baseline options, that have at least
+ * partial overlap with the given date range (start, end).
+ */
+function filteredOptions(baselineOptions: DateRangeOption[], start: string, end: string) {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
 
-    return options.filter(({ dateFrom, dateTo }) => {
+    return baselineOptions.filter(({ dateFrom, dateTo }) => {
         const from = dayjs(dateFrom);
         const to = dayjs(dateTo);
-        return !(to.isBefore(startDate) || from.isAfter(endDate));
+        return !((dateTo !== undefined && to.isBefore(startDate)) ||
+                 (dateFrom !== undefined && from.isAfter(endDate)));
     });
 }

@@ -7,7 +7,7 @@ import { SelectorHeadline } from './SelectorHeadline';
 import { Inset } from '../../styles/Inset';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
-import { type WasapFilter, type WasapAnalysisMode } from '../../views/pageStateHandlers/WasapPageStateHandler';
+import { type WasapFilter, type WasapAnalysisMode, wasapDateRangeOptions } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
@@ -40,6 +40,7 @@ export function WasapPageStateSelector({
                 <DynamicWeekMonthDateFilter
                     lapis={wastewaterConfig.wasapLapisBaseUrl}
                     dateFieldName='sampling_date'
+                    baselineOptions={wasapDateRangeOptions()}
                     value={pageState.samplingDate}
                     onChange={(newDateRange?) => setPageState({ ...pageState, samplingDate: newDateRange })}
                 />
