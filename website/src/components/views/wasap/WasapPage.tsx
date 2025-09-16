@@ -5,6 +5,7 @@ import { type FC } from 'react';
 
 import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
+import { Loading } from '../../../util/Loading';
 import { type WasapFilter, WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
@@ -54,7 +55,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                 {isError ? (
                     <span>There was an error fetching the mutations to display.</span>
                 ) : isPending ? (
-                    <span>Loading mutations to display ...</span>
+                    <Loading />
                 ) : (
                     <div className='h-full pr-4'>
                         <GsMutationsOverTime
