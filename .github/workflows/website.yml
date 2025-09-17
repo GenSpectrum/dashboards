@@ -43,6 +43,9 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
       - run: npm ci
+        # playwright is needed for vitest browser tests
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - run: npm run test
 
   dockerImage:
