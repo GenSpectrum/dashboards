@@ -22,6 +22,7 @@ const organismOptions = {
     [Organisms.denv2]: { location: 'India' },
     [Organisms.denv3]: { location: 'Brazil' },
     [Organisms.denv4]: { location: 'USA' },
+    [Organisms.measles]: { location: 'USA' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {

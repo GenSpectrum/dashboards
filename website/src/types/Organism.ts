@@ -21,6 +21,7 @@ export const Organisms = {
     denv2: 'denv2' as const,
     denv3: 'denv3' as const,
     denv4: 'denv4' as const,
+    measles: 'measles' as const,
 };
 
 export const organismConfig = {
@@ -437,6 +438,21 @@ export const organismConfig = {
             },
         ],
     },
+    [Organisms.measles]: {
+        organism: Organisms.measles,
+        pathFragment: 'measles',
+        label: 'Measles',
+        backgroundColor: 'bg-greenMuted',
+        backgroundColorFocus: 'group-hover:bg-green',
+        menuListEntryDecoration: 'hover:decoration-green',
+        borderEntryDecoration: 'hover:border-green',
+        genome: [
+            {
+                gff3Source: '/gff3Files/measles.gff3',
+                genomeLength: 12108,
+            },
+        ],
+    },
 };
 
 export const paths = {
@@ -500,6 +516,7 @@ export const paths = {
     [Organisms.denv2]: getDefaultPathConfig(Organisms.denv2),
     [Organisms.denv3]: getDefaultPathConfig(Organisms.denv3),
     [Organisms.denv4]: getDefaultPathConfig(Organisms.denv4),
+    [Organisms.measles]: getDefaultPathConfig(Organisms.measles),
     swissWastewater: {
         basePath: `/${wastewaterPathFragment}`,
         breadcrumbs: [wastewaterBreadcrumb],

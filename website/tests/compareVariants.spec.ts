@@ -22,6 +22,7 @@ const organismOptions = {
     [Organisms.denv2]: { lineage: '2II_F.1.1', lineageFieldPlaceholder: 'Clade' },
     [Organisms.denv3]: { lineage: '3III_B.3.2', lineageFieldPlaceholder: 'Clade' },
     [Organisms.denv4]: { lineage: '4II_B.1.2', lineageFieldPlaceholder: 'Clade' },
+    [Organisms.measles]: { lineage: '1A', lineageFieldPlaceholder: 'Lineage' }, //TODO add mutation option when available
 };
 
 test.describe('The Compare Variants page', () => {
