@@ -2,12 +2,13 @@ import { render } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
 import { SingleVariantPageStateSelector } from './SingleVariantPageStateSelector.tsx';
-import { DUMMY_LAPIS_URL, lapisRequestMocks, testOrganismsConfig } from '../../../vitest.setup.ts';
+import { DUMMY_LAPIS_URL, testOrganismsConfig } from '../../../routeMocker.ts';
+import { lapisRouteMocker } from '../../../vitest.setup.ts';
 
 describe('SingleVariantPageStateSelector', () => {
     test('should remember the covid collection id', () => {
-        lapisRequestMocks.postAggregated({}, { data: [] });
-        lapisRequestMocks.referenceGenome({ nucleotideSequences: [{ name: 'main', sequence: 'ATGC' }], genes: [] });
+        lapisRouteMocker.mockPostAggregated({}, { data: [] });
+        lapisRouteMocker.mockReferenceGenome({ nucleotideSequences: [{ name: 'main', sequence: 'ATGC' }], genes: [] });
 
         const initialPageState = {
             datasetFilter: {
