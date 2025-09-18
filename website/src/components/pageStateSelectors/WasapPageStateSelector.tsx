@@ -64,7 +64,19 @@ export function WasapPageStateSelector({
                     </label>
                 </div>
             </Inset>
-            <SelectorHeadline>Mutation selection</SelectorHeadline>
+            <SelectorHeadline
+                info={
+                    <div className='relative p-8'>
+                        <form method='dialog'>
+                            <button className='btn btn-sm btn-circle btn-ghost absolute top-2 right-2'>✕</button>
+                        </form>
+                        <h1 className='text-lg'>TODO title</h1>
+                        TODO text
+                    </div>
+                }
+            >
+                Mutation selection
+            </SelectorHeadline>
 
             <select
                 className='select select-bordered'
