@@ -22,6 +22,7 @@ const organismOptions: Record<string, { location: string; skip?: true }> = {
     [Organisms.denv2]: { location: 'India', skip: true },
     [Organisms.denv3]: { location: 'Brazil' },
     [Organisms.denv4]: { location: 'USA' },
+    [Organisms.measles]: { location: 'USA' },
 };
 
 test.describe('The Sequencing Efforts Page', () => {
