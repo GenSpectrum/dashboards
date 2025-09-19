@@ -18,7 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    getPathoplexusFilters,
+    getGenspectrumLoculusFilters,
     getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -52,17 +52,11 @@ class MeaslesConstants implements OrganismConstants {
         },
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getPathoplexusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions,
-            earliestDate,
+        ...getGenspectrumLoculusFilters({
+            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
         }),
-        {
-            lapisField: 'collectionDevice',
-            placeholderText: 'Collection device',
-            type: 'text' as const,
-            label: 'Collection device',
-        },
     ];
+    public readonly useAdvancedQuery = false;
     public readonly useVariantQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
