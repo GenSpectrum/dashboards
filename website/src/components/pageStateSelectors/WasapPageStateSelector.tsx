@@ -1,19 +1,14 @@
-import {
-    type SequenceType,
-    type DateRangeOption,
-    mutationType,
-    type MutationType,
-} from '@genspectrum/dashboard-components/util';
+import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
 import React, { Fragment, useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
+import { DynamicDateFilter } from './DynamicDateFilter';
 import { SelectorHeadline } from './SelectorHeadline';
 import { Inset } from '../../styles/Inset';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type WasapFilter,
-    wasapDateRangeOptions,
     type WasapAnalysisMode,
     type WasapManualFilter,
     type WasapVariantFilter,
@@ -25,8 +20,8 @@ import {
     defaultUntrackedFilter,
     type WasapBaseFilter,
     type WasapAnalysisFilter,
+    wasapDateRangeOptions,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
@@ -86,16 +81,15 @@ export function WasapPageStateSelector({
                         value={baseFilterState.locationName}
                     />
                 </LabeledField>
-                <LabeledField label='Sampling date'>
-                    <GsDateRangeFilter
-                        lapisDateField='sampling_date'
-                        onDateRangeChange={(dateRange: DateRangeOption | null) => {
-                            setBaseFilterState({ ...baseFilterState, samplingDate: dateRange ?? undefined });
-                        }}
-                        value={baseFilterState.samplingDate}
-                        dateRangeOptions={wasapDateRangeOptions()}
-                    />
-                </LabeledField>
+
+                <DynamicDateFilter
+                    label='Sampling date'
+                    lapis={wastewaterConfig.wasapLapisBaseUrl}
+                    dateFieldName='sampling_date'
+                    baselineOptions={wasapDateRangeOptions()}
+                    value={baseFilterState.samplingDate}
+                    onChange={(newDateRange?) => setBaseFilterState({ ...baseFilterState, samplingDate: newDateRange })}
+                />
                 <div className='h-2' />
                 <RadioSelect
                     label='Granularity'
