@@ -18,7 +18,7 @@ import {
     GenericSingleVariantView,
 } from './BaseView.ts';
 import {
-    getGenspectrumLoculusFilters,
+    getPathoplexusFilters,
     getPathoplexusSequencingEffortsAggregatedVisualizations,
     LOCULUS_AUTHORS_AFFILIATIONS_FIELD,
     LOCULUS_AUTHORS_FIELD,
@@ -37,7 +37,7 @@ import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOpti
 
 const earliestDate = '1930-01-01';
 
-const LINEAGE_FIELD_NAME = 'lineage';
+const LINEAGE_FIELD_NAME = 'genotype';
 
 class MeaslesConstants implements OrganismConstants {
     public readonly organism = Organisms.measles;
@@ -47,14 +47,20 @@ class MeaslesConstants implements OrganismConstants {
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
-            placeholderText: 'Lineage',
+            placeholderText: 'genotype',
             filterType: 'text' as const,
         },
     ];
     public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getGenspectrumLoculusFilters({
+        ...getPathoplexusFilters({
             dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
         }),
+        {
+            lapisField: 'collectionDevice',
+            placeholderText: 'Collection device',
+            type: 'text' as const,
+            label: 'Collection device',
+        },
     ];
     public readonly useAdvancedQuery = false;
     public readonly useVariantQuery = false;
@@ -78,7 +84,7 @@ class MeaslesConstants implements OrganismConstants {
     public get aggregatedVisualizations() {
         return getPathoplexusSequencingEffortsAggregatedVisualizations(this, {
             sublineages: {
-                label: 'Lineages',
+                label: 'Genotype',
                 fields: [LINEAGE_FIELD_NAME],
             },
         });
