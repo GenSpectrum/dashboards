@@ -121,7 +121,7 @@ export class MeaslesCompareSideBySideView extends BaseView<
         const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
             {
                 lineages: {
-                    lineage: '2',
+                    genotype: 'B3',
                 },
             },
             {},

@@ -363,4 +363,14 @@ export const testOrganismsConfig = {
             },
         },
     },
+    measles: {
+        lapis: {
+            url: DUMMY_LAPIS_URL,
+            mainDateField: 'sampleCollectionDate',
+            additionalFilters: {
+                versionStatus: 'LATEST_VERSION',
+                isRevocation: 'false',
+            },
+        },
+    },
 } satisfies OrganismsConfig;
