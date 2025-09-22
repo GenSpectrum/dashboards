@@ -41,10 +41,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
         /* eslint-enable @typescript-eslint/naming-convention */
     };
 
-    const memoizedMutationAnnotations = useMemo(
-        () => JSON.stringify(resistanceMutationAnnotations),
-        [resistanceMutationAnnotations],
-    );
+    const memoizedMutationAnnotations = useMemo(() => JSON.stringify(resistanceMutationAnnotations), []);
 
     return (
         <gs-app lapis={wastewaterConfig.wasapLapisBaseUrl} mutationAnnotations={memoizedMutationAnnotations}>
