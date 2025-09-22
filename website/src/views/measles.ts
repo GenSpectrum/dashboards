@@ -70,13 +70,10 @@ class MeaslesConstants implements OrganismConstants {
     public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
-            lineages: { lineage: '1A' },
+            lineages: { genotype: 'B3' },
         },
         {
-            lineages: { lineage: '1B' },
-        },
-        {
-            lineages: { lineage: '2' },
+            lineages: { genotype: 'D8' },
         },
     ];
     public readonly mutationAnnotations: MutationAnnotation[] = [];
