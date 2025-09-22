@@ -83,4 +83,4 @@
 - name: cchf/S
   url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/cornelius-cchfv/data/nextstrain/cchfv/linked/S/genome_annotation.gff3
 - name: measles
-  url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/measles/genome_annotation.gff3
+  url: https://raw.githubusercontent.com/nextstrain/nextclade_data/refs/heads/master/data/nextstrain/measles/genome/WHO-2012/annotation.gff3
