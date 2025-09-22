@@ -16,6 +16,10 @@
         "check-lint": "eslint .",
         "postinstall": "patch-package",
         "test": "vitest",
+        "test:node": "vitest --project node",
+        "test:headed": "vitest --browser.headless false",
+        "test:browser": "vitest --project browser",
+        "test:browser:headed": "vitest --project browser --browser.headless false",
         "e2e": "playwright test"
     },
     "dependencies": {
@@ -56,6 +60,7 @@
         "@types/topojson-specification": "^1.0.5",
         "@typescript-eslint/eslint-plugin": "^8.43.0",
         "@typescript-eslint/parser": "^8.43.0",
+        "@vitest/browser": "^3.2.4",
         "astro-eslint-parser": "^1.2.2",
         "daisyui": "^5.1.10",
         "dotenv": "^16.5.0",
@@ -66,6 +71,7 @@
         "eslint-plugin-react-hooks": "^5.2.0",
         "jsdom": "^26.1.0",
         "msw": "^2.11.1",
+        "playwright": "^1.55.0",
         "prettier": "^3.6.2",
         "prettier-plugin-astro": "^0.14.1",
         "prettier-plugin-tailwindcss": "^0.6.14",
@@ -73,6 +79,7 @@
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.43.0",
         "vitest": "^3.2.4",
+        "vitest-browser-react": "^1.0.1",
         "zod": "^3.25.74"
     }
 }

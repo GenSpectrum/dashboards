@@ -2,8 +2,33 @@ import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
     test: {
-        environment: 'jsdom',
-        exclude: [...configDefaults.exclude, './tests/**'],
-        setupFiles: 'vitest.setup.ts',
+        projects: [
+            {
+                test: {
+                    name: 'node',
+                    environment: 'jsdom',
+                    exclude: [
+                        ...configDefaults.exclude,
+                        './tests/**',
+                        'src/**/*.browser.{test,spec}.tsx'
+                    ],
+                    setupFiles: 'vitest.setup.ts',
+                }
+            },
+            {
+                test: {
+                    name: 'browser',
+                    include: ['src/**/*.browser.{test,spec}.tsx'],
+                    browser: {
+                        provider: 'playwright',
+                        enabled: true,
+                        headless: true,
+                        instances: [
+                            { browser: 'chromium' }
+                        ],
+                    },
+                }
+            }
+        ]
     },
 });
