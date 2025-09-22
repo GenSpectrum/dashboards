@@ -64,7 +64,7 @@ export function WasapPageStateSelector({
                     </label>
                 </div>
             </Inset>
-            <SelectorHeadline>Mutation selection</SelectorHeadline>
+            <SelectorHeadline info={<ExplorationModeInfo />}>Mutation selection</SelectorHeadline>
 
             <select
                 className='select select-bordered'
@@ -282,6 +282,43 @@ function UntrackedFilter({
                 onChange={(e) => setPageState({ ...pageState, excludeVariants: e.target.value.split(' ') })}
             />
         </LabeledField>
+    );
+}
+
+function ExplorationModeInfo() {
+    return (
+        <div className='relative p-8'>
+            <form method='dialog'>
+                <button className='btn btn-sm btn-circle btn-ghost absolute top-2 right-2'>✕</button>
+            </form>
+            <h1 className='mb-2 text-xl font-semibold'>Exploration modes</h1>
+            <p className='mb-4 text-gray-700'>
+                These exploration views allow visualising the mutations found in the recent past by:
+            </p>
+            <ul className='mb-4 list-inside list-disc space-y-2 text-gray-700'>
+                <li>
+                    <span className='font-semibold text-gray-900'>Resistance Mutations:</span> lookup of mutations known
+                    to confer resistance to antiviral drugs
+                </li>
+                <li>
+                    <span className='font-semibold text-gray-900'>Untracked Mutations:</span> novel mutations not yet
+                    attributed to major variants
+                </li>
+                <li>
+                    <span className='font-semibold text-gray-900'>Manual:</span> explore freely, using the filters on
+                    the plot, i.e., search by minimal proportion
+                </li>
+                <li>
+                    <span className='font-semibold text-gray-900'>Variant Explorer:</span> track variant-specific
+                    mutations over time
+                </li>
+            </ul>
+
+            <p className='text-gray-700'>
+                The visualized data consists of aligned sequencing reads from virus-specific next-generation sequencing,
+                displayed in both nucleotide and amino acid formats.
+            </p>
+        </div>
     );
 }
 
