@@ -62,7 +62,6 @@ class MeaslesConstants implements OrganismConstants {
             label: 'Collection device',
         },
     ];
-    public readonly useAdvancedQuery = false;
     public readonly useVariantQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
