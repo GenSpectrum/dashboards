@@ -52,7 +52,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
     const memoizedMutationAnnotations = useMemo(() => JSON.stringify(resistanceMutationAnnotations), []);
 
     return (
-        <gs-app lapis={wastewaterConfig.wasapLapisBaseUrl} mutationAnnotations={memoizedMutationAnnotations}>
+        <gs-app lapis={wastewaterConfig.wasap.lapisBaseUrl} mutationAnnotations={memoizedMutationAnnotations}>
             <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
                 <div className='h-fit p-2 shadow-lg'>
                     <WasapPageStateSelector
@@ -70,7 +70,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                         <GsMutationsOverTime
                             lapisFilter={lapisFilter}
                             granularity={base.granularity as 'day' | 'week'}
-                            lapisDateField='sampling_date'
+                            lapisDateField={wastewaterConfig.wasap.samplingDateField}
                             sequenceType={analysis.sequenceType}
                             displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
                             pageSizes={[20, 50, 100, 250]}
@@ -103,7 +103,7 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
                 return [];
             }
             return fetchMutations(
-                wastewaterConfig.covSpectrumLapisBaseUrl,
+                wastewaterConfig.wasap.covSpectrumLapisBaseUrl,
                 analysis.sequenceType,
                 analysis.variant,
                 analysis.minProportion,
@@ -118,10 +118,10 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     analysis.excludeVariants.map((v) =>
-                        fetchMutations(wastewaterConfig.covSpectrumLapisBaseUrl, analysis.sequenceType, v, 0.05, 5),
+                        fetchMutations(wastewaterConfig.wasap.covSpectrumLapisBaseUrl, analysis.sequenceType, v, 0.05, 5),
                     ),
                 ).then((r) => r.flat()),
-                fetchMutations(wastewaterConfig.wasapLapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
+                fetchMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
             ]);
             return allMuts.filter((m) => !excludeMutations.includes(m));
         }

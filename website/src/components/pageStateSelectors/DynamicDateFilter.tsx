@@ -47,7 +47,7 @@ function DynamicDateFilterInner({
                 </div>
             ) : (
                 <GsDateRangeFilter
-                    lapisDateField='sampling_date'
+                    lapisDateField={dateFieldName}
                     onDateRangeChange={(dateRange: DateRangeOption | null) => onChange(dateRange ?? undefined)}
                     value={value}
                     dateRangeOptions={filteredOptions(baselineOptions, dateRange.start, dateRange.end)}

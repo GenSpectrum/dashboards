@@ -84,8 +84,8 @@ export function WasapPageStateSelector({
 
                 <DynamicDateFilter
                     label='Sampling date'
-                    lapis={wastewaterConfig.wasapLapisBaseUrl}
-                    dateFieldName='sampling_date'
+                    lapis={wastewaterConfig.wasap.lapisBaseUrl}
+                    dateFieldName={wastewaterConfig.wasap.samplingDateField}
                     baselineOptions={wasapDateRangeOptions()}
                     value={baseFilterState.samplingDate}
                     onChange={(newDateRange?) => setBaseFilterState({ ...baseFilterState, samplingDate: newDateRange })}
@@ -199,7 +199,7 @@ function VariantExplorerFilter({
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
             <LabeledField label='Variant'>
-                <gs-app lapis={wastewaterConfig.covSpectrumLapisBaseUrl}>
+                <gs-app lapis={wastewaterConfig.wasap.covSpectrumLapisBaseUrl}>
                     <GsLineageFilter
                         lapisField='pangoLineage'
                         lapisFilter={{}}
