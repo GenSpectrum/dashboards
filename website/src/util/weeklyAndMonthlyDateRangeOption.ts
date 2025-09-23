@@ -4,10 +4,9 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 dayjs.extend(isoWeek);
 
 export function weeklyAndMonthlyDateRangeOptions(earliestDate: string) {
-    const startDate = dayjs(earliestDate);
-    const endDate = dayjs();
-
     return () => {
+        const startDate = dayjs(earliestDate);
+        const endDate = dayjs();
         const options: { label: string; dateFrom: string; dateTo: string }[] = [];
 
         // Weeks
