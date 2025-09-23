@@ -20,6 +20,12 @@ Start app in development mode:
 npm run dev
 ```
 
+### Testing
+
+Unit testing is done with vitest, and split into two vitest 'projects': `unit` and `browser`, for node based unit tests
+and browser based unit tests using the vitest [Browser mode](https://vitest.dev/guide/browser/). By default, tests are
+run headless, but you can also run them headed. Have a look at the `test:*` commands in the `package.json`.
+
 ### Setting up a GitHub App for Authentication
 
 1. Create a new GitHub App: https://github.com/settings/apps/new
