@@ -87,6 +87,13 @@ import {
     MpoxSequencingEffortsView,
 } from './mpox.ts';
 import type { ExternalNavigationLink, OrganismsConfig } from '../config.ts';
+import {
+    MeaslesAnalyzeSingleVariantView,
+    MeaslesCompareSideBySideView,
+    MeaslesCompareToBaselineView,
+    MeaslesCompareVariantsView,
+    MeaslesSequencingEffortsView,
+} from './measles.ts';
 import type { PageStateHandler } from './pageStateHandlers/PageStateHandler.ts';
 import {
     RsvAAnalyzeSingleVariantView,
@@ -269,6 +276,13 @@ export class Routing {
                 [compareToBaselineViewKey]: new Denv4CompareToBaselineView(organismsConfig),
                 [compareSideBySideViewKey]: new Denv4CompareSideBySideView(organismsConfig),
             },
+            [Organisms.measles]: {
+                [sequencingEffortsViewKey]: new MeaslesSequencingEffortsView(organismsConfig),
+                [singleVariantViewKey]: new MeaslesAnalyzeSingleVariantView(organismsConfig),
+                [compareVariantsViewKey]: new MeaslesCompareVariantsView(organismsConfig),
+                [compareToBaselineViewKey]: new MeaslesCompareToBaselineView(organismsConfig),
+                [compareSideBySideViewKey]: new MeaslesCompareSideBySideView(organismsConfig),
+            },
         } as const;
 
         this.externalPages = this.initializeExternalPages(organismsConfig);
@@ -312,6 +326,8 @@ export class Routing {
                 return Object.values(this.views[Organisms.denv3]);
             case Organisms.denv4:
                 return Object.values(this.views[Organisms.denv4]);
+            case Organisms.measles:
+                return Object.values(this.views[Organisms.measles]);
         }
     }
 

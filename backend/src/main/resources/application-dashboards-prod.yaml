@@ -233,6 +233,18 @@ dashboards:
           label: "Browse data"
           menuIcon: "database"
           description: "Browse the underlying data in the Loculus database."
+    measles:
+      lapis:
+        url: "https://lapis.pathoplexus.org/measles"
+        mainDateField: "sampleCollectionDateRangeLower"
+        additionalFilters:
+          versionStatus: "LATEST_VERSION"
+          isRevocation: "false"
+      externalNavigationLinks:
+        - url: "https://pathoplexus.org/measles"
+          label: "Browse data"
+          menuIcon: "database"
+          description: "Browse the underlying data on Pathoplexus."
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"
