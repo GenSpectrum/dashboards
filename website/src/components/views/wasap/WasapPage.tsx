@@ -108,10 +108,10 @@ async function fetchDisplayMutations({
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     excludeVariants.map((v) =>
-                        fetchMutations(wastewaterConfig.covSpectrumLapisBaseUrl, 'nucleotide', v, 0.05, 5),
+                        fetchMutations(wastewaterConfig.covSpectrumLapisBaseUrl, sequenceType, v, 0.05, 5),
                     ),
                 ).then((r) => r.flat()),
-                fetchMutations(wastewaterConfig.wasapLapisBaseUrl, 'nucleotide', undefined, 0.05, 5),
+                fetchMutations(wastewaterConfig.wasapLapisBaseUrl, sequenceType, undefined, 0.05, 5),
             ]);
             return allMuts.filter((m) => !excludeMutations.includes(m));
         }

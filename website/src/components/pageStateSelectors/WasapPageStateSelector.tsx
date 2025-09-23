@@ -275,13 +275,19 @@ function UntrackedFilter({
     setPageState: (newState: WasapFilter) => void;
 }) {
     return (
-        <LabeledField label='Known variants to exclude'>
-            <input
-                className='input input-bordered'
-                value={pageState.excludeVariants?.join(' ')}
-                onChange={(e) => setPageState({ ...pageState, excludeVariants: e.target.value.split(' ') })}
+        <>
+            <SequenceTypeSelector
+                value={pageState.sequenceType}
+                onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
-        </LabeledField>
+            <LabeledField label='Known variants to exclude'>
+                <input
+                    className='input input-bordered'
+                    value={pageState.excludeVariants?.join(' ')}
+                    onChange={(e) => setPageState({ ...pageState, excludeVariants: e.target.value.split(' ') })}
+                />
+            </LabeledField>
+        </>
     );
 }
 
