@@ -15,6 +15,16 @@ import {
     type WasapFilter,
     wasapDateRangeOptions,
     type WasapAnalysisMode,
+    type WasapManualFilter,
+    type WasapVariantFilter,
+    type WasapResistanceFilter,
+    type WasapUntrackedFilter,
+    defaultManualFilter,
+    defaultVariantFilter,
+    defaultResistanceFilter,
+    defaultUntrackedFilter,
+    type WasapBaseFilter,
+    type WasapAnalysisFilter,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
@@ -24,12 +34,42 @@ import { resistanceSetNames, type ResistanceSetName } from '../views/wasap/resis
 
 export function WasapPageStateSelector({
     pageStateHandler,
-    initialPageState,
+    initialBaseFilterState,
+    initialAnalysisFilterState,
 }: {
     pageStateHandler: PageStateHandler<WasapFilter>;
-    initialPageState: WasapFilter;
+    initialBaseFilterState: WasapBaseFilter;
+    initialAnalysisFilterState: WasapAnalysisFilter;
 }) {
-    const [pageState, setPageState] = useState(initialPageState);
+    const [baseFilterState, setBaseFilterState] = useState(initialBaseFilterState);
+
+    const [manualFilter, setManualFilter] = useState(
+        initialAnalysisFilterState.mode === 'manual' ? initialAnalysisFilterState : defaultManualFilter,
+    );
+    const [variantFilter, setVariantFilter] = useState(
+        initialAnalysisFilterState.mode === 'variant' ? initialAnalysisFilterState : defaultVariantFilter,
+    );
+    const [resistanceFilter, setResistanceFilter] = useState(
+        initialAnalysisFilterState.mode === 'resistance' ? initialAnalysisFilterState : defaultResistanceFilter,
+    );
+    const [untrackedFilter, setUntrackedFilter] = useState(
+        initialAnalysisFilterState.mode === 'untracked' ? initialAnalysisFilterState : defaultUntrackedFilter,
+    );
+
+    const [selectedAnalysisMode, setSelectedAnalysisMode] = useState(initialAnalysisFilterState.mode);
+
+    function getMergedPageState(): WasapFilter {
+        switch (selectedAnalysisMode) {
+            case 'manual':
+                return { base: baseFilterState, analysis: manualFilter };
+            case 'variant':
+                return { base: baseFilterState, analysis: variantFilter };
+            case 'resistance':
+                return { base: baseFilterState, analysis: resistanceFilter };
+            case 'untracked':
+                return { base: baseFilterState, analysis: untrackedFilter };
+        }
+    }
 
     return (
         <div className='flex flex-col gap-4'>
@@ -41,37 +81,37 @@ export function WasapPageStateSelector({
                         lapisField='location_name'
                         lapisFilter={{}}
                         onInputChange={({ location_name: locationName }) => {
-                            setPageState({ ...pageState, locationName });
+                            setBaseFilterState({ ...baseFilterState, locationName });
                         }}
-                        value={pageState.locationName}
+                        value={baseFilterState.locationName}
                     />
                 </LabeledField>
                 <LabeledField label='Sampling date'>
                     <GsDateRangeFilter
                         lapisDateField='sampling_date'
                         onDateRangeChange={(dateRange: DateRangeOption | null) => {
-                            setPageState({ ...pageState, samplingDate: dateRange ?? undefined });
+                            setBaseFilterState({ ...baseFilterState, samplingDate: dateRange ?? undefined });
                         }}
-                        value={pageState.samplingDate}
+                        value={baseFilterState.samplingDate}
                         dateRangeOptions={wasapDateRangeOptions()}
                     />
                 </LabeledField>
                 <div className='h-2' />
                 <RadioSelect
                     label='Granularity'
-                    value={pageState.granularity}
+                    value={baseFilterState.granularity}
                     options={[
                         { value: 'day', label: 'Day' },
                         { value: 'week', label: 'Week' },
                     ]}
-                    onChange={(val) => setPageState({ ...pageState, granularity: val })}
+                    onChange={(val) => setBaseFilterState({ ...baseFilterState, granularity: val })}
                 />
                 <div className='text-sm'>
                     <input
                         type='checkbox'
                         id='excludeEmpty'
-                        checked={pageState.excludeEmpty}
-                        onChange={(e) => setPageState({ ...pageState, excludeEmpty: e.target.checked })}
+                        checked={baseFilterState.excludeEmpty}
+                        onChange={(e) => setBaseFilterState({ ...baseFilterState, excludeEmpty: e.target.checked })}
                     />
                     <label htmlFor='excludeEmpty' className='pl-2'>
                         Exclude empty date ranges
@@ -82,15 +122,9 @@ export function WasapPageStateSelector({
 
             <select
                 className='select select-bordered'
-                value={pageState.analysisMode}
+                value={selectedAnalysisMode}
                 onChange={(e) => {
-                    const analysisMode = e.target.value as WasapAnalysisMode;
-                    const sequenceType = analysisMode === 'resistance' ? 'amino acid' : pageState.sequenceType;
-                    setPageState({
-                        ...pageState,
-                        analysisMode,
-                        sequenceType,
-                    });
+                    setSelectedAnalysisMode(e.target.value as WasapAnalysisMode);
                 }}
             >
                 <option value='manual'>Manual</option>
@@ -100,19 +134,24 @@ export function WasapPageStateSelector({
             </select>
             <Inset className='p-2'>
                 {(() => {
-                    switch (pageState.analysisMode) {
+                    switch (selectedAnalysisMode) {
                         case 'manual':
-                            return <ManualAnalysisFilter pageState={pageState} setPageState={setPageState} />;
+                            return <ManualAnalysisFilter pageState={manualFilter} setPageState={setManualFilter} />;
                         case 'variant':
-                            return <VariantExplorerFilter pageState={pageState} setPageState={setPageState} />;
+                            return <VariantExplorerFilter pageState={variantFilter} setPageState={setVariantFilter} />;
                         case 'resistance':
-                            return <ResistanceMutationsFilter pageState={pageState} setPageState={setPageState} />;
+                            return (
+                                <ResistanceMutationsFilter
+                                    pageState={resistanceFilter}
+                                    setPageState={setResistanceFilter}
+                                />
+                            );
                         case 'untracked':
-                            return <UntrackedFilter pageState={pageState} setPageState={setPageState} />;
+                            return <UntrackedFilter pageState={untrackedFilter} setPageState={setUntrackedFilter} />;
                     }
                 })()}
             </Inset>
-            <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={pageState} />
+            <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={getMergedPageState()} />
         </div>
     );
 }
@@ -121,8 +160,8 @@ function ManualAnalysisFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapManualFilter;
+    setPageState: (newState: WasapManualFilter) => void;
 }) {
     const enabledMutationTypes: MutationType[] =
         pageState.sequenceType === 'nucleotide'
@@ -156,8 +195,8 @@ function VariantExplorerFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapVariantFilter;
+    setPageState: (newState: WasapVariantFilter) => void;
 }) {
     return (
         <>
@@ -217,8 +256,8 @@ function ResistanceMutationsFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapResistanceFilter;
+    setPageState: (newState: WasapResistanceFilter) => void;
 }) {
     return (
         <LabeledField label='Resistance mutation set'>
@@ -239,8 +278,8 @@ function UntrackedFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapUntrackedFilter;
+    setPageState: (newState: WasapUntrackedFilter) => void;
 }) {
     return (
         <>
