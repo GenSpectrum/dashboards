@@ -37,7 +37,7 @@ export type WasapVariantFilter = {
 
 export type WasapResistanceFilter = {
     mode: 'resistance';
-    sequenceType: 'amino acid';
+    sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
     resistanceSet: ResistanceSetName;
 };
 
@@ -233,11 +233,6 @@ const defaultExcludeVariants = [
     'XBB.1.9',
     'XFG',
 ];
-
-export const defaultBaseFilter: WasapBaseFilter = {
-    granularity: 'day',
-    excludeEmpty: true,
-};
 
 export const defaultManualFilter: WasapManualFilter = {
     mode: 'manual',

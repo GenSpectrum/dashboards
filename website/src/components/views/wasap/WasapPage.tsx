@@ -19,19 +19,21 @@ export type WasapPageProps = {
 };
 
 export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
+    // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(), []);
     const { base, analysis } = useMemo(
         () => pageStateHandler.parsePageStateFromUrl(currentUrl),
         [pageStateHandler, currentUrl],
     );
 
+    // fetch which mutations should be analyzed
     const {
-        data: displayMutations,
+        data: selectedMutations,
         isPending,
         isError,
     } = useQuery({
         queryKey: [base, analysis],
-        queryFn: () => fetchDisplayMutations(analysis),
+        queryFn: () => fetchMutationSelection(analysis),
     });
 
     let initialMeanProportionInterval: InitialMeanProportionInterval = { min: 0.0, max: 1.0 };
@@ -70,7 +72,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                             granularity={base.granularity as 'day' | 'week'}
                             lapisDateField='sampling_date'
                             sequenceType={analysis.sequenceType}
-                            displayMutations={displayMutations === 'all' ? undefined : displayMutations}
+                            displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
                             pageSizes={[20, 50, 100, 250]}
                             useNewEndpoint={true}
                             initialMeanProportionInterval={initialMeanProportionInterval}
@@ -85,7 +87,14 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
 
 export const WasapPage = withQueryProvider(WasapPageInner);
 
-async function fetchDisplayMutations(analysis: WasapAnalysisFilter): Promise<string[] | 'all'> {
+/**
+ * Takes the analysis settings and then returns a list of mutations that should be analysed,
+ * based on the settings. can also return the string 'all', which means that everything should
+ * be analysed, no specific selection.
+ *
+ * For some modes, additional data will be fetched to decide which mutations to analyse.
+ */
+async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<string[] | 'all'> {
     switch (analysis.mode) {
         case 'manual':
             return analysis.mutations ?? 'all';
