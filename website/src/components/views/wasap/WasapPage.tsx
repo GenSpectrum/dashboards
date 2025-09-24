@@ -118,7 +118,13 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     analysis.excludeVariants.map((v) =>
-                        fetchMutations(wastewaterConfig.wasap.covSpectrumLapisBaseUrl, analysis.sequenceType, v, 0.05, 5),
+                        fetchMutations(
+                            wastewaterConfig.wasap.covSpectrumLapisBaseUrl,
+                            analysis.sequenceType,
+                            v,
+                            0.05,
+                            5,
+                        ),
                     ),
                 ).then((r) => r.flat()),
                 fetchMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
@@ -148,7 +154,13 @@ async function fetchMutations(
     url.search = new URLSearchParams(params).toString();
 
     const res = await fetch(url.toString());
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(
+            `Request to ${url} failed with status ${res.status} ${res.statusText}. Response: ${text.slice(0, 200)}`,
+        );
+    }
 
     const json: { data: { mutation: string; count: number }[] } = await res.json();
 

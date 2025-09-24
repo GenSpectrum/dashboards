@@ -5,9 +5,12 @@ import React from 'react';
 
 import { Loading } from '../../util/Loading';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
-import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider';
 
-function DynamicDateFilterInner({
+/**
+ * The `DynamicDateFilter` computes the available date range options dynamically,
+ * based on the available dates in the data, for the given LAPIS and field name.
+ */
+export function DynamicDateFilter({
     label,
     lapis,
     dateFieldName,
@@ -57,12 +60,6 @@ function DynamicDateFilterInner({
     );
 }
 
-/**
- * The `DynamicDateFilter` computes the available date range options dynamically,
- * based on the available dates in the data, for the given LAPIS and field name.
- */
-export const DynamicDateFilter = withQueryProvider(DynamicDateFilterInner);
-
 async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ start: string; end: string }> {
     const url = `${baseUrl.replace(/\/$/, '')}/sample/aggregated`;
 
@@ -79,7 +76,12 @@ async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ sta
         }),
     });
 
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(
+            `Request to ${url} failed with status ${res.status} ${res.statusText}. Response: ${text.slice(0, 200)}`,
+        );
+    }
 
     const json: { data: Record<string, string>[] } = await res.json();
     if (!json.data.length) throw new Error('No data returned');

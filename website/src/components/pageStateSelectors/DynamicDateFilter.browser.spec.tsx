@@ -6,8 +6,11 @@ import { DynamicDateFilter } from './DynamicDateFilter.tsx';
 import { DUMMY_LAPIS_URL, LapisRouteMocker } from '../../../routeMocker.ts';
 import { it } from '../../../test-extend.ts';
 import { weeklyAndMonthlyDateRangeOptions } from '../../util/weeklyAndMonthlyDateRangeOption.ts';
+import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
 
 const baselineOptions = weeklyAndMonthlyDateRangeOptions('2025-03-01');
+
+const WrappedDynamicDateFilter = withQueryProvider(DynamicDateFilter);
 
 describe('DynamicDateFilter', () => {
     it('has multiple options', async ({ routeMockers: { lapis } }) => {
@@ -15,11 +18,11 @@ describe('DynamicDateFilter', () => {
 
         const { getByRole, getByText } = render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
-                <DynamicDateFilter
+                <WrappedDynamicDateFilter
                     label='Sampling date'
                     lapis={DUMMY_LAPIS_URL}
                     dateFieldName='sampling_date'
-                    baselineOptions={baselineOptions()}
+                    baselineOptions={baselineOptions}
                     value={undefined}
                     onChange={() => {}}
                 />
@@ -38,11 +41,11 @@ describe('DynamicDateFilter', () => {
 
         const { getByRole, getByText } = render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
-                <DynamicDateFilter
+                <WrappedDynamicDateFilter
                     label='Sampling date'
                     lapis={DUMMY_LAPIS_URL}
                     dateFieldName='sampling_date'
-                    baselineOptions={baselineOptions()}
+                    baselineOptions={baselineOptions}
                     value={undefined}
                     onChange={() => {}}
                 />
@@ -68,11 +71,11 @@ describe('DynamicDateFilter', () => {
 
         const { getByRole, getByText } = render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
-                <DynamicDateFilter
+                <WrappedDynamicDateFilter
                     label='Sampling date'
                     lapis={DUMMY_LAPIS_URL}
                     dateFieldName='sampling_date'
-                    baselineOptions={baselineOptions()}
+                    baselineOptions={baselineOptions}
                     value={undefined}
                     onChange={() => {}}
                 />
@@ -110,11 +113,11 @@ describe('DynamicDateFilter', () => {
 
         const { getByRole, getByText } = render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
-                <DynamicDateFilter
+                <WrappedDynamicDateFilter
                     label='Sampling date'
                     lapis={DUMMY_LAPIS_URL}
                     dateFieldName='sampling_date'
-                    baselineOptions={baselineOptions()}
+                    baselineOptions={baselineOptions}
                     value={undefined}
                     onChange={() => {}}
                 />
