@@ -1,5 +1,5 @@
 import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
-import React, { useId, useState } from 'react';
+import React, { Fragment, useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { SelectorHeadline } from './SelectorHeadline';
@@ -51,7 +51,16 @@ export function WasapPageStateSelector({
                         dateRangeOptions={wasapDateRangeOptions()}
                     />
                 </LabeledField>
-                <GranularityFilter pageState={pageState} setPageState={setPageState} />
+                <div className='h-2' />
+                <RadioSelect
+                    label='Granularity'
+                    value={pageState.granularity}
+                    options={[
+                        { value: 'day', label: 'Day' },
+                        { value: 'week', label: 'Week' },
+                    ]}
+                    onChange={(val) => setPageState({ ...pageState, granularity: val })}
+                />
                 <div className='text-sm'>
                     <input
                         type='checkbox'
@@ -103,57 +112,6 @@ export function WasapPageStateSelector({
     );
 }
 
-function GranularityFilter({
-    pageState,
-    setPageState,
-}: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
-}) {
-    const id = useId();
-
-    return (
-        <>
-            <div className='h-2' />
-            <LabeledField label='Granularity'>
-                <div className='mb-2 flex gap-2 text-sm'>
-                    <input
-                        type='radio'
-                        id={`${id}-day`}
-                        name={`${id}-interval`}
-                        value='day'
-                        className='peer/day hidden'
-                        checked={pageState.granularity === 'day'}
-                        onChange={() => setPageState({ ...pageState, granularity: 'day' })}
-                    />
-                    <label
-                        htmlFor={`${id}-day`}
-                        className='peer-checked/day:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
-                    >
-                        Day
-                    </label>
-
-                    <input
-                        type='radio'
-                        id={`${id}-week`}
-                        name={`${id}-interval`}
-                        value='week'
-                        className='peer/week hidden'
-                        checked={pageState.granularity === 'week'}
-                        onChange={() => setPageState({ ...pageState, granularity: 'week' })}
-                    />
-                    <label
-                        htmlFor={`${id}-week`}
-                        className='peer-checked/week:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
-                    >
-                        Week
-                    </label>
-                </div>
-            </LabeledField>
-        </>
-    );
-}
-
 function ManualAnalysisFilter({
     pageState,
     setPageState,
@@ -193,6 +151,10 @@ function VariantExplorerFilter({
 }) {
     return (
         <>
+            <SequenceTypeSelector
+                value={pageState.sequenceType}
+                onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
+            />
             <LabeledField label='Variant'>
                 <gs-app lapis={wastewaterConfig.covSpectrumLapisBaseUrl}>
                     <GsLineageFilter
@@ -207,10 +169,6 @@ function VariantExplorerFilter({
                     />
                 </gs-app>
             </LabeledField>
-            <SequenceTypeSelector
-                value={pageState.sequenceType}
-                onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
-            />
             <LabeledField label='Min. proportion'>
                 <div className='mb-2 w-full'>
                     <input
@@ -332,16 +290,62 @@ function ExplorationModeInfo() {
 
 function SequenceTypeSelector({ value, onChange }: { value: SequenceType; onChange: (newType: SequenceType) => void }) {
     return (
-        <LabeledField label='Sequence type'>
-            <select
-                className='select select-bordered mb-2'
-                value={value}
-                onChange={(e) => onChange(e.target.value as SequenceType)}
-            >
-                <option value='nucleotide'>Nucleotide</option>
-                <option value='amino acid'>Amino acid</option>
-            </select>
-        </LabeledField>
+        <RadioSelect
+            label='Sequence type'
+            value={value}
+            options={[
+                { value: 'nucleotide', label: 'Nucleotide' },
+                { value: 'amino acid', label: 'Amino acid' },
+            ]}
+            onChange={onChange}
+        />
+    );
+}
+
+function RadioSelect<T extends string>({
+    label,
+    value,
+    options,
+    onChange,
+}: {
+    label: string;
+    value: T;
+    options: { value: T; label: string }[];
+    onChange: (val: T) => void;
+}) {
+    const id = useId();
+
+    return (
+        <>
+            <LabeledField label={label}>
+                <div className='mb-2 flex gap-2 text-sm'>
+                    {options.map((opt) => {
+                        const isChecked = value === opt.value;
+                        return (
+                            <Fragment key={opt.value}>
+                                <input
+                                    type='radio'
+                                    id={`${id}-${opt.value}`}
+                                    name={id}
+                                    value={opt.value}
+                                    className='hidden'
+                                    checked={isChecked}
+                                    onChange={() => onChange(opt.value)}
+                                />
+                                <label
+                                    htmlFor={`${id}-${opt.value}`}
+                                    className={`flex-1 cursor-pointer rounded-md border p-2 text-center ${
+                                        isChecked ? 'border-primary' : 'border-gray-300'
+                                    }`}
+                                >
+                                    {opt.label}
+                                </label>
+                            </Fragment>
+                        );
+                    })}
+                </div>
+            </LabeledField>
+        </>
     );
 }
 
