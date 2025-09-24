@@ -15,8 +15,7 @@ describe('weeklyAndMonthlyDateRangeOptions', () => {
     });
 
     it('should set 2025-09-15 into week 38 with correct week start and end', () => {
-        const getOptions = weeklyAndMonthlyDateRangeOptions('2025-09-15');
-        const options = getOptions();
+        const options = weeklyAndMonthlyDateRangeOptions('2025-09-15');
 
         const weekLabels = options.filter((o) => o.label.includes('W')).map((o) => o.label);
         expect(weekLabels).toContain('2025-W38');
@@ -25,8 +24,7 @@ describe('weeklyAndMonthlyDateRangeOptions', () => {
     });
 
     it('should include week with partial overlap', () => {
-        const getOptions = weeklyAndMonthlyDateRangeOptions('2025-09-07');
-        const options = getOptions();
+        const options = weeklyAndMonthlyDateRangeOptions('2025-09-07');
 
         const weekLabels = options.filter((o) => o.label.includes('W')).map((o) => o.label);
         expect(weekLabels).toContain('2025-W36');
@@ -35,8 +33,7 @@ describe('weeklyAndMonthlyDateRangeOptions', () => {
     });
 
     it('should set 2025-09-15 into correct month with correct month start and end', () => {
-        const getOptions = weeklyAndMonthlyDateRangeOptions('2025-09-15');
-        const options = getOptions();
+        const options = weeklyAndMonthlyDateRangeOptions('2025-09-15');
 
         const monthLabels = options.filter((o) => /^\d{4}-\d{2}$/.test(o.label)).map((o) => o.label);
         expect(monthLabels).toContain('2025-09');
@@ -47,8 +44,7 @@ describe('weeklyAndMonthlyDateRangeOptions', () => {
     });
 
     it('should generate monthly ranges from earliestDate to now', () => {
-        const getOptions = weeklyAndMonthlyDateRangeOptions('2025-07-01');
-        const options = getOptions();
+        const options = weeklyAndMonthlyDateRangeOptions('2025-07-01');
 
         const monthLabels = options.filter((o) => /^\d{4}-\d{2}$/.test(o.label)).map((o) => o.label);
         expect(monthLabels).toContain('2025-07');
@@ -57,8 +53,7 @@ describe('weeklyAndMonthlyDateRangeOptions', () => {
     });
 
     it('should return empty when earliestDate is after current date', () => {
-        const getOptions = weeklyAndMonthlyDateRangeOptions('2026-01-01');
-        const options = getOptions();
+        const options = weeklyAndMonthlyDateRangeOptions('2026-01-01');
         expect(options).toEqual([]);
     });
 });

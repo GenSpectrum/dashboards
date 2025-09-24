@@ -10,7 +10,7 @@ import { formatUrl } from '../../util/formatUrl';
 import { weeklyAndMonthlyDateRangeOptions } from '../../util/weeklyAndMonthlyDateRangeOption';
 import { setSearchFromString } from '../helpers';
 
-export const wasapDateRangeOptions = weeklyAndMonthlyDateRangeOptions('2025-03-01');
+export const wasapDateRangeOptions = () => weeklyAndMonthlyDateRangeOptions('2025-03-01');
 
 export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
 
