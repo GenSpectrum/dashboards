@@ -1,4 +1,9 @@
-import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
+import {
+    type SequenceType,
+    type DateRangeOption,
+    mutationType,
+    type MutationType,
+} from '@genspectrum/dashboard-components/util';
 import React, { Fragment, useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
@@ -119,6 +124,10 @@ function ManualAnalysisFilter({
     pageState: WasapFilter;
     setPageState: (newState: WasapFilter) => void;
 }) {
+    const enabledMutationTypes: MutationType[] =
+        pageState.sequenceType === 'nucleotide'
+            ? [mutationType.nucleotideMutations]
+            : [mutationType.aminoAcidMutations];
     return (
         <>
             <SequenceTypeSelector
@@ -129,6 +138,7 @@ function ManualAnalysisFilter({
                 }}
             />
             <GsMutationFilter
+                enabledMutationTypes={enabledMutationTypes}
                 initialValue={pageState.mutations}
                 onMutationChange={(mutationFilter) => {
                     if (pageState.sequenceType === 'nucleotide') {
