@@ -10,8 +10,11 @@ export const wastewaterConfig = {
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
-    wasapLapisBaseUrl: 'https://lapis.wasap.genspectrum.org/',
-    covSpectrumLapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+    wasap: {
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/',
+        covSpectrumLapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+        samplingDateField: 'sampling_date',
+    },
     pages: {
         rsv: {
             path: `/${wastewaterPathFragment}/rsv`,
