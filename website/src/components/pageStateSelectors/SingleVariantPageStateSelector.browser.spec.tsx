@@ -1,14 +1,17 @@
-import { render } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { describe, expect } from 'vitest';
+import { render } from 'vitest-browser-react';
 
 import { SingleVariantPageStateSelector } from './SingleVariantPageStateSelector.tsx';
 import { DUMMY_LAPIS_URL, testOrganismsConfig } from '../../../routeMocker.ts';
-import { lapisRouteMocker } from '../../../vitest.setup.ts';
+import { it } from '../../../test-extend';
 
 describe('SingleVariantPageStateSelector', () => {
-    test('should remember the covid collection id', () => {
-        lapisRouteMocker.mockPostAggregated({}, { data: [] });
-        lapisRouteMocker.mockReferenceGenome({ nucleotideSequences: [{ name: 'main', sequence: 'ATGC' }], genes: [] });
+    it('should remember the covid collection id', ({ routeMockers }) => {
+        routeMockers.lapis.mockPostAggregated({}, { data: [] });
+        routeMockers.lapis.mockReferenceGenome({
+            nucleotideSequences: [{ name: 'main', sequence: 'ATGC' }],
+            genes: [],
+        });
 
         const initialPageState = {
             datasetFilter: {
@@ -32,6 +35,6 @@ describe('SingleVariantPageStateSelector', () => {
             </gs-app>,
         );
 
-        expect(getByRole('button')).toHaveAttribute('href', expect.stringContaining('collectionId=5'));
+        expect(getByRole('button').element()).toHaveAttribute('href', expect.stringContaining('collectionId=5'));
     });
 });
