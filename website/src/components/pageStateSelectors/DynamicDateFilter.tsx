@@ -60,7 +60,7 @@ export function DynamicDateFilter({
     );
 }
 
-async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ start: string; end: string }> {
+export async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ start: string; end: string }> {
     const url = `${baseUrl.replace(/\/$/, '')}/sample/aggregated`;
 
     const res = await fetch(url, {
