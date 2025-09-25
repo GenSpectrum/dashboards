@@ -6,11 +6,11 @@ import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
-import { fineGrainedDefaultDateRangeOptions } from '../../util/defaultDateRangeOption';
 import { formatUrl } from '../../util/formatUrl';
+import { weeklyAndMonthlyDateRangeOptions } from '../../util/weeklyAndMonthlyDateRangeOption';
 import { setSearchFromString } from '../helpers';
 
-export const wasapDateRangeOptions = fineGrainedDefaultDateRangeOptions('2020-01-01');
+export const wasapDateRangeOptions = () => weeklyAndMonthlyDateRangeOptions('2025-03-01');
 
 export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
 
@@ -61,7 +61,7 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     },
     {
         type: 'date',
-        dateColumn: 'sampling_date',
+        dateColumn: wastewaterConfig.wasap.samplingDateField,
         dateRangeOptions: wasapDateRangeOptions,
     },
     // below are not really LAPIS fields, but we still want to use the URL parsing mechanism
@@ -168,7 +168,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
 
         // general dataset settings
         setSearchFromString(search, 'location_name', base.locationName);
-        setSearchFromDateRange(search, 'sampling_date', base.samplingDate);
+        setSearchFromDateRange(search, wastewaterConfig.wasap.samplingDateField, base.samplingDate);
         setSearchFromString(search, 'granularity', base.granularity);
         if (!base.excludeEmpty) {
             setSearchFromString(search, 'excludeEmpty', 'false');
