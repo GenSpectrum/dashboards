@@ -11,6 +11,7 @@ import {
     type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
+import { fetchDateRange } from '../../pageStateSelectors/DynamicDateFilter';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
@@ -66,7 +67,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                 ) : isPending ? (
                     <Loading />
                 ) : (
-                    <div className='h-full pr-4'>
+                    <div className='h-full space-y-4 pr-4'>
                         <GsMutationsOverTime
                             lapisFilter={lapisFilter}
                             granularity={base.granularity as 'day' | 'week'}
@@ -78,6 +79,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                             initialMeanProportionInterval={initialMeanProportionInterval}
                             hideGaps={base.excludeEmpty ? true : undefined}
                         />
+                        <WasapStats />
                     </div>
                 )}
             </div>
@@ -86,6 +88,60 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
 };
 
 export const WasapPage = withQueryProvider(WasapPageInner);
+
+const TotalCount = () => {
+    const { data, isPending, isError, error } = useQuery({
+        queryKey: ['aggregatedCount'],
+        queryFn: () => fetchTotalCount(wastewaterConfig.wasap.lapisBaseUrl),
+    });
+
+    return (
+        <div className='stat'>
+            <div className='stat-title'>Sequences</div>
+            <div className='stat-value text-base'>{isPending ? '…' : isError ? 'Error' : data.toLocaleString()}</div>
+            <div className='stat-desc text-wrap'>
+                {isPending
+                    ? 'Loading total sequences…'
+                    : isError
+                      ? error.message
+                      : 'The total number of sequenced samples'}
+            </div>
+        </div>
+    );
+};
+
+const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+
+const DateRange = () => {
+    const { data, isPending, isError, error } = useQuery({
+        queryKey: ['dateRange'],
+        queryFn: () => fetchDateRange(wastewaterConfig.wasap.lapisBaseUrl, wastewaterConfig.wasap.samplingDateField),
+    });
+
+    return (
+        <div className='stat'>
+            <div className='stat-title'>Sampling Dates</div>
+            <div className='stat-value text-base'>
+                {isPending ? '…' : isError ? 'Error' : `${formatDate(data.start)} — ${formatDate(data.end)}`}
+            </div>
+            <div className='stat-desc text-wrap'>
+                {isPending
+                    ? 'Loading date range…'
+                    : isError
+                      ? error.message
+                      : 'The start and end dates of collected samples'}
+            </div>
+        </div>
+    );
+};
+
+const WasapStats = () => (
+    <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
+        <TotalCount />
+        <DateRange />
+    </div>
+);
 
 /**
  * Takes the analysis settings and then returns a list of mutations that should be analysed,
@@ -165,4 +221,22 @@ async function fetchMutations(
     const json: { data: { mutation: string; count: number }[] } = await res.json();
 
     return json.data.filter((item) => item.count >= minCount).map((item) => item.mutation);
+}
+
+async function fetchTotalCount(baseUrl: string): Promise<number> {
+    const res = await fetch(`${baseUrl.replace(/\/$/, '')}/sample/aggregated`, {
+        method: 'POST',
+        headers: {
+            /* eslint-disable @typescript-eslint/naming-convention */
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            /* eslint-enable @typescript-eslint/naming-convention */
+        },
+        body: JSON.stringify({}),
+    });
+
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+    const json: { data: { count: number }[] } = await res.json();
+    return json.data[0]?.count ?? 0;
 }
