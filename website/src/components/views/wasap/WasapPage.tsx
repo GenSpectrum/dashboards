@@ -110,9 +110,6 @@ const TotalCount = () => {
     );
 };
 
-const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-
 const DateRange = () => {
     const { data, isPending, isError, error } = useQuery({
         queryKey: ['dateRange'],
@@ -123,7 +120,7 @@ const DateRange = () => {
         <div className='stat'>
             <div className='stat-title'>Sampling Dates</div>
             <div className='stat-value text-base'>
-                {isPending ? '…' : isError ? 'Error' : `${formatDate(data.start)} — ${formatDate(data.end)}`}
+                {isPending ? '…' : isError ? 'Error' : `${data.start} to ${data.end}`}
             </div>
             <div className='stat-desc text-wrap'>
                 {isPending
