@@ -97,14 +97,14 @@ const TotalCount = () => {
 
     return (
         <div className='stat'>
-            <div className='stat-title'>Sequences</div>
+            <div className='stat-title'>Amplicon sequences</div>
             <div className='stat-value text-base'>{isPending ? '…' : isError ? 'Error' : data.toLocaleString()}</div>
             <div className='stat-desc text-wrap'>
                 {isPending
-                    ? 'Loading total sequences…'
+                    ? 'Loading total amplicon sequences count…'
                     : isError
                       ? error.message
-                      : 'The total number of sequenced samples'}
+                      : 'The total number of amplicon sequences in all samples'}
             </div>
         </div>
     );
