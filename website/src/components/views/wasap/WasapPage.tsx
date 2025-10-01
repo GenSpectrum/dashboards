@@ -1,4 +1,4 @@
-import { type SequenceType } from '@genspectrum/dashboard-components/util';
+import type { MeanProportionInterval, SequenceType } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
 import { type FC } from 'react';
@@ -10,7 +10,7 @@ import {
     WasapPageStateHandler,
     type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsMutationsOverTime, type InitialMeanProportionInterval } from '../../genspectrum/GsMutationsOverTime';
+import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { fetchDateRange } from '../../pageStateSelectors/DynamicDateFilter';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
@@ -37,7 +37,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
         queryFn: () => fetchMutationSelection(analysis),
     });
 
-    let initialMeanProportionInterval: InitialMeanProportionInterval = { min: 0.0, max: 1.0 };
+    let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {
         initialMeanProportionInterval = { min: 0.05, max: 0.95 };
     }
