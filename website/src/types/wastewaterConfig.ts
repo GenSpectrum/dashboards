@@ -11,6 +11,12 @@ export const wastewaterConfig = {
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
     wasap: {
+        linkTemplate: {
+            nucleotideMutation:
+                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+            aminoAcidMutation:
+                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+        },
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         covSpectrumLapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
         samplingDateField: 'sampling_date',
