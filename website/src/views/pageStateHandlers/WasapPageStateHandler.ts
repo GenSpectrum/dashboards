@@ -41,9 +41,12 @@ export type WasapResistanceFilter = {
     resistanceSet: ResistanceSetName;
 };
 
+export type ExcludeSetName = 'nextstrain' | 'custom';
+
 export type WasapUntrackedFilter = {
     mode: 'untracked';
     sequenceType: SequenceType;
+    excludeSet: ExcludeSetName;
     excludeVariants?: string[];
 };
 
@@ -103,6 +106,10 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     },
     {
         type: 'text',
+        lapisField: 'excludeSet',
+    },
+    {
+        type: 'text',
         lapisField: 'excludeVariants',
     },
 ];
@@ -154,7 +161,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 analysis = {
                     mode,
                     sequenceType,
-                    excludeVariants: texts.excludeVariants?.split('|') ?? defaultExcludeVariants,
+                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? 'nextstrain',
+                    excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
         }
@@ -192,7 +200,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 break;
             case 'untracked':
                 setSearchFromString(search, 'sequenceType', analysis.sequenceType);
-                setSearchFromString(search, 'excludeVariants', analysis.excludeVariants?.join('|'));
+                setSearchFromString(search, 'excludeSet', analysis.excludeSet);
+                if (analysis.excludeSet === 'custom') {
+                    setSearchFromString(search, 'excludeVariants', analysis.excludeVariants?.join('|'));
+                }
                 break;
         }
 
@@ -203,36 +214,6 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         return wastewaterConfig.pages.covid.path;
     }
 }
-
-const defaultExcludeVariants = [
-    'JN.1',
-    'KP.2',
-    'KP.3',
-    'LP.8',
-    'XEC',
-    'B.1.1.7',
-    'B.1.351',
-    'B.1.617.2',
-    'P.1',
-    'B.1.617.1',
-    'NB.1.8.1',
-    'BA.1',
-    'BA.2.12.1',
-    'BA.2.75.2',
-    'BA.2.75',
-    'BA.2.86',
-    'BA.2',
-    'BA.4',
-    'BA.5',
-    'BQ.1.1',
-    'EG.5',
-    'XBB.1.16',
-    'XBB.1.5',
-    'XBB.2.3',
-    'XBB',
-    'XBB.1.9',
-    'XFG',
-];
 
 export const defaultManualFilter: WasapManualFilter = {
     mode: 'manual',
@@ -255,5 +236,5 @@ export const defaultResistanceFilter: WasapResistanceFilter = {
 export const defaultUntrackedFilter: WasapUntrackedFilter = {
     mode: 'untracked',
     sequenceType: 'nucleotide',
-    excludeVariants: defaultExcludeVariants,
+    excludeSet: 'nextstrain',
 };
