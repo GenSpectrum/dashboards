@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import React from 'react';
 
+import { getDateRange } from '../../lapis/getDateRange';
 import { Loading } from '../../util/Loading';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 
@@ -32,7 +33,7 @@ export function DynamicDateFilter({
         error,
     } = useQuery({
         queryKey: ['dateRange', lapis, dateFieldName],
-        queryFn: () => fetchDateRange(lapis, dateFieldName),
+        queryFn: () => getDateRange(lapis, dateFieldName),
     });
 
     return (
@@ -58,38 +59,6 @@ export function DynamicDateFilter({
             )}
         </label>
     );
-}
-
-export async function fetchDateRange(baseUrl: string, fieldName: string): Promise<{ start: string; end: string }> {
-    const url = `${baseUrl.replace(/\/$/, '')}/sample/aggregated`;
-
-    const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            'Content-Type': 'application/json',
-            'accept': 'application/json',
-        },
-        body: JSON.stringify({
-            fields: [fieldName],
-            orderBy: [fieldName],
-        }),
-    });
-
-    if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(
-            `Request to ${url} failed with status ${res.status} ${res.statusText}. Response: ${text.slice(0, 200)}`,
-        );
-    }
-
-    const json: { data: Record<string, string>[] } = await res.json();
-    if (!json.data.length) throw new Error('No data returned');
-
-    return {
-        start: json.data[0][fieldName],
-        end: json.data[json.data.length - 1][fieldName],
-    };
 }
 
 /**

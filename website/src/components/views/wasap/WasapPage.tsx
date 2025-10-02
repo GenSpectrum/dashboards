@@ -1,9 +1,12 @@
-import type { MeanProportionInterval, SequenceType } from '@genspectrum/dashboard-components/util';
+import type { MeanProportionInterval } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
 import { type FC } from 'react';
 
 import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';
+import { getDateRange } from '../../../lapis/getDateRange';
+import { getMutations } from '../../../lapis/getMutations';
+import { getTotalCount } from '../../../lapis/getTotalCount';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
 import {
@@ -11,7 +14,6 @@ import {
     type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
-import { fetchDateRange } from '../../pageStateSelectors/DynamicDateFilter';
 import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
@@ -92,7 +94,7 @@ export const WasapPage = withQueryProvider(WasapPageInner);
 const TotalCount = () => {
     const { data, isPending, isError, error } = useQuery({
         queryKey: ['aggregatedCount'],
-        queryFn: () => fetchTotalCount(wastewaterConfig.wasap.lapisBaseUrl),
+        queryFn: () => getTotalCount(wastewaterConfig.wasap.lapisBaseUrl, {}),
     });
 
     return (
@@ -113,7 +115,7 @@ const TotalCount = () => {
 const DateRange = () => {
     const { data, isPending, isError, error } = useQuery({
         queryKey: ['dateRange'],
-        queryFn: () => fetchDateRange(wastewaterConfig.wasap.lapisBaseUrl, wastewaterConfig.wasap.samplingDateField),
+        queryFn: () => getDateRange(wastewaterConfig.wasap.lapisBaseUrl, wastewaterConfig.wasap.samplingDateField),
     });
 
     return (
@@ -155,7 +157,7 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             if (!analysis.variant) {
                 return [];
             }
-            return fetchMutations(
+            return getMutations(
                 wastewaterConfig.wasap.covSpectrumLapisBaseUrl,
                 analysis.sequenceType,
                 analysis.variant,
@@ -171,69 +173,12 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     analysis.excludeVariants.map((v) =>
-                        fetchMutations(
-                            wastewaterConfig.wasap.covSpectrumLapisBaseUrl,
-                            analysis.sequenceType,
-                            v,
-                            0.05,
-                            5,
-                        ),
+                        getMutations(wastewaterConfig.wasap.covSpectrumLapisBaseUrl, analysis.sequenceType, v, 0.05, 5),
                     ),
                 ).then((r) => r.flat()),
-                fetchMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
+                getMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
             ]);
             return allMuts.filter((m) => !excludeMutations.includes(m));
         }
     }
-}
-
-async function fetchMutations(
-    baseUrl: string,
-    mutationType: SequenceType,
-    pangoLineage: string | undefined,
-    minProportion: number,
-    minCount: number,
-): Promise<string[]> {
-    const endpoint = mutationType === 'nucleotide' ? 'nucleotideMutations' : 'aminoAcidMutations';
-
-    const url = new URL(`${baseUrl.replace(/\/$/, '')}/sample/${endpoint}`);
-    const params: Record<string, string> = {
-        minProportion: minProportion.toString(),
-    };
-    if (pangoLineage !== undefined) {
-        params.pangoLineage = pangoLineage;
-    }
-
-    url.search = new URLSearchParams(params).toString();
-
-    const res = await fetch(url.toString());
-
-    if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(
-            `Request to ${url} failed with status ${res.status} ${res.statusText}. Response: ${text.slice(0, 200)}`,
-        );
-    }
-
-    const json: { data: { mutation: string; count: number }[] } = await res.json();
-
-    return json.data.filter((item) => item.count >= minCount).map((item) => item.mutation);
-}
-
-async function fetchTotalCount(baseUrl: string): Promise<number> {
-    const res = await fetch(`${baseUrl.replace(/\/$/, '')}/sample/aggregated`, {
-        method: 'POST',
-        headers: {
-            /* eslint-disable @typescript-eslint/naming-convention */
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            /* eslint-enable @typescript-eslint/naming-convention */
-        },
-        body: JSON.stringify({}),
-    });
-
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-
-    const json: { data: { count: number }[] } = await res.json();
-    return json.data[0]?.count ?? 0;
 }
