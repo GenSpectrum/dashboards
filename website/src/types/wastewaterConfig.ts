@@ -11,7 +11,7 @@ export const wastewaterConfig = {
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
     wasap: {
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/',
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         covSpectrumLapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
         samplingDateField: 'sampling_date',
     },
