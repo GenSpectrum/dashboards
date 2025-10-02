@@ -20,7 +20,7 @@ const url = Astro.url;
         },
     ]}
     dataOrigins={[dataOrigins.wise]}
-    lapisUrl={wastewaterConfig.wasapLapisBaseUrl}
+    lapisUrl={wastewaterConfig.wasap.lapisBaseUrl}
 >
     {isStaging() ? <WasapPage currentUrl={url} client:only='react' /> : <span>coming soon!</span>}
 </DataPageLayout>
