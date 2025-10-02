@@ -212,36 +212,24 @@ function VariantExplorerFilter({
                     />
                 </gs-app>
             </LabeledField>
-            <LabeledField label='Min. proportion'>
-                <div className='mb-2 w-full'>
-                    <input
-                        className='w-full'
-                        type='range'
-                        min='0'
-                        max='1'
-                        step='0.01'
-                        value={pageState.minProportion}
-                        onChange={(e) => {
-                            setPageState({ ...pageState, minProportion: parseFloat(e.target.value) });
-                        }}
-                    />
-                </div>
-            </LabeledField>
-            <LabeledField label='Min. count'>
-                <div className='mb-2 w-full'>
-                    <input
-                        className='w-full'
-                        type='range'
-                        min='1'
-                        max='250'
-                        step='1'
-                        value={pageState.minCount}
-                        onChange={(e) => {
-                            setPageState({ ...pageState, minCount: parseInt(e.target.value) });
-                        }}
-                    />
-                </div>
-            </LabeledField>
+            <NumericInput
+                label='Min. proportion'
+                value={pageState.minProportion}
+                min={0}
+                max={1}
+                step={0.01}
+                parser={parseFloat}
+                onChange={(v) => setPageState({ ...pageState, minProportion: v })}
+            />
+            <NumericInput
+                label='Min. count'
+                value={pageState.minCount}
+                min={1}
+                max={250}
+                step={1}
+                parser={parseInt}
+                onChange={(v) => setPageState({ ...pageState, minCount: v })}
+            />
         </>
     );
 }
@@ -400,5 +388,48 @@ function LabeledField({ label, children }: { label: string; children: React.Reac
             </div>
             {children}
         </label>
+    );
+}
+
+function NumericInput({
+    label,
+    value,
+    min,
+    max,
+    step,
+    onChange,
+    parser = parseFloat,
+}: {
+    label: string;
+    value: number;
+    min: number;
+    max: number;
+    step: number;
+    onChange: (v: number) => void;
+    parser?: (v: string) => number;
+}) {
+    return (
+        <LabeledField label={label}>
+            <div className='mb-2 w-full'>
+                <input
+                    className='input input-bordered mb-2 w-full'
+                    type='number'
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => onChange(parser(e.target.value))}
+                />
+                <input
+                    className='accent-primary w-full'
+                    type='range'
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => onChange(parser(e.target.value))}
+                />
+            </div>
+        </LabeledField>
     );
 }
