@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { type FC } from 'react';
 
 import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';
+import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getMutations } from '../../../lapis/getMutations';
 import { getTotalCount } from '../../../lapis/getTotalCount';
@@ -158,7 +159,7 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
                 return [];
             }
             return getMutations(
-                wastewaterConfig.wasap.covSpectrumLapisBaseUrl,
+                wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
                 analysis.sequenceType,
                 analysis.variant,
                 analysis.minProportion,
@@ -167,13 +168,28 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
         case 'resistance':
             return RESISTANCE_MUTATIONS[analysis.resistanceSet];
         case 'untracked': {
-            if (!analysis.excludeVariants) {
+            const variantsToExclude =
+                analysis.excludeSet === 'custom'
+                    ? analysis.excludeVariants
+                    : await getCladeLineages(
+                          wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
+                          wastewaterConfig.wasap.covSpectrum.cladeField,
+                          wastewaterConfig.wasap.covSpectrum.lineageField,
+                          true,
+                      ).then((r) => Object.values(r));
+            if (variantsToExclude === undefined) {
                 return [];
             }
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
-                    analysis.excludeVariants.map((v) =>
-                        getMutations(wastewaterConfig.wasap.covSpectrumLapisBaseUrl, analysis.sequenceType, v, 0.05, 5),
+                    variantsToExclude.map((v) =>
+                        getMutations(
+                            wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
+                            analysis.sequenceType,
+                            v,
+                            0.05,
+                            5,
+                        ),
                     ),
                 ).then((r) => r.flat()),
                 getMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),

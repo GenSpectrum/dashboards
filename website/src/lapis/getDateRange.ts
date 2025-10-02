@@ -1,16 +1,9 @@
 import axios from 'axios';
-import { z } from 'zod';
 
 import { getClientLogger } from '../clientLogger.ts';
+import { aggregatedResponse } from './types.ts';
 
 const logger = getClientLogger('getDateRange');
-
-const baseResponseValueSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
-const aggregatedItem = z.object({ count: z.number() }).catchall(baseResponseValueSchema);
-
-const aggregatedResponse = z.object({
-    data: z.array(aggregatedItem),
-});
 
 export async function getDateRange(baseUrl: string, fieldName: string): Promise<{ start: string; end: string }> {
     const url = `${baseUrl.replace(/\/$/, '')}/sample/aggregated`;
