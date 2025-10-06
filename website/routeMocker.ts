@@ -2,7 +2,6 @@ import { http } from 'msw';
 import type { DefaultBodyType, StrictRequest } from 'msw';
 import type { SetupWorker } from 'msw/browser';
 import type { SetupServer } from 'msw/node';
-import { expect } from 'vitest';
 
 import { type OrganismsConfig } from './src/config';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
@@ -43,6 +42,23 @@ export class LapisRouteMocker {
 
     mockInfo(response: LapisInfo, statusCode = 200) {
         this.workerOrServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver({ statusCode, response })));
+    }
+
+    mockOptionsAggregated() {
+        this.workerOrServer.use(
+            http.options(`${DUMMY_LAPIS_URL}/sample/aggregated`, () => {
+                return new Response(null, {
+                    status: 200,
+                    /* eslint-disable @typescript-eslint/naming-convention */
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                    },
+                    /* eslint-enable @typescript-eslint/naming-convention */
+                });
+            }),
+        );
     }
 
     mockPostAggregated(
@@ -170,39 +186,29 @@ function resolver({
     requestParam?: Record<string, string>;
 }) {
     return async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-        try {
-            if (requestParam !== undefined) {
-                const actualRequestParam = new URL(request.url).searchParams;
-                for (const [key, value] of Object.entries(requestParam)) {
-                    expect(actualRequestParam.get(key), `Request param ${key} did not match`).to.equal(value);
-                }
-                for (const [key, value] of actualRequestParam) {
-                    expect(requestParam[key], `Request param ${key} was not expected`).to.equal(value);
+        if (requestParam) {
+            const actualParams = new URL(request.url).searchParams;
+            for (const [key, value] of Object.entries(requestParam)) {
+                if (actualParams.get(key) !== value) {
+                    return undefined;
                 }
             }
-            if (body !== undefined) {
-                const actualBody = await request.json();
-                expect(actualBody, 'Request body did not match').to.deep.equal(body);
+            for (const [key] of actualParams) {
+                if (!(key in requestParam)) {
+                    return undefined;
+                }
             }
-        } catch (error) {
-            return new Response(
-                JSON.stringify({
-                    error: getError(error),
-                }),
-                {
-                    status: 400,
-                },
-            );
         }
-        return new Response(JSON.stringify(response), {
-            status: statusCode,
-        });
-    };
-}
 
-function getError(error: unknown) {
-    const e = error as { message: string; expected?: unknown; actual?: unknown };
-    return `${e.message} - expected: ${JSON.stringify(e.expected)} - actual ${JSON.stringify(e.actual)}`;
+        if (body) {
+            const actualBody = await request.clone().json();
+            if (JSON.stringify(actualBody) !== JSON.stringify(body)) {
+                return undefined;
+            }
+        }
+
+        return new Response(JSON.stringify(response), { status: statusCode });
+    };
 }
 
 export const testOrganismsConfig = {

@@ -19,6 +19,22 @@ describe('getTotalCount', () => {
         expect(result).equals(42);
     });
 
+    test('foo', async () => {
+        const lapisFilterA = { country: 'Germany' };
+        const lapisFilterB = { country: 'Sweden' };
+        const lapisFilterC = { country: 'USA' };
+
+        lapisRouteMocker.mockPostAggregated(lapisFilterA, { data: [{ count: 42 }] });
+        lapisRouteMocker.mockPostAggregated(lapisFilterB, { data: [{ count: 43 }] });
+
+        const resA = await getTotalCount(DUMMY_LAPIS_URL, lapisFilterA);
+        const resB = await getTotalCount(DUMMY_LAPIS_URL, lapisFilterB);
+        const resC = await getTotalCount(DUMMY_LAPIS_URL, lapisFilterC);
+
+        expect(resA).equals(42);
+        expect(resB).equals(43);
+    });
+
     test('should return undefined when LAPIS request fails', async () => {
         const lapisFilter = { country: 'Germany' };
 
