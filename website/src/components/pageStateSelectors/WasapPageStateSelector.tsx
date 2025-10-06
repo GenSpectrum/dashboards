@@ -243,6 +243,21 @@ function VariantExplorerFilter({
                     />
                 </div>
             </LabeledField>
+            <LabeledField label='Min. jaccard index'>
+                <div className='mb-2 w-full'>
+                    <input
+                        className='w-full'
+                        type='range'
+                        min='0'
+                        max='1'
+                        step='0.01'
+                        value={pageState.minJaccard}
+                        onChange={(e) => {
+                            setPageState({ ...pageState, minJaccard: parseFloat(e.target.value) });
+                        }}
+                    />
+                </div>
+            </LabeledField>
         </>
     );
 }

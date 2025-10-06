@@ -5,7 +5,7 @@ import { type FC } from 'react';
 
 import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';
 import { getDateRange } from '../../../lapis/getDateRange';
-import { getMutations } from '../../../lapis/getMutations';
+import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { getTotalCount } from '../../../lapis/getTotalCount';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
@@ -162,12 +162,13 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             if (!analysis.variant) {
                 return [];
             }
-            return getMutations(
+            return getMutationsForVariant(
                 wastewaterConfig.wasap.covSpectrumLapisBaseUrl,
                 analysis.sequenceType,
                 analysis.variant,
                 analysis.minProportion,
                 analysis.minCount,
+                analysis.minJaccard,
             );
         case 'resistance':
             return RESISTANCE_MUTATIONS[analysis.resistanceSet];
