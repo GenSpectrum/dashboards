@@ -218,7 +218,6 @@ function VariantExplorerFilter({
                 min={0}
                 max={1}
                 step={0.01}
-                parser={parseFloat}
                 onChange={(v) => setPageState({ ...pageState, minProportion: v })}
             />
             <NumericInput
@@ -227,8 +226,7 @@ function VariantExplorerFilter({
                 min={1}
                 max={250}
                 step={1}
-                parser={parseInt}
-                onChange={(v) => setPageState({ ...pageState, minCount: v })}
+                onChange={(v) => setPageState({ ...pageState, minCount: Math.round(v) })}
             />
         </>
     );
@@ -398,7 +396,6 @@ function NumericInput({
     max,
     step,
     onChange,
-    parser = parseFloat,
 }: {
     label: string;
     value: number;
@@ -406,7 +403,6 @@ function NumericInput({
     max: number;
     step: number;
     onChange: (v: number) => void;
-    parser?: (v: string) => number;
 }) {
     return (
         <LabeledField label={label}>
@@ -418,7 +414,12 @@ function NumericInput({
                     max={max}
                     step={step}
                     value={value}
-                    onChange={(e) => onChange(parser(e.target.value))}
+                    onChange={(e) => {
+                        const parsedNumber = Number(e.target.value);
+                        if (Number.isFinite(parsedNumber)) {
+                            onChange(parsedNumber);
+                        }
+                    }}
                 />
                 <input
                     className='accent-primary w-full'
@@ -427,7 +428,7 @@ function NumericInput({
                     max={max}
                     step={step}
                     value={value}
-                    onChange={(e) => onChange(parser(e.target.value))}
+                    onChange={(e) => onChange(Number(e.target.value))}
                 />
             </div>
         </LabeledField>
