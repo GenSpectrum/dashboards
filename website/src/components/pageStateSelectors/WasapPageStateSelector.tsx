@@ -1,13 +1,17 @@
 import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import React, { Fragment, useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { DynamicDateFilter } from './DynamicDateFilter';
 import { SelectorHeadline } from './SelectorHeadline';
+import { getCladeLineages } from '../../lapis/getCladeLineages';
 import { Inset } from '../../styles/Inset';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { Loading } from '../../util/Loading';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
+    type ExcludeSetName,
     type WasapFilter,
     type WasapAnalysisMode,
     type WasapManualFilter,
@@ -65,6 +69,18 @@ export function WasapPageStateSelector({
                 return { base: baseFilterState, analysis: untrackedFilter };
         }
     }
+
+    // data for the 'untracked' analyis mode - loaded here already so it's available when the mode is selected
+    const cladeLineageQueryResult = useQuery({
+        queryKey: ['cladeLineages'],
+        queryFn: () =>
+            getCladeLineages(
+                wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
+                wastewaterConfig.wasap.covSpectrum.cladeField,
+                wastewaterConfig.wasap.covSpectrum.lineageField,
+                true,
+            ),
+    });
 
     return (
         <div className='flex flex-col gap-4'>
@@ -142,7 +158,13 @@ export function WasapPageStateSelector({
                                 />
                             );
                         case 'untracked':
-                            return <UntrackedFilter pageState={untrackedFilter} setPageState={setUntrackedFilter} />;
+                            return (
+                                <UntrackedFilter
+                                    pageState={untrackedFilter}
+                                    setPageState={setUntrackedFilter}
+                                    cladeLineageQueryResult={cladeLineageQueryResult}
+                                />
+                            );
                     }
                 })()}
             </Inset>
@@ -200,7 +222,7 @@ function VariantExplorerFilter({
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
             <LabeledField label='Variant'>
-                <gs-app lapis={wastewaterConfig.wasap.covSpectrumLapisBaseUrl}>
+                <gs-app lapis={wastewaterConfig.wasap.covSpectrum.lapisBaseUrl}>
                     <GsLineageFilter
                         lapisField='pangoLineage'
                         lapisFilter={{}}
@@ -272,10 +294,15 @@ function ResistanceMutationsFilter({
 function UntrackedFilter({
     pageState,
     setPageState,
+    cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
 }: {
     pageState: WasapUntrackedFilter;
     setPageState: (newState: WasapUntrackedFilter) => void;
+    cladeLineageQueryResult: UseQueryResult<Record<string, string>>;
 }) {
+    const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
+    defaultLineages.sort();
+
     return (
         <>
             <SequenceTypeSelector
@@ -283,12 +310,56 @@ function UntrackedFilter({
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
             <LabeledField label='Known variants to exclude'>
-                <input
-                    className='input input-bordered'
-                    value={pageState.excludeVariants?.join(' ')}
-                    onChange={(e) => setPageState({ ...pageState, excludeVariants: e.target.value.split(' ') })}
-                />
+                <select
+                    className='select select-bordered'
+                    value={pageState.excludeSet}
+                    onChange={(e) => setPageState({ ...pageState, excludeSet: e.target.value as ExcludeSetName })}
+                >
+                    <option value='nextstrain'>Nextstrain clades</option>
+                    <option value='custom'>custom</option>
+                </select>
             </LabeledField>
+            {pageState.excludeSet === 'nextstrain' ? (
+                isPending ? (
+                    <Loading />
+                ) : isError ? (
+                    <span>Failed to load variant list. Please try again or use custom variant list.</span>
+                ) : (
+                    <div className='px-1 py-2 text-sm'>
+                        {defaultLineages.join(', ')}{' '}
+                        <button
+                            className='cursor-pointer underline'
+                            onClick={() => {
+                                setPageState({
+                                    ...pageState,
+                                    excludeSet: 'custom',
+                                    excludeVariants: defaultLineages,
+                                });
+                            }}
+                        >
+                            Customize ...
+                        </button>
+                    </div>
+                )
+            ) : (
+                <>
+                    <div className='h-2' />
+                    <LabeledField label='Custom variant list'>
+                        <textarea
+                            className='input input-bordered h-24 resize-y overflow-auto p-1 whitespace-pre-wrap'
+                            wrap='soft'
+                            placeholder='JN.1* KP.2* XFG* ...'
+                            value={pageState.excludeVariants?.join(' ')}
+                            onChange={(e) =>
+                                setPageState({
+                                    ...pageState,
+                                    excludeVariants: e.target.value.trim().split(/[\s,]+/),
+                                })
+                            }
+                        />
+                    </LabeledField>
+                </>
+            )}
         </>
     );
 }
