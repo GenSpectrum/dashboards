@@ -102,6 +102,7 @@ export function WasapPageStateSelector({
                 />
                 <div className='text-sm'>
                     <input
+                        className='accent-primary'
                         type='checkbox'
                         id='excludeEmpty'
                         checked={baseFilterState.excludeEmpty}
