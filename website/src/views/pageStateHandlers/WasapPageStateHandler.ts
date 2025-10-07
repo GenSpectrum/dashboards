@@ -124,7 +124,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
 
         const base: WasapBaseFilter = {
-            locationName: texts.location_name,
+            locationName: texts.location_name ?? 'Zürich (ZH)',
             samplingDate: dateRanges.sampling_date,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
