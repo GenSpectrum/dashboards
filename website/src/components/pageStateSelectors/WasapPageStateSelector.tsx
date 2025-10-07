@@ -235,36 +235,22 @@ function VariantExplorerFilter({
                     />
                 </gs-app>
             </LabeledField>
-            <LabeledField label='Min. proportion'>
-                <div className='mb-2 w-full'>
-                    <input
-                        className='w-full'
-                        type='range'
-                        min='0'
-                        max='1'
-                        step='0.01'
-                        value={pageState.minProportion}
-                        onChange={(e) => {
-                            setPageState({ ...pageState, minProportion: parseFloat(e.target.value) });
-                        }}
-                    />
-                </div>
-            </LabeledField>
-            <LabeledField label='Min. count'>
-                <div className='mb-2 w-full'>
-                    <input
-                        className='w-full'
-                        type='range'
-                        min='1'
-                        max='250'
-                        step='1'
-                        value={pageState.minCount}
-                        onChange={(e) => {
-                            setPageState({ ...pageState, minCount: parseInt(e.target.value) });
-                        }}
-                    />
-                </div>
-            </LabeledField>
+            <NumericInput
+                label='Min. proportion'
+                value={pageState.minProportion}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(v) => setPageState({ ...pageState, minProportion: v })}
+            />
+            <NumericInput
+                label='Min. count'
+                value={pageState.minCount}
+                min={1}
+                max={250}
+                step={1}
+                onChange={(v) => setPageState({ ...pageState, minCount: Math.round(v) })}
+            />
         </>
     );
 }
@@ -472,5 +458,51 @@ function LabeledField({ label, children }: { label: string; children: React.Reac
             </div>
             {children}
         </label>
+    );
+}
+
+function NumericInput({
+    label,
+    value,
+    min,
+    max,
+    step,
+    onChange,
+}: {
+    label: string;
+    value: number;
+    min: number;
+    max: number;
+    step: number;
+    onChange: (v: number) => void;
+}) {
+    return (
+        <LabeledField label={label}>
+            <div className='mb-2 w-full'>
+                <input
+                    className='input input-bordered mb-2 w-full'
+                    type='number'
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => {
+                        const parsedNumber = Number(e.target.value);
+                        if (Number.isFinite(parsedNumber)) {
+                            onChange(parsedNumber);
+                        }
+                    }}
+                />
+                <input
+                    className='accent-primary w-full'
+                    type='range'
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => onChange(Number(e.target.value))}
+                />
+            </div>
+        </LabeledField>
     );
 }
