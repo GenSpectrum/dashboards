@@ -188,13 +188,7 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     variantsToExclude.map((v) =>
-                        getMutations(
-                            wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
-                            analysis.sequenceType,
-                            v,
-                            0.05,
-                            5,
-                        ),
+                        getMutations(wastewaterConfig.wasap.covSpectrum.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
                     ),
                 ).then((r) => r.flat()),
                 getMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
