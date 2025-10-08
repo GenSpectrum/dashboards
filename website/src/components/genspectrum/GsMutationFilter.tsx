@@ -1,5 +1,5 @@
 import '@genspectrum/dashboard-components/components';
-import { gsEventNames } from '@genspectrum/dashboard-components/util';
+import { type MutationType, gsEventNames } from '@genspectrum/dashboard-components/util';
 import { useEffect, useRef } from 'react';
 
 export type MutationFilter = {
@@ -12,10 +12,12 @@ export type MutationFilter = {
 export function GsMutationFilter({
     initialValue,
     width,
+    enabledMutationTypes,
     onMutationChange = () => {},
 }: {
     width?: string;
     initialValue?: MutationFilter | string[] | undefined;
+    enabledMutationTypes?: MutationType[];
     onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
 }) {
     const mutationFilterRef = useRef<HTMLElement>();
@@ -47,6 +49,9 @@ export function GsMutationFilter({
             <gs-mutation-filter
                 width={width}
                 initialValue={JSON.stringify(initialValue ?? [])}
+                enabledMutationTypes={
+                    enabledMutationTypes !== undefined ? JSON.stringify(enabledMutationTypes) : undefined
+                }
                 ref={mutationFilterRef}
             ></gs-mutation-filter>
         </label>

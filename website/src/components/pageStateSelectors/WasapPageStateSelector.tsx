@@ -1,17 +1,31 @@
-import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
-import React, { useId, useState } from 'react';
+import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import React, { Fragment, useId, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
+import { DynamicDateFilter } from './DynamicDateFilter';
 import { SelectorHeadline } from './SelectorHeadline';
+import { getCladeLineages } from '../../lapis/getCladeLineages';
 import { Inset } from '../../styles/Inset';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
+import { Loading } from '../../util/Loading';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
+    type ExcludeSetName,
     type WasapFilter,
-    wasapDateRangeOptions,
     type WasapAnalysisMode,
+    type WasapManualFilter,
+    type WasapVariantFilter,
+    type WasapResistanceFilter,
+    type WasapUntrackedFilter,
+    defaultManualFilter,
+    defaultVariantFilter,
+    defaultResistanceFilter,
+    defaultUntrackedFilter,
+    type WasapBaseFilter,
+    type WasapAnalysisFilter,
+    wasapDateRangeOptions,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
 import { GsTextFilter } from '../genspectrum/GsTextFilter';
@@ -19,12 +33,54 @@ import { resistanceSetNames, type ResistanceSetName } from '../views/wasap/resis
 
 export function WasapPageStateSelector({
     pageStateHandler,
-    initialPageState,
+    initialBaseFilterState,
+    initialAnalysisFilterState,
 }: {
     pageStateHandler: PageStateHandler<WasapFilter>;
-    initialPageState: WasapFilter;
+    initialBaseFilterState: WasapBaseFilter;
+    initialAnalysisFilterState: WasapAnalysisFilter;
 }) {
-    const [pageState, setPageState] = useState(initialPageState);
+    const [baseFilterState, setBaseFilterState] = useState(initialBaseFilterState);
+
+    const [manualFilter, setManualFilter] = useState(
+        initialAnalysisFilterState.mode === 'manual' ? initialAnalysisFilterState : defaultManualFilter,
+    );
+    const [variantFilter, setVariantFilter] = useState(
+        initialAnalysisFilterState.mode === 'variant' ? initialAnalysisFilterState : defaultVariantFilter,
+    );
+    const [resistanceFilter, setResistanceFilter] = useState(
+        initialAnalysisFilterState.mode === 'resistance' ? initialAnalysisFilterState : defaultResistanceFilter,
+    );
+    const [untrackedFilter, setUntrackedFilter] = useState(
+        initialAnalysisFilterState.mode === 'untracked' ? initialAnalysisFilterState : defaultUntrackedFilter,
+    );
+
+    const [selectedAnalysisMode, setSelectedAnalysisMode] = useState(initialAnalysisFilterState.mode);
+
+    function getMergedPageState(): WasapFilter {
+        switch (selectedAnalysisMode) {
+            case 'manual':
+                return { base: baseFilterState, analysis: manualFilter };
+            case 'variant':
+                return { base: baseFilterState, analysis: variantFilter };
+            case 'resistance':
+                return { base: baseFilterState, analysis: resistanceFilter };
+            case 'untracked':
+                return { base: baseFilterState, analysis: untrackedFilter };
+        }
+    }
+
+    // data for the 'untracked' analyis mode - loaded here already so it's available when the mode is selected
+    const cladeLineageQueryResult = useQuery({
+        queryKey: ['cladeLineages'],
+        queryFn: () =>
+            getCladeLineages(
+                wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
+                wastewaterConfig.wasap.covSpectrum.cladeField,
+                wastewaterConfig.wasap.covSpectrum.lineageField,
+                true,
+            ),
+    });
 
     return (
         <div className='flex flex-col gap-4'>
@@ -36,28 +92,37 @@ export function WasapPageStateSelector({
                         lapisField='location_name'
                         lapisFilter={{}}
                         onInputChange={({ location_name: locationName }) => {
-                            setPageState({ ...pageState, locationName });
+                            setBaseFilterState({ ...baseFilterState, locationName });
                         }}
-                        value={pageState.locationName}
+                        value={baseFilterState.locationName}
                     />
                 </LabeledField>
-                <LabeledField label='Sampling date'>
-                    <GsDateRangeFilter
-                        lapisDateField='sampling_date'
-                        onDateRangeChange={(dateRange: DateRangeOption | null) => {
-                            setPageState({ ...pageState, samplingDate: dateRange ?? undefined });
-                        }}
-                        value={pageState.samplingDate}
-                        dateRangeOptions={wasapDateRangeOptions()}
-                    />
-                </LabeledField>
-                <GranularityFilter pageState={pageState} setPageState={setPageState} />
+
+                <DynamicDateFilter
+                    label='Sampling date'
+                    lapis={wastewaterConfig.wasap.lapisBaseUrl}
+                    dateFieldName={wastewaterConfig.wasap.samplingDateField}
+                    baselineOptions={wasapDateRangeOptions()}
+                    value={baseFilterState.samplingDate}
+                    onChange={(newDateRange?) => setBaseFilterState({ ...baseFilterState, samplingDate: newDateRange })}
+                />
+                <div className='h-2' />
+                <RadioSelect
+                    label='Granularity'
+                    value={baseFilterState.granularity}
+                    options={[
+                        { value: 'day', label: 'Day' },
+                        { value: 'week', label: 'Week' },
+                    ]}
+                    onChange={(val) => setBaseFilterState({ ...baseFilterState, granularity: val })}
+                />
                 <div className='text-sm'>
                     <input
+                        className='accent-primary'
                         type='checkbox'
                         id='excludeEmpty'
-                        checked={pageState.excludeEmpty}
-                        onChange={(e) => setPageState({ ...pageState, excludeEmpty: e.target.checked })}
+                        checked={baseFilterState.excludeEmpty}
+                        onChange={(e) => setBaseFilterState({ ...baseFilterState, excludeEmpty: e.target.checked })}
                     />
                     <label htmlFor='excludeEmpty' className='pl-2'>
                         Exclude empty date ranges
@@ -68,15 +133,9 @@ export function WasapPageStateSelector({
 
             <select
                 className='select select-bordered'
-                value={pageState.analysisMode}
+                value={selectedAnalysisMode}
                 onChange={(e) => {
-                    const analysisMode = e.target.value as WasapAnalysisMode;
-                    const sequenceType = analysisMode === 'resistance' ? 'amino acid' : pageState.sequenceType;
-                    setPageState({
-                        ...pageState,
-                        analysisMode,
-                        sequenceType,
-                    });
+                    setSelectedAnalysisMode(e.target.value as WasapAnalysisMode);
                 }}
             >
                 <option value='manual'>Manual</option>
@@ -86,71 +145,31 @@ export function WasapPageStateSelector({
             </select>
             <Inset className='p-2'>
                 {(() => {
-                    switch (pageState.analysisMode) {
+                    switch (selectedAnalysisMode) {
                         case 'manual':
-                            return <ManualAnalysisFilter pageState={pageState} setPageState={setPageState} />;
+                            return <ManualAnalysisFilter pageState={manualFilter} setPageState={setManualFilter} />;
                         case 'variant':
-                            return <VariantExplorerFilter pageState={pageState} setPageState={setPageState} />;
+                            return <VariantExplorerFilter pageState={variantFilter} setPageState={setVariantFilter} />;
                         case 'resistance':
-                            return <ResistanceMutationsFilter pageState={pageState} setPageState={setPageState} />;
+                            return (
+                                <ResistanceMutationsFilter
+                                    pageState={resistanceFilter}
+                                    setPageState={setResistanceFilter}
+                                />
+                            );
                         case 'untracked':
-                            return <UntrackedFilter pageState={pageState} setPageState={setPageState} />;
+                            return (
+                                <UntrackedFilter
+                                    pageState={untrackedFilter}
+                                    setPageState={setUntrackedFilter}
+                                    cladeLineageQueryResult={cladeLineageQueryResult}
+                                />
+                            );
                     }
                 })()}
             </Inset>
-            <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={pageState} />
+            <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={getMergedPageState()} />
         </div>
-    );
-}
-
-function GranularityFilter({
-    pageState,
-    setPageState,
-}: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
-}) {
-    const id = useId();
-
-    return (
-        <>
-            <div className='h-2' />
-            <LabeledField label='Granularity'>
-                <div className='mb-2 flex gap-2 text-sm'>
-                    <input
-                        type='radio'
-                        id={`${id}-day`}
-                        name={`${id}-interval`}
-                        value='day'
-                        className='peer/day hidden'
-                        checked={pageState.granularity === 'day'}
-                        onChange={() => setPageState({ ...pageState, granularity: 'day' })}
-                    />
-                    <label
-                        htmlFor={`${id}-day`}
-                        className='peer-checked/day:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
-                    >
-                        Day
-                    </label>
-
-                    <input
-                        type='radio'
-                        id={`${id}-week`}
-                        name={`${id}-interval`}
-                        value='week'
-                        className='peer/week hidden'
-                        checked={pageState.granularity === 'week'}
-                        onChange={() => setPageState({ ...pageState, granularity: 'week' })}
-                    />
-                    <label
-                        htmlFor={`${id}-week`}
-                        className='peer-checked/week:border-primary flex-1 cursor-pointer rounded-md border border-gray-300 p-2 text-center'
-                    >
-                        Week
-                    </label>
-                </div>
-            </LabeledField>
-        </>
     );
 }
 
@@ -158,9 +177,13 @@ function ManualAnalysisFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapManualFilter;
+    setPageState: (newState: WasapManualFilter) => void;
 }) {
+    const enabledMutationTypes: MutationType[] =
+        pageState.sequenceType === 'nucleotide'
+            ? [mutationType.nucleotideMutations]
+            : [mutationType.aminoAcidMutations];
     return (
         <>
             <SequenceTypeSelector
@@ -171,6 +194,7 @@ function ManualAnalysisFilter({
                 }}
             />
             <GsMutationFilter
+                enabledMutationTypes={enabledMutationTypes}
                 initialValue={pageState.mutations}
                 onMutationChange={(mutationFilter) => {
                     if (pageState.sequenceType === 'nucleotide') {
@@ -188,13 +212,17 @@ function VariantExplorerFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapVariantFilter;
+    setPageState: (newState: WasapVariantFilter) => void;
 }) {
     return (
         <>
+            <SequenceTypeSelector
+                value={pageState.sequenceType}
+                onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
+            />
             <LabeledField label='Variant'>
-                <gs-app lapis={wastewaterConfig.covSpectrumLapisBaseUrl}>
+                <gs-app lapis={wastewaterConfig.wasap.covSpectrum.lapisBaseUrl}>
                     <GsLineageFilter
                         lapisField='pangoLineage'
                         lapisFilter={{}}
@@ -207,40 +235,22 @@ function VariantExplorerFilter({
                     />
                 </gs-app>
             </LabeledField>
-            <SequenceTypeSelector
-                value={pageState.sequenceType}
-                onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
+            <NumericInput
+                label='Min. proportion'
+                value={pageState.minProportion}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(v) => setPageState({ ...pageState, minProportion: v })}
             />
-            <LabeledField label='Min. proportion'>
-                <div className='mb-2 w-full'>
-                    <input
-                        className='w-full'
-                        type='range'
-                        min='0'
-                        max='1'
-                        step='0.01'
-                        value={pageState.minProportion}
-                        onChange={(e) => {
-                            setPageState({ ...pageState, minProportion: parseFloat(e.target.value) });
-                        }}
-                    />
-                </div>
-            </LabeledField>
-            <LabeledField label='Min. count'>
-                <div className='mb-2 w-full'>
-                    <input
-                        className='w-full'
-                        type='range'
-                        min='1'
-                        max='250'
-                        step='1'
-                        value={pageState.minCount}
-                        onChange={(e) => {
-                            setPageState({ ...pageState, minCount: parseInt(e.target.value) });
-                        }}
-                    />
-                </div>
-            </LabeledField>
+            <NumericInput
+                label='Min. count'
+                value={pageState.minCount}
+                min={1}
+                max={250}
+                step={1}
+                onChange={(v) => setPageState({ ...pageState, minCount: Math.round(v) })}
+            />
         </>
     );
 }
@@ -249,8 +259,8 @@ function ResistanceMutationsFilter({
     pageState,
     setPageState,
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapResistanceFilter;
+    setPageState: (newState: WasapResistanceFilter) => void;
 }) {
     return (
         <LabeledField label='Resistance mutation set'>
@@ -270,10 +280,15 @@ function ResistanceMutationsFilter({
 function UntrackedFilter({
     pageState,
     setPageState,
+    cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
 }: {
-    pageState: WasapFilter;
-    setPageState: (newState: WasapFilter) => void;
+    pageState: WasapUntrackedFilter;
+    setPageState: (newState: WasapUntrackedFilter) => void;
+    cladeLineageQueryResult: UseQueryResult<Record<string, string>>;
 }) {
+    const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
+    defaultLineages.sort();
+
     return (
         <>
             <SequenceTypeSelector
@@ -281,12 +296,56 @@ function UntrackedFilter({
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
             <LabeledField label='Known variants to exclude'>
-                <input
-                    className='input input-bordered'
-                    value={pageState.excludeVariants?.join(' ')}
-                    onChange={(e) => setPageState({ ...pageState, excludeVariants: e.target.value.split(' ') })}
-                />
+                <select
+                    className='select select-bordered'
+                    value={pageState.excludeSet}
+                    onChange={(e) => setPageState({ ...pageState, excludeSet: e.target.value as ExcludeSetName })}
+                >
+                    <option value='nextstrain'>Nextstrain clades</option>
+                    <option value='custom'>custom</option>
+                </select>
             </LabeledField>
+            {pageState.excludeSet === 'nextstrain' ? (
+                isPending ? (
+                    <Loading />
+                ) : isError ? (
+                    <span>Failed to load variant list. Please try again or use custom variant list.</span>
+                ) : (
+                    <div className='px-1 py-2 text-sm'>
+                        {defaultLineages.join(', ')}{' '}
+                        <button
+                            className='cursor-pointer underline'
+                            onClick={() => {
+                                setPageState({
+                                    ...pageState,
+                                    excludeSet: 'custom',
+                                    excludeVariants: defaultLineages,
+                                });
+                            }}
+                        >
+                            Customize ...
+                        </button>
+                    </div>
+                )
+            ) : (
+                <>
+                    <div className='h-2' />
+                    <LabeledField label='Custom variant list'>
+                        <textarea
+                            className='input input-bordered h-24 resize-y overflow-auto p-1 whitespace-pre-wrap'
+                            wrap='soft'
+                            placeholder='JN.1* KP.2* XFG* ...'
+                            value={pageState.excludeVariants?.join(' ')}
+                            onChange={(e) =>
+                                setPageState({
+                                    ...pageState,
+                                    excludeVariants: e.target.value.trim().split(/[\s,]+/),
+                                })
+                            }
+                        />
+                    </LabeledField>
+                </>
+            )}
         </>
     );
 }
@@ -332,16 +391,62 @@ function ExplorationModeInfo() {
 
 function SequenceTypeSelector({ value, onChange }: { value: SequenceType; onChange: (newType: SequenceType) => void }) {
     return (
-        <LabeledField label='Sequence type'>
-            <select
-                className='select select-bordered mb-2'
-                value={value}
-                onChange={(e) => onChange(e.target.value as SequenceType)}
-            >
-                <option value='nucleotide'>Nucleotide</option>
-                <option value='amino acid'>Amino acid</option>
-            </select>
-        </LabeledField>
+        <RadioSelect
+            label='Sequence type'
+            value={value}
+            options={[
+                { value: 'nucleotide', label: 'Nucleotide' },
+                { value: 'amino acid', label: 'Amino acid' },
+            ]}
+            onChange={onChange}
+        />
+    );
+}
+
+function RadioSelect<T extends string>({
+    label,
+    value,
+    options,
+    onChange,
+}: {
+    label: string;
+    value: T;
+    options: { value: T; label: string }[];
+    onChange: (val: T) => void;
+}) {
+    const id = useId();
+
+    return (
+        <>
+            <LabeledField label={label}>
+                <div className='mb-2 flex gap-2 text-sm'>
+                    {options.map((opt) => {
+                        const isChecked = value === opt.value;
+                        return (
+                            <Fragment key={opt.value}>
+                                <input
+                                    type='radio'
+                                    id={`${id}-${opt.value}`}
+                                    name={id}
+                                    value={opt.value}
+                                    className='hidden'
+                                    checked={isChecked}
+                                    onChange={() => onChange(opt.value)}
+                                />
+                                <label
+                                    htmlFor={`${id}-${opt.value}`}
+                                    className={`flex-1 cursor-pointer rounded-md border p-2 text-center ${
+                                        isChecked ? 'border-primary' : 'border-gray-300'
+                                    }`}
+                                >
+                                    {opt.label}
+                                </label>
+                            </Fragment>
+                        );
+                    })}
+                </div>
+            </LabeledField>
+        </>
     );
 }
 
@@ -353,5 +458,51 @@ function LabeledField({ label, children }: { label: string; children: React.Reac
             </div>
             {children}
         </label>
+    );
+}
+
+function NumericInput({
+    label,
+    value,
+    min,
+    max,
+    step,
+    onChange,
+}: {
+    label: string;
+    value: number;
+    min: number;
+    max: number;
+    step: number;
+    onChange: (v: number) => void;
+}) {
+    return (
+        <LabeledField label={label}>
+            <div className='mb-2 w-full'>
+                <input
+                    className='input input-bordered mb-2 w-full'
+                    type='number'
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => {
+                        const parsedNumber = Number(e.target.value);
+                        if (Number.isFinite(parsedNumber)) {
+                            onChange(parsedNumber);
+                        }
+                    }}
+                />
+                <input
+                    className='accent-primary w-full'
+                    type='range'
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => onChange(Number(e.target.value))}
+                />
+            </div>
+        </LabeledField>
     );
 }

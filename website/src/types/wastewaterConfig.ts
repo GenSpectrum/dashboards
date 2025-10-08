@@ -10,8 +10,21 @@ export const wastewaterConfig = {
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
-    wasapLapisBaseUrl: 'https://lapis.wasap.genspectrum.org/',
-    covSpectrumLapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+    wasap: {
+        linkTemplate: {
+            nucleotideMutation:
+                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+            aminoAcidMutation:
+                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+        },
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
+        samplingDateField: 'sampling_date',
+        covSpectrum: {
+            lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+            cladeField: 'nextstrainClade',
+            lineageField: 'pangoLineage',
+        },
+    },
     pages: {
         rsv: {
             path: `/${wastewaterPathFragment}/rsv`,

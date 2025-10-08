@@ -1,12 +1,12 @@
-import type { TemporalGranularity, LapisFilter, SequenceType } from '@genspectrum/dashboard-components/util';
+import type {
+    TemporalGranularity,
+    LapisFilter,
+    SequenceType,
+    MeanProportionInterval,
+} from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
 import { ComponentWrapper } from '../ComponentWrapper';
-
-export type InitialMeanProportionInterval = {
-    min: number;
-    max: number;
-};
 
 export type GsMutationsOverTimeProps = {
     lapisFilter: LapisFilter;
@@ -18,7 +18,7 @@ export type GsMutationsOverTimeProps = {
     pageSizes?: number[];
     useNewEndpoint?: true;
     hideGaps?: true;
-    initialMeanProportionInterval?: InitialMeanProportionInterval;
+    initialMeanProportionInterval?: MeanProportionInterval;
 };
 
 export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({

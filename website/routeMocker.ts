@@ -1,4 +1,3 @@
-import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { http } from 'msw';
 import type { DefaultBodyType, StrictRequest } from 'msw';
 import type { SetupWorker } from 'msw/browser';
@@ -47,8 +46,8 @@ export class LapisRouteMocker {
     }
 
     mockPostAggregated(
-        body: LapisFilter,
-        response: { data: Record<string, string | boolean | number>[] },
+        body: Record<string, unknown>,
+        response: { data: Record<string, string | boolean | number | null>[] },
         statusCode = 200,
     ) {
         this.workerOrServer.use(
@@ -65,6 +64,26 @@ export class LapisRouteMocker {
     mockLineageDefinition(fieldName: string, response: LineageDefinition, statusCode = 200) {
         this.workerOrServer.use(
             http.get(`${DUMMY_LAPIS_URL}/sample/lineageDefinition/${fieldName}`, resolver({ statusCode, response })),
+        );
+    }
+
+    mockPostNucleotideMutations(
+        body: Record<string, unknown>,
+        response: { data: { mutation: string; count: number }[] },
+        statusCode = 200,
+    ) {
+        this.workerOrServer.use(
+            http.post(`${DUMMY_LAPIS_URL}/sample/nucleotideMutations`, resolver({ statusCode, body, response })),
+        );
+    }
+
+    mockPostAminoAcidMutations(
+        body: Record<string, unknown>,
+        response: { data: { mutation: string; count: number }[] },
+        statusCode = 200,
+    ) {
+        this.workerOrServer.use(
+            http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver({ statusCode, body, response })),
         );
     }
 }

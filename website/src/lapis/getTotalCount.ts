@@ -7,7 +7,6 @@ import { getClientLogger } from '../clientLogger.ts';
 const lapisTotalCountSchema = z.object({
     data: z.tuple([z.object({ count: z.number() })]),
 });
-export type LapisTotalCount = z.infer<typeof lapisTotalCountSchema>;
 
 const logger = getClientLogger('getTotalCount');
 

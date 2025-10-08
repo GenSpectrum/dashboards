@@ -6,41 +6,56 @@ import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
-import { fineGrainedDefaultDateRangeOptions } from '../../util/defaultDateRangeOption';
 import { formatUrl } from '../../util/formatUrl';
+import { weeklyAndMonthlyDateRangeOptions } from '../../util/weeklyAndMonthlyDateRangeOption';
 import { setSearchFromString } from '../helpers';
 
-export const wasapDateRangeOptions = fineGrainedDefaultDateRangeOptions('2020-01-01');
+export const wasapDateRangeOptions = () => weeklyAndMonthlyDateRangeOptions('2025-03-01');
 
-const defaultExcludeVariants = [
-    'JN.1',
-    'KP.2',
-    'KP.3',
-    'LP.8',
-    'XEC',
-    'B.1.1.7',
-    'B.1.351',
-    'B.1.617.2',
-    'P.1',
-    'B.1.617.1',
-    'NB.1.8.1',
-    'BA.1',
-    'BA.2.12.1',
-    'BA.2.75.2',
-    'BA.2.75',
-    'BA.2.86',
-    'BA.2',
-    'BA.4',
-    'BA.5',
-    'BQ.1.1',
-    'EG.5',
-    'XBB.1.16',
-    'XBB.1.5',
-    'XBB.2.3',
-    'XBB',
-    'XBB.1.9',
-    'XFG',
-];
+export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
+
+export type WasapBaseFilter = {
+    locationName?: string;
+    samplingDate?: DateRangeOption;
+    granularity: string;
+    excludeEmpty: boolean;
+};
+
+export type WasapManualFilter = {
+    mode: 'manual';
+    sequenceType: SequenceType;
+    mutations?: string[];
+};
+
+export type WasapVariantFilter = {
+    mode: 'variant';
+    sequenceType: SequenceType;
+    variant?: string;
+    minProportion: number;
+    minCount: number;
+};
+
+export type WasapResistanceFilter = {
+    mode: 'resistance';
+    sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
+    resistanceSet: ResistanceSetName;
+};
+
+export type ExcludeSetName = 'nextstrain' | 'custom';
+
+export type WasapUntrackedFilter = {
+    mode: 'untracked';
+    sequenceType: SequenceType;
+    excludeSet: ExcludeSetName;
+    excludeVariants?: string[];
+};
+
+export type WasapAnalysisFilter = WasapManualFilter | WasapVariantFilter | WasapResistanceFilter | WasapUntrackedFilter;
+
+export type WasapFilter = {
+    base: WasapBaseFilter;
+    analysis: WasapAnalysisFilter;
+};
 
 const wasapFilterConfig: BaselineFilterConfig[] = [
     {
@@ -49,7 +64,7 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     },
     {
         type: 'date',
-        dateColumn: 'sampling_date',
+        dateColumn: wastewaterConfig.wasap.samplingDateField,
         dateRangeOptions: wasapDateRangeOptions,
     },
     // below are not really LAPIS fields, but we still want to use the URL parsing mechanism
@@ -91,87 +106,104 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     },
     {
         type: 'text',
+        lapisField: 'excludeSet',
+    },
+    {
+        type: 'text',
         lapisField: 'excludeVariants',
     },
 ];
-
-export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
-
-export type WasapFilter = {
-    /**
-    /* Sample collection filters
-     */
-    locationName?: string;
-    samplingDate?: DateRangeOption;
-    granularity: string;
-    excludeEmpty: boolean;
-    /**
-     * Analysis mode settings
-     */
-    analysisMode: WasapAnalysisMode;
-    sequenceType: SequenceType;
-    mutations?: string[];
-    variant?: string;
-    minProportion: number;
-    minCount: number;
-    resistanceSet: ResistanceSetName;
-    excludeVariants?: string[];
-};
 
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
     parsePageStateFromUrl(url: URL): WasapFilter {
         const texts = parseTextFiltersFromUrl(url.searchParams, wasapFilterConfig);
         const dateRanges = parseDateRangesFromUrl(url.searchParams, wasapFilterConfig);
 
-        const analysisMode = (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual';
+        const mode = (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual';
         const sequenceType =
-            (texts.sequenceType as SequenceType | undefined) ??
-            (analysisMode === 'resistance' ? 'amino acid' : 'nucleotide');
+            (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
 
-        return {
-            locationName: texts.location_name,
+        const base: WasapBaseFilter = {
+            locationName: texts.location_name ?? 'Zürich (ZH)',
             samplingDate: dateRanges.sampling_date,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
-            analysisMode,
-            sequenceType,
-            mutations: texts.mutations?.split('|'),
-            variant: texts.variant ?? 'JN.8',
-            minProportion: Number(texts.minProportion ?? '0.05'),
-            minCount: Number(texts.minCount ?? '5'),
-            resistanceSet: (texts.resistanceSet as ResistanceSetName | undefined) ?? resistanceSetNames.ThreeCLPro,
-            excludeVariants: texts.excludeVariants?.split('|') ?? defaultExcludeVariants,
         };
+
+        let analysis: WasapAnalysisFilter;
+
+        switch (mode) {
+            case 'manual':
+                analysis = {
+                    mode,
+                    sequenceType,
+                    mutations: texts.mutations?.split('|'),
+                };
+                break;
+            case 'variant':
+                analysis = {
+                    mode,
+                    sequenceType,
+                    variant: texts.variant ?? 'JN.8',
+                    minProportion: Number(texts.minProportion ?? '0.05'),
+                    minCount: Number(texts.minCount ?? '5'),
+                };
+                break;
+            case 'resistance':
+                analysis = {
+                    mode,
+                    sequenceType: 'amino acid',
+                    resistanceSet:
+                        (texts.resistanceSet as ResistanceSetName | undefined) ?? resistanceSetNames.ThreeCLPro,
+                };
+                break;
+            case 'untracked':
+                analysis = {
+                    mode,
+                    sequenceType,
+                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? 'nextstrain',
+                    excludeVariants: texts.excludeVariants?.split('|'),
+                };
+                break;
+        }
+
+        return { base, analysis };
     }
 
     toUrl(pageState: WasapFilter): string {
         const search = new URLSearchParams();
+        const { base, analysis } = pageState;
+
         // general dataset settings
-        setSearchFromString(search, 'location_name', pageState.locationName);
-        setSearchFromDateRange(search, 'sampling_date', pageState.samplingDate);
-        setSearchFromString(search, 'granularity', pageState.granularity);
-        if (!pageState.excludeEmpty) {
+        setSearchFromString(search, 'location_name', base.locationName);
+        setSearchFromDateRange(search, wastewaterConfig.wasap.samplingDateField, base.samplingDate);
+        setSearchFromString(search, 'granularity', base.granularity);
+        if (!base.excludeEmpty) {
             setSearchFromString(search, 'excludeEmpty', 'false');
         }
+
         // analysis mode dependent settings
-        setSearchFromString(search, 'analysisMode', pageState.analysisMode);
-        switch (pageState.analysisMode) {
+        setSearchFromString(search, 'analysisMode', analysis.mode);
+        switch (analysis.mode) {
             case 'manual':
-                setSearchFromString(search, 'sequenceType', pageState.sequenceType);
-                setSearchFromString(search, 'mutations', pageState.mutations?.join('|'));
+                setSearchFromString(search, 'sequenceType', analysis.sequenceType);
+                setSearchFromString(search, 'mutations', analysis.mutations?.join('|'));
                 break;
             case 'variant':
-                setSearchFromString(search, 'sequenceType', pageState.sequenceType);
-                setSearchFromString(search, 'variant', pageState.variant);
-                setSearchFromString(search, 'minProportion', String(pageState.minProportion));
-                setSearchFromString(search, 'minCount', String(pageState.minCount));
+                setSearchFromString(search, 'sequenceType', analysis.sequenceType);
+                setSearchFromString(search, 'variant', analysis.variant);
+                setSearchFromString(search, 'minProportion', String(analysis.minProportion));
+                setSearchFromString(search, 'minCount', String(analysis.minCount));
                 break;
             case 'resistance':
-                setSearchFromString(search, 'resistanceSet', pageState.resistanceSet);
+                setSearchFromString(search, 'resistanceSet', analysis.resistanceSet);
                 break;
             case 'untracked':
-                setSearchFromString(search, 'sequenceType', pageState.sequenceType);
-                setSearchFromString(search, 'excludeVariants', pageState.excludeVariants?.join('|'));
+                setSearchFromString(search, 'sequenceType', analysis.sequenceType);
+                setSearchFromString(search, 'excludeSet', analysis.excludeSet);
+                if (analysis.excludeSet === 'custom') {
+                    setSearchFromString(search, 'excludeVariants', analysis.excludeVariants?.join('|'));
+                }
                 break;
         }
 
@@ -182,3 +214,27 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         return wastewaterConfig.pages.covid.path;
     }
 }
+
+export const defaultManualFilter: WasapManualFilter = {
+    mode: 'manual',
+    sequenceType: 'nucleotide',
+};
+
+export const defaultVariantFilter: WasapVariantFilter = {
+    mode: 'variant',
+    sequenceType: 'nucleotide',
+    minProportion: 0.05,
+    minCount: 5,
+};
+
+export const defaultResistanceFilter: WasapResistanceFilter = {
+    mode: 'resistance',
+    sequenceType: 'amino acid',
+    resistanceSet: resistanceSetNames.ThreeCLPro,
+};
+
+export const defaultUntrackedFilter: WasapUntrackedFilter = {
+    mode: 'untracked',
+    sequenceType: 'nucleotide',
+    excludeSet: 'nextstrain',
+};
