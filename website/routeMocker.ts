@@ -38,11 +38,18 @@ type LineageDefinition = Record<
     }
 >;
 
+type MockCase = {
+    statusCode?: number;
+    body?: unknown;
+    response?: unknown;
+    requestParam?: Record<string, string>;
+};
+
 export class LapisRouteMocker {
     constructor(private workerOrServer: MSWWorkerOrServer) {}
 
     mockInfo(response: LapisInfo, statusCode = 200) {
-        this.workerOrServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver({ statusCode, response })));
+        this.workerOrServer.use(http.get(`${DUMMY_LAPIS_URL}/sample/info`, resolver([{ statusCode, response }])));
     }
 
     mockPostAggregated(
@@ -51,19 +58,23 @@ export class LapisRouteMocker {
         statusCode = 200,
     ) {
         this.workerOrServer.use(
-            http.post(`${DUMMY_LAPIS_URL}/sample/aggregated`, resolver({ statusCode, body, response })),
+            http.post(`${DUMMY_LAPIS_URL}/sample/aggregated`, resolver([{ statusCode, body, response }])),
         );
+    }
+
+    mockPostAggregatedMulti(cases: MockCase[]) {
+        this.workerOrServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/aggregated`, resolver(cases)));
     }
 
     mockReferenceGenome(response: ReferenceGenome, statusCode = 200) {
         this.workerOrServer.use(
-            http.get(`${DUMMY_LAPIS_URL}/sample/referenceGenome`, resolver({ statusCode, response })),
+            http.get(`${DUMMY_LAPIS_URL}/sample/referenceGenome`, resolver([{ statusCode, response }])),
         );
     }
 
     mockLineageDefinition(fieldName: string, response: LineageDefinition, statusCode = 200) {
         this.workerOrServer.use(
-            http.get(`${DUMMY_LAPIS_URL}/sample/lineageDefinition/${fieldName}`, resolver({ statusCode, response })),
+            http.get(`${DUMMY_LAPIS_URL}/sample/lineageDefinition/${fieldName}`, resolver([{ statusCode, response }])),
         );
     }
 
@@ -73,7 +84,7 @@ export class LapisRouteMocker {
         statusCode = 200,
     ) {
         this.workerOrServer.use(
-            http.post(`${DUMMY_LAPIS_URL}/sample/nucleotideMutations`, resolver({ statusCode, body, response })),
+            http.post(`${DUMMY_LAPIS_URL}/sample/nucleotideMutations`, resolver([{ statusCode, body, response }])),
         );
     }
 
@@ -83,7 +94,7 @@ export class LapisRouteMocker {
         statusCode = 200,
     ) {
         this.workerOrServer.use(
-            http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver({ statusCode, body, response })),
+            http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver([{ statusCode, body, response }])),
         );
     }
 }
@@ -93,7 +104,7 @@ export class BackendRouteMocker {
 
     mockGetSubscriptions(requestParam: { userId: string }, response: SubscriptionResponse[], statusCode = 200) {
         this.workerOrServer.use(
-            http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver({ statusCode, response, requestParam })),
+            http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, response, requestParam }])),
         );
     }
 
@@ -105,7 +116,7 @@ export class BackendRouteMocker {
         this.workerOrServer.use(
             http.get(
                 `${DUMMY_BACKEND_URL}/subscriptions/evaluateTrigger`,
-                resolver({ statusCode, response, requestParam }),
+                resolver([{ statusCode, response, requestParam }]),
             ),
         );
     }
@@ -117,7 +128,7 @@ export class BackendRouteMocker {
         statusCode = 200,
     ) {
         this.workerOrServer.use(
-            http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver({ statusCode, body, response, requestParam })),
+            http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, body, response, requestParam }])),
         );
     }
 
@@ -131,7 +142,7 @@ export class BackendRouteMocker {
         this.workerOrServer.use(
             http.put(
                 `${DUMMY_BACKEND_URL}/subscriptions/${pathVariables.subscriptionId}`,
-                resolver({ statusCode, body, response, requestParam }),
+                resolver([{ statusCode, body, response, requestParam }]),
             ),
         );
     }
@@ -144,7 +155,7 @@ export class BackendRouteMocker {
         this.workerOrServer.use(
             http.delete(
                 `${DUMMY_BACKEND_URL}/subscriptions/${pathVariables.subscriptionId}`,
-                resolver({ statusCode, requestParam }),
+                resolver([{ statusCode, requestParam }]),
             ),
         );
     }
@@ -158,45 +169,34 @@ export class BackendRouteMocker {
     }
 }
 
-function resolver({
-    statusCode,
-    body,
-    response,
-    requestParam,
-}: {
-    statusCode: number;
-    body?: unknown;
-    response?: unknown;
-    requestParam?: Record<string, string>;
-}) {
+function resolver(cases: MockCase[]) {
     return async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-        try {
-            if (requestParam !== undefined) {
-                const actualRequestParam = new URL(request.url).searchParams;
-                for (const [key, value] of Object.entries(requestParam)) {
-                    expect(actualRequestParam.get(key), `Request param ${key} did not match`).to.equal(value);
+        const actualRequestParam = new URL(request.url).searchParams;
+        const actualBody = await request.json().catch(() => undefined);
+
+        const errors: string[] = [];
+
+        for (const { body, requestParam, response, statusCode } of cases) {
+            try {
+                if (requestParam !== undefined) {
+                    for (const [key, value] of Object.entries(requestParam)) {
+                        expect(actualRequestParam.get(key), `Request param ${key} did not match`).to.equal(value);
+                    }
+                    for (const [key, value] of actualRequestParam) {
+                        expect(requestParam[key], `Request param ${key} was not expected`).to.equal(value);
+                    }
                 }
-                for (const [key, value] of actualRequestParam) {
-                    expect(requestParam[key], `Request param ${key} was not expected`).to.equal(value);
+                if (body !== undefined) {
+                    expect(actualBody, 'Request body did not match').to.deep.equal(body);
                 }
+
+                return new Response(JSON.stringify(response), { status: statusCode ?? 200 });
+            } catch (err) {
+                errors.push(getError(err));
             }
-            if (body !== undefined) {
-                const actualBody = await request.json();
-                expect(actualBody, 'Request body did not match').to.deep.equal(body);
-            }
-        } catch (error) {
-            return new Response(
-                JSON.stringify({
-                    error: getError(error),
-                }),
-                {
-                    status: 400,
-                },
-            );
         }
-        return new Response(JSON.stringify(response), {
-            status: statusCode,
-        });
+
+        return new Response(JSON.stringify({ errors }), { status: 400 });
     };
 }
 
