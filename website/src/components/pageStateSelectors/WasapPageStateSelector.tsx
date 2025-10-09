@@ -9,6 +9,7 @@ import { getCladeLineages } from '../../lapis/getCladeLineages';
 import { Inset } from '../../styles/Inset';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { Loading } from '../../util/Loading';
+import { recentDaysDateRangeOptions } from '../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type ExcludeSetName,
@@ -24,7 +25,6 @@ import {
     defaultUntrackedFilter,
     type WasapBaseFilter,
     type WasapAnalysisFilter,
-    wasapDateRangeOptions,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
@@ -102,7 +102,7 @@ export function WasapPageStateSelector({
                     label='Sampling date'
                     lapis={wastewaterConfig.wasap.lapisBaseUrl}
                     dateFieldName={wastewaterConfig.wasap.samplingDateField}
-                    baselineOptions={wasapDateRangeOptions()}
+                    generateOptions={recentDaysDateRangeOptions}
                     value={baseFilterState.samplingDate}
                     onChange={(newDateRange?) => setBaseFilterState({ ...baseFilterState, samplingDate: newDateRange })}
                 />
