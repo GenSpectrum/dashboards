@@ -23,9 +23,9 @@ We value clean code, here are some guidelines on what we consider clean code:
 
 The website shows dashboards for several organisms.
 The data sources are publicly available instances of [LAPIS](https://github.com/GenSpectrum/LAPIS) (one for each organism).
-Every organism has several views on the data.
+Every organism has several views on the data. "View" here means the whole page as displayed in the browser, each with their own base URL, which is mirroring the sub-paths of the `.astro` files in `website/src/pages/`.
 The different views of an organism highlight different aspects of the data,
-but they use the same LAPIS instance.
+but they use the same LAPIS instance (XX defined or configured where?).
 
 The views make use of the [Dashboard Components](https://github.com/GenSpectrum/dashboard-components) library.
 Every view has a section that lets the user set filters on the sequence data that should be considered, such as:
@@ -41,7 +41,7 @@ The currently set filters are considered the "state" of the view.
 - The state is stored as query parameters in the URL,
   so that the user can bookmark the current view or send it to someone else.
 - Obviously, we must be able to reconstruct the state from a given URL.
-    - Upon a page reload, the values of the input fields in the filters section must be set according to the state in the URL.
+    - Upon a page reload, the values of the input fields in the filters section must be set according to the state in the URL. (XX how does this happen, is the state in a single location and pulled from there by the fields?)
 - The state can also be translated into `lapisFilter` objects that can be passed to the visualization components.
   The components in turn will use the `lapisFilter` objects to query LAPIS for the data that they show.
 
@@ -62,14 +62,14 @@ Think: `prevalence = count(variant in Germany) / count(all sequences in Germany)
 We make use of some major libraries: Astro, React, DaisyUI, and Tailwindcss.
 
 - Render pages using Astro when possible
-    - Astro render HTML on the server, which is faster than rendering on the client.
-    - Avoid client side Javascript code in Astro components.
+    - Astro renders HTML on the server, which is faster than rendering on the client.
+    - Avoid vanilla client side JavaScript code in Astro components.
       If you need interactivity in the browser, then you should use React.
-- when possible use CSS over Javascript for interactivity (e.g. for modals, dropdowns, etc.)
+- when possible use CSS over JavaScript for interactivity (e.g. for modals, dropdowns, etc.)
     - it often yields less and simpler code
     - we can profit from browser parallelization and optimizations (modern browsers are highly optimized for parsing HTML and CSS - when using JS that's not immediately possible)
 - use React for interactive components
-- Use constant collections for "magic values" are used across the code base, e.g.:
+- Use constant collections for "magic values" that are used across the code base, e.g.:
 
     ```typescript
     export const constantCollection = {
