@@ -20,7 +20,7 @@ export const RESISTANCE_MUTATIONS = {
         'ORF1a:M3312I',
         'ORF1a:M3312L',
         'ORF1a:M3312T',
-        'ORF1a:M3312d',
+        'ORF1a:M3312-',
         'ORF1a:L3313F',
         'ORF1a:G3401S',
         'ORF1a:F3403L',
@@ -42,7 +42,7 @@ export const RESISTANCE_MUTATIONS = {
         'ORF1a:E3429Q',
         'ORF1a:E3429V',
         'ORF1a:L3430F',
-        'ORF1a:P3431d',
+        'ORF1a:P3431-',
         'ORF1a:T3432I',
         'ORF1a:H3435L',
         'ORF1a:H3435N',
@@ -276,23 +276,136 @@ export const RESISTANCE_MUTATIONS = {
 const fetchSnippet =
     'as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).';
 
+// Hardcoded mature protein positions for 3CLpro (mature starts at genomic 3264, so position = genomic - 3263)
+/* eslint-disable @typescript-eslint/naming-convention */
+const threeCLProMaturePositions: Record<string, number> = {
+    'ORF1a:T3284I': 21,
+    'ORF1a:T3288A': 25,
+    'ORF1a:T3288N': 25,
+    'ORF1a:T3308I': 45,
+    'ORF1a:D3311Y': 48,
+    'ORF1a:M3312I': 49,
+    'ORF1a:M3312L': 49,
+    'ORF1a:M3312T': 49,
+    'ORF1a:M3312-': 49,
+    'ORF1a:L3313F': 50,
+    'ORF1a:G3401S': 138,
+    'ORF1a:F3403L': 140,
+    'ORF1a:F3403S': 140,
+    'ORF1a:N3405D': 142,
+    'ORF1a:N3405L': 142,
+    'ORF1a:N3405S': 142,
+    'ORF1a:G3406S': 143,
+    'ORF1a:S3407A': 144,
+    'ORF1a:S3407E': 144,
+    'ORF1a:S3407L': 144,
+    'ORF1a:S3407P': 144,
+    'ORF1a:C3423F': 160,
+    'ORF1a:M3428R': 165,
+    'ORF1a:M3428T': 165,
+    'ORF1a:E3429A': 166,
+    'ORF1a:E3429G': 166,
+    'ORF1a:E3429K': 166,
+    'ORF1a:E3429Q': 166,
+    'ORF1a:E3429V': 166,
+    'ORF1a:L3430F': 167,
+    'ORF1a:P3431-': 168,
+    'ORF1a:T3432I': 169,
+    'ORF1a:H3435L': 172,
+    'ORF1a:H3435N': 172,
+    'ORF1a:H3435Q': 172,
+    'ORF1a:H3435Y': 172,
+    'ORF1a:A3436T': 173,
+    'ORF1a:A3436V': 173,
+    'ORF1a:V3449A': 186,
+    'ORF1a:R3451G': 188,
+    'ORF1a:R3451S': 188,
+    'ORF1a:Q3452I': 189,
+    'ORF1a:Q3452K': 189,
+    'ORF1a:T3453I': 190,
+    'ORF1a:A3454T': 191,
+    'ORF1a:A3454V': 191,
+    'ORF1a:Q3455A': 192,
+    'ORF1a:Q3455C': 192,
+    'ORF1a:Q3455D': 192,
+    'ORF1a:Q3455E': 192,
+    'ORF1a:Q3455F': 192,
+    'ORF1a:Q3455G': 192,
+    'ORF1a:Q3455H': 192,
+    'ORF1a:Q3455I': 192,
+    'ORF1a:Q3455K': 192,
+    'ORF1a:Q3455L': 192,
+    'ORF1a:Q3455N': 192,
+    'ORF1a:Q3455P': 192,
+    'ORF1a:Q3455R': 192,
+    'ORF1a:Q3455S': 192,
+    'ORF1a:Q3455T': 192,
+    'ORF1a:Q3455V': 192,
+    'ORF1a:Q3455W': 192,
+    'ORF1a:Q3455Y': 192,
+    'ORF1a:A3456P': 193,
+    'ORF1a:A3457S': 194,
+    'ORF1a:P3515L': 252,
+    'ORF1a:V3560A': 297,
+    'ORF1a:S3564P': 301,
+    'ORF1a:T3567I': 304,
+    'ORF1a:F3568L': 305,
+};
+/* eslint-enable @typescript-eslint/naming-convention */
+
+// Hardcoded mature protein positions for RdRp (from original mature positions)
+/* eslint-disable @typescript-eslint/naming-convention */
+const rdRpMaturePositions: Record<string, number> = {
+    'ORF1b:V157A': 166,
+    'ORF1b:V157L': 166,
+    'ORF1b:N189S': 198,
+    'ORF1b:R276C': 285,
+    'ORF1b:A367V': 376,
+    'ORF1b:A440V': 449,
+    'ORF1b:F471L': 480,
+    'ORF1b:D475Y': 484,
+    'ORF1b:A517V': 526,
+    'ORF1b:V548L': 557,
+    'ORF1b:G662S': 671,
+    'ORF1b:S750A': 759,
+    'ORF1b:V783I': 792,
+    'ORF1b:E787G': 796,
+    'ORF1b:C790F': 799,
+    'ORF1b:C790R': 799,
+    'ORF1b:E793A': 802,
+    'ORF1b:E793D': 802,
+    'ORF1b:M915R': 924,
+};
+/* eslint-enable @typescript-eslint/naming-convention */
+
+// Helper to format mature mutation name
+function formatMatureName(mutation: string, gene: string, position: number): string {
+    const parts = mutation.split(':')[1]; // e.g., 'V157A'
+    const originalBase = parts[0];
+    const newBase = parts[parts.length - 1];
+    return `${mutation} (${gene}:${originalBase}${position}${newBase})`;
+}
+
 export const resistanceMutationAnnotations: MutationAnnotations = [
-    {
-        name: resistanceSetNames.ThreeCLPro,
-        symbol: 'c',
-        description: `SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation ${fetchSnippet}`,
-        aminoAcidMutations: RESISTANCE_MUTATIONS['3CLpro'],
-    },
-    {
-        name: resistanceSetNames.RdRp,
+    // RdRp: individual annotations per mutation with mature notation in name
+    ...RESISTANCE_MUTATIONS.RdRp.map((mutation) => ({
+        name: formatMatureName(mutation, 'RdRp', rdRpMaturePositions[mutation]),
         symbol: 'r',
         description: `SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation ${fetchSnippet}`,
-        aminoAcidMutations: RESISTANCE_MUTATIONS.RdRp,
-    },
-    {
-        name: resistanceSetNames.Spike,
+        aminoAcidMutations: [mutation],
+    })),
+    // 3CLpro: individual annotations per mutation with mature notation in name
+    ...RESISTANCE_MUTATIONS['3CLpro'].map((mutation) => ({
+        name: formatMatureName(mutation, '3CLpro', threeCLProMaturePositions[mutation]),
+        symbol: 'c',
+        description: `SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation ${fetchSnippet}`,
+        aminoAcidMutations: [mutation],
+    })),
+    // Spike: individual annotations per mutation
+    ...RESISTANCE_MUTATIONS.Spike.map((mutation) => ({
+        name: mutation,
         symbol: 's',
         description: `SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation ${fetchSnippet}`,
-        aminoAcidMutations: RESISTANCE_MUTATIONS.Spike,
-    },
+        aminoAcidMutations: [mutation],
+    })),
 ];
