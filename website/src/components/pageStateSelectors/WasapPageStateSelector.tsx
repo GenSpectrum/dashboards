@@ -1,12 +1,13 @@
 import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import React, { Fragment, useId, useState } from 'react';
+import React, { Fragment, useId, useState, type ReactNode } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { DynamicDateFilter } from './DynamicDateFilter';
 import { SelectorHeadline } from './SelectorHeadline';
 import { getCladeLineages } from '../../lapis/getCladeLineages';
 import { Inset } from '../../styles/Inset';
+import { useModalRef, Modal } from '../../styles/containers/Modal';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { Loading } from '../../util/Loading';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
@@ -277,6 +278,30 @@ function ResistanceMutationsFilter({
     );
 }
 
+function KnownVariantsExclusionInfo() {
+    return (
+        <div className='relative p-8'>
+            <form method='dialog'>
+                <button className='btn btn-sm btn-circle btn-ghost absolute top-2 right-2'>✕</button>
+            </form>
+            <h1 className='mb-2 text-xl font-semibold'>How it works</h1>
+            <p className='text-gray-700'>
+                Mutations that are characteristic of selected lineages are excluded based on clinical sequences on{' '}
+                <a className='link' href='https://cov-spectrum.org/'>
+                    CovSpectrum
+                </a>
+                .
+            </p>
+            <p className='text-gray-700'>
+                For each lineage, mutations appearing in sequences assigned to this lineage are excluded if two criteria
+                are met. First, the mutation appears in at least 9 sequences; second, it appears in at least 80 % of
+                sequences assigned to that lineage. This is an empirical definition of characteristic mutations. For
+                each lineage, mutations appearing at least 9 times and in ≥80% of its samples are excluded.
+            </p>
+        </div>
+    );
+}
+
 function UntrackedFilter({
     pageState,
     setPageState,
@@ -295,7 +320,7 @@ function UntrackedFilter({
                 value={pageState.sequenceType}
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
-            <LabeledField label='Known variants to exclude'>
+            <LabeledField label='Known variants to exclude' info={<KnownVariantsExclusionInfo />}>
                 <select
                     className='select select-bordered'
                     value={pageState.excludeSet}
@@ -450,14 +475,28 @@ function RadioSelect<T extends string>({
     );
 }
 
-function LabeledField({ label, children }: { label: string; children: React.ReactNode }) {
+function LabeledField({ label, children, info }: { label: string; children: React.ReactNode; info?: ReactNode }) {
+    const modalRef = useModalRef();
+
     return (
-        <label className='form-control'>
-            <div className='label'>
-                <span className='label-text'>{label}</span>
+        <div className='form-control'>
+            <div className={`flex flex-row items-baseline justify-between gap-2 ${info !== undefined ? 'mb-2' : ''}`}>
+                <label className='label'>
+                    <span className='label-text'>{label}</span>
+                </label>
+                {info !== undefined && (
+                    <>
+                        <button type='button' className='btn btn-xs' onClick={() => modalRef.current?.showModal()}>
+                            ?
+                        </button>
+                        <Modal modalRef={modalRef} size='large'>
+                            {info}
+                        </Modal>
+                    </>
+                )}
             </div>
             {children}
-        </label>
+        </div>
     );
 }
 
