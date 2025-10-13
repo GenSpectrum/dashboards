@@ -286,7 +286,17 @@ function KnownVariantsExclusionInfo() {
             </form>
             <h1 className='mb-2 text-xl font-semibold'>How it works</h1>
             <p className='text-gray-700'>
-                For each lineage, mutations appearing at least 9 times and in ≥80% of its samples are excluded.
+                Mutations that are characteristic of selected lineages are excluded based on clinical sequences on{' '}
+                <a className='link' href='https://cov-spectrum.org/'>
+                    CovSpectrum
+                </a>
+                .
+            </p>
+            <p className='text-gray-700'>
+                For each lineage, mutations appearing in sequences assigned to this lineage are excluded if two criteria
+                are met. First, the mutation appears in at least 9 sequences; second, it appears in at least 80 % of
+                sequences assigned to that lineage. This is an empirical definition of characteristic mutations. For
+                each lineage, mutations appearing at least 9 times and in ≥80% of its samples are excluded.
             </p>
         </div>
     );
