@@ -33,6 +33,7 @@ export type WasapVariantFilter = {
     variant?: string;
     minProportion: number;
     minCount: number;
+    minJaccard: number;
 };
 
 export type WasapResistanceFilter = {
@@ -102,6 +103,10 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     },
     {
         type: 'text',
+        lapisField: 'minJaccard',
+    },
+    {
+        type: 'text',
         lapisField: 'resistanceSet',
     },
     {
@@ -147,6 +152,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     variant: texts.variant ?? 'JN.8',
                     minProportion: Number(texts.minProportion ?? '0.05'),
                     minCount: Number(texts.minCount ?? '5'),
+                    minJaccard: Number(texts.minJaccard ?? '0.75'),
                 };
                 break;
             case 'resistance':
@@ -194,6 +200,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 setSearchFromString(search, 'variant', analysis.variant);
                 setSearchFromString(search, 'minProportion', String(analysis.minProportion));
                 setSearchFromString(search, 'minCount', String(analysis.minCount));
+                setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
                 break;
             case 'resistance':
                 setSearchFromString(search, 'resistanceSet', analysis.resistanceSet);
@@ -225,6 +232,7 @@ export const defaultVariantFilter: WasapVariantFilter = {
     sequenceType: 'nucleotide',
     minProportion: 0.05,
     minCount: 5,
+    minJaccard: 0.75,
 };
 
 export const defaultResistanceFilter: WasapResistanceFilter = {

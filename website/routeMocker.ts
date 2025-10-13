@@ -88,6 +88,10 @@ export class LapisRouteMocker {
         );
     }
 
+    mockPostNucleotideMutationsMulti(cases: MockCase[]) {
+        this.workerOrServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/nucleotideMutations`, resolver(cases)));
+    }
+
     mockPostAminoAcidMutations(
         body: Record<string, unknown>,
         response: { data: { mutation: string; count: number }[] },
@@ -96,6 +100,10 @@ export class LapisRouteMocker {
         this.workerOrServer.use(
             http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver([{ statusCode, body, response }])),
         );
+    }
+
+    mockPostAminoAcidMutationsMulti(cases: MockCase[]) {
+        this.workerOrServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver(cases)));
     }
 }
 
