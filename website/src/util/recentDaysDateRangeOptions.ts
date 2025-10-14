@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
  * Generates date range options for "most recent X days" where X is 7, 14, 30, 60, or 90.
  * Counts backwards from the given end date.
  */
-export function recentDaysDateRangeOptions(_startDate: string, endDate: string): DateRangeOption[] {
+export function recentDaysDateRangeOptions({ endDate }: { endDate: string }): DateRangeOption[] {
     const end = dayjs(endDate);
     const dayOptions = [7, 14, 30, 60, 90];
 

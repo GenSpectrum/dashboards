@@ -5,7 +5,7 @@ import { recentDaysDateRangeOptions } from './recentDaysDateRangeOptions';
 describe('recentDaysDateRangeOptions', () => {
     it('should generate options for 7, 14, 30, 60, and 90 days', () => {
         const endDate = '2025-03-08';
-        const options = recentDaysDateRangeOptions('2025-01-01', endDate);
+        const options = recentDaysDateRangeOptions({ endDate });
 
         expect(options).toHaveLength(5);
         expect(options[0].label).toBe('Most recent 7 days');
@@ -17,7 +17,7 @@ describe('recentDaysDateRangeOptions', () => {
 
     it('should calculate correct date ranges counting backwards from end date', () => {
         const endDate = '2025-03-08';
-        const options = recentDaysDateRangeOptions('2025-01-01', endDate);
+        const options = recentDaysDateRangeOptions({ endDate });
 
         // 7 days: 2025-03-02 to 2025-03-08
         expect(options[0].dateFrom).toBe('2025-03-02');
@@ -42,7 +42,7 @@ describe('recentDaysDateRangeOptions', () => {
 
     it('should work with different end dates', () => {
         const endDate = '2025-12-31';
-        const options = recentDaysDateRangeOptions('2025-01-01', endDate);
+        const options = recentDaysDateRangeOptions({ endDate });
 
         expect(options[0].dateTo).toBe('2025-12-31');
         expect(options[0].dateFrom).toBe('2025-12-25'); // 7 days before Dec 31
@@ -53,7 +53,7 @@ describe('recentDaysDateRangeOptions', () => {
 
     it('should handle leap years correctly', () => {
         const endDate = '2024-03-01'; // 2024 is a leap year
-        const options = recentDaysDateRangeOptions('2024-01-01', endDate);
+        const options = recentDaysDateRangeOptions({ endDate });
 
         // 30 days back from March 1, 2024 should be February 1, 2024 (accounting for Feb 29)
         expect(options[2].dateFrom).toBe('2024-02-01');
@@ -62,7 +62,7 @@ describe('recentDaysDateRangeOptions', () => {
 
     it('should work across year boundaries', () => {
         const endDate = '2025-01-15';
-        const options = recentDaysDateRangeOptions('2024-01-01', endDate);
+        const options = recentDaysDateRangeOptions({ endDate });
 
         // 7 days: 2025-01-09 to 2025-01-15
         expect(options[0].dateFrom).toBe('2025-01-09');

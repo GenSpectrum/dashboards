@@ -22,7 +22,7 @@ export function DynamicDateFilter({
     label: string;
     lapis: string;
     dateFieldName: string;
-    generateOptions: (startDate: string, endDate: string) => DateRangeOption[];
+    generateOptions: ({ endDate }: { endDate: string }) => DateRangeOption[];
     value: DateRangeOption | undefined;
     onChange: (newValue: DateRangeOption | undefined) => void;
 }) {
@@ -40,13 +40,13 @@ export function DynamicDateFilter({
         if (!dateRange) {
             return [];
         }
-        return generateOptions(dateRange.start, dateRange.end);
+        return generateOptions({ endDate: dateRange.end });
     }, [dateRange, generateOptions]);
 
     // When the value has a "Custom" label, try to match it back to one of the generated options
     // by comparing dateFrom and dateTo. If there's a match, use that option's label instead of "Custom".
     const normalizedValue = useMemo(() => {
-        if (!value || value.label !== CustomDateRangeLabel) {
+        if (value === undefined || value.label !== CustomDateRangeLabel) {
             return value;
         }
 
