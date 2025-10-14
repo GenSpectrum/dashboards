@@ -1,9 +1,9 @@
 import { type DateRangeOption } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { getDateRange } from '../../lapis/getDateRange';
+import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { Loading } from '../../util/Loading';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter';
 
@@ -15,14 +15,14 @@ export function DynamicDateFilter({
     label,
     lapis,
     dateFieldName,
-    baselineOptions,
+    generateOptions,
     value,
     onChange,
 }: {
     label: string;
     lapis: string;
     dateFieldName: string;
-    baselineOptions: DateRangeOption[];
+    generateOptions: ({ endDate }: { endDate: string }) => DateRangeOption[];
     value: DateRangeOption | undefined;
     onChange: (newValue: DateRangeOption | undefined) => void;
 }) {
@@ -35,6 +35,27 @@ export function DynamicDateFilter({
         queryKey: ['dateRange', lapis, dateFieldName],
         queryFn: () => getDateRange(lapis, dateFieldName),
     });
+
+    const generatedOptions = useMemo(() => {
+        if (!dateRange) {
+            return [];
+        }
+        return generateOptions({ endDate: dateRange.end });
+    }, [dateRange, generateOptions]);
+
+    // When the value has a "Custom" label, try to match it back to one of the generated options
+    // by comparing dateFrom and dateTo. If there's a match, use that option's label instead of "Custom".
+    const normalizedValue = useMemo(() => {
+        if (value === undefined || value.label !== CustomDateRangeLabel) {
+            return value;
+        }
+
+        const matchingOption = generatedOptions.find(
+            (option) => option.dateFrom === value.dateFrom && option.dateTo === value.dateTo,
+        );
+
+        return matchingOption ?? value;
+    }, [value, generatedOptions]);
 
     return (
         <label className='form-control'>
@@ -53,25 +74,10 @@ export function DynamicDateFilter({
                 <GsDateRangeFilter
                     lapisDateField={dateFieldName}
                     onDateRangeChange={(dateRange: DateRangeOption | null) => onChange(dateRange ?? undefined)}
-                    value={value}
-                    dateRangeOptions={filteredOptions(baselineOptions, dateRange.start, dateRange.end)}
+                    value={normalizedValue}
+                    dateRangeOptions={generatedOptions}
                 />
             )}
         </label>
     );
-}
-
-/**
- * Returns only the options from the given list of baseline options, that have at least
- * partial overlap with the given date range (start, end).
- */
-function filteredOptions(baselineOptions: DateRangeOption[], start: string, end: string) {
-    const startDate = dayjs(start);
-    const endDate = dayjs(end);
-
-    return baselineOptions.filter(({ dateFrom, dateTo }) => {
-        const from = dayjs(dateFrom);
-        const to = dayjs(dateTo);
-        return !((dateTo !== undefined && to.isBefore(startDate)) || (dateFrom !== undefined && from.isAfter(endDate)));
-    });
 }
