@@ -25,24 +25,27 @@ class DummyPageStateHandler implements PageStateHandler<DummyPageState> {
 describe('ApplyFilterButton', () => {
     const handler = new DummyPageStateHandler();
 
-    test('should render enabled button for short URL', () => {
+    test('should render enabled link for short URL', () => {
         const shortState: DummyPageState = { data: 'short' };
 
         const { container } = render(<ApplyFilterButton pageStateHandler={handler} newPageState={shortState} />);
 
-        const button = container.querySelector('button');
-        expect(button).not.toBeDisabled();
+        const link = container.querySelector('a');
+        expect(link).toBeInTheDocument();
+        expect(link).toHaveAttribute('href', '/test?data=short');
+        expect(container.querySelector('span.btn-disabled')).not.toBeInTheDocument();
         expect(container.textContent).not.toMatch(/URL is too long/i);
     });
 
-    test('should render disabled button and error message for long URL', () => {
+    test('should render disabled span and error message for long URL', () => {
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
 
         const { container } = render(<ApplyFilterButton pageStateHandler={handler} newPageState={longState} />);
 
-        const button = container.querySelector('button');
-        expect(button).toBeDisabled();
+        const disabledSpan = container.querySelector('span.btn-disabled');
+        expect(disabledSpan).toBeInTheDocument();
+        expect(container.querySelector('a')).not.toBeInTheDocument();
         expect(container.textContent).toMatch(/URL is too long/i);
         expect(container.textContent).toMatch(/2000/);
     });
@@ -54,14 +57,15 @@ describe('ApplyFilterButton', () => {
             <ApplyFilterButton pageStateHandler={handler} newPageState={shortState} />,
         );
 
-        const button = container.querySelector('button');
-        expect(button).not.toBeDisabled();
+        expect(container.querySelector('a')).toBeInTheDocument();
+        expect(container.querySelector('span.btn-disabled')).not.toBeInTheDocument();
 
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
         rerender(<ApplyFilterButton pageStateHandler={handler} newPageState={longState} />);
 
-        expect(button).toBeDisabled();
+        expect(container.querySelector('span.btn-disabled')).toBeInTheDocument();
+        expect(container.querySelector('a')).not.toBeInTheDocument();
         expect(container.textContent).toMatch(/URL is too long/i);
     });
 
@@ -73,13 +77,14 @@ describe('ApplyFilterButton', () => {
             <ApplyFilterButton pageStateHandler={handler} newPageState={longState} />,
         );
 
-        const button = container.querySelector('button');
-        expect(button).toBeDisabled();
+        expect(container.querySelector('span.btn-disabled')).toBeInTheDocument();
+        expect(container.querySelector('a')).not.toBeInTheDocument();
 
         const shortState: DummyPageState = { data: 'short' };
         rerender(<ApplyFilterButton pageStateHandler={handler} newPageState={shortState} />);
 
-        expect(button).not.toBeDisabled();
+        expect(container.querySelector('a')).toBeInTheDocument();
+        expect(container.querySelector('span.btn-disabled')).not.toBeInTheDocument();
         expect(container.textContent).not.toMatch(/URL is too long/i);
     });
 });

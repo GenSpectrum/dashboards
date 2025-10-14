@@ -17,18 +17,17 @@ export function ApplyFilterButton<PageState extends object>({
     const fullUrl = `${window.location.origin}${url}`;
     const urlTooLong = fullUrl.length > MAX_URL_LENGTH;
 
-    const handleClick = () => {
-        if (urlTooLong) {
-            return;
-        }
-        window.location.href = url;
-    };
-
     return (
         <>
-            <button className={`btn btn-primary ${className}`} onClick={handleClick} disabled={urlTooLong}>
-                Apply filters
-            </button>
+            {urlTooLong ? (
+                <span role='button' className={`btn btn-primary btn-disabled ${className}`}>
+                    Apply filters
+                </span>
+            ) : (
+                <a role='button' href={url} className={`btn btn-primary ${className}`}>
+                    Apply filters
+                </a>
+            )}
             {urlTooLong && (
                 <div className='alert alert-error mt-2'>
                     <span>
