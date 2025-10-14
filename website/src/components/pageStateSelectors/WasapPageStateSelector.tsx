@@ -262,7 +262,7 @@ function VariantExplorerFilter({
                 info={<MinCountInfo />}
             />
             <NumericInput
-                label='Min. jaccard index'
+                label='Min. Jaccard index'
                 info={<JaccardIndexInfo />}
                 value={pageState.minJaccard}
                 min={0}
