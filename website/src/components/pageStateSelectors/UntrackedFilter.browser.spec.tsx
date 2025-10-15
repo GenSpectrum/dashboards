@@ -1,10 +1,9 @@
 import { type UseQueryResult } from '@tanstack/react-query';
-import { cleanup, render, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom/vitest';
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, vi } from 'vitest';
+import { render } from 'vitest-browser-react';
 
 import { UntrackedFilter } from './WasapPageStateSelector';
+import { it } from '../../../test-extend';
 import type { WasapUntrackedFilter } from '../../views/pageStateHandlers/WasapPageStateHandler';
 
 describe('UntrackedFilter - custom variants textarea', () => {
@@ -21,10 +20,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         excludeVariants: [],
     };
 
-    afterEach(() => cleanup());
-
-    test('allows typing spaces without them disappearing', async () => {
-        const user = userEvent.setup();
+    it('allows typing spaces without them disappearing', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
@@ -37,14 +33,12 @@ describe('UntrackedFilter - custom variants textarea', () => {
 
         const textarea = getByRole('textbox');
 
-        await user.type(textarea, 'JN.1 ');
+        await textarea.fill('JN.1 ');
 
-        // The textarea should still show the trailing space
-        expect(textarea).toHaveValue('JN.1 ');
+        await expect.element(textarea).toHaveValue('JN.1 ');
     });
 
-    test('parses space-separated variants', async () => {
-        const user = userEvent.setup();
+    it('parses space-separated variants', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
@@ -57,7 +51,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
 
         const textarea = getByRole('textbox');
 
-        await user.type(textarea, 'JN.1 KP.2');
+        await textarea.fill('JN.1 KP.2');
 
         // Should have been called with parsed variants
         expect(mockSetPageState).toHaveBeenCalledWith(
@@ -67,8 +61,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         );
     });
 
-    test('parses comma-separated variants', async () => {
-        const user = userEvent.setup();
+    it('parses comma-separated variants', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
@@ -81,7 +74,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
 
         const textarea = getByRole('textbox');
 
-        await user.type(textarea, 'JN.1, KP.2, XFG');
+        await textarea.fill('JN.1, KP.2, XFG');
 
         expect(mockSetPageState).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -90,8 +83,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         );
     });
 
-    test('handles mixed separators (comma and space)', async () => {
-        const user = userEvent.setup();
+    it('handles mixed separators (comma and space)', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
@@ -104,7 +96,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
 
         const textarea = getByRole('textbox');
 
-        await user.type(textarea, 'JN.1, KP.2 XFG');
+        await textarea.fill('JN.1, KP.2 XFG');
 
         expect(mockSetPageState).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -113,8 +105,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         );
     });
 
-    test('filters out empty strings from multiple commas', async () => {
-        const user = userEvent.setup();
+    it('filters out empty strings from multiple commas', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
@@ -127,7 +118,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
 
         const textarea = getByRole('textbox');
 
-        await user.type(textarea, 'JN.1,, KP.2');
+        await textarea.fill('JN.1,, KP.2');
 
         expect(mockSetPageState).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -136,7 +127,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         );
     });
 
-    test('syncs textarea when page state changes externally', async () => {
+    it('syncs textarea when page state changes externally', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole, rerender } = render(
@@ -150,7 +141,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         const textarea = getByRole('textbox');
 
         // Initially empty
-        expect(textarea).toHaveValue('');
+        await expect.element(textarea).toHaveValue('');
 
         // Update page state externally
         const updatedPageState: WasapUntrackedFilter = {
@@ -167,13 +158,10 @@ describe('UntrackedFilter - custom variants textarea', () => {
         );
 
         // Textarea should sync
-        await waitFor(() => {
-            expect(textarea).toHaveValue('BA.1 BA.2');
-        });
+        await expect.element(textarea).toHaveValue('BA.1 BA.2');
     });
 
-    test('does not sync textarea when typing (prevents losing spaces)', async () => {
-        const user = userEvent.setup();
+    it('does not sync textarea when typing (prevents losing spaces)', async () => {
         let currentState = defaultPageState;
 
         const setPageState = vi.fn((newState) => {
@@ -190,8 +178,8 @@ describe('UntrackedFilter - custom variants textarea', () => {
 
         const textarea = getByRole('textbox');
 
-        // Type "JN.1 " (with trailing space)
-        await user.type(textarea, 'JN.1 ');
+        // Fill "JN.1 " (with trailing space)
+        await textarea.fill('JN.1 ');
 
         // Rerender with the updated state (simulating React's state update)
         rerender(
@@ -203,6 +191,6 @@ describe('UntrackedFilter - custom variants textarea', () => {
         );
 
         // The textarea should still have the trailing space
-        expect(textarea).toHaveValue('JN.1 ');
+        await expect.element(textarea).toHaveValue('JN.1 ');
     });
 });

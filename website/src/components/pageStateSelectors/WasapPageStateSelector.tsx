@@ -331,7 +331,10 @@ export function UntrackedFilter({
         if (!arraysEqual) {
             setCustomVariantsText(currentVariants.join(' '));
         }
-    }, [pageState.excludeVariants, customVariantsText]);
+        // we don't include the 'customVariantsText' in the dependencies,
+        // because we only want to run when the variants change, not on every keystroke.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pageState.excludeVariants]);
 
     return (
         <>
