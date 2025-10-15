@@ -331,8 +331,7 @@ export function UntrackedFilter({
         if (!arraysEqual) {
             setCustomVariantsText(currentVariants.join(' '));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageState.excludeVariants]);
+    }, [pageState.excludeVariants, customVariantsText]);
 
     return (
         <>
