@@ -4,7 +4,7 @@ import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHa
 export function ApplyFilterButton<PageState extends object>({
     pageStateHandler,
     newPageState,
-    className,
+    className = '',
 }: WithClassName<{
     pageStateHandler: PageStateHandler<PageState>;
     newPageState: PageState;
