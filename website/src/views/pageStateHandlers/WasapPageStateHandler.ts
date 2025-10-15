@@ -56,6 +56,32 @@ export type WasapFilter = {
     analysis: WasapAnalysisFilter;
 };
 
+export const defaultManualFilter: WasapManualFilter = {
+    mode: 'manual',
+    sequenceType: 'nucleotide',
+};
+
+export const defaultVariantFilter: WasapVariantFilter = {
+    mode: 'variant',
+    sequenceType: 'nucleotide',
+    variant: 'XFG*',
+    minProportion: 0.8,
+    minCount: 15,
+    minJaccard: 0.75,
+};
+
+export const defaultResistanceFilter: WasapResistanceFilter = {
+    mode: 'resistance',
+    sequenceType: 'amino acid',
+    resistanceSet: resistanceSetNames.ThreeCLPro,
+};
+
+export const defaultUntrackedFilter: WasapUntrackedFilter = {
+    mode: 'untracked',
+    sequenceType: 'nucleotide',
+    excludeSet: 'nextstrain',
+};
+
 const wasapFilterConfig: BaselineFilterConfig[] = [
     {
         type: 'text',
@@ -147,10 +173,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 analysis = {
                     mode,
                     sequenceType,
-                    variant: texts.variant ?? 'JN.8',
-                    minProportion: Number(texts.minProportion ?? '0.05'),
-                    minCount: Number(texts.minCount ?? '5'),
-                    minJaccard: Number(texts.minJaccard ?? '0.75'),
+                    variant: texts.variant ?? defaultVariantFilter.variant,
+                    minProportion: Number(texts.minProportion ?? defaultVariantFilter.minProportion),
+                    minCount: Number(texts.minCount ?? defaultVariantFilter.minCount),
+                    minJaccard: Number(texts.minJaccard ?? defaultVariantFilter.minJaccard),
                 };
                 break;
             case 'resistance':
@@ -158,14 +184,14 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     mode,
                     sequenceType: 'amino acid',
                     resistanceSet:
-                        (texts.resistanceSet as ResistanceSetName | undefined) ?? resistanceSetNames.ThreeCLPro,
+                        (texts.resistanceSet as ResistanceSetName | undefined) ?? defaultResistanceFilter.resistanceSet,
                 };
                 break;
             case 'untracked':
                 analysis = {
                     mode,
                     sequenceType,
-                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? 'nextstrain',
+                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? defaultUntrackedFilter.excludeSet,
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
@@ -221,28 +247,3 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         return wastewaterConfig.pages.covid.path;
     }
 }
-
-export const defaultManualFilter: WasapManualFilter = {
-    mode: 'manual',
-    sequenceType: 'nucleotide',
-};
-
-export const defaultVariantFilter: WasapVariantFilter = {
-    mode: 'variant',
-    sequenceType: 'nucleotide',
-    minProportion: 0.05,
-    minCount: 5,
-    minJaccard: 0.75,
-};
-
-export const defaultResistanceFilter: WasapResistanceFilter = {
-    mode: 'resistance',
-    sequenceType: 'amino acid',
-    resistanceSet: resistanceSetNames.ThreeCLPro,
-};
-
-export const defaultUntrackedFilter: WasapUntrackedFilter = {
-    mode: 'untracked',
-    sequenceType: 'nucleotide',
-    excludeSet: 'nextstrain',
-};
