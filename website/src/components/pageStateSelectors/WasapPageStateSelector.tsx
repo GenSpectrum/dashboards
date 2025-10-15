@@ -147,8 +147,8 @@ export function WasapPageStateSelector({
                 }}
             >
                 <option value='manual'>Manual</option>
-                <option value='variant'>Variant Explorer</option>
                 <option value='resistance'>Resistance Mutations</option>
+                <option value='variant'>Variant Explorer</option>
                 <option value='untracked'>Untracked Mutations</option>
             </select>
             <Inset className='p-2'>
