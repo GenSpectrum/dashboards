@@ -178,7 +178,7 @@ describe('backendService', () => {
         backendRouteMocker.mockGetSubscriptionsBackendError(errorResponse, 400);
 
         await expect(backendService.getSubscriptions({ userId: '123' })).rejects.to.deep.equal(
-            new UnknownBackendError('', 400, '/subscriptions'),
+            new UnknownBackendError('Bad Request', 400, '/subscriptions'),
         );
     });
 });
