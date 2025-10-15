@@ -76,17 +76,21 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                     <Loading />
                 ) : (
                     <div className='h-full space-y-4 pr-4'>
-                        <GsMutationsOverTime
-                            lapisFilter={lapisFilter}
-                            granularity={base.granularity as 'day' | 'week'}
-                            lapisDateField={wastewaterConfig.wasap.samplingDateField}
-                            sequenceType={analysis.sequenceType}
-                            displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
-                            pageSizes={[20, 50, 100, 250]}
-                            useNewEndpoint={true}
-                            initialMeanProportionInterval={initialMeanProportionInterval}
-                            hideGaps={base.excludeEmpty ? true : undefined}
-                        />
+                        {selectedMutations.length === 0 ? (
+                            <NoDataHelperText analysisFilter={analysis} />
+                        ) : (
+                            <GsMutationsOverTime
+                                lapisFilter={lapisFilter}
+                                granularity={base.granularity as 'day' | 'week'}
+                                lapisDateField={wastewaterConfig.wasap.samplingDateField}
+                                sequenceType={analysis.sequenceType}
+                                displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
+                                pageSizes={[20, 50, 100, 250]}
+                                useNewEndpoint={true}
+                                initialMeanProportionInterval={initialMeanProportionInterval}
+                                hideGaps={base.excludeEmpty ? true : undefined}
+                            />
+                        )}
                         <WasapStats />
                     </div>
                 )}
@@ -96,6 +100,27 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
 };
 
 export const WasapPage = withQueryProvider(WasapPageInner);
+
+const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFilter }) => {
+    return (
+        <div className='rounded-md border-2 border-gray-100 p-4'>
+            <h1 className='text-lg font-semibold'>No mutations selected</h1>
+            {analysisFilter.mode === 'variant' && (
+                <p className='text-sm'>
+                    No mutations could be found matching your current filter settings. Try lowering filter thresholds or
+                    looking at a different variant.
+                </p>
+            )}
+            {analysisFilter.mode === 'untracked' &&
+                analysisFilter.excludeSet === 'custom' &&
+                (analysisFilter.excludeVariants === undefined || analysisFilter.excludeVariants.length === 0) && (
+                    <p className='text-sm'>
+                        Your set of variants to exclude is empty, please provide at least one variant to exclude.
+                    </p>
+                )}
+        </div>
+    );
+};
 
 const TotalCount = () => {
     const { data, isPending, isError, error } = useQuery({
