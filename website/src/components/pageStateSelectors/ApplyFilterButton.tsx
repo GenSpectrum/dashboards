@@ -17,25 +17,21 @@ export function ApplyFilterButton<PageState extends object>({
     const fullUrl = `${window.location.origin}${url}`;
     const urlTooLong = fullUrl.length > MAX_URL_LENGTH;
 
-    return (
+    return urlTooLong ? (
         <>
-            {urlTooLong ? (
-                <span role='button' className={`btn btn-primary btn-disabled ${className}`}>
-                    Apply filters
+            <span role='button' className={`btn btn-primary btn-disabled ${className}`}>
+                Apply filters
+            </span>
+            <div className='alert alert-error mt-2'>
+                <span>
+                    The URL is too long ({fullUrl.length} characters, maximum {MAX_URL_LENGTH}). Please reduce the
+                    amount of data in the filters.
                 </span>
-            ) : (
-                <a role='button' href={url} className={`btn btn-primary ${className}`}>
-                    Apply filters
-                </a>
-            )}
-            {urlTooLong && (
-                <div className='alert alert-error mt-2'>
-                    <span>
-                        The URL is too long ({fullUrl.length} characters, maximum {MAX_URL_LENGTH}). Please reduce the
-                        amount of data in the filters.
-                    </span>
-                </div>
-            )}
+            </div>
         </>
+    ) : (
+        <a role='button' href={url} className={`btn btn-primary ${className}`}>
+            Apply filters
+        </a>
     );
 }
