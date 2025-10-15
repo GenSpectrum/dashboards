@@ -1,6 +1,6 @@
 import type { MeanProportionInterval } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { type FC } from 'react';
 
 import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';

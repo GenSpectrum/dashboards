@@ -1,6 +1,6 @@
 import { type DateRangeOption } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { getDateRange } from '../../lapis/getDateRange';
 import { CustomDateRangeLabel } from '../../types/DateWindow';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 function InfoBlock({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className='relative p-8'>
