@@ -1,4 +1,4 @@
-import React, { type ReactNode, type PropsWithChildren } from 'react';
+import { type ReactNode, type PropsWithChildren } from 'react';
 
 import { useModalRef, Modal } from '../../styles/containers/Modal';
 

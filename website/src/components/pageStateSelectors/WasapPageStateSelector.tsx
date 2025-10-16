@@ -1,14 +1,23 @@
 import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import React, { Fragment, useId, useState } from 'react';
+import { Fragment, useEffect, useId, useState, type ReactNode } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { DynamicDateFilter } from './DynamicDateFilter';
 import { SelectorHeadline } from './SelectorHeadline';
+import {
+    ExplorationModeInfo,
+    JaccardIndexInfo,
+    KnownVariantsExclusionInfo,
+    MinCountInfo,
+    MinProportionInfo,
+} from './WasapInfoBlocks';
 import { getCladeLineages } from '../../lapis/getCladeLineages';
 import { Inset } from '../../styles/Inset';
+import { useModalRef, Modal } from '../../styles/containers/Modal';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { Loading } from '../../util/Loading';
+import { recentDaysDateRangeOptions } from '../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
 import {
     type ExcludeSetName,
@@ -24,7 +33,6 @@ import {
     defaultUntrackedFilter,
     type WasapBaseFilter,
     type WasapAnalysisFilter,
-    wasapDateRangeOptions,
 } from '../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../genspectrum/GsLineageFilter';
 import { GsMutationFilter } from '../genspectrum/GsMutationFilter';
@@ -102,7 +110,7 @@ export function WasapPageStateSelector({
                     label='Sampling date'
                     lapis={wastewaterConfig.wasap.lapisBaseUrl}
                     dateFieldName={wastewaterConfig.wasap.samplingDateField}
-                    baselineOptions={wasapDateRangeOptions()}
+                    generateOptions={recentDaysDateRangeOptions}
                     value={baseFilterState.samplingDate}
                     onChange={(newDateRange?) => setBaseFilterState({ ...baseFilterState, samplingDate: newDateRange })}
                 />
@@ -139,8 +147,8 @@ export function WasapPageStateSelector({
                 }}
             >
                 <option value='manual'>Manual</option>
-                <option value='variant'>Variant Explorer</option>
                 <option value='resistance'>Resistance Mutations</option>
+                <option value='variant'>Variant Explorer</option>
                 <option value='untracked'>Untracked Mutations</option>
             </select>
             <Inset className='p-2'>
@@ -242,6 +250,7 @@ function VariantExplorerFilter({
                 max={1}
                 step={0.01}
                 onChange={(v) => setPageState({ ...pageState, minProportion: v })}
+                info={<MinProportionInfo />}
             />
             <NumericInput
                 label='Min. count'
@@ -250,6 +259,16 @@ function VariantExplorerFilter({
                 max={250}
                 step={1}
                 onChange={(v) => setPageState({ ...pageState, minCount: Math.round(v) })}
+                info={<MinCountInfo />}
+            />
+            <NumericInput
+                label='Min. Jaccard index'
+                info={<JaccardIndexInfo />}
+                value={pageState.minJaccard}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
             />
         </>
     );
@@ -277,7 +296,14 @@ function ResistanceMutationsFilter({
     );
 }
 
-function UntrackedFilter({
+function parseVariantsFromText(text: string): string[] {
+    return text
+        .trim()
+        .split(/[\s,]+/)
+        .filter((v) => v.length > 0);
+}
+
+export function UntrackedFilter({
     pageState,
     setPageState,
     cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
@@ -289,13 +315,34 @@ function UntrackedFilter({
     const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
     defaultLineages.sort();
 
+    // Local state for the textarea to preserve formatting (spaces, etc.)
+    const [customVariantsText, setCustomVariantsText] = useState(pageState.excludeVariants?.join(' ') ?? '');
+
+    // Sync local state when excludeVariants changes externally (not from our own typing)
+    useEffect(() => {
+        const variantsFromText = parseVariantsFromText(customVariantsText);
+        const currentVariants = pageState.excludeVariants ?? [];
+
+        // Only update text if the arrays are different (external change)
+        const arraysEqual =
+            variantsFromText.length === currentVariants.length &&
+            variantsFromText.every((v, i) => v === currentVariants[i]);
+
+        if (!arraysEqual) {
+            setCustomVariantsText(currentVariants.join(' '));
+        }
+        // we don't include the 'customVariantsText' in the dependencies,
+        // because we only want to run when the variants change, not on every keystroke.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pageState.excludeVariants]);
+
     return (
         <>
             <SequenceTypeSelector
                 value={pageState.sequenceType}
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
-            <LabeledField label='Known variants to exclude'>
+            <LabeledField label='Known variants to exclude' info={<KnownVariantsExclusionInfo />}>
                 <select
                     className='select select-bordered'
                     value={pageState.excludeSet}
@@ -316,6 +363,8 @@ function UntrackedFilter({
                         <button
                             className='cursor-pointer underline'
                             onClick={() => {
+                                const variantsText = defaultLineages.join(' ');
+                                setCustomVariantsText(variantsText);
                                 setPageState({
                                     ...pageState,
                                     excludeSet: 'custom',
@@ -335,55 +384,23 @@ function UntrackedFilter({
                             className='input input-bordered h-24 resize-y overflow-auto p-1 whitespace-pre-wrap'
                             wrap='soft'
                             placeholder='JN.1* KP.2* XFG* ...'
-                            value={pageState.excludeVariants?.join(' ')}
-                            onChange={(e) =>
+                            value={customVariantsText}
+                            onChange={(e) => {
+                                const newText = e.target.value;
+                                setCustomVariantsText(newText);
+
+                                const newVariants = parseVariantsFromText(newText);
+
                                 setPageState({
                                     ...pageState,
-                                    excludeVariants: e.target.value.trim().split(/[\s,]+/),
-                                })
-                            }
+                                    excludeVariants: newVariants,
+                                });
+                            }}
                         />
                     </LabeledField>
                 </>
             )}
         </>
-    );
-}
-
-function ExplorationModeInfo() {
-    return (
-        <div className='relative p-8'>
-            <form method='dialog'>
-                <button className='btn btn-sm btn-circle btn-ghost absolute top-2 right-2'>✕</button>
-            </form>
-            <h1 className='mb-2 text-xl font-semibold'>Exploration modes</h1>
-            <p className='mb-4 text-gray-700'>
-                These exploration views allow visualising the mutations found in the recent past by:
-            </p>
-            <ul className='mb-4 list-inside list-disc space-y-2 text-gray-700'>
-                <li>
-                    <span className='font-semibold text-gray-900'>Resistance Mutations:</span> lookup of mutations known
-                    to confer resistance to antiviral drugs
-                </li>
-                <li>
-                    <span className='font-semibold text-gray-900'>Untracked Mutations:</span> novel mutations not yet
-                    attributed to major variants
-                </li>
-                <li>
-                    <span className='font-semibold text-gray-900'>Manual:</span> explore freely, using the filters on
-                    the plot, i.e., search by minimal proportion
-                </li>
-                <li>
-                    <span className='font-semibold text-gray-900'>Variant Explorer:</span> track variant-specific
-                    mutations over time
-                </li>
-            </ul>
-
-            <p className='text-gray-700'>
-                The visualized data consists of aligned sequencing reads from virus-specific next-generation sequencing,
-                displayed in both nucleotide and amino acid formats.
-            </p>
-        </div>
     );
 }
 
@@ -450,19 +467,34 @@ function RadioSelect<T extends string>({
     );
 }
 
-function LabeledField({ label, children }: { label: string; children: React.ReactNode }) {
+function LabeledField({ label, children, info }: { label: string; children: React.ReactNode; info?: ReactNode }) {
+    const modalRef = useModalRef();
+
     return (
-        <label className='form-control'>
-            <div className='label'>
-                <span className='label-text'>{label}</span>
+        <div className='form-control'>
+            <div className={`flex flex-row items-baseline justify-between gap-2 ${info !== undefined ? 'mb-2' : ''}`}>
+                <label className='label'>
+                    <span className='label-text'>{label}</span>
+                </label>
+                {info !== undefined && (
+                    <>
+                        <button type='button' className='btn btn-xs' onClick={() => modalRef.current?.showModal()}>
+                            ?
+                        </button>
+                        <Modal modalRef={modalRef} size='large'>
+                            {info}
+                        </Modal>
+                    </>
+                )}
             </div>
             {children}
-        </label>
+        </div>
     );
 }
 
 function NumericInput({
     label,
+    info,
     value,
     min,
     max,
@@ -470,6 +502,7 @@ function NumericInput({
     onChange,
 }: {
     label: string;
+    info?: ReactNode;
     value: number;
     min: number;
     max: number;
@@ -477,7 +510,7 @@ function NumericInput({
     onChange: (v: number) => void;
 }) {
     return (
-        <LabeledField label={label}>
+        <LabeledField label={label} info={info}>
             <div className='mb-2 w-full'>
                 <input
                     className='input input-bordered mb-2 w-full'

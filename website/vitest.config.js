@@ -6,14 +6,9 @@ export default defineConfig({
             {
                 test: {
                     name: 'node',
-                    environment: 'jsdom',
-                    exclude: [
-                        ...configDefaults.exclude,
-                        './tests/**',
-                        'src/**/*.browser.{test,spec}.tsx'
-                    ],
+                    exclude: [...configDefaults.exclude, './tests/**', 'src/**/*.browser.{test,spec}.tsx'],
                     setupFiles: 'vitest.setup.ts',
-                }
+                },
             },
             {
                 test: {
@@ -23,12 +18,10 @@ export default defineConfig({
                         provider: 'playwright',
                         enabled: true,
                         headless: true,
-                        instances: [
-                            { browser: 'chromium' }
-                        ],
+                        instances: [{ browser: 'chromium' }],
                     },
-                }
-            }
-        ]
+                },
+            },
+        ],
     },
 });
