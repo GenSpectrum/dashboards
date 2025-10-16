@@ -1,6 +1,6 @@
 import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import React, { Fragment, useEffect, useId, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useState, type ReactNode } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { DynamicDateFilter } from './DynamicDateFilter';

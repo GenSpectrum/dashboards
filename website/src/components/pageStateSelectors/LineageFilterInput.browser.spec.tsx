@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, expect } from 'vitest';
 import { render } from 'vitest-browser-react';
 
