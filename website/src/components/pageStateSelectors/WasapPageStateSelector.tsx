@@ -1,6 +1,6 @@
 import { type SequenceType, mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { Fragment, useId, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useState, type ReactNode } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton';
 import { DynamicDateFilter } from './DynamicDateFilter';
@@ -296,7 +296,14 @@ function ResistanceMutationsFilter({
     );
 }
 
-function UntrackedFilter({
+function parseVariantsFromText(text: string): string[] {
+    return text
+        .trim()
+        .split(/[\s,]+/)
+        .filter((v) => v.length > 0);
+}
+
+export function UntrackedFilter({
     pageState,
     setPageState,
     cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
@@ -307,6 +314,27 @@ function UntrackedFilter({
 }) {
     const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
     defaultLineages.sort();
+
+    // Local state for the textarea to preserve formatting (spaces, etc.)
+    const [customVariantsText, setCustomVariantsText] = useState(pageState.excludeVariants?.join(' ') ?? '');
+
+    // Sync local state when excludeVariants changes externally (not from our own typing)
+    useEffect(() => {
+        const variantsFromText = parseVariantsFromText(customVariantsText);
+        const currentVariants = pageState.excludeVariants ?? [];
+
+        // Only update text if the arrays are different (external change)
+        const arraysEqual =
+            variantsFromText.length === currentVariants.length &&
+            variantsFromText.every((v, i) => v === currentVariants[i]);
+
+        if (!arraysEqual) {
+            setCustomVariantsText(currentVariants.join(' '));
+        }
+        // we don't include the 'customVariantsText' in the dependencies,
+        // because we only want to run when the variants change, not on every keystroke.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pageState.excludeVariants]);
 
     return (
         <>
@@ -335,6 +363,8 @@ function UntrackedFilter({
                         <button
                             className='cursor-pointer underline'
                             onClick={() => {
+                                const variantsText = defaultLineages.join(' ');
+                                setCustomVariantsText(variantsText);
                                 setPageState({
                                     ...pageState,
                                     excludeSet: 'custom',
@@ -354,13 +384,18 @@ function UntrackedFilter({
                             className='input input-bordered h-24 resize-y overflow-auto p-1 whitespace-pre-wrap'
                             wrap='soft'
                             placeholder='JN.1* KP.2* XFG* ...'
-                            value={pageState.excludeVariants?.join(' ')}
-                            onChange={(e) =>
+                            value={customVariantsText}
+                            onChange={(e) => {
+                                const newText = e.target.value;
+                                setCustomVariantsText(newText);
+
+                                const newVariants = parseVariantsFromText(newText);
+
                                 setPageState({
                                     ...pageState,
-                                    excludeVariants: e.target.value.trim().split(/[\s,]+/),
-                                })
-                            }
+                                    excludeVariants: newVariants,
+                                });
+                            }}
                         />
                     </LabeledField>
                 </>
