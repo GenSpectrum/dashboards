@@ -1,3 +1,6 @@
+/**
+ * A text block to be put into a Modal as helper information for labeled filter fields.
+ */
 function InfoBlock({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className='relative p-8'>

@@ -15,7 +15,7 @@ import {
     type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
-import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
+import { PageStateSelector } from '../../pageStateSelectors/wasap/PageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
 export type WasapPageProps = {
@@ -64,7 +64,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
         >
             <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
                 <div className='h-fit p-2 shadow-lg'>
-                    <WasapPageStateSelector
+                    <PageStateSelector
                         pageStateHandler={pageStateHandler}
                         initialBaseFilterState={base}
                         initialAnalysisFilterState={analysis}
@@ -101,6 +101,10 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
 
 export const WasapPage = withQueryProvider(WasapPageInner);
 
+/**
+ * A note to the user to display when no mutations are selected due to the settings that they set in the filters.
+ * The information is tailored to the mode and settings the user selected.
+ */
 const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFilter }) => {
     return (
         <div className='rounded-md border-2 border-gray-100 p-4'>
