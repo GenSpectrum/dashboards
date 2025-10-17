@@ -2,9 +2,9 @@ import { type UseQueryResult } from '@tanstack/react-query';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
-import { UntrackedFilter } from './WasapPageStateSelector';
-import { it } from '../../../test-extend';
-import type { WasapUntrackedFilter } from '../../views/pageStateHandlers/WasapPageStateHandler';
+import { UntrackedFilter } from './UntrackedFilter';
+import { it } from '../../../../../test-extend';
+import type { WasapUntrackedFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
 
 describe('UntrackedFilter - custom variants textarea', () => {
     const mockCladeLineageQueryResult = {
