@@ -22,6 +22,10 @@ export type WasapBaseFilter = {
 export type WasapManualFilter = {
     mode: 'manual';
     sequenceType: SequenceType;
+    /**
+     * A list of mutations like A23T (nucleotide) or S:E44H (amino acid).
+     * The type of mutation should match the sequenceType.
+     */
     mutations?: string[];
 };
 

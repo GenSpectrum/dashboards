@@ -45,6 +45,11 @@ type MockCase = {
     requestParam?: Record<string, string>;
 };
 
+/**
+ * Allows you to mock LAPIS API routes.
+ * By default, the host is DUMMY_LAPIS_URL, so it's best if you use that as the lapisUrl in your tests.
+ * Some mock functions exist with the *WithUrl suffix, where you can override the lapisUrl as well.
+ */
 export class LapisRouteMocker {
     constructor(private workerOrServer: MSWWorkerOrServer) {}
 
@@ -57,9 +62,16 @@ export class LapisRouteMocker {
         response: { data: Record<string, string | boolean | number | null>[] },
         statusCode = 200,
     ) {
-        this.workerOrServer.use(
-            http.post(`${DUMMY_LAPIS_URL}/sample/aggregated`, resolver([{ statusCode, body, response }])),
-        );
+        this.mockPostAggregatedWithUrl(DUMMY_LAPIS_URL, body, response, statusCode);
+    }
+
+    mockPostAggregatedWithUrl(
+        lapisUrl: string,
+        body: Record<string, unknown>,
+        response: { data: Record<string, string | boolean | number | null>[] },
+        statusCode = 200,
+    ) {
+        this.workerOrServer.use(http.post(`${lapisUrl}/sample/aggregated`, resolver([{ statusCode, body, response }])));
     }
 
     mockPostAggregatedMulti(cases: MockCase[]) {
@@ -67,14 +79,20 @@ export class LapisRouteMocker {
     }
 
     mockReferenceGenome(response: ReferenceGenome, statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(`${DUMMY_LAPIS_URL}/sample/referenceGenome`, resolver([{ statusCode, response }])),
-        );
+        this.mockReferenceGenomeWithUrl(DUMMY_LAPIS_URL, response, statusCode);
+    }
+
+    mockReferenceGenomeWithUrl(lapisUrl: string, response: ReferenceGenome, statusCode = 200) {
+        this.workerOrServer.use(http.get(`${lapisUrl}/sample/referenceGenome`, resolver([{ statusCode, response }])));
     }
 
     mockLineageDefinition(fieldName: string, response: LineageDefinition, statusCode = 200) {
+        this.mockLineageDefinitionWithUrl(DUMMY_LAPIS_URL, fieldName, response, statusCode);
+    }
+
+    mockLineageDefinitionWithUrl(lapisUrl: string, fieldName: string, response: LineageDefinition, statusCode = 200) {
         this.workerOrServer.use(
-            http.get(`${DUMMY_LAPIS_URL}/sample/lineageDefinition/${fieldName}`, resolver([{ statusCode, response }])),
+            http.get(`${lapisUrl}/sample/lineageDefinition/${fieldName}`, resolver([{ statusCode, response }])),
         );
     }
 
