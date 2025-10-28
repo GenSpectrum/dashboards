@@ -115,6 +115,20 @@ export function ExplorationModeInfo() {
                 The visualized data consists of aligned sequencing reads from virus-specific next-generation sequencing,
                 displayed in both nucleotide and amino acid formats.
             </p>
+
+            <h2 className='mt-4 mb-2 text-base font-semibold'>Subsampling Strategy</h2>
+            <p className='text-gray-700'>
+                Wastewater surveillance processes samples with highly variable read depths. To ensure consistent
+                performance, we cap amplicon sequences at 4.5 million reads per sample through random subsampling,
+                preserving Variant Allele Frequency and Haplotype Structure for reliable and predictable operations.
+            </p>
+            <p className='mt-2 text-gray-700'>
+                For the full data for download, visit{' '}
+                <a className='link' href='https://db.wasap.genspectrum.org'>
+                    db.wasap.genspectrum.org
+                </a>
+                .
+            </p>
         </InfoBlock>
     );
 }
