@@ -33,9 +33,21 @@ export function KnownVariantsExclusionInfo() {
     );
 }
 
-export function MinProportionInfo() {
+export function DefineClinicalSignatureInfo() {
     return (
-        <InfoBlock title='Minimum Proportion'>
+        <InfoBlock title='Define Variant Signature based on Clinical Sequences from CovSpectrum'>
+            <p className='text-gray-700'>
+                Fetch characteristic mutations from clinical sequences assigned a given variant.
+            </p>
+            <p className='mt-2 text-gray-700'>
+                Enter a{' '}
+                <a className='link' href='https://cov-spectrum.org/'>
+                    CovSpectrum
+                </a>{' '}
+                variant query to filter for a given Pango variant (e.g. "BA.5").
+            </p>
+
+            <h2 className='mt-4 mb-2 text-base font-semibold'>Minimum Proportion</h2>
             <p className='text-gray-700'>
                 The minimum proportion threshold filters mutations based on their frequency within the selected variant.
             </p>
@@ -44,25 +56,15 @@ export function MinProportionInfo() {
                 included. For example, a value of 0.8 means the mutation must appear in at least 80% of the variant's
                 sequences.
             </p>
-        </InfoBlock>
-    );
-}
 
-export function MinCountInfo() {
-    return (
-        <InfoBlock title='Minimum Count'>
+            <h2 className='mt-4 mb-2 text-base font-semibold'>Minimum Count</h2>
             <p className='text-gray-700'>
                 The minimum count threshold filters mutations based on their occurrence across clinical sequences
                 assigned to a selected variant. Only mutations that appear in at least this many clinical sequences of
                 the selected variant will be included.
             </p>
-        </InfoBlock>
-    );
-}
 
-export function JaccardIndexInfo() {
-    return (
-        <InfoBlock title='Jaccard Index'>
+            <h2 className='mt-4 mb-2 text-base font-semibold'>Jaccard Index</h2>
             <p className='text-gray-700'>
                 The Jaccard index measures how specific a mutation is to a variant. It represents the overlap between
                 sequences with the mutation and sequences of the variant.
