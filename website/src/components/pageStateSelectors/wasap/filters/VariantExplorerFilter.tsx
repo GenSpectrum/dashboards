@@ -29,7 +29,7 @@ export function VariantExplorerFilter({
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
             <Inset className='mt-4 p-2'>
-                <SelectorHeadline info={DefineClinicalSignatureInfo()}>Define Clinical Signature</SelectorHeadline>
+                <SelectorHeadline info={<DefineClinicalSignatureInfo />}>Define Clinical Signature</SelectorHeadline>
                 <LabeledField label='Variant'>
                     <gs-app lapis={clinicalSequenceLapisBaseUrl}>
                         <GsLineageFilter
