@@ -60,7 +60,7 @@ export type WasapFilter = {
     analysis: WasapAnalysisFilter;
 };
 
-export const defaultManualFilter: WasapManualFilter = {
+export const defaultMlocationNameWasapManualFilter = {
     mode: 'manual',
     sequenceType: 'nucleotide',
 };
@@ -124,7 +124,7 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     {
         type: 'text',
         lapisField: 'minProportion',
-    },
+    },locationName
     {
         type: 'text',
         lapisField: 'minCount',
@@ -158,7 +158,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
 
         const base: WasapBaseFilter = {
             locationName: texts.location_name ?? 'Zürich (ZH)',
-            samplingDate: dateRanges.sampling_date,
+            samplingDate: dateRanges.samplingDate,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
@@ -175,7 +175,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 break;
             case 'variant':
                 analysis = {
-                    mode,
+                    mode,locationName
                     sequenceType,
                     variant: texts.variant ?? defaultVariantFilter.variant,
                     minProportion: Number(texts.minProportion ?? defaultVariantFilter.minProportion),
