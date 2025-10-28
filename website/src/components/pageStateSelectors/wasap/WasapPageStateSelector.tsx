@@ -90,9 +90,9 @@ export function WasapPageStateSelector({
                 <LabeledField label='Sampling location'>
                     <GsTextFilter
                         placeholderText='Sampling location'
-                        lapisField='location_name'
+                        lapisField={wastewaterConfig.wasap.locationNameField}
                         lapisFilter={{}}
-                        onInputChange={({ location_name: locationName }) => {
+                        onInputChange={({ locationName }) => {
                             setBaseFilterState({ ...baseFilterState, locationName });
                         }}
                         value={baseFilterState.locationName}

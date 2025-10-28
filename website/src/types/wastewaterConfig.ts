@@ -18,7 +18,8 @@ export const wastewaterConfig = {
                 'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
         },
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
-        samplingDateField: 'sampling_date',
+        samplingDateField: 'samplingDate',
+        locationNameField: 'locationName',
         covSpectrum: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
             cladeField: 'nextstrainClade',
