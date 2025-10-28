@@ -47,9 +47,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
 
     const lapisFilter = {
         /* eslint-disable @typescript-eslint/naming-convention */
-        ...(base.locationName && { location_name: base.locationName }),
-        ...(base.samplingDate?.dateFrom && { sampling_dateFrom: base.samplingDate.dateFrom }),
-        ...(base.samplingDate?.dateTo && { sampling_dateTo: base.samplingDate.dateTo }),
+        ...(base.locationName && { locationName: base.locationName }),
+        ...(base.samplingDate?.dateFrom && { samplingDateFrom: base.samplingDate.dateFrom }),
+        ...(base.samplingDate?.dateTo && { samplingDateTo: base.samplingDate.dateTo }),
         /* eslint-enable @typescript-eslint/naming-convention */
     };
 

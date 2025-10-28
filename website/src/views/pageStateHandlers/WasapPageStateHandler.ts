@@ -89,7 +89,7 @@ export const defaultUntrackedFilter: WasapUntrackedFilter = {
 const wasapFilterConfig: BaselineFilterConfig[] = [
     {
         type: 'text',
-        lapisField: 'location_name',
+        lapisField: 'locationName',
     },
     {
         type: 'date',
@@ -157,8 +157,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
 
         const base: WasapBaseFilter = {
-            locationName: texts.location_name ?? 'Zürich (ZH)',
-            samplingDate: dateRanges.sampling_date,
+            locationName: texts.locationName ?? 'Zürich (ZH)',
+            samplingDate: dateRanges.samplingDate,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
@@ -209,7 +209,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const { base, analysis } = pageState;
 
         // general dataset settings
-        setSearchFromString(search, 'location_name', base.locationName);
+        setSearchFromString(search, 'locationName', base.locationName);
         // Force the date range to always use the Custom label for URL serialization
         const customDateRange = base.samplingDate ? { ...base.samplingDate, label: CustomDateRangeLabel } : undefined;
         setSearchFromDateRange(search, wastewaterConfig.wasap.samplingDateField, customDateRange);
