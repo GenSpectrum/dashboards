@@ -55,13 +55,13 @@ describe('LineageFilterInput', () => {
             </gs-app>,
         );
 
-        await expect.element(screen.getByText('A(1364)')).toBeInTheDocument();
+        await expect.element(screen.getByText('A(1,364)')).toBeInTheDocument();
         const options = screen.getByRole('option', { includeHidden: true }).elements();
         expect(options).toHaveLength(6);
         const texts = options.map((o) => o.textContent);
 
-        expect(texts).toContain('A(1364)');
-        expect(texts).toContain('A.1(2981)');
-        expect(texts).toContain('A.1*(2981)');
+        expect(texts).toContain('A(1,364)');
+        expect(texts).toContain('A.1(2,981)');
+        expect(texts).toContain('A.1*(2,981)');
     });
 });
