@@ -1,0 +1,83 @@
+name: Bump Dashboard Components
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs daily at noon UTC
+    - cron: '0 12 * * *'
+
+jobs:
+  bump-dependency:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+
+      - name: Cache .npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('website/package-lock.json') }}
+
+      - name: Install dependencies
+        working-directory: ./website
+        run: npm ci
+
+      - name: Update dashboard-components
+        working-directory: ./website
+        run: npm update @genspectrum/dashboard-components
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet package-lock.json; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+        working-directory: ./website
+
+      - name: Get new version
+        if: steps.changes.outputs.has_changes == 'true'
+        id: version
+        working-directory: ./website
+        run: |
+          VERSION=$(node -p "require('./package.json').dependencies['@genspectrum/dashboard-components']")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="bump-dashboard-components-$(date +%Y%m%d-%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
+          git add website/package.json website/package-lock.json
+          git commit -m "chore(website): bump @genspectrum/dashboard-components to ${{ steps.version.outputs.version }}"
+          git push origin "$BRANCH_NAME"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "chore(website): bump @genspectrum/dashboard-components to ${{ steps.version.outputs.version }}" \
+            --body "This PR updates \`@genspectrum/dashboard-components\` to the latest version.
+
+          **Changes:**
+          - Updated \`@genspectrum/dashboard-components\` to ${{ steps.version.outputs.version }}
+
+          This PR was automatically created by the [bump-dashboard-components workflow](https://github.com/${{ github.repository }}/actions/workflows/bump-dashboard-components.yml)."
+
+      - name: No updates available
+        if: steps.changes.outputs.has_changes == 'false'
+        run: echo "No updates available for @genspectrum/dashboard-components"
