@@ -12,5 +12,8 @@
   "scripts": {
     "commitlint:last-commit": "commitlint --from=HEAD~1 --verbose",
     "commitlint:merge-base": "commitlint --from=$(git merge-base HEAD main) --verbose"
+  },
+  "dependencies": {
+    "@genspectrum/dashboard-components": "^1.10.0"
   }
 }
