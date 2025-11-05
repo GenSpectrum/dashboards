@@ -123,6 +123,14 @@ export class LapisRouteMocker {
     mockPostAminoAcidMutationsMulti(cases: MockCase[]) {
         this.workerOrServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver(cases)));
     }
+
+    mockLapisDown() {
+        this.workerOrServer.use(
+            http.all(`${DUMMY_LAPIS_URL}/*`, () => {
+                return Response.error();
+            }),
+        );
+    }
 }
 
 export class BackendRouteMocker {
