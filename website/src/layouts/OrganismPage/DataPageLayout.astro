@@ -3,6 +3,7 @@ import type { ComponentProps } from 'astro/types';
 
 import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
 import LastUpdatedInfo from './LastUpdatedInfo.astro';
+import LapisUnreachableWrapperClient from '../../components/LapisUnreachableWrapperClient';
 import type { DataOrigin } from '../../types/dataOrigins';
 import { type BreadcrumbElement, Breadcrumbs } from '../Breadcrumbs';
 import BaseLayout from '../base/BaseLayout.astro';
@@ -24,7 +25,9 @@ const { title, breadcrumbs, dataOrigins, lapisUrl, downloadLinks = [], accession
     <div class='ml-2'>
         <Breadcrumbs breadcrumbs={breadcrumbs} />
     </div>
-    <slot />
+    <LapisUnreachableWrapperClient lapisUrl={lapisUrl} client:only='react'>
+        <slot />
+    </LapisUnreachableWrapperClient>
     <div class='mt-2 flex flex-col items-center justify-center sm:mt-0 sm:flex-row sm:gap-4' slot='secondary-footer'>
         {
             downloadLinks.length > 0 && (
