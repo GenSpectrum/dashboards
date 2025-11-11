@@ -3,6 +3,7 @@ import axios from 'axios';
 import { z } from 'zod';
 
 import { getClientLogger } from '../clientLogger.ts';
+import { getTotalCount } from './getTotalCount.ts';
 
 const mutationsSchema = z.object({
     data: z.array(
@@ -35,10 +36,54 @@ export async function getMutations(
     minProportion: number,
     minCount: number,
 ): Promise<string[]> {
+    return getMutationsInternal(lapisUrl, mutationType, pangoLineage, minProportion).then((data) =>
+        data.filter((item) => item.count >= minCount).map((item) => item.mutation),
+    );
+}
+
+export async function getMutationsForVariant(
+    lapisUrl: string,
+    mutationType: SequenceType,
+    pangoLineage: string,
+    minProportion: number,
+    minCount: number,
+    minJaccardIndex: number,
+) {
+    return Promise.all([
+        // sequence counts WITH mutation and WITH lineage
+        getMutationsInternal(lapisUrl, mutationType, pangoLineage, minProportion).then((r) =>
+            r.filter((item) => item.count >= minCount),
+        ),
+        // sequence counts WITH mutation (only)
+        getMutationsInternal(lapisUrl, mutationType, undefined, 0).then((r) =>
+            Object.fromEntries(r.map((item) => [item.mutation, item.count])),
+        ),
+        // sequence count WITH lineage (only)
+        getTotalCount(lapisUrl, { pangoLineage }),
+    ]).then(([intersectionCounts, totalCounts, variantCount]) =>
+        intersectionCounts
+            .filter(
+                ({ mutation, count }) =>
+                    // Formula: https://en.wikipedia.org/wiki/Jaccard_index#Overview
+                    count / (variantCount + totalCounts[mutation] - count) >= minJaccardIndex,
+            )
+            .map(({ mutation }) => mutation),
+    );
+}
+
+async function getMutationsInternal(
+    lapisUrl: string,
+    mutationType: SequenceType,
+    pangoLineage: string | undefined,
+    minProportion: number | undefined,
+): Promise<{ mutation: string; count: number }[]> {
     const endpoint = mutationType === 'nucleotide' ? 'nucleotideMutations' : 'aminoAcidMutations';
     const url = `${lapisUrl.replace(/\/$/, '')}/sample/${endpoint}`;
 
-    const body: Record<string, unknown> = { minProportion };
+    const body: Record<string, unknown> = {};
+    if (minProportion !== undefined) {
+        body.minProportion = minProportion;
+    }
     if (pangoLineage !== undefined) {
         body.pangoLineage = pangoLineage;
     }
@@ -59,5 +104,5 @@ export async function getMutations(
         throw new Error(message);
     }
 
-    return parsedResponse.data.data.filter((item) => item.count >= minCount).map((item) => item.mutation);
+    return parsedResponse.data.data;
 }

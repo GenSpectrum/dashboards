@@ -1,12 +1,12 @@
 import type { MeanProportionInterval } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { type FC } from 'react';
 
 import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getDateRange } from '../../../lapis/getDateRange';
-import { getMutations } from '../../../lapis/getMutations';
+import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { getTotalCount } from '../../../lapis/getTotalCount';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
@@ -15,7 +15,7 @@ import {
     type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
-import { WasapPageStateSelector } from '../../pageStateSelectors/WasapPageStateSelector';
+import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
 export type WasapPageProps = {
@@ -46,11 +46,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
     }
 
     const lapisFilter = {
-        /* eslint-disable @typescript-eslint/naming-convention */
-        ...(base.locationName && { location_name: base.locationName }),
-        ...(base.samplingDate?.dateFrom && { sampling_dateFrom: base.samplingDate.dateFrom }),
-        ...(base.samplingDate?.dateTo && { sampling_dateTo: base.samplingDate.dateTo }),
-        /* eslint-enable @typescript-eslint/naming-convention */
+        ...(base.locationName && { locationName: base.locationName }),
+        ...(base.samplingDate?.dateFrom && { samplingDateFrom: base.samplingDate.dateFrom }),
+        ...(base.samplingDate?.dateTo && { samplingDateTo: base.samplingDate.dateTo }),
     };
 
     const memoizedMutationAnnotations = useMemo(() => JSON.stringify(resistanceMutationAnnotations), []);
@@ -76,17 +74,21 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                     <Loading />
                 ) : (
                     <div className='h-full space-y-4 pr-4'>
-                        <GsMutationsOverTime
-                            lapisFilter={lapisFilter}
-                            granularity={base.granularity as 'day' | 'week'}
-                            lapisDateField={wastewaterConfig.wasap.samplingDateField}
-                            sequenceType={analysis.sequenceType}
-                            displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
-                            pageSizes={[20, 50, 100, 250]}
-                            useNewEndpoint={true}
-                            initialMeanProportionInterval={initialMeanProportionInterval}
-                            hideGaps={base.excludeEmpty ? true : undefined}
-                        />
+                        {selectedMutations.length === 0 ? (
+                            <NoDataHelperText analysisFilter={analysis} />
+                        ) : (
+                            <GsMutationsOverTime
+                                lapisFilter={lapisFilter}
+                                granularity={base.granularity as 'day' | 'week'}
+                                lapisDateField={wastewaterConfig.wasap.samplingDateField}
+                                sequenceType={analysis.sequenceType}
+                                displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
+                                pageSizes={[20, 50, 100, 250]}
+                                useNewEndpoint={true}
+                                initialMeanProportionInterval={initialMeanProportionInterval}
+                                hideGaps={base.excludeEmpty ? true : undefined}
+                            />
+                        )}
                         <WasapStats />
                     </div>
                 )}
@@ -96,6 +98,31 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
 };
 
 export const WasapPage = withQueryProvider(WasapPageInner);
+
+/**
+ * A note to the user to display when no mutations are selected due to the settings that they set in the filters.
+ * The information is tailored to the mode and settings the user selected.
+ */
+const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFilter }) => {
+    return (
+        <div className='rounded-md border-2 border-gray-100 p-4'>
+            <h1 className='text-lg font-semibold'>No mutations selected</h1>
+            {analysisFilter.mode === 'variant' && (
+                <p className='text-sm'>
+                    No mutations could be found matching your current filter settings. Try lowering filter thresholds or
+                    looking at a different variant.
+                </p>
+            )}
+            {analysisFilter.mode === 'untracked' &&
+                analysisFilter.excludeSet === 'custom' &&
+                (analysisFilter.excludeVariants === undefined || analysisFilter.excludeVariants.length === 0) && (
+                    <p className='text-sm'>
+                        Your set of variants to exclude is empty, please provide at least one variant to exclude.
+                    </p>
+                )}
+        </div>
+    );
+};
 
 const TotalCount = () => {
     const { data, isPending, isError, error } = useQuery({
@@ -163,12 +190,13 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             if (!analysis.variant) {
                 return [];
             }
-            return getMutations(
+            return getMutationsForVariant(
                 wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
                 analysis.sequenceType,
                 analysis.variant,
                 analysis.minProportion,
                 analysis.minCount,
+                analysis.minJaccard,
             );
         case 'resistance':
             return RESISTANCE_MUTATIONS[analysis.resistanceSet];
@@ -188,13 +216,7 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<st
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     variantsToExclude.map((v) =>
-                        getMutations(
-                            wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
-                            analysis.sequenceType,
-                            v,
-                            0.05,
-                            5,
-                        ),
+                        getMutations(wastewaterConfig.wasap.covSpectrum.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
                     ),
                 ).then((r) => r.flat()),
                 getMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),

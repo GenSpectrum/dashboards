@@ -5,12 +5,10 @@ import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFrom
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
+import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { formatUrl } from '../../util/formatUrl';
-import { weeklyAndMonthlyDateRangeOptions } from '../../util/weeklyAndMonthlyDateRangeOption';
 import { setSearchFromString } from '../helpers';
-
-export const wasapDateRangeOptions = () => weeklyAndMonthlyDateRangeOptions('2025-03-01');
 
 export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
 
@@ -24,6 +22,10 @@ export type WasapBaseFilter = {
 export type WasapManualFilter = {
     mode: 'manual';
     sequenceType: SequenceType;
+    /**
+     * A list of mutations like A23T (nucleotide) or S:E44H (amino acid).
+     * The type of mutation should match the sequenceType.
+     */
     mutations?: string[];
 };
 
@@ -33,6 +35,7 @@ export type WasapVariantFilter = {
     variant?: string;
     minProportion: number;
     minCount: number;
+    minJaccard: number;
 };
 
 export type WasapResistanceFilter = {
@@ -57,15 +60,41 @@ export type WasapFilter = {
     analysis: WasapAnalysisFilter;
 };
 
+export const defaultManualFilter: WasapManualFilter = {
+    mode: 'manual',
+    sequenceType: 'nucleotide',
+};
+
+export const defaultVariantFilter: WasapVariantFilter = {
+    mode: 'variant',
+    sequenceType: 'nucleotide',
+    variant: 'XFG*',
+    minProportion: 0.8,
+    minCount: 15,
+    minJaccard: 0.75,
+};
+
+export const defaultResistanceFilter: WasapResistanceFilter = {
+    mode: 'resistance',
+    sequenceType: 'amino acid',
+    resistanceSet: resistanceSetNames.ThreeCLPro,
+};
+
+export const defaultUntrackedFilter: WasapUntrackedFilter = {
+    mode: 'untracked',
+    sequenceType: 'nucleotide',
+    excludeSet: 'nextstrain',
+};
+
 const wasapFilterConfig: BaselineFilterConfig[] = [
     {
         type: 'text',
-        lapisField: 'location_name',
+        lapisField: wastewaterConfig.wasap.locationNameField,
     },
     {
         type: 'date',
         dateColumn: wastewaterConfig.wasap.samplingDateField,
-        dateRangeOptions: wasapDateRangeOptions,
+        dateRangeOptions: () => [],
     },
     // below are not really LAPIS fields, but we still want to use the URL parsing mechanism
     {
@@ -102,6 +131,10 @@ const wasapFilterConfig: BaselineFilterConfig[] = [
     },
     {
         type: 'text',
+        lapisField: 'minJaccard',
+    },
+    {
+        type: 'text',
         lapisField: 'resistanceSet',
     },
     {
@@ -124,8 +157,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
 
         const base: WasapBaseFilter = {
-            locationName: texts.location_name ?? 'Zürich (ZH)',
-            samplingDate: dateRanges.sampling_date,
+            locationName: texts.locationName ?? 'Zürich (ZH)',
+            samplingDate: dateRanges.samplingDate,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
@@ -144,9 +177,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 analysis = {
                     mode,
                     sequenceType,
-                    variant: texts.variant ?? 'JN.8',
-                    minProportion: Number(texts.minProportion ?? '0.05'),
-                    minCount: Number(texts.minCount ?? '5'),
+                    variant: texts.variant ?? defaultVariantFilter.variant,
+                    minProportion: Number(texts.minProportion ?? defaultVariantFilter.minProportion),
+                    minCount: Number(texts.minCount ?? defaultVariantFilter.minCount),
+                    minJaccard: Number(texts.minJaccard ?? defaultVariantFilter.minJaccard),
                 };
                 break;
             case 'resistance':
@@ -154,14 +188,14 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     mode,
                     sequenceType: 'amino acid',
                     resistanceSet:
-                        (texts.resistanceSet as ResistanceSetName | undefined) ?? resistanceSetNames.ThreeCLPro,
+                        (texts.resistanceSet as ResistanceSetName | undefined) ?? defaultResistanceFilter.resistanceSet,
                 };
                 break;
             case 'untracked':
                 analysis = {
                     mode,
                     sequenceType,
-                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? 'nextstrain',
+                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? defaultUntrackedFilter.excludeSet,
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
@@ -175,8 +209,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const { base, analysis } = pageState;
 
         // general dataset settings
-        setSearchFromString(search, 'location_name', base.locationName);
-        setSearchFromDateRange(search, wastewaterConfig.wasap.samplingDateField, base.samplingDate);
+        setSearchFromString(search, wastewaterConfig.wasap.locationNameField, base.locationName);
+        // Force the date range to always use the Custom label for URL serialization
+        const customDateRange = base.samplingDate ? { ...base.samplingDate, label: CustomDateRangeLabel } : undefined;
+        setSearchFromDateRange(search, wastewaterConfig.wasap.samplingDateField, customDateRange);
         setSearchFromString(search, 'granularity', base.granularity);
         if (!base.excludeEmpty) {
             setSearchFromString(search, 'excludeEmpty', 'false');
@@ -194,6 +230,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 setSearchFromString(search, 'variant', analysis.variant);
                 setSearchFromString(search, 'minProportion', String(analysis.minProportion));
                 setSearchFromString(search, 'minCount', String(analysis.minCount));
+                setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
                 break;
             case 'resistance':
                 setSearchFromString(search, 'resistanceSet', analysis.resistanceSet);
@@ -214,27 +251,3 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         return wastewaterConfig.pages.covid.path;
     }
 }
-
-export const defaultManualFilter: WasapManualFilter = {
-    mode: 'manual',
-    sequenceType: 'nucleotide',
-};
-
-export const defaultVariantFilter: WasapVariantFilter = {
-    mode: 'variant',
-    sequenceType: 'nucleotide',
-    minProportion: 0.05,
-    minCount: 5,
-};
-
-export const defaultResistanceFilter: WasapResistanceFilter = {
-    mode: 'resistance',
-    sequenceType: 'amino acid',
-    resistanceSet: resistanceSetNames.ThreeCLPro,
-};
-
-export const defaultUntrackedFilter: WasapUntrackedFilter = {
-    mode: 'untracked',
-    sequenceType: 'nucleotide',
-    excludeSet: 'nextstrain',
-};
