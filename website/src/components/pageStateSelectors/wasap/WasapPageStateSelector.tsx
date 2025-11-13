@@ -169,6 +169,7 @@ export function WasapPageStateSelector({
                                 <UntrackedFilter
                                     pageState={untrackedFilter}
                                     setPageState={setUntrackedFilter}
+                                    clinicalSequenceLapisBaseUrl={wastewaterConfig.wasap.covSpectrum.lapisBaseUrl}
                                     cladeLineageQueryResult={cladeLineageQueryResult}
                                 />
                             );

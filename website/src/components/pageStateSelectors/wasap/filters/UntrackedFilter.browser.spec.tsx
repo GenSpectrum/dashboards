@@ -1,10 +1,14 @@
 import { type UseQueryResult } from '@tanstack/react-query';
+import { userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { UntrackedFilter } from './UntrackedFilter';
+import type { LapisRouteMocker } from '../../../../../routeMocker';
 import { it } from '../../../../../test-extend';
 import type { WasapUntrackedFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
+
+const DUMMY_LAPIS_URL_2 = 'http://lapis2.dummy';
 
 describe('UntrackedFilter - custom variants textarea', () => {
     const mockCladeLineageQueryResult = {
@@ -20,177 +24,93 @@ describe('UntrackedFilter - custom variants textarea', () => {
         excludeVariants: [],
     };
 
-    it('allows typing spaces without them disappearing', async () => {
+    it('sets multiple variants when multiple are selected', async ({ routeMockers: { lapis } }) => {
+        setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
             <UntrackedFilter
                 pageState={defaultPageState}
                 setPageState={mockSetPageState}
+                clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
                 cladeLineageQueryResult={mockCladeLineageQueryResult}
             />,
         );
 
-        const textarea = getByRole('textbox');
+        const variantCombobox = await vi.waitFor(() => getByRole('combobox', { name: /variant/i }));
 
-        await textarea.fill('JN.1 ');
+        await userEvent.click(variantCombobox);
 
-        await expect.element(textarea).toHaveValue('JN.1 ');
-    });
+        const option = await vi.waitFor(() => getByRole('option', { name: 'JN.1', exact: true }));
+        await option.click();
 
-    it('parses space-separated variants', async () => {
-        const mockSetPageState = vi.fn();
-
-        const { getByRole } = render(
-            <UntrackedFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        const textarea = getByRole('textbox');
-
-        await textarea.fill('JN.1 KP.2');
-
-        // Should have been called with parsed variants
-        expect(mockSetPageState).toHaveBeenCalledWith(
-            expect.objectContaining({
-                excludeVariants: ['JN.1', 'KP.2'],
-            }),
-        );
-    });
-
-    it('parses comma-separated variants', async () => {
-        const mockSetPageState = vi.fn();
-
-        const { getByRole } = render(
-            <UntrackedFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        const textarea = getByRole('textbox');
-
-        await textarea.fill('JN.1, KP.2, XFG');
-
-        expect(mockSetPageState).toHaveBeenCalledWith(
-            expect.objectContaining({
-                excludeVariants: ['JN.1', 'KP.2', 'XFG'],
-            }),
-        );
-    });
-
-    it('handles mixed separators (comma and space)', async () => {
-        const mockSetPageState = vi.fn();
-
-        const { getByRole } = render(
-            <UntrackedFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        const textarea = getByRole('textbox');
-
-        await textarea.fill('JN.1, KP.2 XFG');
-
-        expect(mockSetPageState).toHaveBeenCalledWith(
-            expect.objectContaining({
-                excludeVariants: ['JN.1', 'KP.2', 'XFG'],
-            }),
-        );
-    });
-
-    it('filters out empty strings from multiple commas', async () => {
-        const mockSetPageState = vi.fn();
-
-        const { getByRole } = render(
-            <UntrackedFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        const textarea = getByRole('textbox');
-
-        await textarea.fill('JN.1,, KP.2');
-
-        expect(mockSetPageState).toHaveBeenCalledWith(
-            expect.objectContaining({
-                excludeVariants: ['JN.1', 'KP.2'],
-            }),
-        );
-    });
-
-    it('syncs textarea when page state changes externally', async () => {
-        const mockSetPageState = vi.fn();
-
-        const { getByRole, rerender } = render(
-            <UntrackedFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        const textarea = getByRole('textbox');
-
-        // Initially empty
-        await expect.element(textarea).toHaveValue('');
-
-        // Update page state externally
-        const updatedPageState: WasapUntrackedFilter = {
-            ...defaultPageState,
-            excludeVariants: ['BA.1', 'BA.2'],
-        };
-
-        rerender(
-            <UntrackedFilter
-                pageState={updatedPageState}
-                setPageState={mockSetPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        // Textarea should sync
-        await expect.element(textarea).toHaveValue('BA.1 BA.2');
-    });
-
-    it('does not sync textarea when typing (prevents losing spaces)', async () => {
-        let currentState = defaultPageState;
-
-        const setPageState = vi.fn((newState) => {
-            currentState = newState;
+        await vi.waitFor(() => {
+            expect(mockSetPageState).toHaveBeenCalledWith({
+                ...defaultPageState,
+                excludeVariants: ['JN.1'],
+            });
         });
 
-        const { getByRole, rerender } = render(
-            <UntrackedFilter
-                pageState={currentState}
-                setPageState={setPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
+        const option2 = await vi.waitFor(() => getByRole('option', { name: 'KP.2', exact: true }));
+        await option2.click();
 
-        const textarea = getByRole('textbox');
-
-        // Fill "JN.1 " (with trailing space)
-        await textarea.fill('JN.1 ');
-
-        // Rerender with the updated state (simulating React's state update)
-        rerender(
-            <UntrackedFilter
-                pageState={currentState}
-                setPageState={setPageState}
-                cladeLineageQueryResult={mockCladeLineageQueryResult}
-            />,
-        );
-
-        // The textarea should still have the trailing space
-        await expect.element(textarea).toHaveValue('JN.1 ');
+        await vi.waitFor(() => {
+            expect(mockSetPageState).toHaveBeenCalledWith({
+                ...defaultPageState,
+                excludeVariants: ['JN.1', 'KP.2'],
+            });
+        });
     });
 });
+
+function setupLapisMocks(lapisRouteMocker: LapisRouteMocker) {
+    const sequence = 'ATGC'.repeat(5000); // 20,000 base pairs
+    lapisRouteMocker.mockReferenceGenome({
+        nucleotideSequences: [{ name: 'main', sequence }],
+        genes: [{ name: 'S', sequence }],
+    });
+    /* eslint-disable @typescript-eslint/naming-convention */
+    lapisRouteMocker.mockLineageDefinition('pangoLineage', {
+        'JN.1': { parents: ['BA.2'], aliases: [] },
+        'KP.2': { parents: ['JN.1'], aliases: [] },
+        'BA.2': { parents: ['B.1.1.529'], aliases: [] },
+    });
+    /* eslint-enable @typescript-eslint/naming-convention */
+
+    // Mocks for the internal gs-app that uses the other LAPIS URL
+
+    lapisRouteMocker.mockReferenceGenomeWithUrl(DUMMY_LAPIS_URL_2, {
+        nucleotideSequences: [{ name: 'main', sequence }],
+        genes: [{ name: 'S', sequence }],
+    });
+
+    /* eslint-disable @typescript-eslint/naming-convention */
+    lapisRouteMocker.mockLineageDefinitionWithUrl(DUMMY_LAPIS_URL_2, 'pangoLineage', {
+        'JN.1': { parents: ['BA.2'], aliases: [] },
+        'KP.2': { parents: ['JN.1'], aliases: [] },
+        'BA.2': { parents: ['B.1.1.529'], aliases: [] },
+    });
+    /* eslint-enable @typescript-eslint/naming-convention */
+
+    lapisRouteMocker.mockPostAggregatedWithUrl(
+        DUMMY_LAPIS_URL_2,
+        { fields: ['pangoLineage'] },
+        {
+            data: [
+                { count: 688569, pangoLineage: 'B.1.1.7' },
+                { count: 314323, pangoLineage: 'BA.1' },
+                { count: 54887, pangoLineage: 'B.1' },
+                { count: 25101, pangoLineage: 'B.1.1' },
+                { count: 20322, pangoLineage: 'P.1' },
+                { count: 20018, pangoLineage: 'KP.3.1.1' },
+                { count: 11424, pangoLineage: 'D.2' },
+                { count: 6916, pangoLineage: 'JN.1' },
+                { count: 3197, pangoLineage: 'KP.2' },
+                { count: 2191, pangoLineage: 'C.37' },
+                { count: 1599, pangoLineage: 'KP.3' },
+                { count: 1481, pangoLineage: 'P.1.15' },
+                { count: 1364, pangoLineage: 'A' },
+            ],
+        },
+    );
+}
