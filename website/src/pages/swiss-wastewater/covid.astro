@@ -1,6 +1,5 @@
 ---
 import { WasapPage } from '../../components/views/wasap/WasapPage';
-import { isStaging } from '../../config';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
@@ -22,5 +21,5 @@ const url = Astro.url;
     dataOrigins={[dataOrigins.wise]}
     lapisUrl={wastewaterConfig.wasap.lapisBaseUrl}
 >
-    {isStaging() ? <WasapPage currentUrl={url} client:only='react' /> : <span>coming soon!</span>}
+    <WasapPage currentUrl={url} client:only='react' />
 </DataPageLayout>
