@@ -13,9 +13,9 @@ export const wastewaterConfig = {
     wasap: {
         linkTemplate: {
             nucleotideMutation:
-                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
             aminoAcidMutation:
-                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
         },
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         samplingDateField: 'samplingDate',
@@ -23,8 +23,10 @@ export const wastewaterConfig = {
         covSpectrum: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
             cladeField: 'nextstrainClade',
-            lineageField: 'pangoLineage',
+            lineageField: 'nextcladePangoLineage',
         },
+        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
+        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
     },
     pages: {
         rsv: {

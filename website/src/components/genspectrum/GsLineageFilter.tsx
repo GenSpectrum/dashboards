@@ -10,15 +10,19 @@ export function GsLineageFilter<Lineage extends string>({
     placeholderText,
     width,
     onLineageChange = () => {},
+    onLineageMultiChange = () => {},
     hideCounts,
+    multiSelect,
 }: {
     lapisField: Lineage;
-    value?: string;
+    value?: string | string[];
     lapisFilter: LapisFilter;
     placeholderText?: string;
     width?: string;
     onLineageChange?: (lineage: { [key in Lineage]: string | undefined }) => void;
+    onLineageMultiChange?: (lineage: { [key in Lineage]: string[] | undefined }) => void;
     hideCounts?: true;
+    multiSelect?: true;
 }) {
     const lineageFilterRef = useRef<HTMLElement>();
 
@@ -39,15 +43,38 @@ export function GsLineageFilter<Lineage extends string>({
         };
     }, [onLineageChange]);
 
+    useEffect(() => {
+        const currentLineageFilterRef = lineageFilterRef.current;
+        if (!currentLineageFilterRef) {
+            return;
+        }
+
+        const handleLineageMultiChange = (event: CustomEvent) => {
+            onLineageMultiChange(event.detail);
+        };
+
+        currentLineageFilterRef.addEventListener(gsEventNames.lineageFilterMultiChanged, handleLineageMultiChange);
+
+        return () => {
+            currentLineageFilterRef.removeEventListener(
+                gsEventNames.lineageFilterMultiChanged,
+                handleLineageMultiChange,
+            );
+        };
+    }, [onLineageMultiChange]);
+
+    const valueProperty = value === undefined ? (multiSelect ? '[]' : '') : multiSelect ? JSON.stringify(value) : value;
+
     return (
         <gs-lineage-filter
             lapisField={lapisField}
             placeholderText={placeholderText}
-            value={value ?? ''}
+            value={valueProperty}
             width={width}
             ref={lineageFilterRef}
             lapisFilter={JSON.stringify(lapisFilter)}
             hideCounts={hideCounts}
+            multiSelect={multiSelect}
         ></gs-lineage-filter>
     );
 }

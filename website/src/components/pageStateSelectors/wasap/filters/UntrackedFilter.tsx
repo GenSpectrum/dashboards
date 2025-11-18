@@ -1,54 +1,34 @@
 import { type UseQueryResult } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 
 import { Loading } from '../../../../util/Loading';
 import {
     type ExcludeSetName,
     type WasapUntrackedFilter,
 } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
+import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
 import { KnownVariantsExclusionInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
 import { SequenceTypeSelector } from '../utils/SequenceTypeSelector';
 
-function parseVariantsFromText(text: string): string[] {
-    return text
-        .trim()
-        .split(/[\s,]+/)
-        .filter((v) => v.length > 0);
+interface UntrackedFilterProps {
+    pageState: WasapUntrackedFilter;
+    setPageState: (newState: WasapUntrackedFilter) => void;
+    cladeLineageQueryResult: UseQueryResult<Record<string, string>>;
+    /**
+     * The LAPIS base URL for the clinical sequence data used in the variant selector.
+     * This is _not_ the same as the LAPIS providing the wastewater amplicon sequences.
+     */
+    clinicalSequenceLapisBaseUrl: string;
 }
 
 export function UntrackedFilter({
     pageState,
     setPageState,
     cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
-}: {
-    pageState: WasapUntrackedFilter;
-    setPageState: (newState: WasapUntrackedFilter) => void;
-    cladeLineageQueryResult: UseQueryResult<Record<string, string>>;
-}) {
+    clinicalSequenceLapisBaseUrl,
+}: UntrackedFilterProps) {
     const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
     defaultLineages.sort();
-
-    // Local state for the textarea to preserve formatting (spaces, etc.)
-    const [customVariantsText, setCustomVariantsText] = useState(pageState.excludeVariants?.join(' ') ?? '');
-
-    // Sync local state when excludeVariants changes externally (not from our own typing)
-    useEffect(() => {
-        const variantsFromText = parseVariantsFromText(customVariantsText);
-        const currentVariants = pageState.excludeVariants ?? [];
-
-        // Only update text if the arrays are different (external change)
-        const arraysEqual =
-            variantsFromText.length === currentVariants.length &&
-            variantsFromText.every((v, i) => v === currentVariants[i]);
-
-        if (!arraysEqual) {
-            setCustomVariantsText(currentVariants.join(' '));
-        }
-        // we don't include the 'customVariantsText' in the dependencies,
-        // because we only want to run when the variants change, not on every keystroke.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageState.excludeVariants]);
 
     return (
         <>
@@ -77,8 +57,6 @@ export function UntrackedFilter({
                         <button
                             className='cursor-pointer underline'
                             onClick={() => {
-                                const variantsText = defaultLineages.join(' ');
-                                setCustomVariantsText(variantsText);
                                 setPageState({
                                     ...pageState,
                                     excludeSet: 'custom',
@@ -94,23 +72,19 @@ export function UntrackedFilter({
                 <>
                     <div className='h-2' />
                     <LabeledField label='Custom variant list'>
-                        <textarea
-                            className='input input-bordered h-24 resize-y overflow-auto p-1 whitespace-pre-wrap'
-                            wrap='soft'
-                            placeholder='JN.1* KP.2* XFG* ...'
-                            value={customVariantsText}
-                            onChange={(e) => {
-                                const newText = e.target.value;
-                                setCustomVariantsText(newText);
-
-                                const newVariants = parseVariantsFromText(newText);
-
-                                setPageState({
-                                    ...pageState,
-                                    excludeVariants: newVariants,
-                                });
-                            }}
-                        />
+                        <gs-app lapis={clinicalSequenceLapisBaseUrl}>
+                            <GsLineageFilter
+                                lapisField='pangoLineage'
+                                lapisFilter={{}}
+                                placeholderText='Variant'
+                                value={pageState.excludeVariants}
+                                onLineageMultiChange={({ pangoLineage }) => {
+                                    setPageState({ ...pageState, excludeVariants: pangoLineage });
+                                }}
+                                hideCounts={true}
+                                multiSelect={true}
+                            />
+                        </gs-app>
                     </LabeledField>
                 </>
             )}
