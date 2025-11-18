@@ -23,7 +23,7 @@ export const wastewaterConfig = {
         covSpectrum: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
             cladeField: 'nextstrainClade',
-            lineageField: 'pangoLineage',
+            lineageField: 'nextcladePangoLineage',
         },
     },
     pages: {
