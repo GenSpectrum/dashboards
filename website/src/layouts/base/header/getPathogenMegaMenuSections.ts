@@ -85,7 +85,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 externalLink: false,
                 description: wastewaterConfig.pages.influenza.description,
             },
-            /** -- menu entry hidden for now --
             {
                 label: 'SARS-CoV-2',
                 iconType: 'table',
@@ -94,14 +93,21 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 externalLink: false,
                 description: wastewaterConfig.pages.covid.description,
             },
-            */
             {
-                label: 'Browse data',
+                label: 'Browse RSV & Influenza data',
                 iconType: 'database',
                 href: wastewaterConfig.browseDataUrl,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
                 description: wastewaterConfig.browseDataDescription,
+            },
+            {
+                label: 'Browse SARS-CoV-2 data',
+                iconType: 'database',
+                href: wastewaterConfig.wasap.browseDataUrl,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: true,
+                description: wastewaterConfig.wasap.browseDataDescription,
             },
         ],
         href: `/${wastewaterPathFragment}`,

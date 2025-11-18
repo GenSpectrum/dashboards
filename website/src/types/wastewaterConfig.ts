@@ -25,6 +25,8 @@ export const wastewaterConfig = {
             cladeField: 'nextstrainClade',
             lineageField: 'nextcladePangoLineage',
         },
+        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
+        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
     },
     pages: {
         rsv: {
