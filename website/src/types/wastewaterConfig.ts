@@ -13,9 +13,9 @@ export const wastewaterConfig = {
     wasap: {
         linkTemplate: {
             nucleotideMutation:
-                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
             aminoAcidMutation:
-                'https://cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
         },
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         samplingDateField: 'samplingDate',
