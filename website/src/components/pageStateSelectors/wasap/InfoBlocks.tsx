@@ -133,14 +133,14 @@ export function ExplorationModeInfo() {
                 <a className='link' href='https://github.com/lh3/bwa?rgh-link-date=2025-11-11T16%3A12%3A21.000Z'>
                     BWA
                 </a>{' '}
-                (Nucleotide), using{' '}
+                (Nucleotides) and{' '}
                 <a
                     className='link'
                     href='https://github.com/bbuchfink/diamond?rgh-link-date=2025-11-11T16%3A12%3A21.000Z'
                 >
                     DIAMOND
                 </a>{' '}
-                .
+                (Amino acids).
             </p>
 
             <p className='mt-2 text-gray-700'>
