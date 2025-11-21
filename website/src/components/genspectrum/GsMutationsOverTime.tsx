@@ -3,6 +3,7 @@ import type {
     LapisFilter,
     SequenceType,
     MeanProportionInterval,
+    CustomColumn,
 } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
@@ -19,6 +20,7 @@ export type GsMutationsOverTimeProps = {
     useNewEndpoint?: true;
     hideGaps?: true;
     initialMeanProportionInterval?: MeanProportionInterval;
+    customColumns?: CustomColumn[];
 };
 
 export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
@@ -32,6 +34,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     useNewEndpoint,
     hideGaps,
     initialMeanProportionInterval,
+    customColumns
 }) => {
     return (
         <ComponentWrapper
@@ -53,6 +56,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 initialMeanProportionInterval={
                     initialMeanProportionInterval ? JSON.stringify(initialMeanProportionInterval) : undefined
                 }
+                customColumns={customColumns ? JSON.stringify(customColumns) : undefined}
             ></gs-mutations-over-time>
         </ComponentWrapper>
     );
