@@ -41,6 +41,10 @@ export async function getMutations(
     );
 }
 
+/**
+ * Returns the list of mutations that are defining this variant, based on the given parameters.
+ * The result also includes the Jaccard index for every mutation.
+ */
 export async function getMutationsForVariant(
     lapisUrl: string,
     mutationType: SequenceType,
@@ -62,12 +66,12 @@ export async function getMutationsForVariant(
         getTotalCount(lapisUrl, { pangoLineage }),
     ]).then(([intersectionCounts, totalCounts, variantCount]) =>
         intersectionCounts
-            .filter(
-                ({ mutation, count }) =>
-                    // Formula: https://en.wikipedia.org/wiki/Jaccard_index#Overview
-                    count / (variantCount + totalCounts[mutation] - count) >= minJaccardIndex,
-            )
-            .map(({ mutation }) => mutation),
+            .map(({ mutation, count }) => ({
+                mutation,
+                // Formula: https://en.wikipedia.org/wiki/Jaccard_index#Overview
+                jaccardIndex: count / (variantCount + totalCounts[mutation] - count),
+            }))
+            .filter(({ jaccardIndex }) => jaccardIndex >= minJaccardIndex),
     );
 }
 

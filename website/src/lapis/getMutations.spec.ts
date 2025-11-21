@@ -100,7 +100,7 @@ describe('getMutationsForVariant', () => {
 
         const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'FOO', 0.1, 5, 0.9);
 
-        expect(result).toEqual(['A2C']);
+        expect(result).toEqual([{ mutation: 'A2C', jaccardIndex: 1 }]);
     });
 
     test('should include mutations with Jaccard index at threshold', async () => {
@@ -125,7 +125,7 @@ describe('getMutationsForVariant', () => {
 
         const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'BAR', 0.05, 5, 0.6);
 
-        expect(result).toEqual(['T100C']);
+        expect(result).toEqual([{ mutation: 'T100C', jaccardIndex: 10 / 15 }]);
     });
 
     test('should filter by minCount before Jaccard index', async () => {
@@ -185,7 +185,11 @@ describe('getMutationsForVariant', () => {
 
         const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'QUX', 0.05, 5, 0.75);
 
-        expect(result).toEqual(['C200T', 'A300G', 'T400C']);
+        expect(result).toEqual([
+            { mutation: 'C200T', jaccardIndex: 45 / 55 },
+            { mutation: 'A300G', jaccardIndex: 48 / 62 },
+            { mutation: 'T400C', jaccardIndex: 1 },
+        ]);
     });
 
     test('should work with amino acid mutations', async () => {
@@ -210,6 +214,6 @@ describe('getMutationsForVariant', () => {
 
         const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'amino acid', 'DELTA', 0.05, 5, 0.9);
 
-        expect(result).toEqual(['S:L452R']);
+        expect(result).toEqual([{ mutation: 'S:L452R', jaccardIndex: 1 }]);
     });
 });
