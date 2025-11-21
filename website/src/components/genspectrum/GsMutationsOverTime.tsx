@@ -34,7 +34,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     useNewEndpoint,
     hideGaps,
     initialMeanProportionInterval,
-    customColumns
+    customColumns,
 }) => {
     return (
         <ComponentWrapper
