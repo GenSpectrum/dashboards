@@ -30,7 +30,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
     );
 
     // fetch which mutations should be analyzed
-    const { displayMutations, customColumns, isPending, isError } = useWasapPageData(analysis);
+    const { data, isPending, isError } = useWasapPageData(analysis);
+    const displayMutations = data?.displayMutations;
+    const customColumns = data?.customColumns;
 
     let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {

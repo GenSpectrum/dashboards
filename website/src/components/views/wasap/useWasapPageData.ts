@@ -70,22 +70,35 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<Mu
     }
 }
 
-function getDisplayMutationsAndCustomColumns(
-    mutationSelection: MutationSelection | undefined,
-): [string[] | undefined, CustomColumn[] | undefined] {
+/**
+ * The W-ASAP page data consists of the mutations to display in the mutations-over-time component,
+ * and the additional custom columns that might optionally be displayed.
+ *
+ * If displayMutations is undefined, that means that all mutations should be displayed
+ * (That is the default behaviour of the mutations-over-time component).
+ */
+type WasapPageData = {
+    displayMutations?: string[];
+    customColumns?: CustomColumn[];
+};
+
+/**
+ * Turns the internal `MutationSelection` into the easier-to-work-with `WasapPageData`.
+ */
+function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection | undefined): WasapPageData {
     if (mutationSelection === undefined) {
-        return [undefined, undefined];
+        return {};
     }
 
     switch (mutationSelection.type) {
         case 'all':
-            return [undefined, undefined];
+            return {};
         case 'selected':
-            return [mutationSelection.mutations, undefined];
+            return { displayMutations: mutationSelection.mutations };
         case 'jaccard':
-            return [
-                mutationSelection.mutationsWithScore.map(({ mutation }) => mutation),
-                [
+            return {
+                displayMutations: mutationSelection.mutationsWithScore.map(({ mutation }) => mutation),
+                customColumns: [
                     {
                         header: 'Jaccard index',
                         values: Object.fromEntries(
@@ -96,21 +109,17 @@ function getDisplayMutationsAndCustomColumns(
                         ),
                     },
                 ],
-            ];
+            };
     }
 }
 
 /**
- * Hook that fetches and returns display mutations and custom columns for the WASAP page,
+ * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
  * depending on the analysis mode and analysis mode settings.
  */
 export function useWasapPageData(analysis: WasapAnalysisFilter) {
-    const { data, isPending, isError } = useQuery({
+    return useQuery({
         queryKey: ['wasap', analysis],
-        queryFn: () => fetchMutationSelection(analysis),
+        queryFn: () => fetchMutationSelection(analysis).then((data) => wasapPageDataFromMutationSelection(data)),
     });
-
-    const [displayMutations, customColumns] = getDisplayMutationsAndCustomColumns(data);
-
-    return { displayMutations, customColumns, isPending, isError };
 }
