@@ -102,7 +102,7 @@ function getDisplayMutationsAndCustomColumns(
 
 /**
  * Hook that fetches and returns display mutations and custom columns for the WASAP page,
- * depending on the analyis mode and analysis mode settings.
+ * depending on the analysis mode and analysis mode settings.
  */
 export function useWasapPageData(analysis: WasapAnalysisFilter) {
     const { data, isPending, isError } = useQuery({
