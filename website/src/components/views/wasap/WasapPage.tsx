@@ -3,10 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { type FC } from 'react';
 
-import { RESISTANCE_MUTATIONS, resistanceMutationAnnotations } from './resistanceMutations';
-import { getCladeLineages } from '../../../lapis/getCladeLineages';
+import { resistanceMutationAnnotations } from './resistanceMutations';
+import { useWasapPageData } from './useWasapPageData';
 import { getDateRange } from '../../../lapis/getDateRange';
-import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { getTotalCount } from '../../../lapis/getTotalCount';
 import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
@@ -31,14 +30,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
     );
 
     // fetch which mutations should be analyzed
-    const {
-        data: selectedMutations,
-        isPending,
-        isError,
-    } = useQuery({
-        queryKey: [base, analysis],
-        queryFn: () => fetchMutationSelection(analysis),
-    });
+    const { data, isPending, isError } = useWasapPageData(analysis);
+    const displayMutations = data?.displayMutations;
+    const customColumns = data?.customColumns;
 
     let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {
@@ -74,7 +68,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                     <Loading />
                 ) : (
                     <div className='h-full space-y-4 pr-4'>
-                        {selectedMutations.length === 0 ? (
+                        {displayMutations !== undefined && displayMutations.length === 0 ? (
                             <NoDataHelperText analysisFilter={analysis} />
                         ) : (
                             <GsMutationsOverTime
@@ -82,11 +76,12 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                                 granularity={base.granularity as 'day' | 'week'}
                                 lapisDateField={wastewaterConfig.wasap.samplingDateField}
                                 sequenceType={analysis.sequenceType}
-                                displayMutations={selectedMutations === 'all' ? undefined : selectedMutations}
+                                displayMutations={displayMutations}
                                 pageSizes={[20, 50, 100, 250]}
                                 useNewEndpoint={true}
                                 initialMeanProportionInterval={initialMeanProportionInterval}
                                 hideGaps={base.excludeEmpty ? true : undefined}
+                                customColumns={customColumns}
                             />
                         )}
                         <WasapStats />
@@ -174,54 +169,3 @@ const WasapStats = () => (
         <DateRange />
     </div>
 );
-
-/**
- * Takes the analysis settings and then returns a list of mutations that should be analysed,
- * based on the settings. can also return the string 'all', which means that everything should
- * be analysed, no specific selection.
- *
- * For some modes, additional data will be fetched to decide which mutations to analyse.
- */
-async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<string[] | 'all'> {
-    switch (analysis.mode) {
-        case 'manual':
-            return analysis.mutations ?? 'all';
-        case 'variant':
-            if (!analysis.variant) {
-                return [];
-            }
-            return getMutationsForVariant(
-                wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
-                analysis.sequenceType,
-                analysis.variant,
-                analysis.minProportion,
-                analysis.minCount,
-                analysis.minJaccard,
-            );
-        case 'resistance':
-            return RESISTANCE_MUTATIONS[analysis.resistanceSet];
-        case 'untracked': {
-            const variantsToExclude =
-                analysis.excludeSet === 'custom'
-                    ? analysis.excludeVariants
-                    : await getCladeLineages(
-                          wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
-                          wastewaterConfig.wasap.covSpectrum.cladeField,
-                          wastewaterConfig.wasap.covSpectrum.lineageField,
-                          true,
-                      ).then((r) => Object.values(r));
-            if (variantsToExclude === undefined) {
-                return [];
-            }
-            const [excludeMutations, allMuts] = await Promise.all([
-                Promise.all(
-                    variantsToExclude.map((v) =>
-                        getMutations(wastewaterConfig.wasap.covSpectrum.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
-                    ),
-                ).then((r) => r.flat()),
-                getMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
-            ]);
-            return allMuts.filter((m) => !excludeMutations.includes(m));
-        }
-    }
-}
