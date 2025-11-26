@@ -118,6 +118,7 @@ export const CovidSingleVariantDataDisplay: FC<CovidSingleVariantDataDisplayProp
                 sequenceType='nucleotide'
                 granularity={timeGranularity}
                 lapisDateField={view.organismConstants.mainDateField}
+                useNewEndpoint={true}
             />
 
             <GsMutationsOverTime
@@ -125,6 +126,7 @@ export const CovidSingleVariantDataDisplay: FC<CovidSingleVariantDataDisplayProp
                 sequenceType='amino acid'
                 granularity={timeGranularity}
                 lapisDateField={view.organismConstants.mainDateField}
+                useNewEndpoint={true}
             />
         </div>
     );
