@@ -2,9 +2,9 @@ import type { CustomColumn } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 
 import { RESISTANCE_MUTATIONS } from './resistanceMutations';
+import type { WasapPageConfig } from './wasapPageConfig';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
-import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import type { WasapAnalysisFilter } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 
 type AllMutations = {
@@ -23,7 +23,10 @@ type SelectedWithJaccard = {
 
 type MutationSelection = AllMutations | SelectedMutations | SelectedWithJaccard;
 
-async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<MutationSelection> {
+async function fetchMutationSelection(
+    config: WasapPageConfig,
+    analysis: WasapAnalysisFilter,
+): Promise<MutationSelection> {
     switch (analysis.mode) {
         case 'manual':
             return analysis.mutations ? { type: 'selected', mutations: analysis.mutations } : { type: 'all' };
@@ -32,7 +35,7 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<Mu
                 return { type: 'selected', mutations: [] };
             }
             return getMutationsForVariant(
-                wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
+                config.clinicalLapis.lapisBaseUrl,
                 analysis.sequenceType,
                 analysis.variant,
                 analysis.minProportion,
@@ -46,9 +49,9 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<Mu
                 analysis.excludeSet === 'custom'
                     ? analysis.excludeVariants
                     : await getCladeLineages(
-                          wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
-                          wastewaterConfig.wasap.covSpectrum.cladeField,
-                          wastewaterConfig.wasap.covSpectrum.lineageField,
+                          config.clinicalLapis.lapisBaseUrl,
+                          config.clinicalLapis.cladeField,
+                          config.clinicalLapis.lineageField,
                           true,
                       ).then((r) => Object.values(r));
             if (variantsToExclude === undefined) {
@@ -57,10 +60,10 @@ async function fetchMutationSelection(analysis: WasapAnalysisFilter): Promise<Mu
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
                     variantsToExclude.map((v) =>
-                        getMutations(wastewaterConfig.wasap.covSpectrum.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
+                        getMutations(config.clinicalLapis.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
                     ),
                 ).then((r) => r.flat()),
-                getMutations(wastewaterConfig.wasap.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
+                getMutations(config.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
             ]);
             return {
                 type: 'selected',
@@ -117,9 +120,10 @@ function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection
  * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
  * depending on the analysis mode and analysis mode settings.
  */
-export function useWasapPageData(analysis: WasapAnalysisFilter) {
+export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
     return useQuery({
         queryKey: ['wasap', analysis],
-        queryFn: () => fetchMutationSelection(analysis).then((data) => wasapPageDataFromMutationSelection(data)),
+        queryFn: () =>
+            fetchMutationSelection(config, analysis).then((data) => wasapPageDataFromMutationSelection(data)),
     });
 }

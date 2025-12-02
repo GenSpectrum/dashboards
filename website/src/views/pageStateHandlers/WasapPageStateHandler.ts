@@ -5,8 +5,8 @@ import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFrom
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
+import type { WasapPageConfig } from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
-import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { formatUrl } from '../../util/formatUrl';
 import { setSearchFromString } from '../helpers';
 
@@ -85,72 +85,18 @@ export const defaultUntrackedFilter: WasapUntrackedFilter = {
     sequenceType: 'nucleotide',
     excludeSet: 'nextstrain',
 };
-
-const wasapFilterConfig: BaselineFilterConfig[] = [
-    {
-        type: 'text',
-        lapisField: wastewaterConfig.wasap.locationNameField,
-    },
-    {
-        type: 'date',
-        dateColumn: wastewaterConfig.wasap.samplingDateField,
-        dateRangeOptions: () => [],
-    },
-    // below are not really LAPIS fields, but we still want to use the URL parsing mechanism
-    {
-        type: 'text',
-        lapisField: 'granularity',
-    },
-    {
-        type: 'text',
-        lapisField: 'excludeEmpty',
-    },
-    {
-        type: 'text',
-        lapisField: 'analysisMode',
-    },
-    {
-        type: 'text',
-        lapisField: 'sequenceType',
-    },
-    {
-        type: 'text',
-        lapisField: 'mutations',
-    },
-    {
-        type: 'text',
-        lapisField: 'variant',
-    },
-    {
-        type: 'text',
-        lapisField: 'minProportion',
-    },
-    {
-        type: 'text',
-        lapisField: 'minCount',
-    },
-    {
-        type: 'text',
-        lapisField: 'minJaccard',
-    },
-    {
-        type: 'text',
-        lapisField: 'resistanceSet',
-    },
-    {
-        type: 'text',
-        lapisField: 'excludeSet',
-    },
-    {
-        type: 'text',
-        lapisField: 'excludeVariants',
-    },
-];
-
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
+    private readonly config: WasapPageConfig;
+    private readonly filterConfig: BaselineFilterConfig[];
+
+    constructor(config: WasapPageConfig) {
+        this.config = config;
+        this.filterConfig = generateWasapFilterConfig(config);
+    }
+
     parsePageStateFromUrl(url: URL): WasapFilter {
-        const texts = parseTextFiltersFromUrl(url.searchParams, wasapFilterConfig);
-        const dateRanges = parseDateRangesFromUrl(url.searchParams, wasapFilterConfig);
+        const texts = parseTextFiltersFromUrl(url.searchParams, this.filterConfig);
+        const dateRanges = parseDateRangesFromUrl(url.searchParams, this.filterConfig);
 
         const mode = (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual';
         const sequenceType =
@@ -209,10 +155,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const { base, analysis } = pageState;
 
         // general dataset settings
-        setSearchFromString(search, wastewaterConfig.wasap.locationNameField, base.locationName);
+        setSearchFromString(search, this.config.locationNameField, base.locationName);
         // Force the date range to always use the Custom label for URL serialization
         const customDateRange = base.samplingDate ? { ...base.samplingDate, label: CustomDateRangeLabel } : undefined;
-        setSearchFromDateRange(search, wastewaterConfig.wasap.samplingDateField, customDateRange);
+        setSearchFromDateRange(search, this.config.samplingDateField, customDateRange);
         setSearchFromString(search, 'granularity', base.granularity);
         if (!base.excludeEmpty) {
             setSearchFromString(search, 'excludeEmpty', 'false');
@@ -244,10 +190,73 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 break;
         }
 
-        return formatUrl(wastewaterConfig.pages.covid.path, search);
+        return formatUrl(this.config.path, search);
     }
 
     getDefaultPageUrl(): string {
-        return wastewaterConfig.pages.covid.path;
+        return this.config.path;
     }
+}
+
+function generateWasapFilterConfig(pageConfig: WasapPageConfig): BaselineFilterConfig[] {
+    return [
+        {
+            type: 'text',
+            lapisField: pageConfig.locationNameField,
+        },
+        {
+            type: 'date',
+            dateColumn: pageConfig.samplingDateField,
+            dateRangeOptions: () => [],
+        },
+        // below are not really LAPIS fields, but we still want to use the URL parsing mechanism
+        {
+            type: 'text',
+            lapisField: 'granularity',
+        },
+        {
+            type: 'text',
+            lapisField: 'excludeEmpty',
+        },
+        {
+            type: 'text',
+            lapisField: 'analysisMode',
+        },
+        {
+            type: 'text',
+            lapisField: 'sequenceType',
+        },
+        {
+            type: 'text',
+            lapisField: 'mutations',
+        },
+        {
+            type: 'text',
+            lapisField: 'variant',
+        },
+        {
+            type: 'text',
+            lapisField: 'minProportion',
+        },
+        {
+            type: 'text',
+            lapisField: 'minCount',
+        },
+        {
+            type: 'text',
+            lapisField: 'minJaccard',
+        },
+        {
+            type: 'text',
+            lapisField: 'resistanceSet',
+        },
+        {
+            type: 'text',
+            lapisField: 'excludeSet',
+        },
+        {
+            type: 'text',
+            lapisField: 'excludeVariants',
+        },
+    ];
 }

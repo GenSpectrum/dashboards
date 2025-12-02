@@ -1,6 +1,30 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
+import type { WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
+
 export const wastewaterPathFragment = 'swiss-wastewater';
+
+export const wasapConfigCovid: WasapPageConfig = {
+    path: `/${wastewaterPathFragment}/covid`,
+    name: 'SARS-CoV-2',
+    description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
+    linkTemplate: {
+        nucleotideMutation:
+            'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+        aminoAcidMutation:
+            'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+    },
+    lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
+    samplingDateField: 'samplingDate',
+    locationNameField: 'locationName',
+    clinicalLapis: {
+        lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+        cladeField: 'nextstrainClade',
+        lineageField: 'nextcladePangoLineage',
+    },
+    browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
+    browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+};
 
 export const wastewaterConfig = {
     menuListEntryDecoration: 'decoration-teal',
@@ -10,24 +34,6 @@ export const wastewaterConfig = {
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
-    wasap: {
-        linkTemplate: {
-            nucleotideMutation:
-                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
-            aminoAcidMutation:
-                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
-        },
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
-        samplingDateField: 'samplingDate',
-        locationNameField: 'locationName',
-        covSpectrum: {
-            lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
-            cladeField: 'nextstrainClade',
-            lineageField: 'nextcladePangoLineage',
-        },
-        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
-        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-    },
     pages: {
         rsv: {
             path: `/${wastewaterPathFragment}/rsv`,
@@ -36,10 +42,6 @@ export const wastewaterConfig = {
         influenza: {
             path: `/${wastewaterPathFragment}/flu`,
             description: 'Analyze Influenza data that was collected by the WISE project.',
-        },
-        covid: {
-            path: `/${wastewaterPathFragment}/covid`,
-            description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
         },
     },
 };

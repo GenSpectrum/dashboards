@@ -29,6 +29,7 @@ describe('VariantExplorerFilter', () => {
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
+                    clinicalSequenceLapisLineageField='pangoLineage'
                 />
             </gs-app>,
         );
@@ -52,6 +53,7 @@ describe('VariantExplorerFilter', () => {
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
+                    clinicalSequenceLapisLineageField='pangoLineage'
                 />
             </gs-app>,
         );
@@ -82,6 +84,7 @@ describe('VariantExplorerFilter', () => {
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
+                    clinicalSequenceLapisLineageField='pangoLineage'
                 />
             </gs-app>,
         );

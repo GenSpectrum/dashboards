@@ -1,6 +1,6 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
 import { type Organism, organismConfig, paths } from '../../../types/Organism.ts';
-import { wastewaterConfig, wastewaterPathFragment } from '../../../types/wastewaterConfig.ts';
+import { wasapConfigCovid, wastewaterConfig, wastewaterPathFragment } from '../../../types/wastewaterConfig.ts';
 import { ServerSide } from '../../../views/serverSideRouting.ts';
 
 type MegaMenuSection = {
@@ -88,10 +88,10 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             {
                 label: 'SARS-CoV-2',
                 iconType: 'table',
-                href: wastewaterConfig.pages.covid.path,
+                href: wasapConfigCovid.path,
+                description: wasapConfigCovid.description,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
-                description: wastewaterConfig.pages.covid.description,
             },
             {
                 label: 'Browse RSV & Influenza data',
@@ -104,10 +104,10 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             {
                 label: 'Browse SARS-CoV-2 data',
                 iconType: 'database',
-                href: wastewaterConfig.wasap.browseDataUrl,
+                href: wasapConfigCovid.browseDataUrl,
+                description: wasapConfigCovid.browseDataDescription,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
-                description: wastewaterConfig.wasap.browseDataDescription,
             },
         ],
         href: `/${wastewaterPathFragment}`,

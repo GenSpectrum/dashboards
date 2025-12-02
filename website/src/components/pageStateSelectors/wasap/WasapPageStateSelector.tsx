@@ -13,7 +13,6 @@ import { LabeledField } from './utils/LabeledField';
 import { RadioSelect } from './utils/RadioSelect';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { Inset } from '../../../styles/Inset';
-import { wastewaterConfig } from '../../../types/wastewaterConfig';
 import { recentDaysDateRangeOptions } from '../../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../../views/pageStateHandlers/PageStateHandler';
 import {
@@ -27,16 +26,19 @@ import {
     type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsTextFilter } from '../../genspectrum/GsTextFilter';
+import type { WasapPageConfig } from '../../views/wasap/wasapPageConfig';
 
 /**
  * The root filter control for the W-ASAP dashboard.
  * Uses sub filter components for the different modes, in the 'filters' directory.
  */
 export function WasapPageStateSelector({
+    config,
     pageStateHandler,
     initialBaseFilterState,
     initialAnalysisFilterState,
 }: {
+    config: WasapPageConfig;
     pageStateHandler: PageStateHandler<WasapFilter>;
     initialBaseFilterState: WasapBaseFilter;
     initialAnalysisFilterState: WasapAnalysisFilter;
@@ -76,9 +78,9 @@ export function WasapPageStateSelector({
         queryKey: ['cladeLineages'],
         queryFn: () =>
             getCladeLineages(
-                wastewaterConfig.wasap.covSpectrum.lapisBaseUrl,
-                wastewaterConfig.wasap.covSpectrum.cladeField,
-                wastewaterConfig.wasap.covSpectrum.lineageField,
+                config.clinicalLapis.lapisBaseUrl,
+                config.clinicalLapis.cladeField,
+                config.clinicalLapis.lineageField,
                 true,
             ),
     });
@@ -90,7 +92,7 @@ export function WasapPageStateSelector({
                 <LabeledField label='Sampling location'>
                     <GsTextFilter
                         placeholderText='Sampling location'
-                        lapisField={wastewaterConfig.wasap.locationNameField}
+                        lapisField={config.locationNameField}
                         lapisFilter={{}}
                         onInputChange={({ locationName }) => {
                             setBaseFilterState({ ...baseFilterState, locationName });
@@ -101,8 +103,8 @@ export function WasapPageStateSelector({
 
                 <DynamicDateFilter
                     label='Sampling date'
-                    lapis={wastewaterConfig.wasap.lapisBaseUrl}
-                    dateFieldName={wastewaterConfig.wasap.samplingDateField}
+                    lapis={config.lapisBaseUrl}
+                    dateFieldName={config.samplingDateField}
                     generateOptions={recentDaysDateRangeOptions}
                     value={baseFilterState.samplingDate}
                     onChange={(newDateRange?) => setBaseFilterState({ ...baseFilterState, samplingDate: newDateRange })}
@@ -154,7 +156,8 @@ export function WasapPageStateSelector({
                                 <VariantExplorerFilter
                                     pageState={variantFilter}
                                     setPageState={setVariantFilter}
-                                    clinicalSequenceLapisBaseUrl={wastewaterConfig.wasap.covSpectrum.lapisBaseUrl}
+                                    clinicalSequenceLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                    clinicalSequenceLapisLineageField={config.clinicalLapis.lineageField}
                                 />
                             );
                         case 'resistance':
@@ -169,7 +172,8 @@ export function WasapPageStateSelector({
                                 <UntrackedFilter
                                     pageState={untrackedFilter}
                                     setPageState={setUntrackedFilter}
-                                    clinicalSequenceLapisBaseUrl={wastewaterConfig.wasap.covSpectrum.lapisBaseUrl}
+                                    clinicalSequenceLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                    clinicalSequenceLapisLineageField={config.clinicalLapis.lineageField}
                                     cladeLineageQueryResult={cladeLineageQueryResult}
                                 />
                             );

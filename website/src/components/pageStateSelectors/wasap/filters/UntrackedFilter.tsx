@@ -19,6 +19,7 @@ interface UntrackedFilterProps {
      * This is _not_ the same as the LAPIS providing the wastewater amplicon sequences.
      */
     clinicalSequenceLapisBaseUrl: string;
+    clinicalSequenceLapisLineageField: string;
 }
 
 export function UntrackedFilter({
@@ -26,6 +27,7 @@ export function UntrackedFilter({
     setPageState,
     cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
     clinicalSequenceLapisBaseUrl,
+    clinicalSequenceLapisLineageField,
 }: UntrackedFilterProps) {
     const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
     defaultLineages.sort();
@@ -74,7 +76,7 @@ export function UntrackedFilter({
                     <LabeledField label='Custom variant list'>
                         <gs-app lapis={clinicalSequenceLapisBaseUrl}>
                             <GsLineageFilter
-                                lapisField='pangoLineage'
+                                lapisField={clinicalSequenceLapisLineageField}
                                 lapisFilter={{}}
                                 placeholderText='Variant'
                                 value={pageState.excludeVariants}
