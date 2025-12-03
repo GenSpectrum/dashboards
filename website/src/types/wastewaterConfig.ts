@@ -12,8 +12,8 @@ export const wastewaterPathFragment = 'swiss-wastewater';
 
 export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPageConfig> = {
     [wastewaterOrganisms.covid]: {
-        path: `/${wastewaterPathFragment}/covid`,
         name: 'SARS-CoV-2',
+        path: `/${wastewaterPathFragment}/covid`,
         description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
         linkTemplate: {
             nucleotideMutation:
@@ -21,6 +21,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             aminoAcidMutation:
                 'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
         },
+        enabledAnalysisModes: ['manual', 'resistance', 'variant', 'untracked'],
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',

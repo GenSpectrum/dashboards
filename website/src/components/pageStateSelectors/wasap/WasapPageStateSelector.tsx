@@ -75,6 +75,7 @@ export function WasapPageStateSelector({
 
     // data for the 'untracked' analysis mode - loaded here already so it's available when the mode is selected
     const cladeLineageQueryResult = useQuery({
+        enabled: config.enabledAnalysisModes.includes('untracked'),
         queryKey: ['cladeLineages'],
         queryFn: () =>
             getCladeLineages(
@@ -141,10 +142,11 @@ export function WasapPageStateSelector({
                     setSelectedAnalysisMode(e.target.value as WasapAnalysisMode);
                 }}
             >
-                <option value='manual'>Manual</option>
-                <option value='resistance'>Resistance Mutations</option>
-                <option value='variant'>Variant Explorer</option>
-                <option value='untracked'>Untracked Mutations</option>
+                {config.enabledAnalysisModes.map((mode) => (
+                    <option key={mode} value={mode}>
+                        {modeLabel(mode)}
+                    </option>
+                ))}
             </select>
             <Inset className='p-2'>
                 {(() => {
@@ -183,4 +185,17 @@ export function WasapPageStateSelector({
             <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={getMergedPageState()} />
         </div>
     );
+}
+
+function modeLabel(mode: WasapAnalysisMode): string {
+    switch (mode) {
+        case 'manual':
+            return 'Manual';
+        case 'resistance':
+            return 'Resistance Mutations';
+        case 'variant':
+            return 'Variant Explorer';
+        case 'untracked':
+            return 'Untracked Mutations';
+    }
 }
