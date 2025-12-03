@@ -1,5 +1,7 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
+import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
+
 export const wastewaterPathFragment = 'swiss-wastewater';
 
 export const wastewaterConfig = {
@@ -27,6 +29,7 @@ export const wastewaterConfig = {
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+        resistanceMutations: covidResistanceMutations,
     },
     pages: {
         rsv: {
