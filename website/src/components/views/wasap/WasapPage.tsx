@@ -8,6 +8,7 @@ import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getTotalCount } from '../../../lapis/getTotalCount';
+import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
 import {
     WasapPageStateHandler,
@@ -18,11 +19,12 @@ import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPage
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
 export type WasapPageProps = {
+    wastewaterOrganism: WastewaterOrganismName;
     currentUrl: URL;
-    config: WasapPageConfig;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ config, currentUrl }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, currentUrl }) => {
+    const config = wastewaterOrganismConfigs[wastewaterOrganism];
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
     const { base, analysis } = useMemo(

@@ -1,32 +1,36 @@
 ---
 import { WasapPage } from './WasapPage';
-import type { WasapPageConfig } from './wasapPageConfig';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import DataPageLayout from '../../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../../types/dataOrigins';
-import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
+import {
+    wastewaterBreadcrumb,
+    wastewaterOrganismConfigs,
+    type WastewaterOrganismName,
+} from '../../../types/wastewaterConfig';
 
 type Props = {
-    wasapPageConfig: WasapPageConfig;
+    wastewaterOrganism: WastewaterOrganismName;
 };
 
-const { wasapPageConfig } = Astro.props;
+const { wastewaterOrganism } = Astro.props;
+const { name, path: href, lapisBaseUrl } = wastewaterOrganismConfigs[wastewaterOrganism];
 
 const url = Astro.url;
 ---
 
 <DataPageLayout
-    title={`Swiss wastewater - ${wasapPageConfig.name}`}
+    title={`Swiss wastewater - ${name}`}
     breadcrumbs={[
         ...defaultBreadcrumbs,
         wastewaterBreadcrumb,
         {
-            name: wasapPageConfig.name,
-            href: wasapPageConfig.path,
+            name,
+            href,
         },
     ]}
     dataOrigins={[dataOrigins.wise]}
-    lapisUrl={wasapPageConfig.lapisBaseUrl}
+    lapisUrl={lapisBaseUrl}
 >
-    <WasapPage config={wasapPageConfig} currentUrl={url} client:only='react' />
+    <WasapPage wastewaterOrganism={wastewaterOrganism} currentUrl={url} client:only='react' />
 </DataPageLayout>
