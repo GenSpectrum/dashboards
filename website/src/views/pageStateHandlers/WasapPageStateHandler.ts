@@ -26,21 +26,17 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
     }
 
     parsePageStateFromUrl(url: URL): WasapFilter {
+        // URL-parsed settings
         const texts = parseTextFiltersFromUrl(url.searchParams, this.filterConfig);
         const dateRanges = parseDateRangesFromUrl(url.searchParams, this.filterConfig);
+        const providedSequenceType = texts.sequenceType as SequenceType | undefined;
+        const providedMode = texts.analysisMode as WasapAnalysisMode | undefined;
 
+        // config provided defaults
         const defaults = this.config.filterDefaults;
+        const defaultMode = this.config.enabledAnalysisModes[0];
 
-        const base: WasapBaseFilter = {
-            locationName: texts.locationName ?? this.config.defaultLocationName,
-            samplingDate: dateRanges.samplingDate,
-            granularity: texts.granularity ?? 'day',
-            excludeEmpty: texts.excludeEmpty !== 'false',
-        };
-
-        const mode = (texts.analysisMode as WasapAnalysisMode | undefined) ?? this.config.enabledAnalysisModes[0];
-        const sequenceType =
-            (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
+        const mode = providedMode ?? defaultMode;
 
         let analysis: WasapAnalysisFilter;
 
@@ -48,14 +44,14 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             case 'manual':
                 analysis = {
                     mode,
-                    sequenceType,
+                    sequenceType: providedSequenceType ?? defaults.manual.sequenceType,
                     mutations: texts.mutations?.split('|'),
                 };
                 break;
             case 'variant':
                 analysis = {
                     mode,
-                    sequenceType,
+                    sequenceType: providedSequenceType ?? defaults.variant.sequenceType,
                     variant: texts.variant ?? defaults.variant.variant,
                     minProportion: Number(texts.minProportion ?? defaults.variant.minProportion),
                     minCount: Number(texts.minCount ?? defaults.variant.minCount),
@@ -72,12 +68,19 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             case 'untracked':
                 analysis = {
                     mode,
-                    sequenceType,
+                    sequenceType: providedSequenceType ?? defaults.untracked.sequenceType,
                     excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? defaults.untracked.excludeSet,
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
         }
+
+        const base: WasapBaseFilter = {
+            locationName: texts.locationName ?? this.config.defaultLocationName,
+            samplingDate: dateRanges.samplingDate,
+            granularity: texts.granularity ?? 'day',
+            excludeEmpty: texts.excludeEmpty !== 'false',
+        };
 
         return { base, analysis };
     }

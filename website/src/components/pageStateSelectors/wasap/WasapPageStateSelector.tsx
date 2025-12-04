@@ -15,12 +15,6 @@ import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { Inset } from '../../../styles/Inset';
 import { recentDaysDateRangeOptions } from '../../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../../views/pageStateHandlers/PageStateHandler';
-import {
-    defaultManualFilter,
-    defaultVariantFilter,
-    defaultResistanceFilter,
-    defaultUntrackedFilter,
-} from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsTextFilter } from '../../genspectrum/GsTextFilter';
 import type {
     WasapAnalysisFilter,
@@ -48,16 +42,18 @@ export function WasapPageStateSelector({
     const [baseFilterState, setBaseFilterState] = useState(initialBaseFilterState);
 
     const [manualFilter, setManualFilter] = useState(
-        initialAnalysisFilterState.mode === 'manual' ? initialAnalysisFilterState : defaultManualFilter,
+        initialAnalysisFilterState.mode === 'manual' ? initialAnalysisFilterState : config.filterDefaults.manual,
     );
     const [variantFilter, setVariantFilter] = useState(
-        initialAnalysisFilterState.mode === 'variant' ? initialAnalysisFilterState : defaultVariantFilter,
+        initialAnalysisFilterState.mode === 'variant' ? initialAnalysisFilterState : config.filterDefaults.variant,
     );
     const [resistanceFilter, setResistanceFilter] = useState(
-        initialAnalysisFilterState.mode === 'resistance' ? initialAnalysisFilterState : defaultResistanceFilter,
+        initialAnalysisFilterState.mode === 'resistance'
+            ? initialAnalysisFilterState
+            : config.filterDefaults.resistance,
     );
     const [untrackedFilter, setUntrackedFilter] = useState(
-        initialAnalysisFilterState.mode === 'untracked' ? initialAnalysisFilterState : defaultUntrackedFilter,
+        initialAnalysisFilterState.mode === 'untracked' ? initialAnalysisFilterState : config.filterDefaults.untracked,
     );
 
     const [selectedAnalysisMode, setSelectedAnalysisMode] = useState(initialAnalysisFilterState.mode);

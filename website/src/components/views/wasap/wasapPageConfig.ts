@@ -31,6 +31,7 @@ export type WasapPageConfig = {
      * Which modes to enable on the dashboard; the list will also define the order
      * in which the modes are shown in the dropdown menu.
      * Should not contain duplicates.
+     * At least one mode needs to be enabled.
      */
     enabledAnalysisModes: WasapAnalysisMode[];
 
@@ -106,15 +107,15 @@ export type WasapVariantFilter = {
 export type WasapResistanceFilter = {
     mode: 'resistance';
     sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
-    resistanceSet: string;
+    resistanceSet?: string;
 };
 
-export type ExcludeSetName = 'nextstrain' | 'custom';
+export type ExcludeSetName = 'predefined' | 'custom';
 
 export type WasapUntrackedFilter = {
     mode: 'untracked';
     sequenceType: SequenceType;
-    excludeSet: ExcludeSetName;
+    excludeSet?: ExcludeSetName;
     excludeVariants?: string[];
 };
 

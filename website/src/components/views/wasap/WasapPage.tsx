@@ -52,7 +52,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
                     toMutationAnnotations(resistanceMutation),
                 ),
             ),
-        [],
+        [config.resistanceMutationSets],
     );
     const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 

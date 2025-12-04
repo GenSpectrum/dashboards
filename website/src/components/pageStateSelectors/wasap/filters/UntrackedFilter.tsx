@@ -41,11 +41,11 @@ export function UntrackedFilter({
                     value={pageState.excludeSet}
                     onChange={(e) => setPageState({ ...pageState, excludeSet: e.target.value as ExcludeSetName })}
                 >
-                    <option value='nextstrain'>Nextstrain clades</option>
+                    <option value='predefined'>Nextstrain clades</option>
                     <option value='custom'>custom</option>
                 </select>
             </LabeledField>
-            {pageState.excludeSet === 'nextstrain' ? (
+            {pageState.excludeSet === 'predefined' ? (
                 isPending ? (
                     <Loading />
                 ) : isError ? (
