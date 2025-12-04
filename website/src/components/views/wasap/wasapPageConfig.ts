@@ -22,6 +22,9 @@ export type WasapPageConfig = {
      */
     description: string;
 
+    /**
+     * Object with templates to generate URLs to specific mutations.
+     */
     linkTemplate: LinkTemplate;
 
     /**
@@ -45,6 +48,16 @@ export type WasapPageConfig = {
     browseDataDescription: string;
 
     resistanceMutationSets: ResistanceMutationSet[];
+
+    defaultLocationName: string;
+    filterDefaults: FilterDefaults;
+};
+
+type FilterDefaults = {
+    manual: WasapManualFilter;
+    variant: WasapVariantFilter;
+    resistance: WasapResistanceFilter;
+    untracked: WasapUntrackedFilter;
 };
 
 /**

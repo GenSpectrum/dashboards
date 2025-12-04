@@ -34,6 +34,32 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+        // TODO - in theory we only need to provide defaults for the modes that are enabled, I think?
+        defaultLocationName: 'Zürich (ZH)',
+        filterDefaults: {
+            manual: {
+                mode: 'manual',
+                sequenceType: 'nucleotide',
+            },
+            variant: {
+                mode: 'variant',
+                sequenceType: 'nucleotide',
+                variant: 'XFG*',
+                minProportion: 0.8,
+                minCount: 15,
+                minJaccard: 0.75,
+            },
+            resistance: {
+                mode: 'resistance',
+                sequenceType: 'amino acid',
+                resistanceSet: 'Spike',
+            },
+            untracked: {
+                mode: 'untracked',
+                sequenceType: 'nucleotide',
+                excludeSet: 'nextstrain',
+            },
+        },
     },
 };
 

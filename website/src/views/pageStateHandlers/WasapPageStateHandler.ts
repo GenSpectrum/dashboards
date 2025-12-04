@@ -10,41 +10,12 @@ import type {
     WasapAnalysisMode,
     WasapBaseFilter,
     WasapFilter,
-    WasapManualFilter,
     WasapPageConfig,
-    WasapResistanceFilter,
-    WasapUntrackedFilter,
-    WasapVariantFilter,
 } from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { formatUrl } from '../../util/formatUrl';
 import { setSearchFromString } from '../helpers';
 
-export const defaultManualFilter: WasapManualFilter = {
-    mode: 'manual',
-    sequenceType: 'nucleotide',
-};
-
-export const defaultVariantFilter: WasapVariantFilter = {
-    mode: 'variant',
-    sequenceType: 'nucleotide',
-    variant: 'XFG*', // TODO
-    minProportion: 0.8,
-    minCount: 15,
-    minJaccard: 0.75,
-};
-
-export const defaultResistanceFilter: WasapResistanceFilter = {
-    mode: 'resistance',
-    sequenceType: 'amino acid',
-    resistanceSet: 'Spike', // TODO - needs to be more generic
-};
-
-export const defaultUntrackedFilter: WasapUntrackedFilter = {
-    mode: 'untracked',
-    sequenceType: 'nucleotide',
-    excludeSet: 'nextstrain',
-};
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
     private readonly config: WasapPageConfig;
     private readonly filterConfig: BaselineFilterConfig[];
@@ -58,16 +29,18 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const texts = parseTextFiltersFromUrl(url.searchParams, this.filterConfig);
         const dateRanges = parseDateRangesFromUrl(url.searchParams, this.filterConfig);
 
-        const mode = (texts.analysisMode as WasapAnalysisMode | undefined) ?? 'manual';
-        const sequenceType =
-            (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
+        const defaults = this.config.filterDefaults;
 
         const base: WasapBaseFilter = {
-            locationName: texts.locationName ?? 'Zürich (ZH)', // TODO
+            locationName: texts.locationName ?? this.config.defaultLocationName,
             samplingDate: dateRanges.samplingDate,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
+
+        const mode = (texts.analysisMode as WasapAnalysisMode | undefined) ?? this.config.enabledAnalysisModes[0];
+        const sequenceType =
+            (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
 
         let analysis: WasapAnalysisFilter;
 
@@ -83,24 +56,24 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 analysis = {
                     mode,
                     sequenceType,
-                    variant: texts.variant ?? defaultVariantFilter.variant,
-                    minProportion: Number(texts.minProportion ?? defaultVariantFilter.minProportion),
-                    minCount: Number(texts.minCount ?? defaultVariantFilter.minCount),
-                    minJaccard: Number(texts.minJaccard ?? defaultVariantFilter.minJaccard),
+                    variant: texts.variant ?? defaults.variant.variant,
+                    minProportion: Number(texts.minProportion ?? defaults.variant.minProportion),
+                    minCount: Number(texts.minCount ?? defaults.variant.minCount),
+                    minJaccard: Number(texts.minJaccard ?? defaults.variant.minJaccard),
                 };
                 break;
             case 'resistance':
                 analysis = {
                     mode,
                     sequenceType: 'amino acid',
-                    resistanceSet: texts.resistanceSet ?? defaultResistanceFilter.resistanceSet,
+                    resistanceSet: texts.resistanceSet ?? defaults.resistance.resistanceSet,
                 };
                 break;
             case 'untracked':
                 analysis = {
                     mode,
                     sequenceType,
-                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? defaultUntrackedFilter.excludeSet,
+                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? defaults.untracked.excludeSet,
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
