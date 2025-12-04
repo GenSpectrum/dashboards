@@ -4,7 +4,6 @@ import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
-import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { wastewaterConfig } from '../../types/wastewaterConfig';
 import { formatUrl } from '../../util/formatUrl';
@@ -41,7 +40,7 @@ export type WasapVariantFilter = {
 export type WasapResistanceFilter = {
     mode: 'resistance';
     sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
-    resistanceSet: ResistanceSetName;
+    resistanceSet: string;
 };
 
 export type ExcludeSetName = 'nextstrain' | 'custom';
@@ -77,7 +76,7 @@ export const defaultVariantFilter: WasapVariantFilter = {
 export const defaultResistanceFilter: WasapResistanceFilter = {
     mode: 'resistance',
     sequenceType: 'amino acid',
-    resistanceSet: resistanceSetNames.ThreeCLPro,
+    resistanceSet: wastewaterConfig.wasap.resistanceMutations[0].name,
 };
 
 export const defaultUntrackedFilter: WasapUntrackedFilter = {
@@ -187,8 +186,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 analysis = {
                     mode,
                     sequenceType: 'amino acid',
-                    resistanceSet:
-                        (texts.resistanceSet as ResistanceSetName | undefined) ?? defaultResistanceFilter.resistanceSet,
+                    resistanceSet: texts.resistanceSet ?? defaultResistanceFilter.resistanceSet,
                 };
                 break;
             case 'untracked':

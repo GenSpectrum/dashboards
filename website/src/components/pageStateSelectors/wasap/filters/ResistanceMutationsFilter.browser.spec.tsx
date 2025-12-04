@@ -4,13 +4,12 @@ import { render } from 'vitest-browser-react';
 import { ResistanceMutationsFilter } from './ResistanceMutationsFilter';
 import { it } from '../../../../../test-extend';
 import type { WasapResistanceFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
-import { resistanceSetNames } from '../../../views/wasap/resistanceMutations';
 
 describe('ResistanceMutationsFilter', () => {
     const defaultPageState: WasapResistanceFilter = {
         mode: 'resistance',
         sequenceType: 'amino acid',
-        resistanceSet: resistanceSetNames.ThreeCLPro,
+        resistanceSet: '3CLpro',
     };
 
     it('renders with initial resistance set', async () => {
@@ -21,7 +20,7 @@ describe('ResistanceMutationsFilter', () => {
         );
 
         const select = getByRole('combobox');
-        await expect.element(select).toHaveValue(resistanceSetNames.ThreeCLPro);
+        await expect.element(select).toHaveValue('3CLpro');
     });
 
     it('calls setPageState when selecting a different resistance set', async () => {
@@ -32,11 +31,11 @@ describe('ResistanceMutationsFilter', () => {
         );
 
         const select = getByRole('combobox');
-        await select.selectOptions(resistanceSetNames.RdRp);
+        await select.selectOptions('RdRp');
 
         expect(mockSetPageState).toHaveBeenCalledWith({
             ...defaultPageState,
-            resistanceSet: resistanceSetNames.RdRp,
+            resistanceSet: 'RdRp',
         });
     });
 });
