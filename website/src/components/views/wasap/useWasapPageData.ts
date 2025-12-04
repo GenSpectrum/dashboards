@@ -1,7 +1,6 @@
 import type { CustomColumn } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 
-import { RESISTANCE_MUTATIONS } from './resistanceMutations';
 import type { WasapPageConfig } from './wasapPageConfig';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
@@ -43,7 +42,11 @@ async function fetchMutationSelection(
                 analysis.minJaccard,
             ).then((r) => ({ type: 'jaccard', mutationsWithScore: r }));
         case 'resistance':
-            return { type: 'selected', mutations: RESISTANCE_MUTATIONS[analysis.resistanceSet] };
+            return {
+                type: 'selected',
+                mutations:
+                    config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
+            };
         case 'untracked': {
             const variantsToExclude =
                 analysis.excludeSet === 'custom'

@@ -1,5 +1,6 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
+import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
 import type { WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
 export const wastewaterOrganisms = {
@@ -22,6 +23,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
         },
         enabledAnalysisModes: ['manual', 'resistance', 'variant', 'untracked'],
+        resistanceMutationSets: covidResistanceMutations,
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',

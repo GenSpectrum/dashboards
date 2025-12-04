@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { type FC } from 'react';
 
-import { resistanceMutationAnnotations } from './resistanceMutations';
+import { toMutationAnnotations } from './resistanceMutations';
 import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
@@ -48,7 +48,15 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
         ...(base.samplingDate?.dateTo && { samplingDateTo: base.samplingDate.dateTo }),
     };
 
-    const memoizedMutationAnnotations = useMemo(() => JSON.stringify(resistanceMutationAnnotations), []);
+    const memoizedMutationAnnotations = useMemo(
+        () =>
+            JSON.stringify(
+                config.resistanceMutationSets.flatMap((resistanceMutation) =>
+                    toMutationAnnotations(resistanceMutation),
+                ),
+            ),
+        [],
+    );
     const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 
     return (

@@ -1,3 +1,4 @@
+import type { ResistanceMutationSet } from './resistanceMutations';
 import type { WasapAnalysisMode } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 
 /**
@@ -56,4 +57,6 @@ export type WasapPageConfig = {
 
     browseDataUrl: string;
     browseDataDescription: string;
+
+    resistanceMutationSets: ResistanceMutationSet[];
 };

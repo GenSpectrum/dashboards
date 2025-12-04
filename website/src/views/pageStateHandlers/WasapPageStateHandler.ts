@@ -4,7 +4,6 @@ import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
-import { resistanceSetNames, type ResistanceSetName } from '../../components/views/wasap/resistanceMutations';
 import type { WasapPageConfig } from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { formatUrl } from '../../util/formatUrl';
@@ -41,7 +40,7 @@ export type WasapVariantFilter = {
 export type WasapResistanceFilter = {
     mode: 'resistance';
     sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
-    resistanceSet: ResistanceSetName;
+    resistanceSet: string;
 };
 
 export type ExcludeSetName = 'nextstrain' | 'custom';
@@ -68,7 +67,7 @@ export const defaultManualFilter: WasapManualFilter = {
 export const defaultVariantFilter: WasapVariantFilter = {
     mode: 'variant',
     sequenceType: 'nucleotide',
-    variant: 'XFG*',
+    variant: 'XFG*', // TODO
     minProportion: 0.8,
     minCount: 15,
     minJaccard: 0.75,
@@ -77,7 +76,7 @@ export const defaultVariantFilter: WasapVariantFilter = {
 export const defaultResistanceFilter: WasapResistanceFilter = {
     mode: 'resistance',
     sequenceType: 'amino acid',
-    resistanceSet: resistanceSetNames.ThreeCLPro,
+    resistanceSet: 'Spike', // TODO - needs to be more generic
 };
 
 export const defaultUntrackedFilter: WasapUntrackedFilter = {
@@ -103,7 +102,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
             (texts.sequenceType as SequenceType | undefined) ?? (mode === 'resistance' ? 'amino acid' : 'nucleotide');
 
         const base: WasapBaseFilter = {
-            locationName: texts.locationName ?? 'Zürich (ZH)',
+            locationName: texts.locationName ?? 'Zürich (ZH)', // TODO
             samplingDate: dateRanges.samplingDate,
             granularity: texts.granularity ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
@@ -133,8 +132,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 analysis = {
                     mode,
                     sequenceType: 'amino acid',
-                    resistanceSet:
-                        (texts.resistanceSet as ResistanceSetName | undefined) ?? defaultResistanceFilter.resistanceSet,
+                    resistanceSet: texts.resistanceSet ?? defaultResistanceFilter.resistanceSet,
                 };
                 break;
             case 'untracked':

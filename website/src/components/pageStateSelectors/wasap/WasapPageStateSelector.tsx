@@ -167,6 +167,7 @@ export function WasapPageStateSelector({
                                 <ResistanceMutationsFilter
                                     pageState={resistanceFilter}
                                     setPageState={setResistanceFilter}
+                                    resistanceMutationSets={config.resistanceMutationSets}
                                 />
                             );
                         case 'untracked':
