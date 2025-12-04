@@ -1,7 +1,7 @@
 import { mutationType, type MutationType } from '@genspectrum/dashboard-components/util';
 
-import { type WasapManualFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationFilter } from '../../../genspectrum/GsMutationFilter';
+import type { WasapManualFilter } from '../../../views/wasap/wasapPageConfig';
 import { SequenceTypeSelector } from '../utils/SequenceTypeSelector';
 
 export function ManualAnalysisFilter({

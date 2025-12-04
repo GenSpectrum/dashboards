@@ -1,10 +1,9 @@
 import type { CustomColumn } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 
-import type { WasapPageConfig } from './wasapPageConfig';
+import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
-import type { WasapAnalysisFilter } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 
 type AllMutations = {
     type: 'all';

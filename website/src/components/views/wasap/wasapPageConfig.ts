@@ -1,20 +1,6 @@
+import type { DateRangeOption, SequenceType } from '@genspectrum/dashboard-components/util';
+
 import type { ResistanceMutationSet } from './resistanceMutations';
-import type { WasapAnalysisMode } from '../../../views/pageStateHandlers/WasapPageStateHandler';
-
-/**
- * URL templates containing the placeholder '{{mutation}}', which are used to construct
- * URLs to mutations in the mutations-over-time component.
- */
-export type LinkTemplate = {
-    nucleotideMutation: string;
-    aminoAcidMutation: string;
-};
-
-export type ClinicalLapisConfig = {
-    lapisBaseUrl: string;
-    cladeField: string;
-    lineageField: string;
-};
 
 /**
  * All config settings for a W-ASAP dashboard page.
@@ -59,4 +45,69 @@ export type WasapPageConfig = {
     browseDataDescription: string;
 
     resistanceMutationSets: ResistanceMutationSet[];
+};
+
+/**
+ * URL templates containing the placeholder '{{mutation}}', which are used to construct
+ * URLs to mutations in the mutations-over-time component.
+ */
+export type LinkTemplate = {
+    nucleotideMutation: string;
+    aminoAcidMutation: string;
+};
+
+export type ClinicalLapisConfig = {
+    lapisBaseUrl: string;
+    cladeField: string;
+    lineageField: string;
+};
+
+export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
+
+export type WasapBaseFilter = {
+    locationName?: string;
+    samplingDate?: DateRangeOption;
+    granularity: string;
+    excludeEmpty: boolean;
+};
+
+export type WasapManualFilter = {
+    mode: 'manual';
+    sequenceType: SequenceType;
+    /**
+     * A list of mutations like A23T (nucleotide) or S:E44H (amino acid).
+     * The type of mutation should match the sequenceType.
+     */
+    mutations?: string[];
+};
+
+export type WasapVariantFilter = {
+    mode: 'variant';
+    sequenceType: SequenceType;
+    variant?: string;
+    minProportion: number;
+    minCount: number;
+    minJaccard: number;
+};
+
+export type WasapResistanceFilter = {
+    mode: 'resistance';
+    sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
+    resistanceSet: string;
+};
+
+export type ExcludeSetName = 'nextstrain' | 'custom';
+
+export type WasapUntrackedFilter = {
+    mode: 'untracked';
+    sequenceType: SequenceType;
+    excludeSet: ExcludeSetName;
+    excludeVariants?: string[];
+};
+
+export type WasapAnalysisFilter = WasapManualFilter | WasapVariantFilter | WasapResistanceFilter | WasapUntrackedFilter;
+
+export type WasapFilter = {
+    base: WasapBaseFilter;
+    analysis: WasapAnalysisFilter;
 };

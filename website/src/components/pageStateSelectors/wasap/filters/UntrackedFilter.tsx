@@ -1,11 +1,8 @@
 import { type UseQueryResult } from '@tanstack/react-query';
 
 import { Loading } from '../../../../util/Loading';
-import {
-    type ExcludeSetName,
-    type WasapUntrackedFilter,
-} from '../../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
+import type { ExcludeSetName, WasapUntrackedFilter } from '../../../views/wasap/wasapPageConfig';
 import { KnownVariantsExclusionInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
 import { SequenceTypeSelector } from '../utils/SequenceTypeSelector';

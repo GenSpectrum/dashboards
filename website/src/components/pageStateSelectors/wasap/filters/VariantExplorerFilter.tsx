@@ -1,6 +1,6 @@
 import { Inset } from '../../../../styles/Inset';
-import { type WasapVariantFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
+import type { WasapVariantFilter } from '../../../views/wasap/wasapPageConfig';
 import { SelectorHeadline } from '../../SelectorHeadline';
 import { DefineClinicalSignatureInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';

@@ -5,15 +5,12 @@ import { type FC } from 'react';
 
 import { toMutationAnnotations } from './resistanceMutations';
 import { useWasapPageData } from './useWasapPageData';
-import type { WasapPageConfig } from './wasapPageConfig';
+import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getTotalCount } from '../../../lapis/getTotalCount';
 import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
-import {
-    WasapPageStateHandler,
-    type WasapAnalysisFilter,
-} from '../../../views/pageStateHandlers/WasapPageStateHandler';
+import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';

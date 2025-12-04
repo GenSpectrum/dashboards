@@ -1,63 +1,24 @@
-import { type SequenceType, type DateRangeOption } from '@genspectrum/dashboard-components/util';
+import { type SequenceType } from '@genspectrum/dashboard-components/util';
 
 import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
-import type { WasapPageConfig } from '../../components/views/wasap/wasapPageConfig';
+import type {
+    ExcludeSetName,
+    WasapAnalysisFilter,
+    WasapAnalysisMode,
+    WasapBaseFilter,
+    WasapFilter,
+    WasapManualFilter,
+    WasapPageConfig,
+    WasapResistanceFilter,
+    WasapUntrackedFilter,
+    WasapVariantFilter,
+} from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { formatUrl } from '../../util/formatUrl';
 import { setSearchFromString } from '../helpers';
-
-export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
-
-export type WasapBaseFilter = {
-    locationName?: string;
-    samplingDate?: DateRangeOption;
-    granularity: string;
-    excludeEmpty: boolean;
-};
-
-export type WasapManualFilter = {
-    mode: 'manual';
-    sequenceType: SequenceType;
-    /**
-     * A list of mutations like A23T (nucleotide) or S:E44H (amino acid).
-     * The type of mutation should match the sequenceType.
-     */
-    mutations?: string[];
-};
-
-export type WasapVariantFilter = {
-    mode: 'variant';
-    sequenceType: SequenceType;
-    variant?: string;
-    minProportion: number;
-    minCount: number;
-    minJaccard: number;
-};
-
-export type WasapResistanceFilter = {
-    mode: 'resistance';
-    sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
-    resistanceSet: string;
-};
-
-export type ExcludeSetName = 'nextstrain' | 'custom';
-
-export type WasapUntrackedFilter = {
-    mode: 'untracked';
-    sequenceType: SequenceType;
-    excludeSet: ExcludeSetName;
-    excludeVariants?: string[];
-};
-
-export type WasapAnalysisFilter = WasapManualFilter | WasapVariantFilter | WasapResistanceFilter | WasapUntrackedFilter;
-
-export type WasapFilter = {
-    base: WasapBaseFilter;
-    analysis: WasapAnalysisFilter;
-};
 
 export const defaultManualFilter: WasapManualFilter = {
     mode: 'manual',

@@ -4,7 +4,7 @@ import { render } from 'vitest-browser-react';
 import { ResistanceMutationsFilter } from './ResistanceMutationsFilter';
 import { it } from '../../../../../test-extend';
 import { wastewaterOrganismConfigs } from '../../../../types/wastewaterConfig';
-import type { WasapResistanceFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
+import type { WasapResistanceFilter } from '../../../views/wasap/wasapPageConfig';
 
 describe('ResistanceMutationsFilter', () => {
     const defaultPageState: WasapResistanceFilter = {

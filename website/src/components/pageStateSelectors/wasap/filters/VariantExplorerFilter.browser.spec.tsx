@@ -5,7 +5,7 @@ import { render } from 'vitest-browser-react';
 import { VariantExplorerFilter } from './VariantExplorerFilter';
 import { DUMMY_LAPIS_URL, type LapisRouteMocker } from '../../../../../routeMocker';
 import { it } from '../../../../../test-extend';
-import type { WasapVariantFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
+import type { WasapVariantFilter } from '../../../views/wasap/wasapPageConfig';
 
 const DUMMY_LAPIS_URL_2 = 'http://lapis2.dummy';
 

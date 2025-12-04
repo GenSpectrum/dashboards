@@ -16,17 +16,19 @@ import { Inset } from '../../../styles/Inset';
 import { recentDaysDateRangeOptions } from '../../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../../views/pageStateHandlers/PageStateHandler';
 import {
-    type WasapFilter,
-    type WasapAnalysisMode,
     defaultManualFilter,
     defaultVariantFilter,
     defaultResistanceFilter,
     defaultUntrackedFilter,
-    type WasapBaseFilter,
-    type WasapAnalysisFilter,
 } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsTextFilter } from '../../genspectrum/GsTextFilter';
-import type { WasapPageConfig } from '../../views/wasap/wasapPageConfig';
+import type {
+    WasapAnalysisFilter,
+    WasapAnalysisMode,
+    WasapBaseFilter,
+    WasapFilter,
+    WasapPageConfig,
+} from '../../views/wasap/wasapPageConfig';
 
 /**
  * The root filter control for the W-ASAP dashboard.
