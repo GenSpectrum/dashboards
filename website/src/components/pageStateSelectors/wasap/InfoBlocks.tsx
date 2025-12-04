@@ -1,3 +1,6 @@
+import 'katex/dist/katex.min.css';
+import { BlockMath, InlineMath } from 'react-katex';
+
 /**
  * A text block to be put into a Modal as helper information for labeled filter fields.
  */
@@ -34,6 +37,8 @@ export function KnownVariantsExclusionInfo() {
 }
 
 export function DefineClinicalSignatureInfo() {
+    const m = (math: string) => <InlineMath math={math} />;
+
     return (
         <InfoBlock title='Define Variant Signature based on Clinical Sequences from CovSpectrum'>
             <p className='text-gray-700'>
@@ -66,12 +71,31 @@ export function DefineClinicalSignatureInfo() {
 
             <h2 className='mt-4 mb-2 text-base font-semibold'>Jaccard Index</h2>
             <p className='text-gray-700'>
-                The Jaccard index measures how specific a mutation is to a variant. It represents the overlap between
-                sequences with the mutation and sequences of the variant.
+                The Jaccard index measures how specific a mutation is to a variant. A mutation has a high Jaccard index
+                if it appears frequently within a variant and <span className='italic'>rarely</span> outside the
+                variant.
             </p>
+            <p className='text-gray-700'>
+                <BlockMath math='Jaccard_{s,m} = \frac{|S_{m,v}|}{|S_m| + |S_v| - |S_{m,v}|}' />
+                with:
+            </p>
+            <ul className='mt-2 list-disc pl-8 text-gray-700'>
+                <li>
+                    {m('S_m')}: The set of sequences with the mutation {m('m')}
+                </li>
+                <li>
+                    {m('S_v')}: The set of sequences of variant {m('v')}
+                </li>
+                <li>
+                    {m('S_{m,v}')}: The intersection of {m('S_m')} and {m('S_v')} ({m('S_m \\cap S_v')}); the set of
+                    sequences of variant {m('v')} with mutation {m('m')}
+                </li>
+            </ul>
             <p className='mt-2 text-gray-700'>
-                A value of 1.0 means the mutation appears exclusively in that variant. Lower values indicate the
-                mutation also appears in other variants. The threshold filters mutations by their variant specificity.
+                An index of 1 indicates that all sequences of variant {m('v')} have the mutation {m('m')} and all
+                sequences with the mutation {m('m')} belong to the variant {m('v')} (perfect overlap). Lesser values
+                indicate that either not all sequences of the variant have the mutation or not all sequences with the
+                mutation belong to the variant (or both).
             </p>
         </InfoBlock>
     );
