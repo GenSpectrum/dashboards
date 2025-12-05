@@ -1,6 +1,67 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
+import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
+import type { WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
+
+export const wastewaterOrganisms = {
+    covid: 'covid',
+} as const;
+
+export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof wastewaterOrganisms];
+
 export const wastewaterPathFragment = 'swiss-wastewater';
+
+export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPageConfig> = {
+    [wastewaterOrganisms.covid]: {
+        name: 'SARS-CoV-2',
+        path: `/${wastewaterPathFragment}/covid`,
+        description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
+        linkTemplate: {
+            nucleotideMutation:
+                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+            aminoAcidMutation:
+                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+        },
+        enabledAnalysisModes: ['manual', 'resistance', 'variant', 'untracked'],
+        resistanceMutationSets: covidResistanceMutations,
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
+        samplingDateField: 'samplingDate',
+        locationNameField: 'locationName',
+        clinicalLapis: {
+            lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+            cladeField: 'nextstrainClade',
+            lineageField: 'nextcladePangoLineage',
+        },
+        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
+        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+        defaultLocationName: 'Zürich (ZH)',
+        filterDefaults: {
+            manual: {
+                mode: 'manual',
+                sequenceType: 'nucleotide',
+                mutations: undefined,
+            },
+            variant: {
+                mode: 'variant',
+                sequenceType: 'nucleotide',
+                variant: 'XFG*',
+                minProportion: 0.8,
+                minCount: 15,
+                minJaccard: 0.75,
+            },
+            resistance: {
+                mode: 'resistance',
+                sequenceType: 'amino acid',
+                resistanceSet: '3CLPro',
+            },
+            untracked: {
+                mode: 'untracked',
+                sequenceType: 'nucleotide',
+                excludeSet: 'predefined',
+            },
+        },
+    },
+};
 
 export const wastewaterConfig = {
     menuListEntryDecoration: 'decoration-teal',
@@ -10,24 +71,6 @@ export const wastewaterConfig = {
     browseDataUrl: 'https://wise-loculus.genspectrum.org',
     browseDataDescription: 'Browse the data in the WISE Loculus instance.',
     lapisBaseUrl: 'https://api.wise-loculus.genspectrum.org',
-    wasap: {
-        linkTemplate: {
-            nucleotideMutation:
-                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
-            aminoAcidMutation:
-                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
-        },
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
-        samplingDateField: 'samplingDate',
-        locationNameField: 'locationName',
-        covSpectrum: {
-            lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
-            cladeField: 'nextstrainClade',
-            lineageField: 'nextcladePangoLineage',
-        },
-        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
-        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-    },
     pages: {
         rsv: {
             path: `/${wastewaterPathFragment}/rsv`,
@@ -36,10 +79,6 @@ export const wastewaterConfig = {
         influenza: {
             path: `/${wastewaterPathFragment}/flu`,
             description: 'Analyze Influenza data that was collected by the WISE project.',
-        },
-        covid: {
-            path: `/${wastewaterPathFragment}/covid`,
-            description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
         },
     },
 };
