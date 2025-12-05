@@ -5,32 +5,32 @@ import { type FC } from 'react';
 
 import { toMutationAnnotations } from './resistanceMutations';
 import { useWasapPageData } from './useWasapPageData';
+import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getTotalCount } from '../../../lapis/getTotalCount';
-import { wastewaterConfig } from '../../../types/wastewaterConfig';
+import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
-import {
-    WasapPageStateHandler,
-    type WasapAnalysisFilter,
-} from '../../../views/pageStateHandlers/WasapPageStateHandler';
+import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 
 export type WasapPageProps = {
+    wastewaterOrganism: WastewaterOrganismName;
     currentUrl: URL;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, currentUrl }) => {
+    const config = wastewaterOrganismConfigs[wastewaterOrganism];
     // initialize page state from the URL
-    const pageStateHandler = useMemo(() => new WasapPageStateHandler(), []);
+    const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
     const { base, analysis } = useMemo(
         () => pageStateHandler.parsePageStateFromUrl(currentUrl),
         [pageStateHandler, currentUrl],
     );
 
     // fetch which mutations should be analyzed
-    const { data, isPending, isError } = useWasapPageData(analysis);
+    const { data, isPending, isError } = useWasapPageData(config, analysis);
     const displayMutations = data?.displayMutations;
     const customColumns = data?.customColumns;
 
@@ -48,23 +48,24 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
     const memoizedMutationAnnotations = useMemo(
         () =>
             JSON.stringify(
-                wastewaterConfig.wasap.resistanceMutations.flatMap((resistanceMutation) =>
+                config.resistanceMutationSets.flatMap((resistanceMutation) =>
                     toMutationAnnotations(resistanceMutation),
                 ),
             ),
-        [],
+        [config.resistanceMutationSets],
     );
-    const memoizedLinkTemplate = useMemo(() => JSON.stringify(wastewaterConfig.wasap.linkTemplate), []);
+    const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 
     return (
         <gs-app
-            lapis={wastewaterConfig.wasap.lapisBaseUrl}
+            lapis={config.lapisBaseUrl}
             mutationAnnotations={memoizedMutationAnnotations}
             mutationLinkTemplate={memoizedLinkTemplate}
         >
             <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
                 <div className='h-fit p-2 shadow-lg'>
                     <WasapPageStateSelector
+                        config={config}
                         pageStateHandler={pageStateHandler}
                         initialBaseFilterState={base}
                         initialAnalysisFilterState={analysis}
@@ -82,7 +83,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                             <GsMutationsOverTime
                                 lapisFilter={lapisFilter}
                                 granularity={base.granularity as 'day' | 'week'}
-                                lapisDateField={wastewaterConfig.wasap.samplingDateField}
+                                lapisDateField={config.samplingDateField}
                                 sequenceType={analysis.sequenceType}
                                 displayMutations={displayMutations}
                                 pageSizes={[20, 50, 100, 250]}
@@ -92,7 +93,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ currentUrl }) => {
                                 customColumns={customColumns}
                             />
                         )}
-                        <WasapStats />
+                        <WasapStats config={config} />
                     </div>
                 )}
             </div>
@@ -127,10 +128,10 @@ const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFil
     );
 };
 
-const TotalCount = () => {
+const TotalCount = ({ config }: { config: WasapPageConfig }) => {
     const { data, isPending, isError, error } = useQuery({
         queryKey: ['aggregatedCount'],
-        queryFn: () => getTotalCount(wastewaterConfig.wasap.lapisBaseUrl, {}),
+        queryFn: () => getTotalCount(config.lapisBaseUrl, {}),
     });
 
     return (
@@ -148,10 +149,10 @@ const TotalCount = () => {
     );
 };
 
-const DateRange = () => {
+const DateRange = ({ config }: { config: WasapPageConfig }) => {
     const { data, isPending, isError, error } = useQuery({
         queryKey: ['dateRange'],
-        queryFn: () => getDateRange(wastewaterConfig.wasap.lapisBaseUrl, wastewaterConfig.wasap.samplingDateField),
+        queryFn: () => getDateRange(config.lapisBaseUrl, config.samplingDateField),
     });
 
     return (
@@ -171,9 +172,9 @@ const DateRange = () => {
     );
 };
 
-const WasapStats = () => (
+const WasapStats = ({ config }: { config: WasapPageConfig }) => (
     <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
-        <TotalCount />
-        <DateRange />
+        <TotalCount config={config} />
+        <DateRange config={config} />
     </div>
 );

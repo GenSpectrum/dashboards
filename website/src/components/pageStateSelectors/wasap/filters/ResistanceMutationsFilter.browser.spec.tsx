@@ -3,7 +3,8 @@ import { render } from 'vitest-browser-react';
 
 import { ResistanceMutationsFilter } from './ResistanceMutationsFilter';
 import { it } from '../../../../../test-extend';
-import type { WasapResistanceFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
+import { wastewaterOrganismConfigs } from '../../../../types/wastewaterConfig';
+import type { WasapResistanceFilter } from '../../../views/wasap/wasapPageConfig';
 
 describe('ResistanceMutationsFilter', () => {
     const defaultPageState: WasapResistanceFilter = {
@@ -12,11 +13,17 @@ describe('ResistanceMutationsFilter', () => {
         resistanceSet: '3CLpro',
     };
 
+    const resistanceMutationSets = wastewaterOrganismConfigs.covid.resistanceMutationSets;
+
     it('renders with initial resistance set', async () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
-            <ResistanceMutationsFilter pageState={defaultPageState} setPageState={mockSetPageState} />,
+            <ResistanceMutationsFilter
+                pageState={defaultPageState}
+                setPageState={mockSetPageState}
+                resistanceMutationSets={resistanceMutationSets}
+            />,
         );
 
         const select = getByRole('combobox');
@@ -27,7 +34,11 @@ describe('ResistanceMutationsFilter', () => {
         const mockSetPageState = vi.fn();
 
         const { getByRole } = render(
-            <ResistanceMutationsFilter pageState={defaultPageState} setPageState={mockSetPageState} />,
+            <ResistanceMutationsFilter
+                pageState={defaultPageState}
+                setPageState={mockSetPageState}
+                resistanceMutationSets={resistanceMutationSets}
+            />,
         );
 
         const select = getByRole('combobox');
