@@ -5,6 +5,7 @@ import type { WasapPageConfig } from '../components/views/wasap/wasapPageConfig'
 
 export const wastewaterOrganisms = {
     covid: 'covid',
+    rsvA: 'rsv-a',
 } as const;
 
 export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof wastewaterOrganisms];
@@ -22,7 +23,10 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             aminoAcidMutation:
                 'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
         },
-        enabledAnalysisModes: ['manual', 'resistance', 'variant', 'untracked'],
+        manualAnalysisModeEnabled: true,
+        variantAnalysisModeEnabled: true,
+        resistanceAnalysisModeEnabled: true,
+        untrackedAnalysisModeEnabled: true,
         resistanceMutationSets: covidResistanceMutations,
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
         samplingDateField: 'samplingDate',
@@ -58,6 +62,44 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 mode: 'untracked',
                 sequenceType: 'nucleotide',
                 excludeSet: 'predefined',
+            },
+        },
+    },
+    [wastewaterOrganisms.rsvA]: {
+        name: 'RSV-A',
+        path: `/${wastewaterPathFragment}/rsv-a`,
+        description: 'Analyze RSV-A data that was collected by the WISE project.',
+        linkTemplate: {
+            nucleotideMutation:
+                'https://genspectrum.org/rsv-a/single-variant?sampleCollectionDateRangeLower=Last+year&nucleotideMutations={{mutation}}',
+            aminoAcidMutation:
+                'https://genspectrum.org/rsv-a/single-variant?sampleCollectionDateRangeLower=Last+year&aminoAcidMutations={{mutation}}',
+        },
+        manualAnalysisModeEnabled: true,
+        variantAnalysisModeEnabled: true,
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org', // TODO https://github.com/GenSpectrum/dashboards/issues/949
+        samplingDateField: 'samplingDate',
+        locationNameField: 'locationName',
+        clinicalLapis: {
+            lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-a',
+            lineageField: 'lineage',
+        },
+        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search', // TODO https://github.com/GenSpectrum/dashboards/issues/949
+        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+        defaultLocationName: 'Zürich (ZH)',
+        filterDefaults: {
+            manual: {
+                mode: 'manual',
+                sequenceType: 'nucleotide',
+                mutations: undefined,
+            },
+            variant: {
+                mode: 'variant',
+                sequenceType: 'nucleotide',
+                variant: 'XFG*',
+                minProportion: 0.8,
+                minCount: 15,
+                minJaccard: 0.75,
             },
         },
     },

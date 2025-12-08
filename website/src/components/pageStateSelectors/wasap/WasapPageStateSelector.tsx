@@ -16,12 +16,13 @@ import { Inset } from '../../../styles/Inset';
 import { recentDaysDateRangeOptions } from '../../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../../views/pageStateHandlers/PageStateHandler';
 import { GsTextFilter } from '../../genspectrum/GsTextFilter';
-import type {
-    WasapAnalysisFilter,
-    WasapAnalysisMode,
-    WasapBaseFilter,
-    WasapFilter,
-    WasapPageConfig,
+import {
+    enabledAnalysisModes,
+    type WasapAnalysisFilter,
+    type WasapAnalysisMode,
+    type WasapBaseFilter,
+    type WasapFilter,
+    type WasapPageConfig,
 } from '../../views/wasap/wasapPageConfig';
 
 /**
@@ -41,47 +42,54 @@ export function WasapPageStateSelector({
 }) {
     const [baseFilterState, setBaseFilterState] = useState(initialBaseFilterState);
 
-    const [manualFilter, setManualFilter] = useState(
-        initialAnalysisFilterState.mode === 'manual' ? initialAnalysisFilterState : config.filterDefaults.manual,
-    );
-    const [variantFilter, setVariantFilter] = useState(
-        initialAnalysisFilterState.mode === 'variant' ? initialAnalysisFilterState : config.filterDefaults.variant,
-    );
-    const [resistanceFilter, setResistanceFilter] = useState(
-        initialAnalysisFilterState.mode === 'resistance'
-            ? initialAnalysisFilterState
-            : config.filterDefaults.resistance,
-    );
-    const [untrackedFilter, setUntrackedFilter] = useState(
-        initialAnalysisFilterState.mode === 'untracked' ? initialAnalysisFilterState : config.filterDefaults.untracked,
-    );
+    // State for each individual analysis mode setting component
+    const {
+        manualFilter,
+        setManualFilter,
+        variantFilter,
+        setVariantFilter,
+        resistanceFilter,
+        setResistanceFilter,
+        untrackedFilter,
+        setUntrackedFilter,
+    } = useAnalysisFilterStates(initialAnalysisFilterState, config);
 
     const [selectedAnalysisMode, setSelectedAnalysisMode] = useState(initialAnalysisFilterState.mode);
 
     function getMergedPageState(): WasapFilter {
+        // We're using the ! below because we know that for the selected mode we have a defined state.
+        // based on the initialization in useAnalysisFilterStates
+        /* eslint-disable  @typescript-eslint/no-non-null-assertion */
         switch (selectedAnalysisMode) {
             case 'manual':
-                return { base: baseFilterState, analysis: manualFilter };
+                return { base: baseFilterState, analysis: manualFilter! };
             case 'variant':
-                return { base: baseFilterState, analysis: variantFilter };
+                return { base: baseFilterState, analysis: variantFilter! };
             case 'resistance':
-                return { base: baseFilterState, analysis: resistanceFilter };
+                return { base: baseFilterState, analysis: resistanceFilter! };
             case 'untracked':
-                return { base: baseFilterState, analysis: untrackedFilter };
+                return { base: baseFilterState, analysis: untrackedFilter! };
         }
+        /* eslint-enable  @typescript-eslint/no-non-null-assertion */
     }
 
     // data for the 'untracked' analysis mode - loaded here already so it's available when the mode is selected
     const cladeLineageQueryResult = useQuery({
-        enabled: config.enabledAnalysisModes.includes('untracked'),
+        enabled: config.untrackedAnalysisModeEnabled,
         queryKey: ['cladeLineages'],
-        queryFn: () =>
-            getCladeLineages(
+        queryFn: () => {
+            if (!config.untrackedAnalysisModeEnabled) {
+                throw Error(
+                    "This clade lineage query was called despite 'untracked' mode being disabled. This should not happen.",
+                );
+            }
+            return getCladeLineages(
                 config.clinicalLapis.lapisBaseUrl,
                 config.clinicalLapis.cladeField,
                 config.clinicalLapis.lineageField,
                 true,
-            ),
+            );
+        },
     });
 
     return (
@@ -140,7 +148,7 @@ export function WasapPageStateSelector({
                     setSelectedAnalysisMode(e.target.value as WasapAnalysisMode);
                 }}
             >
-                {config.enabledAnalysisModes.map((mode) => (
+                {enabledAnalysisModes(config).map((mode) => (
                     <option key={mode} value={mode}>
                         {modeLabel(mode)}
                     </option>
@@ -150,8 +158,14 @@ export function WasapPageStateSelector({
                 {(() => {
                     switch (selectedAnalysisMode) {
                         case 'manual':
+                            if (!config.manualAnalysisModeEnabled || manualFilter === undefined) {
+                                throw Error("'manual' mode selected, but it isn't enabled.");
+                            }
                             return <ManualAnalysisFilter pageState={manualFilter} setPageState={setManualFilter} />;
                         case 'variant':
+                            if (!config.variantAnalysisModeEnabled || variantFilter === undefined) {
+                                throw Error("'variant' mode selected, but it isn't enabled.");
+                            }
                             return (
                                 <VariantExplorerFilter
                                     pageState={variantFilter}
@@ -161,6 +175,9 @@ export function WasapPageStateSelector({
                                 />
                             );
                         case 'resistance':
+                            if (!config.resistanceAnalysisModeEnabled || resistanceFilter === undefined) {
+                                throw Error("'resistance' mode selected, but it isn't enabled.");
+                            }
                             return (
                                 <ResistanceMutationsFilter
                                     pageState={resistanceFilter}
@@ -169,6 +186,9 @@ export function WasapPageStateSelector({
                                 />
                             );
                         case 'untracked':
+                            if (!config.untrackedAnalysisModeEnabled || untrackedFilter === undefined) {
+                                throw Error("'untracked' mode selected, but it isn't enabled.");
+                            }
                             return (
                                 <UntrackedFilter
                                     pageState={untrackedFilter}
@@ -197,4 +217,51 @@ function modeLabel(mode: WasapAnalysisMode): string {
         case 'untracked':
             return 'Untracked Mutations';
     }
+}
+
+/**
+ * States for each analysis filter component.
+ * For the analysis mode that is given in the initial filter settings, the given values are used.
+ * Else, the default filter values from the `config` are used.
+ */
+function useAnalysisFilterStates(initialFilter: WasapAnalysisFilter, config: WasapPageConfig) {
+    const [manualFilter, setManualFilter] = useState(
+        initialFilter.mode === 'manual'
+            ? initialFilter
+            : config.manualAnalysisModeEnabled
+              ? config.filterDefaults.manual
+              : undefined,
+    );
+    const [variantFilter, setVariantFilter] = useState(
+        initialFilter.mode === 'variant'
+            ? initialFilter
+            : config.variantAnalysisModeEnabled
+              ? config.filterDefaults.variant
+              : undefined,
+    );
+    const [resistanceFilter, setResistanceFilter] = useState(
+        initialFilter.mode === 'resistance'
+            ? initialFilter
+            : config.resistanceAnalysisModeEnabled
+              ? config.filterDefaults.resistance
+              : undefined,
+    );
+    const [untrackedFilter, setUntrackedFilter] = useState(
+        initialFilter.mode === 'untracked'
+            ? initialFilter
+            : config.untrackedAnalysisModeEnabled
+              ? config.filterDefaults.untracked
+              : undefined,
+    );
+
+    return {
+        manualFilter,
+        setManualFilter,
+        variantFilter,
+        setVariantFilter,
+        resistanceFilter,
+        setResistanceFilter,
+        untrackedFilter,
+        setUntrackedFilter,
+    };
 }

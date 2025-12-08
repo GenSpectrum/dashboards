@@ -4,13 +4,14 @@ import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
 import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
-import type {
-    ExcludeSetName,
-    WasapAnalysisFilter,
-    WasapAnalysisMode,
-    WasapBaseFilter,
-    WasapFilter,
-    WasapPageConfig,
+import {
+    enabledAnalysisModes,
+    type ExcludeSetName,
+    type WasapAnalysisFilter,
+    type WasapAnalysisMode,
+    type WasapBaseFilter,
+    type WasapFilter,
+    type WasapPageConfig,
 } from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { formatUrl } from '../../util/formatUrl';
@@ -33,8 +34,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const providedMode = texts.analysisMode as WasapAnalysisMode | undefined;
 
         // config provided defaults
-        const defaults = this.config.filterDefaults;
-        const defaultMode = this.config.enabledAnalysisModes[0];
+        const defaultMode = enabledAnalysisModes(this.config)[0];
 
         const mode = providedMode ?? defaultMode;
 
@@ -42,34 +42,48 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
 
         switch (mode) {
             case 'manual':
+                if (!this.config.manualAnalysisModeEnabled) {
+                    throw Error("The 'manual' analysis mode is not enabled.");
+                }
                 analysis = {
                     mode,
-                    sequenceType: providedSequenceType ?? defaults.manual.sequenceType,
+                    sequenceType: providedSequenceType ?? this.config.filterDefaults.manual.sequenceType,
                     mutations: texts.mutations?.split('|'),
                 };
                 break;
             case 'variant':
+                if (!this.config.variantAnalysisModeEnabled) {
+                    throw Error("The 'variant' analysis mode is not enabled.");
+                }
                 analysis = {
                     mode,
-                    sequenceType: providedSequenceType ?? defaults.variant.sequenceType,
-                    variant: texts.variant ?? defaults.variant.variant,
-                    minProportion: Number(texts.minProportion ?? defaults.variant.minProportion),
-                    minCount: Number(texts.minCount ?? defaults.variant.minCount),
-                    minJaccard: Number(texts.minJaccard ?? defaults.variant.minJaccard),
+                    sequenceType: providedSequenceType ?? this.config.filterDefaults.variant.sequenceType,
+                    variant: texts.variant ?? this.config.filterDefaults.variant.variant,
+                    minProportion: Number(texts.minProportion ?? this.config.filterDefaults.variant.minProportion),
+                    minCount: Number(texts.minCount ?? this.config.filterDefaults.variant.minCount),
+                    minJaccard: Number(texts.minJaccard ?? this.config.filterDefaults.variant.minJaccard),
                 };
                 break;
             case 'resistance':
+                if (!this.config.resistanceAnalysisModeEnabled) {
+                    throw Error("The 'resistance' analysis mode is not enabled.");
+                }
                 analysis = {
                     mode,
                     sequenceType: 'amino acid',
-                    resistanceSet: texts.resistanceSet ?? defaults.resistance.resistanceSet,
+                    resistanceSet: texts.resistanceSet ?? this.config.filterDefaults.resistance.resistanceSet,
                 };
                 break;
             case 'untracked':
+                if (!this.config.untrackedAnalysisModeEnabled) {
+                    throw Error("The 'untracked' analysis mode is not enabled.");
+                }
                 analysis = {
                     mode,
-                    sequenceType: providedSequenceType ?? defaults.untracked.sequenceType,
-                    excludeSet: (texts.excludeSet as ExcludeSetName | undefined) ?? defaults.untracked.excludeSet,
+                    sequenceType: providedSequenceType ?? this.config.filterDefaults.untracked.sequenceType,
+                    excludeSet:
+                        (texts.excludeSet as ExcludeSetName | undefined) ??
+                        this.config.filterDefaults.untracked.excludeSet,
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;

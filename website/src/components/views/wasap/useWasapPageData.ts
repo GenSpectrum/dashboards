@@ -27,8 +27,14 @@ async function fetchMutationSelection(
 ): Promise<MutationSelection> {
     switch (analysis.mode) {
         case 'manual':
+            if (!config.manualAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'manual' mode is not enabled.");
+            }
             return analysis.mutations ? { type: 'selected', mutations: analysis.mutations } : { type: 'all' };
         case 'variant':
+            if (!config.variantAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+            }
             if (!analysis.variant) {
                 return { type: 'selected', mutations: [] };
             }
@@ -43,12 +49,18 @@ async function fetchMutationSelection(
                 analysis.minJaccard,
             ).then((r) => ({ type: 'jaccard', mutationsWithScore: r }));
         case 'resistance':
+            if (!config.resistanceAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
+            }
             return {
                 type: 'selected',
                 mutations:
                     config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
             };
         case 'untracked': {
+            if (!config.untrackedAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'untracked' mode is not enabled.");
+            }
             const variantsToExclude =
                 analysis.excludeSet === 'custom'
                     ? analysis.excludeVariants
