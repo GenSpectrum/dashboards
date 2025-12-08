@@ -1,6 +1,6 @@
 import { Inset } from '../../../../styles/Inset';
-import { type WasapVariantFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
+import type { WasapVariantFilter } from '../../../views/wasap/wasapPageConfig';
 import { SelectorHeadline } from '../../SelectorHeadline';
 import { DefineClinicalSignatureInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
@@ -15,12 +15,14 @@ interface VariantExplorerFilterProps {
      * This is _not_ the same as the LAPIS providing the wastewater amplicon sequences.
      */
     clinicalSequenceLapisBaseUrl: string;
+    clinicalSequenceLapisLineageField: string;
 }
 
 export function VariantExplorerFilter({
     pageState,
     setPageState,
     clinicalSequenceLapisBaseUrl,
+    clinicalSequenceLapisLineageField,
 }: VariantExplorerFilterProps) {
     return (
         <>
@@ -33,7 +35,7 @@ export function VariantExplorerFilter({
                 <LabeledField label='Variant'>
                     <gs-app lapis={clinicalSequenceLapisBaseUrl}>
                         <GsLineageFilter
-                            lapisField='pangoLineage'
+                            lapisField={clinicalSequenceLapisLineageField}
                             lapisFilter={{}}
                             placeholderText='Variant'
                             value={pageState.variant}

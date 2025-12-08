@@ -1,11 +1,8 @@
 import { type UseQueryResult } from '@tanstack/react-query';
 
 import { Loading } from '../../../../util/Loading';
-import {
-    type ExcludeSetName,
-    type WasapUntrackedFilter,
-} from '../../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
+import type { ExcludeSetName, WasapUntrackedFilter } from '../../../views/wasap/wasapPageConfig';
 import { KnownVariantsExclusionInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
 import { SequenceTypeSelector } from '../utils/SequenceTypeSelector';
@@ -19,6 +16,7 @@ interface UntrackedFilterProps {
      * This is _not_ the same as the LAPIS providing the wastewater amplicon sequences.
      */
     clinicalSequenceLapisBaseUrl: string;
+    clinicalSequenceLapisLineageField: string;
 }
 
 export function UntrackedFilter({
@@ -26,6 +24,7 @@ export function UntrackedFilter({
     setPageState,
     cladeLineageQueryResult: { isPending, isError, data: cladeLineages },
     clinicalSequenceLapisBaseUrl,
+    clinicalSequenceLapisLineageField,
 }: UntrackedFilterProps) {
     const defaultLineages = cladeLineages ? Object.values(cladeLineages) : [];
     defaultLineages.sort();
@@ -42,11 +41,11 @@ export function UntrackedFilter({
                     value={pageState.excludeSet}
                     onChange={(e) => setPageState({ ...pageState, excludeSet: e.target.value as ExcludeSetName })}
                 >
-                    <option value='nextstrain'>Nextstrain clades</option>
+                    <option value='predefined'>Nextstrain clades</option>
                     <option value='custom'>custom</option>
                 </select>
             </LabeledField>
-            {pageState.excludeSet === 'nextstrain' ? (
+            {pageState.excludeSet === 'predefined' ? (
                 isPending ? (
                     <Loading />
                 ) : isError ? (
@@ -74,7 +73,7 @@ export function UntrackedFilter({
                     <LabeledField label='Custom variant list'>
                         <gs-app lapis={clinicalSequenceLapisBaseUrl}>
                             <GsLineageFilter
-                                lapisField='pangoLineage'
+                                lapisField={clinicalSequenceLapisLineageField}
                                 lapisFilter={{}}
                                 placeholderText='Variant'
                                 value={pageState.excludeVariants}

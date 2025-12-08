@@ -4,7 +4,7 @@ import { render } from 'vitest-browser-react';
 import { ManualAnalysisFilter } from './ManualAnalysisFilter';
 import { DUMMY_LAPIS_URL, type LapisRouteMocker } from '../../../../../routeMocker';
 import { it } from '../../../../../test-extend';
-import type { WasapManualFilter } from '../../../../views/pageStateHandlers/WasapPageStateHandler';
+import type { WasapManualFilter } from '../../../views/wasap/wasapPageConfig';
 
 describe('ManualAnalysisFilter', () => {
     const defaultPageState: WasapManualFilter = {
