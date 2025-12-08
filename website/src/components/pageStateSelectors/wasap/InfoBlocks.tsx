@@ -87,7 +87,7 @@ export function DefineClinicalSignatureInfo() {
                     {m('S_v')}: The set of sequences of variant {m('v')}
                 </li>
                 <li>
-                    {m('S_{m,v}')}: The intersection of {m('S_m')} and {m('S_v')} ({m('S_m \\cap S_v')}); the set of
+                    {m('S_{m,v}')}: The intersection {m('S_m \\cap S_v')} of {m('S_m')} and {m('S_v')}; the set of
                     sequences of variant {m('v')} with mutation {m('m')}
                 </li>
             </ul>
