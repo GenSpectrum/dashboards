@@ -77,8 +77,11 @@ export function UntrackedFilter({
                                 lapisFilter={{}}
                                 placeholderText='Variant'
                                 value={pageState.excludeVariants}
-                                onLineageMultiChange={({ pangoLineage }) => {
-                                    setPageState({ ...pageState, excludeVariants: pangoLineage });
+                                onLineageMultiChange={(lineages) => {
+                                    setPageState({
+                                        ...pageState,
+                                        excludeVariants: lineages[clinicalSequenceLapisLineageField],
+                                    });
                                 }}
                                 hideCounts={true}
                                 multiSelect={true}

@@ -39,8 +39,8 @@ export function VariantExplorerFilter({
                             lapisFilter={{}}
                             placeholderText='Variant'
                             value={pageState.variant}
-                            onLineageChange={({ pangoLineage }) => {
-                                setPageState({ ...pageState, variant: pangoLineage });
+                            onLineageChange={(lineages) => {
+                                setPageState({ ...pageState, variant: lineages[clinicalSequenceLapisLineageField] });
                             }}
                             hideCounts={true}
                         />
