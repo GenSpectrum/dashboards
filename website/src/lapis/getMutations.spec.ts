@@ -20,7 +20,7 @@ describe('getMutations', () => {
             },
         );
 
-        const result = await getMutations(DUMMY_LAPIS_URL, 'nucleotide', 'B.1.1.7', 0.1, 3);
+        const result = await getMutations(DUMMY_LAPIS_URL, 'nucleotide', { pangoLineage: 'B.1.1.7' }, 0.1, 3);
 
         expect(result).toEqual(['A123C']);
     });
@@ -98,7 +98,14 @@ describe('getMutationsForVariant', () => {
             },
         ]);
 
-        const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'FOO', 0.1, 5, 0.9);
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { pangoLineage: 'FOO' },
+            0.1,
+            5,
+            0.9,
+        );
 
         expect(result).toEqual([{ mutation: 'A2C', jaccardIndex: 1 }]);
     });
@@ -123,7 +130,14 @@ describe('getMutationsForVariant', () => {
             },
         ]);
 
-        const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'BAR', 0.05, 5, 0.6);
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { pangoLineage: 'BAR' },
+            0.05,
+            5,
+            0.6,
+        );
 
         expect(result).toEqual([{ mutation: 'T100C', jaccardIndex: 10 / 15 }]);
     });
@@ -148,7 +162,14 @@ describe('getMutationsForVariant', () => {
             },
         ]);
 
-        const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'BAZ', 0.01, 5, 0.01);
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { pangoLineage: 'BAZ' },
+            0.01,
+            5,
+            0.01,
+        );
 
         expect(result).toEqual([]);
     });
@@ -183,7 +204,14 @@ describe('getMutationsForVariant', () => {
             },
         ]);
 
-        const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'nucleotide', 'QUX', 0.05, 5, 0.75);
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { pangoLineage: 'QUX' },
+            0.05,
+            5,
+            0.75,
+        );
 
         expect(result).toEqual([
             { mutation: 'C200T', jaccardIndex: 45 / 55 },
@@ -212,7 +240,46 @@ describe('getMutationsForVariant', () => {
             },
         ]);
 
-        const result = await getMutationsForVariant(DUMMY_LAPIS_URL, 'amino acid', 'DELTA', 0.05, 5, 0.9);
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'amino acid',
+            { pangoLineage: 'DELTA' },
+            0.05,
+            5,
+            0.9,
+        );
+
+        expect(result).toEqual([{ mutation: 'S:L452R', jaccardIndex: 1 }]);
+    });
+
+    test('should work with different lineage field name', async () => {
+        // Setup:
+        // - Variant DELTA has 30 sequences
+        // - S:L452R: in 30 DELTA sequences, 30 total -> Jaccard = 30/(30+30-30) = 30/30 = 1.0 (included)
+        lapisRouteMocker.mockPostAggregated({ fooLineage: 'DELTA' }, { data: [{ count: 30 }] });
+        lapisRouteMocker.mockPostAminoAcidMutationsMulti([
+            {
+                body: { minProportion: 0.05, fooLineage: 'DELTA' },
+                response: {
+                    data: [{ mutation: 'S:L452R', count: 30 }],
+                },
+            },
+            {
+                body: { minProportion: 0 },
+                response: {
+                    data: [{ mutation: 'S:L452R', count: 30 }],
+                },
+            },
+        ]);
+
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'amino acid',
+            { fooLineage: 'DELTA' },
+            0.05,
+            5,
+            0.9,
+        );
 
         expect(result).toEqual([{ mutation: 'S:L452R', jaccardIndex: 1 }]);
     });

@@ -35,7 +35,9 @@ async function fetchMutationSelection(
             return getMutationsForVariant(
                 config.clinicalLapis.lapisBaseUrl,
                 analysis.sequenceType,
-                analysis.variant,
+                {
+                    [config.clinicalLapis.lineageField]: analysis.variant,
+                },
                 analysis.minProportion,
                 analysis.minCount,
                 analysis.minJaccard,
@@ -61,8 +63,16 @@ async function fetchMutationSelection(
             }
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
-                    variantsToExclude.map((v) =>
-                        getMutations(config.clinicalLapis.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
+                    variantsToExclude.map((variant) =>
+                        getMutations(
+                            config.clinicalLapis.lapisBaseUrl,
+                            analysis.sequenceType,
+                            {
+                                [config.clinicalLapis.lapisBaseUrl]: variant,
+                            },
+                            0.8,
+                            9,
+                        ),
                     ),
                 ).then((r) => r.flat()),
                 getMutations(config.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
