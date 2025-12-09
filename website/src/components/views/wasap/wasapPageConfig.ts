@@ -47,12 +47,12 @@ export type WasapPageConfigBase = {
  * If the mode is enabled, the type also contains mode dependent settings, like extra fetch settings
  * or mode default configs.
  */
-type AnalysisModeConfigs = ManualAnalyisModeConfig &
+type AnalysisModeConfigs = ManualAnalysisModeConfig &
     VariantAnalysisModeConfig &
     ResistanceAnalysisModeConfig &
     UntrackedAnalyisModeConfig;
 
-type ManualAnalyisModeConfig =
+type ManualAnalysisModeConfig =
     | {
           manualAnalysisModeEnabled?: never;
       }
