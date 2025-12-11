@@ -1,4 +1,4 @@
-import type { DateRangeOption, SequenceType } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
 import type { ResistanceMutationSet } from './resistanceMutations';
 
@@ -144,7 +144,7 @@ export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked
 export type WasapBaseFilter = {
     locationName?: string;
     samplingDate?: DateRangeOption;
-    granularity: string;
+    granularity: TemporalGranularity;
     excludeEmpty: boolean;
 };
 
