@@ -27,26 +27,40 @@ async function fetchMutationSelection(
 ): Promise<MutationSelection> {
     switch (analysis.mode) {
         case 'manual':
+            if (!config.manualAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'manual' mode is not enabled.");
+            }
             return analysis.mutations ? { type: 'selected', mutations: analysis.mutations } : { type: 'all' };
         case 'variant':
+            if (!config.variantAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+            }
             if (!analysis.variant) {
                 return { type: 'selected', mutations: [] };
             }
             return getMutationsForVariant(
                 config.clinicalLapis.lapisBaseUrl,
                 analysis.sequenceType,
-                analysis.variant,
+                {
+                    [config.clinicalLapis.lineageField]: analysis.variant,
+                },
                 analysis.minProportion,
                 analysis.minCount,
                 analysis.minJaccard,
             ).then((r) => ({ type: 'jaccard', mutationsWithScore: r }));
         case 'resistance':
+            if (!config.resistanceAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
+            }
             return {
                 type: 'selected',
                 mutations:
                     config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
             };
         case 'untracked': {
+            if (!config.untrackedAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'untracked' mode is not enabled.");
+            }
             const variantsToExclude =
                 analysis.excludeSet === 'custom'
                     ? analysis.excludeVariants
@@ -61,8 +75,16 @@ async function fetchMutationSelection(
             }
             const [excludeMutations, allMuts] = await Promise.all([
                 Promise.all(
-                    variantsToExclude.map((v) =>
-                        getMutations(config.clinicalLapis.lapisBaseUrl, analysis.sequenceType, v, 0.8, 9),
+                    variantsToExclude.map((variant) =>
+                        getMutations(
+                            config.clinicalLapis.lapisBaseUrl,
+                            analysis.sequenceType,
+                            {
+                                [config.clinicalLapis.lapisBaseUrl]: variant,
+                            },
+                            0.8,
+                            9,
+                        ),
                     ),
                 ).then((r) => r.flat()),
                 getMutations(config.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),

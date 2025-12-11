@@ -3,7 +3,7 @@ import { render } from 'vitest-browser-react';
 
 import { ResistanceMutationsFilter } from './ResistanceMutationsFilter';
 import { it } from '../../../../../test-extend';
-import { wastewaterOrganismConfigs } from '../../../../types/wastewaterConfig';
+import { covidResistanceMutations } from '../../../views/wasap/resistanceMutations';
 import type { WasapResistanceFilter } from '../../../views/wasap/wasapPageConfig';
 
 describe('ResistanceMutationsFilter', () => {
@@ -13,7 +13,7 @@ describe('ResistanceMutationsFilter', () => {
         resistanceSet: '3CLpro',
     };
 
-    const resistanceMutationSets = wastewaterOrganismConfigs.covid.resistanceMutationSets;
+    const resistanceMutationSets = covidResistanceMutations;
 
     it('renders with initial resistance set', async () => {
         const mockSetPageState = vi.fn();
