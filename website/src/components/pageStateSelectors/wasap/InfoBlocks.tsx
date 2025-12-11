@@ -100,9 +100,10 @@ export function DefineClinicalSignatureInfo() {
 
             <h2 className='mt-4 mb-2 text-base font-semibold'>Time Frame</h2>
             <p className='text-gray-700'>
-                The time frame of sequences to consider. This is particularily relevant for the Jaccard Index setting.
-                Some mutations might have occurred frequently in other variants, but a relatively long time ago. Chosing
-                a shorter time frame might show mutations that would've otherwise not shown as significant.
+                Time frame for sequence selection. Shorter windows reduce dominance of well-sequenced historical
+                variants, yielding higher Jaccard values for emerging variants with fewer clinical sequences.
+                Use this filter to exclude variants no longer in circulation when assessing significance of
+                current mutations.
             </p>
         </InfoBlock>
     );
