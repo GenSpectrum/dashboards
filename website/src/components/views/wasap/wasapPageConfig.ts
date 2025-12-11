@@ -5,7 +5,12 @@ import type { ResistanceMutationSet } from './resistanceMutations';
 /**
  * All config settings for a W-ASAP dashboard page.
  */
-export type WasapPageConfig = {
+export type WasapPageConfig = WasapPageConfigBase & AnalysisModeConfigs;
+
+/**
+ * Base settings that apply to all modes.
+ */
+export type WasapPageConfigBase = {
     /**
      * The name of the organism, i.e. 'Sars-CoV-2'
      */
@@ -27,39 +32,99 @@ export type WasapPageConfig = {
      */
     linkTemplate: LinkTemplate;
 
-    /**
-     * Which modes to enable on the dashboard; the list will also define the order
-     * in which the modes are shown in the dropdown menu.
-     * Should not contain duplicates.
-     * At least one mode needs to be enabled.
-     */
-    enabledAnalysisModes: WasapAnalysisMode[];
-
     lapisBaseUrl: string;
     samplingDateField: string;
     locationNameField: string;
 
-    /**
-     * Settings for the clinical LAPIS instance.
-     * It is used to fetch mutation sets for lineages.
-     */
-    clinicalLapis: ClinicalLapisConfig;
+    defaultLocationName: string;
 
     browseDataUrl: string;
     browseDataDescription: string;
-
-    resistanceMutationSets: ResistanceMutationSet[];
-
-    defaultLocationName: string;
-    filterDefaults: FilterDefaults;
 };
 
-type FilterDefaults = {
-    manual: WasapManualFilter;
-    variant: WasapVariantFilter;
-    resistance: WasapResistanceFilter;
-    untracked: WasapUntrackedFilter;
-};
+/**
+ * Mode dependent settings. Always contains a config setting called <modeName>AnalysisModeEnabled.
+ * If the mode is enabled, the type also contains mode dependent settings, like extra fetch settings
+ * or mode default configs.
+ */
+type AnalysisModeConfigs = ManualAnalysisModeConfig &
+    VariantAnalysisModeConfig &
+    ResistanceAnalysisModeConfig &
+    UntrackedAnalyisModeConfig;
+
+type ManualAnalysisModeConfig =
+    | {
+          manualAnalysisModeEnabled?: never;
+      }
+    | {
+          manualAnalysisModeEnabled: true;
+          filterDefaults: {
+              manual: WasapManualFilter;
+          };
+      };
+
+type VariantAnalysisModeConfig =
+    | {
+          variantAnalysisModeEnabled?: never;
+      }
+    | {
+          variantAnalysisModeEnabled: true;
+          clinicalLapis: {
+              lapisBaseUrl: string;
+              lineageField: string;
+          };
+          filterDefaults: {
+              variant: WasapVariantFilter;
+          };
+      };
+
+type ResistanceAnalysisModeConfig =
+    | {
+          resistanceAnalysisModeEnabled?: never;
+      }
+    | {
+          resistanceAnalysisModeEnabled: true;
+          resistanceMutationSets: ResistanceMutationSet[];
+          filterDefaults: {
+              resistance: WasapResistanceFilter;
+          };
+      };
+
+type UntrackedAnalyisModeConfig =
+    | {
+          untrackedAnalysisModeEnabled?: never;
+      }
+    | {
+          untrackedAnalysisModeEnabled: true;
+          clinicalLapis: {
+              lapisBaseUrl: string;
+              cladeField: string;
+              lineageField: string;
+          };
+          filterDefaults: {
+              untracked: WasapUntrackedFilter;
+          };
+      };
+
+/**
+ * Convenience function to get the list of enabled modes.
+ */
+export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode[] {
+    const result: WasapAnalysisMode[] = [];
+    if (config.manualAnalysisModeEnabled) {
+        result.push('manual');
+    }
+    if (config.variantAnalysisModeEnabled) {
+        result.push('variant');
+    }
+    if (config.resistanceAnalysisModeEnabled) {
+        result.push('resistance');
+    }
+    if (config.untrackedAnalysisModeEnabled) {
+        result.push('untracked');
+    }
+    return result;
+}
 
 /**
  * URL templates containing the placeholder '{{mutation}}', which are used to construct
@@ -70,14 +135,11 @@ export type LinkTemplate = {
     aminoAcidMutation: string;
 };
 
-export type ClinicalLapisConfig = {
-    lapisBaseUrl: string;
-    cladeField: string;
-    lineageField: string;
-};
-
 export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
 
+/**
+ * Contains mode-independent settings, like the filter for location and date range.
+ */
 export type WasapBaseFilter = {
     locationName?: string;
     samplingDate?: DateRangeOption;
