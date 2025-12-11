@@ -97,6 +97,13 @@ export function DefineClinicalSignatureInfo() {
                 indicate that either not all sequences of the variant have the mutation or not all sequences with the
                 mutation belong to the variant (or both).
             </p>
+
+            <h2 className='mt-4 mb-2 text-base font-semibold'>Time Frame</h2>
+            <p className='text-gray-700'>
+                The time frame of sequences to consider. This is particularily relevant for the Jaccard Index setting.
+                Some mutations might have occurred frequently in other variants, but a relatively long time ago. Chosing
+                a shorter time frame might show mutations that would've otherwise not shown as significant.
+            </p>
         </InfoBlock>
     );
 }

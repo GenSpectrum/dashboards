@@ -54,18 +54,19 @@ export async function getMutationsForVariant(
     minProportion: number,
     minCount: number,
     minJaccardIndex: number,
+    dateFilter: LapisFilter | undefined,
 ) {
     return Promise.all([
         // sequence counts WITH mutation and WITH lineage
-        getMutationsInternal(lapisUrl, mutationType, lineageFilter, minProportion).then((r) =>
+        getMutationsInternal(lapisUrl, mutationType, { ...lineageFilter, ...dateFilter }, minProportion).then((r) =>
             r.filter((item) => item.count >= minCount),
         ),
         // sequence counts WITH mutation (only)
-        getMutationsInternal(lapisUrl, mutationType, undefined, 0).then((r) =>
+        getMutationsInternal(lapisUrl, mutationType, dateFilter, 0).then((r) =>
             Object.fromEntries(r.map((item) => [item.mutation, item.count])),
         ),
         // sequence count WITH lineage (only)
-        getTotalCount(lapisUrl, lineageFilter),
+        getTotalCount(lapisUrl, { ...lineageFilter, ...dateFilter }),
     ]).then(([intersectionCounts, totalCounts, variantCount]) =>
         intersectionCounts
             .map(({ mutation, count }) => ({

@@ -33,6 +33,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         locationNameField: 'locationName',
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+            dateField: 'date',
             cladeField: 'nextstrainClade',
             lineageField: 'nextcladePangoLineage',
         },
@@ -52,6 +53,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
+                timeFrame: 'all',
             },
             resistance: {
                 mode: 'resistance',
@@ -82,6 +84,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         locationNameField: 'locationName',
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-a',
+            dateField: 'sampleCollectionDateRangeLower',
             lineageField: 'lineage',
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search', // TODO https://github.com/GenSpectrum/dashboards/issues/949
@@ -100,6 +103,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
+                timeFrame: 'all',
             },
         },
     },
