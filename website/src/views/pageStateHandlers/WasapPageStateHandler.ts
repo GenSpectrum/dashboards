@@ -7,6 +7,7 @@ import { type BaselineFilterConfig } from '../../components/pageStateSelectors/B
 import {
     enabledAnalysisModes,
     type ExcludeSetName,
+    type VariantTimeFrame,
     type WasapAnalysisFilter,
     type WasapAnalysisMode,
     type WasapBaseFilter,
@@ -62,6 +63,9 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     minProportion: Number(texts.minProportion ?? this.config.filterDefaults.variant.minProportion),
                     minCount: Number(texts.minCount ?? this.config.filterDefaults.variant.minCount),
                     minJaccard: Number(texts.minJaccard ?? this.config.filterDefaults.variant.minJaccard),
+                    timeFrame:
+                        (texts.timeFrame as VariantTimeFrame | undefined) ??
+                        this.config.filterDefaults.variant.timeFrame,
                 };
                 break;
             case 'resistance':
@@ -126,6 +130,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 setSearchFromString(search, 'minProportion', String(analysis.minProportion));
                 setSearchFromString(search, 'minCount', String(analysis.minCount));
                 setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
+                setSearchFromString(search, 'timeFrame', analysis.timeFrame);
                 break;
             case 'resistance':
                 setSearchFromString(search, 'resistanceSet', analysis.resistanceSet);
@@ -194,6 +199,10 @@ function generateWasapFilterConfig(pageConfig: WasapPageConfig): BaselineFilterC
         {
             type: 'text',
             lapisField: 'minJaccard',
+        },
+        {
+            type: 'text',
+            lapisField: 'timeFrame',
         },
         {
             type: 'text',

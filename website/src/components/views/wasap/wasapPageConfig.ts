@@ -71,6 +71,7 @@ type VariantAnalysisModeConfig =
           variantAnalysisModeEnabled: true;
           clinicalLapis: {
               lapisBaseUrl: string;
+              dateField: string;
               lineageField: string;
           };
           filterDefaults: {
@@ -157,6 +158,8 @@ export type WasapManualFilter = {
     mutations?: string[];
 };
 
+export type VariantTimeFrame = 'all' | '6months' | '3months';
+
 export type WasapVariantFilter = {
     mode: 'variant';
     sequenceType: SequenceType;
@@ -164,6 +167,7 @@ export type WasapVariantFilter = {
     minProportion: number;
     minCount: number;
     minJaccard: number;
+    timeFrame: VariantTimeFrame;
 };
 
 export type WasapResistanceFilter = {

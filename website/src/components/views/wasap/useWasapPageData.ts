@@ -1,7 +1,8 @@
-import type { CustomColumn } from '@genspectrum/dashboard-components/util';
+import type { CustomColumn, LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 
-import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
+import type { VariantTimeFrame, WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 
@@ -47,6 +48,7 @@ async function fetchMutationSelection(
                 analysis.minProportion,
                 analysis.minCount,
                 analysis.minJaccard,
+                getLapisFilterForTimeFrame(analysis.timeFrame, config.clinicalLapis.dateField),
             ).then((r) => ({ type: 'jaccard', mutationsWithScore: r }));
         case 'resistance':
             if (!config.resistanceAnalysisModeEnabled) {
@@ -95,6 +97,26 @@ async function fetchMutationSelection(
             };
         }
     }
+}
+
+function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
+    let fromDate = undefined;
+    switch (timeFrame) {
+        case 'all':
+            break;
+        case '6months':
+            fromDate = dayjs().subtract(6, 'month').format('YYYY-MM-DD');
+            break;
+        case '3months':
+            fromDate = dayjs().subtract(3, 'month').format('YYYY-MM-DD');
+            break;
+    }
+    if (fromDate === undefined) {
+        return {};
+    }
+    return {
+        [`${dateFieldName}From`]: fromDate,
+    };
 }
 
 /**
