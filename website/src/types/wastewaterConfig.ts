@@ -56,7 +56,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             resistance: {
                 mode: 'resistance',
                 sequenceType: 'amino acid',
-                resistanceSet: '3CLPro',
+                resistanceSet: '3CLpro',
             },
             untracked: {
                 mode: 'untracked',
