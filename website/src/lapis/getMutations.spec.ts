@@ -41,6 +41,28 @@ describe('getMutations', () => {
         expect(result).toEqual(['A123C', 'G234T']);
     });
 
+    test('should return filtered mutations with multiple filters', async () => {
+        lapisRouteMocker.mockPostNucleotideMutations(
+            { minProportion: 0.1, pangoLineage: 'B.1.1.7', dateFrom: '2023-05-01' },
+            {
+                data: [
+                    { mutation: 'A123C', count: 5 },
+                    { mutation: 'G234T', count: 2 },
+                ],
+            },
+        );
+
+        const result = await getMutations(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { pangoLineage: 'B.1.1.7', dateFrom: '2023-05-01' },
+            0.1,
+            3,
+        );
+
+        expect(result).toEqual(['A123C']);
+    });
+
     test('should throw on failed request', async () => {
         lapisRouteMocker.mockPostNucleotideMutations(
             { minProportion: 0.1 },
@@ -105,6 +127,50 @@ describe('getMutationsForVariant', () => {
             0.1,
             5,
             0.9,
+            {},
+        );
+
+        expect(result).toEqual([{ mutation: 'A2C', jaccardIndex: 1 }]);
+    });
+
+    test('should set date filter correctly', async () => {
+        // Setup:
+        // - Variant FOO has 20 sequences
+        // - A1C: in 20 FOO sequences, 40 total -> Jaccard = 20/(20+40-20) = 20/40 = 0.5 (excluded, < 0.9)
+        // - A2C: in 20 FOO sequences, 20 total -> Jaccard = 20/(20+20-20) = 20/20 = 1.0 (included, >= 0.9)
+        // - A3C: in 2 FOO sequences (excluded by minCount < 5)
+        lapisRouteMocker.mockPostAggregated({ pangoLineage: 'FOO', dateFrom: '2025-01-01' }, { data: [{ count: 20 }] });
+        lapisRouteMocker.mockPostNucleotideMutationsMulti([
+            {
+                body: { minProportion: 0.1, pangoLineage: 'FOO', dateFrom: '2025-01-01' },
+                response: {
+                    data: [
+                        { mutation: 'A1C', count: 20 },
+                        { mutation: 'A2C', count: 20 },
+                        { mutation: 'A3C', count: 2 },
+                    ],
+                },
+            },
+            {
+                body: { minProportion: 0, dateFrom: '2025-01-01' },
+                response: {
+                    data: [
+                        { mutation: 'A1C', count: 40 },
+                        { mutation: 'A2C', count: 20 },
+                        { mutation: 'A3C', count: 2 },
+                    ],
+                },
+            },
+        ]);
+
+        const result = await getMutationsForVariant(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { pangoLineage: 'FOO' },
+            0.1,
+            5,
+            0.9,
+            { dateFrom: '2025-01-01' },
         );
 
         expect(result).toEqual([{ mutation: 'A2C', jaccardIndex: 1 }]);
@@ -137,6 +203,7 @@ describe('getMutationsForVariant', () => {
             0.05,
             5,
             0.6,
+            {},
         );
 
         expect(result).toEqual([{ mutation: 'T100C', jaccardIndex: 10 / 15 }]);
@@ -169,6 +236,7 @@ describe('getMutationsForVariant', () => {
             0.01,
             5,
             0.01,
+            {},
         );
 
         expect(result).toEqual([]);
@@ -211,6 +279,7 @@ describe('getMutationsForVariant', () => {
             0.05,
             5,
             0.75,
+            {},
         );
 
         expect(result).toEqual([
@@ -247,6 +316,7 @@ describe('getMutationsForVariant', () => {
             0.05,
             5,
             0.9,
+            {},
         );
 
         expect(result).toEqual([{ mutation: 'S:L452R', jaccardIndex: 1 }]);
@@ -279,6 +349,7 @@ describe('getMutationsForVariant', () => {
             0.05,
             5,
             0.9,
+            {},
         );
 
         expect(result).toEqual([{ mutation: 'S:L452R', jaccardIndex: 1 }]);
