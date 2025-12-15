@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { WasapPageStateHandler } from './WasapPageStateHandler';
 import { covidResistanceMutations } from '../../components/views/wasap/resistanceMutations';
-import type {
-    WasapManualFilter,
-    WasapPageConfig,
-    WasapResistanceFilter,
-    WasapUntrackedFilter,
-    WasapVariantFilter,
+import {
+    VARIANT_TIME_FRAME,
+    type WasapManualFilter,
+    type WasapPageConfig,
+    type WasapResistanceFilter,
+    type WasapUntrackedFilter,
+    type WasapVariantFilter,
 } from '../../components/views/wasap/wasapPageConfig';
 
 const config: WasapPageConfig = {
@@ -32,6 +33,7 @@ const config: WasapPageConfig = {
         lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
         cladeField: 'nextstrainClade',
         lineageField: 'nextcladePangoLineage',
+        dateField: 'date',
     },
     browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
     browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
@@ -49,6 +51,7 @@ const config: WasapPageConfig = {
             minProportion: 0.8,
             minCount: 15,
             minJaccard: 0.75,
+            timeFrame: VARIANT_TIME_FRAME.all,
         },
         resistance: {
             mode: 'resistance',
@@ -184,7 +187,8 @@ describe('WasapPageStateHandler', () => {
                 'variant=BA.2*&' +
                 'minProportion=0.5&' +
                 'minCount=10&' +
-                'minJaccard=0.6&';
+                'minJaccard=0.6&' +
+                'timeFrame=3months&';
             const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
 
             expect(filter.analysis.mode).toBe('variant');
@@ -196,6 +200,7 @@ describe('WasapPageStateHandler', () => {
             expect(analysis.minCount).toBe(10);
             expect(typeof analysis.minJaccard).toBe('number');
             expect(analysis.minJaccard).toBe(0.6);
+            expect(analysis.timeFrame).toBe(VARIANT_TIME_FRAME.threeMonths);
 
             const newUrl = handler.toUrl(filter);
             expect(newUrl).toBe(url);
