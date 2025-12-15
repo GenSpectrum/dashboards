@@ -1,14 +1,10 @@
 ---
-import SelectBaseline from './SelectBaseline.astro';
+import { GenericCompareToBaselineDataDisplay } from './GenericCompareToBaselineDataDisplay';
 import { isStaging, getDashboardsConfig } from '../../../config';
 import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { ComponentHeight } from '../../../views/OrganismConstants';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
-import ComponentsGrid from '../../ComponentsGrid.astro';
-import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
 import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
 import { CompareToBaselineSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
@@ -24,12 +20,6 @@ const view = ServerSide.routing.getOrganismView(organismViewKey);
 
 const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
 
-const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    earliestDate: new Date(view.organismConstants.earliestDate),
-    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
-});
-
 const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
 const noVariantSelected = pageState.variants.size < 1;
 
@@ -40,6 +30,8 @@ const downloadLinks = noVariantSelected
           filter: lapisFilter,
           downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
       }));
+
+const organismConfig = getDashboardsConfig().dashboards.organisms;
 ---
 
 <SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
@@ -47,27 +39,18 @@ const downloadLinks = noVariantSelected
         slot='filters'
         initialPageState={pageState}
         organismViewKey={organismViewKey}
-        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        organismsConfig={organismConfig}
         enableAdvancedQueryFilter={isStaging()}
         client:only='react'
     >
         <CompareToBaselineSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
     </CompareVariantsToBaselineStateSelector>
-    {
-        noVariantSelected ? (
-            <SelectBaseline slot='dataDisplay' />
-        ) : (
-            <ComponentsGrid slot='dataDisplay'>
-                <GsPrevalenceOverTime
-                    numeratorFilters={numeratorLapisFilters}
-                    denominatorFilter={baselineLapisFilter}
-                    lapisDateField={view.organismConstants.mainDateField}
-                    granularity={timeGranularity}
-                    views={['line', 'table', 'bar']}
-                    height={ComponentHeight.large}
-                    pageSize={12}
-                />
-            </ComponentsGrid>
-        )
-    }
+    <div slot='dataDisplay'>
+        <GenericCompareToBaselineDataDisplay
+            organismViewKey={organismViewKey}
+            organismsConfig={organismConfig}
+            pageState={pageState}
+            client:load
+        />
+    </div>
 </SingleVariantOrganismPageLayout>
