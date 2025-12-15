@@ -21,7 +21,10 @@ export const GenericCompareToBaselineDataDisplay: FC<GenericCompareToBaselineDis
     organismsConfig,
     pageState,
 }) => {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const view = useMemo(
+        () => new Routing(organismsConfig).getOrganismView(organismViewKey),
+        [organismsConfig, organismViewKey],
+    );
 
     const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState);
     const timeGranularity = chooseGranularityBasedOnDateRange({
