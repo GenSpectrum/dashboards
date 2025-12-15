@@ -158,7 +158,13 @@ export type WasapManualFilter = {
     mutations?: string[];
 };
 
-export type VariantTimeFrame = 'all' | '6months' | '3months';
+export const VARIANT_TIME_FRAME = {
+    all: 'all',
+    sixMonths: '6months',
+    threeMonths: '3months',
+} as const;
+
+export type VariantTimeFrame = (typeof VARIANT_TIME_FRAME)[keyof typeof VARIANT_TIME_FRAME];
 
 export type WasapVariantFilter = {
     mode: 'variant';

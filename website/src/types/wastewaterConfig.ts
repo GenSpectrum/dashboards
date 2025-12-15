@@ -1,7 +1,7 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
-import type { WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
+import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
 export const wastewaterOrganisms = {
     covid: 'covid',
@@ -53,7 +53,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
-                timeFrame: 'all',
+                timeFrame: VARIANT_TIME_FRAME.all,
             },
             resistance: {
                 mode: 'resistance',
@@ -103,7 +103,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
-                timeFrame: 'all',
+                timeFrame: VARIANT_TIME_FRAME.all,
             },
         },
     },
