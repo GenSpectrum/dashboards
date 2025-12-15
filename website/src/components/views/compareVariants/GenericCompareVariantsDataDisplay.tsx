@@ -23,7 +23,10 @@ export const GenericCompareVariantsDataDisplay: FC<GenericCompareVariantsDataDis
     organismsConfig,
     pageState,
 }) => {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const view = useMemo(
+        () => new Routing(organismsConfig).getOrganismView(organismViewKey),
+        [organismsConfig, organismViewKey],
+    );
 
     const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(pageState.datasetFilter);
     const timeGranularity = chooseGranularityBasedOnDateRange({
