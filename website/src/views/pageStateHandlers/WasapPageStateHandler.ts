@@ -1,9 +1,9 @@
-import { type SequenceType } from '@genspectrum/dashboard-components/util';
+import { type SequenceType, type TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
 import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
-import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
+import type { BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import {
     enabledAnalysisModes,
     type ExcludeSetName,
@@ -96,7 +96,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const base: WasapBaseFilter = {
             locationName: texts.locationName ?? this.config.defaultLocationName,
             samplingDate: dateRanges.samplingDate,
-            granularity: texts.granularity ?? 'day',
+            granularity: (texts.granularity as TemporalGranularity | undefined) ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
 
