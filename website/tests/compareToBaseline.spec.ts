@@ -2,10 +2,10 @@ import { expect } from '@playwright/test';
 
 import { test } from './e2e.fixture.ts';
 import { organismOptions, organismsWithView } from './helpers.ts';
-import { compareVariantsViewKey } from '../src/views/viewKeys';
+import { compareToBaselineViewKey } from '../src/views/viewKeys';
 
 test.describe('The Compare To Baseline page', () => {
-    for (const organism of organismsWithView(compareVariantsViewKey)) {
+    for (const organism of organismsWithView(compareToBaselineViewKey)) {
         test(`should show diagrams after selecting two variants and a baseline - ${organism}`, async ({
             compareToBaselinePage,
         }) => {
