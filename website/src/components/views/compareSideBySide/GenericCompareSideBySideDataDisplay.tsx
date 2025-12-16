@@ -11,14 +11,14 @@ import { GsAggregate } from '../../genspectrum/GsAggregate.tsx';
 import { GsMutations } from '../../genspectrum/GsMutations.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 
-export type GenericCompareSideBySideDataDisplayDisplayProps = {
+export type GenericCompareSideBySideDataDisplayProps = {
     organismViewKey: `${OrganismWithViewKey<typeof compareSideBySideViewKey>}.${typeof compareSideBySideViewKey}`;
     organismsConfig: OrganismsConfig;
     datasetAndVariantData: DatasetAndVariantData;
     hideMutationComponents?: boolean;
 };
 
-export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDataDisplayDisplayProps> = ({
+export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDataDisplayProps> = ({
     organismViewKey,
     organismsConfig,
     datasetAndVariantData,
