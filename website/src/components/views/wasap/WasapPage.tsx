@@ -79,7 +79,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
                     <Loading />
                 ) : (
                     <div className='h-full space-y-4 pr-4'>
-                        {displayMutations !== undefined && displayMutations.length === 0 ? (
+                        {displayMutations?.length === 0 ? (
                             <NoDataHelperText analysisFilter={analysis} />
                         ) : (
                             <GsMutationsOverTime

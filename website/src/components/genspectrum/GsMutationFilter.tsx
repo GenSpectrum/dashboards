@@ -13,7 +13,7 @@ export function GsMutationFilter({
     initialValue,
     width,
     enabledMutationTypes,
-    onMutationChange = () => {},
+    onMutationChange,
 }: {
     width?: string;
     initialValue?: MutationFilter | string[] | undefined;
