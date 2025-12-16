@@ -16,7 +16,7 @@ export class CompareSideBySidePage extends ViewPage {
 
     public async addColumn(options: {
         dateRangeOption: string;
-        expectedColumnCount: number,
+        expectedColumnCount: number;
         lineage?: string;
         lineageFieldPlaceholder?: string;
         mutation?: string;

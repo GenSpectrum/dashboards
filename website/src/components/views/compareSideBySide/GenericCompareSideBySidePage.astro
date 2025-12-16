@@ -1,4 +1,5 @@
 ---
+import { GenericCompareSideBySideDataDisplay } from './GenericCompareSideBySideDataDisplay.tsx';
 import { toDownloadLink } from './toDownloadLink';
 import { isStaging, getDashboardsConfig, getLapisUrl } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
@@ -7,7 +8,6 @@ import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
-import { GenericCompareSideBySideDataDisplay } from './GenericCompareSideBySideDataDisplay.tsx';
 
 type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareSideBySideViewKey>;
 interface Props {
