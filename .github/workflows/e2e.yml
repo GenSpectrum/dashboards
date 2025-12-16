@@ -57,8 +57,13 @@ jobs:
         WEBSITE_TAG: ${{ steps.branchTag.outputs.branchTag }}
         BACKEND_TAG: ${{ steps.branchTag.outputs.branchTag }}
 
-    - name: Run Playwright tests
+    - name: Run Playwright tests (all browsers)
+      if: github.ref == 'refs/heads/main'
       run: npm run e2e
+
+    - name: Run Playwright tests (chromium only)
+      if: github.ref != 'refs/heads/main'
+      run: npm run e2e:chromium
 
     - uses: actions/upload-artifact@v6
       if: ${{ !cancelled() }}
