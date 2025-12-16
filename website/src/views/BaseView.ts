@@ -19,8 +19,7 @@ export abstract class BaseView<
     PageState extends object,
     Constants extends OrganismConstants,
     StateHandler extends PageStateHandler<PageState>,
-> implements View<PageState, Constants, StateHandler>
-{
+> implements View<PageState, Constants, StateHandler> {
     public readonly pathname;
     public readonly viewTitle;
     public readonly viewBreadcrumbEntries;
