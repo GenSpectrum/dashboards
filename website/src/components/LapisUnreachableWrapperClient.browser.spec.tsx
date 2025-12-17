@@ -1,7 +1,7 @@
 import { describe, expect } from 'vitest';
 import { render } from 'vitest-browser-react';
 
-import LapisUnreachableWrapperClient from './LapisUnreachableWrapperClient';
+import { LapisUnreachableWrapperClient } from './LapisUnreachableWrapperClient';
 import { DUMMY_LAPIS_URL } from '../../routeMocker';
 import { it } from '../../test-extend';
 
