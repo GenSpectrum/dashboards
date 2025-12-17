@@ -117,5 +117,7 @@ import { Page } from '../types/pages';
         </div>
     </div>
 
-    <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus, dataOrigins.wise]} />
+    <div class='mt-2 border-t border-gray-200'>
+        <DataInfo dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus, dataOrigins.wise]} />
+    </div>
 </BaseLayout>
