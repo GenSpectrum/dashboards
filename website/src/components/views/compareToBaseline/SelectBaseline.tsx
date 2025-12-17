@@ -1,0 +1,19 @@
+import type { FC } from 'react';
+
+import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
+
+export const SelectBaseline: FC = () => {
+    return (
+        <div className='mx-4 mt-20 flex min-h-64 flex-col items-center'>
+            <PageHeadline>Analyze a variant compared to a baseline</PageHeadline>
+            <div className='max-w-xl'>
+                <p className='mb-2'>To proceed, please select a variant filter.</p>
+                <p>
+                    If no baseline is selected all sequences will be used as a baseline for comparing against sequences
+                    with a specified variant. Note that the dataset filter is applied to the entire dataset including
+                    both the baseline and variant subsets. Adjust the dataset filter as needed to refine your selection.
+                </p>
+            </div>
+        </div>
+    );
+};

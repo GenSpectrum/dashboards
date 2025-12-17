@@ -46,7 +46,7 @@ export function DynamicDateFilter({
     // When the value has a "Custom" label, try to match it back to one of the generated options
     // by comparing dateFrom and dateTo. If there's a match, use that option's label instead of "Custom".
     const normalizedValue = useMemo(() => {
-        if (value === undefined || value.label !== CustomDateRangeLabel) {
+        if (value?.label !== CustomDateRangeLabel) {
             return value;
         }
 

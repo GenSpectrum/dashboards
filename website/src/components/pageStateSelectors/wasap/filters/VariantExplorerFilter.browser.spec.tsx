@@ -17,6 +17,7 @@ describe('VariantExplorerFilter', () => {
         minProportion: 0.05,
         minCount: 10,
         minJaccard: 0.5,
+        timeFrame: 'all',
     };
 
     it('calls setPageState when changing sequence type', async ({ routeMockers: { lapis } }) => {

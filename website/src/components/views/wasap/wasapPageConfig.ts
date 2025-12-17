@@ -1,4 +1,4 @@
-import type { DateRangeOption, SequenceType } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
 import type { ResistanceMutationSet } from './resistanceMutations';
 
@@ -71,6 +71,7 @@ type VariantAnalysisModeConfig =
           variantAnalysisModeEnabled: true;
           clinicalLapis: {
               lapisBaseUrl: string;
+              dateField: string;
               lineageField: string;
           };
           filterDefaults: {
@@ -143,7 +144,7 @@ export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked
 export type WasapBaseFilter = {
     locationName?: string;
     samplingDate?: DateRangeOption;
-    granularity: string;
+    granularity: TemporalGranularity;
     excludeEmpty: boolean;
 };
 
@@ -157,6 +158,14 @@ export type WasapManualFilter = {
     mutations?: string[];
 };
 
+export const VARIANT_TIME_FRAME = {
+    all: 'all',
+    sixMonths: '6months',
+    threeMonths: '3months',
+} as const;
+
+export type VariantTimeFrame = (typeof VARIANT_TIME_FRAME)[keyof typeof VARIANT_TIME_FRAME];
+
 export type WasapVariantFilter = {
     mode: 'variant';
     sequenceType: SequenceType;
@@ -164,6 +173,7 @@ export type WasapVariantFilter = {
     minProportion: number;
     minCount: number;
     minJaccard: number;
+    timeFrame: VariantTimeFrame;
 };
 
 export type WasapResistanceFilter = {
