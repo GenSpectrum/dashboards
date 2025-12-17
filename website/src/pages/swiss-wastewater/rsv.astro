@@ -4,56 +4,58 @@ import type { SequenceType } from '@genspectrum/dashboard-components/util';
 import RsvWastewaterInfo from '../../components/RsvWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
-import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig, RSVTypes, wastewaterBreadcrumb } from '../../types/wastewaterConfig';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { DataPageLayout } from '../../layouts/OrganismPage/DataPageLayout.tsx';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
 ---
 
-<DataPageLayout
-    title='Swiss wastewater - RSV'
-    breadcrumbs={[
-        ...defaultBreadcrumbs,
-        wastewaterBreadcrumb,
-        {
-            name: 'RSV',
-            href: wastewaterConfig.pages.rsv.path,
-        },
-    ]}
-    dataOrigins={[dataOrigins.wise]}
-    lapisUrl={lapisUrl}
->
-    <gs-app lapis={lapisUrl}>
-        <div class='m-4 flex flex-col gap-4'>
+<BaseLayout title='Swiss wastewater - RSV'>
+    <DataPageLayout
+        breadcrumbs={[
+            ...defaultBreadcrumbs,
+            wastewaterBreadcrumb,
             {
-                RSVTypes.map((reference) => (
-                    <>
-                        <div class='m-4 flex flex-col gap-4'>
-                            <h2 class='text-2xl'>{reference}</h2>
-                            {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
-                                <GsWastewaterMutationsOverTime
-                                    title={`${sequenceType} mutations`}
-                                    lapisFilter={{
-                                        reference,
-                                        versionStatus: 'LATEST_VERSION',
-                                        isRevocation: false,
-                                    }}
-                                    sequenceType={sequenceType}
-                                    collapsible={sequenceType === 'nucleotide'}
-                                    linkSuffix={reference}
-                                >
-                                    <RsvWastewaterInfo
-                                        slot='infoText'
-                                        reference={reference}
+                name: 'RSV',
+                href: wastewaterConfig.pages.rsv.path,
+            },
+        ]}
+        dataOrigins={[dataOrigins.wise]}
+        lapisUrl={lapisUrl}
+    >
+        <gs-app lapis={lapisUrl}>
+            <div class='m-4 flex flex-col gap-4'>
+                {
+                    RSVTypes.map((reference) => (
+                        <>
+                            <div class='m-4 flex flex-col gap-4'>
+                                <h2 class='text-2xl'>{reference}</h2>
+                                {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                                    <GsWastewaterMutationsOverTime
+                                        title={`${sequenceType} mutations`}
+                                        lapisFilter={{
+                                            reference,
+                                            versionStatus: 'LATEST_VERSION',
+                                            isRevocation: false,
+                                        }}
                                         sequenceType={sequenceType}
-                                    />
-                                </GsWastewaterMutationsOverTime>
-                            ))}
-                        </div>
-                    </>
-                ))
-            }
-        </div>
-    </gs-app>
-</DataPageLayout>
+                                        collapsible={sequenceType === 'nucleotide'}
+                                        linkSuffix={reference}
+                                    >
+                                        <RsvWastewaterInfo
+                                            slot='infoText'
+                                            reference={reference}
+                                            sequenceType={sequenceType}
+                                        />
+                                    </GsWastewaterMutationsOverTime>
+                                ))}
+                            </div>
+                        </>
+                    ))
+                }
+            </div>
+        </gs-app>
+    </DataPageLayout>
+</BaseLayout>
