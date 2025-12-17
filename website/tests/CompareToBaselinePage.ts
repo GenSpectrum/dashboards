@@ -24,15 +24,11 @@ export class CompareToBaselinePage extends CompareVariantsPage {
             const { lineage, lineageFieldPlaceholder } = options;
 
             const lineageFieldLocator = this.page.getByPlaceholder(lineageFieldPlaceholder);
-            await lineageFieldLocator.first().fill(lineage);
-
-            const selectedLineage = this.page.getByRole('option', { name: lineage, exact: false });
-            await selectedLineage.first().click();
+            await this.fillLineageField(lineageFieldLocator.first(), lineage);
         }
 
         if (options.mutation) {
-            await this.mutationField.first().fill(options.mutation);
-            await this.mutationField.first().press('Enter');
+            await this.fillMutationField(this.mutationField.first(), options.mutation);
         }
     }
 }

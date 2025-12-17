@@ -33,15 +33,11 @@ export class CompareVariantsPage extends ViewPage {
             const lineageFieldLocator = this.page.getByPlaceholder(lineageFieldPlaceholder);
             await expect(lineageFieldLocator).toHaveCount(numberMutationFields + 1);
 
-            await lineageFieldLocator.last().fill(lineage);
-
-            const selectedLineage = this.page.getByRole('option', { name: lineage, exact: false });
-            await selectedLineage.first().click();
+            await this.fillLineageField(lineageFieldLocator.last(), lineage);
         }
 
         if (options.mutation) {
-            await this.mutationField.last().fill(options.mutation);
-            await this.mutationField.last().press('Enter');
+            await this.fillMutationField(this.mutationField.last(), options.mutation);
         }
     }
 }
