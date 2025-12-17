@@ -3,12 +3,10 @@ import type { ComponentProps } from 'astro/types';
 
 import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
 import DataPageLayout from './DataPageLayout.astro';
-import LastUpdatedInfo from './LastUpdatedInfo.astro';
 import { getLapisUrl } from '../../config';
 import type { OrganismConstants } from '../../views/OrganismConstants';
 import { type View } from '../../views/View';
 import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler';
-import DataInfo from '../base/footer/DataInfo.astro';
 
 interface Props {
     view: View<object, OrganismConstants, PageStateHandler<object>>;
@@ -21,29 +19,15 @@ const { view, downloadLinks } = Astro.props;
 <DataPageLayout
     title={view.viewTitle}
     breadcrumbs={view.viewBreadcrumbEntries}
+    downloadLinks={downloadLinks}
+    dataOrigins={view.organismConstants.dataOrigins}
     lapisUrl={getLapisUrl(view.organismConstants.organism)}
+    accessionDownloadFields={view.organismConstants.accessionDownloadFields}
 >
     <gs-app
         lapis={getLapisUrl(view.organismConstants.organism)}
         mutationAnnotations={JSON.stringify(view.organismConstants.mutationAnnotations)}
     >
-        <div class='flex h-full flex-col'>
-            <div class='grow'>
-                <slot />
-            </div>
-            <div class='mt-2 flex flex-col items-center justify-center border-t border-gray-200 sm:flex-row sm:gap-4'>
-                {
-                    downloadLinks.length > 0 && (
-                        <AccessionsDownloadButton
-                            accessionDownloadFields={view.organismConstants.accessionDownloadFields}
-                            downloadLinks={downloadLinks}
-                            lapisUrl={getLapisUrl(view.organismConstants.organism)}
-                        />
-                    )
-                }
-                <LastUpdatedInfo lapisUrl={getLapisUrl(view.organismConstants.organism)} />
-                <DataInfo dataOrigins={view.organismConstants.dataOrigins} />
-            </div>
-        </div>
+        <slot />
     </gs-app>
 </DataPageLayout>
