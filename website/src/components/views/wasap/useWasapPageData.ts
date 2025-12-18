@@ -6,6 +6,18 @@ import type { VariantTimeFrame, WasapAnalysisFilter, WasapPageConfig } from './w
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 
+/**
+ * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
+ * depending on the analysis mode and analysis mode settings.
+ */
+export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
+    return useQuery({
+        queryKey: ['wasap', analysis],
+        queryFn: () =>
+            fetchMutationSelection(config, analysis).then((data) => wasapPageDataFromMutationSelection(data)),
+    });
+}
+
 type AllMutations = {
     type: 'all';
 };
@@ -99,7 +111,7 @@ async function fetchMutationSelection(
     }
 }
 
-function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
+export function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
     let fromDate = undefined;
     switch (timeFrame) {
         case 'all':
@@ -160,16 +172,4 @@ function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection
                 ],
             };
     }
-}
-
-/**
- * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
- * depending on the analysis mode and analysis mode settings.
- */
-export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
-    return useQuery({
-        queryKey: ['wasap', analysis],
-        queryFn: () =>
-            fetchMutationSelection(config, analysis).then((data) => wasapPageDataFromMutationSelection(data)),
-    });
 }

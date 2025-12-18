@@ -4,8 +4,13 @@ import { useMemo } from 'react';
 import { type FC } from 'react';
 
 import { toMutationAnnotations } from './resistanceMutations';
-import { useWasapPageData } from './useWasapPageData';
-import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
+import { getLapisFilterForTimeFrame, useWasapPageData } from './useWasapPageData';
+import {
+    variantTimeFrameLabel,
+    type WasapAnalysisFilter,
+    type WasapPageConfig,
+    type WasapVariantFilter,
+} from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getTotalCount } from '../../../lapis/getTotalCount';
 import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
@@ -95,6 +100,15 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
                                 customColumns={customColumns}
                             />
                         )}
+                        {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
+                            <VariantFetchInfo
+                                analysis={analysis}
+                                clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                clinicalLapisDateField={config.clinicalLapis.dateField}
+                                warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                            />
+                        )}
                         <WasapStats config={config} />
                     </div>
                 )}
@@ -129,6 +143,71 @@ const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFil
         </div>
     );
 };
+
+/**
+ * Info stat about the amount of sequences used during the computation of the clinical variant signature.
+ * Will also show a warning of the count is small.
+ */
+const VariantFetchInfo = ({
+    analysis,
+    clinicalLapisBaseUrl,
+    clinicalLapisLineageField,
+    clinicalLapisDateField,
+    warningThreshold,
+}: {
+    analysis: WasapVariantFilter;
+    clinicalLapisBaseUrl: string;
+    clinicalLapisLineageField: string;
+    clinicalLapisDateField: string;
+    warningThreshold: number;
+}) => {
+    const lapisFilter = {
+        ...getLapisFilterForTimeFrame(analysis.timeFrame, clinicalLapisDateField),
+        [clinicalLapisLineageField]: analysis.variant,
+    };
+
+    const { data, isPending, isError, error } = useQuery({
+        queryKey: ['variantFetchInfo'],
+        queryFn: () => getTotalCount(clinicalLapisBaseUrl, lapisFilter),
+    });
+
+    const isHighlighted = data !== undefined && data < warningThreshold;
+
+    let message = `The number of clinical sequences for ${analysis.variant}`;
+    if (analysis.timeFrame !== 'all') {
+        message += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
+    }
+    if (isHighlighted) {
+        message += '. Clinical signature calculation with this few sequences is not recommended.';
+    }
+
+    return (
+        <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
+            <div className='stat'>
+                <div className='stat-title'>Clinical sequences for {analysis.variant}</div>
+                <div className='stat-value text-base'>
+                    {isPending ? (
+                        '…'
+                    ) : isError ? (
+                        'Error'
+                    ) : isHighlighted ? (
+                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{data.toLocaleString()}</span>
+                    ) : (
+                        data.toLocaleString()
+                    )}
+                </div>
+                <div className='stat-desc text-wrap'>{isPending ? 'Loading …' : isError ? error.message : message}</div>
+            </div>
+        </div>
+    );
+};
+
+const WasapStats = ({ config }: { config: WasapPageConfig }) => (
+    <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
+        <TotalCount config={config} />
+        <DateRange config={config} />
+    </div>
+);
 
 const TotalCount = ({ config }: { config: WasapPageConfig }) => {
     const { data, isPending, isError, error } = useQuery({
@@ -173,10 +252,3 @@ const DateRange = ({ config }: { config: WasapPageConfig }) => {
         </div>
     );
 };
-
-const WasapStats = ({ config }: { config: WasapPageConfig }) => (
-    <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
-        <TotalCount config={config} />
-        <DateRange config={config} />
-    </div>
-);

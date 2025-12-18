@@ -19,9 +19,9 @@ import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
 import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
 import { formatUrl } from '../../util/formatUrl.ts';
 
-export class SingleVariantPageStateHandler<
-    PageState extends DatasetAndVariantData = DatasetAndVariantData,
-> implements PageStateHandler<DatasetAndVariantData> {
+export class SingleVariantPageStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
+    implements PageStateHandler<DatasetAndVariantData>
+{
     protected readonly pathname;
 
     constructor(
