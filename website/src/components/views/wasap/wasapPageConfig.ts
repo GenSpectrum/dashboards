@@ -77,6 +77,7 @@ type VariantAnalysisModeConfig =
           filterDefaults: {
               variant: WasapVariantFilter;
           };
+          clinicalSequenceCountWarningThreshold: number;
       };
 
 type ResistanceAnalysisModeConfig =
@@ -165,6 +166,17 @@ export const VARIANT_TIME_FRAME = {
 } as const;
 
 export type VariantTimeFrame = (typeof VARIANT_TIME_FRAME)[keyof typeof VARIANT_TIME_FRAME];
+
+export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
+    switch (timeFrame) {
+        case VARIANT_TIME_FRAME.all:
+            return 'All';
+        case VARIANT_TIME_FRAME.sixMonths:
+            return '6 months';
+        case VARIANT_TIME_FRAME.threeMonths:
+            return '3 months';
+    }
+}
 
 export type WasapVariantFilter = {
     mode: 'variant';

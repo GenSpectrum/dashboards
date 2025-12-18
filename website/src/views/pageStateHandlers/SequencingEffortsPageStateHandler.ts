@@ -16,9 +16,9 @@ import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterF
 import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
 import { formatUrl } from '../../util/formatUrl.ts';
 
-export class SequencingEffortsStateHandler<
-    PageState extends DatasetAndVariantData = DatasetAndVariantData,
-> implements PageStateHandler<DatasetAndVariantData> {
+export class SequencingEffortsStateHandler<PageState extends DatasetAndVariantData = DatasetAndVariantData>
+    implements PageStateHandler<DatasetAndVariantData>
+{
     protected readonly pathname;
 
     constructor(

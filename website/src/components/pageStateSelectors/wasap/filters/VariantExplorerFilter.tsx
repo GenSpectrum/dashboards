@@ -2,6 +2,7 @@ import { Inset } from '../../../../styles/Inset';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
 import {
     VARIANT_TIME_FRAME,
+    variantTimeFrameLabel,
     type VariantTimeFrame,
     type WasapVariantFilter,
 } from '../../../views/wasap/wasapPageConfig';
@@ -80,9 +81,13 @@ export function VariantExplorerFilter({
                         value={pageState.timeFrame}
                         onChange={(e) => setPageState({ ...pageState, timeFrame: e.target.value as VariantTimeFrame })}
                     >
-                        <option value={VARIANT_TIME_FRAME.all}>All</option>
-                        <option value={VARIANT_TIME_FRAME.sixMonths}>Past 6 months</option>
-                        <option value={VARIANT_TIME_FRAME.threeMonths}>Past 3 months</option>
+                        <option value={VARIANT_TIME_FRAME.all}>{variantTimeFrameLabel(VARIANT_TIME_FRAME.all)}</option>
+                        <option value={VARIANT_TIME_FRAME.sixMonths}>
+                            Past {variantTimeFrameLabel(VARIANT_TIME_FRAME.sixMonths)}
+                        </option>
+                        <option value={VARIANT_TIME_FRAME.threeMonths}>
+                            Past {variantTimeFrameLabel(VARIANT_TIME_FRAME.threeMonths)}
+                        </option>
                     </select>
                 </LabeledField>
             </Inset>
