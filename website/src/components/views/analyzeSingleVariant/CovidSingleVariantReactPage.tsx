@@ -1,4 +1,4 @@
-import { type FC, useMemo, useState } from 'react';
+import { type FC, useMemo } from 'react';
 
 import { CollectionsList } from './CollectionsList.tsx';
 import { CovidSingleVariantDataDisplay } from './CovidSingleVariantDataDisplay.tsx';
@@ -10,6 +10,7 @@ import { type OrganismViewKey, Routing } from '../../../views/routing.ts';
 import { SelectorHeadline } from '../../pageStateSelectors/SelectorHeadline.tsx';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector.tsx';
 import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink.ts';
+import { usePageState } from '../usePageState.ts';
 
 export type CovidSingleVariantReactPageProps = {
     organismsConfig: OrganismsConfig;
@@ -20,9 +21,7 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
     const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
     const view = useMemo(() => new Routing(organismsConfig).getOrganismView(organismViewKey), [organismsConfig]);
 
-    const [pageState, setPageState] = useState(() =>
-        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
-    );
+    const { pageState, setPageState } = usePageState(view);
 
     const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
 
