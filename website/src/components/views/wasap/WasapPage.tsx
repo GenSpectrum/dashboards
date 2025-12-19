@@ -26,20 +26,19 @@ import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPag
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
+import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
     wastewaterOrganism: WastewaterOrganismName;
-    currentUrl: URL;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, currentUrl }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
     const config = wastewaterOrganismConfigs[wastewaterOrganism];
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
-    const { base, analysis } = useMemo(
-        () => pageStateHandler.parsePageStateFromUrl(currentUrl),
-        [pageStateHandler, currentUrl],
-    );
+
+    const { pageState, setPageState } = usePageState(pageStateHandler);
+    const { base, analysis } = pageState;
 
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, analysis);
@@ -95,6 +94,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
                             pageStateHandler={pageStateHandler}
                             initialBaseFilterState={base}
                             initialAnalysisFilterState={analysis}
+                            setPageState={setPageState}
                         />
                     </div>
                     {isError ? (

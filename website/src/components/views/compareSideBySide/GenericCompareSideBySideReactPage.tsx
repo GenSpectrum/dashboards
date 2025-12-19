@@ -29,7 +29,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
         [organismsConfig, organismViewKey],
     );
 
-    const { pageState, setPageState } = usePageState(view);
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
 

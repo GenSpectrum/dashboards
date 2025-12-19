@@ -26,7 +26,7 @@ export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPage
         [organismsConfig, organismViewKey],
     );
 
-    const { pageState, setPageState } = usePageState(view);
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
     const notEnoughVariantsSelected = pageState.variants.size < 2;

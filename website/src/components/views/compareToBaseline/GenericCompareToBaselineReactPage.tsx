@@ -26,7 +26,7 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
         [organismsConfig, organismViewKey],
     );
 
-    const { pageState, setPageState } = usePageState(view);
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
     const noVariantSelected = pageState.variants.size < 1;
@@ -52,12 +52,7 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
                     enableAdvancedQueryFilter={isStaging}
                 />
             }
-            dataDisplay={
-                <GenericCompareToBaselineDataDisplay
-                    view={view}
-                    pageState={pageState}
-                />
-            }
+            dataDisplay={<GenericCompareToBaselineDataDisplay view={view} pageState={pageState} />}
         />
     );
 };

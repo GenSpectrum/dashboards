@@ -9,10 +9,8 @@ type Props = {
 
 const { wastewaterOrganism } = Astro.props;
 const { name } = wastewaterOrganismConfigs[wastewaterOrganism];
-
-const url = Astro.url;
 ---
 
 <BaseLayout title={`Swiss wastewater - ${name}`}>
-    <WasapPage wastewaterOrganism={wastewaterOrganism} currentUrl={url} client:only='react' />
+    <WasapPage wastewaterOrganism={wastewaterOrganism} client:only='react' />
 </BaseLayout>
