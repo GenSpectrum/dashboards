@@ -24,7 +24,7 @@ type AggregatedVisualizations = {
 
 export interface OrganismConstants {
     readonly organism: Organism;
-    readonly earliestDate : string;
+    readonly earliestDate: string;
     readonly dataOrigins: DataOrigin[];
     readonly accessionDownloadFields: string[];
     readonly mainDateField: string;
