@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { GenericAnalyseSingleVariantDataDisplay } from './GenericAnalyseSingleVariantDataDisplay';
 import { type OrganismsConfig } from '../../../config';
@@ -28,7 +28,9 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const [pageState, setPageState] = useState(() =>
+        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
+    );
 
     const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 
@@ -58,19 +60,13 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
             organismsConfig={organismsConfig}
             filters={
                 <SingleVariantPageStateSelector
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    initialPageState={pageState}
+                    view={view}
+                    pageState={pageState}
+                    setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
                 />
             }
-            dataDisplay={
-                <GenericAnalyseSingleVariantDataDisplay
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    pageState={pageState}
-                />
-            }
+            dataDisplay={<GenericAnalyseSingleVariantDataDisplay view={view} pageState={pageState} />}
         />
     );
 };

@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { GenericCompareVariantsDataDisplay } from './GenericCompareVariantsDataDisplay';
 import { type OrganismsConfig } from '../../../config';
@@ -25,7 +25,9 @@ export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPage
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const [pageState, setPageState] = useState(() =>
+        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
+    );
 
     const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
     const notEnoughVariantsSelected = pageState.variants.size < 2;
@@ -45,19 +47,13 @@ export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPage
             organismsConfig={organismsConfig}
             filters={
                 <CompareVariantsPageStateSelector
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    initialPageState={pageState}
+                    view={view}
+                    pageState={pageState}
+                    setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
                 />
             }
-            dataDisplay={
-                <GenericCompareVariantsDataDisplay
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    pageState={pageState}
-                />
-            }
+            dataDisplay={<GenericCompareVariantsDataDisplay view={view} pageState={pageState} />}
         />
     );
 };

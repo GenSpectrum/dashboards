@@ -1,17 +1,13 @@
 import { views } from '@genspectrum/dashboard-components/util';
-import { type FC, useMemo } from 'react';
+import { type Dispatch, type FC, type SetStateAction } from 'react';
 
 import { CollectionsList } from './CollectionsList.tsx';
 import { SelectVariant } from './SelectVariant.tsx';
-import type { OrganismsConfig } from '../../../config.ts';
-import type { Organisms } from '../../../types/Organism.ts';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange.ts';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues.ts';
-import type { CovidVariantData } from '../../../views/covid.ts';
+import { CovidAnalyzeSingleVariantView, type CovidVariantData } from '../../../views/covid.ts';
 import { getLocationSubdivision } from '../../../views/locationHelpers.ts';
 import { locationFieldsToFilterIdentifier } from '../../../views/pageStateHandlers/locationFilterFromToUrl.ts';
-import { Routing } from '../../../views/routing.ts';
-import type { singleVariantViewKey } from '../../../views/viewKeys.ts';
 import { ComponentsGrid } from '../../ComponentsGrid.tsx';
 import { GsAggregate } from '../../genspectrum/GsAggregate.tsx';
 import { GsMutations } from '../../genspectrum/GsMutations.tsx';
@@ -21,18 +17,16 @@ import { GsRelativeGrowthAdvantage } from '../../genspectrum/GsRelativeGrowthAdv
 import { GsStatistics } from '../../genspectrum/GsStatistics.tsx';
 
 export type CovidSingleVariantDataDisplayProps = {
-    organismViewKey: `${typeof Organisms.covid}.${typeof singleVariantViewKey}`;
-    organismsConfig: OrganismsConfig;
+    view: CovidAnalyzeSingleVariantView;
     pageState: CovidVariantData;
+    setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
 export const CovidSingleVariantDataDisplay: FC<CovidSingleVariantDataDisplayProps> = ({
-    organismViewKey,
-    organismsConfig,
+    view,
     pageState,
+    setPageState,
 }) => {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
-
     const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
     const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
     const timeGranularity = chooseGranularityBasedOnDateRange({
@@ -55,7 +49,9 @@ export const CovidSingleVariantDataDisplay: FC<CovidSingleVariantDataDisplayProp
                     <div className='max-w-md'>
                         <CollectionsList
                             initialCollectionId={pageState.collectionId}
-                            organismsConfig={organismsConfig}
+                            view={view}
+                            pageState={pageState}
+                            setPageState={setPageState}
                         />
                     </div>
                 </SelectVariant>

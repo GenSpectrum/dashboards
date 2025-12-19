@@ -1,8 +1,8 @@
-import type { FC } from 'react';
+import type { Dispatch, FC, SetStateAction } from 'react';
 
 import { collectionVariantClassName } from './CollectionsList';
 import { Organisms } from '../../../types/Organism';
-import type { DatasetFilter } from '../../../views/View.ts';
+import type { DatasetAndVariantData, DatasetFilter } from '../../../views/View.ts';
 import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
 import type { SingleVariantOrganism, ViewsMap } from '../../../views/routing';
 import { singleVariantViewKey } from '../../../views/viewKeys';
@@ -10,9 +10,10 @@ import { singleVariantViewKey } from '../../../views/viewKeys';
 export type QuickstartLinksProps = {
     view: ViewsMap[Exclude<SingleVariantOrganism, typeof Organisms.covid>][typeof singleVariantViewKey];
     datasetFilter: DatasetFilter;
+    setPageState: Dispatch<SetStateAction<DatasetAndVariantData>>;
 };
 
-export const QuickstartLinks: FC<QuickstartLinksProps> = ({ view, datasetFilter }) => {
+export const QuickstartLinks: FC<QuickstartLinksProps> = ({ view, datasetFilter, setPageState }) => {
     const variants = view.organismConstants.predefinedVariants;
 
     return (
@@ -21,13 +22,20 @@ export const QuickstartLinks: FC<QuickstartLinksProps> = ({ view, datasetFilter 
 
             <div className='flex max-w-md flex-col'>
                 {variants.map((variant) => {
-                    const href = view.pageStateHandler.toUrl({
-                        datasetFilter: datasetFilter,
-                        variantFilter: variant,
-                    });
+                    const applyFilters = () => {
+                        const newPageState = {
+                            datasetFilter: datasetFilter,
+                            variantFilter: variant,
+                        };
+                        // TODO put this into a usePageState hook
+                        window.history.pushState(undefined, '', view.pageStateHandler.toUrl(newPageState));
+                        setPageState(newPageState);
+                    };
+
+                    const displayName = toDisplayName(variant);
                     return (
-                        <a key={href} className={collectionVariantClassName} href={href}>
-                            {toDisplayName(variant)}
+                        <a key={displayName} className={collectionVariantClassName} onClick={applyFilters}>
+                            {displayName}
                         </a>
                     );
                 })}

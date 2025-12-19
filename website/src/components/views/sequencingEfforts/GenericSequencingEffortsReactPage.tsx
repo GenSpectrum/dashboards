@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { GenericSequencingEffortsDataDisplay } from './GenericSequencingEffortsDataDisplay';
 import { type OrganismsConfig } from '../../../config';
@@ -24,7 +24,9 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const [pageState, setPageState] = useState(() =>
+        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
+    );
 
     const lapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 
@@ -43,9 +45,9 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
             organismsConfig={organismsConfig}
             filters={
                 <SequencingEffortsPageStateSelector
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    initialPageState={pageState}
+                    view={view}
+                    pageState={pageState}
+                    setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
                 />
             }

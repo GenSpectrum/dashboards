@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { GenericCompareToBaselineDataDisplay } from './GenericCompareToBaselineDataDisplay';
 import { type OrganismsConfig } from '../../../config';
@@ -25,7 +25,9 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const [pageState, setPageState] = useState(() =>
+        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
+    );
 
     const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
     const noVariantSelected = pageState.variants.size < 1;
@@ -45,16 +47,15 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
             organismsConfig={organismsConfig}
             filters={
                 <CompareVariantsToBaselineStateSelector
-                    initialPageState={pageState}
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
+                    view={view}
+                    pageState={pageState}
+                    setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
                 />
             }
             dataDisplay={
                 <GenericCompareToBaselineDataDisplay
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
+                    view={view}
                     pageState={pageState}
                 />
             }

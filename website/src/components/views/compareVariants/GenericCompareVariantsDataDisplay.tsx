@@ -1,33 +1,22 @@
-import { type FC, useMemo } from 'react';
+import { type FC } from 'react';
 
 import { SelectVariants } from './SelectVariants.tsx';
-import type { OrganismsConfig } from '../../../config.ts';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange.ts';
+import { GenericCompareVariantsView } from '../../../views/BaseView.ts';
+import type { OrganismConstants } from '../../../views/OrganismConstants.ts';
 import type { CompareVariantsData } from '../../../views/View.ts';
-import { type OrganismWithViewKey, Routing } from '../../../views/routing.ts';
-import { compareVariantsViewKey } from '../../../views/viewKeys.ts';
 import { ComponentsGrid } from '../../ComponentsGrid.tsx';
 import { GsMutationComparison } from '../../genspectrum/GsMutationComparison.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 
 export type GenericCompareVariantsDataDisplayProps = {
-    organismViewKey: `${OrganismWithViewKey<typeof compareVariantsViewKey>}.${typeof compareVariantsViewKey}`;
-    organismsConfig: OrganismsConfig;
+    view: GenericCompareVariantsView<OrganismConstants>;
     pageState: CompareVariantsData;
 };
 
 const componentHeight = '540px'; // prevalence over time table with 10 rows
 
-export const GenericCompareVariantsDataDisplay: FC<GenericCompareVariantsDataDisplayProps> = ({
-    organismViewKey,
-    organismsConfig,
-    pageState,
-}) => {
-    const view = useMemo(
-        () => new Routing(organismsConfig).getOrganismView(organismViewKey),
-        [organismsConfig, organismViewKey],
-    );
-
+export const GenericCompareVariantsDataDisplay: FC<GenericCompareVariantsDataDisplayProps> = ({ view, pageState }) => {
     const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(pageState.datasetFilter);
     const timeGranularity = chooseGranularityBasedOnDateRange({
         earliestDate: new Date(view.organismConstants.earliestDate),
