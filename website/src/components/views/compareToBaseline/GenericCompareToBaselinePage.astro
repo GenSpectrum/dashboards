@@ -1,10 +1,10 @@
 ---
+import { GenericCompareToBaselineReactPage } from './GenericCompareToBaselineReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { GenericCompareToBaselineReactPage } from './GenericCompareToBaselineReactPage';
 
 interface Props {
     organism: OrganismWithViewKey<typeof compareToBaselineViewKey>;

@@ -1,10 +1,10 @@
 ---
+import { GenericCompareSideBySideReactPage } from './GenericCompareSideBySideReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { GenericCompareSideBySideReactPage } from './GenericCompareSideBySideReactPage';
 
 interface Props {
     organism: OrganismWithViewKey<typeof compareSideBySideViewKey>;

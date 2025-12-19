@@ -4,10 +4,10 @@ import type { SequenceType } from '@genspectrum/dashboard-components/util';
 import RsvWastewaterInfo from '../../components/RsvWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import { DataPageLayout } from '../../layouts/OrganismPage/DataPageLayout.tsx';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import { wastewaterConfig, RSVTypes, wastewaterBreadcrumb } from '../../types/wastewaterConfig';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
-import { DataPageLayout } from '../../layouts/OrganismPage/DataPageLayout.tsx';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/rsv`;
 ---

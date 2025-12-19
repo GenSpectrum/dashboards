@@ -1,11 +1,11 @@
 ---
+import { GenericAnalyseSingleVariantReactPage } from './GenericAnalyseSingleVariantReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { Organisms } from '../../../types/Organism';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { GenericAnalyseSingleVariantReactPage } from './GenericAnalyseSingleVariantReactPage';
-import { Organisms } from '../../../types/Organism';
 
 interface Props {
     organism: Exclude<OrganismWithViewKey<typeof singleVariantViewKey>, typeof Organisms.covid>;
