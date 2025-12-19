@@ -10,6 +10,7 @@ import { type OrganismViewKey, Routing } from '../../../views/routing.ts';
 import { SelectorHeadline } from '../../pageStateSelectors/SelectorHeadline.tsx';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector.tsx';
 import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink.ts';
+import { usePageState } from '../usePageState.ts';
 
 export type CovidSingleVariantReactPageProps = {
     organismsConfig: OrganismsConfig;
@@ -20,7 +21,7 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
     const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
     const view = useMemo(() => new Routing(organismsConfig).getOrganismView(organismViewKey), [organismsConfig]);
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
 
@@ -51,9 +52,9 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
             filters={
                 <>
                     <SingleVariantPageStateSelector
-                        organismViewKey={organismViewKey}
-                        organismsConfig={organismsConfig}
-                        initialPageState={pageState}
+                        view={view}
+                        pageState={pageState}
+                        setPageState={setPageState}
                         enableAdvancedQueryFilter={isStaging}
                     />
                     <hr className='my-4 border-gray-200' />
@@ -61,17 +62,14 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
                         <SelectorHeadline>Collections</SelectorHeadline>
                         <CollectionsList
                             initialCollectionId={pageState.collectionId}
-                            organismsConfig={organismsConfig}
+                            pageState={pageState}
+                            setPageState={setPageState}
                         />
                     </div>
                 </>
             }
             dataDisplay={
-                <CovidSingleVariantDataDisplay
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    pageState={pageState}
-                />
+                <CovidSingleVariantDataDisplay view={view} pageState={pageState} setPageState={setPageState} />
             }
         />
     );

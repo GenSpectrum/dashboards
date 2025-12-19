@@ -1,36 +1,28 @@
-import { type FC, useMemo } from 'react';
+import { type FC } from 'react';
 
-import type { OrganismsConfig } from '../../../config.ts';
 import { Organisms } from '../../../types/Organism.ts';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange.ts';
-import { ComponentHeight } from '../../../views/OrganismConstants.ts';
-import type { DatasetAndVariantData } from '../../../views/View.ts';
+import { BaseView } from '../../../views/BaseView.ts';
+import { ComponentHeight, type OrganismConstants } from '../../../views/OrganismConstants.ts';
+import type { CompareSideBySideData, DatasetAndVariantData } from '../../../views/View.ts';
+import { CompareSideBySideStateHandler } from '../../../views/pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import { toLapisFilterWithoutVariant } from '../../../views/pageStateHandlers/toLapisFilterWithoutVariant.ts';
-import { type OrganismWithViewKey, Routing } from '../../../views/routing.ts';
-import { compareSideBySideViewKey } from '../../../views/viewKeys.ts';
 import { GsAggregate } from '../../genspectrum/GsAggregate.tsx';
 import { GsMutations } from '../../genspectrum/GsMutations.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 import { GsRelativeGrowthAdvantage } from '../../genspectrum/GsRelativeGrowthAdvantage.tsx';
 
 export type GenericCompareSideBySideDataDisplayProps = {
-    organismViewKey: `${OrganismWithViewKey<typeof compareSideBySideViewKey>}.${typeof compareSideBySideViewKey}`;
-    organismsConfig: OrganismsConfig;
+    view: BaseView<CompareSideBySideData, OrganismConstants, CompareSideBySideStateHandler>;
     datasetAndVariantData: DatasetAndVariantData;
     hideMutationComponents?: boolean;
 };
 
 export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDataDisplayProps> = ({
-    organismViewKey,
-    organismsConfig,
+    view,
     datasetAndVariantData,
     hideMutationComponents,
 }) => {
-    const view = useMemo(
-        () => new Routing(organismsConfig).getOrganismView(organismViewKey),
-        [organismsConfig, organismViewKey],
-    );
-
     const { datasetFilter, variantFilter } = datasetAndVariantData;
 
     const datasetLapisFilter = toLapisFilterWithoutVariant(datasetFilter, view.organismConstants.additionalFilters);

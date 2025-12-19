@@ -1,31 +1,19 @@
-import { type FC, useMemo } from 'react';
+import { type FC } from 'react';
 
 import { SelectBaseline } from './SelectBaseline.tsx';
-import type { OrganismsConfig } from '../../../config.ts';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange.ts';
-import { ComponentHeight } from '../../../views/OrganismConstants.ts';
+import { GenericCompareToBaselineView } from '../../../views/BaseView.ts';
+import { ComponentHeight, type OrganismConstants } from '../../../views/OrganismConstants.ts';
 import type { CompareToBaselineData } from '../../../views/View.ts';
-import { type OrganismWithViewKey, Routing } from '../../../views/routing.ts';
-import { compareToBaselineViewKey } from '../../../views/viewKeys.ts';
 import { ComponentsGrid } from '../../ComponentsGrid.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 
 export type GenericCompareToBaselineDisplayProps = {
-    organismViewKey: `${OrganismWithViewKey<typeof compareToBaselineViewKey>}.${typeof compareToBaselineViewKey}`;
-    organismsConfig: OrganismsConfig;
+    view: GenericCompareToBaselineView<OrganismConstants>;
     pageState: CompareToBaselineData;
 };
 
-export const GenericCompareToBaselineDataDisplay: FC<GenericCompareToBaselineDisplayProps> = ({
-    organismViewKey,
-    organismsConfig,
-    pageState,
-}) => {
-    const view = useMemo(
-        () => new Routing(organismsConfig).getOrganismView(organismViewKey),
-        [organismsConfig, organismViewKey],
-    );
-
+export const GenericCompareToBaselineDataDisplay: FC<GenericCompareToBaselineDisplayProps> = ({ view, pageState }) => {
     const baselineLapisFilter = view.pageStateHandler.baselineFilterToLapisFilter(pageState);
     const timeGranularity = chooseGranularityBasedOnDateRange({
         earliestDate: new Date(view.organismConstants.earliestDate),

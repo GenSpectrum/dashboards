@@ -7,6 +7,7 @@ import { OrganismViewPageLayout } from '../../../layouts/OrganismPage/OrganismVi
 import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../../views/routing';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
+import { usePageState } from '../usePageState.ts';
 
 export type GenericCompareSideBySideReactPageProps = {
     organism: OrganismWithViewKey<typeof compareSideBySideViewKey>;
@@ -28,7 +29,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
 
@@ -57,17 +58,16 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                                     </a>
                                 )}
                                 <CompareSideBySidePageStateSelector
+                                    view={view}
                                     filterId={id}
-                                    initialPageState={pageState}
-                                    organismsConfig={organismsConfig}
-                                    organismViewKey={organismViewKey}
+                                    pageState={pageState}
+                                    setPageState={setPageState}
                                     enableAdvancedQueryFilter={isStaging}
                                 />
                             </div>
 
                             <GenericCompareSideBySideDataDisplay
-                                organismViewKey={organismViewKey}
-                                organismsConfig={organismsConfig}
+                                view={view}
                                 datasetAndVariantData={datasetAndVariantData}
                                 hideMutationComponents={hideMutationComponents}
                             />

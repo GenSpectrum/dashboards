@@ -1,37 +1,38 @@
-import { useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
-import type { OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
+import { BaseView } from '../../views/BaseView.ts';
+import type { OrganismConstants } from '../../views/OrganismConstants.ts';
 import type { CompareSideBySideData } from '../../views/View.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
-import type { compareSideBySideViewKey } from '../../views/viewKeys.ts';
+import { CompareSideBySideStateHandler } from '../../views/pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 
 export function CompareSideBySidePageStateSelector({
+    view,
     filterId,
-    initialPageState,
-    organismViewKey,
-    organismsConfig,
+    pageState,
+    setPageState,
     enableAdvancedQueryFilter,
 }: {
+    view: BaseView<CompareSideBySideData, OrganismConstants, CompareSideBySideStateHandler>;
     filterId: number;
-    initialPageState: CompareSideBySideData;
-    organismViewKey: OrganismViewKey & `${string}.${typeof compareSideBySideViewKey}`;
-    organismsConfig: OrganismsConfig;
+    pageState: CompareSideBySideData;
+    setPageState: Dispatch<SetStateAction<CompareSideBySideData>>;
     enableAdvancedQueryFilter: boolean;
 }) {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
+    const [draftPageState, setDraftPageState] = useState(pageState);
+    useEffect(() => setDraftPageState(pageState), [pageState]);
+
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
         [view.organismConstants],
     );
-    const [pageState, setPageState] = useState(initialPageState);
 
     const { filterOfCurrentId, currentLapisFilter } = useMemo(() => {
-        const filterOfCurrentId = pageState.filters.get(filterId) ?? {
+        const filterOfCurrentId = draftPageState.filters.get(filterId) ?? {
             datasetFilter: {
                 locationFilters: {},
                 dateFilters: {},
@@ -47,7 +48,7 @@ export function CompareSideBySidePageStateSelector({
                 filterOfCurrentId.variantFilter,
             ),
         };
-    }, [pageState, filterId, view.pageStateHandler]);
+    }, [draftPageState, filterId, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4 p-2 shadow-lg'>
@@ -60,8 +61,8 @@ export function CompareSideBySidePageStateSelector({
                             lapisFilter={currentLapisFilter}
                             datasetFilter={filterOfCurrentId.datasetFilter}
                             setDatasetFilter={(newDatasetFilter) => {
-                                setPageState((previousState) => {
-                                    const updatedFilters = new Map(initialPageState.filters);
+                                setDraftPageState((previousState) => {
+                                    const updatedFilters = new Map(pageState.filters);
                                     updatedFilters.set(filterId, {
                                         ...filterOfCurrentId,
                                         datasetFilter: newDatasetFilter,
@@ -78,8 +79,8 @@ export function CompareSideBySidePageStateSelector({
                     <Inset className='p-2'>
                         <VariantSelector
                             onVariantFilterChange={(newVariantFilter) => {
-                                setPageState((previousState) => {
-                                    const updatedFilters = new Map(initialPageState.filters);
+                                setDraftPageState((previousState) => {
+                                    const updatedFilters = new Map(pageState.filters);
                                     updatedFilters.set(filterId, {
                                         ...filterOfCurrentId,
                                         variantFilter: newVariantFilter,
@@ -96,7 +97,11 @@ export function CompareSideBySidePageStateSelector({
                 </div>
             </div>
             <div className='flex justify-end'>
-                <ApplyFilterButton pageStateHandler={view.pageStateHandler} newPageState={pageState} />
+                <ApplyFilterButton
+                    pageStateHandler={view.pageStateHandler}
+                    newPageState={draftPageState}
+                    setPageState={setPageState}
+                />
             </div>
         </div>
     );

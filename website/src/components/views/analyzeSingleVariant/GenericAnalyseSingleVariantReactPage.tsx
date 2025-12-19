@@ -10,6 +10,7 @@ import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../.
 import { singleVariantViewKey } from '../../../views/viewKeys';
 import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
 import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
+import { usePageState } from '../usePageState.ts';
 
 export type GenericAnalyseSingleVariantReactPageProps = {
     organism: Exclude<OrganismWithViewKey<typeof singleVariantViewKey>, typeof Organisms.covid>;
@@ -28,7 +29,7 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 
@@ -58,18 +59,14 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
             organismsConfig={organismsConfig}
             filters={
                 <SingleVariantPageStateSelector
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    initialPageState={pageState}
+                    view={view}
+                    pageState={pageState}
+                    setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
                 />
             }
             dataDisplay={
-                <GenericAnalyseSingleVariantDataDisplay
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    pageState={pageState}
-                />
+                <GenericAnalyseSingleVariantDataDisplay view={view} pageState={pageState} setPageState={setPageState} />
             }
         />
     );
