@@ -7,6 +7,7 @@ import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../.
 import { compareVariantsViewKey } from '../../../views/viewKeys';
 import { CompareVariantsPageStateSelector } from '../../pageStateSelectors/CompareVariantsPageStateSelector';
 import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
+import { usePageState } from '../usePageState.ts';
 
 export type GenericCompareVariantsReactPageProps = {
     organism: OrganismWithViewKey<typeof compareVariantsViewKey>;
@@ -25,9 +26,7 @@ export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPage
         [organismsConfig, organismViewKey],
     );
 
-    const [pageState, setPageState] = useState(() =>
-        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
-    );
+    const { pageState, setPageState } = usePageState(view);
 
     const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
     const notEnoughVariantsSelected = pageState.variants.size < 2;

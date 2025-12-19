@@ -23,13 +23,10 @@ export const QuickstartLinks: FC<QuickstartLinksProps> = ({ view, datasetFilter,
             <div className='flex max-w-md flex-col'>
                 {variants.map((variant) => {
                     const applyFilters = () => {
-                        const newPageState = {
+                        setPageState({
                             datasetFilter: datasetFilter,
                             variantFilter: variant,
-                        };
-                        // TODO put this into a usePageState hook
-                        window.history.pushState(undefined, '', view.pageStateHandler.toUrl(newPageState));
-                        setPageState(newPageState);
+                        });
                     };
 
                     const displayName = toDisplayName(variant);

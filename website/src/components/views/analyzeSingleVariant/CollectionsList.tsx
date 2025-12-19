@@ -22,12 +22,11 @@ type Collection = {
 
 type CollectionsListProps = {
     initialCollectionId?: number;
-    view: CovidAnalyzeSingleVariantView;
     pageState: CovidVariantData;
     setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-export function CollectionsList({ initialCollectionId, view, pageState, setPageState }: CollectionsListProps) {
+export function CollectionsList({ initialCollectionId,  pageState, setPageState }: CollectionsListProps) {
     const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
     const query = useQuery({
@@ -53,7 +52,6 @@ export function CollectionsList({ initialCollectionId, view, pageState, setPageS
             />
             <CollectionVariantList
                 collection={query.data.find((c) => c.id === selectedCollectionId) ?? query.data[0]}
-                view={view}
                 pageState={pageState}
                 setPageState={setPageState}
             />
@@ -95,12 +93,11 @@ const querySchema = z.object({
 
 type CollectionVariantListProps = {
     collection: Collection;
-    view: CovidAnalyzeSingleVariantView;
     pageState: CovidVariantData;
     setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-function CollectionVariantList({ collection, view, pageState, setPageState }: CollectionVariantListProps) {
+function CollectionVariantList({ collection, pageState, setPageState }: CollectionVariantListProps) {
     const variants = collection.variants;
 
     return (
@@ -109,7 +106,6 @@ function CollectionVariantList({ collection, view, pageState, setPageState }: Co
                 <VariantLink
                     key={`${variant.name}_${variant.query}_${index}`}
                     variant={variant}
-                    view={view}
                     collectionId={collection.id}
                     pageState={pageState}
                     setPageState={setPageState}
@@ -121,21 +117,18 @@ function CollectionVariantList({ collection, view, pageState, setPageState }: Co
 
 type VariantLinkProps = {
     variant: CollectionVariant;
-    view: CovidAnalyzeSingleVariantView;
     collectionId: number;
     pageState: CovidVariantData;
     setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-function VariantLink({ variant, view, collectionId, pageState, setPageState }: VariantLinkProps) {
+function VariantLink({ variant, collectionId, pageState, setPageState }: VariantLinkProps) {
     const newPageState = useVariantLink(pageState, collectionId, variant);
 
     const applyFilters = () => {
         if (newPageState === undefined) {
             return;
         }
-
-        window.history.pushState(undefined, '', view.pageStateHandler.toUrl(newPageState));
         setPageState(newPageState);
     };
 

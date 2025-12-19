@@ -7,6 +7,7 @@ import { OrganismViewPageLayout } from '../../../layouts/OrganismPage/OrganismVi
 import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../../views/routing';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
+import { usePageState } from '../usePageState.ts';
 
 export type GenericCompareSideBySideReactPageProps = {
     organism: OrganismWithViewKey<typeof compareSideBySideViewKey>;
@@ -28,9 +29,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
         [organismsConfig, organismViewKey],
     );
 
-    const [pageState, setPageState] = useState(() =>
-        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
-    );
+    const { pageState, setPageState } = usePageState(view);
 
     const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
 
