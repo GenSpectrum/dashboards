@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { z } from 'zod';
 
 import { getClientLogger } from '../../../clientLogger.ts';
-import { CovidAnalyzeSingleVariantView, type CovidVariantData } from '../../../views/covid.ts';
+import { type CovidVariantData } from '../../../views/covid.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 
 export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan border-gray-200 cursor-pointer';
@@ -26,7 +26,7 @@ type CollectionsListProps = {
     setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-export function CollectionsList({ initialCollectionId,  pageState, setPageState }: CollectionsListProps) {
+export function CollectionsList({ initialCollectionId, pageState, setPageState }: CollectionsListProps) {
     const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
     const query = useQuery({

@@ -1,4 +1,4 @@
-import { type FC, useMemo, useState } from 'react';
+import { type FC, useMemo } from 'react';
 
 import { GenericCompareVariantsDataDisplay } from './GenericCompareVariantsDataDisplay';
 import { type OrganismsConfig } from '../../../config';
