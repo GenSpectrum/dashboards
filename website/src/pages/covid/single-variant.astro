@@ -1,8 +1,8 @@
 ---
-import { isStaging, getDashboardsConfig } from '../../config';
-import { ServerSide } from '../../views/serverSideRouting';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { CovidSingleVariantReactPage } from '../../components/views/analyzeSingleVariant/CovidSingleVariantReactPage';
+import { isStaging, getDashboardsConfig } from '../../config';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { ServerSide } from '../../views/serverSideRouting';
 
 const view = ServerSide.routing.getOrganismView('covid.singleVariantView');
 ---

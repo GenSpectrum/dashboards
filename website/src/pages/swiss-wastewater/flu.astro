@@ -5,6 +5,7 @@ import InfluenzaWastewaterInfo from '../../components/InfluenzaWastewaterInfo.as
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import { DataPageLayout } from '../../layouts/OrganismPage/DataPageLayout.tsx';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import {
     getMutationAnnotation,
@@ -12,7 +13,6 @@ import {
     wastewaterBreadcrumb,
     wastewaterConfig,
 } from '../../types/wastewaterConfig';
-import BaseLayout from '../../layouts/base/BaseLayout.astro';
 
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
 ---

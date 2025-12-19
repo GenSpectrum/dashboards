@@ -1,10 +1,10 @@
 ---
+import { GenericSequencingEffortsReactPage } from './GenericSequencingEffortsReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { GenericSequencingEffortsReactPage } from './GenericSequencingEffortsReactPage';
 
 interface Props {
     organism: OrganismWithViewKey<typeof sequencingEffortsViewKey>;

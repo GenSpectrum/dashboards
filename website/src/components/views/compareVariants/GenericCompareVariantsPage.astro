@@ -1,10 +1,10 @@
 ---
+import { GenericCompareVariantsReactPage } from './GenericCompareVariantsReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareVariantsViewKey } from '../../../views/viewKeys';
-import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { GenericCompareVariantsReactPage } from './GenericCompareVariantsReactPage';
 
 interface Props {
     organism: OrganismWithViewKey<typeof compareVariantsViewKey>;
