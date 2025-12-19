@@ -1,56 +1,25 @@
 ---
-import { GenericSequencingEffortsDataDisplay } from './GenericSequencingEffortsDataDisplay';
+import { GenericSequencingEffortsReactPage } from './GenericSequencingEffortsReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
-import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
-import { SequencingEffortsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
-import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
 
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof sequencingEffortsViewKey>;
 interface Props {
-    organism: OrganismViewCompareVariant;
+    organism: OrganismWithViewKey<typeof sequencingEffortsViewKey>;
 }
 
 const { organism } = Astro.props;
-const organismViewKey: OrganismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
-const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const lapisFilter = view.pageStateHandler.toLapisFilter(pageState);
-
-const organismConfig = getDashboardsConfig().dashboards.organisms;
+const view = ServerSide.routing.getOrganismView(`${organism}.${sequencingEffortsViewKey}`);
 ---
 
-<SingleVariantOrganismPageLayout
-    view={view}
-    downloadLinks={[
-        {
-            label: 'Download accessions',
-            filter: lapisFilter,
-            downloadFileBasename: `${organism}_sequencing_efforts_accessions`,
-        },
-    ]}
->
-    <SequencingEffortsPageStateSelector
-        slot='filters'
-        organismViewKey={organismViewKey}
-        organismsConfig={organismConfig}
-        initialPageState={pageState}
-        enableAdvancedQueryFilter={isStaging()}
+<BaseLayout title={view.viewTitle}>
+    <GenericSequencingEffortsReactPage
+        organism={organism}
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        isStaging={isStaging()}
         client:only='react'
-    >
-        <SequencingEffortsSelectorFallback slot='fallback' />
-    </SequencingEffortsPageStateSelector>
-
-    <div slot='dataDisplay'>
-        <GenericSequencingEffortsDataDisplay
-            organismViewKey={organismViewKey}
-            organismsConfig={organismConfig}
-            pageState={pageState}
-            client:only='react'
-        />
-    </div>
-</SingleVariantOrganismPageLayout>
+    />
+</BaseLayout>

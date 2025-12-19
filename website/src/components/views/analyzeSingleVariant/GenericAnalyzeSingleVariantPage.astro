@@ -1,70 +1,26 @@
 ---
-import { GenericAnalyseSingleVariantDataDisplay } from './GenericAnalyseSingleVariantDataDisplay';
+import { GenericAnalyseSingleVariantReactPage } from './GenericAnalyseSingleVariantReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
-import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { Organisms } from '../../../types/Organism';
-import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues';
-import { toDisplayName } from '../../../views/pageStateHandlers/PageStateHandler';
-import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
+import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
-import { AnalyzeSingleVariantSelectorFallback } from '../../pageStateSelectors/FallbackElement';
-import { SingleVariantPageStateSelector } from '../../pageStateSelectors/SingleVariantPageStateSelector';
-import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof singleVariantViewKey>;
 interface Props {
-    organism: Exclude<OrganismViewCompareVariant, typeof Organisms.covid>;
+    organism: Exclude<OrganismWithViewKey<typeof singleVariantViewKey>, typeof Organisms.covid>;
 }
 
 const { organism } = Astro.props;
-const organismViewKey = `${organism}.${singleVariantViewKey}` satisfies OrganismViewKey;
-const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
-
-const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
-
-const organismConfig = getDashboardsConfig().dashboards.organisms;
-
-const displayName = toDisplayName(pageState.variantFilter);
-const downloadLinks = noVariantSelected
-    ? [
-          {
-              label: 'Download all accessions',
-              filter: variantLapisFilter,
-              downloadFileBasename: `${view.organismConstants.organism}_accessions`,
-          },
-      ]
-    : [
-          {
-              label: `Download accessions of "${displayName}"`,
-              filter: variantLapisFilter,
-              downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
-          },
-      ];
+const view = ServerSide.routing.getOrganismView(`${organism}.${singleVariantViewKey}`);
 ---
 
-<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
-    <SingleVariantPageStateSelector
-        slot='filters'
-        organismViewKey={organismViewKey}
-        organismsConfig={organismConfig}
-        initialPageState={pageState}
-        enableAdvancedQueryFilter={isStaging()}
+<BaseLayout title={view.viewTitle}>
+    <GenericAnalyseSingleVariantReactPage
+        organism={organism}
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        isStaging={isStaging()}
         client:only='react'
-    >
-        <AnalyzeSingleVariantSelectorFallback slot='fallback' />
-    </SingleVariantPageStateSelector>
-
-    <div slot='dataDisplay'>
-        <GenericAnalyseSingleVariantDataDisplay
-            organismViewKey={organismViewKey}
-            organismsConfig={organismConfig}
-            pageState={pageState}
-            client:load
-        />
-    </div>
-</SingleVariantOrganismPageLayout>
+    />
+</BaseLayout>

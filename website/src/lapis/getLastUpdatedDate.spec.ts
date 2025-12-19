@@ -28,7 +28,7 @@ describe('getLastUpdatedDate', () => {
 
         const result = await getLastUpdatedDate(DUMMY_LAPIS_URL);
 
-        expect(result).toBeUndefined();
+        expect(result).toBeNull();
     });
 
     test('should handle non-numeric data versions gracefully', async () => {
@@ -36,6 +36,6 @@ describe('getLastUpdatedDate', () => {
 
         const result = await getLastUpdatedDate(DUMMY_LAPIS_URL);
 
-        expect(result).toBeUndefined();
+        expect(result).toBeNull();
     });
 });

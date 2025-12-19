@@ -1,80 +1,28 @@
 ---
-import { GenericCompareSideBySideDataDisplay } from './GenericCompareSideBySideDataDisplay.tsx';
-import { toDownloadLink } from './toDownloadLink';
+import { GenericCompareSideBySideReactPage } from './GenericCompareSideBySideReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
-import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
-import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
-import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
-import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareSideBySideViewKey>;
 interface Props {
-    organism: OrganismViewCompareVariant;
+    organism: OrganismWithViewKey<typeof compareSideBySideViewKey>;
     hideMutationComponents?: boolean;
 }
 
 const { organism, hideMutationComponents } = Astro.props;
-const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
-const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const organismConfig = getDashboardsConfig().dashboards.organisms;
-
-const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
+const view = ServerSide.routing.getOrganismView(`${organism}.${compareSideBySideViewKey}`);
+const organismsConfig = getDashboardsConfig().dashboards.organisms;
 ---
 
-<OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
-    <div class='flex overflow-x-auto'>
-        {
-            Array.from(pageState.filters).map(([id, datasetAndVariantData]) => {
-                return (
-                    <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'>
-                        <div class='mb-4'>
-                            {pageState.filters.size > 1 && (
-                                <a
-                                    class='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
-                                    href={view.pageStateHandler.toUrl(
-                                        view.pageStateHandler.removeFilter(pageState, id),
-                                    )}
-                                >
-                                    Remove column
-                                </a>
-                            )}
-                            <CompareSideBySidePageStateSelector
-                                filterId={id}
-                                initialPageState={pageState}
-                                organismsConfig={organismConfig}
-                                organismViewKey={organismViewKey}
-                                enableAdvancedQueryFilter={isStaging()}
-                                client:only='react'
-                            >
-                                <CompareSideBySideSelectorFallback
-                                    slot='fallback'
-                                    numFilters={pageState.filters.size}
-                                />
-                            </CompareSideBySidePageStateSelector>
-                        </div>
-
-                        <GenericCompareSideBySideDataDisplay
-                            organismViewKey={organismViewKey}
-                            organismsConfig={organismConfig}
-                            datasetAndVariantData={datasetAndVariantData}
-                            hideMutationComponents={hideMutationComponents}
-                            client:load
-                        />
-                    </div>
-                );
-            })
-        }
-        <a
-            class='py-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
-            href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
-            style='writing-mode: vertical-rl;'
-        >
-            Add column
-        </a>
-    </div>
-</OrganismViewPageLayout>
+<BaseLayout title={view.viewTitle}>
+    <GenericCompareSideBySideReactPage
+        organism={organism}
+        hideMutationComponents={hideMutationComponents}
+        organismsConfig={organismsConfig}
+        isStaging={isStaging()}
+        client:only='react'
+    />
+</BaseLayout>

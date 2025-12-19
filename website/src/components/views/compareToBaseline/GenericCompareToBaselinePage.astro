@@ -1,56 +1,25 @@
 ---
-import { GenericCompareToBaselineDataDisplay } from './GenericCompareToBaselineDataDisplay';
+import { GenericCompareToBaselineReactPage } from './GenericCompareToBaselineReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
-import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
-import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
-import { CompareToBaselineSelectorFallback } from '../../pageStateSelectors/FallbackElement';
-import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareToBaselineViewKey>;
 interface Props {
-    organism: OrganismViewCompareVariant;
+    organism: OrganismWithViewKey<typeof compareToBaselineViewKey>;
 }
 
 const { organism } = Astro.props;
-const organismViewKey = `${organism}.${compareToBaselineViewKey}` satisfies OrganismViewKey;
-const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
-const noVariantSelected = pageState.variants.size < 1;
-
-const downloadLinks = noVariantSelected
-    ? []
-    : numeratorLapisFilters.map(({ lapisFilter, displayName }) => ({
-          label: `Download accessions of "${displayName}"`,
-          filter: lapisFilter,
-          downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
-      }));
-
-const organismConfig = getDashboardsConfig().dashboards.organisms;
+const view = ServerSide.routing.getOrganismView(`${organism}.${compareToBaselineViewKey}`);
 ---
 
-<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
-    <CompareVariantsToBaselineStateSelector
-        slot='filters'
-        initialPageState={pageState}
-        organismViewKey={organismViewKey}
-        organismsConfig={organismConfig}
-        enableAdvancedQueryFilter={isStaging()}
+<BaseLayout title={view.viewTitle}>
+    <GenericCompareToBaselineReactPage
+        organism={organism}
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        isStaging={isStaging()}
         client:only='react'
-    >
-        <CompareToBaselineSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
-    </CompareVariantsToBaselineStateSelector>
-    <div slot='dataDisplay'>
-        <GenericCompareToBaselineDataDisplay
-            organismViewKey={organismViewKey}
-            organismsConfig={organismConfig}
-            pageState={pageState}
-            client:load
-        />
-    </div>
-</SingleVariantOrganismPageLayout>
+    />
+</BaseLayout>
