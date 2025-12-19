@@ -49,7 +49,6 @@ export const CovidSingleVariantDataDisplay: FC<CovidSingleVariantDataDisplayProp
                     <div className='max-w-md'>
                         <CollectionsList
                             initialCollectionId={pageState.collectionId}
-                            view={view}
                             pageState={pageState}
                             setPageState={setPageState}
                         />

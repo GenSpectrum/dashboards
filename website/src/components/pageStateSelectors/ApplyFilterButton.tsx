@@ -22,7 +22,6 @@ export function ApplyFilterButton<PageState extends object>({
     const urlTooLong = fullUrl.length > MAX_URL_LENGTH;
 
     const applyFilters = () => {
-        window.history.pushState(undefined, '', url);
         setPageState(newPageState);
     };
 

@@ -7,6 +7,7 @@ import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../.
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
 import { CompareVariantsToBaselineStateSelector } from '../../pageStateSelectors/CompareVariantsToBaselineStateSelector';
 import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
+import { usePageState } from '../usePageState.ts';
 
 export type GenericCompareToBaselineReactPageProps = {
     organism: OrganismWithViewKey<typeof compareToBaselineViewKey>;
@@ -25,9 +26,7 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
         [organismsConfig, organismViewKey],
     );
 
-    const [pageState, setPageState] = useState(() =>
-        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
-    );
+    const { pageState, setPageState } = usePageState(view);
 
     const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
     const noVariantSelected = pageState.variants.size < 1;

@@ -62,7 +62,6 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
                         <SelectorHeadline>Collections</SelectorHeadline>
                         <CollectionsList
                             initialCollectionId={pageState.collectionId}
-                            view={view}
                             pageState={pageState}
                             setPageState={setPageState}
                         />

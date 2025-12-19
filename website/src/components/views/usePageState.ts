@@ -5,13 +5,12 @@ import type { View } from '../../views/View.ts';
 import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler.ts';
 
 export function usePageState<
-    PageState extends object,
-    V extends View<PageState, OrganismConstants, PageStateHandler<PageState>>,
->(view: V): { pageState: PageState; setPageState: Dispatch<SetStateAction<PageState>> } {
-    // type PageState = V extends View<infer PS, OrganismConstants, PageStateHandler<infer PS>> ? PS : never;
+    V extends View<object, OrganismConstants, PageStateHandler<object>>,
+>(view: V) {
+    type PageState = V extends View<infer PS, OrganismConstants, PageStateHandler<infer PS>> ? PS : never;
 
-    const [pageState, setPageStateRaw] = useState<PageState>(() =>
-        view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)),
+    const [pageState, setPageStateRaw] = useState<PageState>(
+        () => view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href)) as PageState,
     );
 
     const setPageState: Dispatch<SetStateAction<PageState>> = useCallback(
