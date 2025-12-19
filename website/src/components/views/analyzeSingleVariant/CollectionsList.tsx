@@ -1,15 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { z } from 'zod';
 
 import { getClientLogger } from '../../../clientLogger.ts';
-import type { OrganismsConfig } from '../../../config.ts';
-import { type CovidVariantData } from '../../../views/covid.ts';
-import { Routing } from '../../../views/routing.ts';
+import { CovidAnalyzeSingleVariantView, type CovidVariantData } from '../../../views/covid.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
-import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
-export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan border-gray-200';
+export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan border-gray-200 cursor-pointer';
 
 type CollectionVariant = {
     name: string;
@@ -25,12 +22,12 @@ type Collection = {
 
 type CollectionsListProps = {
     initialCollectionId?: number;
-    organismsConfig: OrganismsConfig;
+    view: CovidAnalyzeSingleVariantView;
+    pageState: CovidVariantData;
+    setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-export const CollectionsList = withQueryProvider(CollectionsListInner);
-
-function CollectionsListInner({ initialCollectionId, organismsConfig }: CollectionsListProps) {
+export function CollectionsList({ initialCollectionId, view, pageState, setPageState }: CollectionsListProps) {
     const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
     const query = useQuery({
@@ -56,7 +53,9 @@ function CollectionsListInner({ initialCollectionId, organismsConfig }: Collecti
             />
             <CollectionVariantList
                 collection={query.data.find((c) => c.id === selectedCollectionId) ?? query.data[0]}
-                organismsConfig={organismsConfig}
+                view={view}
+                pageState={pageState}
+                setPageState={setPageState}
             />
         </>
     );
@@ -96,10 +95,12 @@ const querySchema = z.object({
 
 type CollectionVariantListProps = {
     collection: Collection;
-    organismsConfig: OrganismsConfig;
+    view: CovidAnalyzeSingleVariantView;
+    pageState: CovidVariantData;
+    setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-function CollectionVariantList({ collection, organismsConfig }: CollectionVariantListProps) {
+function CollectionVariantList({ collection, view, pageState, setPageState }: CollectionVariantListProps) {
     const variants = collection.variants;
 
     return (
@@ -108,8 +109,10 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
                 <VariantLink
                     key={`${variant.name}_${variant.query}_${index}`}
                     variant={variant}
-                    organismsConfig={organismsConfig}
+                    view={view}
                     collectionId={collection.id}
+                    pageState={pageState}
+                    setPageState={setPageState}
                 />
             ))}
         </div>
@@ -118,31 +121,39 @@ function CollectionVariantList({ collection, organismsConfig }: CollectionVarian
 
 type VariantLinkProps = {
     variant: CollectionVariant;
-    organismsConfig: OrganismsConfig;
+    view: CovidAnalyzeSingleVariantView;
     collectionId: number;
+    pageState: CovidVariantData;
+    setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
 
-function VariantLink({ variant, organismsConfig, collectionId }: VariantLinkProps) {
-    const variantLink = useVariantLink(organismsConfig, collectionId, variant);
+function VariantLink({ variant, view, collectionId, pageState, setPageState }: VariantLinkProps) {
+    const newPageState = useVariantLink(pageState, collectionId, variant);
+
+    const applyFilters = () => {
+        if (newPageState === undefined) {
+            return;
+        }
+
+        window.history.pushState(undefined, '', view.pageStateHandler.toUrl(newPageState));
+        setPageState(newPageState);
+    };
 
     return (
-        <a className={collectionVariantClassName} href={variantLink}>
+        <button className={collectionVariantClassName} onClick={applyFilters}>
             {variant.name}
-        </a>
+        </button>
     );
 }
 
 const logger = getClientLogger('CollectionList');
 
-function useVariantLink(organismsConfig: OrganismsConfig, collectionId: number, variant: CollectionVariant) {
-    const routing = useMemo(() => new Routing(organismsConfig), [organismsConfig]);
-
+function useVariantLink(
+    currentPageState: CovidVariantData,
+    collectionId: number,
+    variant: CollectionVariant,
+): CovidVariantData | undefined {
     const { showErrorToast } = useErrorToast(logger);
-
-    const currentPageState = routing
-        .getOrganismView('covid.singleVariantView')
-        .pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
-    let newPageState: CovidVariantData;
 
     const queryParseResult = querySchema.safeParse(JSON.parse(variant.query));
 
@@ -158,7 +169,7 @@ function useVariantLink(organismsConfig: OrganismsConfig, collectionId: number, 
     const query = queryParseResult.data;
 
     if (query.variantQuery !== undefined) {
-        newPageState = {
+        return {
             ...currentPageState,
             collectionId: collectionId,
             variantFilter: {
@@ -168,7 +179,7 @@ function useVariantLink(organismsConfig: OrganismsConfig, collectionId: number, 
             },
         };
     } else {
-        newPageState = {
+        return {
             ...currentPageState,
             collectionId: collectionId,
             variantFilter: {
@@ -184,5 +195,4 @@ function useVariantLink(organismsConfig: OrganismsConfig, collectionId: number, 
             },
         };
     }
-    return routing.getOrganismView('covid.singleVariantView').pageStateHandler.toUrl(newPageState);
 }

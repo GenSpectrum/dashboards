@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 import type { WithClassName } from '../../types/WithClassName.ts';
 import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler.ts';
 
@@ -8,14 +10,21 @@ const MAX_URL_LENGTH = 2000;
 export function ApplyFilterButton<PageState extends object>({
     pageStateHandler,
     newPageState,
+    setPageState,
     className = '',
 }: WithClassName<{
     pageStateHandler: PageStateHandler<PageState>;
     newPageState: PageState;
+    setPageState: Dispatch<SetStateAction<PageState>>;
 }>) {
     const url = pageStateHandler.toUrl(newPageState);
     const fullUrl = `${window.location.origin}${url}`;
     const urlTooLong = fullUrl.length > MAX_URL_LENGTH;
+
+    const applyFilters = () => {
+        window.history.pushState(undefined, '', url);
+        setPageState(newPageState);
+    };
 
     return urlTooLong ? (
         <>
@@ -30,8 +39,8 @@ export function ApplyFilterButton<PageState extends object>({
             </div>
         </>
     ) : (
-        <a role='button' href={url} className={`btn btn-primary ${className}`}>
+        <button type='button' onClick={applyFilters} className={`btn btn-primary ${className}`}>
             Apply filters
-        </a>
+        </button>
     );
 }

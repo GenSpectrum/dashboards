@@ -1,38 +1,38 @@
-import { useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
-import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
+import type { GenericSingleVariantView } from '../../views/BaseView.ts';
+import type { OrganismConstants } from '../../views/OrganismConstants.ts';
 import { type DatasetAndVariantData } from '../../views/View.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
-import type { singleVariantViewKey } from '../../views/viewKeys.ts';
 
 export function SingleVariantPageStateSelector({
-    organismViewKey,
-    organismsConfig,
-    initialPageState,
+    view,
+    pageState,
+    setPageState,
     enableAdvancedQueryFilter,
 }: {
-    organismViewKey: OrganismViewKey & `${string}.${typeof singleVariantViewKey}`;
-    organismsConfig: OrganismsConfig;
-    initialPageState: DatasetAndVariantData;
+    view: GenericSingleVariantView<OrganismConstants>;
+    pageState: DatasetAndVariantData;
+    setPageState: Dispatch<SetStateAction<DatasetAndVariantData>>;
     enableAdvancedQueryFilter: boolean;
 }) {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
         [view.organismConstants],
     );
-    const [pageState, setPageState] = useState(initialPageState);
+
+    const [draftPageState, setDraftPageState] = useState(pageState);
+    useEffect(() => setDraftPageState(pageState), [pageState]);
 
     const baselineFilterConfigs = view.organismConstants.baselineFilterConfigs;
 
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.toLapisFilter(pageState);
-    }, [pageState, view.pageStateHandler]);
+        return view.pageStateHandler.toLapisFilter(draftPageState);
+    }, [draftPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -42,9 +42,9 @@ export function SingleVariantPageStateSelector({
                     <BaselineSelector
                         baselineFilterConfigs={baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
-                        datasetFilter={pageState.datasetFilter}
+                        datasetFilter={draftPageState.datasetFilter}
                         setDatasetFilter={(newDatasetFilter) => {
-                            setPageState((previousState) => ({
+                            setDraftPageState((previousState) => ({
                                 ...previousState,
                                 datasetFilter: newDatasetFilter,
                             }));
@@ -59,13 +59,13 @@ export function SingleVariantPageStateSelector({
                 <Inset className={'p-2'}>
                     <VariantSelector
                         onVariantFilterChange={(newVariantFilter) => {
-                            setPageState((previousState) => ({
+                            setDraftPageState((previousState) => ({
                                 ...previousState,
                                 variantFilter: newVariantFilter,
                             }));
                         }}
                         variantFilterConfig={variantFilterConfig}
-                        variantFilter={pageState.variantFilter}
+                        variantFilter={draftPageState.variantFilter}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
@@ -76,7 +76,8 @@ export function SingleVariantPageStateSelector({
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
-                    newPageState={pageState}
+                    newPageState={draftPageState}
+                    setPageState={setPageState}
                 />
             </div>
         </div>

@@ -29,7 +29,7 @@ describe('SingleVariantPageStateSelector', () => {
                 <SingleVariantPageStateSelector
                     organismViewKey='covid.singleVariantView'
                     organismsConfig={testOrganismsConfig}
-                    initialPageState={initialPageState}
+                    pageState={initialPageState}
                     enableAdvancedQueryFilter={true}
                 />
             </gs-app>,

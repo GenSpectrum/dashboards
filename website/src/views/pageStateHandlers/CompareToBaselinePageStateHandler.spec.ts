@@ -9,6 +9,7 @@ const mockDateRangeOption = { label: 'Last 7 Days', dateFrom: '2024-11-22', date
 
 const mockConstants: OrganismConstants = {
     organism: Organisms.covid,
+    earliestDate: 'earliestDate',
     dataOrigins: [],
     locationFields: ['country', 'region'],
     mainDateField: 'date',
