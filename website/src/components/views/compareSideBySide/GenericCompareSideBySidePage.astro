@@ -1,7 +1,7 @@
 ---
 import { GenericCompareSideBySideDataDisplay } from './GenericCompareSideBySideDataDisplay.tsx';
 import { toDownloadLink } from './toDownloadLink';
-import { isStaging, getDashboardsConfig, getLapisUrl } from '../../../config';
+import { isStaging, getDashboardsConfig } from '../../../config';
 import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
 import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
@@ -27,56 +27,54 @@ const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.p
 ---
 
 <OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
-    <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
-        <div class='flex overflow-x-auto'>
-            {
-                Array.from(pageState.filters).map(([id, datasetAndVariantData]) => {
-                    return (
-                        <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'>
-                            <div class='mb-4'>
-                                {pageState.filters.size > 1 && (
-                                    <a
-                                        class='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
-                                        href={view.pageStateHandler.toUrl(
-                                            view.pageStateHandler.removeFilter(pageState, id),
-                                        )}
-                                    >
-                                        Remove column
-                                    </a>
-                                )}
-                                <CompareSideBySidePageStateSelector
-                                    filterId={id}
-                                    initialPageState={pageState}
-                                    organismsConfig={organismConfig}
-                                    organismViewKey={organismViewKey}
-                                    enableAdvancedQueryFilter={isStaging()}
-                                    client:only='react'
+    <div class='flex overflow-x-auto'>
+        {
+            Array.from(pageState.filters).map(([id, datasetAndVariantData]) => {
+                return (
+                    <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'>
+                        <div class='mb-4'>
+                            {pageState.filters.size > 1 && (
+                                <a
+                                    class='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
+                                    href={view.pageStateHandler.toUrl(
+                                        view.pageStateHandler.removeFilter(pageState, id),
+                                    )}
                                 >
-                                    <CompareSideBySideSelectorFallback
-                                        slot='fallback'
-                                        numFilters={pageState.filters.size}
-                                    />
-                                </CompareSideBySidePageStateSelector>
-                            </div>
-
-                            <GenericCompareSideBySideDataDisplay
-                                organismViewKey={organismViewKey}
+                                    Remove column
+                                </a>
+                            )}
+                            <CompareSideBySidePageStateSelector
+                                filterId={id}
+                                initialPageState={pageState}
                                 organismsConfig={organismConfig}
-                                datasetAndVariantData={datasetAndVariantData}
-                                hideMutationComponents={hideMutationComponents}
-                                client:load
-                            />
+                                organismViewKey={organismViewKey}
+                                enableAdvancedQueryFilter={isStaging()}
+                                client:only='react'
+                            >
+                                <CompareSideBySideSelectorFallback
+                                    slot='fallback'
+                                    numFilters={pageState.filters.size}
+                                />
+                            </CompareSideBySidePageStateSelector>
                         </div>
-                    );
-                })
-            }
-            <a
-                class='py-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
-                href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
-                style='writing-mode: vertical-rl;'
-            >
-                Add column
-            </a>
-        </div>
-    </gs-app>
+
+                        <GenericCompareSideBySideDataDisplay
+                            organismViewKey={organismViewKey}
+                            organismsConfig={organismConfig}
+                            datasetAndVariantData={datasetAndVariantData}
+                            hideMutationComponents={hideMutationComponents}
+                            client:load
+                        />
+                    </div>
+                );
+            })
+        }
+        <a
+            class='py-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
+            href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
+            style='writing-mode: vertical-rl;'
+        >
+            Add column
+        </a>
+    </div>
 </OrganismViewPageLayout>

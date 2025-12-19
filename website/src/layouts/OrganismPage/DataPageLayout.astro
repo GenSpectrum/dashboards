@@ -1,11 +1,11 @@
 ---
 import type { ComponentProps } from 'astro/types';
 
+import LapisUnreachableWrapperClient from '../../components/LapisUnreachableWrapperClient';
+import { type BreadcrumbElement, Breadcrumbs } from '../Breadcrumbs';
 import AccessionsDownloadButton from './AccessionsDownloadButton.astro';
 import LastUpdatedInfo from './LastUpdatedInfo.astro';
-import LapisUnreachableWrapperClient from '../../components/LapisUnreachableWrapperClient';
-import type { DataOrigin } from '../../types/dataOrigins';
-import { type BreadcrumbElement, Breadcrumbs } from '../Breadcrumbs';
+import type { DataOrigin } from '../../types/dataOrigins.ts';
 import BaseLayout from '../base/BaseLayout.astro';
 import DataInfo from '../base/footer/DataInfo.astro';
 
@@ -22,23 +22,27 @@ const { title, breadcrumbs, dataOrigins, lapisUrl, downloadLinks = [], accession
 ---
 
 <BaseLayout title={title}>
-    <div class='ml-2'>
-        <Breadcrumbs breadcrumbs={breadcrumbs} />
-    </div>
-    <LapisUnreachableWrapperClient lapisUrl={lapisUrl} client:only='react'>
-        <slot />
-    </LapisUnreachableWrapperClient>
-    <div class='mt-2 flex flex-col items-center justify-center sm:mt-0 sm:flex-row sm:gap-4' slot='secondary-footer'>
-        {
-            downloadLinks.length > 0 && (
-                <AccessionsDownloadButton
-                    accessionDownloadFields={accessionDownloadFields}
-                    downloadLinks={downloadLinks}
-                    lapisUrl={lapisUrl}
-                />
-            )
-        }
-        <LastUpdatedInfo lapisUrl={lapisUrl} />
-        <DataInfo dataOrigins={dataOrigins} />
+    <div class='flex h-full flex-col'>
+        <div class='ml-2'>
+            <Breadcrumbs breadcrumbs={breadcrumbs} />
+        </div>
+        <div class='grow'>
+            <LapisUnreachableWrapperClient lapisUrl={lapisUrl} client:only='react'>
+                <slot />
+            </LapisUnreachableWrapperClient>
+        </div>
+        <div class='mt-2 flex flex-col items-center justify-center border-t border-gray-200 sm:flex-row sm:gap-4'>
+            {
+                downloadLinks.length > 0 && (
+                    <AccessionsDownloadButton
+                        accessionDownloadFields={accessionDownloadFields}
+                        downloadLinks={downloadLinks}
+                        lapisUrl={lapisUrl}
+                    />
+                )
+            }
+            <LastUpdatedInfo lapisUrl={lapisUrl} />
+            <DataInfo dataOrigins={dataOrigins} />
+        </div>
     </div>
 </BaseLayout>

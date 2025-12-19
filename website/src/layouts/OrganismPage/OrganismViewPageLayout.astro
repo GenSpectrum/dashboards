@@ -24,5 +24,10 @@ const { view, downloadLinks } = Astro.props;
     lapisUrl={getLapisUrl(view.organismConstants.organism)}
     accessionDownloadFields={view.organismConstants.accessionDownloadFields}
 >
-    <slot />
+    <gs-app
+        lapis={getLapisUrl(view.organismConstants.organism)}
+        mutationAnnotations={JSON.stringify(view.organismConstants.mutationAnnotations)}
+    >
+        <slot />
+    </gs-app>
 </DataPageLayout>
