@@ -25,7 +25,7 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
         [organismsConfig, organismViewKey],
     );
 
-    const { pageState, setPageState } = usePageState(view);
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const lapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 

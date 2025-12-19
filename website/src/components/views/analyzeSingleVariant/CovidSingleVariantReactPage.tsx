@@ -21,7 +21,7 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
     const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
     const view = useMemo(() => new Routing(organismsConfig).getOrganismView(organismViewKey), [organismsConfig]);
 
-    const { pageState, setPageState } = usePageState(view);
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
 

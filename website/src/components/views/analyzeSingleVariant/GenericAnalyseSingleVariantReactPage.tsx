@@ -29,7 +29,7 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
         [organismsConfig, organismViewKey],
     );
 
-    const { pageState, setPageState } = usePageState(view);
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 
