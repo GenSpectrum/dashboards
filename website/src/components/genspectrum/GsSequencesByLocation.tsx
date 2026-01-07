@@ -28,6 +28,7 @@ export const GsSequencesByLocation: FC<GsSequencesByLocationProps> = ({
         <ComponentWrapper title={title} height={height}>
             {mapData === undefined ? (
                 <gs-sequences-by-location
+                    key={mapName} // Force remount when mapName changes - otherwise React seems to set props to null that were set before which is invalid for the web component
                     lapisLocationField={lapisLocationField}
                     lapisFilter={JSON.stringify(lapisFilter)}
                     pageSize={pageSize ?? defaultTablePageSize}
@@ -37,6 +38,7 @@ export const GsSequencesByLocation: FC<GsSequencesByLocationProps> = ({
                 />
             ) : (
                 <gs-sequences-by-location
+                    key={mapName}
                     lapisLocationField={lapisLocationField}
                     lapisFilter={JSON.stringify(lapisFilter)}
                     pageSize={pageSize ?? defaultTablePageSize}
