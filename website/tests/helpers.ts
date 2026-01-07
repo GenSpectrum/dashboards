@@ -8,9 +8,11 @@ export function organismsWithView<ViewKey extends string>(viewKey: ViewKey): Org
 
 export const organismOptions = {
     [Organisms.covid]: { lineage: 'JN.1*', lineageFieldPlaceholder: 'Nextclade pango lineage' },
+    [Organisms.influenzaA]: { lineage: 'H1', lineageFieldPlaceholder: 'HA subtype' },
     [Organisms.h5n1]: { lineage: '2.3.4.4b', lineageFieldPlaceholder: 'Clade' },
     [Organisms.h1n1pdm]: { lineage: '6B.1A.5a.2a.1', lineageFieldPlaceholder: 'Clade HA' },
     [Organisms.h3n2]: { lineage: '3C.2a1b', lineageFieldPlaceholder: 'Clade HA' },
+    [Organisms.influenzaB]: { lineage: 'vic', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.victoria]: { lineage: 'V1A.3a.2', lineageFieldPlaceholder: 'Clade HA' },
     [Organisms.westNile]: { lineage: '1A', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.rsvA]: { lineage: 'A.D.5.2', lineageFieldPlaceholder: 'Lineage' },
