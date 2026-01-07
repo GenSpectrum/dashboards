@@ -133,7 +133,7 @@ function VariantLink({ variant, collectionId, pageState, setPageState }: Variant
     };
 
     return (
-        <button className={collectionVariantClassName} onClick={applyFilters}>
+        <button type='button' className={collectionVariantClassName} onClick={applyFilters}>
             {variant.name}
         </button>
     );
