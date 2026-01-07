@@ -62,7 +62,7 @@ export function CompareSideBySidePageStateSelector({
                             datasetFilter={filterOfCurrentId.datasetFilter}
                             setDatasetFilter={(newDatasetFilter) => {
                                 setDraftPageState((previousState) => {
-                                    const updatedFilters = new Map(pageState.filters);
+                                    const updatedFilters = new Map(previousState.filters);
                                     updatedFilters.set(filterId, {
                                         ...filterOfCurrentId,
                                         datasetFilter: newDatasetFilter,
@@ -80,7 +80,7 @@ export function CompareSideBySidePageStateSelector({
                         <VariantSelector
                             onVariantFilterChange={(newVariantFilter) => {
                                 setDraftPageState((previousState) => {
-                                    const updatedFilters = new Map(pageState.filters);
+                                    const updatedFilters = new Map(previousState.filters);
                                     updatedFilters.set(filterId, {
                                         ...filterOfCurrentId,
                                         variantFilter: newVariantFilter,
