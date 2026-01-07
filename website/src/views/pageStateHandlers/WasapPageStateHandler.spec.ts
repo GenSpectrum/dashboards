@@ -38,6 +38,7 @@ const config: WasapPageConfig = {
     browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
     browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
     defaultLocationName: 'Zürich (ZH)',
+    clinicalSequenceCountWarningThreshold: 50,
     filterDefaults: {
         manual: {
             mode: 'manual',
