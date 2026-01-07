@@ -123,7 +123,7 @@ type VariantLinkProps = {
 };
 
 function VariantLink({ variant, collectionId, pageState, setPageState }: VariantLinkProps) {
-    const newPageState = useVariantLink(pageState, collectionId, variant);
+    const newPageState = useVariantLinkPageState(pageState, collectionId, variant);
 
     const applyFilters = () => {
         if (newPageState === undefined) {
@@ -141,7 +141,7 @@ function VariantLink({ variant, collectionId, pageState, setPageState }: Variant
 
 const logger = getClientLogger('CollectionList');
 
-function useVariantLink(
+function useVariantLinkPageState(
     currentPageState: CovidVariantData,
     collectionId: number,
     variant: CollectionVariant,
