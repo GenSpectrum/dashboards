@@ -191,9 +191,9 @@ const VariantFetchInfo = ({
                     ) : isError ? (
                         'Error'
                     ) : isHighlighted ? (
-                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{data.toLocaleString()}</span>
+                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{data.toLocaleString('en-us')}</span>
                     ) : (
-                        data.toLocaleString()
+                        data.toLocaleString('en-us')
                     )}
                 </div>
                 <div className='stat-desc text-wrap'>{isPending ? 'Loading …' : isError ? error.message : message}</div>
@@ -218,7 +218,9 @@ const TotalCount = ({ config }: { config: WasapPageConfig }) => {
     return (
         <div className='stat'>
             <div className='stat-title'>Amplicon sequences</div>
-            <div className='stat-value text-base'>{isPending ? '…' : isError ? 'Error' : data.toLocaleString()}</div>
+            <div className='stat-value text-base'>
+                {isPending ? '…' : isError ? 'Error' : data.toLocaleString('en-us')}
+            </div>
             <div className='stat-desc text-wrap'>
                 {isPending
                     ? 'Loading total amplicon sequences count…'
