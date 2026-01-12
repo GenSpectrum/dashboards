@@ -94,7 +94,7 @@ async function fetchMutationSelection(
                             config.clinicalLapis.lapisBaseUrl,
                             analysis.sequenceType,
                             {
-                                [config.clinicalLapis.lapisBaseUrl]: variant,
+                                [config.clinicalLapis.lineageField]: variant,
                             },
                             0.8,
                             9,
