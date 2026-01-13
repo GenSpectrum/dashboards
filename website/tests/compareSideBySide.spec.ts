@@ -9,6 +9,8 @@ test.describe('The Compare Side-By-Side page', () => {
         test(`should show diagrams after selecting a variant in both columns - ${organism}`, async ({
             compareSideBySidePage,
         }) => {
+            test.setTimeout(60_000); // there is a lot of data to load, so we need the test to run longer
+
             const options = organismOptions[organism];
 
             await compareSideBySidePage.goto(organism);
