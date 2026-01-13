@@ -4,7 +4,8 @@ import type { SequenceType } from '@genspectrum/dashboard-components/util';
 import InfluenzaWastewaterInfo from '../../components/InfluenzaWastewaterInfo.astro';
 import GsWastewaterMutationsOverTime from '../../components/genspectrum/GsWastewaterMutationsOverTime.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
-import DataPageLayout from '../../layouts/OrganismPage/DataPageLayout.astro';
+import { DataPageLayout } from '../../layouts/OrganismPage/DataPageLayout.tsx';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { dataOrigins } from '../../types/dataOrigins';
 import {
     getMutationAnnotation,
@@ -16,48 +17,49 @@ import {
 const lapisUrl = `${wastewaterConfig.lapisBaseUrl}/influenza`;
 ---
 
-<DataPageLayout
-    title='Swiss wastewater - Influenza'
-    breadcrumbs={[
-        ...defaultBreadcrumbs,
-        wastewaterBreadcrumb,
+<BaseLayout title='Swiss wastewater - Influenza'>
+    <DataPageLayout
+        breadcrumbs={[
+            ...defaultBreadcrumbs,
+            wastewaterBreadcrumb,
+            {
+                name: 'Influenza',
+                href: wastewaterConfig.pages.influenza.path,
+            },
+        ]}
+        dataOrigins={[dataOrigins.wise]}
+        lapisUrl={lapisUrl}
+    >
         {
-            name: 'Influenza',
-            href: wastewaterConfig.pages.influenza.path,
-        },
-    ]}
-    dataOrigins={[dataOrigins.wise]}
-    lapisUrl={lapisUrl}
->
-    {
-        InfluenzaTypes.map((reference) => {
-            const mutationAnnotations = getMutationAnnotation(reference);
-            return (
-                <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(mutationAnnotations)}>
-                    <div class='m-4 flex flex-col gap-4'>
-                        <h2 class='text-2xl'>{reference}</h2>
-                        {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
-                            <GsWastewaterMutationsOverTime
-                                title={`${sequenceType} mutations`}
-                                lapisFilter={{
-                                    reference,
-                                    versionStatus: 'LATEST_VERSION',
-                                    isRevocation: false,
-                                }}
-                                sequenceType={sequenceType}
-                                collapsible={sequenceType === 'nucleotide'}
-                                linkSuffix={reference}
-                            >
-                                <InfluenzaWastewaterInfo
-                                    slot='infoText'
-                                    reference={reference}
+            InfluenzaTypes.map((reference) => {
+                const mutationAnnotations = getMutationAnnotation(reference);
+                return (
+                    <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(mutationAnnotations)}>
+                        <div class='m-4 flex flex-col gap-4'>
+                            <h2 class='text-2xl'>{reference}</h2>
+                            {(['nucleotide', 'amino acid'] satisfies SequenceType[]).map((sequenceType) => (
+                                <GsWastewaterMutationsOverTime
+                                    title={`${sequenceType} mutations`}
+                                    lapisFilter={{
+                                        reference,
+                                        versionStatus: 'LATEST_VERSION',
+                                        isRevocation: false,
+                                    }}
                                     sequenceType={sequenceType}
-                                />
-                            </GsWastewaterMutationsOverTime>
-                        ))}
-                    </div>
-                </gs-app>
-            );
-        })
-    }
-</DataPageLayout>
+                                    collapsible={sequenceType === 'nucleotide'}
+                                    linkSuffix={reference}
+                                >
+                                    <InfluenzaWastewaterInfo
+                                        slot='infoText'
+                                        reference={reference}
+                                        sequenceType={sequenceType}
+                                    />
+                                </GsWastewaterMutationsOverTime>
+                            ))}
+                        </div>
+                    </gs-app>
+                );
+            })
+        }
+    </DataPageLayout>
+</BaseLayout>

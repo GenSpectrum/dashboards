@@ -13,7 +13,14 @@ import {
 } from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getTotalCount } from '../../../lapis/getTotalCount';
-import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
+import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
+import { dataOrigins } from '../../../types/dataOrigins.ts';
+import {
+    wastewaterBreadcrumb,
+    wastewaterOrganismConfigs,
+    type WastewaterOrganismName,
+} from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
@@ -64,56 +71,69 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
     const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 
     return (
-        <gs-app
-            lapis={config.lapisBaseUrl}
-            mutationAnnotations={memoizedMutationAnnotations}
-            mutationLinkTemplate={memoizedLinkTemplate}
+        <DataPageLayout
+            breadcrumbs={[
+                ...defaultBreadcrumbs,
+                wastewaterBreadcrumb,
+                {
+                    name: config.name,
+                    href: config.path,
+                },
+            ]}
+            dataOrigins={[dataOrigins.wise]}
+            lapisUrl={config.lapisBaseUrl}
         >
-            <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
-                <div className='h-fit p-2 shadow-lg'>
-                    <WasapPageStateSelector
-                        config={config}
-                        pageStateHandler={pageStateHandler}
-                        initialBaseFilterState={base}
-                        initialAnalysisFilterState={analysis}
-                    />
-                </div>
-                {isError ? (
-                    <span>There was an error fetching the mutations to display.</span>
-                ) : isPending ? (
-                    <Loading />
-                ) : (
-                    <div className='h-full space-y-4 pr-4'>
-                        {displayMutations?.length === 0 ? (
-                            <NoDataHelperText analysisFilter={analysis} />
-                        ) : (
-                            <GsMutationsOverTime
-                                lapisFilter={lapisFilter}
-                                granularity={base.granularity as 'day' | 'week'}
-                                lapisDateField={config.samplingDateField}
-                                sequenceType={analysis.sequenceType}
-                                displayMutations={displayMutations}
-                                pageSizes={[20, 50, 100, 250]}
-                                useNewEndpoint={true}
-                                initialMeanProportionInterval={initialMeanProportionInterval}
-                                hideGaps={base.excludeEmpty ? true : undefined}
-                                customColumns={customColumns}
-                            />
-                        )}
-                        {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
-                            <VariantFetchInfo
-                                analysis={analysis}
-                                clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
-                                clinicalLapisLineageField={config.clinicalLapis.lineageField}
-                                clinicalLapisDateField={config.clinicalLapis.dateField}
-                                warningThreshold={config.clinicalSequenceCountWarningThreshold}
-                            />
-                        )}
-                        <WasapStats config={config} />
+            <gs-app
+                lapis={config.lapisBaseUrl}
+                mutationAnnotations={memoizedMutationAnnotations}
+                mutationLinkTemplate={memoizedLinkTemplate}
+            >
+                <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
+                    <div className='h-fit p-2 shadow-lg'>
+                        <WasapPageStateSelector
+                            config={config}
+                            pageStateHandler={pageStateHandler}
+                            initialBaseFilterState={base}
+                            initialAnalysisFilterState={analysis}
+                        />
                     </div>
-                )}
-            </div>
-        </gs-app>
+                    {isError ? (
+                        <span>There was an error fetching the mutations to display.</span>
+                    ) : isPending ? (
+                        <Loading />
+                    ) : (
+                        <div className='h-full space-y-4 pr-4'>
+                            {displayMutations?.length === 0 ? (
+                                <NoDataHelperText analysisFilter={analysis} />
+                            ) : (
+                                <GsMutationsOverTime
+                                    lapisFilter={lapisFilter}
+                                    granularity={base.granularity as 'day' | 'week'}
+                                    lapisDateField={config.samplingDateField}
+                                    sequenceType={analysis.sequenceType}
+                                    displayMutations={displayMutations}
+                                    pageSizes={[20, 50, 100, 250]}
+                                    useNewEndpoint={true}
+                                    initialMeanProportionInterval={initialMeanProportionInterval}
+                                    hideGaps={base.excludeEmpty ? true : undefined}
+                                    customColumns={customColumns}
+                                />
+                            )}
+                            {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
+                                <VariantFetchInfo
+                                    analysis={analysis}
+                                    clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                    clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                    clinicalLapisDateField={config.clinicalLapis.dateField}
+                                    warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                />
+                            )}
+                            <WasapStats config={config} />
+                        </div>
+                    )}
+                </div>
+            </gs-app>
+        </DataPageLayout>
     );
 };
 

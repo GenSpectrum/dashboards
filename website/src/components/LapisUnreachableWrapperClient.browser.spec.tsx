@@ -1,31 +1,28 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect } from 'vitest';
 import { render } from 'vitest-browser-react';
 
-import LapisUnreachableWrapperClient from './LapisUnreachableWrapperClient';
+import { LapisUnreachableWrapperClient } from './LapisUnreachableWrapperClient';
 import { DUMMY_LAPIS_URL } from '../../routeMocker';
 import { it } from '../../test-extend';
+
+const queryClient = new QueryClient();
 
 describe('LapisUnreachableWrapperClient', () => {
     it('displays children when LAPIS is reachable', async ({ routeMockers: { lapis } }) => {
         lapis.mockPostAggregated({}, { data: [{ count: 100 }] });
 
-        const { getByText } = render(
-            <LapisUnreachableWrapperClient lapisUrl={DUMMY_LAPIS_URL}>
-                <div>Content is visible</div>
-            </LapisUnreachableWrapperClient>,
-        );
+        const content = 'Content is visible';
 
-        await expect.element(getByText('Content is visible')).toBeVisible();
+        const { getByText } = renderWithContent(content);
+
+        await expect.element(getByText(content)).toBeVisible();
     });
 
     it('displays error message when LAPIS is unreachable', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByText } = render(
-            <LapisUnreachableWrapperClient lapisUrl={DUMMY_LAPIS_URL}>
-                <div>Content is visible</div>
-            </LapisUnreachableWrapperClient>,
-        );
+        const { getByText } = renderWithContent('Content is visible');
 
         await expect.element(getByText('Data Source Unreachable')).toBeVisible();
         await expect.element(getByText('Unable to connect to the data source')).toBeVisible();
@@ -34,23 +31,17 @@ describe('LapisUnreachableWrapperClient', () => {
     it('does not display children when LAPIS is unreachable', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByText } = render(
-            <LapisUnreachableWrapperClient lapisUrl={DUMMY_LAPIS_URL}>
-                <div>Content should not be visible</div>
-            </LapisUnreachableWrapperClient>,
-        );
+        const content = 'Content is visible';
 
-        await expect.poll(() => getByText('Content should not be visible').query()).not.toBeInTheDocument();
+        const { getByText } = renderWithContent(content);
+
+        await expect.poll(() => getByText(content).query()).not.toBeInTheDocument();
     });
 
     it('displays error when LAPIS returns invalid response', async ({ routeMockers: { lapis } }) => {
         lapis.mockPostAggregated({}, { data: [] }, 200);
 
-        const { getByText } = render(
-            <LapisUnreachableWrapperClient lapisUrl={DUMMY_LAPIS_URL}>
-                <div>Content is visible</div>
-            </LapisUnreachableWrapperClient>,
-        );
+        const { getByText } = renderWithContent('Content is visible');
 
         await expect.element(getByText('Data Source Unreachable')).toBeVisible();
     });
@@ -58,12 +49,18 @@ describe('LapisUnreachableWrapperClient', () => {
     it('displays error when LAPIS returns 500', async ({ routeMockers: { lapis } }) => {
         lapis.mockPostAggregated({}, { data: [{ count: 100 }] }, 500);
 
-        const { getByText } = render(
-            <LapisUnreachableWrapperClient lapisUrl={DUMMY_LAPIS_URL}>
-                <div>Content is visible</div>
-            </LapisUnreachableWrapperClient>,
-        );
+        const { getByText } = renderWithContent('Content is visible');
 
         await expect.element(getByText('Data Source Unreachable')).toBeVisible();
     });
 });
+
+function renderWithContent(content: string) {
+    return render(
+        <QueryClientProvider client={queryClient}>
+            <LapisUnreachableWrapperClient lapisUrl={DUMMY_LAPIS_URL}>
+                <div>{content}</div>
+            </LapisUnreachableWrapperClient>
+        </QueryClientProvider>,
+    );
+}
