@@ -1,7 +1,7 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
 import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
-import type { WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
+import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
 export const wastewaterOrganisms = {
     covid: 'covid',
@@ -28,17 +28,19 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         resistanceAnalysisModeEnabled: true,
         untrackedAnalysisModeEnabled: true,
         resistanceMutationSets: covidResistanceMutations,
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+            dateField: 'date',
             cladeField: 'nextstrainClade',
             lineageField: 'nextcladePangoLineage',
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
         defaultLocationName: 'Zürich (ZH)',
+        clinicalSequenceCountWarningThreshold: 50,
         filterDefaults: {
             manual: {
                 mode: 'manual',
@@ -52,6 +54,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
+                timeFrame: VARIANT_TIME_FRAME.all,
             },
             resistance: {
                 mode: 'resistance',
@@ -77,16 +80,18 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         },
         manualAnalysisModeEnabled: true,
         variantAnalysisModeEnabled: true,
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org', // TODO https://github.com/GenSpectrum/dashboards/issues/949
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsva',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-a',
+            dateField: 'sampleCollectionDateRangeLower',
             lineageField: 'lineage',
         },
-        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search', // TODO https://github.com/GenSpectrum/dashboards/issues/949
+        browseDataUrl: 'https://db.wasap.genspectrum.org/rsva/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-        defaultLocationName: 'Zürich (ZH)',
+        defaultLocationName: 'Geneva',
+        clinicalSequenceCountWarningThreshold: 50,
         filterDefaults: {
             manual: {
                 mode: 'manual',
@@ -100,6 +105,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
+                timeFrame: VARIANT_TIME_FRAME.all,
             },
         },
     },

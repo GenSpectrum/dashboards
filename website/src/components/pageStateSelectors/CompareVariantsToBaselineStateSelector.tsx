@@ -1,29 +1,28 @@
-import { useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
 import { VariantsSelector } from './VariantsSelector.tsx';
-import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
+import { GenericCompareToBaselineView } from '../../views/BaseView.ts';
+import type { OrganismConstants } from '../../views/OrganismConstants.ts';
 import type { CompareToBaselineData, Id, VariantFilter } from '../../views/View.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
-import { type compareToBaselineViewKey } from '../../views/viewKeys.ts';
 
 export function CompareVariantsToBaselineStateSelector({
-    organismViewKey,
-    organismsConfig,
-    initialPageState,
+    view,
+    pageState,
+    setPageState,
     enableAdvancedQueryFilter,
 }: {
-    organismViewKey: OrganismViewKey & `${string}.${typeof compareToBaselineViewKey}`;
-    organismsConfig: OrganismsConfig;
-    initialPageState: CompareToBaselineData;
+    view: GenericCompareToBaselineView<OrganismConstants>;
+    pageState: CompareToBaselineData;
+    setPageState: Dispatch<SetStateAction<CompareToBaselineData>>;
     enableAdvancedQueryFilter: boolean;
 }) {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
-    const [pageState, setPageState] = useState(initialPageState);
+    const [draftPageState, setDraftPageState] = useState(pageState);
+    useEffect(() => setDraftPageState(pageState), [pageState]);
 
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
@@ -31,12 +30,12 @@ export function CompareVariantsToBaselineStateSelector({
     );
 
     const variantFilterConfigs = useMemo(() => {
-        return new Map(pageState.variants.entries().map(([id]) => [id, { ...variantFilterConfig }]));
-    }, [pageState.variants, variantFilterConfig]);
+        return new Map(draftPageState.variants.entries().map(([id]) => [id, { ...variantFilterConfig }]));
+    }, [draftPageState.variants, variantFilterConfig]);
 
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.baselineFilterToLapisFilter(pageState);
-    }, [pageState, view.pageStateHandler]);
+        return view.pageStateHandler.baselineFilterToLapisFilter(draftPageState);
+    }, [draftPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -47,9 +46,9 @@ export function CompareVariantsToBaselineStateSelector({
                         <BaselineSelector
                             baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                             lapisFilter={currentLapisFilter}
-                            datasetFilter={pageState.datasetFilter}
+                            datasetFilter={draftPageState.datasetFilter}
                             setDatasetFilter={(newDatasetFilter) => {
-                                setPageState((previousState) => ({
+                                setDraftPageState((previousState) => ({
                                     ...previousState,
                                     datasetFilter: newDatasetFilter,
                                 }));
@@ -64,13 +63,13 @@ export function CompareVariantsToBaselineStateSelector({
                 <Inset className='p-2'>
                     <VariantSelector
                         onVariantFilterChange={(newVariantFilter) => {
-                            setPageState((previousState) => ({
+                            setDraftPageState((previousState) => ({
                                 ...previousState,
                                 baselineFilter: newVariantFilter,
                             }));
                         }}
                         variantFilterConfig={variantFilterConfig}
-                        variantFilter={pageState.baselineFilter}
+                        variantFilter={draftPageState.baselineFilter}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
                     />
@@ -81,10 +80,10 @@ export function CompareVariantsToBaselineStateSelector({
                 <SelectorHeadline>Variant Filters</SelectorHeadline>
                 <Inset className='p-2'>
                     <VariantsSelector
-                        variantFilters={pageState.variants}
+                        variantFilters={draftPageState.variants}
                         variantFilterConfigs={variantFilterConfigs}
                         setVariantFilters={(newVariantFilters: Map<Id, VariantFilter>) => {
-                            setPageState((previousState) => ({
+                            setDraftPageState((previousState) => ({
                                 ...previousState,
                                 variants: newVariantFilters,
                             }));
@@ -98,7 +97,8 @@ export function CompareVariantsToBaselineStateSelector({
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
-                    newPageState={pageState}
+                    newPageState={draftPageState}
+                    setPageState={setPageState}
                 />
             </div>
         </div>

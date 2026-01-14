@@ -1,16 +1,15 @@
 import { views } from '@genspectrum/dashboard-components/util';
-import { type FC, useMemo } from 'react';
+import { type Dispatch, type FC, type SetStateAction } from 'react';
 
 import { QuickstartLinks } from './QuickstartLinks.tsx';
 import { SelectVariant } from './SelectVariant.tsx';
-import type { OrganismsConfig } from '../../../config.ts';
 import { Organisms } from '../../../types/Organism.ts';
 import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange.ts';
 import { hasOnlyUndefinedValues } from '../../../util/hasOnlyUndefinedValues.ts';
 import type { DatasetAndVariantData } from '../../../views/View.ts';
 import { getLocationSubdivision } from '../../../views/locationHelpers.ts';
 import { locationFieldsToFilterIdentifier } from '../../../views/pageStateHandlers/locationFilterFromToUrl.ts';
-import { type OrganismViewKey, Routing, type SingleVariantOrganism } from '../../../views/routing.ts';
+import { type SingleVariantOrganism, type ViewsMap } from '../../../views/routing.ts';
 import type { singleVariantViewKey } from '../../../views/viewKeys.ts';
 import { ComponentsGrid } from '../../ComponentsGrid.tsx';
 import { GsAggregate } from '../../genspectrum/GsAggregate.tsx';
@@ -20,19 +19,16 @@ import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx
 import { GsStatistics } from '../../genspectrum/GsStatistics.tsx';
 
 export type GenericAnalyseSingleVariantDataDisplayProps = {
-    organismViewKey: OrganismViewKey &
-        `${Exclude<SingleVariantOrganism, typeof Organisms.covid>}.${typeof singleVariantViewKey}`;
-    organismsConfig: OrganismsConfig;
+    view: ViewsMap[Exclude<SingleVariantOrganism, typeof Organisms.covid>][typeof singleVariantViewKey];
     pageState: DatasetAndVariantData;
+    setPageState: Dispatch<SetStateAction<DatasetAndVariantData>>;
 };
 
 export const GenericAnalyseSingleVariantDataDisplay: FC<GenericAnalyseSingleVariantDataDisplayProps> = ({
-    organismViewKey,
-    organismsConfig,
+    view,
     pageState,
+    setPageState,
 }) => {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
-
     const variantLapisFilter = view.pageStateHandler.toLapisFilter(pageState);
     const datasetLapisFilter = view.pageStateHandler.toLapisFilterWithoutVariant(pageState);
     const timeGranularity = chooseGranularityBasedOnDateRange({
@@ -52,7 +48,7 @@ export const GenericAnalyseSingleVariantDataDisplay: FC<GenericAnalyseSingleVari
         <div className='mx-[8px] flex flex-col gap-y-6'>
             {noVariantSelected && (
                 <SelectVariant>
-                    <QuickstartLinks view={view} datasetFilter={pageState.datasetFilter} />
+                    <QuickstartLinks view={view} datasetFilter={pageState.datasetFilter} setPageState={setPageState} />
                 </SelectVariant>
             )}
             <GsStatistics numeratorFilter={variantLapisFilter} denominatorFilter={datasetLapisFilter} />

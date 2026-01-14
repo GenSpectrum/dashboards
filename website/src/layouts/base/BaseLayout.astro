@@ -34,14 +34,13 @@ const { title, forceLoggedOutState = false } = Astro.props;
         </script>
     </head>
 
-    <body class='flex min-h-screen flex-col'>
+    <body class='flex h-screen flex-col'>
         <ToastContainer client:load />
+        <Header forceLoggedOutState={forceLoggedOutState} />
         <div class='grow'>
-            <Header forceLoggedOutState={forceLoggedOutState} />
             <slot />
         </div>
         <Footer>
-            <slot slot='secondary-footer' name='secondary-footer' />
             <FooterNavigation slot='primary-footer' />
         </Footer>
     </body>

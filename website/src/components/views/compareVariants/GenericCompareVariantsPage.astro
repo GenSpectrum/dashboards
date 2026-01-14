@@ -1,88 +1,25 @@
 ---
-import SelectVariants from './SelectVariants.astro';
+import { GenericCompareVariantsReactPage } from './GenericCompareVariantsReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
-import SingleVariantOrganismPageLayout from '../../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareVariantsViewKey } from '../../../views/viewKeys';
-import ComponentsGrid from '../../ComponentsGrid.astro';
-import GsMutationComparison from '../../genspectrum/GsMutationComparison.astro';
-import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
-import { CompareVariantsPageStateSelector } from '../../pageStateSelectors/CompareVariantsPageStateSelector';
-import { CompareVariantsSelectorFallback } from '../../pageStateSelectors/FallbackElement';
-import { sanitizeForFilename } from '../compareSideBySide/toDownloadLink';
 
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareVariantsViewKey>;
 interface Props {
-    organism: OrganismViewCompareVariant;
+    organism: OrganismWithViewKey<typeof compareVariantsViewKey>;
 }
 
 const { organism } = Astro.props;
-const organismViewKey = `${organism}.${compareVariantsViewKey}` satisfies OrganismViewKey;
-const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const datasetLapisFilter = view.pageStateHandler.datasetFilterToLapisFilter(pageState.datasetFilter);
-const timeGranularity = chooseGranularityBasedOnDateRange({
-    earliestDate: new Date(view.organismConstants.earliestDate),
-    dateRange: pageState.datasetFilter.dateFilters[view.organismConstants.mainDateField],
-});
-
-const numeratorLapisFilters = view.pageStateHandler.variantFiltersToNamedLapisFilters(pageState);
-
-const notEnoughVariantsSelected = pageState.variants.size < 2;
-
-const downloadLinks = notEnoughVariantsSelected
-    ? []
-    : numeratorLapisFilters.map(({ lapisFilter, displayName }) => ({
-          label: `Download accessions of "${displayName}"`,
-          filter: lapisFilter,
-          downloadFileBasename: `${organism}_${sanitizeForFilename(displayName)}_accessions`,
-      }));
-
-const componentHeight = '540px'; // prevalence over time table with 10 rows
+const view = ServerSide.routing.getOrganismView(`${organism}.${compareVariantsViewKey}`);
 ---
 
-<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
-    <CompareVariantsPageStateSelector
-        slot='filters'
-        organismViewKey={organismViewKey}
+<BaseLayout title={view.viewTitle}>
+    <GenericCompareVariantsReactPage
+        organism={organism}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
-        initialPageState={pageState}
+        isStaging={isStaging()}
         client:only='react'
-        enableAdvancedQueryFilter={isStaging()}
-    >
-        <CompareVariantsSelectorFallback slot='fallback' numFilters={numeratorLapisFilters.length} />
-    </CompareVariantsPageStateSelector>
-    {
-        notEnoughVariantsSelected ? (
-            <SelectVariants slot='dataDisplay' />
-        ) : (
-            <ComponentsGrid slot='dataDisplay'>
-                <GsPrevalenceOverTime
-                    numeratorFilters={numeratorLapisFilters}
-                    denominatorFilter={datasetLapisFilter}
-                    lapisDateField={view.organismConstants.mainDateField}
-                    granularity={timeGranularity}
-                    views={['line', 'table', 'bar', 'bubble']}
-                    height={componentHeight}
-                    pageSize={10}
-                />
-                <GsMutationComparison
-                    lapisFilters={numeratorLapisFilters}
-                    sequenceType='nucleotide'
-                    height={componentHeight}
-                    pageSize={10}
-                />
-                <GsMutationComparison
-                    lapisFilters={numeratorLapisFilters}
-                    sequenceType='amino acid'
-                    height={componentHeight}
-                    pageSize={10}
-                />
-            </ComponentsGrid>
-        )
-    }
-</SingleVariantOrganismPageLayout>
+    />
+</BaseLayout>

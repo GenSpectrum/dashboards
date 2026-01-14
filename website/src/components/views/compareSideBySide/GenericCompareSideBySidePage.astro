@@ -1,132 +1,28 @@
 ---
-import { toDownloadLink } from './toDownloadLink';
-import { isStaging, getDashboardsConfig, getLapisUrl } from '../../../config';
-import OrganismViewPageLayout from '../../../layouts/OrganismPage/OrganismViewPageLayout.astro';
-import { chooseGranularityBasedOnDateRange } from '../../../util/chooseGranularityBasedOnDateRange';
-import { ComponentHeight } from '../../../views/OrganismConstants';
-import { toLapisFilterWithoutVariant } from '../../../views/pageStateHandlers/toLapisFilterWithoutVariant';
-import { type OrganismViewKey, type OrganismWithViewKey } from '../../../views/routing';
+import { GenericCompareSideBySideReactPage } from './GenericCompareSideBySideReactPage';
+import { isStaging, getDashboardsConfig } from '../../../config';
+import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
-import GsAggregate from '../../genspectrum/GsAggregate.astro';
-import GsMutations from '../../genspectrum/GsMutations.astro';
-import GsPrevalenceOverTime from '../../genspectrum/GsPrevalenceOverTime.astro';
-import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
-import { CompareSideBySideSelectorFallback } from '../../pageStateSelectors/FallbackElement';
 
-type OrganismViewCompareVariant = OrganismWithViewKey<typeof compareSideBySideViewKey>;
 interface Props {
-    organism: OrganismViewCompareVariant;
+    organism: OrganismWithViewKey<typeof compareSideBySideViewKey>;
     hideMutationComponents?: boolean;
 }
 
 const { organism, hideMutationComponents } = Astro.props;
-const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
-const view = ServerSide.routing.getOrganismView(organismViewKey);
 
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
+const view = ServerSide.routing.getOrganismView(`${organism}.${compareSideBySideViewKey}`);
+const organismsConfig = getDashboardsConfig().dashboards.organisms;
 ---
 
-<OrganismViewPageLayout view={view} downloadLinks={downloadLinks}>
-    <gs-app lapis={getLapisUrl(view.organismConstants.organism)}>
-        <div class='flex overflow-x-auto'>
-            {
-                Array.from(pageState.filters).map(([id, { variantFilter, datasetFilter }]) => {
-                    const datasetLapisFilter = toLapisFilterWithoutVariant(
-                        datasetFilter,
-                        view.organismConstants.additionalFilters,
-                    );
-                    const timeGranularity = chooseGranularityBasedOnDateRange({
-                        earliestDate: new Date(view.organismConstants.earliestDate),
-                        dateRange: datasetFilter.dateFilters[view.organismConstants.mainDateField],
-                    });
-                    const numeratorFilter = view.pageStateHandler.variantFilterToLapisFilter(
-                        datasetFilter,
-                        variantFilter,
-                    );
-
-                    return (
-                        <div class='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'>
-                            <div class='mb-4'>
-                                {pageState.filters.size > 1 && (
-                                    <a
-                                        class='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
-                                        href={view.pageStateHandler.toUrl(
-                                            view.pageStateHandler.removeFilter(pageState, id),
-                                        )}
-                                    >
-                                        Remove column
-                                    </a>
-                                )}
-                                <CompareSideBySidePageStateSelector
-                                    filterId={id}
-                                    initialPageState={pageState}
-                                    organismsConfig={getDashboardsConfig().dashboards.organisms}
-                                    organismViewKey={organismViewKey}
-                                    enableAdvancedQueryFilter={isStaging()}
-                                    client:only='react'
-                                >
-                                    <CompareSideBySideSelectorFallback
-                                        slot='fallback'
-                                        numFilters={pageState.filters.size}
-                                    />
-                                </CompareSideBySidePageStateSelector>
-                            </div>
-
-                            <GsPrevalenceOverTime
-                                numeratorFilters={[
-                                    {
-                                        displayName: '',
-                                        lapisFilter: numeratorFilter,
-                                    },
-                                ]}
-                                denominatorFilter={datasetLapisFilter}
-                                lapisDateField={view.organismConstants.mainDateField}
-                                granularity={timeGranularity}
-                                height={ComponentHeight.large}
-                                pageSize={10}
-                            />
-                            {!hideMutationComponents && (
-                                <>
-                                    <GsMutations
-                                        lapisFilter={numeratorFilter}
-                                        baselineLapisFilter={datasetLapisFilter}
-                                        sequenceType='nucleotide'
-                                        pageSize={10}
-                                    />
-                                    <GsMutations
-                                        lapisFilter={numeratorFilter}
-                                        baselineLapisFilter={datasetLapisFilter}
-                                        sequenceType='amino acid'
-                                        pageSize={10}
-                                    />
-                                </>
-                            )}
-
-                            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(
-                                ({ label, fields, views }) => (
-                                    <GsAggregate
-                                        title={label}
-                                        fields={fields}
-                                        lapisFilter={numeratorFilter}
-                                        views={views}
-                                        pageSize={10}
-                                    />
-                                ),
-                            )}
-                        </div>
-                    );
-                })
-            }
-            <a
-                class='py-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
-                href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
-                style='writing-mode: vertical-rl;'
-            >
-                Add column
-            </a>
-        </div>
-    </gs-app>
-</OrganismViewPageLayout>
+<BaseLayout title={view.viewTitle}>
+    <GenericCompareSideBySideReactPage
+        organism={organism}
+        hideMutationComponents={hideMutationComponents}
+        organismsConfig={organismsConfig}
+        isStaging={isStaging()}
+        client:only='react'
+    />
+</BaseLayout>

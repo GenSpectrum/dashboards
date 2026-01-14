@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { ApplyFilterButton } from '../ApplyFilterButton';
 import { DynamicDateFilter } from '../DynamicDateFilter';
@@ -34,11 +34,13 @@ export function WasapPageStateSelector({
     pageStateHandler,
     initialBaseFilterState,
     initialAnalysisFilterState,
+    setPageState,
 }: {
     config: WasapPageConfig;
     pageStateHandler: PageStateHandler<WasapFilter>;
     initialBaseFilterState: WasapBaseFilter;
     initialAnalysisFilterState: WasapAnalysisFilter;
+    setPageState: Dispatch<SetStateAction<WasapFilter>>;
 }) {
     const [baseFilterState, setBaseFilterState] = useState(initialBaseFilterState);
 
@@ -201,7 +203,11 @@ export function WasapPageStateSelector({
                     }
                 })()}
             </Inset>
-            <ApplyFilterButton pageStateHandler={pageStateHandler} newPageState={getMergedPageState()} />
+            <ApplyFilterButton
+                pageStateHandler={pageStateHandler}
+                newPageState={getMergedPageState()}
+                setPageState={setPageState}
+            />
         </div>
     );
 }

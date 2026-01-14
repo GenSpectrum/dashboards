@@ -2,7 +2,7 @@
 import Link from '../components/Link.astro';
 import MainMenu from '../components/MainMenu.astro';
 import BaseLayout from '../layouts/base/BaseLayout.astro';
-import DataInfo from '../layouts/base/footer/DataInfo.astro';
+import { DataInfo } from '../layouts/base/footer/DataInfo.tsx';
 import { BrandName } from '../layouts/base/header/Brand';
 import { getPathogenMegaMenuSections } from '../layouts/base/header/getPathogenMegaMenuSections';
 import { dataOrigins } from '../types/dataOrigins';
@@ -110,12 +110,14 @@ import { Page } from '../types/pages';
             Feedback, suggestions, bug reports and active contributions are highly welcome, please create an issue in
             our
             <Link external href='https://github.com/GenSpectrum/dashboards'>Github repository</Link>
-            . For general questions, please contact Chaoran Chen (chaoran.chen@bsse.ethz.ch). For media requests, please
-            reach out to ETH Zurich Media Relations (mediarelations@hk.ethz.ch). A list of all team members can be found
+            . For general questions, please contact Chaoran Chen (chaoran.chen@bsse.ethz.ch). For media requests, please reach
+            out to ETH Zurich Media Relations (mediarelations@hk.ethz.ch). A list of all team members can be found
             <Link external href='https://github.com/GenSpectrum'>here </Link>
             .
         </div>
     </div>
 
-    <DataInfo slot='secondary-footer' dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus, dataOrigins.wise]} />
+    <div class='mt-2 border-t border-gray-200'>
+        <DataInfo dataOrigins={[dataOrigins.insdc, dataOrigins.pathoplexus, dataOrigins.wise]} />
+    </div>
 </BaseLayout>

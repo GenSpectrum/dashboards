@@ -4,30 +4,43 @@ import { useMemo } from 'react';
 import { type FC } from 'react';
 
 import { toMutationAnnotations } from './resistanceMutations';
-import { useWasapPageData } from './useWasapPageData';
-import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
+import { getLapisFilterForTimeFrame, useWasapPageData } from './useWasapPageData';
+import {
+    variantTimeFrameLabel,
+    type WasapAnalysisFilter,
+    type WasapPageConfig,
+    type WasapVariantFilter,
+} from './wasapPageConfig';
 import { getDateRange } from '../../../lapis/getDateRange';
 import { getTotalCount } from '../../../lapis/getTotalCount';
-import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
+import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
+import { dataOrigins } from '../../../types/dataOrigins.ts';
+import {
+    wastewaterBreadcrumb,
+    wastewaterOrganismConfigs,
+    type WastewaterOrganismName,
+} from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
+import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
     wastewaterOrganism: WastewaterOrganismName;
-    currentUrl: URL;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, currentUrl }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
     const config = wastewaterOrganismConfigs[wastewaterOrganism];
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
-    const { base, analysis } = useMemo(
-        () => pageStateHandler.parsePageStateFromUrl(currentUrl),
-        [pageStateHandler, currentUrl],
-    );
+
+    const {
+        pageState: { base, analysis },
+        setPageState,
+    } = usePageState(pageStateHandler);
 
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, analysis);
@@ -59,47 +72,70 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, current
     const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 
     return (
-        <gs-app
-            lapis={config.lapisBaseUrl}
-            mutationAnnotations={memoizedMutationAnnotations}
-            mutationLinkTemplate={memoizedLinkTemplate}
+        <DataPageLayout
+            breadcrumbs={[
+                ...defaultBreadcrumbs,
+                wastewaterBreadcrumb,
+                {
+                    name: config.name,
+                    href: config.path,
+                },
+            ]}
+            dataOrigins={[dataOrigins.wise]}
+            lapisUrl={config.lapisBaseUrl}
         >
-            <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
-                <div className='h-fit p-2 shadow-lg'>
-                    <WasapPageStateSelector
-                        config={config}
-                        pageStateHandler={pageStateHandler}
-                        initialBaseFilterState={base}
-                        initialAnalysisFilterState={analysis}
-                    />
-                </div>
-                {isError ? (
-                    <span>There was an error fetching the mutations to display.</span>
-                ) : isPending ? (
-                    <Loading />
-                ) : (
-                    <div className='h-full space-y-4 pr-4'>
-                        {displayMutations !== undefined && displayMutations.length === 0 ? (
-                            <NoDataHelperText analysisFilter={analysis} />
-                        ) : (
-                            <GsMutationsOverTime
-                                lapisFilter={lapisFilter}
-                                granularity={base.granularity as 'day' | 'week'}
-                                lapisDateField={config.samplingDateField}
-                                sequenceType={analysis.sequenceType}
-                                displayMutations={displayMutations}
-                                pageSizes={[20, 50, 100, 250]}
-                                useNewEndpoint={true}
-                                initialMeanProportionInterval={initialMeanProportionInterval}
-                                hideGaps={base.excludeEmpty ? true : undefined}
-                                customColumns={customColumns}
-                            />
-                        )}
-                        <WasapStats config={config} />
+            <gs-app
+                lapis={config.lapisBaseUrl}
+                mutationAnnotations={memoizedMutationAnnotations}
+                mutationLinkTemplate={memoizedLinkTemplate}
+            >
+                <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
+                    <div className='h-fit p-2 shadow-lg'>
+                        <WasapPageStateSelector
+                            config={config}
+                            pageStateHandler={pageStateHandler}
+                            initialBaseFilterState={base}
+                            initialAnalysisFilterState={analysis}
+                            setPageState={setPageState}
+                        />
                     </div>
-                )}
-            </div>
-        </gs-app>
+                    {isError ? (
+                        <span>There was an error fetching the mutations to display.</span>
+                    ) : isPending ? (
+                        <Loading />
+                    ) : (
+                        <div className='h-full space-y-4 pr-4'>
+                            {displayMutations?.length === 0 ? (
+                                <NoDataHelperText analysisFilter={analysis} />
+                            ) : (
+                                <GsMutationsOverTime
+                                    lapisFilter={lapisFilter}
+                                    granularity={base.granularity as 'day' | 'week'}
+                                    lapisDateField={config.samplingDateField}
+                                    sequenceType={analysis.sequenceType}
+                                    displayMutations={displayMutations}
+                                    pageSizes={[20, 50, 100, 250]}
+                                    useNewEndpoint={true}
+                                    initialMeanProportionInterval={initialMeanProportionInterval}
+                                    hideGaps={base.excludeEmpty ? true : undefined}
+                                    customColumns={customColumns}
+                                />
+                            )}
+                            {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
+                                <VariantFetchInfo
+                                    analysis={analysis}
+                                    clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                    clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                    clinicalLapisDateField={config.clinicalLapis.dateField}
+                                    warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                />
+                            )}
+                            <WasapStats config={config} />
+                        </div>
+                    )}
+                </div>
+            </gs-app>
+        </DataPageLayout>
     );
 };
 
@@ -130,6 +166,71 @@ const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFil
     );
 };
 
+/**
+ * Info stat about the amount of sequences used during the computation of the clinical variant signature.
+ * Will also show a warning of the count is small.
+ */
+const VariantFetchInfo = ({
+    analysis,
+    clinicalLapisBaseUrl,
+    clinicalLapisLineageField,
+    clinicalLapisDateField,
+    warningThreshold,
+}: {
+    analysis: WasapVariantFilter;
+    clinicalLapisBaseUrl: string;
+    clinicalLapisLineageField: string;
+    clinicalLapisDateField: string;
+    warningThreshold: number;
+}) => {
+    const lapisFilter = {
+        ...getLapisFilterForTimeFrame(analysis.timeFrame, clinicalLapisDateField),
+        [clinicalLapisLineageField]: analysis.variant,
+    };
+
+    const { data, isPending, isError, error } = useQuery({
+        queryKey: ['variantFetchInfo'],
+        queryFn: () => getTotalCount(clinicalLapisBaseUrl, lapisFilter),
+    });
+
+    const isHighlighted = data !== undefined && data < warningThreshold;
+
+    let message = `The number of clinical sequences for ${analysis.variant}`;
+    if (analysis.timeFrame !== 'all') {
+        message += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
+    }
+    if (isHighlighted) {
+        message += '. Clinical signature calculation with this few sequences is not recommended.';
+    }
+
+    return (
+        <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
+            <div className='stat'>
+                <div className='stat-title'>Clinical sequences for {analysis.variant}</div>
+                <div className='stat-value text-base'>
+                    {isPending ? (
+                        '…'
+                    ) : isError ? (
+                        'Error'
+                    ) : isHighlighted ? (
+                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{data.toLocaleString('en-us')}</span>
+                    ) : (
+                        data.toLocaleString('en-us')
+                    )}
+                </div>
+                <div className='stat-desc text-wrap'>{isPending ? 'Loading …' : isError ? error.message : message}</div>
+            </div>
+        </div>
+    );
+};
+
+const WasapStats = ({ config }: { config: WasapPageConfig }) => (
+    <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
+        <TotalCount config={config} />
+        <DateRange config={config} />
+    </div>
+);
+
 const TotalCount = ({ config }: { config: WasapPageConfig }) => {
     const { data, isPending, isError, error } = useQuery({
         queryKey: ['aggregatedCount'],
@@ -139,7 +240,9 @@ const TotalCount = ({ config }: { config: WasapPageConfig }) => {
     return (
         <div className='stat'>
             <div className='stat-title'>Amplicon sequences</div>
-            <div className='stat-value text-base'>{isPending ? '…' : isError ? 'Error' : data.toLocaleString()}</div>
+            <div className='stat-value text-base'>
+                {isPending ? '…' : isError ? 'Error' : data.toLocaleString('en-us')}
+            </div>
             <div className='stat-desc text-wrap'>
                 {isPending
                     ? 'Loading total amplicon sequences count…'
@@ -173,10 +276,3 @@ const DateRange = ({ config }: { config: WasapPageConfig }) => {
         </div>
     );
 };
-
-const WasapStats = ({ config }: { config: WasapPageConfig }) => (
-    <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
-        <TotalCount config={config} />
-        <DateRange config={config} />
-    </div>
-);

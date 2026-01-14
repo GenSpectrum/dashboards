@@ -1,9 +1,22 @@
-import type { CustomColumn } from '@genspectrum/dashboard-components/util';
+import type { CustomColumn, LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 
-import type { WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
+import type { VariantTimeFrame, WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
+
+/**
+ * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
+ * depending on the analysis mode and analysis mode settings.
+ */
+export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
+    return useQuery({
+        queryKey: ['wasap', analysis],
+        queryFn: () =>
+            fetchMutationSelection(config, analysis).then((data) => wasapPageDataFromMutationSelection(data)),
+    });
+}
 
 type AllMutations = {
     type: 'all';
@@ -47,6 +60,7 @@ async function fetchMutationSelection(
                 analysis.minProportion,
                 analysis.minCount,
                 analysis.minJaccard,
+                getLapisFilterForTimeFrame(analysis.timeFrame, config.clinicalLapis.dateField),
             ).then((r) => ({ type: 'jaccard', mutationsWithScore: r }));
         case 'resistance':
             if (!config.resistanceAnalysisModeEnabled) {
@@ -80,7 +94,7 @@ async function fetchMutationSelection(
                             config.clinicalLapis.lapisBaseUrl,
                             analysis.sequenceType,
                             {
-                                [config.clinicalLapis.lapisBaseUrl]: variant,
+                                [config.clinicalLapis.lineageField]: variant,
                             },
                             0.8,
                             9,
@@ -95,6 +109,26 @@ async function fetchMutationSelection(
             };
         }
     }
+}
+
+export function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
+    let fromDate = undefined;
+    switch (timeFrame) {
+        case 'all':
+            break;
+        case '6months':
+            fromDate = dayjs().subtract(6, 'month').format('YYYY-MM-DD');
+            break;
+        case '3months':
+            fromDate = dayjs().subtract(3, 'month').format('YYYY-MM-DD');
+            break;
+    }
+    if (fromDate === undefined) {
+        return {};
+    }
+    return {
+        [`${dateFieldName}From`]: fromDate,
+    };
 }
 
 /**
@@ -138,16 +172,4 @@ function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection
                 ],
             };
     }
-}
-
-/**
- * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
- * depending on the analysis mode and analysis mode settings.
- */
-export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
-    return useQuery({
-        queryKey: ['wasap', analysis],
-        queryFn: () =>
-            fetchMutationSelection(config, analysis).then((data) => wasapPageDataFromMutationSelection(data)),
-    });
 }

@@ -4,7 +4,9 @@ Contributions are very welcome! Just fork the repository, develop in a branch an
 
 ## Commit Messages
 
-We follow [conventional commits](https://www.conventionalcommits.org) when writing commit messages.
+Commits on the `main` branch should follow [conventional commits](https://www.conventionalcommits.org).
+Since we squash-merge pull requests, the PR title should also follow conventional commits
+(because it will become the commit message of the squashed commit).
 The messages themselves should help future developers understand **why** changes were made.
 
 ## Code Style

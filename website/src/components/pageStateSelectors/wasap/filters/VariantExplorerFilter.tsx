@@ -1,6 +1,11 @@
 import { Inset } from '../../../../styles/Inset';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
-import type { WasapVariantFilter } from '../../../views/wasap/wasapPageConfig';
+import {
+    VARIANT_TIME_FRAME,
+    variantTimeFrameLabel,
+    type VariantTimeFrame,
+    type WasapVariantFilter,
+} from '../../../views/wasap/wasapPageConfig';
 import { SelectorHeadline } from '../../SelectorHeadline';
 import { DefineClinicalSignatureInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
@@ -70,6 +75,21 @@ export function VariantExplorerFilter({
                     step={0.01}
                     onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
                 />
+                <LabeledField label='Time frame'>
+                    <select
+                        className='select select-bordered'
+                        value={pageState.timeFrame}
+                        onChange={(e) => setPageState({ ...pageState, timeFrame: e.target.value as VariantTimeFrame })}
+                    >
+                        <option value={VARIANT_TIME_FRAME.all}>{variantTimeFrameLabel(VARIANT_TIME_FRAME.all)}</option>
+                        <option value={VARIANT_TIME_FRAME.sixMonths}>
+                            Past {variantTimeFrameLabel(VARIANT_TIME_FRAME.sixMonths)}
+                        </option>
+                        <option value={VARIANT_TIME_FRAME.threeMonths}>
+                            Past {variantTimeFrameLabel(VARIANT_TIME_FRAME.threeMonths)}
+                        </option>
+                    </select>
+                </LabeledField>
             </Inset>
         </>
     );

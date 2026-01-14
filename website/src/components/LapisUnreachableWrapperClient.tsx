@@ -2,14 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { type FC, type ReactNode } from 'react';
 
 import { checkLapisHealth } from '../lapis/checkLapisHealth';
-import { withQueryProvider } from './subscriptions/backendApi/withQueryProvider';
 
 type LapisUnreachableWrapperClientProps = {
     lapisUrl: string;
     children: ReactNode;
 };
 
-const LapisUnreachableWrapperClientInner: FC<LapisUnreachableWrapperClientProps> = ({ lapisUrl, children }) => {
+export const LapisUnreachableWrapperClient: FC<LapisUnreachableWrapperClientProps> = ({ lapisUrl, children }) => {
     const { data: isReachable, isLoading } = useQuery({
         queryKey: ['lapis-reachable', lapisUrl],
         queryFn: () => checkLapisHealth(lapisUrl),
@@ -37,7 +36,3 @@ const LapisUnreachableWrapperClientInner: FC<LapisUnreachableWrapperClientProps>
 
     return <>{children}</>;
 };
-
-const LapisUnreachableWrapperClient = withQueryProvider(LapisUnreachableWrapperClientInner);
-
-export default LapisUnreachableWrapperClient;

@@ -1,4 +1,4 @@
-import type { DateRangeOption, SequenceType } from '@genspectrum/dashboard-components/util';
+import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
 import type { ResistanceMutationSet } from './resistanceMutations';
 
@@ -71,11 +71,13 @@ type VariantAnalysisModeConfig =
           variantAnalysisModeEnabled: true;
           clinicalLapis: {
               lapisBaseUrl: string;
+              dateField: string;
               lineageField: string;
           };
           filterDefaults: {
               variant: WasapVariantFilter;
           };
+          clinicalSequenceCountWarningThreshold: number;
       };
 
 type ResistanceAnalysisModeConfig =
@@ -143,7 +145,7 @@ export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked
 export type WasapBaseFilter = {
     locationName?: string;
     samplingDate?: DateRangeOption;
-    granularity: string;
+    granularity: TemporalGranularity;
     excludeEmpty: boolean;
 };
 
@@ -157,6 +159,25 @@ export type WasapManualFilter = {
     mutations?: string[];
 };
 
+export const VARIANT_TIME_FRAME = {
+    all: 'all',
+    sixMonths: '6months',
+    threeMonths: '3months',
+} as const;
+
+export type VariantTimeFrame = (typeof VARIANT_TIME_FRAME)[keyof typeof VARIANT_TIME_FRAME];
+
+export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
+    switch (timeFrame) {
+        case VARIANT_TIME_FRAME.all:
+            return 'All';
+        case VARIANT_TIME_FRAME.sixMonths:
+            return '6 months';
+        case VARIANT_TIME_FRAME.threeMonths:
+            return '3 months';
+    }
+}
+
 export type WasapVariantFilter = {
     mode: 'variant';
     sequenceType: SequenceType;
@@ -164,6 +185,7 @@ export type WasapVariantFilter = {
     minProportion: number;
     minCount: number;
     minJaccard: number;
+    timeFrame: VariantTimeFrame;
 };
 
 export type WasapResistanceFilter = {

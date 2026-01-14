@@ -1,12 +1,13 @@
-import { type SequenceType } from '@genspectrum/dashboard-components/util';
+import { type SequenceType, type TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
 import { type PageStateHandler } from './PageStateHandler';
 import { parseDateRangesFromUrl, setSearchFromDateRange } from './dateFilterFromToUrl';
 import { parseTextFiltersFromUrl } from './textFilterFromToUrl';
-import { type BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
+import type { BaselineFilterConfig } from '../../components/pageStateSelectors/BaselineSelector';
 import {
     enabledAnalysisModes,
     type ExcludeSetName,
+    type VariantTimeFrame,
     type WasapAnalysisFilter,
     type WasapAnalysisMode,
     type WasapBaseFilter,
@@ -62,6 +63,9 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     minProportion: Number(texts.minProportion ?? this.config.filterDefaults.variant.minProportion),
                     minCount: Number(texts.minCount ?? this.config.filterDefaults.variant.minCount),
                     minJaccard: Number(texts.minJaccard ?? this.config.filterDefaults.variant.minJaccard),
+                    timeFrame:
+                        (texts.timeFrame as VariantTimeFrame | undefined) ??
+                        this.config.filterDefaults.variant.timeFrame,
                 };
                 break;
             case 'resistance':
@@ -92,7 +96,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const base: WasapBaseFilter = {
             locationName: texts.locationName ?? this.config.defaultLocationName,
             samplingDate: dateRanges.samplingDate,
-            granularity: texts.granularity ?? 'day',
+            granularity: (texts.granularity as TemporalGranularity | undefined) ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
 
@@ -126,6 +130,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 setSearchFromString(search, 'minProportion', String(analysis.minProportion));
                 setSearchFromString(search, 'minCount', String(analysis.minCount));
                 setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
+                setSearchFromString(search, 'timeFrame', analysis.timeFrame);
                 break;
             case 'resistance':
                 setSearchFromString(search, 'resistanceSet', analysis.resistanceSet);
@@ -194,6 +199,10 @@ function generateWasapFilterConfig(pageConfig: WasapPageConfig): BaselineFilterC
         {
             type: 'text',
             lapisField: 'minJaccard',
+        },
+        {
+            type: 'text',
+            lapisField: 'timeFrame',
         },
         {
             type: 'text',

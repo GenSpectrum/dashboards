@@ -1,72 +1,16 @@
 ---
-import { AnalyzeSingleVariantSelectorFallback } from '../../components/pageStateSelectors/FallbackElement';
-import { SelectorHeadline } from '../../components/pageStateSelectors/SelectorHeadline';
-import { SingleVariantPageStateSelector } from '../../components/pageStateSelectors/SingleVariantPageStateSelector';
-import { CollectionsList } from '../../components/views/analyzeSingleVariant/CollectionsList';
-import { CovidSingleVariantDataDisplay } from '../../components/views/analyzeSingleVariant/CovidSingleVariantDataDisplay';
-import { sanitizeForFilename } from '../../components/views/compareSideBySide/toDownloadLink';
+import { CovidSingleVariantReactPage } from '../../components/views/analyzeSingleVariant/CovidSingleVariantReactPage';
 import { isStaging, getDashboardsConfig } from '../../config';
-import SingleVariantOrganismPageLayout from '../../layouts/OrganismPage/SingleVariantOrganismPageLayout.astro';
-import { hasOnlyUndefinedValues } from '../../util/hasOnlyUndefinedValues';
-import { toDisplayName } from '../../views/pageStateHandlers/PageStateHandler';
-import { type OrganismViewKey } from '../../views/routing';
+import BaseLayout from '../../layouts/base/BaseLayout.astro';
 import { ServerSide } from '../../views/serverSideRouting';
 
-const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
-const view = ServerSide.routing.getOrganismView(organismViewKey);
-const pageState = view.pageStateHandler.parsePageStateFromUrl(Astro.url);
-
-const variantFilter = view.pageStateHandler.toLapisFilter(pageState);
-
-const noVariantSelected = hasOnlyUndefinedValues(pageState.variantFilter);
-
-const displayName = toDisplayName(pageState.variantFilter);
-const downloadLinks = noVariantSelected
-    ? [
-          {
-              label: 'Download all accessions',
-              filter: variantFilter,
-              downloadFileBasename: `${view.organismConstants.organism}_accessions`,
-          },
-      ]
-    : [
-          {
-              label: `Download accessions of ${displayName}`,
-              filter: variantFilter,
-              downloadFileBasename: `${view.organismConstants.organism}_${sanitizeForFilename(displayName)}_accessions`,
-          },
-      ];
-const organismConfig = getDashboardsConfig().dashboards.organisms;
+const view = ServerSide.routing.getOrganismView('covid.singleVariantView');
 ---
 
-<SingleVariantOrganismPageLayout view={view} downloadLinks={downloadLinks}>
-    <div slot='filters'>
-        <SingleVariantPageStateSelector
-            organismViewKey={organismViewKey}
-            organismsConfig={organismConfig}
-            initialPageState={pageState}
-            enableAdvancedQueryFilter={isStaging()}
-            client:only='react'
-        >
-            <AnalyzeSingleVariantSelectorFallback slot='fallback' />
-        </SingleVariantPageStateSelector>
-        <hr class='my-4 border-gray-200' />
-        <div class='mt-4'>
-            <SelectorHeadline>Collections</SelectorHeadline>
-            <CollectionsList
-                initialCollectionId={pageState.collectionId}
-                organismsConfig={organismConfig}
-                client:load
-            />
-        </div>
-    </div>
-
-    <div slot='dataDisplay'>
-        <CovidSingleVariantDataDisplay
-            organismViewKey={organismViewKey}
-            organismsConfig={organismConfig}
-            pageState={pageState}
-            client:load
-        />
-    </div>
-</SingleVariantOrganismPageLayout>
+<BaseLayout title={view.viewTitle}>
+    <CovidSingleVariantReactPage
+        organismsConfig={getDashboardsConfig().dashboards.organisms}
+        isStaging={isStaging()}
+        client:only='react'
+    />
+</BaseLayout>

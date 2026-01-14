@@ -13,7 +13,7 @@ jobs:
       with:
         node-version: lts/*
     - name: Cache .npm
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('lapis-e2e/**/package-lock.json') }}
@@ -57,10 +57,15 @@ jobs:
         WEBSITE_TAG: ${{ steps.branchTag.outputs.branchTag }}
         BACKEND_TAG: ${{ steps.branchTag.outputs.branchTag }}
 
-    - name: Run Playwright tests
+    - name: Run Playwright tests (all browsers)
+      if: github.ref == 'refs/heads/main'
       run: npm run e2e
 
-    - uses: actions/upload-artifact@v4
+    - name: Run Playwright tests (chromium only)
+      if: github.ref != 'refs/heads/main'
+      run: npm run e2e:chromium
+
+    - uses: actions/upload-artifact@v6
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
