@@ -37,8 +37,10 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
 
-    const { pageState, setPageState } = usePageState(pageStateHandler);
-    const { base, analysis } = pageState;
+    const {
+        pageState: { base, analysis },
+        setPageState,
+    } = usePageState(pageStateHandler);
 
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, analysis);

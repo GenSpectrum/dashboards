@@ -2,6 +2,13 @@ import { type Dispatch, type SetStateAction, useCallback, useMemo, useState } fr
 
 import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler.ts';
 
+/**
+ * Given a `PageStateHandler`, this hook initially parses the page state from the current URL.
+ * It returns a `pageState` object and a `setPageState` function.
+ * When the function is called,
+ * the new page state is turned into a URL and set as the current URL (added to the page history).
+ * This way, the URL and current page state are kept in sync.
+ */
 export function usePageState<StateHandler extends PageStateHandler<object>>(pageStateHandler: StateHandler) {
     type PageState = StateHandler extends PageStateHandler<infer PS> ? PS : never;
 
