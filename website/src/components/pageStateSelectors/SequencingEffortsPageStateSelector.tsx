@@ -1,33 +1,31 @@
-import { useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
 import { LineageFilterInput } from './LineageFilterInput.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
-import { type OrganismsConfig } from '../../config.ts';
 import { Inset } from '../../styles/Inset.tsx';
+import { GenericSequencingEffortsView } from '../../views/BaseView.ts';
+import type { OrganismConstants } from '../../views/OrganismConstants.ts';
 import type { DatasetAndVariantData } from '../../views/View.ts';
-import { type OrganismViewKey, Routing } from '../../views/routing.ts';
-import type { sequencingEffortsViewKey } from '../../views/viewKeys.ts';
 
 export function SequencingEffortsPageStateSelector({
-    organismViewKey,
-    organismsConfig,
-    initialPageState,
+    view,
+    pageState,
+    setPageState,
     enableAdvancedQueryFilter,
 }: {
-    organismViewKey: OrganismViewKey & `${string}.${typeof sequencingEffortsViewKey}`;
-    organismsConfig: OrganismsConfig;
-    initialPageState: DatasetAndVariantData;
+    view: GenericSequencingEffortsView<OrganismConstants>;
+    pageState: DatasetAndVariantData;
+    setPageState: Dispatch<SetStateAction<DatasetAndVariantData>>;
     enableAdvancedQueryFilter: boolean;
 }) {
-    const view = useMemo(() => new Routing(organismsConfig), [organismsConfig]).getOrganismView(organismViewKey);
-
-    const [pageState, setPageState] = useState(initialPageState);
+    const [draftPageState, setDraftPageState] = useState(pageState);
+    useEffect(() => setDraftPageState(pageState), [pageState]);
 
     const currentLapisFilter = useMemo(() => {
-        return view.pageStateHandler.toLapisFilter(pageState);
-    }, [pageState, view.pageStateHandler]);
+        return view.pageStateHandler.toLapisFilter(draftPageState);
+    }, [draftPageState, view.pageStateHandler]);
 
     return (
         <div className='flex flex-col gap-4'>
@@ -37,9 +35,9 @@ export function SequencingEffortsPageStateSelector({
                     <BaselineSelector
                         baselineFilterConfigs={view.organismConstants.baselineFilterConfigs}
                         lapisFilter={currentLapisFilter}
-                        datasetFilter={pageState.datasetFilter}
+                        datasetFilter={draftPageState.datasetFilter}
                         setDatasetFilter={(newDatasetFilter) => {
-                            setPageState((previousState) => ({
+                            setDraftPageState((previousState) => ({
                                 ...previousState,
                                 datasetFilter: newDatasetFilter,
                             }));
@@ -50,7 +48,7 @@ export function SequencingEffortsPageStateSelector({
                         <LineageFilterInput
                             lineageFilterConfig={lineageFilterConfig}
                             onLineageChange={(lineage) => {
-                                setPageState((previousState) => ({
+                                setDraftPageState((previousState) => ({
                                     ...previousState,
                                     variantFilter: {
                                         lineages: {
@@ -62,7 +60,7 @@ export function SequencingEffortsPageStateSelector({
                             }}
                             key={lineageFilterConfig.lapisField}
                             lapisFilter={currentLapisFilter}
-                            value={pageState.variantFilter.lineages?.[lineageFilterConfig.lapisField]}
+                            value={draftPageState.variantFilter.lineages?.[lineageFilterConfig.lapisField]}
                         />
                     ))}
                 </Inset>
@@ -71,7 +69,8 @@ export function SequencingEffortsPageStateSelector({
                 <ApplyFilterButton
                     className='w-full'
                     pageStateHandler={view.pageStateHandler}
-                    newPageState={pageState}
+                    newPageState={draftPageState}
+                    setPageState={setPageState}
                 />
             </div>
         </div>

@@ -6,6 +6,7 @@ import { SingleVariantOrganismPageLayout } from '../../../layouts/OrganismPage/S
 import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../../views/routing';
 import { sequencingEffortsViewKey } from '../../../views/viewKeys';
 import { SequencingEffortsPageStateSelector } from '../../pageStateSelectors/SequencingEffortsPageStateSelector';
+import { usePageState } from '../usePageState.ts';
 
 export type GenericSequencingEffortsReactPageProps = {
     organism: OrganismWithViewKey<typeof sequencingEffortsViewKey>;
@@ -24,7 +25,7 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
         [organismsConfig, organismViewKey],
     );
 
-    const pageState = view.pageStateHandler.parsePageStateFromUrl(new URL(window.location.href));
+    const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
     const lapisFilter = view.pageStateHandler.toLapisFilter(pageState);
 
@@ -43,9 +44,9 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
             organismsConfig={organismsConfig}
             filters={
                 <SequencingEffortsPageStateSelector
-                    organismViewKey={organismViewKey}
-                    organismsConfig={organismsConfig}
-                    initialPageState={pageState}
+                    view={view}
+                    pageState={pageState}
+                    setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
                 />
             }
