@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { z } from 'zod';
 
 import { getClientLogger } from '../clientLogger.ts';
+import setupDayjs from '../util/setupDayjs.ts';
 
 const lapisInfoSchema = z.object({
     dataVersion: z.string(),
@@ -10,6 +11,8 @@ const lapisInfoSchema = z.object({
 export type LapisInfo = z.infer<typeof lapisInfoSchema>;
 
 const logger = getClientLogger('getLastUpdatedDate');
+
+setupDayjs();
 
 export async function getLastUpdatedDate(lapisUrl: string) {
     try {
