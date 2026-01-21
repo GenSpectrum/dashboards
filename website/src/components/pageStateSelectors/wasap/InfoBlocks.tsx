@@ -75,10 +75,10 @@ export function DefineClinicalSignatureInfo() {
                 if it appears frequently within a variant and <span className='italic'>rarely</span> outside the
                 variant.
             </p>
-            <p className='text-gray-700'>
+            <div className='text-gray-700'>
                 <BlockMath math='Jaccard_{s,m} = \frac{|S_{m,v}|}{|S_m| + |S_v| - |S_{m,v}|}' />
                 with:
-            </p>
+            </div>
             <ul className='mt-2 list-disc pl-8 text-gray-700'>
                 <li>
                     {m('S_m')}: The set of sequences with the mutation {m('m')}
