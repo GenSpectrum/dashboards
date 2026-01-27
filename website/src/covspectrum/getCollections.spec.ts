@@ -17,17 +17,26 @@ describe('getCollections', () => {
             {
                 id: 3,
                 title: 'Third Collection',
-                variants: [{ name: 'Variant C', query: '{}', description: 'Description C' }],
+                description: 'Third collection description',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [{ query: '{}', name: 'Variant C', description: 'Description C', highlighted: false }],
             },
             {
                 id: 1,
                 title: 'First Collection',
-                variants: [{ name: 'Variant A', query: '{}', description: 'Description A' }],
+                description: 'First collection description',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [{ query: '{}', name: 'Variant A', description: 'Description A', highlighted: false }],
             },
             {
                 id: 2,
                 title: 'Second Collection',
-                variants: [{ name: 'Variant B', query: '{}', description: 'Description B' }],
+                description: 'Second collection description',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [{ query: '{}', name: 'Variant B', description: 'Description B', highlighted: false }],
             },
         ];
 
@@ -72,6 +81,9 @@ describe('getCollections', () => {
             {
                 id: 'not-a-number', // Invalid: should be number
                 title: 'Collection',
+                description: 'Description',
+                maintainers: 'Maintainer',
+                email: 'email@example.com',
                 variants: [],
             },
         ];
@@ -106,16 +118,21 @@ describe('getCollections', () => {
             {
                 id: 1,
                 title: 'Test Collection',
+                description: 'A test collection',
+                maintainers: 'Test Team',
+                email: 'test@example.com',
                 variants: [
                     {
-                        name: 'BA.1',
                         query: '{"pangoLineage":"BA.1"}',
+                        name: 'BA.1',
                         description: 'Omicron BA.1',
+                        highlighted: true,
                     },
                     {
-                        name: 'BA.2',
                         query: '{"pangoLineage":"BA.2"}',
+                        name: 'BA.2',
                         description: 'Omicron BA.2',
+                        highlighted: false,
                     },
                 ],
             },
