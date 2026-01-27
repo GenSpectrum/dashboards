@@ -1,0 +1,55 @@
+import axios from 'axios';
+import { z } from 'zod';
+
+import { getClientLogger } from '../clientLogger.ts';
+
+const collectionVariantSchema = z.object({
+    name: z.string(),
+    query: z.string(),
+    description: z.string(),
+});
+
+const collectionSchema = z.object({
+    id: z.number(),
+    title: z.string(),
+    variants: z.array(collectionVariantSchema),
+});
+
+const collectionsResponseSchema = z.array(collectionSchema);
+
+export type CollectionVariant = z.infer<typeof collectionVariantSchema>;
+export type Collection = z.infer<typeof collectionSchema>;
+
+const logger = getClientLogger('getCollections');
+
+/**
+ * Fetches the list of variant collections from the CoV-Spectrum API.
+ * Collections are returned sorted by ID in ascending order.
+ *
+ * @param covSpectrumApiBaseUrl The base URL of the CoV-Spectrum API (e.g., 'https://cov-spectrum.org/api/v2')
+ * @returns A promise that resolves to an array of Collection objects
+ * @throws Error if the request fails or response validation fails
+ */
+export async function getCollections(covSpectrumApiBaseUrl: string): Promise<Collection[]> {
+    const url = `${covSpectrumApiBaseUrl}/resource/collection`;
+
+    let response;
+    try {
+        response = await axios.get(url);
+    } catch (error) {
+        const message = `Failed to fetch collections: ${JSON.stringify(error)}`;
+        logger.error(message);
+        throw new Error(message);
+    }
+
+    const parsedResponse = collectionsResponseSchema.safeParse(response.data);
+    if (parsedResponse.success) {
+        // Sort by ID to ensure consistent ordering
+        const sorted = parsedResponse.data.sort((c1, c2) => c1.id - c2.id);
+        return sorted;
+    }
+
+    const message = `Failed to parse collections response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
+    logger.error(message);
+    throw new Error(message);
+}
