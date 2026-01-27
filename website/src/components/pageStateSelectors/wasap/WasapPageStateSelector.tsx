@@ -5,6 +5,7 @@ import { ApplyFilterButton } from '../ApplyFilterButton';
 import { DynamicDateFilter } from '../DynamicDateFilter';
 import { SelectorHeadline } from '../SelectorHeadline';
 import { ExplorationModeInfo } from './InfoBlocks';
+import { CollectionAnalysisFilter } from './filters/CollectionAnalysisFilter';
 import { ManualAnalysisFilter } from './filters/ManualAnalysisFilter';
 import { ResistanceMutationsFilter } from './filters/ResistanceMutationsFilter';
 import { UntrackedFilter } from './filters/UntrackedFilter';
@@ -54,6 +55,8 @@ export function WasapPageStateSelector({
         setResistanceFilter,
         untrackedFilter,
         setUntrackedFilter,
+        collectionFilter,
+        setCollectionFilter,
     } = useAnalysisFilterStates(initialAnalysisFilterState, config);
 
     const [selectedAnalysisMode, setSelectedAnalysisMode] = useState(initialAnalysisFilterState.mode);
@@ -71,6 +74,8 @@ export function WasapPageStateSelector({
                 return { base: baseFilterState, analysis: resistanceFilter! };
             case 'untracked':
                 return { base: baseFilterState, analysis: untrackedFilter! };
+            case 'collection':
+                return { base: baseFilterState, analysis: collectionFilter! };
         }
         /* eslint-enable  @typescript-eslint/no-non-null-assertion */
     }
@@ -200,6 +205,17 @@ export function WasapPageStateSelector({
                                     cladeLineageQueryResult={cladeLineageQueryResult}
                                 />
                             );
+                        case 'collection':
+                            if (!config.collectionAnalysisModeEnabled || collectionFilter === undefined) {
+                                throw Error("'collection' mode selected, but it isn't enabled.");
+                            }
+                            return (
+                                <CollectionAnalysisFilter
+                                    pageState={collectionFilter}
+                                    setPageState={setCollectionFilter}
+                                    collectionsApiBaseUrl={config.collectionsApiBaseUrl}
+                                />
+                            );
                     }
                 })()}
             </Inset>
@@ -222,6 +238,8 @@ function modeLabel(mode: WasapAnalysisMode): string {
             return 'Variant Explorer';
         case 'untracked':
             return 'Untracked Mutations';
+        case 'collection':
+            return 'Collection';
     }
 }
 
@@ -259,6 +277,13 @@ function useAnalysisFilterStates(initialFilter: WasapAnalysisFilter, config: Was
               ? config.filterDefaults.untracked
               : undefined,
     );
+    const [collectionFilter, setCollectionFilter] = useState(
+        initialFilter.mode === 'collection'
+            ? initialFilter
+            : config.collectionAnalysisModeEnabled
+              ? config.filterDefaults.collection
+              : undefined,
+    );
 
     return {
         manualFilter,
@@ -269,5 +294,7 @@ function useAnalysisFilterStates(initialFilter: WasapAnalysisFilter, config: Was
         setResistanceFilter,
         untrackedFilter,
         setUntrackedFilter,
+        collectionFilter,
+        setCollectionFilter,
     };
 }

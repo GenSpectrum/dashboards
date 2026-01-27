@@ -44,8 +44,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
 
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, analysis);
-    const displayMutations = data?.displayMutations;
-    const customColumns = data?.customColumns;
 
     let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {
@@ -100,39 +98,61 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                         />
                     </div>
                     {isError ? (
-                        <span>There was an error fetching the mutations to display.</span>
+                        <span>There was an error fetching the data to display.</span>
                     ) : isPending ? (
                         <Loading />
-                    ) : (
+                    ) : data ? (
                         <div className='h-full space-y-4 pr-4'>
-                            {displayMutations?.length === 0 ? (
-                                <NoDataHelperText analysisFilter={analysis} />
+                            {data.type === 'mutations' ? (
+                                <>
+                                    {data.displayMutations?.length === 0 ? (
+                                        <NoDataHelperText analysisFilter={analysis} />
+                                    ) : (
+                                        <GsMutationsOverTime
+                                            lapisFilter={lapisFilter}
+                                            granularity={base.granularity as 'day' | 'week'}
+                                            lapisDateField={config.samplingDateField}
+                                            sequenceType={'sequenceType' in analysis ? analysis.sequenceType : 'nucleotide'}
+                                            displayMutations={data.displayMutations}
+                                            pageSizes={[20, 50, 100, 250]}
+                                            useNewEndpoint={true}
+                                            initialMeanProportionInterval={initialMeanProportionInterval}
+                                            hideGaps={base.excludeEmpty ? true : undefined}
+                                            customColumns={data.customColumns}
+                                        />
+                                    )}
+                                    {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
+                                        <VariantFetchInfo
+                                            analysis={analysis}
+                                            clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                            clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                            clinicalLapisDateField={config.clinicalLapis.dateField}
+                                            warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                        />
+                                    )}
+                                    <WasapStats config={config} />
+                                </>
                             ) : (
-                                <GsMutationsOverTime
-                                    lapisFilter={lapisFilter}
-                                    granularity={base.granularity as 'day' | 'week'}
-                                    lapisDateField={config.samplingDateField}
-                                    sequenceType={analysis.sequenceType}
-                                    displayMutations={displayMutations}
-                                    pageSizes={[20, 50, 100, 250]}
-                                    useNewEndpoint={true}
-                                    initialMeanProportionInterval={initialMeanProportionInterval}
-                                    hideGaps={base.excludeEmpty ? true : undefined}
-                                    customColumns={customColumns}
-                                />
+                                <div className='rounded-md border-2 border-gray-100 p-4'>
+                                    <h2 className='mb-4 text-xl font-bold'>
+                                        Collection: {data.collection.title}
+                                    </h2>
+                                    <p className='mb-4 text-gray-600'>
+                                        Collection display is not yet implemented. This collection contains{' '}
+                                        {data.collection.variants.length} variant{data.collection.variants.length !== 1 ? 's' : ''}.
+                                    </p>
+                                    <div className='space-y-2'>
+                                        {data.collection.variants.map((variant, idx) => (
+                                            <div key={idx} className='rounded border p-3'>
+                                                <div className='font-semibold'>{variant.name}</div>
+                                                <pre className='mt-1 overflow-x-auto text-xs text-gray-500'>{variant.query}</pre>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             )}
-                            {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
-                                <VariantFetchInfo
-                                    analysis={analysis}
-                                    clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
-                                    clinicalLapisLineageField={config.clinicalLapis.lineageField}
-                                    clinicalLapisDateField={config.clinicalLapis.dateField}
-                                    warningThreshold={config.clinicalSequenceCountWarningThreshold}
-                                />
-                            )}
-                            <WasapStats config={config} />
                         </div>
-                    )}
+                    ) : null}
                 </div>
             </gs-app>
         </DataPageLayout>

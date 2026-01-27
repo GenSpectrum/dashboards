@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import type { VariantTimeFrame, WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
+import { getCollection } from '../../../covspectrum/getCollection';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 
@@ -32,7 +33,19 @@ type SelectedWithJaccard = {
     mutationsWithScore: { mutation: string; jaccardIndex: number }[];
 };
 
-type MutationSelection = AllMutations | SelectedMutations | SelectedWithJaccard;
+type CollectionData = {
+    type: 'collectionData';
+    collection: {
+        id: number;
+        title: string;
+        variants: {
+            name: string;
+            query: string;
+        }[];
+    };
+};
+
+type MutationSelection = AllMutations | SelectedMutations | SelectedWithJaccard | CollectionData;
 
 async function fetchMutationSelection(
     config: WasapPageConfig,
@@ -108,6 +121,26 @@ async function fetchMutationSelection(
                 mutations: allMuts.filter((m) => !excludeMutations.includes(m)),
             };
         }
+        case 'collection': {
+            if (!config.collectionAnalysisModeEnabled) {
+                throw Error("Cannot fetch data, 'collection' mode is not enabled.");
+            }
+            if (!analysis.collectionId) {
+                throw Error('No collection selected');
+            }
+            const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
+            return {
+                type: 'collectionData',
+                collection: {
+                    id: collection.id,
+                    title: collection.title,
+                    variants: collection.variants.map((v) => ({
+                        name: v.name,
+                        query: v.query,
+                    })),
+                },
+            };
+        }
     }
 }
 
@@ -132,15 +165,36 @@ export function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFiel
 }
 
 /**
- * The W-ASAP page data consists of the mutations to display in the mutations-over-time component,
+ * The W-ASAP page data can be either mutations data or collection data.
+ */
+export type WasapPageData = WasapMutationsData | WasapCollectionData;
+
+/**
+ * Mutations data consists of the mutations to display in the mutations-over-time component,
  * and the additional custom columns that might optionally be displayed.
  *
  * If displayMutations is undefined, that means that all mutations should be displayed
  * (That is the default behaviour of the mutations-over-time component).
  */
-type WasapPageData = {
+export type WasapMutationsData = {
+    type: 'mutations';
     displayMutations?: string[];
     customColumns?: CustomColumn[];
+};
+
+/**
+ * Collection data consists of a collection with its variants.
+ */
+export type WasapCollectionData = {
+    type: 'collection';
+    collection: {
+        id: number;
+        title: string;
+        variants: {
+            name: string;
+            query: string;
+        }[];
+    };
 };
 
 /**
@@ -148,16 +202,17 @@ type WasapPageData = {
  */
 function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection | undefined): WasapPageData {
     if (mutationSelection === undefined) {
-        return {};
+        return { type: 'mutations' };
     }
 
     switch (mutationSelection.type) {
         case 'all':
-            return {};
+            return { type: 'mutations' };
         case 'selected':
-            return { displayMutations: mutationSelection.mutations };
+            return { type: 'mutations', displayMutations: mutationSelection.mutations };
         case 'jaccard':
             return {
+                type: 'mutations',
                 displayMutations: mutationSelection.mutationsWithScore.map(({ mutation }) => mutation),
                 customColumns: [
                     {
@@ -170,6 +225,11 @@ function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection
                         ),
                     },
                 ],
+            };
+        case 'collectionData':
+            return {
+                type: 'collection',
+                collection: mutationSelection.collection,
             };
     }
 }
