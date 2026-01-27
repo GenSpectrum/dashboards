@@ -1,24 +1,7 @@
 import axios from 'axios';
-import { z } from 'zod';
 
 import { getClientLogger } from '../clientLogger.ts';
-
-const collectionVariantSchema = z.object({
-    name: z.string(),
-    query: z.string(),
-    description: z.string(),
-});
-
-const collectionSchema = z.object({
-    id: z.number(),
-    title: z.string(),
-    variants: z.array(collectionVariantSchema),
-});
-
-const collectionsResponseSchema = z.array(collectionSchema);
-
-export type CollectionVariant = z.infer<typeof collectionVariantSchema>;
-export type Collection = z.infer<typeof collectionSchema>;
+import { collectionsResponseSchema, type Collection } from './types.ts';
 
 const logger = getClientLogger('getCollections');
 

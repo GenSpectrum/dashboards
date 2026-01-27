@@ -1,7 +1,8 @@
 import { http } from 'msw';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { getCollections, type Collection } from './getCollections.ts';
+import { getCollections } from './getCollections.ts';
+import { type Collection } from './types.ts';
 import { astroApiRouteMocker, testServer } from '../../vitest.setup.ts';
 
 const DUMMY_COV_SPECTRUM_URL = 'http://cov-spectrum.dummy/api/v2';

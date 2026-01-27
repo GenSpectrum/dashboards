@@ -3,7 +3,8 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { z } from 'zod';
 
 import { getClientLogger } from '../../../clientLogger.ts';
-import { getCollections, type Collection, type CollectionVariant } from '../../../covspectrum/getCollections.ts';
+import { getCollections } from '../../../covspectrum/getCollections.ts';
+import { type Collection, type CollectionVariant } from '../../../covspectrum/types.ts';
 import { type CovidVariantData } from '../../../views/covid.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 
