@@ -27,6 +27,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         variantAnalysisModeEnabled: true,
         resistanceAnalysisModeEnabled: true,
         untrackedAnalysisModeEnabled: true,
+        collectionAnalysisModeEnabled: true,
         resistanceMutationSets: covidResistanceMutations,
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
         samplingDateField: 'samplingDate',
@@ -39,6 +40,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+        collectionsApiBaseUrl: 'https://cov-spectrum.org/api/v2',
         defaultLocationName: 'Zürich (ZH)',
         clinicalSequenceCountWarningThreshold: 50,
         filterDefaults: {
@@ -65,6 +67,10 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 mode: 'untracked',
                 sequenceType: 'nucleotide',
                 excludeSet: 'predefined',
+            },
+            collection: {
+                mode: 'collection',
+                collectionId: 1,
             },
         },
     },

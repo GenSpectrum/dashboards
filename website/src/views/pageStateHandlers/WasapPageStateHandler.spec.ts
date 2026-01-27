@@ -147,7 +147,9 @@ describe('WasapPageStateHandler', () => {
             expect(filter.base.locationName).toBe('Zürich (ZH)');
             expect(filter.base.granularity).toBe('day');
             expect(filter.analysis.mode).toBe('manual');
-            expect(filter.analysis.sequenceType).toBe('nucleotide');
+            if (filter.analysis.mode === 'manual') {
+                expect(filter.analysis.sequenceType).toBe('nucleotide');
+            }
 
             const newUrl = handler.toUrl(filter);
             expect(newUrl).toBe(url);
