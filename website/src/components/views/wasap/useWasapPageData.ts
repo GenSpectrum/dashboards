@@ -14,134 +14,159 @@ import { getMutations, getMutationsForVariant } from '../../../lapis/getMutation
 export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
     return useQuery({
         queryKey: ['wasap', analysis],
-        queryFn: () =>
-            fetchMutationSelection(config, analysis).then((data) => wasapPageDataFromMutationSelection(data)),
+        queryFn: () => fetchWasapPageData(config, analysis),
     });
 }
 
-type AllMutations = {
-    type: 'all';
-};
-
-type SelectedMutations = {
-    type: 'selected';
-    mutations: string[];
-};
-
-type SelectedWithJaccard = {
-    type: 'jaccard';
-    mutationsWithScore: { mutation: string; jaccardIndex: number }[];
-};
-
-type CollectionData = {
-    type: 'collectionData';
-    collection: {
-        id: number;
-        title: string;
-        variants: {
-            name: string;
-            query: string;
-        }[];
-    };
-};
-
-type MutationSelection = AllMutations | SelectedMutations | SelectedWithJaccard | CollectionData;
-
-async function fetchMutationSelection(
-    config: WasapPageConfig,
-    analysis: WasapAnalysisFilter,
-): Promise<MutationSelection> {
+async function fetchWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter): Promise<WasapPageData> {
     switch (analysis.mode) {
         case 'manual':
-            if (!config.manualAnalysisModeEnabled) {
-                throw Error("Cannot fetch data, 'manual' mode is not enabled.");
-            }
-            return analysis.mutations ? { type: 'selected', mutations: analysis.mutations } : { type: 'all' };
+            return fetchManualModeData(config, analysis);
         case 'variant':
-            if (!config.variantAnalysisModeEnabled) {
-                throw Error("Cannot fetch data, 'variant' mode is not enabled.");
-            }
-            if (!analysis.variant) {
-                return { type: 'selected', mutations: [] };
-            }
-            return getMutationsForVariant(
-                config.clinicalLapis.lapisBaseUrl,
-                analysis.sequenceType,
-                {
-                    [config.clinicalLapis.lineageField]: analysis.variant,
-                },
-                analysis.minProportion,
-                analysis.minCount,
-                analysis.minJaccard,
-                getLapisFilterForTimeFrame(analysis.timeFrame, config.clinicalLapis.dateField),
-            ).then((r) => ({ type: 'jaccard', mutationsWithScore: r }));
+            return fetchVariantModeData(config, analysis);
         case 'resistance':
-            if (!config.resistanceAnalysisModeEnabled) {
-                throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
-            }
-            return {
-                type: 'selected',
-                mutations:
-                    config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
-            };
-        case 'untracked': {
-            if (!config.untrackedAnalysisModeEnabled) {
-                throw Error("Cannot fetch data, 'untracked' mode is not enabled.");
-            }
-            const variantsToExclude =
-                analysis.excludeSet === 'custom'
-                    ? analysis.excludeVariants
-                    : await getCladeLineages(
-                          config.clinicalLapis.lapisBaseUrl,
-                          config.clinicalLapis.cladeField,
-                          config.clinicalLapis.lineageField,
-                          true,
-                      ).then((r) => Object.values(r));
-            if (variantsToExclude === undefined) {
-                return { type: 'selected', mutations: [] };
-            }
-            const [excludeMutations, allMuts] = await Promise.all([
-                Promise.all(
-                    variantsToExclude.map((variant) =>
-                        getMutations(
-                            config.clinicalLapis.lapisBaseUrl,
-                            analysis.sequenceType,
-                            {
-                                [config.clinicalLapis.lineageField]: variant,
-                            },
-                            0.8,
-                            9,
-                        ),
-                    ),
-                ).then((r) => r.flat()),
-                getMutations(config.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
-            ]);
-            return {
-                type: 'selected',
-                mutations: allMuts.filter((m) => !excludeMutations.includes(m)),
-            };
-        }
-        case 'collection': {
-            if (!config.collectionAnalysisModeEnabled) {
-                throw Error("Cannot fetch data, 'collection' mode is not enabled.");
-            }
-            if (!analysis.collectionId) {
-                throw Error('No collection selected');
-            }
-            const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
-            return {
-                type: 'collectionData',
-                collection: {
-                    id: collection.id,
-                    title: collection.title,
-                    variants: collection.variants.map((v) => ({
-                        name: v.name,
-                        query: v.query,
-                    })),
-                },
-            };
-        }
+            return fetchResistanceModeData(config, analysis);
+        case 'untracked':
+            return fetchUntrackedModeData(config, analysis);
+        case 'collection':
+            return fetchCollectionModeData(config, analysis);
     }
+}
+
+function fetchManualModeData(config: WasapPageConfig, analysis: WasapAnalysisFilter): WasapMutationsData {
+    if (!config.manualAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'manual' mode is not enabled.");
+    }
+    if (analysis.mode !== 'manual') {
+        throw Error('Invalid analysis mode');
+    }
+    return {
+        type: 'mutations',
+        displayMutations: analysis.mutations,
+    };
+}
+
+async function fetchVariantModeData(
+    config: WasapPageConfig,
+    analysis: WasapAnalysisFilter,
+): Promise<WasapMutationsData> {
+    if (!config.variantAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+    }
+    if (analysis.mode !== 'variant') {
+        throw Error('Invalid analysis mode');
+    }
+    if (!analysis.variant) {
+        return { type: 'mutations', displayMutations: [] };
+    }
+    const mutationsWithScore = await getMutationsForVariant(
+        config.clinicalLapis.lapisBaseUrl,
+        analysis.sequenceType,
+        {
+            [config.clinicalLapis.lineageField]: analysis.variant,
+        },
+        analysis.minProportion,
+        analysis.minCount,
+        analysis.minJaccard,
+        getLapisFilterForTimeFrame(analysis.timeFrame, config.clinicalLapis.dateField),
+    );
+    return {
+        type: 'mutations',
+        displayMutations: mutationsWithScore.map(({ mutation }) => mutation),
+        customColumns: [
+            {
+                header: 'Jaccard index',
+                values: Object.fromEntries(
+                    mutationsWithScore.map(({ mutation, jaccardIndex }) => [mutation, jaccardIndex.toPrecision(2)]),
+                ),
+            },
+        ],
+    };
+}
+
+function fetchResistanceModeData(config: WasapPageConfig, analysis: WasapAnalysisFilter): WasapMutationsData {
+    if (!config.resistanceAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
+    }
+    if (analysis.mode !== 'resistance') {
+        throw Error('Invalid analysis mode');
+    }
+    return {
+        type: 'mutations',
+        displayMutations:
+            config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
+    };
+}
+
+async function fetchUntrackedModeData(
+    config: WasapPageConfig,
+    analysis: WasapAnalysisFilter,
+): Promise<WasapMutationsData> {
+    if (!config.untrackedAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'untracked' mode is not enabled.");
+    }
+    if (analysis.mode !== 'untracked') {
+        throw Error('Invalid analysis mode');
+    }
+    const variantsToExclude =
+        analysis.excludeSet === 'custom'
+            ? analysis.excludeVariants
+            : await getCladeLineages(
+                  config.clinicalLapis.lapisBaseUrl,
+                  config.clinicalLapis.cladeField,
+                  config.clinicalLapis.lineageField,
+                  true,
+              ).then((r) => Object.values(r));
+    if (variantsToExclude === undefined) {
+        return { type: 'mutations', displayMutations: [] };
+    }
+    const [excludeMutations, allMuts] = await Promise.all([
+        Promise.all(
+            variantsToExclude.map((variant) =>
+                getMutations(
+                    config.clinicalLapis.lapisBaseUrl,
+                    analysis.sequenceType,
+                    {
+                        [config.clinicalLapis.lineageField]: variant,
+                    },
+                    0.8,
+                    9,
+                ),
+            ),
+        ).then((r) => r.flat()),
+        getMutations(config.lapisBaseUrl, analysis.sequenceType, undefined, 0.05, 5),
+    ]);
+    return {
+        type: 'mutations',
+        displayMutations: allMuts.filter((m) => !excludeMutations.includes(m)),
+    };
+}
+
+async function fetchCollectionModeData(
+    config: WasapPageConfig,
+    analysis: WasapAnalysisFilter,
+): Promise<WasapCollectionData> {
+    if (!config.collectionAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'collection' mode is not enabled.");
+    }
+    if (analysis.mode !== 'collection') {
+        throw Error('Invalid analysis mode');
+    }
+    if (!analysis.collectionId) {
+        throw Error('No collection selected');
+    }
+    const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
+    return {
+        type: 'collection',
+        collection: {
+            id: collection.id,
+            title: collection.title,
+            variants: collection.variants.map((v) => ({
+                name: v.name,
+                query: v.query,
+            })),
+        },
+    };
 }
 
 export function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
@@ -196,40 +221,3 @@ export type WasapCollectionData = {
         }[];
     };
 };
-
-/**
- * Turns the internal `MutationSelection` into the easier-to-work-with `WasapPageData`.
- */
-function wasapPageDataFromMutationSelection(mutationSelection: MutationSelection | undefined): WasapPageData {
-    if (mutationSelection === undefined) {
-        return { type: 'mutations' };
-    }
-
-    switch (mutationSelection.type) {
-        case 'all':
-            return { type: 'mutations' };
-        case 'selected':
-            return { type: 'mutations', displayMutations: mutationSelection.mutations };
-        case 'jaccard':
-            return {
-                type: 'mutations',
-                displayMutations: mutationSelection.mutationsWithScore.map(({ mutation }) => mutation),
-                customColumns: [
-                    {
-                        header: 'Jaccard index',
-                        values: Object.fromEntries(
-                            mutationSelection.mutationsWithScore.map(({ mutation, jaccardIndex }) => [
-                                mutation,
-                                jaccardIndex.toPrecision(2),
-                            ]),
-                        ),
-                    },
-                ],
-            };
-        case 'collectionData':
-            return {
-                type: 'collection',
-                collection: mutationSelection.collection,
-            };
-    }
-}
