@@ -98,7 +98,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
-            /** Not enabled yet: https://github.com/GenSpectrum/dashboards/issues/948
             {
                 label: 'RSV-A (interactive)',
                 iconType: 'table',
@@ -107,7 +106,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
-            */
             {
                 label: 'Browse RSV & Influenza data',
                 iconType: 'database',
@@ -124,7 +122,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },
-            /** Not enabled yet: https://github.com/GenSpectrum/dashboards/issues/948
             {
                 label: 'Browse RSV-A data',
                 iconType: 'database',
@@ -133,7 +130,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },
-            */
         ],
         href: `/${wastewaterPathFragment}`,
     };
