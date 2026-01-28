@@ -3,22 +3,12 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { z } from 'zod';
 
 import { getClientLogger } from '../../../clientLogger.ts';
+import { getCollections } from '../../../covspectrum/getCollections.ts';
+import { type Collection, type CollectionVariant } from '../../../covspectrum/types.ts';
 import { type CovidVariantData } from '../../../views/covid.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 
 export const collectionVariantClassName = 'border bg-white px-4 py-2 hover:bg-cyan border-gray-200 cursor-pointer';
-
-type CollectionVariant = {
-    name: string;
-    query: string;
-    description: string;
-};
-
-type Collection = {
-    id: number;
-    title: string;
-    variants: CollectionVariant[];
-};
 
 type CollectionsListProps = {
     initialCollectionId?: number;
@@ -29,14 +19,10 @@ type CollectionsListProps = {
 export function CollectionsList({ initialCollectionId, pageState, setPageState }: CollectionsListProps) {
     const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId ?? 1);
 
+    const covSpectrumApiBaseUrl = 'https://cov-spectrum.org/api/v2';
     const query = useQuery({
-        queryKey: [],
-        queryFn: async () => {
-            const response = await fetch('https://cov-spectrum.org/api/v2/resource/collection');
-            const collections = (await response.json()) as Collection[];
-            collections.sort((c1, c2) => c1.id - c2.id);
-            return collections;
-        },
+        queryKey: ['collections', covSpectrumApiBaseUrl],
+        queryFn: async () => getCollections(covSpectrumApiBaseUrl),
     });
 
     if (!query.data) {
