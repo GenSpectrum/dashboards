@@ -6,7 +6,7 @@ import { usePageState } from './usePageState';
 import { it } from '../../../test-extend';
 
 describe('usePageState', () => {
-    it('should update pageState when URL changes via browser navigation', async () => {
+    it('should update pageState when URL changes via browser navigation', () => {
         window.history.pushState({}, '', '/?value=initial');
 
         const mockPageStateHandler = {
