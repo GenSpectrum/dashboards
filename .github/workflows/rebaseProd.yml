@@ -30,5 +30,5 @@ jobs:
             ### Make sure to merge this creating a merge commit.
             **Do not squash-merge** this PR. **Do not rebase and merge**."
         
-            gh pr create --base prod --head main --title "Update prod from main" --body "$body"
+            gh pr create --base prod --head main --title "chore: update prod from main" --body "$body"
           fi
