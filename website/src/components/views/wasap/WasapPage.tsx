@@ -101,7 +101,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                         <span>There was an error fetching the data to display.</span>
                     ) : isPending ? (
                         <Loading />
-                    ) : data ? (
+                    ) : (
                         <div className='h-full space-y-4 pr-4'>
                             {data.type === 'mutations' ? (
                                 <>
@@ -112,7 +112,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                                             lapisFilter={lapisFilter}
                                             granularity={base.granularity as 'day' | 'week'}
                                             lapisDateField={config.samplingDateField}
-                                            sequenceType={'sequenceType' in analysis ? analysis.sequenceType : 'nucleotide'}
+                                            sequenceType={
+                                                'sequenceType' in analysis ? analysis.sequenceType : 'nucleotide'
+                                            }
                                             displayMutations={data.displayMutations}
                                             pageSizes={[20, 50, 100, 250]}
                                             useNewEndpoint={true}
@@ -134,25 +136,26 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                                 </>
                             ) : (
                                 <div className='rounded-md border-2 border-gray-100 p-4'>
-                                    <h2 className='mb-4 text-xl font-bold'>
-                                        Collection: {data.collection.title}
-                                    </h2>
+                                    <h2 className='mb-4 text-xl font-bold'>Collection: {data.collection.title}</h2>
                                     <p className='mb-4 text-gray-600'>
                                         Collection display is not yet implemented. This collection contains{' '}
-                                        {data.collection.variants.length} variant{data.collection.variants.length !== 1 ? 's' : ''}.
+                                        {data.collection.variants.length} variant
+                                        {data.collection.variants.length !== 1 ? 's' : ''}.
                                     </p>
                                     <div className='space-y-2'>
                                         {data.collection.variants.map((variant, idx) => (
                                             <div key={idx} className='rounded border p-3'>
                                                 <div className='font-semibold'>{variant.name}</div>
-                                                <pre className='mt-1 overflow-x-auto text-xs text-gray-500'>{variant.query}</pre>
+                                                <pre className='mt-1 overflow-x-auto text-xs text-gray-500'>
+                                                    {variant.query}
+                                                </pre>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
                         </div>
-                    ) : null}
+                    )}
                 </div>
             </gs-app>
         </DataPageLayout>
