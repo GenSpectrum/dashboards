@@ -13,7 +13,11 @@ export function CollectionAnalysisFilter({
     setPageState: (newState: WasapCollectionFilter) => void;
     collectionsApiBaseUrl: string;
 }) {
-    const { data: collections, isPending, isError } = useQuery({
+    const {
+        data: collections,
+        isPending,
+        isError,
+    } = useQuery({
         queryKey: ['collections', collectionsApiBaseUrl],
         queryFn: () => getCollections(collectionsApiBaseUrl),
     });
@@ -23,7 +27,7 @@ export function CollectionAnalysisFilter({
             {isPending ? (
                 <div className='text-sm text-gray-500'>Loading collections...</div>
             ) : isError ? (
-                <div className='text-sm text-error'>Error loading collections</div>
+                <div className='text-error text-sm'>Error loading collections</div>
             ) : (
                 <select
                     className='select select-bordered'
@@ -36,7 +40,7 @@ export function CollectionAnalysisFilter({
                     }
                 >
                     <option value=''>Select a collection...</option>
-                    {collections?.map((collection) => (
+                    {collections.map((collection) => (
                         <option key={collection.id} value={collection.id}>
                             #{collection.id} {collection.title}
                         </option>
