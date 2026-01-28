@@ -12,7 +12,7 @@ dashboards:
     h5n1:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h5n1"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -24,7 +24,7 @@ dashboards:
     h1n1pdm:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h1n1pdm"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -36,7 +36,7 @@ dashboards:
     h3n2:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h3n2"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -48,7 +48,7 @@ dashboards:
     influenzaA:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-a"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -60,7 +60,7 @@ dashboards:
     influenzaB:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-b"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -72,7 +72,7 @@ dashboards:
     victoria:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/b-victoria"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "country"
           - "division"
@@ -173,7 +173,7 @@ dashboards:
     denv1:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/denv1"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "country"
           - "division"
@@ -190,7 +190,7 @@ dashboards:
     denv2:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/denv2"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "country"
           - "division"
@@ -207,7 +207,7 @@ dashboards:
     denv3:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/denv3"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "country"
           - "division"
@@ -224,7 +224,7 @@ dashboards:
     denv4:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/denv4"
-        mainDateField: "sampleCollectionDate"
+        mainDateField: "sampleCollectionDateRangeLower"
         locationFields:
           - "country"
           - "division"
