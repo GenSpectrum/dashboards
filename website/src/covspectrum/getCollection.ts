@@ -1,0 +1,36 @@
+import axios from 'axios';
+
+import { getClientLogger } from '../clientLogger.ts';
+import { collectionSchema, type Collection } from './types.ts';
+
+const logger = getClientLogger('getCollection');
+
+/**
+ * Fetches a single variant collection by ID from the CoV-Spectrum API.
+ *
+ * @param covSpectrumApiBaseUrl The base URL of the CoV-Spectrum API (e.g., 'https://cov-spectrum.org/api/v2')
+ * @param id The ID of the collection to fetch
+ * @returns A promise that resolves to a Collection object
+ * @throws Error if the request fails or response validation fails
+ */
+export async function getCollection(covSpectrumApiBaseUrl: string, id: number): Promise<Collection> {
+    const url = `${covSpectrumApiBaseUrl}/resource/collection/${id}`;
+
+    let response;
+    try {
+        response = await axios.get(url);
+    } catch (error) {
+        const message = `Failed to fetch collection ${id}: ${JSON.stringify(error)}`;
+        logger.error(message);
+        throw new Error(message);
+    }
+
+    const parsedResponse = collectionSchema.safeParse(response.data);
+    if (parsedResponse.success) {
+        return parsedResponse.data;
+    }
+
+    const message = `Failed to parse collection ${id} response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
+    logger.error(message);
+    throw new Error(message);
+}
