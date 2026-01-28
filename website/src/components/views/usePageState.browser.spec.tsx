@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import { describe, expect } from 'vitest';
 import { renderHook } from 'vitest-browser-react';
 
@@ -24,9 +25,11 @@ describe('usePageState', () => {
 
         expect(result.current.pageState.value).equals('initial');
 
-        window.history.pushState({}, '', '/?value=updated');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        act(() => {
+            window.history.pushState({}, '', '/?value=updated');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        });
 
-        await expect.poll(() => result.current.pageState.value).toBe('updated');
+        expect(result.current.pageState.value).toBe('updated');
     });
 });
