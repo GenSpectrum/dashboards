@@ -138,4 +138,4 @@ export function getLineageFilterFields(lineageFilters: LineageFilterConfig[]) {
 }
 
 export const PATHOPLEXUS_MAIN_FILTER_DATE_COLUMN = 'sampleCollectionDateRangeLower';
-export const GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN = 'sampleCollectionDate';
+export const GENSPECTRUM_LOCULUS_MAIN_FILTER_DATE_COLUMN = 'sampleCollectionDateRangeLower';
