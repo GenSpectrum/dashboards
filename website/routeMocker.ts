@@ -249,7 +249,7 @@ export const testOrganismsConfig = {
     influenzaA: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -259,7 +259,7 @@ export const testOrganismsConfig = {
     h3n2: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -269,7 +269,7 @@ export const testOrganismsConfig = {
     h1n1pdm: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -279,7 +279,7 @@ export const testOrganismsConfig = {
     h5n1: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -289,7 +289,7 @@ export const testOrganismsConfig = {
     influenzaB: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -299,7 +299,7 @@ export const testOrganismsConfig = {
     victoria: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -319,7 +319,7 @@ export const testOrganismsConfig = {
     rsvA: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -329,7 +329,7 @@ export const testOrganismsConfig = {
     rsvB: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -379,7 +379,7 @@ export const testOrganismsConfig = {
     denv1: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -389,7 +389,7 @@ export const testOrganismsConfig = {
     denv2: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -399,7 +399,7 @@ export const testOrganismsConfig = {
     denv3: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -409,7 +409,7 @@ export const testOrganismsConfig = {
     denv4: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
@@ -419,7 +419,7 @@ export const testOrganismsConfig = {
     measles: {
         lapis: {
             url: DUMMY_LAPIS_URL,
-            mainDateField: 'sampleCollectionDate',
+            mainDateField: 'sampleCollectionDateRangeLower',
             additionalFilters: {
                 versionStatus: 'LATEST_VERSION',
                 isRevocation: 'false',
