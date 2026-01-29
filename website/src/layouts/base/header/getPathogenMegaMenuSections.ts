@@ -75,22 +75,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
         borderEntryDecoration: wastewaterConfig.borderEntryDecoration,
         navigationEntries: [
             {
-                label: 'RSV',
-                iconType: 'table',
-                href: wastewaterConfig.pages.rsv.path,
-                underlineColor: wastewaterConfig.menuListEntryDecoration,
-                externalLink: false,
-                description: wastewaterConfig.pages.rsv.description,
-            },
-            {
-                label: 'Influenza',
-                iconType: 'table',
-                href: wastewaterConfig.pages.influenza.path,
-                underlineColor: wastewaterConfig.menuListEntryDecoration,
-                externalLink: false,
-                description: wastewaterConfig.pages.influenza.description,
-            },
-            {
                 label: 'SARS-CoV-2',
                 iconType: 'table',
                 href: wastewaterOrganismConfigs[wastewaterOrganisms.covid].path,
@@ -98,23 +82,29 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
-            /** Not enabled yet: https://github.com/GenSpectrum/dashboards/issues/948
             {
-                label: 'RSV-A (interactive)',
+                label: 'RSV-A',
                 iconType: 'table',
                 href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvA].path,
                 description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvA].description,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
-            */
             {
-                label: 'Browse RSV & Influenza data',
-                iconType: 'database',
-                href: wastewaterConfig.browseDataUrl,
+                label: 'RSV (non-interactive)',
+                iconType: 'table',
+                href: wastewaterConfig.pages.rsv.path,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
-                externalLink: true,
-                description: wastewaterConfig.browseDataDescription,
+                externalLink: false,
+                description: wastewaterConfig.pages.rsv.description,
+            },
+            {
+                label: 'Influenza (non-interactive)',
+                iconType: 'table',
+                href: wastewaterConfig.pages.influenza.path,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: false,
+                description: wastewaterConfig.pages.influenza.description,
             },
             {
                 label: 'Browse SARS-CoV-2 data',
@@ -124,7 +114,6 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },
-            /** Not enabled yet: https://github.com/GenSpectrum/dashboards/issues/948
             {
                 label: 'Browse RSV-A data',
                 iconType: 'database',
@@ -133,7 +122,14 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },
-            */
+            {
+                label: 'Browse non-interactive RSV & Influenza data',
+                iconType: 'database',
+                href: wastewaterConfig.browseDataUrl,
+                underlineColor: wastewaterConfig.menuListEntryDecoration,
+                externalLink: true,
+                description: wastewaterConfig.browseDataDescription,
+            },
         ],
         href: `/${wastewaterPathFragment}`,
     };

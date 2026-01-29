@@ -1,9 +1,6 @@
 ---
 import Wasap from '../../components/views/wasap/Wasap.astro';
-import { isStaging } from '../../config';
 import { wastewaterOrganisms } from '../../types/wastewaterConfig';
-// TODO - remove switch
-// https://github.com/GenSpectrum/dashboards/issues/948
 ---
 
-{isStaging() ? <Wasap wastewaterOrganism={wastewaterOrganisms.rsvA} /> : 'Coming soon!'}
+<Wasap wastewaterOrganism={wastewaterOrganisms.rsvA} />
