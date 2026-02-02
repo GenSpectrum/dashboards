@@ -161,12 +161,15 @@ async function fetchCollectionModeData(
         countQuery: string;
         coverageQuery: string;
     }[] = [];
+
     collection.variants.map((f) => {
         if (f.query.type === 'variantQuery') {
+            const positions = (f.query.variantQuery.match(/\d+/g) ?? []).map(Number);
+            const coverageQuery = positions.map((p) => `!C${p}N`).join(' | ');
             collections.push({
                 displayLabel: f.name,
                 countQuery: f.query.variantQuery,
-                coverageQuery: '!C897N', // TODO - we need to better calculate this
+                coverageQuery,
             });
         }
     });

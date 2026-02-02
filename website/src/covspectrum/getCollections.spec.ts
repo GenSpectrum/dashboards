@@ -2,7 +2,7 @@ import { http } from 'msw';
 import { beforeEach, describe, expect, test } from 'vitest';
 
 import { getCollections } from './getCollections.ts';
-import { type Collection } from './types.ts';
+import { type CollectionRaw } from './types.ts';
 import { astroApiRouteMocker, testServer } from '../../vitest.setup.ts';
 
 const DUMMY_COV_SPECTRUM_URL = 'http://cov-spectrum.dummy/api/v2';
@@ -13,7 +13,7 @@ describe('getCollections', () => {
     });
 
     test('should return collections sorted by id', async () => {
-        const mockCollections: Collection[] = [
+        const mockCollections: CollectionRaw[] = [
             {
                 id: 3,
                 title: 'Third Collection',
@@ -114,7 +114,7 @@ describe('getCollections', () => {
     });
 
     test('should validate collection structure with variants', async () => {
-        const mockCollections: Collection[] = [
+        const mockCollections: CollectionRaw[] = [
             {
                 id: 1,
                 title: 'Test Collection',
