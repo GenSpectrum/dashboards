@@ -25,4 +25,5 @@ data class ExternalNavigationLink(
     val url: String,
     val label: String,
     val menuIcon: String,
+    val description: String,
 )
