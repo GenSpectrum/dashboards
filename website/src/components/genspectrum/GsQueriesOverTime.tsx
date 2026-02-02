@@ -10,6 +10,7 @@ import { type FC } from 'react';
 import { ComponentWrapper } from '../ComponentWrapper';
 
 export type GsQueriesOverTimeProps = {
+    collectionTitle?: string;
     lapisFilter: LapisFilter;
     queries: QueryDefinition[];
     granularity: TemporalGranularity;
@@ -22,6 +23,7 @@ export type GsQueriesOverTimeProps = {
 };
 
 export const GsQueriesOverTime: FC<GsQueriesOverTimeProps> = ({
+    collectionTitle,
     lapisFilter,
     queries,
     granularity,
@@ -33,7 +35,10 @@ export const GsQueriesOverTime: FC<GsQueriesOverTimeProps> = ({
     customColumns,
 }) => {
     return (
-        <ComponentWrapper title='Collections over time' height={height}>
+        <ComponentWrapper
+            title={'Collection over time' + (collectionTitle ? `: ${collectionTitle}` : '')}
+            height={height}
+        >
             <gs-queries-over-time
                 width='100%'
                 height={height ? '100%' : undefined}

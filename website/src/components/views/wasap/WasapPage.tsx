@@ -137,13 +137,8 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                                 </>
                             ) : (
                                 <div className='rounded-md border-2 border-gray-100 p-4'>
-                                    <h2 className='mb-4 text-xl font-bold'>Collection: {data.collection.title}</h2>
-                                    <p className='mb-4 text-gray-600'>
-                                        Collection display is not yet implemented. This collection contains{' '}
-                                        {data.collection.queries.length} queries
-                                        {data.collection.queries.length !== 1 ? 's' : ''}.
-                                    </p>
                                     <GsQueriesOverTime
+                                        collectionTitle={data.collection.title}
                                         lapisFilter={lapisFilter}
                                         queries={data.collection.queries}
                                         granularity={base.granularity as 'day' | 'week'}
@@ -152,16 +147,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                                         initialMeanProportionInterval={initialMeanProportionInterval}
                                         hideGaps={base.excludeEmpty ? true : undefined}
                                     />
-                                    <div className='space-y-2'>
-                                        {data.collection.queries.map((query, idx) => (
-                                            <div key={idx} className='rounded border p-3'>
-                                                <div className='font-semibold'>{query.displayLabel}</div>
-                                                <pre className='mt-1 overflow-x-auto text-xs text-gray-500'>
-                                                    {query.countQuery}
-                                                </pre>
-                                            </div>
-                                        ))}
-                                    </div>
                                 </div>
                             )}
                         </div>
