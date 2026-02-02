@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useCallback, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { PageStateHandler } from '../../views/pageStateHandlers/PageStateHandler.ts';
 
@@ -29,6 +29,19 @@ export function usePageState<StateHandler extends PageStateHandler<object>>(page
         },
         [pageStateHandler],
     );
+
+    useEffect(() => {
+        const handlePopState = () => {
+            const url = new URL(window.location.href);
+            const newPageState = pageStateHandler.parsePageStateFromUrl(url);
+            setPageStateRaw(newPageState as PageState);
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [pageStateHandler]);
 
     return useMemo(() => ({ pageState, setPageState }), [pageState, setPageState]);
 }
