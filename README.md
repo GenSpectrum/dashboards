@@ -31,9 +31,15 @@ when there is new data above a configurable threshold for certain variant of an 
 
 This monorepo contains the following packages:
 
-- [`backend/`](./backend): The backend for additional features of the dashboard website, currently the notification features.
+- [`backend/`](./backend): 
+  The backend for additional features of the dashboard website, currently the notification features.
 
-- [`website/`](./website): The dashboard website: delivery of the (basically static, via Astro) HTML pages with the embedded Dashboard Components (which are included via npm), which retrieve data from LAPIS instances directly, and some additional client side features accessing the backend.
+- [`website/`](./website): 
+  The dashboard website: delivery of the (basically static, via Astro) HTML pages with the embedded Dashboard Components
+  (which are included via npm), 
+  which retrieve data from LAPIS instances directly,
+  and some additional client side features accessing the backend.
+
 
 ## Local setup
 
