@@ -3,9 +3,10 @@ package org.genspectrum.dashboardsbackend.controller
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
+import org.genspectrum.dashboardsbackend.KnownTestOrganisms
 import org.genspectrum.dashboardsbackend.api.LapisFilter
-import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Trigger
+import org.genspectrum.dashboardsbackend.dummySubscriptionRequest
 import org.genspectrum.dashboardsbackend.model.triggerevaluation.AggregatedData
 import org.genspectrum.dashboardsbackend.model.triggerevaluation.LapisAggregatedResponse
 import org.genspectrum.dashboardsbackend.model.triggerevaluation.LapisClient
@@ -48,7 +49,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
             userId = userId,
         )
 
-        mockLapisResponse(Organism.Covid, aggregatedResponseWithCount(40))
+        mockLapisResponse(aggregatedResponseWithCount(40))
 
         subscriptionsClient
             .evaluateTriggerRaw(
@@ -71,7 +72,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
             userId = userId,
         )
 
-        mockLapisResponse(Organism.Covid, aggregatedResponseWithCount(20))
+        mockLapisResponse(aggregatedResponseWithCount(20))
 
         subscriptionsClient
             .evaluateTriggerRaw(
@@ -92,7 +93,6 @@ class SubscriptionsControllerTriggerEvaluationTest(
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         mockLapisResponse(
-            Organism.Covid,
             LapisError(
                 ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(456), "dummy LAPIS error"),
                 LapisInfo(),
@@ -126,7 +126,6 @@ class SubscriptionsControllerTriggerEvaluationTest(
         )
 
         mockLapisResponse(
-            organism = Organism.Covid,
             expectedCalls = listOf(
                 expectNumeratorRequest() to aggregatedResponseWithCount(101),
                 expectDenominatorRequest() to aggregatedResponseWithCount(1_000),
@@ -158,11 +157,11 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
     private fun expectDenominatorRequest(): (LapisFilter) -> Boolean = { it["denominatorFilterKey"] == "value2" }
 
-    fun mockLapisResponse(organism: Organism, lapisResponse: LapisResponse) {
-        mockLapisResponse(organism, listOf({ _: LapisFilter -> true } to lapisResponse))
+    fun mockLapisResponse(lapisResponse: LapisResponse) {
+        mockLapisResponse(listOf({ _: LapisFilter -> true } to lapisResponse))
     }
 
-    fun mockLapisResponse(organism: Organism, expectedCalls: List<Pair<(LapisFilter) -> Boolean, LapisResponse>>) {
+    fun mockLapisResponse(expectedCalls: List<Pair<(LapisFilter) -> Boolean, LapisResponse>>) {
         val lapisClientMock = mockk<LapisClient>()
         every { lapisClientMock.aggregated(any()) } answers {
             for ((lapisFilterMatcher, lapisResponse) in expectedCalls) {
@@ -173,6 +172,6 @@ class SubscriptionsControllerTriggerEvaluationTest(
             throw RuntimeException("Unexpected call to LAPIS with filter $fieldValue")
         }
 
-        every { lapisClientProviderMock.provide(organism) }.returns(lapisClientMock)
+        every { lapisClientProviderMock.provide(KnownTestOrganisms.Covid.name) }.returns(lapisClientMock)
     }
 }

@@ -20,7 +20,7 @@ class SubscriptionTest {
             id = "someId",
             name = "Test Subscription",
             active = true,
-            organism = Organism.Covid,
+            organism = "covid",
             interval = EvaluationInterval.WEEKLY,
             dateWindow = DateWindow.LAST_6_MONTHS,
             trigger = CountTrigger(10, emptyMap()),

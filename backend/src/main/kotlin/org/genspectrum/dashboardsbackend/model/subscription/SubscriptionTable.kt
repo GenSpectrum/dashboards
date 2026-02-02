@@ -39,7 +39,7 @@ class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         name = name,
         interval = enumValueOf(interval),
         active = active,
-        organism = enumValueOf(organism),
+        organism = organism,
         dateWindow = enumValueOf(dateWindow),
         trigger = trigger,
     )

@@ -3,9 +3,9 @@ package org.genspectrum.dashboardsbackend.model.triggerevaluation
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import kotlinx.datetime.LocalDate
+import org.genspectrum.dashboardsbackend.KnownTestOrganisms
 import org.genspectrum.dashboardsbackend.api.DateWindow
 import org.genspectrum.dashboardsbackend.api.EvaluationInterval
-import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
@@ -35,12 +35,9 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     properties = [
-        "dashboards.organisms.covid.lapis.url=http://localhost:\${mockServerPort}/covid",
-        "dashboards.organisms.h5n1.lapis.url=http://localhost:\${mockServerPort}/h5n1",
-        "dashboards.organisms.mpox.lapis.url=http://localhost:\${mockServerPort}/mpox",
-        "dashboards.organisms.westNile.lapis.url=http://localhost:\${mockServerPort}/westnile",
-        "dashboards.organisms.rsvA.lapis.url=http://localhost:\${mockServerPort}/rsva",
-        "dashboards.organisms.rsvB.lapis.url=http://localhost:\${mockServerPort}/rsvb",
+        "dashboards.organisms.Covid.lapis.url=http://localhost:\${mockServerPort}/covid",
+        "dashboards.organisms.Mpox.lapis.url=http://localhost:\${mockServerPort}/mpox",
+        "dashboards.organisms.WestNile.lapis.url=http://localhost:\${mockServerPort}/westnile",
     ],
 )
 @MockServerTest
@@ -53,7 +50,7 @@ class CountTriggerEvaluatorTest(
     private lateinit var dateProviderMock: DateProvider
 
     val someSubscription = makeSubscription(
-        organism = Organism.WestNile,
+        organism = KnownTestOrganisms.WestNile.name,
         trigger = Trigger.CountTrigger(
             count = 100,
             filter = emptyMap(),
@@ -67,7 +64,7 @@ class CountTriggerEvaluatorTest(
 
     @ParameterizedTest
     @MethodSource("getOrganisms")
-    fun `GIVEN lapis returns count above count trigger threshold THEN returns condition met`(organism: Organism) {
+    fun `GIVEN lapis returns count above count trigger threshold THEN returns condition met`(organism: String) {
         mockServerClient
             .`when`(
                 requestingAggregatedDataWith(
@@ -76,9 +73,9 @@ class CountTriggerEvaluatorTest(
                         {
                             "country": "Germany",
                             "division": "Berlin",
-                            "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                            "${organism.name.lowercase()}_dateTo": "2021-03-15",
-                            "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
+                            "${organism.lowercase()}_dateFrom": "2020-09-15",
+                            "${organism.lowercase()}_dateTo": "2021-03-15",
+                            "someAdditionalFilter": "${organism.lowercase()}_additional_filter"
                         }
                     """.replace("\\s".toRegex(), ""),
                 ),
@@ -113,7 +110,7 @@ class CountTriggerEvaluatorTest(
     @ParameterizedTest
     @MethodSource("getOrganisms")
     fun `GIVEN lapis returns count lower or equal than count trigger threshold THEN returns condition not met`(
-        organism: Organism,
+        organism: String,
     ) {
         mockServerClient
             .`when`(
@@ -123,9 +120,9 @@ class CountTriggerEvaluatorTest(
                         {
                             "country": "Germany",
                             "division": "Berlin",
-                            "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                            "${organism.name.lowercase()}_dateTo": "2021-03-15",
-                            "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
+                            "${organism.lowercase()}_dateFrom": "2020-09-15",
+                            "${organism.lowercase()}_dateTo": "2021-03-15",
+                            "someAdditionalFilter": "${organism.lowercase()}_additional_filter"
                         }
                     """.replace("\\s".toRegex(), ""),
                 ),
@@ -272,7 +269,7 @@ class CountTriggerEvaluatorTest(
         )
     }
 
-    private fun requestingAggregatedDataWith(organism: Organism, body: String): HttpRequest? = request()
+    private fun requestingAggregatedDataWith(organism: String, body: String): HttpRequest? = request()
         .withMethod("POST")
         .withContentType(MediaType.APPLICATION_JSON)
         .withPath(getAggregatedRoute(organism))
@@ -295,7 +292,7 @@ class CountTriggerEvaluatorTest(
             """.trimIndent(),
         )
 
-    private fun makeSubscription(organism: Organism, trigger: Trigger.CountTrigger) = Subscription(
+    private fun makeSubscription(organism: String, trigger: Trigger.CountTrigger) = Subscription(
         id = "id",
         name = "test",
         interval = EvaluationInterval.WEEKLY,
@@ -305,10 +302,10 @@ class CountTriggerEvaluatorTest(
         trigger = trigger,
     )
 
-    fun getAggregatedRoute(organism: Organism) = "/${organism.name.lowercase()}/sample/aggregated"
+    fun getAggregatedRoute(organism: String) = "/${organism.lowercase()}/sample/aggregated"
 
     companion object {
         @JvmStatic
-        fun getOrganisms() = Organism.entries.toList()
+        fun getOrganisms() = KnownTestOrganisms.entries.map { it.name }
     }
 }
