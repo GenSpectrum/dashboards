@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { getClientLogger } from '../../../clientLogger.ts';
 import { getCollections } from '../../../covspectrum/getCollections.ts';
-import { type Collection, type CollectionVariant } from '../../../covspectrum/types.ts';
+import { type CollectionRaw, type CollectionVariantRaw } from '../../../covspectrum/types.ts';
 import { type CovidVariantData } from '../../../views/covid.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 
@@ -46,7 +46,7 @@ export function CollectionsList({ initialCollectionId, pageState, setPageState }
 }
 
 type CollectionSelectorProps = {
-    collections: Collection[];
+    collections: CollectionRaw[];
     selectedId: number;
     onSelect: (index: number) => void;
 };
@@ -78,7 +78,7 @@ const querySchema = z.object({
 });
 
 type CollectionVariantListProps = {
-    collection: Collection;
+    collection: CollectionRaw;
     pageState: CovidVariantData;
     setPageState: Dispatch<SetStateAction<CovidVariantData>>;
 };
@@ -102,7 +102,7 @@ function CollectionVariantList({ collection, pageState, setPageState }: Collecti
 }
 
 type VariantLinkProps = {
-    variant: CollectionVariant;
+    variant: CollectionVariantRaw;
     collectionId: number;
     pageState: CovidVariantData;
     setPageState: Dispatch<SetStateAction<CovidVariantData>>;
@@ -130,7 +130,7 @@ const logger = getClientLogger('CollectionList');
 function useVariantLinkPageState(
     currentPageState: CovidVariantData,
     collectionId: number,
-    variant: CollectionVariant,
+    variant: CollectionVariantRaw,
 ): CovidVariantData | undefined {
     const { showErrorToast } = useErrorToast(logger);
 
@@ -146,6 +146,8 @@ function useVariantLinkPageState(
     }
 
     const query = queryParseResult.data;
+
+    // TODO - this query parsing below should move into the getCollections function
 
     if (query.variantQuery !== undefined) {
         return {

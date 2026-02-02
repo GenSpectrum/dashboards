@@ -24,6 +24,7 @@ import {
 import { Loading } from '../../../util/Loading';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
+import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 import { usePageState } from '../usePageState.ts';
@@ -139,15 +140,24 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                                     <h2 className='mb-4 text-xl font-bold'>Collection: {data.collection.title}</h2>
                                     <p className='mb-4 text-gray-600'>
                                         Collection display is not yet implemented. This collection contains{' '}
-                                        {data.collection.variants.length} variant
-                                        {data.collection.variants.length !== 1 ? 's' : ''}.
+                                        {data.collection.queries.length} queries
+                                        {data.collection.queries.length !== 1 ? 's' : ''}.
                                     </p>
+                                    <GsQueriesOverTime
+                                        lapisFilter={lapisFilter}
+                                        queries={data.collection.queries}
+                                        granularity={base.granularity as 'day' | 'week'}
+                                        lapisDateField={config.samplingDateField}
+                                        pageSizes={[20, 50, 100, 250]}
+                                        initialMeanProportionInterval={initialMeanProportionInterval}
+                                        hideGaps={base.excludeEmpty ? true : undefined}
+                                    />
                                     <div className='space-y-2'>
-                                        {data.collection.variants.map((variant, idx) => (
+                                        {data.collection.queries.map((query, idx) => (
                                             <div key={idx} className='rounded border p-3'>
-                                                <div className='font-semibold'>{variant.name}</div>
+                                                <div className='font-semibold'>{query.displayLabel}</div>
                                                 <pre className='mt-1 overflow-x-auto text-xs text-gray-500'>
-                                                    {variant.query}
+                                                    {query.countQuery}
                                                 </pre>
                                             </div>
                                         ))}

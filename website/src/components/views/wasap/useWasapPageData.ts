@@ -156,15 +156,26 @@ async function fetchCollectionModeData(
         throw Error('No collection selected');
     }
     const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
+    const collections: {
+        displayLabel: string;
+        countQuery: string;
+        coverageQuery: string;
+    }[] = [];
+    collection.variants.map((f) => {
+        if (f.query.type === 'variantQuery') {
+            collections.push({
+                displayLabel: f.name,
+                countQuery: f.query.variantQuery,
+                coverageQuery: '!C897N', // TODO - we need to better calculate this
+            });
+        }
+    });
     return {
         type: 'collection',
         collection: {
             id: collection.id,
             title: collection.title,
-            variants: collection.variants.map((v) => ({
-                name: v.name,
-                query: v.query,
-            })),
+            queries: collections,
         },
     };
 }
@@ -215,9 +226,10 @@ export type WasapCollectionData = {
     collection: {
         id: number;
         title: string;
-        variants: {
-            name: string;
-            query: string;
+        queries: {
+            displayLabel: string;
+            countQuery: string;
+            coverageQuery: string;
         }[];
     };
 };

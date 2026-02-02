@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { getClientLogger } from '../clientLogger.ts';
-import { collectionSchema, type Collection } from './types.ts';
+import { collectionRawSchema, collectionVariantSchema, type Collection, type CollectionVariant } from './types.ts';
 
 const logger = getClientLogger('getCollection');
 
@@ -25,12 +25,49 @@ export async function getCollection(covSpectrumApiBaseUrl: string, id: number): 
         throw new Error(message);
     }
 
-    const parsedResponse = collectionSchema.safeParse(response.data);
-    if (parsedResponse.success) {
-        return parsedResponse.data;
+    const parsedResponse = collectionRawSchema.safeParse(response.data);
+    if (!parsedResponse.success) {
+        const message = `Failed to parse collection ${id} response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
+        logger.error(message);
+        throw new Error(message);
     }
 
-    const message = `Failed to parse collection ${id} response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
-    logger.error(message);
-    throw new Error(message);
+    // Parse the query field in each variant from JSON string to object
+    const rawCollection = parsedResponse.data;
+    const parsedVariants: CollectionVariant[] = [];
+
+    for (const variant of rawCollection.variants) {
+        let parsedQuery;
+        try {
+            parsedQuery = JSON.parse(variant.query);
+        } catch (error) {
+            const message = `Failed to parse query JSON for variant "${variant.name}" in collection ${id}: ${error}`;
+            logger.error(message);
+            throw new Error(message);
+        }
+
+        // Add type discriminator based on the shape of the parsed query
+        const queryWithType =
+            'variantQuery' in parsedQuery
+                ? { type: 'variantQuery' as const, ...parsedQuery }
+                : { type: 'detailedMutations' as const, ...parsedQuery };
+
+        const variantValidation = collectionVariantSchema.safeParse({
+            ...variant,
+            query: queryWithType,
+        });
+
+        if (!variantValidation.success) {
+            const message = `Failed to validate parsed variant "${variant.name}" in collection ${id}: ${JSON.stringify(variantValidation.error)}`;
+            logger.error(message);
+            throw new Error(message);
+        }
+
+        parsedVariants.push(variantValidation.data);
+    }
+
+    return {
+        ...rawCollection,
+        variants: parsedVariants,
+    };
 }
