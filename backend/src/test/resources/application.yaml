@@ -7,39 +7,21 @@ spring:
 
 dashboards:
   organisms:
-    covid:
+    Covid:
       lapis:
         url: "https://covid.lapis.dummy"
         mainDateField: "covid_date"
         additionalFilters:
           someAdditionalFilter: "covid_additional_filter"
-    h5n1:
-      lapis:
-        url: "https://h5n1.lapis.dummy"
-        mainDateField: "h5n1_date"
-        additionalFilters:
-          someAdditionalFilter: "h5n1_additional_filter"
-    mpox:
+    Mpox:
       lapis:
         url: "https://mpox.lapis.dummy"
         mainDateField: "mpox_date"
         additionalFilters:
           someAdditionalFilter: "mpox_additional_filter"
-    westNile:
+    WestNile:
       lapis:
         url: "https://westNile.lapis.dummy"
         mainDateField: "westnile_date"
         additionalFilters:
           someAdditionalFilter: "westnile_additional_filter"
-    rsvA:
-      lapis:
-        url: "https://rsvA.lapis.dummy"
-        mainDateField: "rsva_date"
-        additionalFilters:
-          someAdditionalFilter: "rsva_additional_filter"
-    rsvB:
-      lapis:
-        url: "https://rsvB.lapis.dummy"
-        mainDateField: "rsvb_date"
-        additionalFilters:
-          someAdditionalFilter: "rsvb_additional_filter"

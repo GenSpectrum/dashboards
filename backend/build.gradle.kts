@@ -29,7 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
     implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
-    implementation("org.postgresql:postgresql:42.7.4")
+    implementation("org.postgresql:postgresql:42.7.7")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.56.0")
     implementation("org.jetbrains.exposed:exposed-json:0.56.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
@@ -39,7 +39,8 @@ dependencies {
         exclude(group = "org.mockito")
     }
     testImplementation("com.ninja-squad:springmockk:4.0.2")
-    testImplementation("org.testcontainers:postgresql:1.20.4")
+    testImplementation("org.testcontainers:testcontainers:2.0.3")
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.3")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
 }

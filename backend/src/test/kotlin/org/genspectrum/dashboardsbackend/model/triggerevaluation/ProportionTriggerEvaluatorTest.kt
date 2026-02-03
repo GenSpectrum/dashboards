@@ -3,9 +3,9 @@ package org.genspectrum.dashboardsbackend.model.triggerevaluation
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import kotlinx.datetime.LocalDate
+import org.genspectrum.dashboardsbackend.KnownTestOrganisms
 import org.genspectrum.dashboardsbackend.api.DateWindow
 import org.genspectrum.dashboardsbackend.api.EvaluationInterval
-import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
@@ -33,12 +33,9 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     properties = [
-        "dashboards.organisms.covid.lapis.url=http://localhost:\${mockServerPort}/covid",
-        "dashboards.organisms.h5n1.lapis.url=http://localhost:\${mockServerPort}/h5n1",
-        "dashboards.organisms.mpox.lapis.url=http://localhost:\${mockServerPort}/mpox",
-        "dashboards.organisms.westNile.lapis.url=http://localhost:\${mockServerPort}/westnile",
-        "dashboards.organisms.rsvA.lapis.url=http://localhost:\${mockServerPort}/rsva",
-        "dashboards.organisms.rsvB.lapis.url=http://localhost:\${mockServerPort}/rsvb",
+        "dashboards.organisms.Covid.lapis.url=http://localhost:\${mockServerPort}/covid",
+        "dashboards.organisms.Mpox.lapis.url=http://localhost:\${mockServerPort}/mpox",
+        "dashboards.organisms.WestNile.lapis.url=http://localhost:\${mockServerPort}/westnile",
     ],
 )
 @MockServerTest
@@ -51,7 +48,7 @@ class ProportionTriggerEvaluatorTest(
     private lateinit var dateProviderMock: DateProvider
 
     val someSubscription = makeSubscriptionWithProportionThreshold(
-        organism = Organism.WestNile,
+        organism = KnownTestOrganisms.WestNile.name,
         proportion = 0.1,
     )
 
@@ -62,7 +59,7 @@ class ProportionTriggerEvaluatorTest(
 
     @ParameterizedTest
     @MethodSource("getOrganisms")
-    fun `GIVEN lapis returns proportion above count trigger threshold THEN returns condition met`(organism: Organism) {
+    fun `GIVEN lapis returns proportion above count trigger threshold THEN returns condition met`(organism: String) {
         mockServerClient
             .`when`(requestingNumeratorData(organism))
             .respond(withSuccessResponse(count = 501))
@@ -92,7 +89,7 @@ class ProportionTriggerEvaluatorTest(
     @ParameterizedTest
     @MethodSource("getOrganisms")
     fun `GIVEN lapis returns count lower or equal than count trigger threshold THEN returns condition not met`(
-        organism: Organism,
+        organism: String,
     ) {
         mockServerClient
             .`when`(requestingNumeratorData(organism))
@@ -122,7 +119,7 @@ class ProportionTriggerEvaluatorTest(
 
     @Test
     fun `GIVEN lapis returns 0 for denominator THEN returns condition met`() {
-        val organism = Organism.WestNile
+        val organism = KnownTestOrganisms.WestNile.name
 
         mockServerClient
             .`when`(requestingNumeratorData(organism))
@@ -152,7 +149,7 @@ class ProportionTriggerEvaluatorTest(
 
     @Test
     fun `GIVEN lapis returns 0 for denominator and numerator THEN returns condition not met`() {
-        val organism = Organism.WestNile
+        val organism = KnownTestOrganisms.WestNile.name
 
         mockServerClient
             .`when`(requestingNumeratorData(organism))
@@ -312,26 +309,26 @@ class ProportionTriggerEvaluatorTest(
             """.trimIndent(),
         )
 
-    private fun requestingNumeratorData(organism: Organism) = requestingAggregatedDataWith(
+    private fun requestingNumeratorData(organism: String) = requestingAggregatedDataWith(
         organism = organism,
         body = """
             {
                 "numeratorFilterKey": "numeratorFilterValue",
-                "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                "${organism.name.lowercase()}_dateTo": "2021-03-15",
-                "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
+                "${organism.lowercase()}_dateFrom": "2020-09-15",
+                "${organism.lowercase()}_dateTo": "2021-03-15",
+                "someAdditionalFilter": "${organism.lowercase()}_additional_filter"
             }
         """.replace("\\s".toRegex(), ""),
     )
 
-    private fun requestingDenominatorData(organism: Organism) = requestingAggregatedDataWith(
+    private fun requestingDenominatorData(organism: String) = requestingAggregatedDataWith(
         organism = organism,
         body = """
             {
                 "denominatorFilterKey": "denominatorFilterValue",
-                "${organism.name.lowercase()}_dateFrom": "2020-09-15",
-                "${organism.name.lowercase()}_dateTo": "2021-03-15",
-                "someAdditionalFilter": "${organism.name.lowercase()}_additional_filter"
+                "${organism.lowercase()}_dateFrom": "2020-09-15",
+                "${organism.lowercase()}_dateTo": "2021-03-15",
+                "someAdditionalFilter": "${organism.lowercase()}_additional_filter"
             }
         """.replace("\\s".toRegex(), ""),
     )
@@ -344,7 +341,7 @@ class ProportionTriggerEvaluatorTest(
         )
     }
 
-    private fun requestingAggregatedDataWith(organism: Organism, body: String) = request()
+    private fun requestingAggregatedDataWith(organism: String, body: String) = request()
         .withMethod("POST")
         .withContentType(MediaType.APPLICATION_JSON)
         .withPath(getAggregatedRoute(organism))
@@ -367,7 +364,7 @@ class ProportionTriggerEvaluatorTest(
             """.trimIndent(),
         )
 
-    private fun makeSubscriptionWithProportionThreshold(organism: Organism, proportion: Double) = Subscription(
+    private fun makeSubscriptionWithProportionThreshold(organism: String, proportion: Double) = Subscription(
         id = "id",
         name = "test",
         interval = EvaluationInterval.WEEKLY,
@@ -385,10 +382,10 @@ class ProportionTriggerEvaluatorTest(
         ),
     )
 
-    fun getAggregatedRoute(organism: Organism) = "/${organism.name.lowercase()}/sample/aggregated"
+    fun getAggregatedRoute(organism: String) = "/${organism.lowercase()}/sample/aggregated"
 
     companion object {
         @JvmStatic
-        fun getOrganisms() = Organism.entries.toList()
+        fun getOrganisms() = KnownTestOrganisms.entries.map { it.name }
     }
 }
