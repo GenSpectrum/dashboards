@@ -5,6 +5,7 @@ import type { SetupServer } from 'msw/node';
 import { expect } from 'vitest';
 
 import { type OrganismsConfig } from './src/config';
+import type { CollectionRaw } from './src/covspectrum/types.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
@@ -44,6 +45,26 @@ type MockCase = {
     response?: unknown;
     requestParam?: Record<string, string>;
 };
+
+export class CovSpectrumRouteMocker {
+    constructor(private workerOrServer: MSWWorkerOrServer) {}
+
+    mockGetCollections(baseUrl: string, response: CollectionRaw[], statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(`${baseUrl}/resource/collection`, () => {
+                return new Response(JSON.stringify(response), { status: statusCode });
+            }),
+        );
+    }
+
+    mockGetCollection(baseUrl: string, id: number, response: CollectionRaw, statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(`${baseUrl}/resource/collection/${id}`, () => {
+                return new Response(JSON.stringify(response), { status: statusCode });
+            }),
+        );
+    }
+}
 
 /**
  * Allows you to mock LAPIS API routes.
