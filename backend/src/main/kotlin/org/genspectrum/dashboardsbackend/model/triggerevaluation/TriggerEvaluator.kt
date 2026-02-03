@@ -3,7 +3,6 @@ package org.genspectrum.dashboardsbackend.model.triggerevaluation
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import org.genspectrum.dashboardsbackend.api.DateWindow
-import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.Trigger
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResult
@@ -60,7 +59,7 @@ class TriggerEvaluator(
         )
     }
 
-    private fun additionalFilters(organism: Organism): Map<String, String> {
+    private fun additionalFilters(organism: String): Map<String, String> {
         return dashboardsConfig.getOrganismConfig(organism).lapis.additionalFilters ?: emptyMap()
     }
 }
@@ -76,9 +75,7 @@ private class CountComputation(
     private val threshold: Int,
 ) : TriggerComputation {
     override fun evaluate(): TriggerEvaluationResult {
-        val lapisResponse = lapisClient.aggregated(lapisFilter)
-
-        return when (lapisResponse) {
+        return when (val lapisResponse = lapisClient.aggregated(lapisFilter)) {
             is LapisAggregatedResponse -> {
                 if (lapisResponse.data.isEmpty()) {
                     log.error {

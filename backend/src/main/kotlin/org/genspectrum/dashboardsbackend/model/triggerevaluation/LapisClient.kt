@@ -3,7 +3,6 @@ package org.genspectrum.dashboardsbackend.model.triggerevaluation
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.LapisFilter
-import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.log
 import org.genspectrum.dashboardsbackend.logging.REQUEST_ID_HEADER
@@ -27,15 +26,15 @@ class LapisClientProvider(
     objectMapper: ObjectMapper,
     requestIdContext: RequestIdContext,
 ) {
-    private val clients = Organism.entries.associateWith {
+    private val clients = dashboardsConfig.organisms.mapValues {
         LapisClient(
-            baseUrl = dashboardsConfig.getOrganismConfig(it).lapis.url,
+            baseUrl = it.value.lapis.url,
             objectMapper = objectMapper,
             requestIdContext = requestIdContext,
         )
     }
 
-    fun provide(organism: Organism) = clients[organism]
+    fun provide(organism: String) = clients[organism]
         ?: throw IllegalArgumentException("No LAPIS client for organism $organism registered")
 }
 

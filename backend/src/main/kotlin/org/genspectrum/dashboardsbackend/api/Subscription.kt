@@ -13,26 +13,6 @@ enum class DateWindow {
     LAST_6_MONTHS,
 }
 
-enum class Organism {
-    @JsonProperty("covid")
-    Covid,
-
-    @JsonProperty("h5n1")
-    H5N1,
-
-    @JsonProperty("mpox")
-    Mpox,
-
-    @JsonProperty("westNile")
-    WestNile,
-
-    @JsonProperty("rsvA")
-    RsvA,
-
-    @JsonProperty("rsvB")
-    RsvB,
-}
-
 enum class EvaluationInterval {
     @JsonProperty("daily")
     DAILY,
@@ -87,15 +67,6 @@ sealed interface Trigger {
 
 typealias LapisFilter = Map<String, String>
 
-interface BaseSubscription {
-    val name: String?
-    val interval: EvaluationInterval?
-    val organism: Organism?
-    val dateWindow: DateWindow?
-    val trigger: Trigger?
-    val active: Boolean?
-}
-
 @Schema(
     description = "A subscription",
     example = """
@@ -112,13 +83,13 @@ interface BaseSubscription {
 )
 data class Subscription(
     val id: String,
-    override val name: String,
-    override val interval: EvaluationInterval,
-    override val active: Boolean,
-    override val organism: Organism,
-    override val dateWindow: DateWindow,
-    override val trigger: Trigger,
-) : BaseSubscription
+    val name: String,
+    val interval: EvaluationInterval,
+    val active: Boolean,
+    val organism: String,
+    val dateWindow: DateWindow,
+    val trigger: Trigger,
+)
 
 @Schema(
     description = "A subscription request",
@@ -133,13 +104,13 @@ data class Subscription(
 """,
 )
 data class SubscriptionRequest(
-    override val name: String,
-    override val interval: EvaluationInterval,
-    override val organism: Organism,
-    override val dateWindow: DateWindow,
-    override val trigger: Trigger,
-    override val active: Boolean,
-) : BaseSubscription
+    val name: String,
+    val interval: EvaluationInterval,
+    val organism: String,
+    val dateWindow: DateWindow,
+    val trigger: Trigger,
+    val active: Boolean,
+)
 
 @Schema(
     description = "A subscription update request",
@@ -154,10 +125,10 @@ data class SubscriptionRequest(
 """,
 )
 data class SubscriptionUpdate(
-    override val name: String? = null,
-    override val interval: EvaluationInterval? = null,
-    override val organism: Organism? = null,
-    override val dateWindow: DateWindow? = null,
-    override val trigger: Trigger? = null,
-    override val active: Boolean? = null,
-) : BaseSubscription
+    val name: String? = null,
+    val interval: EvaluationInterval? = null,
+    val organism: String? = null,
+    val dateWindow: DateWindow? = null,
+    val trigger: Trigger? = null,
+    val active: Boolean? = null,
+)

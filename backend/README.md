@@ -1,19 +1,7 @@
-> [!NOTE]
-> 
-> This backend is *not currently used* as the subscription feature is
-> currently on hold and not fully implemented yet, and can currently
-> be ignored when setting up a dashboards installation.  It is also
-> partially out of date. An exception are these two configuration
-> files which are shared with the frontend (`website` folder) and thus
-> in use and up to date:
-> [application-dashboards-prod.yaml](src/main/resources/application-dashboards-prod.yaml),
-> [application-dashboards-staging.yaml](src/main/resources/application-dashboards-staging.yaml)
-
 # Dashboards backend
 
-This backend exists to serve the subscription feature (unfinished,
-currently on hold, note the banner above). Genomic queries are served
-by LAPIS instances and do not go through this backend.
+This backend exists to serve the subscription feature (which is not fully implemented and currently on hold).
+Genomic queries are served by LAPIS instances and do not go through this backend.
 
 See [docs/arc42/03-context.md](../docs/arc42/03-context.md) for its
 place in the whole context.

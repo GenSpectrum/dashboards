@@ -1,12 +1,12 @@
 package org.genspectrum.dashboardsbackend.controller
 
+import org.genspectrum.dashboardsbackend.KnownTestOrganisms
 import org.genspectrum.dashboardsbackend.api.DateWindow
 import org.genspectrum.dashboardsbackend.api.EvaluationInterval
-import org.genspectrum.dashboardsbackend.api.Organism
 import org.genspectrum.dashboardsbackend.api.Subscription
-import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.api.Trigger.CountTrigger
+import org.genspectrum.dashboardsbackend.dummySubscriptionRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -21,23 +21,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.UUID
-
-val dummySubscriptionRequest = SubscriptionRequest(
-    name = "My search",
-    interval = EvaluationInterval.MONTHLY,
-    dateWindow = DateWindow.LAST_6_MONTHS,
-    trigger = CountTrigger(
-        30,
-        mapOf(
-            "country" to "France",
-            "dateFrom" to "2024-01-01",
-            "dateTo" to "2024-01-05",
-        ),
-    ),
-    organism = Organism.Covid,
-    active = true,
-)
+import java.util.*
 
 fun getNewUserId(): String {
     return UUID.randomUUID().toString()
@@ -114,6 +98,14 @@ class SubscriptionsControllerTest(
     }
 
     @Test
+    fun `WHEN I create a subscription for unknown organism THEN returns bad request`() {
+        val userId = getNewUserId()
+        subscriptionsClient.postSubscriptionRaw(dummySubscriptionRequest.copy(organism = "unknown organism"), userId)
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.detail").value("Organism 'unknown organism' is not supported"))
+    }
+
+    @Test
     fun `WHEN I delete a subscription that does not exist THEN returns 404`() {
         val userId = getNewUserId()
         subscriptionsClient.deleteSubscriptionRaw("00000000-0000-0000-0000-000000000000", userId)
@@ -177,7 +169,7 @@ class SubscriptionsControllerTest(
                     "dateTo" to "2024-01-05",
                 ),
             ),
-            organism = Organism.RsvA,
+            organism = KnownTestOrganisms.WestNile.name,
             active = false,
         )
 
@@ -192,6 +184,24 @@ class SubscriptionsControllerTest(
 
         assertThat(subscription, equalTo(updatedSubscription))
         assertThat(subscription.name, equalTo(updatedSubscriptionRequest.name))
+    }
+
+    @Test
+    fun `GIVEN subscription exists WHEN I change organism to unknown organism THEN rejects update`() {
+        val userId = getNewUserId()
+        val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
+
+        subscriptionsClient.putSubscriptionRaw(
+            SubscriptionUpdate(organism = "unknown organism"),
+            createdSubscription.id,
+            userId,
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.detail").value("Organism 'unknown organism' is not supported"))
+
+        val subscription = subscriptionsClient.getSubscription(createdSubscription.id, userId)
+
+        assertThat(subscription.organism, equalTo(KnownTestOrganisms.Covid.name))
     }
 
     @Test
