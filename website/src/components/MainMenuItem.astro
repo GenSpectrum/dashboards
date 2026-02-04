@@ -11,7 +11,7 @@ const { iconType, menuListEntryDecoration, href, external } = Astro.props;
 ---
 
 <li class='flex items-center pt-2'>
-    <span class={`iconify mr-2 ${iconMapping[iconType]}`}></span>
+    <span class={`iconify mr-2 shrink-0 ${iconMapping[iconType]}`}></span>
     <a
         class={`hover:underline hover:decoration-4 ${menuListEntryDecoration} ${external === true ? externalLinkIconCss : ''}`}
         href={href}
