@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
@@ -27,6 +28,8 @@ const mockCollections: CollectionRaw[] = [
     },
 ];
 
+const queryClient = new QueryClient();
+
 describe('CollectionAnalysisFilter', () => {
     const defaultPageState: WasapCollectionFilter = {
         mode: 'collection',
@@ -39,11 +42,13 @@ describe('CollectionAnalysisFilter', () => {
         covSpectrum.mockGetCollections(DUMMY_COV_SPECTRUM_URL, mockCollections);
 
         const { getByRole } = render(
-            <CollectionAnalysisFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
-            />,
+            <QueryClientProvider client={queryClient}>
+                <CollectionAnalysisFilter
+                    pageState={defaultPageState}
+                    setPageState={mockSetPageState}
+                    collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
+                />
+            </QueryClientProvider>,
         );
 
         const select = getByRole('combobox');
@@ -56,11 +61,13 @@ describe('CollectionAnalysisFilter', () => {
         covSpectrum.mockGetCollections(DUMMY_COV_SPECTRUM_URL, mockCollections);
 
         const { getByRole } = render(
-            <CollectionAnalysisFilter
-                pageState={defaultPageState}
-                setPageState={mockSetPageState}
-                collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
-            />,
+            <QueryClientProvider client={queryClient}>
+                <CollectionAnalysisFilter
+                    pageState={defaultPageState}
+                    setPageState={mockSetPageState}
+                    collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
+                />
+            </QueryClientProvider>,
         );
 
         const select = getByRole('combobox');
