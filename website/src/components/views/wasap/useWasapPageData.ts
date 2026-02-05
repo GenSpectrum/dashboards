@@ -164,6 +164,8 @@ async function fetchCollectionModeData(
 
     collection.variants.map((f) => {
         if (f.query.type === 'variantQuery') {
+            // TODO - this way of generating a coverageQuery sort-of works, but is not production ready
+            // we need to to it with the LAPIS endpoint: https://github.com/GenSpectrum/dashboards/issues/1026
             const positions = (f.query.variantQuery.match(/\d+/g) ?? []).map(Number);
             const coverageQuery = positions.map((p) => `!C${p}N`).join(' | ');
             collections.push({
