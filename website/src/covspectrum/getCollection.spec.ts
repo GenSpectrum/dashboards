@@ -21,7 +21,10 @@ describe('getCollection', () => {
             email: 'test@example.com',
             variants: [
                 {
-                    query: '{"pangoLineage":"JN.1*"}',
+                    query: {
+                        type: 'detailedMutations',
+                        pangoLineage: 'JN.1*',
+                    },
                     name: 'JN.1*',
                     description: 'JN.1 variant',
                     highlighted: false,
@@ -78,13 +81,19 @@ describe('getCollection', () => {
             email: 'teams@example.com',
             variants: [
                 {
-                    query: '{"aaMutations":["S:L441R"]}',
+                    query: {
+                        type: 'detailedMutations',
+                        aaMutations: ['S:L441R'],
+                    },
                     name: 'S:L441R',
                     description: 'Spike mutation',
                     highlighted: true,
                 },
                 {
-                    query: '{"nextcladePangoLineage":"XEC*"}',
+                    query: {
+                        type: 'detailedMutations',
+                        nextcladePangoLineage: 'XEC*',
+                    },
                     name: 'XEC*',
                     description: 'XEC lineage',
                     highlighted: false,
