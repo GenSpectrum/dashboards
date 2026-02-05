@@ -31,12 +31,15 @@ import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
     wastewaterOrganism: WastewaterOrganismName;
+    isStaging: boolean;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStaging }) => {
     const config = wastewaterOrganismConfigs[wastewaterOrganism];
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
+
+    config.collectionAnalysisModeEnabled = isStaging ? true : undefined;
 
     const {
         pageState: { base, analysis },
