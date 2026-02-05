@@ -147,8 +147,6 @@ function useVariantLinkPageState(
 
     const query = queryParseResult.data;
 
-    // TODO - this query parsing below should move into the getCollections function
-
     if (query.variantQuery !== undefined) {
         return {
             ...currentPageState,

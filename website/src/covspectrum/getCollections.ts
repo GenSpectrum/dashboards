@@ -32,8 +32,6 @@ export async function getCollections(covSpectrumApiBaseUrl: string): Promise<Col
         return sorted;
     }
 
-    // TODO - in here we don't do the same parsing as in getCollection (parsing the query) - we might want to do that
-
     const message = `Failed to parse collections response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
     logger.error(message);
     throw new Error(message);
