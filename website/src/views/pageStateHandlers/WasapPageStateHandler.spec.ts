@@ -4,6 +4,7 @@ import { WasapPageStateHandler } from './WasapPageStateHandler';
 import { covidResistanceMutations } from '../../components/views/wasap/resistanceMutations';
 import {
     VARIANT_TIME_FRAME,
+    type WasapCollectionFilter,
     type WasapManualFilter,
     type WasapPageConfig,
     type WasapResistanceFilter,
@@ -63,6 +64,19 @@ const config: WasapPageConfig = {
             mode: 'untracked',
             sequenceType: 'nucleotide',
             excludeSet: 'predefined',
+        },
+    },
+};
+
+const configWithCollection: WasapPageConfig = {
+    ...config,
+    collectionAnalysisModeEnabled: true,
+    collectionsApiBaseUrl: 'https://collections.example.org',
+    filterDefaults: {
+        ...config.filterDefaults,
+        collection: {
+            mode: 'collection',
+            collectionId: undefined,
         },
     },
 };
@@ -320,6 +334,71 @@ describe('WasapPageStateHandler', () => {
             const analysis1 = filter1.analysis as WasapUntrackedFilter;
             const analysis2 = filter2.analysis as WasapUntrackedFilter;
             expect(analysis2.excludeVariants).toEqual(analysis1.excludeVariants);
+        });
+    });
+
+    describe('collection mode', () => {
+        const handlerWithCollection = new WasapPageStateHandler(configWithCollection);
+
+        it('throws error when feature is disabled', () => {
+            const url = '/wastewater/covid?analysisMode=collection&collectionId=123&';
+            expect(() => handler.parsePageStateFromUrl(new URL(`http://example.com${url}`))).toThrow(
+                "The 'collection' analysis mode is not enabled.",
+            );
+        });
+
+        it('parses and encodes collection filter with collectionId', () => {
+            const url =
+                '/wastewater/covid?' +
+                'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'granularity=day&' +
+                'analysisMode=collection&' +
+                'collectionId=123&';
+            const filter = handlerWithCollection.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            expect(filter.analysis.mode).toBe('collection');
+            const analysis = filter.analysis as WasapCollectionFilter;
+            expect(analysis.collectionId).toBe(123);
+
+            const newUrl = handlerWithCollection.toUrl(filter);
+            expect(newUrl).toBe(url);
+        });
+
+        it('parses collection filter without collectionId', () => {
+            const url = '/wastewater/covid?analysisMode=collection&';
+            const filter = handlerWithCollection.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            expect(filter.analysis.mode).toBe('collection');
+            const analysis = filter.analysis as WasapCollectionFilter;
+            expect(analysis.collectionId).toBeUndefined();
+        });
+
+        it('encodes collection filter omits undefined collectionId', () => {
+            const url = '/wastewater/covid?analysisMode=collection&';
+            const filter = handlerWithCollection.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            const encodedUrl = handlerWithCollection.toUrl(filter);
+            expect(encodedUrl).not.toContain('collectionId');
+        });
+
+        it('converts collectionId string to number', () => {
+            const url = '/wastewater/covid?analysisMode=collection&collectionId=456&';
+            const filter = handlerWithCollection.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            const analysis = filter.analysis as WasapCollectionFilter;
+            expect(typeof analysis.collectionId).toBe('number');
+            expect(analysis.collectionId).toBe(456);
+        });
+
+        it('collection mode round-trip preserves collectionId', () => {
+            const url = '/wastewater/covid?analysisMode=collection&collectionId=789&';
+            const filter1 = handlerWithCollection.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+            const url2 = handlerWithCollection.toUrl(filter1);
+            const filter2 = handlerWithCollection.parsePageStateFromUrl(new URL(`http://example.com${url2}`));
+
+            const analysis1 = filter1.analysis as WasapCollectionFilter;
+            const analysis2 = filter2.analysis as WasapCollectionFilter;
+            expect(analysis2.collectionId).toBe(analysis1.collectionId);
         });
     });
 });
