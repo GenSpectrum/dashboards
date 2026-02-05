@@ -2,7 +2,7 @@ import { http } from 'msw';
 import { beforeEach, describe, expect, test } from 'vitest';
 
 import { getCollection } from './getCollection.ts';
-import { type Collection } from './types.ts';
+import { type CollectionRaw } from './types.ts';
 import { astroApiRouteMocker, testServer } from '../../vitest.setup.ts';
 
 const DUMMY_COV_SPECTRUM_URL = 'http://cov-spectrum.dummy/api/v2';
@@ -13,7 +13,7 @@ describe('getCollection', () => {
     });
 
     test('should successfully fetch a single collection by id', async () => {
-        const mockCollection: Collection = {
+        const mockCollection: CollectionRaw = {
             id: 1,
             title: "Editor's choice",
             description: 'A curated collection',
@@ -21,10 +21,7 @@ describe('getCollection', () => {
             email: 'test@example.com',
             variants: [
                 {
-                    query: {
-                        type: 'detailedMutations',
-                        pangoLineage: 'JN.1*',
-                    },
+                    query: '{ "pangoLineage": "JN.1*" }',
                     name: 'JN.1*',
                     description: 'JN.1 variant',
                     highlighted: false,
@@ -51,7 +48,7 @@ describe('getCollection', () => {
         const collectionId = 42;
         let requestedUrl = '';
 
-        const mockCollection: Collection = {
+        const mockCollection: CollectionRaw = {
             id: collectionId,
             title: 'Test Collection',
             description: 'Test description',
@@ -73,7 +70,7 @@ describe('getCollection', () => {
     });
 
     test('should validate collection structure with all required fields', async () => {
-        const mockCollection: Collection = {
+        const mockCollection: CollectionRaw = {
             id: 2,
             title: 'Full Collection',
             description: 'Complete collection with all fields',
@@ -81,19 +78,13 @@ describe('getCollection', () => {
             email: 'teams@example.com',
             variants: [
                 {
-                    query: {
-                        type: 'detailedMutations',
-                        aaMutations: ['S:L441R'],
-                    },
+                    query: '{ "type": "detailedMutations", "aaMutations": ["S:L441R"] }',
                     name: 'S:L441R',
                     description: 'Spike mutation',
                     highlighted: true,
                 },
                 {
-                    query: {
-                        type: 'detailedMutations',
-                        nextcladePangoLineage: 'XEC*',
-                    },
+                    query: '{ "type": "detailedMutations", "nextcladePangoLineage": "XEC*" }',
                     name: 'XEC*',
                     description: 'XEC lineage',
                     highlighted: false,
