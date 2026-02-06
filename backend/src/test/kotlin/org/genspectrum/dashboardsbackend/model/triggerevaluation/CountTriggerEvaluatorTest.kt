@@ -41,9 +41,7 @@ import org.springframework.boot.test.context.SpringBootTest
     ],
 )
 @MockServerTest
-class CountTriggerEvaluatorTest(
-    @Autowired private val underTest: TriggerEvaluator,
-) {
+class CountTriggerEvaluatorTest(@param:Autowired private val underTest: TriggerEvaluator) {
     private lateinit var mockServerClient: MockServerClient
 
     @MockkBean
@@ -261,13 +259,12 @@ class CountTriggerEvaluatorTest(
         assertThat(exception.message, containsString("Failed to deserialize error response from LAPIS"))
     }
 
-    private fun isEvaluationErrorWith(message: Matcher<String>, statusCode: Int): Matcher<TriggerEvaluationResult> {
-        return allOf(
+    private fun isEvaluationErrorWith(message: Matcher<String>, statusCode: Int): Matcher<TriggerEvaluationResult> =
+        allOf(
             instanceOf(TriggerEvaluationResult.EvaluationError::class.java),
             hasProperty("message", message),
             hasProperty("statusCode", `is`(statusCode)),
         )
-    }
 
     private fun requestingAggregatedDataWith(organism: String, body: String): HttpRequest? = request()
         .withMethod("POST")

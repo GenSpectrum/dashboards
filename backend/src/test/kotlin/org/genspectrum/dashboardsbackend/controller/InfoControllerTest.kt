@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class InfoControllerTest(@Autowired val mockMvc: MockMvc) {
+class InfoControllerTest(@param:Autowired val mockMvc: MockMvc) {
     @Test
     fun `WHEN calling root THEN responds with a hello page`() {
         mockMvc.perform(get("/"))

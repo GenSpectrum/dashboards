@@ -59,9 +59,8 @@ class TriggerEvaluator(
         )
     }
 
-    private fun additionalFilters(organism: String): Map<String, String> {
-        return dashboardsConfig.getOrganismConfig(organism).lapis.additionalFilters ?: emptyMap()
-    }
+    private fun additionalFilters(organism: String): Map<String, String> =
+        dashboardsConfig.getOrganismConfig(organism).lapis.additionalFilters ?: emptyMap()
 }
 
 private interface TriggerComputation {
