@@ -40,7 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest
 )
 @MockServerTest
 class ProportionTriggerEvaluatorTest(
-    @Autowired private val underTest: TriggerEvaluator,
+    @param:Autowired private val underTest: TriggerEvaluator,
 ) {
     private lateinit var mockServerClient: MockServerClient
 

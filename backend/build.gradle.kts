@@ -43,6 +43,8 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-postgresql:2.0.3")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 kotlin {

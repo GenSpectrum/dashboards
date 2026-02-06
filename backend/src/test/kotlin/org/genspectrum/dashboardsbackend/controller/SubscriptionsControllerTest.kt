@@ -31,7 +31,7 @@ fun getNewUserId(): String {
 @AutoConfigureMockMvc
 @Import(SubscriptionsClient::class)
 class SubscriptionsControllerTest(
-    @Autowired private val subscriptionsClient: SubscriptionsClient,
+    @param:Autowired private val subscriptionsClient: SubscriptionsClient,
 ) {
     @Test
     fun `GIVEN I created a subscription WHEN getting subscriptions THEN contains created subscription`() {

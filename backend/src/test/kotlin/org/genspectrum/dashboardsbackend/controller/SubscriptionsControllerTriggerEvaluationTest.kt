@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 @Import(SubscriptionsClient::class)
 class SubscriptionsControllerTriggerEvaluationTest(
-    @Autowired private val subscriptionsClient: SubscriptionsClient,
+    @param:Autowired private val subscriptionsClient: SubscriptionsClient,
 ) {
     @MockkBean
     private lateinit var lapisClientProviderMock: LapisClientProvider
