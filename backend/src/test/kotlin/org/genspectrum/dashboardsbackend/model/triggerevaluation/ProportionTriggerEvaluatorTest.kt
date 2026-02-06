@@ -39,9 +39,7 @@ import org.springframework.boot.test.context.SpringBootTest
     ],
 )
 @MockServerTest
-class ProportionTriggerEvaluatorTest(
-    @param:Autowired private val underTest: TriggerEvaluator,
-) {
+class ProportionTriggerEvaluatorTest(@param:Autowired private val underTest: TriggerEvaluator) {
     private lateinit var mockServerClient: MockServerClient
 
     @MockkBean
@@ -333,13 +331,12 @@ class ProportionTriggerEvaluatorTest(
         """.replace("\\s".toRegex(), ""),
     )
 
-    private fun isEvaluationErrorWith(message: Matcher<String>, statusCode: Int): Matcher<TriggerEvaluationResult> {
-        return allOf(
+    private fun isEvaluationErrorWith(message: Matcher<String>, statusCode: Int): Matcher<TriggerEvaluationResult> =
+        allOf(
             instanceOf(TriggerEvaluationResult.EvaluationError::class.java),
             hasProperty("message", message),
             hasProperty("statusCode", `is`(statusCode)),
         )
-    }
 
     private fun requestingAggregatedDataWith(organism: String, body: String) = request()
         .withMethod("POST")

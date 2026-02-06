@@ -47,6 +47,11 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+// taken from https://github.com/JLLeitschuh/ktlint-gradle/issues/809#issuecomment-2515514826
+ktlint {
+    version.set("1.4.1")
+}
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")

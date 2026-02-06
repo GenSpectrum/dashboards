@@ -15,10 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class SubscriptionsClient(
-    private val mockMvc: MockMvc,
-    private val objectMapper: ObjectMapper,
-) {
+class SubscriptionsClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
     fun getSubscriptionRaw(id: String, userId: String) = mockMvc.perform(get("/subscriptions/$id?userId=$userId"))
 
     fun getSubscription(id: String, userId: String): Subscription = deserializeJsonResponse(

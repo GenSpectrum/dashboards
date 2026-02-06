@@ -14,26 +14,20 @@ import javax.sql.DataSource
 
 @Service
 @Transactional
-class SubscriptionModel(
-    pool: DataSource,
-    private val dashboardsConfig: DashboardsConfig,
-) {
+class SubscriptionModel(pool: DataSource, private val dashboardsConfig: DashboardsConfig) {
     init {
         Database.connect(pool)
     }
 
-    fun getSubscription(subscriptionId: String, userId: String): Subscription {
-        return SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
+    fun getSubscription(subscriptionId: String, userId: String): Subscription =
+        SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?.toSubscription()
             ?: throw NotFoundException("Subscription $subscriptionId not found")
-    }
 
-    fun getSubscriptions(userId: String): List<Subscription> {
-        return SubscriptionEntity.find {
-            SubscriptionTable.userId eq userId
-        }.map {
-            it.toSubscription()
-        }
+    fun getSubscriptions(userId: String): List<Subscription> = SubscriptionEntity.find {
+        SubscriptionTable.userId eq userId
+    }.map {
+        it.toSubscription()
     }
 
     fun postSubscriptions(request: SubscriptionRequest, userId: String): Subscription {

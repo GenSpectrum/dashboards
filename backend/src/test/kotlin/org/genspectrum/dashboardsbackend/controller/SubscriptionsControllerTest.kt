@@ -23,16 +23,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
-fun getNewUserId(): String {
-    return UUID.randomUUID().toString()
-}
+fun getNewUserId(): String = UUID.randomUUID().toString()
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(SubscriptionsClient::class)
-class SubscriptionsControllerTest(
-    @param:Autowired private val subscriptionsClient: SubscriptionsClient,
-) {
+class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClient: SubscriptionsClient) {
     @Test
     fun `GIVEN I created a subscription WHEN getting subscriptions THEN contains created subscription`() {
         val userId = getNewUserId()
