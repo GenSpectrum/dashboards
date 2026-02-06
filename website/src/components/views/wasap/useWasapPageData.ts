@@ -2,7 +2,16 @@ import type { CustomColumn, LapisFilter } from '@genspectrum/dashboard-component
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
-import type { VariantTimeFrame, WasapAnalysisFilter, WasapPageConfig } from './wasapPageConfig';
+import type {
+    VariantTimeFrame,
+    WasapAnalysisFilter,
+    WasapCollectionFilter,
+    WasapManualFilter,
+    WasapPageConfig,
+    WasapResistanceFilter,
+    WasapUntrackedFilter,
+    WasapVariantFilter,
+} from './wasapPageConfig';
 import { getCollection } from '../../../covspectrum/getCollection';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
@@ -33,12 +42,9 @@ async function fetchWasapPageData(config: WasapPageConfig, analysis: WasapAnalys
     }
 }
 
-function fetchManualModeData(config: WasapPageConfig, analysis: WasapAnalysisFilter): WasapMutationsData {
+function fetchManualModeData(config: WasapPageConfig, analysis: WasapManualFilter): WasapMutationsData {
     if (!config.manualAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'manual' mode is not enabled.");
-    }
-    if (analysis.mode !== 'manual') {
-        throw Error('Invalid analysis mode');
     }
     return {
         type: 'mutations',
@@ -48,16 +54,10 @@ function fetchManualModeData(config: WasapPageConfig, analysis: WasapAnalysisFil
 
 async function fetchVariantModeData(
     config: WasapPageConfig,
-    analysis: WasapAnalysisFilter,
+    analysis: WasapVariantFilter,
 ): Promise<WasapMutationsData> {
     if (!config.variantAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'variant' mode is not enabled.");
-    }
-    if (analysis.mode !== 'variant') {
-        throw Error('Invalid analysis mode');
-    }
-    if (!analysis.variant) {
-        return { type: 'mutations', displayMutations: [] };
     }
     const mutationsWithScore = await getMutationsForVariant(
         config.clinicalLapis.lapisBaseUrl,
@@ -84,12 +84,9 @@ async function fetchVariantModeData(
     };
 }
 
-function fetchResistanceModeData(config: WasapPageConfig, analysis: WasapAnalysisFilter): WasapMutationsData {
+function fetchResistanceModeData(config: WasapPageConfig, analysis: WasapResistanceFilter): WasapMutationsData {
     if (!config.resistanceAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
-    }
-    if (analysis.mode !== 'resistance') {
-        throw Error('Invalid analysis mode');
     }
     return {
         type: 'mutations',
@@ -100,13 +97,10 @@ function fetchResistanceModeData(config: WasapPageConfig, analysis: WasapAnalysi
 
 async function fetchUntrackedModeData(
     config: WasapPageConfig,
-    analysis: WasapAnalysisFilter,
+    analysis: WasapUntrackedFilter,
 ): Promise<WasapMutationsData> {
     if (!config.untrackedAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'untracked' mode is not enabled.");
-    }
-    if (analysis.mode !== 'untracked') {
-        throw Error('Invalid analysis mode');
     }
     const variantsToExclude =
         analysis.excludeSet === 'custom'
@@ -144,31 +138,28 @@ async function fetchUntrackedModeData(
 
 async function fetchCollectionModeData(
     config: WasapPageConfig,
-    analysis: WasapAnalysisFilter,
+    analysis: WasapCollectionFilter,
 ): Promise<WasapCollectionData> {
     if (!config.collectionAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'collection' mode is not enabled.");
-    }
-    if (analysis.mode !== 'collection') {
-        throw Error('Invalid analysis mode');
     }
     if (!analysis.collectionId) {
         throw Error('No collection selected');
     }
     const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
-    const collections: {
+    const queries: {
         displayLabel: string;
         countQuery: string;
         coverageQuery: string;
     }[] = [];
 
-    collection.variants.map((f) => {
+    collection.variants.forEach((f) => {
         if (f.query.type === 'variantQuery') {
             // TODO - this way of generating a coverageQuery sort-of works, but is not production ready
             // we need to to it with the LAPIS endpoint: https://github.com/GenSpectrum/dashboards/issues/1026
             const positions = (f.query.variantQuery.match(/\d+/g) ?? []).map(Number);
             const coverageQuery = positions.map((p) => `!C${p}N`).join(' | ');
-            collections.push({
+            queries.push({
                 displayLabel: f.name,
                 countQuery: f.query.variantQuery,
                 coverageQuery,
@@ -180,7 +171,7 @@ async function fetchCollectionModeData(
         collection: {
             id: collection.id,
             title: collection.title,
-            queries: collections,
+            queries,
         },
     };
 }
