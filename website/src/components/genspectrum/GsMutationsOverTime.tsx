@@ -1,9 +1,10 @@
-import type {
-    TemporalGranularity,
-    LapisFilter,
-    SequenceType,
-    MeanProportionInterval,
-    CustomColumn,
+import {
+    type TemporalGranularity,
+    type LapisFilter,
+    type SequenceType,
+    type MeanProportionInterval,
+    type CustomColumn,
+    views,
 } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
@@ -46,7 +47,7 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 height={height ? '100%' : undefined}
                 lapisFilter={JSON.stringify(lapisFilter)}
                 sequenceType={sequenceType}
-                views='["grid"]'
+                views={JSON.stringify([views.grid])}
                 granularity={granularity}
                 lapisDateField={lapisDateField}
                 displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}

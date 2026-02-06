@@ -1,9 +1,10 @@
-import type {
-    CustomColumn,
-    LapisFilter,
-    MeanProportionInterval,
-    QueryDefinition,
-    TemporalGranularity,
+import {
+    views,
+    type CustomColumn,
+    type LapisFilter,
+    type MeanProportionInterval,
+    type QueryDefinition,
+    type TemporalGranularity,
 } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
@@ -44,7 +45,7 @@ export const GsQueriesOverTime: FC<GsQueriesOverTimeProps> = ({
                 height={height ? '100%' : undefined}
                 lapisFilter={JSON.stringify(lapisFilter)}
                 queries={JSON.stringify(queries)}
-                views='["grid"]'
+                views={JSON.stringify([views.grid])}
                 granularity={granularity}
                 lapisDateField={lapisDateField}
                 hideGaps={hideGaps}
