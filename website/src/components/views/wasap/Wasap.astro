@@ -10,6 +10,8 @@ type Props = {
 
 const { wastewaterOrganism } = Astro.props;
 const { name } = wastewaterOrganismConfigs[wastewaterOrganism];
+// TODO -- remove isStaging from here, and cascade removing it into the component, after
+// the collections mode is enabled in prod https://github.com/GenSpectrum/dashboards/issues/1029
 const staging = isStaging();
 ---
 

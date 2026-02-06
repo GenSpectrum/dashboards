@@ -36,12 +36,14 @@ export function WasapPageStateSelector({
     initialBaseFilterState,
     initialAnalysisFilterState,
     setPageState,
+    isStaging,
 }: {
     config: WasapPageConfig;
     pageStateHandler: PageStateHandler<WasapFilter>;
     initialBaseFilterState: WasapBaseFilter;
     initialAnalysisFilterState: WasapAnalysisFilter;
     setPageState: Dispatch<SetStateAction<WasapFilter>>;
+    isStaging: boolean;
 }) {
     const [baseFilterState, setBaseFilterState] = useState(initialBaseFilterState);
 
@@ -155,7 +157,7 @@ export function WasapPageStateSelector({
                     setSelectedAnalysisMode(e.target.value as WasapAnalysisMode);
                 }}
             >
-                {enabledAnalysisModes(config).map((mode) => (
+                {enabledAnalysisModes(config, isStaging).map((mode) => (
                     <option key={mode} value={mode}>
                         {modeLabel(mode)}
                     </option>

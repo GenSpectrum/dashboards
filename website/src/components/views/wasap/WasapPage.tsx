@@ -39,8 +39,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
 
-    config.collectionAnalysisModeEnabled = isStaging ? true : undefined;
-
     const {
         pageState: { base, analysis },
         setPageState,
@@ -99,6 +97,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
                             initialBaseFilterState={base}
                             initialAnalysisFilterState={analysis}
                             setPageState={setPageState}
+                            isStaging={isStaging}
                         />
                     </div>
                     {isError ? (

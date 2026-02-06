@@ -124,7 +124,7 @@ type CollectionAnalysisModeConfig =
 /**
  * Convenience function to get the list of enabled modes.
  */
-export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode[] {
+export function enabledAnalysisModes(config: WasapPageConfig, isStaging: boolean): WasapAnalysisMode[] {
     const result: WasapAnalysisMode[] = [];
     if (config.manualAnalysisModeEnabled) {
         result.push('manual');
@@ -138,7 +138,7 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     if (config.untrackedAnalysisModeEnabled) {
         result.push('untracked');
     }
-    if (config.collectionAnalysisModeEnabled) {
+    if (config.collectionAnalysisModeEnabled && isStaging) {
         result.push('collection');
     }
     return result;
