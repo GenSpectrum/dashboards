@@ -2,7 +2,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 
-import { AstroApiRouteMocker, BackendRouteMocker, LapisRouteMocker } from './routeMocker.ts';
+import { AstroApiRouteMocker, BackendRouteMocker, CovSpectrumRouteMocker, LapisRouteMocker } from './routeMocker.ts';
 import setupDayjs from './src/util/setupDayjs.ts';
 
 setupDayjs();
@@ -14,6 +14,8 @@ export const astroApiRouteMocker = new AstroApiRouteMocker(testServer);
 export const lapisRouteMocker = new LapisRouteMocker(testServer);
 
 export const backendRouteMocker = new BackendRouteMocker(testServer);
+
+export const covSpectrumRouteMocker = new CovSpectrumRouteMocker(testServer);
 
 beforeAll(() => testServer.listen({ onUnhandledRequest: 'warn' }));
 

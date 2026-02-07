@@ -99,35 +99,21 @@ class LapisClient(
         }
     }
 
-    private fun String.truncateAfter(maxLength: Int): String {
-        return if (length > maxLength) {
-            substring(0, maxLength) + "..."
-        } else {
-            this
-        }
+    private fun String.truncateAfter(maxLength: Int): String = if (length > maxLength) {
+        substring(0, maxLength) + "..."
+    } else {
+        this
     }
 }
 
 sealed interface LapisResponse
 
-data class LapisAggregatedResponse(
-    val data: List<AggregatedData>,
-    val info: LapisInfo,
-) : LapisResponse
+data class LapisAggregatedResponse(val data: List<AggregatedData>, val info: LapisInfo) : LapisResponse
 
-data class AggregatedData(
-    val count: Int,
-)
+data class AggregatedData(val count: Int)
 
-data class LapisError(
-    val error: ProblemDetail,
-    val info: LapisInfo,
-) : LapisResponse
+data class LapisError(val error: ProblemDetail, val info: LapisInfo) : LapisResponse
 
-data class LapisInfo(
-    val dataVersion: String? = null,
-)
+data class LapisInfo(val dataVersion: String? = null)
 
-data class LapisNotReachableError(
-    val message: String,
-) : LapisResponse
+data class LapisNotReachableError(val message: String) : LapisResponse
