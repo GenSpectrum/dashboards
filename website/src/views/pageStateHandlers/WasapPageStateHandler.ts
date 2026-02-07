@@ -35,7 +35,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const providedMode = texts.analysisMode as WasapAnalysisMode | undefined;
 
         // config provided defaults
-        const defaultMode = enabledAnalysisModes(this.config)[0];
+        const defaultMode = enabledAnalysisModes(this.config, false)[0];
 
         const mode = providedMode ?? defaultMode;
 
@@ -91,6 +91,15 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
+            case 'collection':
+                if (!this.config.collectionAnalysisModeEnabled) {
+                    throw Error("The 'collection' analysis mode is not enabled.");
+                }
+                analysis = {
+                    mode,
+                    collectionId: texts.collectionId ? Number(texts.collectionId) : undefined,
+                };
+                break;
         }
 
         const base: WasapBaseFilter = {
@@ -141,6 +150,13 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 if (analysis.excludeSet === 'custom') {
                     setSearchFromString(search, 'excludeVariants', analysis.excludeVariants?.join('|'));
                 }
+                break;
+            case 'collection':
+                setSearchFromString(
+                    search,
+                    'collectionId',
+                    analysis.collectionId ? String(analysis.collectionId) : undefined,
+                );
                 break;
         }
 
@@ -215,6 +231,10 @@ function generateWasapFilterConfig(pageConfig: WasapPageConfig): BaselineFilterC
         {
             type: 'text',
             lapisField: 'excludeVariants',
+        },
+        {
+            type: 'text',
+            lapisField: 'collectionId',
         },
     ];
 }
