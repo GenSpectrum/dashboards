@@ -5,7 +5,7 @@ plugins {
     kotlin("plugin.spring") version "2.3.10"
     id("org.springframework.boot") version "3.4.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
 }
 
