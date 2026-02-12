@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { getClientLogger } from '../clientLogger.ts';
-import { collectionsResponseSchema, type Collection } from './types.ts';
+import { collectionsRawResponseSchema, type CollectionRaw } from './types.ts';
 
 const logger = getClientLogger('getCollections');
 
@@ -13,7 +13,7 @@ const logger = getClientLogger('getCollections');
  * @returns A promise that resolves to an array of Collection objects
  * @throws Error if the request fails or response validation fails
  */
-export async function getCollections(covSpectrumApiBaseUrl: string): Promise<Collection[]> {
+export async function getCollections(covSpectrumApiBaseUrl: string): Promise<CollectionRaw[]> {
     const url = `${covSpectrumApiBaseUrl}/resource/collection`;
 
     let response;
@@ -25,7 +25,7 @@ export async function getCollections(covSpectrumApiBaseUrl: string): Promise<Col
         throw new Error(message);
     }
 
-    const parsedResponse = collectionsResponseSchema.safeParse(response.data);
+    const parsedResponse = collectionsRawResponseSchema.safeParse(response.data);
     if (parsedResponse.success) {
         // Sort by ID to ensure consistent ordering
         const sorted = parsedResponse.data.sort((c1, c2) => c1.id - c2.id);

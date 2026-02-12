@@ -34,21 +34,18 @@ class SubscriptionsController(
     fun getSubscription(
         @IdParameter @PathVariable id: String,
         @UserIdParameter @RequestParam userId: String,
-    ): Subscription {
-        return subscriptionModel.getSubscription(
-            subscriptionId = id,
-            userId = userId,
-        )
-    }
+    ): Subscription = subscriptionModel.getSubscription(
+        subscriptionId = id,
+        userId = userId,
+    )
 
     @GetMapping("/subscriptions", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Get all subscriptions of a user",
         description = "Returns a list of all subscriptions of a user.",
     )
-    fun getSubscriptions(@UserIdParameter @RequestParam userId: String): List<Subscription> {
-        return subscriptionModel.getSubscriptions(userId)
-    }
+    fun getSubscriptions(@UserIdParameter @RequestParam userId: String): List<Subscription> =
+        subscriptionModel.getSubscriptions(userId)
 
     @PostMapping("/subscriptions")
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,12 +56,10 @@ class SubscriptionsController(
     fun postSubscriptions(
         @RequestBody subscription: SubscriptionRequest,
         @UserIdParameter @RequestParam userId: String,
-    ): Subscription {
-        return subscriptionModel.postSubscriptions(
-            request = subscription,
-            userId = userId,
-        )
-    }
+    ): Subscription = subscriptionModel.postSubscriptions(
+        request = subscription,
+        userId = userId,
+    )
 
     @DeleteMapping("/subscriptions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -88,13 +83,11 @@ class SubscriptionsController(
         @RequestBody subscription: SubscriptionUpdate,
         @IdParameter @PathVariable id: String,
         @UserIdParameter @RequestParam userId: String,
-    ): Subscription {
-        return subscriptionModel.putSubscription(
-            subscriptionId = id,
-            subscriptionUpdate = subscription,
-            userId = userId,
-        )
-    }
+    ): Subscription = subscriptionModel.putSubscription(
+        subscriptionId = id,
+        subscriptionUpdate = subscription,
+        userId = userId,
+    )
 
     @GetMapping("/subscriptions/evaluateTrigger")
     @Operation(

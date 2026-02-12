@@ -48,10 +48,7 @@ sealed interface Trigger {
     }
 
     @Schema(description = "A trigger that is triggered when a certain count is reached")
-    data class CountTrigger @JsonCreator constructor(
-        val count: Int,
-        val filter: LapisFilter,
-    ) : Trigger {
+    data class CountTrigger @JsonCreator constructor(val count: Int, val filter: LapisFilter) : Trigger {
         val type: CountTriggerType = CountTriggerType.COUNT
     }
 
