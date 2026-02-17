@@ -116,6 +116,7 @@ type CollectionAnalysisModeConfig =
     | {
           collectionAnalysisModeEnabled: true;
           collectionsApiBaseUrl: string;
+          collectionTitleFilter: string;
           filterDefaults: {
               collection: WasapCollectionFilter;
           };

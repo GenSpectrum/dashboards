@@ -72,6 +72,7 @@ const configWithCollection: WasapPageConfig = {
     ...config,
     collectionAnalysisModeEnabled: true,
     collectionsApiBaseUrl: 'https://collections.example.org',
+    collectionTitleFilter: 'test',
     filterDefaults: {
         ...config.filterDefaults,
         collection: {

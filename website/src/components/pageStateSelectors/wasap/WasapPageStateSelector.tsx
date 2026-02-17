@@ -216,6 +216,7 @@ export function WasapPageStateSelector({
                                     pageState={collectionFilter}
                                     setPageState={setCollectionFilter}
                                     collectionsApiBaseUrl={config.collectionsApiBaseUrl}
+                                    collectionTitleFilter={config.collectionTitleFilter}
                                 />
                             );
                     }

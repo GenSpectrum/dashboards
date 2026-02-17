@@ -41,6 +41,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
         collectionsApiBaseUrl: 'https://cov-spectrum.org/api/v2',
+        collectionTitleFilter: 'wastewater',
         defaultLocationName: 'Zürich (ZH)',
         clinicalSequenceCountWarningThreshold: 50,
         filterDefaults: {

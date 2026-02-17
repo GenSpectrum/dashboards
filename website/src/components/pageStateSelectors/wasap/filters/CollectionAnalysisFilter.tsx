@@ -8,18 +8,20 @@ export function CollectionAnalysisFilter({
     pageState,
     setPageState,
     collectionsApiBaseUrl,
+    collectionTitleFilter,
 }: {
     pageState: WasapCollectionFilter;
     setPageState: (newState: WasapCollectionFilter) => void;
     collectionsApiBaseUrl: string;
+    collectionTitleFilter: string;
 }) {
     const {
         data: collections,
         isPending,
         isError,
     } = useQuery({
-        queryKey: ['collections', collectionsApiBaseUrl],
-        queryFn: () => getCollections(collectionsApiBaseUrl),
+        queryKey: ['collections', collectionsApiBaseUrl, collectionTitleFilter],
+        queryFn: () => getCollections(collectionsApiBaseUrl, collectionTitleFilter),
     });
 
     return (

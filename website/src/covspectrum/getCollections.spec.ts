@@ -151,4 +151,131 @@ describe('getCollections', () => {
         expect(result[0].variants[0].name).equals('BA.1');
         expect(result[0].variants[1].name).equals('BA.2');
     });
+
+    test('should filter collections by title (case-insensitive)', async () => {
+        const mockCollections: CollectionRaw[] = [
+            {
+                id: 1,
+                title: 'Wastewater Collection Alpha',
+                description: 'First wastewater collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+            {
+                id: 2,
+                title: 'Clinical Collection Beta',
+                description: 'Clinical collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+            {
+                id: 3,
+                title: 'Wastewater Collection Gamma',
+                description: 'Second wastewater collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+        ];
+
+        testServer.use(
+            http.get(`${DUMMY_COV_SPECTRUM_URL}/resource/collection`, () => {
+                return Response.json(mockCollections);
+            }),
+        );
+
+        const result = await getCollections(DUMMY_COV_SPECTRUM_URL, 'wastewater');
+
+        expect(result).toHaveLength(2);
+        expect(result[0].id).equals(1);
+        expect(result[1].id).equals(3);
+    });
+
+    test('should filter collections by title with different case', async () => {
+        const mockCollections: CollectionRaw[] = [
+            {
+                id: 1,
+                title: 'Wastewater Collection',
+                description: 'Test collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+            {
+                id: 2,
+                title: 'Other Collection',
+                description: 'Other collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+        ];
+
+        testServer.use(
+            http.get(`${DUMMY_COV_SPECTRUM_URL}/resource/collection`, () => {
+                return Response.json(mockCollections);
+            }),
+        );
+
+        const result = await getCollections(DUMMY_COV_SPECTRUM_URL, 'WASTEWATER');
+
+        expect(result).toHaveLength(1);
+        expect(result[0].id).equals(1);
+    });
+
+    test('should return empty array when filter matches no collections', async () => {
+        const mockCollections: CollectionRaw[] = [
+            {
+                id: 1,
+                title: 'Collection A',
+                description: 'Test collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+        ];
+
+        testServer.use(
+            http.get(`${DUMMY_COV_SPECTRUM_URL}/resource/collection`, () => {
+                return Response.json(mockCollections);
+            }),
+        );
+
+        const result = await getCollections(DUMMY_COV_SPECTRUM_URL, 'nonexistent');
+
+        expect(result).toHaveLength(0);
+    });
+
+    test('should return all collections when no filter is provided', async () => {
+        const mockCollections: CollectionRaw[] = [
+            {
+                id: 1,
+                title: 'Collection A',
+                description: 'Test collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+            {
+                id: 2,
+                title: 'Collection B',
+                description: 'Test collection',
+                maintainers: 'Test Maintainer',
+                email: 'test@example.com',
+                variants: [],
+            },
+        ];
+
+        testServer.use(
+            http.get(`${DUMMY_COV_SPECTRUM_URL}/resource/collection`, () => {
+                return Response.json(mockCollections);
+            }),
+        );
+
+        const result = await getCollections(DUMMY_COV_SPECTRUM_URL);
+
+        expect(result).toHaveLength(2);
+    });
 });
