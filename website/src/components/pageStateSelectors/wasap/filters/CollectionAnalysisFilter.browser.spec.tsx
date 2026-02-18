@@ -47,7 +47,7 @@ describe('CollectionAnalysisFilter', () => {
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
-                    collectionTitleFilter='test-filter'
+                    collectionTitleFilter='pro'
                 />
             </QueryClientProvider>,
         );
@@ -67,7 +67,7 @@ describe('CollectionAnalysisFilter', () => {
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
-                    collectionTitleFilter='test-filter'
+                    collectionTitleFilter='r'
                 />
             </QueryClientProvider>,
         );
