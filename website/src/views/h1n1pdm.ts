@@ -73,7 +73,7 @@ class H1n1pdmConstants implements OrganismConstants {
     public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
-            lineages: { cladeHA: '6B.1A.5a.2a.1', cladeNA: 'C.5.3' },
+            lineages: { cladeHA: 'C.1.9.3', cladeNA: 'C.5.3' },
         },
     ];
 
@@ -122,7 +122,7 @@ export class H1n1pdmCompareSideBySideView extends BaseView<
             {},
             {
                 lineages: {
-                    [CLADE_HA_FIELD_NAME]: '6B.1A.5a.2a.1',
+                    [CLADE_HA_FIELD_NAME]: 'C.1.9.3',
                     [CLADE_NA_FIELD_NAME]: 'C.5.3',
                 },
             },
