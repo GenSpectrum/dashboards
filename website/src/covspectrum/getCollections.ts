@@ -32,7 +32,7 @@ export async function getCollections(covSpectrumApiBaseUrl: string, titleFilter?
         let collections = parsedResponse.data.sort((c1, c2) => c1.id - c2.id);
 
         // Apply title filter if provided
-        if (titleFilter) {
+        if (titleFilter !== undefined) {
             const lowerFilter = titleFilter.toLowerCase();
             collections = collections.filter((collection) => collection.title.toLowerCase().includes(lowerFilter));
         }
