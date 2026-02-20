@@ -1,64 +1,60 @@
 import {
-    type TemporalGranularity,
-    type LapisFilter,
-    type SequenceType,
-    type MeanProportionInterval,
-    type CustomColumn,
     views,
+    type CustomColumn,
+    type LapisFilter,
+    type MeanProportionInterval,
+    type QueryDefinition,
+    type TemporalGranularity,
 } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
 import { ComponentWrapper } from '../ComponentWrapper';
 
-export type GsMutationsOverTimeProps = {
+export type GsQueriesOverTimeProps = {
+    collectionTitle?: string;
     lapisFilter: LapisFilter;
-    sequenceType: SequenceType;
+    queries: QueryDefinition[];
     granularity: TemporalGranularity;
     lapisDateField: string;
-    displayMutations?: string[];
     height?: string;
     pageSizes?: number[];
-    useNewEndpoint?: true;
     hideGaps?: true;
     initialMeanProportionInterval?: MeanProportionInterval;
     customColumns?: CustomColumn[];
 };
 
-export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
+export const GsQueriesOverTime: FC<GsQueriesOverTimeProps> = ({
+    collectionTitle,
     lapisFilter,
-    sequenceType,
+    queries,
     granularity,
     lapisDateField,
-    displayMutations,
     height,
     pageSizes,
-    useNewEndpoint,
     hideGaps,
     initialMeanProportionInterval,
     customColumns,
 }) => {
     return (
         <ComponentWrapper
-            title={sequenceType === 'nucleotide' ? 'Nucleotide mutations over time' : 'Amino acid mutations over time'}
+            title={'Collection over time' + (collectionTitle ? `: ${collectionTitle}` : '')}
             height={height}
         >
-            <gs-mutations-over-time
+            <gs-queries-over-time
                 width='100%'
                 height={height ? '100%' : undefined}
                 lapisFilter={JSON.stringify(lapisFilter)}
-                sequenceType={sequenceType}
+                queries={JSON.stringify(queries)}
                 views={JSON.stringify([views.grid])}
                 granularity={granularity}
                 lapisDateField={lapisDateField}
-                displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
-                useNewEndpoint={useNewEndpoint}
                 hideGaps={hideGaps}
                 pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
                 initialMeanProportionInterval={
                     initialMeanProportionInterval ? JSON.stringify(initialMeanProportionInterval) : undefined
                 }
                 customColumns={customColumns ? JSON.stringify(customColumns) : undefined}
-            ></gs-mutations-over-time>
+            ></gs-queries-over-time>
         </ComponentWrapper>
     );
 };

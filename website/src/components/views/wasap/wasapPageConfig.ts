@@ -50,7 +50,8 @@ export type WasapPageConfigBase = {
 type AnalysisModeConfigs = ManualAnalysisModeConfig &
     VariantAnalysisModeConfig &
     ResistanceAnalysisModeConfig &
-    UntrackedAnalyisModeConfig;
+    UntrackedAnalyisModeConfig &
+    CollectionAnalysisModeConfig;
 
 type ManualAnalysisModeConfig =
     | {
@@ -108,10 +109,23 @@ type UntrackedAnalyisModeConfig =
           };
       };
 
+type CollectionAnalysisModeConfig =
+    | {
+          collectionAnalysisModeEnabled?: never;
+      }
+    | {
+          collectionAnalysisModeEnabled: true;
+          collectionsApiBaseUrl: string;
+          collectionTitleFilter: string;
+          filterDefaults: {
+              collection: WasapCollectionFilter;
+          };
+      };
+
 /**
  * Convenience function to get the list of enabled modes.
  */
-export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode[] {
+export function enabledAnalysisModes(config: WasapPageConfig, isStaging: boolean): WasapAnalysisMode[] {
     const result: WasapAnalysisMode[] = [];
     if (config.manualAnalysisModeEnabled) {
         result.push('manual');
@@ -125,6 +139,9 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     if (config.untrackedAnalysisModeEnabled) {
         result.push('untracked');
     }
+    if (config.collectionAnalysisModeEnabled && isStaging) {
+        result.push('collection');
+    }
     return result;
 }
 
@@ -137,7 +154,7 @@ export type LinkTemplate = {
     aminoAcidMutation: string;
 };
 
-export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked';
+export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked' | 'collection';
 
 /**
  * Contains mode-independent settings, like the filter for location and date range.
@@ -203,7 +220,17 @@ export type WasapUntrackedFilter = {
     excludeVariants?: string[];
 };
 
-export type WasapAnalysisFilter = WasapManualFilter | WasapVariantFilter | WasapResistanceFilter | WasapUntrackedFilter;
+export type WasapCollectionFilter = {
+    mode: 'collection';
+    collectionId?: number;
+};
+
+export type WasapAnalysisFilter =
+    | WasapManualFilter
+    | WasapVariantFilter
+    | WasapResistanceFilter
+    | WasapUntrackedFilter
+    | WasapCollectionFilter;
 
 export type WasapFilter = {
     base: WasapBaseFilter;
