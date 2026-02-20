@@ -70,7 +70,7 @@ describe('parseQuery', () => {
 
         lapisRouteMocker.mockPostQueryParse({ queries }, { data: [] }, 500);
 
-        await expect(parseQuery(DUMMY_LAPIS_URL, queries)).rejects.toThrow(/Failed to parse queries/);
+        await expect(parseQuery(DUMMY_LAPIS_URL, queries)).rejects.toThrow(/Failed to make parse queries API request/);
     });
 
     test('should throw when LAPIS returns unexpected data', async () => {
@@ -79,6 +79,6 @@ describe('parseQuery', () => {
         // @ts-expect-error -- intentionally passing wrong data
         lapisRouteMocker.mockPostQueryParse({ queries }, { data: 'something unexpected' });
 
-        await expect(parseQuery(DUMMY_LAPIS_URL, queries)).rejects.toThrow(/Failed to parse query response/);
+        await expect(parseQuery(DUMMY_LAPIS_URL, queries)).rejects.toThrow(/Failed to parse API response/);
     });
 });

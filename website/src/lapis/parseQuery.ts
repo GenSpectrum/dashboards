@@ -44,14 +44,14 @@ export async function parseQuery(lapisUrl: string, queries: string[]): Promise<P
     try {
         response = await axios.post(url, body);
     } catch (error) {
-        const message = `Failed to parse queries: ${JSON.stringify(error)}`;
+        const message = `Failed to make parse queries API request: ${JSON.stringify(error)}`;
         logger.error(message);
         throw new Error(message);
     }
 
     const parsedResponse = queryParseResponseSchema.safeParse(response.data);
     if (!parsedResponse.success) {
-        const message = `Failed to parse query response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
+        const message = `Failed to parse API response: ${JSON.stringify(parsedResponse.error)} (was ${JSON.stringify(response.data)})`;
         logger.error(message);
         throw new Error(message);
     }
