@@ -166,7 +166,8 @@ const nOfSchema: z.ZodType<{
     }),
 );
 
-// Combined union for all SiloFilterExpression types
+// Combined union for all SiloFilterExpression types.
+// This schema was initially LLM generated from the LAPIS code.
 export const siloFilterExpressionSchema = z.union([
     stringEqualsSchema,
     booleanEqualsSchema,
