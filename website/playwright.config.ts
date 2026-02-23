@@ -20,18 +20,29 @@ export default defineConfig({
     },
 
     projects: [
+        // API integration tests (browser-independent)
+        {
+            name: 'api',
+            testMatch: /.*\/api\/.*\.spec\.ts/,
+            // No browser device - runs in Node.js context
+        },
+
+        // Browser-based UI tests
         {
             name: 'chromium',
+            testIgnore: /.*\/api\/.*/,
             use: { ...devices['Desktop Chrome'] },
         },
 
         {
             name: 'firefox',
+            testIgnore: /.*\/api\/.*/,
             use: { ...devices['Desktop Firefox'] },
         },
 
         {
             name: 'webkit',
+            testIgnore: /.*\/api\/.*/,
             use: { ...devices['Desktop Safari'] },
         },
     ],
