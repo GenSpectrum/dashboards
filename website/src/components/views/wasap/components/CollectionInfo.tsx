@@ -17,9 +17,8 @@ export const CollectionInfo: FC<CollectionInfoProps> = ({ collectionId, collecti
         <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
             {/* Collection Link Stat */}
             <div className='stat content-start'>
-                <div className='stat-title'>Collection</div>
+                <div className='stat-title'>CoV-Spectrum collection</div>
                 <div className='stat-value text-base'>
-                    View{' '}
                     <a
                         href={`https://cov-spectrum.org/collections/${collectionId}`}
                         target='_blank'
@@ -27,10 +26,9 @@ export const CollectionInfo: FC<CollectionInfoProps> = ({ collectionId, collecti
                         className='link'
                     >
                         {collectionTitle}
-                    </a>{' '}
-                    on CoV-Spectrum
+                    </a>
                 </div>
-                <div className='stat-desc text-wrap'>{collectionTitle}</div>
+                <div className='stat-desc text-wrap'>Collection #{collectionId}</div>
             </div>
 
             {/* Invalid Variants Stat (conditional) */}
