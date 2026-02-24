@@ -1,18 +1,13 @@
 import type { MeanProportionInterval } from '@genspectrum/dashboard-components/util';
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { type FC } from 'react';
 
+import { CollectionInfo } from './components/CollectionInfo';
+import { NoDataHelperText } from './components/NoDataHelperText';
+import { VariantFetchInfo } from './components/VariantFetchInfo';
+import { WasapStats } from './components/WasapStats';
 import { toMutationAnnotations } from './resistanceMutations';
-import { getLapisFilterForTimeFrame, useWasapPageData } from './useWasapPageData';
-import {
-    variantTimeFrameLabel,
-    type WasapAnalysisFilter,
-    type WasapPageConfig,
-    type WasapVariantFilter,
-} from './wasapPageConfig';
-import { getDateRange } from '../../../lapis/getDateRange';
-import { getTotalCount } from '../../../lapis/getTotalCount';
+import { useWasapPageData } from './useWasapPageData';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
@@ -70,11 +65,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
         [config],
     );
     const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
-
-    // TODO - below, below the "analysis.mode === 'variant'" part, add another part for the
-    // collection analysis mode. In it, we want to display a link to the collection on cov-spectrum.
-    // the links look like this: https://cov-spectrum.org/collections/233 - the ID is at the end.
-    // for now, the URL can just be hardcoded here.
 
     return (
         <DataPageLayout
@@ -140,7 +130,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
                                             warningThreshold={config.clinicalSequenceCountWarningThreshold}
                                         />
                                     )}
-                                    <WasapStats config={config} />
                                 </>
                             ) : (
                                 <>
@@ -161,9 +150,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
                                         collectionTitle={data.collection.title}
                                         invalidVariants={data.invalidVariants}
                                     />
-                                    <WasapStats config={config} />
                                 </>
                             )}
+                            <WasapStats config={config} />
                         </div>
                     )}
                 </div>
@@ -173,196 +162,3 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
 };
 
 export const WasapPage = withQueryProvider(WasapPageInner);
-
-/**
- * A note to the user to display when no mutations are selected due to the settings that they set in the filters.
- * The information is tailored to the mode and settings the user selected.
- */
-const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFilter }) => {
-    return (
-        <div className='rounded-md border-2 border-gray-100 p-4'>
-            <h1 className='text-lg font-semibold'>No mutations selected</h1>
-            {analysisFilter.mode === 'variant' && (
-                <p className='text-sm'>
-                    No mutations could be found matching your current filter settings. Try lowering filter thresholds or
-                    looking at a different variant.
-                </p>
-            )}
-            {analysisFilter.mode === 'untracked' &&
-                analysisFilter.excludeSet === 'custom' &&
-                (analysisFilter.excludeVariants === undefined || analysisFilter.excludeVariants.length === 0) && (
-                    <p className='text-sm'>
-                        Your set of variants to exclude is empty, please provide at least one variant to exclude.
-                    </p>
-                )}
-        </div>
-    );
-};
-
-/**
- * Info component that displays collection metadata and any invalid variants.
- */
-const CollectionInfo = ({
-    collectionId,
-    collectionTitle,
-    invalidVariants,
-}: {
-    collectionId: number;
-    collectionTitle: string;
-    invalidVariants?: {
-        name: string;
-        error: string;
-    }[];
-}) => {
-    return (
-        <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
-            {/* Collection Link Stat */}
-            <div className='stat content-start'>
-                <div className='stat-title'>Collection</div>
-                <div className='stat-value text-base'>
-                    View{' '}
-                    <a
-                        href={`https://cov-spectrum.org/collections/${collectionId}`}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='link'
-                    >
-                        {collectionTitle}
-                    </a>{' '}
-                    on CoV-Spectrum
-                </div>
-                <div className='stat-desc text-wrap'>{collectionTitle}</div>
-            </div>
-
-            {/* Invalid Variants Stat (conditional) */}
-            {invalidVariants && invalidVariants.length > 0 && (
-                <div className='stat'>
-                    <div className='stat-title'>Invalid Variants</div>
-                    <div className='stat-value text-base'>
-                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{invalidVariants.length}</span>
-                    </div>
-                    <div className='stat-desc text-wrap'>
-                        <ul className='mt-1 list-inside list-disc space-y-1'>
-                            {invalidVariants.map((v, i) => (
-                                <li key={i}>
-                                    <strong>{v.name}</strong>: {v.error}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-/**
- * Info stat about the amount of sequences used during the computation of the clinical variant signature.
- * Will also show a warning of the count is small.
- */
-const VariantFetchInfo = ({
-    analysis,
-    clinicalLapisBaseUrl,
-    clinicalLapisLineageField,
-    clinicalLapisDateField,
-    warningThreshold,
-}: {
-    analysis: WasapVariantFilter;
-    clinicalLapisBaseUrl: string;
-    clinicalLapisLineageField: string;
-    clinicalLapisDateField: string;
-    warningThreshold: number;
-}) => {
-    const lapisFilter = {
-        ...getLapisFilterForTimeFrame(analysis.timeFrame, clinicalLapisDateField),
-        [clinicalLapisLineageField]: analysis.variant,
-    };
-
-    const { data, isPending, isError, error } = useQuery({
-        queryKey: ['variantFetchInfo'],
-        queryFn: () => getTotalCount(clinicalLapisBaseUrl, lapisFilter),
-    });
-
-    const isHighlighted = data !== undefined && data < warningThreshold;
-
-    let message = `The number of clinical sequences for ${analysis.variant}`;
-    if (analysis.timeFrame !== 'all') {
-        message += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
-    }
-    if (isHighlighted) {
-        message += '. Clinical signature calculation with this few sequences is not recommended.';
-    }
-
-    return (
-        <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
-            <div className='stat'>
-                <div className='stat-title'>Clinical sequences for {analysis.variant}</div>
-                <div className='stat-value text-base'>
-                    {isPending ? (
-                        '…'
-                    ) : isError ? (
-                        'Error'
-                    ) : isHighlighted ? (
-                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{data.toLocaleString('en-us')}</span>
-                    ) : (
-                        data.toLocaleString('en-us')
-                    )}
-                </div>
-                <div className='stat-desc text-wrap'>{isPending ? 'Loading …' : isError ? error.message : message}</div>
-            </div>
-        </div>
-    );
-};
-
-const WasapStats = ({ config }: { config: WasapPageConfig }) => (
-    <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
-        <TotalCount config={config} />
-        <DateRange config={config} />
-    </div>
-);
-
-const TotalCount = ({ config }: { config: WasapPageConfig }) => {
-    const { data, isPending, isError, error } = useQuery({
-        queryKey: ['aggregatedCount'],
-        queryFn: () => getTotalCount(config.lapisBaseUrl, {}),
-    });
-
-    return (
-        <div className='stat'>
-            <div className='stat-title'>Amplicon sequences</div>
-            <div className='stat-value text-base'>
-                {isPending ? '…' : isError ? 'Error' : data.toLocaleString('en-us')}
-            </div>
-            <div className='stat-desc text-wrap'>
-                {isPending
-                    ? 'Loading total amplicon sequences count…'
-                    : isError
-                      ? error.message
-                      : 'The total number of amplicon sequences in all samples'}
-            </div>
-        </div>
-    );
-};
-
-const DateRange = ({ config }: { config: WasapPageConfig }) => {
-    const { data, isPending, isError, error } = useQuery({
-        queryKey: ['dateRange'],
-        queryFn: () => getDateRange(config.lapisBaseUrl, config.samplingDateField),
-    });
-
-    return (
-        <div className='stat'>
-            <div className='stat-title'>Sampling Dates</div>
-            <div className='stat-value text-base'>
-                {isPending ? '…' : isError ? 'Error' : `${data.start} to ${data.end}`}
-            </div>
-            <div className='stat-desc text-wrap'>
-                {isPending
-                    ? 'Loading date range…'
-                    : isError
-                      ? error.message
-                      : 'The start and end dates of collected samples'}
-            </div>
-        </div>
-    );
-};
