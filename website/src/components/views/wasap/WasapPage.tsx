@@ -71,6 +71,11 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
     );
     const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 
+    // TODO - below, below the "analysis.mode === 'variant'" part, add another part for the
+    // collection analysis mode. In it, we want to display a link to the collection on cov-spectrum.
+    // the links look like this: https://cov-spectrum.org/collections/233 - the ID is at the end.
+    // for now, the URL can just be hardcoded here.
+
     return (
         <DataPageLayout
             breadcrumbs={[
