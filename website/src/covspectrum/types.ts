@@ -54,3 +54,7 @@ export const collectionSchema = z.object({
 
 export type CollectionVariant = z.infer<typeof collectionVariantSchema>;
 export type Collection = z.infer<typeof collectionSchema>;
+
+// TODO - let's write a little helper that can turn a 'detailedMutations' type into a query string.
+// If any lineages are given, it cannot be done. In that case, raise an error.
+// The function should be called detailedMutationsToQuery.
