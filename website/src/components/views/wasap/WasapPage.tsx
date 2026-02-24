@@ -143,18 +143,26 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
                                     <WasapStats config={config} />
                                 </>
                             ) : (
-                                <div className='rounded-md border-2 border-gray-100 p-4'>
-                                    <GsQueriesOverTime
+                                <>
+                                    <div className='rounded-md border-2 border-gray-100 p-4'>
+                                        <GsQueriesOverTime
+                                            collectionTitle={data.collection.title}
+                                            lapisFilter={lapisFilter}
+                                            queries={data.collection.queries}
+                                            granularity={base.granularity}
+                                            lapisDateField={config.samplingDateField}
+                                            pageSizes={[20, 50, 100, 250]}
+                                            initialMeanProportionInterval={initialMeanProportionInterval}
+                                            hideGaps={base.excludeEmpty ? true : undefined}
+                                        />
+                                    </div>
+                                    <CollectionInfo
+                                        collectionId={data.collection.id}
                                         collectionTitle={data.collection.title}
-                                        lapisFilter={lapisFilter}
-                                        queries={data.collection.queries}
-                                        granularity={base.granularity}
-                                        lapisDateField={config.samplingDateField}
-                                        pageSizes={[20, 50, 100, 250]}
-                                        initialMeanProportionInterval={initialMeanProportionInterval}
-                                        hideGaps={base.excludeEmpty ? true : undefined}
+                                        invalidVariants={data.invalidVariants}
                                     />
-                                </div>
+                                    <WasapStats config={config} />
+                                </>
                             )}
                         </div>
                     )}
@@ -187,6 +195,63 @@ const NoDataHelperText = ({ analysisFilter }: { analysisFilter: WasapAnalysisFil
                         Your set of variants to exclude is empty, please provide at least one variant to exclude.
                     </p>
                 )}
+        </div>
+    );
+};
+
+/**
+ * Info component that displays collection metadata and any invalid variants.
+ */
+const CollectionInfo = ({
+    collectionId,
+    collectionTitle,
+    invalidVariants,
+}: {
+    collectionId: number;
+    collectionTitle: string;
+    invalidVariants?: {
+        name: string;
+        error: string;
+    }[];
+}) => {
+    return (
+        <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
+            {/* Collection Link Stat */}
+            <div className='stat content-start'>
+                <div className='stat-title'>Collection</div>
+                <div className='stat-value text-base'>
+                    View{' '}
+                    <a
+                        href={`https://cov-spectrum.org/collections/${collectionId}`}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='link'
+                    >
+                        {collectionTitle}
+                    </a>{' '}
+                    on CoV-Spectrum
+                </div>
+                <div className='stat-desc text-wrap'>{collectionTitle}</div>
+            </div>
+
+            {/* Invalid Variants Stat (conditional) */}
+            {invalidVariants && invalidVariants.length > 0 && (
+                <div className='stat'>
+                    <div className='stat-title'>Invalid Variants</div>
+                    <div className='stat-value text-base'>
+                        <span className='rounded bg-yellow-200 px-1 py-0.5'>{invalidVariants.length}</span>
+                    </div>
+                    <div className='stat-desc text-wrap'>
+                        <ul className='mt-1 list-inside list-disc space-y-1'>
+                            {invalidVariants.map((v, i) => (
+                                <li key={i}>
+                                    <strong>{v.name}</strong>: {v.error}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
