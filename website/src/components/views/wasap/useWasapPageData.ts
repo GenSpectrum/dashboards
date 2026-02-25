@@ -13,6 +13,7 @@ import type {
     WasapVariantFilter,
 } from './wasapPageConfig';
 import { getCollection } from '../../../covspectrum/getCollection';
+import { detailedMutationsToQuery } from '../../../covspectrum/variantConversionUtil';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { parseQuery } from '../../../lapis/parseQuery';
@@ -155,31 +156,22 @@ async function fetchCollectionModeData(
         queryString: string;
     }[] = [];
 
-    const invalidVariants: {
-        name: string;
-        error: string;
-    }[] = [];
-
     for (const variant of collection.variants) {
+        let queryString: string;
         switch (variant.query.type) {
             case 'variantQuery': {
-                const queryString = variant.query.variantQuery;
-                variantData.push({
-                    name: variant.name,
-                    queryString: queryString,
-                });
+                queryString = variant.query.variantQuery;
                 break;
             }
             case 'detailedMutations': {
-                // TODO - maybe we can just turn these into queries, should be easyish?
-                // only error if lineage filter is also used.
-                invalidVariants.push({
-                    name: variant.name,
-                    error: 'Detailed mutations not supported.',
-                });
+                queryString = detailedMutationsToQuery(variant.query);
                 break;
             }
         }
+        variantData.push({
+            name: variant.name,
+            queryString: queryString,
+        });
     }
 
     // Parse all variant queries through LAPIS
@@ -193,6 +185,11 @@ async function fetchCollectionModeData(
         displayLabel: string;
         countQuery: string;
         coverageQuery: string;
+    }[] = [];
+
+    const invalidVariants: {
+        name: string;
+        error: string;
     }[] = [];
 
     variantData.forEach(({ name, queryString }, index) => {
