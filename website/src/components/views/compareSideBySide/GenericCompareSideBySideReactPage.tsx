@@ -106,13 +106,13 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                     </div>
                 </div>
 
-                <a
+                <button
                     className='px-8 py-4 text-left text-sm font-light hover:bg-neutral-100'
-                    href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
+                    onClick={() => setPageState(view.pageStateHandler.addEmptyFilter(pageState))}
                     style={{ writingMode: 'vertical-rl' }}
                 >
                     Add column
-                </a>
+                </button>
             </div>
         </OrganismViewPageLayout>
     );
