@@ -54,12 +54,12 @@ describe('detailedMutationsToQuery', () => {
             nucMutations: ['A123T'],
             aaMutations: ['S:N501Y'],
             nucInsertions: ['ins_22204:GAGCCAGAA'],
-            aaInsertions: ['S:ins_214:EPE'],
+            aaInsertions: ['ins_S:214:EPE'],
         };
 
         const result = detailedMutationsToQuery(query);
 
-        expect(result).toBe('pangoLineage=BA.2 & A123T & S:N501Y & ins_22204:GAGCCAGAA & S:ins_214:EPE');
+        expect(result).toBe('pangoLineage=BA.2 & A123T & S:N501Y & ins_22204:GAGCCAGAA & ins_S:214:EPE');
     });
 
     test('should handle multiple mutations and both lineage types', () => {
