@@ -36,6 +36,8 @@ export const detailedMutationsQuerySchema = z.object({
     aaInsertions: z.array(z.string()).optional(),
 });
 
+export type DetailedMutationsQuery = z.infer<typeof detailedMutationsQuerySchema>;
+
 export const collectionVariantSchema = z.object({
     query: z.discriminatedUnion('type', [variantQuerySchema, detailedMutationsQuerySchema]),
     name: z.string(),
