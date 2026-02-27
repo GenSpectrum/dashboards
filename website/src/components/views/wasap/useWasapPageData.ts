@@ -156,6 +156,11 @@ async function fetchCollectionModeData(
         queryString: string;
     }[] = [];
 
+    const invalidVariants: {
+        name: string;
+        error: string;
+    }[] = [];
+
     for (const variant of collection.variants) {
         let queryString: string;
         switch (variant.query.type) {
@@ -167,6 +172,13 @@ async function fetchCollectionModeData(
                 queryString = detailedMutationsToQuery(variant.query);
                 break;
             }
+        }
+        if (queryString === '') {
+            invalidVariants.push({
+                name: variant.name,
+                error: 'Variant is empty.',
+            });
+            continue;
         }
         variantData.push({
             name: variant.name,
@@ -185,11 +197,6 @@ async function fetchCollectionModeData(
         displayLabel: string;
         countQuery: string;
         coverageQuery: string;
-    }[] = [];
-
-    const invalidVariants: {
-        name: string;
-        error: string;
     }[] = [];
 
     variantData.forEach(({ name, queryString }, index) => {
