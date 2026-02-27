@@ -47,41 +47,35 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
             view={view}
             downloadLinks={downloadLinks}
         >
-            {/* Main horizontal layout with columns and add button */}
             <div className='flex'>
-                {/* Columns container */}
                 <div className='flex flex-1 flex-col gap-4'>
-                    {/* FILTERS SECTION - Flexbox horizontal scroll */}
                     <div className='flex overflow-x-auto border-b-2 border-gray-200'>
-                        {columnsArray.map(([id]) => {
-                            return (
-                                <div
-                                    key={id}
-                                    className='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2 pb-4'
-                                >
-                                    {pageState.filters.size > 1 && (
-                                        <a
-                                            className='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
-                                            href={view.pageStateHandler.toUrl(
-                                                view.pageStateHandler.removeFilter(pageState, id),
-                                            )}
-                                        >
-                                            Remove column
-                                        </a>
-                                    )}
-                                    <CompareSideBySidePageStateSelector
-                                        view={view}
-                                        filterId={id}
-                                        draftPageState={draftPageState}
-                                        setDraftPageState={setDraftPageState}
-                                        enableAdvancedQueryFilter={isStaging}
-                                    />
-                                </div>
-                            );
-                        })}
+                        {columnsArray.map(([id]) => (
+                            <div
+                                key={id}
+                                className={`flex min-w-125 flex-1 flex-col gap-4 ${id < columnsArray.length - 1 ? 'border-r-2 border-gray-200' : ''} px-2 pb-4`}
+                            >
+                                {pageState.filters.size > 1 && (
+                                    <a
+                                        className='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
+                                        href={view.pageStateHandler.toUrl(
+                                            view.pageStateHandler.removeFilter(pageState, id),
+                                        )}
+                                    >
+                                        Remove column
+                                    </a>
+                                )}
+                                <CompareSideBySidePageStateSelector
+                                    view={view}
+                                    filterId={id}
+                                    draftPageState={draftPageState}
+                                    setDraftPageState={setDraftPageState}
+                                    enableAdvancedQueryFilter={isStaging}
+                                />
+                            </div>
+                        ))}
                     </div>
 
-                    {/* APPLY BUTTON SECTION */}
                     <div className='border-b-2 border-gray-200 bg-gray-50 p-4'>
                         <div className='flex justify-center'>
                             <ApplyFilterButton
@@ -93,7 +87,6 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                         </div>
                     </div>
 
-                    {/* DATA SECTION - CSS Grid for alignment */}
                     <div
                         className='grid gap-y-4 overflow-x-auto'
                         style={{
@@ -101,24 +94,21 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                             gridAutoRows: 'auto',
                         }}
                     >
-                        {columnsArray.map(([id, datasetAndVariantData], colIndex) => {
-                            return (
-                                <div key={id} className='contents'>
-                                    <GenericCompareSideBySideDataDisplay
-                                        view={view}
-                                        datasetAndVariantData={datasetAndVariantData}
-                                        hideMutationComponents={hideMutationComponents}
-                                        columnIndex={colIndex}
-                                    />
-                                </div>
-                            );
-                        })}
+                        {columnsArray.map(([id, datasetAndVariantData], colIndex) => (
+                            <div key={id} className='contents'>
+                                <GenericCompareSideBySideDataDisplay
+                                    view={view}
+                                    datasetAndVariantData={datasetAndVariantData}
+                                    hideMutationComponents={hideMutationComponents}
+                                    columnIndex={colIndex}
+                                />
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* ADD COLUMN BUTTON - spans full height */}
                 <a
-                    className='flex items-center border-l-2 border-gray-200 px-2 py-4 text-left text-sm font-light hover:bg-neutral-100'
+                    className='flex h-full items-center border-l-2 border-gray-200 px-2 py-4 text-left text-sm font-light hover:bg-neutral-100'
                     href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
                     style={{ writingMode: 'vertical-rl' }}
                 >
