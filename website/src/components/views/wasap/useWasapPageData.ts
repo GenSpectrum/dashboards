@@ -209,7 +209,7 @@ async function fetchCollectionModeData(
         if (!validationResult.isGenomeOnly) {
             invalidVariants.push({
                 name: name,
-                error: validationResult.error ?? 'Query contains non-genome filters',
+                error: validationResult.error,
             });
             return;
         }
