@@ -364,8 +364,10 @@ describe('validateGenomeOnly', () => {
         const result = validateGenomeOnly(expression);
 
         expect(result.isGenomeOnly).toBe(false);
-        expect(result.error).toContain('StringEquals');
-        expect(result.error).toContain('DateBetween');
-        expect(result.error).toContain('IntEquals');
+        if (!result.isGenomeOnly) {
+            expect(result.error).toContain('StringEquals');
+            expect(result.error).toContain('DateBetween');
+            expect(result.error).toContain('IntEquals');
+        }
     });
 });
