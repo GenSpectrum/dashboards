@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState, useEffect } from 'react';
 
 import { GenericCompareSideBySideDataDisplay } from './GenericCompareSideBySideDataDisplay.tsx';
 import { toDownloadLink } from './toDownloadLink';
@@ -6,6 +6,7 @@ import { type OrganismsConfig } from '../../../config';
 import { OrganismViewPageLayout } from '../../../layouts/OrganismPage/OrganismViewPageLayout.tsx';
 import { type OrganismViewKey, type OrganismWithViewKey, Routing } from '../../../views/routing';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
+import { ApplyFilterButton } from '../../pageStateSelectors/ApplyFilterButton.tsx';
 import { CompareSideBySidePageStateSelector } from '../../pageStateSelectors/CompareSideBySidePageStateSelector';
 import { usePageState } from '../usePageState.ts';
 
@@ -31,7 +32,13 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
 
     const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
+    const [draftPageState, setDraftPageState] = useState(pageState);
+    useEffect(() => setDraftPageState(pageState), [pageState]);
+
     const downloadLinks = [...pageState.filters.entries()].map(toDownloadLink(view.pageStateHandler, organism));
+
+    const columnsArray = Array.from(pageState.filters);
+    const columnCount = columnsArray.length;
 
     return (
         <OrganismViewPageLayout
@@ -39,14 +46,14 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
             view={view}
             downloadLinks={downloadLinks}
         >
-            <div className='flex overflow-x-auto'>
-                {Array.from(pageState.filters).map(([id, datasetAndVariantData]) => {
-                    return (
-                        <div
-                            key={id}
-                            className='flex min-w-[500px] flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2'
-                        >
-                            <div className='mb-4'>
+            <div className='flex'>
+                <div className='flex flex-1 flex-col'>
+                    <div className='flex overflow-x-auto'>
+                        {columnsArray.map(([id]) => (
+                            <div
+                                key={id}
+                                className='flex min-w-125 flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2 pb-4'
+                            >
                                 {pageState.filters.size > 1 && (
                                     <a
                                         className='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
@@ -60,22 +67,47 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                                 <CompareSideBySidePageStateSelector
                                     view={view}
                                     filterId={id}
-                                    pageState={pageState}
-                                    setPageState={setPageState}
+                                    draftPageState={draftPageState}
+                                    setDraftPageState={setDraftPageState}
                                     enableAdvancedQueryFilter={isStaging}
                                 />
                             </div>
+                        ))}
+                    </div>
 
-                            <GenericCompareSideBySideDataDisplay
-                                view={view}
-                                datasetAndVariantData={datasetAndVariantData}
-                                hideMutationComponents={hideMutationComponents}
+                    <div className='border-t-2 border-r-2 border-b-2 border-gray-200 bg-gray-50 p-2'>
+                        <div className='flex justify-center'>
+                            <ApplyFilterButton
+                                pageStateHandler={view.pageStateHandler}
+                                newPageState={draftPageState}
+                                setPageState={setPageState}
+                                className='min-w-50'
                             />
                         </div>
-                    );
-                })}
+                    </div>
+
+                    <div
+                        className='grid overflow-x-auto'
+                        style={{
+                            gridTemplateColumns: `repeat(${columnCount}, minmax(500px, 1fr))`,
+                            gridAutoRows: 'auto',
+                        }}
+                    >
+                        {columnsArray.map(([id, datasetAndVariantData], colIndex) => (
+                            <div key={id} className='contents'>
+                                <GenericCompareSideBySideDataDisplay
+                                    view={view}
+                                    datasetAndVariantData={datasetAndVariantData}
+                                    hideMutationComponents={hideMutationComponents}
+                                    columnIndex={colIndex}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 <a
-                    className='py-4 pt-8 text-left text-sm font-light hover:bg-neutral-100'
+                    className='px-8 py-4 text-left text-sm font-light hover:bg-neutral-100'
                     href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
                     style={{ writingMode: 'vertical-rl' }}
                 >
