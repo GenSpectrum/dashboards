@@ -32,7 +32,6 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
 
     const { pageState, setPageState } = usePageState(view.pageStateHandler);
 
-    // Centralized draft state for all columns
     const [draftPageState, setDraftPageState] = useState(pageState);
     useEffect(() => setDraftPageState(pageState), [pageState]);
 
@@ -48,12 +47,12 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
             downloadLinks={downloadLinks}
         >
             <div className='flex'>
-                <div className='flex flex-1 flex-col gap-4'>
-                    <div className='flex overflow-x-auto border-b-2 border-gray-200'>
+                <div className='flex flex-1 flex-col'>
+                    <div className='flex overflow-x-auto'>
                         {columnsArray.map(([id]) => (
                             <div
                                 key={id}
-                                className={`flex min-w-125 flex-1 flex-col gap-4 ${id < columnsArray.length - 1 ? 'border-r-2 border-gray-200' : ''} px-2 pb-4`}
+                                className='flex min-w-125 flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2 pb-4'
                             >
                                 {pageState.filters.size > 1 && (
                                     <a
@@ -76,7 +75,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                         ))}
                     </div>
 
-                    <div className='border-b-2 border-gray-200 bg-gray-50 p-4'>
+                    <div className='border-t-2 border-r-2 border-b-2 border-gray-200 bg-gray-50 p-2'>
                         <div className='flex justify-center'>
                             <ApplyFilterButton
                                 pageStateHandler={view.pageStateHandler}
@@ -88,7 +87,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                     </div>
 
                     <div
-                        className='grid gap-y-4 overflow-x-auto'
+                        className='grid overflow-x-auto'
                         style={{
                             gridTemplateColumns: `repeat(${columnCount}, minmax(500px, 1fr))`,
                             gridAutoRows: 'auto',
@@ -108,7 +107,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                 </div>
 
                 <a
-                    className='flex h-full items-center border-l-2 border-gray-200 px-2 py-4 text-left text-sm font-light hover:bg-neutral-100'
+                    className='flex items-center px-2 py-4 text-left text-sm font-light hover:bg-neutral-100'
                     href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
                     style={{ writingMode: 'vertical-rl' }}
                 >
