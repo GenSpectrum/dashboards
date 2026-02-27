@@ -22,7 +22,7 @@ export const VariantFetchInfo: FC<{
     };
 
     const { data, isPending, isError, error } = useQuery({
-        queryKey: ['variantFetchInfo'],
+        queryKey: ['variantFetchInfo', analysis.variant, analysis.timeFrame],
         queryFn: () => getTotalCount(clinicalLapisBaseUrl, lapisFilter),
     });
 
