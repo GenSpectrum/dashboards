@@ -107,7 +107,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                 </div>
 
                 <a
-                    className='flex items-center px-2 py-4 text-left text-sm font-light hover:bg-neutral-100'
+                    className='px-8 py-4 text-left text-sm font-light hover:bg-neutral-100'
                     href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
                     style={{ writingMode: 'vertical-rl' }}
                 >
