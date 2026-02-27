@@ -105,11 +105,12 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                 </div>
 
                 <button
-                    className='px-8 py-4 text-left text-sm font-light hover:bg-neutral-100'
+                    className='px-4 py-8 text-left hover:bg-neutral-100'
                     onClick={() => setPageState(view.pageStateHandler.addEmptyFilter(pageState))}
-                    style={{ writingMode: 'vertical-rl' }}
                 >
-                    Add column
+                    <span className='h-full text-sm font-light' style={{ writingMode: 'vertical-rl' }}>
+                        Add column
+                    </span>
                 </button>
             </div>
         </OrganismViewPageLayout>
