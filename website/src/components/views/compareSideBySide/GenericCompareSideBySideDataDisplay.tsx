@@ -16,12 +16,14 @@ export type GenericCompareSideBySideDataDisplayProps = {
     view: BaseView<CompareSideBySideData, OrganismConstants, CompareSideBySideStateHandler>;
     datasetAndVariantData: DatasetAndVariantData;
     hideMutationComponents?: boolean;
+    columnIndex?: number;
 };
 
 export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDataDisplayProps> = ({
     view,
     datasetAndVariantData,
     hideMutationComponents,
+    columnIndex = 0,
 }) => {
     const { datasetFilter, variantFilter } = datasetAndVariantData;
 
@@ -32,55 +34,93 @@ export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDat
     });
     const numeratorFilter = view.pageStateHandler.variantFilterToLapisFilter(datasetFilter, variantFilter);
 
+    // Fixed row indices - all columns use same row numbers, even if some rows are empty
+    const rowPrevalence = 1;
+    const rowGrowth = 2;
+    const rowMutationsNucleotide = 3;
+    const rowMutationsAminoAcid = 4;
+    const rowAggregateStart = 5;
+
     return (
         <>
-            <GsPrevalenceOverTime
-                numeratorFilters={[
-                    {
-                        displayName: '',
-                        lapisFilter: numeratorFilter,
-                    },
-                ]}
-                denominatorFilter={datasetLapisFilter}
-                lapisDateField={view.organismConstants.mainDateField}
-                granularity={timeGranularity}
-                height={ComponentHeight.large}
-                pageSize={10}
-            />
-            {view.organismConstants.organism === Organisms.covid && (
-                <GsRelativeGrowthAdvantage
-                    numeratorFilter={numeratorFilter}
+            {/* Row 1: Prevalence Over Time - always shown */}
+            <div
+                className='border-r-2 border-gray-200 px-2'
+                style={{ gridColumn: columnIndex + 1, gridRow: rowPrevalence }}
+            >
+                <GsPrevalenceOverTime
+                    numeratorFilters={[
+                        {
+                            displayName: '',
+                            lapisFilter: numeratorFilter,
+                        },
+                    ]}
                     denominatorFilter={datasetLapisFilter}
                     lapisDateField={view.organismConstants.mainDateField}
+                    granularity={timeGranularity}
                     height={ComponentHeight.large}
+                    pageSize={10}
                 />
+            </div>
+
+            {/* Row 2: Relative Growth Advantage (COVID only) */}
+            {view.organismConstants.organism === Organisms.covid && (
+                <div
+                    className='border-r-2 border-gray-200 px-2'
+                    style={{ gridColumn: columnIndex + 1, gridRow: rowGrowth }}
+                >
+                    <GsRelativeGrowthAdvantage
+                        numeratorFilter={numeratorFilter}
+                        denominatorFilter={datasetLapisFilter}
+                        lapisDateField={view.organismConstants.mainDateField}
+                        height={ComponentHeight.large}
+                    />
+                </div>
             )}
+
+            {/* Row 3 & 4: Mutations (if not hidden) */}
             {hideMutationComponents !== true && (
                 <>
-                    <GsMutations
-                        lapisFilter={numeratorFilter}
-                        baselineLapisFilter={datasetLapisFilter}
-                        sequenceType='nucleotide'
-                        pageSize={10}
-                    />
-                    <GsMutations
-                        lapisFilter={numeratorFilter}
-                        baselineLapisFilter={datasetLapisFilter}
-                        sequenceType='amino acid'
-                        pageSize={10}
-                    />
+                    <div
+                        className='border-r-2 border-gray-200 px-2'
+                        style={{ gridColumn: columnIndex + 1, gridRow: rowMutationsNucleotide }}
+                    >
+                        <GsMutations
+                            lapisFilter={numeratorFilter}
+                            baselineLapisFilter={datasetLapisFilter}
+                            sequenceType='nucleotide'
+                            pageSize={10}
+                        />
+                    </div>
+                    <div
+                        className='border-r-2 border-gray-200 px-2'
+                        style={{ gridColumn: columnIndex + 1, gridRow: rowMutationsAminoAcid }}
+                    >
+                        <GsMutations
+                            lapisFilter={numeratorFilter}
+                            baselineLapisFilter={datasetLapisFilter}
+                            sequenceType='amino acid'
+                            pageSize={10}
+                        />
+                    </div>
                 </>
             )}
 
-            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(({ label, fields, views }) => (
-                <GsAggregate
+            {/* Remaining rows: Aggregated Visualizations */}
+            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(({ label, fields, views }, index) => (
+                <div
                     key={label}
-                    title={label}
-                    fields={fields}
-                    lapisFilter={numeratorFilter}
-                    views={views}
-                    pageSize={10}
-                />
+                    className='border-r-2 border-gray-200 px-2'
+                    style={{ gridColumn: columnIndex + 1, gridRow: rowAggregateStart + index }}
+                >
+                    <GsAggregate
+                        title={label}
+                        fields={fields}
+                        lapisFilter={numeratorFilter}
+                        views={views}
+                        pageSize={10}
+                    />
+                </div>
             ))}
         </>
     );

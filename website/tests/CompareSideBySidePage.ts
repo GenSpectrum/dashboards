@@ -45,6 +45,7 @@ export class CompareSideBySidePage extends ViewPage {
             await this.fillMutationField(this.mutationField.last(), options.mutation);
         }
 
-        await this.page.getByRole('button', { name: 'Apply filters' }).last().click();
+        // Single apply button that applies to all columns
+        await this.page.getByRole('button', { name: 'Apply filters' }).click();
     }
 }

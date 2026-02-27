@@ -1,6 +1,5 @@
-import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useMemo } from 'react';
 
-import { ApplyFilterButton } from './ApplyFilterButton.tsx';
 import { BaselineSelector } from './BaselineSelector.tsx';
 import { SelectorHeadline } from './SelectorHeadline.tsx';
 import { makeVariantFilterConfig, VariantSelector } from './VariantSelector.tsx';
@@ -13,18 +12,16 @@ import { CompareSideBySideStateHandler } from '../../views/pageStateHandlers/Com
 export function CompareSideBySidePageStateSelector({
     view,
     filterId,
-    pageState,
-    setPageState,
+    draftPageState,
+    setDraftPageState,
     enableAdvancedQueryFilter,
 }: {
     view: BaseView<CompareSideBySideData, OrganismConstants, CompareSideBySideStateHandler>;
     filterId: number;
-    pageState: CompareSideBySideData;
-    setPageState: Dispatch<SetStateAction<CompareSideBySideData>>;
+    draftPageState: CompareSideBySideData;
+    setDraftPageState: Dispatch<SetStateAction<CompareSideBySideData>>;
     enableAdvancedQueryFilter: boolean;
 }) {
-    const [draftPageState, setDraftPageState] = useState(pageState);
-    useEffect(() => setDraftPageState(pageState), [pageState]);
 
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
@@ -95,13 +92,6 @@ export function CompareSideBySidePageStateSelector({
                         />
                     </Inset>
                 </div>
-            </div>
-            <div className='flex justify-end'>
-                <ApplyFilterButton
-                    pageStateHandler={view.pageStateHandler}
-                    newPageState={draftPageState}
-                    setPageState={setPageState}
-                />
             </div>
         </div>
     );
