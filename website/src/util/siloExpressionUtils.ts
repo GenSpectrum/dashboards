@@ -3,12 +3,14 @@ import type { SiloFilterExpression } from '../lapis/siloFilterExpression.ts';
 /**
  * Result of validating a SILO filter expression
  */
-export interface GenomeCheckResult {
-    /** Whether the expression tree contains only genome checks */
-    isGenomeOnly: boolean;
-    /** Error message if validation failed */
-    error?: string;
-}
+export type GenomeCheckResult =
+    | {
+          isGenomeOnly: true;
+      }
+    | {
+          isGenomeOnly: false;
+          error: string;
+      };
 
 /**
  * Set of expression types that are considered genome checks
