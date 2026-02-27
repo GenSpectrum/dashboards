@@ -55,14 +55,12 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                                 className='flex min-w-125 flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2 pb-4'
                             >
                                 {pageState.filters.size > 1 && (
-                                    <a
-                                        className='block w-full px-2 py-1 text-sm font-light hover:bg-neutral-100'
-                                        href={view.pageStateHandler.toUrl(
-                                            view.pageStateHandler.removeFilter(pageState, id),
-                                        )}
+                                    <button
+                                        className='block w-full px-2 py-1 text-left text-sm font-light hover:bg-neutral-100'
+                                        onClick={() => setPageState(view.pageStateHandler.removeFilter(pageState, id))}
                                     >
                                         Remove column
-                                    </a>
+                                    </button>
                                 )}
                                 <CompareSideBySidePageStateSelector
                                     view={view}
@@ -106,13 +104,14 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                     </div>
                 </div>
 
-                <a
-                    className='px-8 py-4 text-left text-sm font-light hover:bg-neutral-100'
-                    href={view.pageStateHandler.toUrl(view.pageStateHandler.addEmptyFilter(pageState))}
-                    style={{ writingMode: 'vertical-rl' }}
+                <button
+                    className='px-4 py-8 text-left hover:bg-neutral-100'
+                    onClick={() => setPageState(view.pageStateHandler.addEmptyFilter(pageState))}
                 >
-                    Add column
-                </a>
+                    <span className='h-full text-sm font-light' style={{ writingMode: 'vertical-rl' }}>
+                        Add column
+                    </span>
+                </button>
             </div>
         </OrganismViewPageLayout>
     );
