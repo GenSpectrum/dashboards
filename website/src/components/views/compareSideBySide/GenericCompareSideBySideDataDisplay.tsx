@@ -107,21 +107,23 @@ export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDat
             )}
 
             {/* Remaining rows: Aggregated Visualizations */}
-            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(({ label, fields, views }, index) => (
-                <div
-                    key={label}
-                    className='border-r-2 border-gray-200 px-2'
-                    style={{ gridColumn: columnIndex + 1, gridRow: rowAggregateStart + index }}
-                >
-                    <GsAggregate
-                        title={label}
-                        fields={fields}
-                        lapisFilter={numeratorFilter}
-                        views={views}
-                        pageSize={10}
-                    />
-                </div>
-            ))}
+            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(
+                ({ label, fields, views }, index) => (
+                    <div
+                        key={label}
+                        className='border-r-2 border-gray-200 px-2'
+                        style={{ gridColumn: columnIndex + 1, gridRow: rowAggregateStart + index }}
+                    >
+                        <GsAggregate
+                            title={label}
+                            fields={fields}
+                            lapisFilter={numeratorFilter}
+                            views={views}
+                            pageSize={10}
+                        />
+                    </div>
+                ),
+            )}
         </>
     );
 };

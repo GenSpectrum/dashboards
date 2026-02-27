@@ -31,7 +31,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
     );
 
     const { pageState, setPageState } = usePageState(view.pageStateHandler);
-    
+
     // Centralized draft state for all columns
     const [draftPageState, setDraftPageState] = useState(pageState);
     useEffect(() => setDraftPageState(pageState), [pageState]);
@@ -53,7 +53,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                 <div className='flex flex-1 flex-col gap-4'>
                     {/* FILTERS SECTION - Flexbox horizontal scroll */}
                     <div className='flex overflow-x-auto border-b-2 border-gray-200'>
-                        {columnsArray.map(([id, datasetAndVariantData]) => {
+                        {columnsArray.map(([id]) => {
                             return (
                                 <div
                                     key={id}
@@ -88,14 +88,14 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                                 pageStateHandler={view.pageStateHandler}
                                 newPageState={draftPageState}
                                 setPageState={setPageState}
-                                className='min-w-[200px]'
+                                className='min-w-50'
                             />
                         </div>
                     </div>
 
                     {/* DATA SECTION - CSS Grid for alignment */}
                     <div
-                        className='grid overflow-x-auto gap-y-4'
+                        className='grid gap-y-4 overflow-x-auto'
                         style={{
                             gridTemplateColumns: `repeat(${columnCount}, minmax(500px, 1fr))`,
                             gridAutoRows: 'auto',
@@ -103,10 +103,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                     >
                         {columnsArray.map(([id, datasetAndVariantData], colIndex) => {
                             return (
-                                <div
-                                    key={id}
-                                    className='contents'
-                                >
+                                <div key={id} className='contents'>
                                     <GenericCompareSideBySideDataDisplay
                                         view={view}
                                         datasetAndVariantData={datasetAndVariantData}

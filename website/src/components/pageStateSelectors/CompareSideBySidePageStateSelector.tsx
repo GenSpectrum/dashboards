@@ -22,7 +22,6 @@ export function CompareSideBySidePageStateSelector({
     setDraftPageState: Dispatch<SetStateAction<CompareSideBySideData>>;
     enableAdvancedQueryFilter: boolean;
 }) {
-
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
         [view.organismConstants],
