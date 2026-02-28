@@ -6,6 +6,7 @@ import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wa
 export const wastewaterOrganisms = {
     covid: 'covid',
     rsvA: 'rsv-a',
+    rsvB: 'rsv-B',
 } as const;
 
 export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof wastewaterOrganisms];
@@ -96,6 +97,47 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             lineageField: 'lineage',
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/rsva/search',
+        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+        defaultLocationName: 'Geneva',
+        clinicalSequenceCountWarningThreshold: 50,
+        filterDefaults: {
+            manual: {
+                mode: 'manual',
+                sequenceType: 'nucleotide',
+                mutations: undefined,
+            },
+            variant: {
+                mode: 'variant',
+                sequenceType: 'nucleotide',
+                variant: 'XFG*',
+                minProportion: 0.8,
+                minCount: 15,
+                minJaccard: 0.75,
+                timeFrame: VARIANT_TIME_FRAME.all,
+            },
+        },
+    },
+    [wastewaterOrganisms.rsvB]: {
+        name: 'RSV-B',
+        path: `/${wastewaterPathFragment}/rsv-b`,
+        description: 'Analyze RSV-B data that was collected by the WISE project.',
+        linkTemplate: {
+            nucleotideMutation:
+                'https://genspectrum.org/rsv-b/single-variant?sampleCollectionDateRangeLower=Last+year&nucleotideMutations={{mutation}}',
+            aminoAcidMutation:
+                'https://genspectrum.org/rsv-b/single-variant?sampleCollectionDateRangeLower=Last+year&aminoAcidMutations={{mutation}}',
+        },
+        manualAnalysisModeEnabled: true,
+        variantAnalysisModeEnabled: true,
+        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsvb',
+        samplingDateField: 'samplingDate',
+        locationNameField: 'locationName',
+        clinicalLapis: {
+            lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-b',
+            dateField: 'sampleCollectionDateRangeLower',
+            lineageField: 'lineage',
+        },
+        browseDataUrl: 'https://db.wasap.genspectrum.org/rsvb/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
         defaultLocationName: 'Geneva',
         clinicalSequenceCountWarningThreshold: 50,
