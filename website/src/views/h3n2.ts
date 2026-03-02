@@ -73,7 +73,7 @@ class H3n2Constants implements OrganismConstants {
     public readonly accessionDownloadFields = INFLUENZA_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
-            lineages: { cladeHA: '3C.2a1b.2a.2a.3a.1' },
+            lineages: { cladeHA: 'K' },
         },
     ];
 
