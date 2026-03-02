@@ -12,16 +12,25 @@ import { GsMutations } from '../../genspectrum/GsMutations.tsx';
 import { GsPrevalenceOverTime } from '../../genspectrum/GsPrevalenceOverTime.tsx';
 import { GsRelativeGrowthAdvantage } from '../../genspectrum/GsRelativeGrowthAdvantage.tsx';
 
+// Fixed row indices - all columns use same row numbers, even if some rows are empty
+const rowPrevalence = 1;
+const rowGrowth = 2;
+const rowMutationsNucleotide = 3;
+const rowMutationsAminoAcid = 4;
+const rowAggregateStart = 5;
+
 export type GenericCompareSideBySideDataDisplayProps = {
     view: BaseView<CompareSideBySideData, OrganismConstants, CompareSideBySideStateHandler>;
     datasetAndVariantData: DatasetAndVariantData;
     hideMutationComponents?: boolean;
+    columnIndex: number;
 };
 
 export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDataDisplayProps> = ({
     view,
     datasetAndVariantData,
     hideMutationComponents,
+    columnIndex,
 }) => {
     const { datasetFilter, variantFilter } = datasetAndVariantData;
 
@@ -32,56 +41,80 @@ export const GenericCompareSideBySideDataDisplay: FC<GenericCompareSideBySideDat
     });
     const numeratorFilter = view.pageStateHandler.variantFilterToLapisFilter(datasetFilter, variantFilter);
 
+    const wrapperClassName = 'border-r-2 border-gray-200 p-2';
     return (
         <>
-            <GsPrevalenceOverTime
-                numeratorFilters={[
-                    {
-                        displayName: '',
-                        lapisFilter: numeratorFilter,
-                    },
-                ]}
-                denominatorFilter={datasetLapisFilter}
-                lapisDateField={view.organismConstants.mainDateField}
-                granularity={timeGranularity}
-                height={ComponentHeight.large}
-                pageSize={10}
-            />
-            {view.organismConstants.organism === Organisms.covid && (
-                <GsRelativeGrowthAdvantage
-                    numeratorFilter={numeratorFilter}
+            <div className={wrapperClassName} style={{ gridColumn: columnIndex + 1, gridRow: rowPrevalence }}>
+                <GsPrevalenceOverTime
+                    numeratorFilters={[
+                        {
+                            displayName: '',
+                            lapisFilter: numeratorFilter,
+                        },
+                    ]}
                     denominatorFilter={datasetLapisFilter}
                     lapisDateField={view.organismConstants.mainDateField}
+                    granularity={timeGranularity}
                     height={ComponentHeight.large}
+                    pageSize={10}
                 />
+            </div>
+
+            {view.organismConstants.organism === Organisms.covid && (
+                <div className={wrapperClassName} style={{ gridColumn: columnIndex + 1, gridRow: rowGrowth }}>
+                    <GsRelativeGrowthAdvantage
+                        numeratorFilter={numeratorFilter}
+                        denominatorFilter={datasetLapisFilter}
+                        lapisDateField={view.organismConstants.mainDateField}
+                        height={ComponentHeight.large}
+                    />
+                </div>
             )}
+
             {hideMutationComponents !== true && (
                 <>
-                    <GsMutations
-                        lapisFilter={numeratorFilter}
-                        baselineLapisFilter={datasetLapisFilter}
-                        sequenceType='nucleotide'
-                        pageSize={10}
-                    />
-                    <GsMutations
-                        lapisFilter={numeratorFilter}
-                        baselineLapisFilter={datasetLapisFilter}
-                        sequenceType='amino acid'
-                        pageSize={10}
-                    />
+                    <div
+                        className={wrapperClassName}
+                        style={{ gridColumn: columnIndex + 1, gridRow: rowMutationsNucleotide }}
+                    >
+                        <GsMutations
+                            lapisFilter={numeratorFilter}
+                            baselineLapisFilter={datasetLapisFilter}
+                            sequenceType='nucleotide'
+                            pageSize={10}
+                        />
+                    </div>
+                    <div
+                        className={wrapperClassName}
+                        style={{ gridColumn: columnIndex + 1, gridRow: rowMutationsAminoAcid }}
+                    >
+                        <GsMutations
+                            lapisFilter={numeratorFilter}
+                            baselineLapisFilter={datasetLapisFilter}
+                            sequenceType='amino acid'
+                            pageSize={10}
+                        />
+                    </div>
                 </>
             )}
 
-            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(({ label, fields, views }) => (
-                <GsAggregate
-                    key={label}
-                    title={label}
-                    fields={fields}
-                    lapisFilter={numeratorFilter}
-                    views={views}
-                    pageSize={10}
-                />
-            ))}
+            {view.organismConstants.aggregatedVisualizations.compareSideBySide.map(
+                ({ label, fields, views }, index) => (
+                    <div
+                        key={label}
+                        className={wrapperClassName}
+                        style={{ gridColumn: columnIndex + 1, gridRow: rowAggregateStart + index }}
+                    >
+                        <GsAggregate
+                            title={label}
+                            fields={fields}
+                            lapisFilter={numeratorFilter}
+                            views={views}
+                            pageSize={10}
+                        />
+                    </div>
+                ),
+            )}
         </>
     );
 };
