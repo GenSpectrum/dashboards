@@ -48,11 +48,11 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
         >
             <div className='flex'>
                 <div className='flex flex-1 flex-col'>
-                    <div className='flex overflow-x-auto'>
+                    <div className='flex overflow-x-auto bg-gray-50'>
                         {columnsArray.map(([id]) => (
                             <div
                                 key={id}
-                                className='flex min-w-125 flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2 pb-4'
+                                className='flex min-w-125 flex-1 flex-col gap-4 border-r-2 border-gray-200 px-2 pb-2'
                             >
                                 {pageState.filters.size > 1 && (
                                     <a
@@ -75,7 +75,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                         ))}
                     </div>
 
-                    <div className='border-t-2 border-r-2 border-b-2 border-gray-200 bg-gray-50 p-2'>
+                    <div className='border-r-2 border-b-2 border-gray-200 bg-gray-50 p-2'>
                         <div className='flex justify-center'>
                             <ApplyFilterButton
                                 pageStateHandler={view.pageStateHandler}

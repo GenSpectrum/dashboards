@@ -47,7 +47,7 @@ export function CompareSideBySidePageStateSelector({
     }, [draftPageState, filterId, view.pageStateHandler]);
 
     return (
-        <div className='flex gap-4 p-2 shadow-lg'>
+        <div className='flex gap-4 rounded-md border border-gray-200 p-2 shadow-md'>
             <div className='grow'>
                 <SelectorHeadline>Filter dataset</SelectorHeadline>
                 <Inset className='p-2'>
