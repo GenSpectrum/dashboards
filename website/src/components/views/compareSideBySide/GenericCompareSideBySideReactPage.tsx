@@ -56,6 +56,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                             >
                                 {pageState.filters.size > 1 && (
                                     <button
+                                        type='button'
                                         className='block w-full px-2 py-1 text-left text-sm font-light hover:bg-neutral-100'
                                         onClick={() => setPageState(view.pageStateHandler.removeFilter(pageState, id))}
                                     >
@@ -105,6 +106,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                 </div>
 
                 <button
+                    type='button'
                     className='px-4 py-8 text-left hover:bg-neutral-100'
                     onClick={() => setPageState(view.pageStateHandler.addEmptyFilter(pageState))}
                 >
