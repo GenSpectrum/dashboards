@@ -11,7 +11,7 @@ export const organismOptions = {
     [Organisms.influenzaA]: { lineage: 'H1', lineageFieldPlaceholder: 'HA subtype' },
     [Organisms.h5n1]: { lineage: '2.3.4.4b', lineageFieldPlaceholder: 'Clade' },
     [Organisms.h1n1pdm]: { lineage: 'C.1.9.3', lineageFieldPlaceholder: 'Clade HA' },
-    [Organisms.h3n2]: { lineage: '3C.2a1b', lineageFieldPlaceholder: 'Clade HA' },
+    [Organisms.h3n2]: { lineage: 'K', lineageFieldPlaceholder: 'Clade HA' },
     [Organisms.influenzaB]: { lineage: 'vic', lineageFieldPlaceholder: 'Lineage' },
     [Organisms.victoria]: { lineage: 'V1A.3a.2', lineageFieldPlaceholder: 'Clade HA' },
     [Organisms.westNile]: { lineage: '1A', lineageFieldPlaceholder: 'Lineage' },

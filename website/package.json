@@ -21,6 +21,7 @@
         "test:browser": "vitest --project browser",
         "test:browser:headed": "vitest --project browser --browser.headless false",
         "e2e": "playwright test",
+        "e2e:api": "playwright test --project=api",
         "e2e:chromium": "playwright test --project=chromium"
     },
     "dependencies": {
