@@ -50,10 +50,8 @@ export const GsQueriesOverTime: FC<GsQueriesOverTimeProps> = ({
                 lapisDateField={lapisDateField}
                 hideGaps={hideGaps}
                 pageSizes={pageSizes ?? [10, 20, 30, 40, 50]}
-                initialMeanProportionInterval={
-                    initialMeanProportionInterval ? JSON.stringify(initialMeanProportionInterval) : undefined
-                }
-                customColumns={customColumns ? JSON.stringify(customColumns) : undefined}
+                initialMeanProportionInterval={initialMeanProportionInterval}
+                customColumns={customColumns}
             ></gs-queries-over-time>
         </ComponentWrapper>
     );

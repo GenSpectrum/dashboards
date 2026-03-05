@@ -74,7 +74,7 @@ export function GsDateRangeFilter({
         <gs-date-range-filter
             ref={dateRangeSelectorRef}
             dateRangeOptions={dateRangeOptions}
-            value={isCustom ? value : value?.label}
+            value={(isCustom ? value : value?.label) ?? null}
             lapisDateField={lapisDateField}
             width={width}
         ></gs-date-range-filter>
