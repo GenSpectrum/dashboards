@@ -63,13 +63,11 @@ export function GsLineageFilter<Lineage extends string>({
         };
     }, [onLineageMultiChange]);
 
-    const valueProperty = value === undefined ? (multiSelect ? '[]' : '') : multiSelect ? JSON.stringify(value) : value;
-
     return (
         <gs-lineage-filter
             lapisField={lapisField}
             placeholderText={placeholderText}
-            value={valueProperty}
+            value={value ?? (multiSelect ? [] : '')}
             width={width}
             ref={lineageFilterRef}
             lapisFilter={lapisFilter}

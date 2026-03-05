@@ -49,9 +49,7 @@ export function GsMutationFilter({
             <gs-mutation-filter
                 width={width}
                 initialValue={initialValue ?? []}
-                enabledMutationTypes={
-                    enabledMutationTypes !== undefined ? JSON.stringify(enabledMutationTypes) : undefined
-                }
+                enabledMutationTypes={enabledMutationTypes}
                 ref={mutationFilterRef}
             ></gs-mutation-filter>
         </label>
