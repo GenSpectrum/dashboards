@@ -8,7 +8,7 @@ import {
 import { useEffect, useRef } from 'react';
 import '@genspectrum/dashboard-components/components';
 
-export function GsNumerRangeFilter({
+export function GsNumberRangeFilter({
     lapisField,
     width,
     onNumberRangeChanged = () => {},
@@ -27,11 +27,11 @@ export function GsNumerRangeFilter({
     sliderMax?: number;
     sliderStep?: number;
 }) {
-    const numberRangeFilterRef = useRef<HTMLElement>();
+    const numberRangeFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentInputRef = numberRangeFilterRef.current;
-        if (currentInputRef === undefined) {
+        if (currentInputRef === null) {
             return;
         }
 

@@ -5,7 +5,7 @@ import { locationFieldsToFilterIdentifier } from '../../views/pageStateHandlers/
 import { AdvancedQueryFilter } from '../genspectrum/AdvancedQueryFilter.tsx';
 import { GsDateRangeFilter } from '../genspectrum/GsDateRangeFilter.tsx';
 import { GsLocationFilter } from '../genspectrum/GsLocationFilter.tsx';
-import { GsNumerRangeFilter } from '../genspectrum/GsNumerRangeFilter.tsx';
+import { GsNumberRangeFilter } from '../genspectrum/GsNumberRangeFilter.tsx';
 import { GsTextFilter } from '../genspectrum/GsTextFilter.tsx';
 
 export type LocationFilterConfig = {
@@ -143,7 +143,7 @@ export function BaselineSelector({
                                 <div className='label'>
                                     <span className='label-text'>{config.label ?? config.lapisField}</span>
                                 </div>
-                                <GsNumerRangeFilter
+                                <GsNumberRangeFilter
                                     lapisField={config.lapisField}
                                     sliderMin={config.sliderMin}
                                     sliderMax={config.sliderMax}

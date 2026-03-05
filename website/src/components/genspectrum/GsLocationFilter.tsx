@@ -22,7 +22,7 @@ export function GsLocationFilter<Field extends string>({
     value?: LapisLocation;
     hideCounts?: true;
 }) {
-    const locationFilterRef = useRef<HTMLElement>();
+    const locationFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentLocationFilterRef = locationFilterRef.current;
