@@ -57,7 +57,7 @@ export function GsNumberRangeFilter({
             ref={numberRangeFilterRef}
             lapisField={lapisField}
             width={width}
-            value={JSON.stringify(value ?? {})}
+            value={value ?? {}}
             sliderMin={sliderMin}
             sliderMax={sliderMax}
             sliderStep={sliderStep}

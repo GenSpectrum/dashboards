@@ -42,12 +42,12 @@ export function GsLocationFilter<Field extends string>({
 
     return (
         <gs-location-filter
-            fields={JSON.stringify(fields)}
+            fields={fields}
             placeholderText={placeholderText}
-            lapisFilter={JSON.stringify(lapisFilter)}
+            lapisFilter={lapisFilter}
             width={width}
             ref={locationFilterRef}
-            value={JSON.stringify(value)}
+            value={value}
             hideCounts={hideCounts}
         ></gs-location-filter>
     );

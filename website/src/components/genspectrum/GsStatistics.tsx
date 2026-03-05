@@ -13,8 +13,8 @@ export const GsStatistics: FC<GsStatisticsProps> = ({ numeratorFilter, denominat
         <div className='h-56 sm:h-32'>
             <ComponentHeadline title='Stats' />
             <gs-statistics
-                numeratorFilter={JSON.stringify(numeratorFilter)}
-                denominatorFilter={JSON.stringify(denominatorFilter)}
+                numeratorFilter={numeratorFilter}
+                denominatorFilter={denominatorFilter}
                 width='100%'
                 height='100%'
             />

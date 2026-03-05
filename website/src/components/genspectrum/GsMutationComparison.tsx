@@ -1,4 +1,4 @@
-import type { NamedLapisFilter, SequenceType } from '@genspectrum/dashboard-components/util';
+import { type NamedLapisFilter, type SequenceType, views } from '@genspectrum/dashboard-components/util';
 import type { FC } from 'react';
 
 import { defaultTablePageSize } from '../../views/View';
@@ -23,9 +23,9 @@ export const GsMutationComparison: FC<GsMutationComparisonProps> = ({
             height={height}
         >
             <gs-mutation-comparison
-                lapisFilters={JSON.stringify(lapisFilters)}
+                lapisFilters={lapisFilters}
                 sequenceType={sequenceType}
-                views='["venn", "table"]'
+                views={[views.venn, views.table]}
                 pageSize={pageSize ?? defaultTablePageSize}
                 width='100%'
                 height={height ? '100%' : undefined}
