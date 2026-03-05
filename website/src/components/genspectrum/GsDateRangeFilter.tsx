@@ -24,7 +24,7 @@ export function GsDateRangeFilter({
     dateRangeOptions?: DateRangeOption[];
     width?: string;
 }) {
-    const dateRangeSelectorRef = useRef<HTMLElement>();
+    const dateRangeSelectorRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentDateRangeSelectorRef = dateRangeSelectorRef.current;

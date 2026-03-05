@@ -1,11 +1,11 @@
-import type { ChangeEventHandler } from 'react';
+import type { InputEventHandler } from 'react';
 
 export function VariantQueryFilter({
     value,
     onInput,
 }: {
     value?: string;
-    onInput?: ChangeEventHandler<HTMLInputElement>;
+    onInput?: InputEventHandler<HTMLInputElement>;
 }) {
     return (
         <label className='form-control'>

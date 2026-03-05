@@ -24,7 +24,7 @@ export function GsLineageFilter<Lineage extends string>({
     hideCounts?: true;
     multiSelect?: true;
 }) {
-    const lineageFilterRef = useRef<HTMLElement>();
+    const lineageFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentLineageFilterRef = lineageFilterRef.current;

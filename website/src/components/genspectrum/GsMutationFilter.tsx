@@ -20,7 +20,7 @@ export function GsMutationFilter({
     enabledMutationTypes?: MutationType[];
     onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
 }) {
-    const mutationFilterRef = useRef<HTMLElement>();
+    const mutationFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentMutationFilterRef = mutationFilterRef.current;
