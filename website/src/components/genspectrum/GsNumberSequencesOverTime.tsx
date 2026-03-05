@@ -29,9 +29,9 @@ export function GsNumberSequencesOverTime({
     return (
         <ComponentWrapper title='Number sequences' height={height}>
             <gs-number-sequences-over-time
-                lapisFilters={JSON.stringify(lapisFilters)}
+                lapisFilters={lapisFilters}
                 lapisDateField={lapisDateField}
-                views={JSON.stringify(views)}
+                views={views}
                 width={width}
                 height={height}
                 granularity={granularity}

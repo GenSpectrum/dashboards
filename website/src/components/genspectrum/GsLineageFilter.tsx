@@ -72,7 +72,7 @@ export function GsLineageFilter<Lineage extends string>({
             value={valueProperty}
             width={width}
             ref={lineageFilterRef}
-            lapisFilter={JSON.stringify(lapisFilter)}
+            lapisFilter={lapisFilter}
             hideCounts={hideCounts}
             multiSelect={multiSelect}
         ></gs-lineage-filter>

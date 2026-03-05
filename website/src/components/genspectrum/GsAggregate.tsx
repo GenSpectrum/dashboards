@@ -17,9 +17,9 @@ export const GsAggregate: FC<GsAggregateProps> = ({ title, height, fields, lapis
     return (
         <ComponentWrapper title={title} height={height}>
             <gs-aggregate
-                views={JSON.stringify(views)}
-                fields={JSON.stringify(fields)}
-                lapisFilter={JSON.stringify(lapisFilter)}
+                views={views}
+                fields={fields}
+                lapisFilter={lapisFilter}
                 pageSize={pageSize ?? defaultTablePageSize}
                 width='100%'
                 height={height ? '100%' : undefined}

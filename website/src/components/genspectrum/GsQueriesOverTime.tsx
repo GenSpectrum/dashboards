@@ -43,13 +43,13 @@ export const GsQueriesOverTime: FC<GsQueriesOverTimeProps> = ({
             <gs-queries-over-time
                 width='100%'
                 height={height ? '100%' : undefined}
-                lapisFilter={JSON.stringify(lapisFilter)}
-                queries={JSON.stringify(queries)}
-                views={JSON.stringify([views.grid])}
+                lapisFilter={lapisFilter}
+                queries={queries}
+                views={[views.grid]}
                 granularity={granularity}
                 lapisDateField={lapisDateField}
                 hideGaps={hideGaps}
-                pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
+                pageSizes={pageSizes ?? [10, 20, 30, 40, 50]}
                 initialMeanProportionInterval={
                     initialMeanProportionInterval ? JSON.stringify(initialMeanProportionInterval) : undefined
                 }
