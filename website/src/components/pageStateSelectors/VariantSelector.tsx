@@ -65,7 +65,7 @@ export function VariantSelector({
                     onInput={(event) => {
                         onVariantFilterChange({
                             ...variantFilter,
-                            variantQuery: event.target.value,
+                            variantQuery: event.currentTarget.value,
                         });
                     }}
                     value={variantFilter.variantQuery ?? ''}

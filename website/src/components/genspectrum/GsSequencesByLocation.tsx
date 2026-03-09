@@ -1,4 +1,4 @@
-import { type LapisFilter } from '@genspectrum/dashboard-components/util';
+import { type LapisFilter, views } from '@genspectrum/dashboard-components/util';
 import type { FC } from 'react';
 
 import { getSequencesByLocationMapData } from '../../util/getSequencesByLocationMapData';
@@ -30,9 +30,9 @@ export const GsSequencesByLocation: FC<GsSequencesByLocationProps> = ({
                 <gs-sequences-by-location
                     key={mapName} // Force remount when mapName changes - otherwise React seems to set props to null that were set before which is invalid for the web component
                     lapisLocationField={lapisLocationField}
-                    lapisFilter={JSON.stringify(lapisFilter)}
+                    lapisFilter={lapisFilter}
                     pageSize={pageSize ?? defaultTablePageSize}
-                    views={JSON.stringify(['table'])}
+                    views={['table']}
                     width='100%'
                     height={height ? '100%' : undefined}
                 />
@@ -40,10 +40,10 @@ export const GsSequencesByLocation: FC<GsSequencesByLocationProps> = ({
                 <gs-sequences-by-location
                     key={mapName}
                     lapisLocationField={lapisLocationField}
-                    lapisFilter={JSON.stringify(lapisFilter)}
+                    lapisFilter={lapisFilter}
                     pageSize={pageSize ?? defaultTablePageSize}
-                    views={JSON.stringify(['map', 'table'])}
-                    mapSource={JSON.stringify(mapData.mapSource)}
+                    views={[views.map, views.table]}
+                    mapSource={mapData.mapSource}
                     width='100%'
                     height={height ? '100%' : undefined}
                     zoom={mapData.zoom}

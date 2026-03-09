@@ -20,9 +20,9 @@ export const GsRelativeGrowthAdvantage: FC<GsRelativeGrowthAdvantageProps> = ({
     return (
         <ComponentWrapper title='Relative growth advantage' height={height}>
             <gs-relative-growth-advantage
-                numeratorFilter={JSON.stringify(numeratorFilter)}
-                denominatorFilter={JSON.stringify(denominatorFilter)}
-                generationTime='7'
+                numeratorFilter={numeratorFilter}
+                denominatorFilter={denominatorFilter}
+                generationTime={7}
                 pageSize={defaultTablePageSize}
                 width='100%'
                 height={height ? '100%' : undefined}

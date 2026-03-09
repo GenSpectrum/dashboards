@@ -1,4 +1,4 @@
-import { type LapisFilter, type SequenceType } from '@genspectrum/dashboard-components/util';
+import { type LapisFilter, type SequenceType, views } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
 import { defaultTablePageSize } from '../../views/View.ts';
@@ -25,12 +25,10 @@ export const GsMutations: FC<GsMutationsProps> = ({
             height={height}
         >
             <gs-mutations
-                lapisFilter={JSON.stringify(lapisFilter)}
-                baselineLapisFilter={
-                    baselineLapisFilter === undefined ? undefined : JSON.stringify(baselineLapisFilter)
-                }
+                lapisFilter={lapisFilter}
+                baselineLapisFilter={baselineLapisFilter}
                 sequenceType={sequenceType}
-                views='["grid", "table", "insertions"]'
+                views={[views.grid, views.table, views.insertions]}
                 pageSize={pageSize ?? defaultTablePageSize}
                 width='100%'
                 height={height ? '100%' : undefined}

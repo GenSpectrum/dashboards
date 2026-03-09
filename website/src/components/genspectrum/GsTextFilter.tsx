@@ -20,7 +20,7 @@ export function GsTextFilter<LapisField extends string>({
     value?: string | undefined;
     hideCounts?: true;
 }) {
-    const textInputRef = useRef<HTMLElement>();
+    const textInputRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentInputRef = textInputRef.current;
@@ -43,7 +43,7 @@ export function GsTextFilter<LapisField extends string>({
             ref={textInputRef}
             lapisField={lapisField}
             placeholderText={placeholderText}
-            lapisFilter={JSON.stringify(lapisFilter)}
+            lapisFilter={lapisFilter}
             width={width}
             value={value ?? ''}
             hideCounts={hideCounts}
