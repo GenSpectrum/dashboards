@@ -103,14 +103,12 @@ export const GenericAnalyseSingleVariantDataDisplay: FC<GenericAnalyseSingleVari
                 sequenceType='nucleotide'
                 granularity={timeGranularity}
                 lapisDateField={view.organismConstants.mainDateField}
-                useNewEndpoint={true}
             />
             <GsMutationsOverTime
                 lapisFilter={variantLapisFilter}
                 sequenceType='amino acid'
                 granularity={timeGranularity}
                 lapisDateField={view.organismConstants.mainDateField}
-                useNewEndpoint={true}
             />
         </div>
     );

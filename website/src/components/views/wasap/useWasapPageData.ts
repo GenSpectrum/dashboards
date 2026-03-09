@@ -13,8 +13,11 @@ import type {
     WasapVariantFilter,
 } from './wasapPageConfig';
 import { getCollection } from '../../../covspectrum/getCollection';
+import { detailedMutationsToQuery } from '../../../covspectrum/variantConversionUtil';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
+import { parseQuery } from '../../../lapis/parseQuery';
+import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 
 /**
  * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
@@ -147,25 +150,87 @@ async function fetchCollectionModeData(
         throw Error('No collection selected');
     }
     const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
+
+    const variantData: {
+        name: string;
+        queryString: string;
+    }[] = [];
+
+    const invalidVariants: {
+        name: string;
+        error: string;
+    }[] = [];
+
+    for (const variant of collection.variants) {
+        let queryString: string;
+        switch (variant.query.type) {
+            case 'variantQuery': {
+                queryString = variant.query.variantQuery;
+                break;
+            }
+            case 'detailedMutations': {
+                queryString = detailedMutationsToQuery(variant.query);
+                break;
+            }
+        }
+        if (queryString === '') {
+            invalidVariants.push({
+                name: variant.name,
+                error: 'Variant is empty.',
+            });
+            continue;
+        }
+        variantData.push({
+            name: variant.name,
+            queryString: queryString,
+        });
+    }
+
+    // Parse all variant queries through LAPIS
+    const parseResults = await parseQuery(
+        config.lapisBaseUrl,
+        variantData.map((vd) => vd.queryString),
+    );
+
+    // Process results and validate
     const queries: {
         displayLabel: string;
         countQuery: string;
         coverageQuery: string;
     }[] = [];
 
-    collection.variants.forEach((f) => {
-        if (f.query.type === 'variantQuery') {
-            // TODO - this way of generating a coverageQuery sort-of works, but is not production ready
-            // we need to to it with the LAPIS endpoint: https://github.com/GenSpectrum/dashboards/issues/1026
-            const positions = (f.query.variantQuery.match(/\d+/g) ?? []).map(Number);
-            const coverageQuery = positions.map((p) => `!C${p}N`).join(' | ');
-            queries.push({
-                displayLabel: f.name,
-                countQuery: f.query.variantQuery,
-                coverageQuery,
+    variantData.forEach(({ name, queryString }, index) => {
+        const parseResult = parseResults[index];
+
+        // Check if parsing failed
+        if (parseResult.type === 'failure') {
+            invalidVariants.push({
+                name: name,
+                error: `Parse error: ${parseResult.error}`,
             });
+            return;
         }
+
+        // Validate that the parsed query only contains genome checks
+        const validationResult = validateGenomeOnly(parseResult.filter);
+        if (!validationResult.isGenomeOnly) {
+            invalidVariants.push({
+                name: name,
+                error: validationResult.error,
+            });
+            return;
+        }
+
+        // Query is valid - add to queries array
+        // coverage query can be calculated as below, see https://github.com/GenSpectrum/LAPIS/pull/1558
+        const coverageQuery = `(${queryString}) or (not maybe(${queryString}))`;
+        queries.push({
+            displayLabel: name,
+            countQuery: queryString,
+            coverageQuery,
+        });
     });
+
     return {
         type: 'collection',
         collection: {
@@ -173,6 +238,7 @@ async function fetchCollectionModeData(
             title: collection.title,
             queries,
         },
+        ...(invalidVariants.length > 0 && { invalidVariants }),
     };
 }
 
@@ -228,4 +294,8 @@ export type WasapCollectionData = {
             coverageQuery: string;
         }[];
     };
+    invalidVariants?: {
+        name: string;
+        error: string;
+    }[];
 };
