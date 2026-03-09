@@ -120,7 +120,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
                                             }
                                             displayMutations={data.displayMutations}
                                             pageSizes={[20, 50, 100, 250]}
-                                            useNewEndpoint={true}
                                             initialMeanProportionInterval={initialMeanProportionInterval}
                                             hideGaps={base.excludeEmpty ? true : undefined}
                                             customColumns={data.customColumns}

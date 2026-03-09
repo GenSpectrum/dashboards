@@ -18,7 +18,6 @@ export type GsMutationsOverTimeProps = {
     displayMutations?: string[];
     height?: string;
     pageSizes?: number[];
-    useNewEndpoint?: true;
     hideGaps?: true;
     initialMeanProportionInterval?: MeanProportionInterval;
     customColumns?: CustomColumn[];
@@ -32,7 +31,6 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
     displayMutations,
     height,
     pageSizes,
-    useNewEndpoint,
     hideGaps,
     initialMeanProportionInterval,
     customColumns,
@@ -51,7 +49,6 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
                 granularity={granularity}
                 lapisDateField={lapisDateField}
                 displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
-                useNewEndpoint={useNewEndpoint}
                 hideGaps={hideGaps}
                 pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
                 initialMeanProportionInterval={
