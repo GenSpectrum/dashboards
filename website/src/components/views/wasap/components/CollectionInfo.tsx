@@ -40,8 +40,8 @@ export const CollectionInfo: FC<CollectionInfoProps> = ({ collectionId, collecti
                     </div>
                     <div className='stat-desc text-wrap'>
                         <ul className='mt-1 list-inside list-disc space-y-1'>
-                            {invalidVariants.map((v, i) => (
-                                <li key={i}>
+                            {invalidVariants.map((v) => (
+                                <li key={`${v.name}:${v.error}`}>
                                     <strong>{v.name}</strong>: {v.error}
                                 </li>
                             ))}
