@@ -6,8 +6,8 @@ import { type OrganismWithViewKey } from '../src/views/routing';
 import { compareSideBySideViewKey } from '../src/views/viewKeys';
 
 export class CompareSideBySidePage extends ViewPage {
-    public readonly removeColumnButton = this.page.getByRole('link', { name: 'Remove column' });
-    public readonly addColumnButton = this.page.getByRole('link', { name: 'Add column' });
+    public readonly removeColumnButton = this.page.getByRole('button', { name: 'Remove column' });
+    public readonly addColumnButton = this.page.getByRole('button', { name: 'Add column' });
     public readonly mutationField = this.page.getByRole('combobox', { name: 'Enter a mutation', exact: false });
 
     public async goto(organism: OrganismWithViewKey<typeof compareSideBySideViewKey>) {
