@@ -55,16 +55,13 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
 
     const memoizedMutationAnnotations = useMemo(
         () =>
-            JSON.stringify(
-                config.resistanceAnalysisModeEnabled
-                    ? config.resistanceMutationSets.flatMap((resistanceMutation) =>
-                          toMutationAnnotations(resistanceMutation),
-                      )
-                    : [],
-            ),
+            config.resistanceAnalysisModeEnabled
+                ? config.resistanceMutationSets.flatMap((resistanceMutation) =>
+                      toMutationAnnotations(resistanceMutation),
+                  )
+                : [],
         [config],
     );
-    const memoizedLinkTemplate = useMemo(() => JSON.stringify(config.linkTemplate), [config.linkTemplate]);
 
     return (
         <DataPageLayout
@@ -82,7 +79,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
             <gs-app
                 lapis={config.lapisBaseUrl}
                 mutationAnnotations={memoizedMutationAnnotations}
-                mutationLinkTemplate={memoizedLinkTemplate}
+                mutationLinkTemplate={config.linkTemplate}
             >
                 <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
                     <div className='h-fit p-2 shadow-lg'>
