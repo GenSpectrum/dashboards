@@ -43,8 +43,9 @@ object VariantTable : UUIDTable(VARIANT_TABLE) {
     val countQuery = text("count_query").nullable()
     val coverageQuery = text("coverage_query").nullable()
 
-    // TODO - the List<String> isn't correct, the type is more complex than that
-    val mutationList = jacksonSerializableJsonb<List<String>>("mutation_list").nullable()
+    val mutationList = jacksonSerializableJsonb<org.genspectrum.dashboardsbackend.api.MutationListDefinition>(
+        "mutation_list",
+    ).nullable()
 }
 
 class VariantEntity(id: EntityID<UUID>) : UUIDEntity(id) {
