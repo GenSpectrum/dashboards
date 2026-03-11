@@ -1,0 +1,43 @@
+package org.genspectrum.dashboardsbackend.model.collection
+
+import org.genspectrum.dashboardsbackend.api.Collection
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.UUIDTable
+import java.util.UUID
+
+const val COLLECTION_TABLE = "collections_table"
+
+object CollectionTable : UUIDTable(COLLECTION_TABLE) {
+    val name = text("name")
+    val ownedBy = varchar("owned_by", 255)
+    val organism = varchar("organism", 255)
+    val description = text("description").nullable()
+}
+
+class CollectionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<CollectionEntity>(CollectionTable) {
+        fun findForUser(id: UUID, userId: String) = findById(id)
+            ?.takeIf { it.ownedBy == userId }
+
+        // TODO we probably want to have a 'find by organism' as well
+    }
+
+    var name by CollectionTable.name
+    var ownedBy by CollectionTable.ownedBy
+    var organism by CollectionTable.organism
+    var description by CollectionTable.description
+
+    // Navigation property to access variants
+    val variants by VariantEntity referrersOn VariantTable.collectionId
+
+    fun toCollection() = Collection(
+        id = id.value.toString(),
+        name = name,
+        ownedBy = ownedBy,
+        organism = organism,
+        description = description,
+        variants = variants.map { it.toVariant() },
+    )
+}
