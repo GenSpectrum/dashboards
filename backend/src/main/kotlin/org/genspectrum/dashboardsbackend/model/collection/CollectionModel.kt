@@ -1,0 +1,68 @@
+package org.genspectrum.dashboardsbackend.model.collection
+
+import org.genspectrum.dashboardsbackend.api.Collection
+import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.VariantRequest
+import org.genspectrum.dashboardsbackend.config.DashboardsConfig
+import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
+import org.jetbrains.exposed.sql.Database
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import javax.sql.DataSource
+
+@Service
+@Transactional
+class CollectionModel(pool: DataSource, private val dashboardsConfig: DashboardsConfig) {
+    init {
+        Database.connect(pool)
+    }
+
+    fun createCollection(request: CollectionRequest, userId: String): Collection {
+        dashboardsConfig.validateIsValidOrganism(request.organism)
+
+        val collectionEntity = CollectionEntity.new {
+            name = request.name
+            organism = request.organism
+            description = request.description
+            ownedBy = userId
+        }
+
+        val variantEntities = request.variants.map { variantRequest ->
+            val variantEntity = when (variantRequest) {
+                is VariantRequest.QueryVariantRequest -> {
+                    VariantEntity.new {
+                        this.collectionId = collectionEntity.id
+                        this.variantType = VariantType.QUERY
+                        this.name = variantRequest.name
+                        this.description = variantRequest.description
+                        this.countQuery = variantRequest.countQuery
+                        this.coverageQuery = variantRequest.coverageQuery
+                        this.mutationList = null
+                    }
+                }
+                is VariantRequest.MutationListVariantRequest -> {
+                    VariantEntity.new {
+                        this.collectionId = collectionEntity.id
+                        this.variantType = VariantType.MUTATION_LIST
+                        this.name = variantRequest.name
+                        this.description = variantRequest.description
+                        this.mutationList = variantRequest.mutationList
+                        this.countQuery = null
+                        this.coverageQuery = null
+                    }
+                }
+            }
+            variantEntity.validate()
+            variantEntity
+        }
+
+        return Collection(
+            id = collectionEntity.id.value.toString(),
+            name = collectionEntity.name,
+            ownedBy = collectionEntity.ownedBy,
+            organism = collectionEntity.organism,
+            description = collectionEntity.description,
+            variants = variantEntities.map { it.toVariant() },
+        )
+    }
+}
