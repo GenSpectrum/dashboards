@@ -5,6 +5,8 @@ import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
+import org.genspectrum.dashboardsbackend.controller.NotFoundException
+import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
@@ -37,6 +39,11 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
 
         return query.map { it.toCollection() }
     }
+
+    fun getCollection(id: String): Collection =
+        CollectionEntity.findById(convertToUuid(id))
+            ?.toCollection()
+            ?: throw NotFoundException("Collection $id not found")
 
     fun createCollection(request: CollectionRequest, userId: String): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)

@@ -43,6 +43,13 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
                 .andExpect(status().isOk),
         )
 
+    fun getCollectionRaw(id: String): ResultActions = mockMvc.perform(get("/collections/$id"))
+
+    fun getCollection(id: String): Collection = deserializeJsonResponse(
+        getCollectionRaw(id)
+            .andExpect(status().isOk),
+    )
+
     private inline fun <reified T> deserializeJsonResponse(resultActions: ResultActions): T {
         val content =
             resultActions

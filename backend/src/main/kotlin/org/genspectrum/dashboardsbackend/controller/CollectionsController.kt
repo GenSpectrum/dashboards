@@ -7,6 +7,7 @@ import org.genspectrum.dashboardsbackend.model.collection.CollectionModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
@@ -27,6 +28,15 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         userId = userId,
         organism = organism,
     )
+
+    @GetMapping("/collections/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(
+        summary = "Get a collection by ID",
+        description = "Returns a single collection with all its variants.",
+    )
+    fun getCollection(
+        @IdParameter @PathVariable id: String,
+    ): Collection = collectionModel.getCollection(id)
 
     @PostMapping("/collections")
     @ResponseStatus(HttpStatus.CREATED)
