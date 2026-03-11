@@ -6,6 +6,8 @@ import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.and
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import javax.sql.DataSource
@@ -15,6 +17,25 @@ import javax.sql.DataSource
 class CollectionModel(pool: DataSource, private val dashboardsConfig: DashboardsConfig) {
     init {
         Database.connect(pool)
+    }
+
+    fun getCollections(userId: String?, organism: String?): List<Collection> {
+        val query = if (userId == null && organism == null) {
+            CollectionEntity.all()
+        } else {
+            CollectionEntity.find {
+                var conditions: Op<Boolean> = Op.TRUE
+                if (userId != null) {
+                    conditions = conditions and (CollectionTable.ownedBy eq userId)
+                }
+                if (organism != null) {
+                    conditions = conditions and (CollectionTable.organism eq organism)
+                }
+                conditions
+            }
+        }
+
+        return query.map { it.toCollection() }
     }
 
     fun createCollection(request: CollectionRequest, userId: String): Collection {

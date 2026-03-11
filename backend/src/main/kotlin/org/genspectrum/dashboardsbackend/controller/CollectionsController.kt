@@ -5,6 +5,8 @@ import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.model.collection.CollectionModel
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
@@ -13,6 +15,19 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class CollectionsController(private val collectionModel: CollectionModel) {
+    @GetMapping("/collections", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(
+        summary = "Get collections",
+        description = "Returns collections filtered by optional userId and/or organism parameters.",
+    )
+    fun getCollections(
+        @RequestParam(required = false) userId: String?,
+        @RequestParam(required = false) organism: String?,
+    ): List<Collection> = collectionModel.getCollections(
+        userId = userId,
+        organism = organism,
+    )
+
     @PostMapping("/collections")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
