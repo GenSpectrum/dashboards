@@ -1,9 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.KnownTestOrganisms
-import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.Variant
-import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.dummyCollectionRequest
 import org.genspectrum.dashboardsbackend.dummyMutationListVariantRequest
 import org.genspectrum.dashboardsbackend.dummyQueryVariantRequest
@@ -30,7 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class CollectionsControllerTest(@param:Autowired private val collectionsClient: CollectionsClient) {
 
     @Test
-    fun `GIVEN I create a collection with variants WHEN getting collection THEN returns collection with variants and generated IDs`() {
+    fun `GIVEN collection with variants WHEN creating THEN returns with generated IDs`() {
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
@@ -97,8 +95,14 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
         val userA = getNewUserId()
         val userB = getNewUserId()
 
-        val collectionA = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User A Collection"), userA)
-        val collectionB = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User B Collection"), userB)
+        val collectionA = collectionsClient.postCollection(
+            dummyCollectionRequest.copy(name = "User A Collection"),
+            userA,
+        )
+        val collectionB = collectionsClient.postCollection(
+            dummyCollectionRequest.copy(name = "User B Collection"),
+            userB,
+        )
 
         val collectionsForUserA = collectionsClient.getCollections(userId = userA)
         val collectionsForUserB = collectionsClient.getCollections(userId = userB)
@@ -111,7 +115,7 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
     }
 
     @Test
-    fun `GIVEN collections for multiple users and organisms WHEN getting all collections THEN returns all collections`() {
+    fun `GIVEN multiple collections WHEN getting all THEN returns all`() {
         val userA = getNewUserId()
         val userB = getNewUserId()
 
@@ -185,7 +189,7 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
     }
 
     @Test
-    fun `GIVEN collections for multiple users and organisms WHEN filtering by userId AND organism THEN returns correct subset`() {
+    fun `GIVEN multiple collections WHEN filtering by userId AND organism THEN returns subset`() {
         val userA = getNewUserId()
         val userB = getNewUserId()
 
@@ -249,7 +253,7 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
     }
 
     @Test
-    fun `GIVEN collection with both variant types WHEN getting collection THEN variant types are correctly discriminated`() {
+    fun `GIVEN both variant types WHEN getting collection THEN types are discriminated`() {
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
@@ -285,9 +289,12 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
     }
 
     @Test
-    fun `GIVEN collection created by different user WHEN getting collection by ID THEN returns collection (public access)`() {
+    fun `GIVEN different user's collection WHEN getting by ID THEN returns (public access)`() {
         val userA = getNewUserId()
-        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User A Collection"), userA)
+        val createdCollection = collectionsClient.postCollection(
+            dummyCollectionRequest.copy(name = "User A Collection"),
+            userA,
+        )
 
         val retrievedCollection = collectionsClient.getCollection(createdCollection.id)
 

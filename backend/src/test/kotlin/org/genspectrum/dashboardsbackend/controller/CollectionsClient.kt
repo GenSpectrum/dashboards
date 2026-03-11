@@ -37,11 +37,10 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         return mockMvc.perform(get("/collections$params"))
     }
 
-    fun getCollections(userId: String? = null, organism: String? = null): List<Collection> =
-        deserializeJsonResponse(
-            getCollectionsRaw(userId, organism)
-                .andExpect(status().isOk),
-        )
+    fun getCollections(userId: String? = null, organism: String? = null): List<Collection> = deserializeJsonResponse(
+        getCollectionsRaw(userId, organism)
+            .andExpect(status().isOk),
+    )
 
     fun getCollectionRaw(id: String): ResultActions = mockMvc.perform(get("/collections/$id"))
 
