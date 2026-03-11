@@ -40,10 +40,9 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
         return query.map { it.toCollection() }
     }
 
-    fun getCollection(id: String): Collection =
-        CollectionEntity.findById(convertToUuid(id))
-            ?.toCollection()
-            ?: throw NotFoundException("Collection $id not found")
+    fun getCollection(id: String): Collection = CollectionEntity.findById(convertToUuid(id))
+        ?.toCollection()
+        ?: throw NotFoundException("Collection $id not found")
 
     fun createCollection(request: CollectionRequest, userId: String): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)

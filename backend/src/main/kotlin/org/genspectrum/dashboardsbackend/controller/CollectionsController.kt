@@ -34,9 +34,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         summary = "Get a collection by ID",
         description = "Returns a single collection with all its variants.",
     )
-    fun getCollection(
-        @IdParameter @PathVariable id: String,
-    ): Collection = collectionModel.getCollection(id)
+    fun getCollection(@IdParameter @PathVariable id: String): Collection = collectionModel.getCollection(id)
 
     @PostMapping("/collections")
     @ResponseStatus(HttpStatus.CREATED)
