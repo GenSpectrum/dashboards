@@ -68,6 +68,24 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                     }
                 }
                 is VariantRequest.MutationListVariantRequest -> {
+                    // Validate lineage filters
+                    val organismConfig = dashboardsConfig.getOrganismConfig(request.organism)
+                    val validLineageFields = organismConfig.lapis.lineageFields ?: emptyList()
+
+                    val invalidFields = variantRequest.mutationList.lineageFilters.keys - validLineageFields.toSet()
+                    if (invalidFields.isNotEmpty()) {
+                        val validFieldsStr = if (validLineageFields.isEmpty()) {
+                            "no lineage fields are configured"
+                        } else {
+                            "valid fields are: ${validLineageFields.joinToString(", ")}"
+                        }
+                        throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                            "Invalid lineage fields for organism '${request.organism}': ${invalidFields.joinToString(
+                                ", ",
+                            )}. $validFieldsStr",
+                        )
+                    }
+
                     VariantEntity.new {
                         this.collectionId = collectionEntity.id
                         this.variantType = VariantType.MUTATION_LIST

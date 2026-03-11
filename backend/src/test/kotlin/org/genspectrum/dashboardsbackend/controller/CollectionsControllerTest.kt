@@ -2,6 +2,7 @@ package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.KnownTestOrganisms
 import org.genspectrum.dashboardsbackend.api.Variant
+import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.dummyCollectionRequest
 import org.genspectrum.dashboardsbackend.dummyMutationListVariantRequest
 import org.genspectrum.dashboardsbackend.dummyQueryVariantRequest
@@ -249,7 +250,7 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
             retrievedCollection.variants.first { it is Variant.MutationListVariant } as Variant.MutationListVariant
         assertThat(mutationListVariant.name, equalTo("Omicron mutations"))
         assertThat(mutationListVariant.description, equalTo("Key mutations"))
-        assertThat(mutationListVariant.mutationList, equalTo(listOf("S:N501Y", "S:E484K", "S:K417N")))
+        assertThat(mutationListVariant.mutationList.aaMutations, equalTo(listOf("S:N501Y", "S:E484K", "S:K417N")))
     }
 
     @Test
@@ -320,5 +321,119 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.detail").value("Invalid UUID $invalidId"))
+    }
+
+    // MutationListDefinition Tests
+
+    @Test
+    fun `WHEN creating variant with lineage filter THEN succeeds`() {
+        val userId = getNewUserId()
+        val variantWithLineage = VariantRequest.MutationListVariantRequest(
+            name = "BA.2 lineage",
+            description = "BA.2 variant",
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition.create(
+                aaMutations = listOf("S:N501Y"),
+                lineageFilters = mapOf("pangoLineage" to "BA.2*"),
+            ),
+        )
+        val request = dummyCollectionRequest.copy(variants = listOf(variantWithLineage))
+
+        val createdCollection = collectionsClient.postCollection(request, userId)
+
+        assertThat(createdCollection.variants, hasSize(1))
+        val variant = createdCollection.variants[0] as Variant.MutationListVariant
+        assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y")))
+        assertThat(variant.mutationList.lineageFilters["pangoLineage"], equalTo("BA.2*"))
+    }
+
+    @Test
+    fun `WHEN creating variant with invalid lineage field THEN returns 400`() {
+        val userId = getNewUserId()
+        val variantWithInvalidLineage = VariantRequest.MutationListVariantRequest(
+            name = "Invalid lineage",
+            description = "Has invalid lineage field",
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition.create(
+                aaMutations = emptyList(),
+                lineageFilters = mapOf("invalidLineageField" to "value"),
+            ),
+        )
+        val request = dummyCollectionRequest.copy(variants = listOf(variantWithInvalidLineage))
+
+        collectionsClient.postCollectionRaw(request, userId)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(
+                jsonPath("$.detail").value(
+                    org.hamcrest.Matchers.containsString("Invalid lineage fields for organism 'Covid'"),
+                ),
+            )
+            .andExpect(
+                jsonPath("$.detail").value(
+                    org.hamcrest.Matchers.containsString("invalidLineageField"),
+                ),
+            )
+    }
+
+    @Test
+    fun `WHEN creating variant with multiple lineage filters THEN succeeds`() {
+        val userId = getNewUserId()
+        val variantWithMultipleLineages = VariantRequest.MutationListVariantRequest(
+            name = "Multiple lineages",
+            description = "Has multiple lineage filters",
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition.create(
+                aaMutations = listOf("S:K417N"),
+                lineageFilters = mapOf(
+                    "pangoLineage" to "BA.2*",
+                    "nextcladePangoLineage" to "BA.2.75*",
+                ),
+            ),
+        )
+        val request = dummyCollectionRequest.copy(variants = listOf(variantWithMultipleLineages))
+
+        val createdCollection = collectionsClient.postCollection(request, userId)
+
+        val variant = createdCollection.variants[0] as Variant.MutationListVariant
+        assertThat(variant.mutationList.lineageFilters["pangoLineage"], equalTo("BA.2*"))
+        assertThat(variant.mutationList.lineageFilters["nextcladePangoLineage"], equalTo("BA.2.75*"))
+    }
+
+    @Test
+    fun `WHEN creating variant with only aaMutations THEN succeeds`() {
+        val userId = getNewUserId()
+        val variantWithOnlyAaMutations = VariantRequest.MutationListVariantRequest(
+            name = "Only AA mutations",
+            description = "Only has amino acid mutations",
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+                aaMutations = listOf("S:N501Y", "S:E484K"),
+            ),
+        )
+        val request = dummyCollectionRequest.copy(variants = listOf(variantWithOnlyAaMutations))
+
+        val createdCollection = collectionsClient.postCollection(request, userId)
+
+        val variant = createdCollection.variants[0] as Variant.MutationListVariant
+        assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y", "S:E484K")))
+        assertThat(variant.mutationList.nucMutations, org.hamcrest.Matchers.nullValue())
+    }
+
+    @Test
+    fun `WHEN creating variant with insertions THEN succeeds`() {
+        val userId = getNewUserId()
+        val variantWithInsertions = VariantRequest.MutationListVariantRequest(
+            name = "With insertions",
+            description = "Has insertions",
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+                aaMutations = listOf("S:N501Y"),
+                aaInsertions = listOf("ins_S:214:EPE"),
+                nucInsertions = listOf("ins_22204:GAG"),
+            ),
+        )
+        val request = dummyCollectionRequest.copy(variants = listOf(variantWithInsertions))
+
+        val createdCollection = collectionsClient.postCollection(request, userId)
+
+        val variant = createdCollection.variants[0] as Variant.MutationListVariant
+        assertThat(variant.mutationList.aaInsertions, equalTo(listOf("ins_S:214:EPE")))
+        assertThat(variant.mutationList.nucInsertions, equalTo(listOf("ins_22204:GAG")))
     }
 }

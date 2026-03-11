@@ -116,7 +116,9 @@ sealed interface Variant {
     "collectionId": "660e8400-e29b-41d4-a716-446655440000",
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
-    "mutationList": ["S:N501Y", "S:E484K", "S:K417N"]
+    "mutationList": {
+        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+    }
 }
 """,
     )
@@ -125,7 +127,7 @@ sealed interface Variant {
         override val collectionId: String,
         val name: String,
         val description: String?,
-        val mutationList: List<String>,
+        val mutationList: MutationListDefinition,
     ) : Variant {
         val type: MutationListVariantType = MutationListVariantType.MUTATION_LIST
     }
@@ -170,13 +172,15 @@ sealed interface VariantRequest {
     "type": "mutationList",
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
-    "mutationList": ["S:N501Y", "S:E484K", "S:K417N"]
+    "mutationList": {
+        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+    }
 }
 """,
     )
     data class MutationListVariantRequest(
         val name: String,
         val description: String? = null,
-        val mutationList: List<String>,
+        val mutationList: MutationListDefinition,
     ) : VariantRequest
 }
