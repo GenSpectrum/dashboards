@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:9022/subscriptions"
+    url: "jdbc:postgresql://localhost:9022/dashboards-backend-db"
     username: "postgres"
     password: "unsecure"

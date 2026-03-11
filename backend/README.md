@@ -12,13 +12,39 @@ You have to provide config information to the backend:
 * Dashboards configuration, e.g. the LAPIS instances of the organisms.
   We have profiles available that only need to be activated via `spring.profiles.active`.
 * Database connection configuration: values need to be passed via [external properties](https://docs.spring.io/spring-boot/reference/features/external-config.html).
-  For local development, we have a `local-db` profile available. 
+  For local development, we have a `local-db` profile available.
   You can also check that for required properties.
+
+### Start local database
+
+Start the local PostgreSQL database using Docker Compose:
+
+```bash
+docker-compose -f docker-compose.dev.yaml up -d
+```
+
+Stop the database:
+
+```bash
+docker-compose -f docker-compose.dev.yaml down
+```
+
+Stop and remove data volumes:
+
+```bash
+docker-compose -f docker-compose.dev.yaml down -v
+```
+
+### Run the backend
 
 To run the backend locally, you can use the following command:
 ```bash
 ./gradlew bootRun --args='--spring.profiles.active=local-db,dashboards-prod'
 ```
+
+The backend will be available at:
+- Base URL: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
 Run tests:
     
