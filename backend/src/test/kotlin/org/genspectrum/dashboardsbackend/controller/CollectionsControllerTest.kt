@@ -268,4 +268,50 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
         // Verify MutationListVariant has mutationList field
         assertThat(mutationListVariants[0].mutationList, notNullValue())
     }
+
+    @Test
+    fun `GIVEN collection exists WHEN getting collection by ID THEN returns collection with all fields and variants`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        val retrievedCollection = collectionsClient.getCollection(createdCollection.id)
+
+        assertThat(retrievedCollection.id, equalTo(createdCollection.id))
+        assertThat(retrievedCollection.name, equalTo(dummyCollectionRequest.name))
+        assertThat(retrievedCollection.ownedBy, equalTo(userId))
+        assertThat(retrievedCollection.organism, equalTo(dummyCollectionRequest.organism))
+        assertThat(retrievedCollection.description, equalTo(dummyCollectionRequest.description))
+        assertThat(retrievedCollection.variants, hasSize(2))
+    }
+
+    @Test
+    fun `GIVEN collection created by different user WHEN getting collection by ID THEN returns collection (public access)`() {
+        val userA = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User A Collection"), userA)
+
+        val retrievedCollection = collectionsClient.getCollection(createdCollection.id)
+
+        assertThat(retrievedCollection.id, equalTo(createdCollection.id))
+        assertThat(retrievedCollection.ownedBy, equalTo(userA))
+    }
+
+    @Test
+    fun `WHEN getting collection with non-existent ID THEN returns 404`() {
+        val nonExistentId = "00000000-0000-0000-0000-000000000000"
+
+        collectionsClient.getCollectionRaw(nonExistentId)
+            .andExpect(status().isNotFound)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.detail").value("Collection $nonExistentId not found"))
+    }
+
+    @Test
+    fun `WHEN getting collection with invalid UUID format THEN returns 400`() {
+        val invalidId = "not-a-uuid"
+
+        collectionsClient.getCollectionRaw(invalidId)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.detail").value("Invalid UUID $invalidId"))
+    }
 }
