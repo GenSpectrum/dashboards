@@ -149,7 +149,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                     variantUpdate.id == null -> {
                         val variantEntity = createVariantEntity(
                             collectionEntity,
-                            variantUpdate
+                            variantUpdate,
                         )
                         variantEntity.validate()
                         variantIdsToKeep.add(variantEntity.id.value)
@@ -187,56 +187,54 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
         return collectionEntity.toCollection()
     }
 
-    private fun createVariantEntity(
-        collectionEntity: CollectionEntity,
-        variantUpdate: VariantUpdate
-    ): VariantEntity = when (variantUpdate) {
-        is VariantUpdate.QueryVariantUpdate -> {
-            VariantEntity.new {
-                this.collectionId = collectionEntity.id
-                this.variantType = VariantType.QUERY
-                this.name = variantUpdate.name
-                this.description = variantUpdate.description
-                this.countQuery = variantUpdate.countQuery
-                this.coverageQuery = variantUpdate.coverageQuery
-                this.mutationList = null
-            }
-        }
-        is VariantUpdate.MutationListVariantUpdate -> {
-            // Validate lineage filters
-            val organismConfig = dashboardsConfig.getOrganismConfig(collectionEntity.organism)
-            val validLineageFields = organismConfig.lapis.lineageFields ?: emptyList()
-
-            val invalidFields = variantUpdate.mutationList.lineageFilters.keys - validLineageFields.toSet()
-            if (invalidFields.isNotEmpty()) {
-                val validFieldsStr = if (validLineageFields.isEmpty()) {
-                    "no lineage fields are configured"
-                } else {
-                    "valid fields are: ${validLineageFields.joinToString(", ")}"
+    private fun createVariantEntity(collectionEntity: CollectionEntity, variantUpdate: VariantUpdate): VariantEntity =
+        when (variantUpdate) {
+            is VariantUpdate.QueryVariantUpdate -> {
+                VariantEntity.new {
+                    this.collectionId = collectionEntity.id
+                    this.variantType = VariantType.QUERY
+                    this.name = variantUpdate.name
+                    this.description = variantUpdate.description
+                    this.countQuery = variantUpdate.countQuery
+                    this.coverageQuery = variantUpdate.coverageQuery
+                    this.mutationList = null
                 }
-                throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
-                    "Invalid lineage fields for organism '${collectionEntity.organism}': ${invalidFields.joinToString(
-                        ", ",
-                    )}. $validFieldsStr",
-                )
             }
+            is VariantUpdate.MutationListVariantUpdate -> {
+                // Validate lineage filters
+                val organismConfig = dashboardsConfig.getOrganismConfig(collectionEntity.organism)
+                val validLineageFields = organismConfig.lapis.lineageFields ?: emptyList()
 
-            VariantEntity.new {
-                this.collectionId = collectionEntity.id
-                this.variantType = VariantType.MUTATION_LIST
-                this.name = variantUpdate.name
-                this.description = variantUpdate.description
-                this.mutationList = variantUpdate.mutationList
-                this.countQuery = null
-                this.coverageQuery = null
+                val invalidFields =
+                    variantUpdate.mutationList.lineageFilters.keys - validLineageFields.toSet()
+                if (invalidFields.isNotEmpty()) {
+                    val validFieldsStr = if (validLineageFields.isEmpty()) {
+                        "no lineage fields are configured"
+                    } else {
+                        "valid fields are: ${validLineageFields.joinToString(", ")}"
+                    }
+                    throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                        "Invalid lineage fields for organism '${collectionEntity.organism}': " +
+                            "${invalidFields.joinToString(", ")}. $validFieldsStr",
+                    )
+                }
+
+                VariantEntity.new {
+                    this.collectionId = collectionEntity.id
+                    this.variantType = VariantType.MUTATION_LIST
+                    this.name = variantUpdate.name
+                    this.description = variantUpdate.description
+                    this.mutationList = variantUpdate.mutationList
+                    this.countQuery = null
+                    this.coverageQuery = null
+                }
             }
         }
-    }
 
     private fun updateVariantEntity(
         variantEntity: VariantEntity,
         variantUpdate: VariantUpdate,
-        collectionEntity: CollectionEntity
+        collectionEntity: CollectionEntity,
     ) {
         when (variantUpdate) {
             is VariantUpdate.QueryVariantUpdate -> {
