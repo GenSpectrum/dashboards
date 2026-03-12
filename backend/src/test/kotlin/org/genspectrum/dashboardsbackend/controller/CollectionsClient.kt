@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -47,6 +49,17 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
 
     fun getCollection(id: String): Collection = deserializeJsonResponse(
         getCollectionRaw(id)
+            .andExpect(status().isOk),
+    )
+
+    fun putCollectionRaw(collection: CollectionUpdate, id: String, userId: String): ResultActions = mockMvc.perform(
+        put("/collections/$id?userId=$userId")
+            .content(objectMapper.writeValueAsString(collection))
+            .contentType(MediaType.APPLICATION_JSON),
+    )
+
+    fun putCollection(collection: CollectionUpdate, id: String, userId: String): Collection = deserializeJsonResponse(
+        putCollectionRaw(collection, id, userId)
             .andExpect(status().isOk),
     )
 

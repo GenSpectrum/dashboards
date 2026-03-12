@@ -3,6 +3,7 @@ package org.genspectrum.dashboardsbackend.controller
 import io.swagger.v3.oas.annotations.Operation
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.model.collection.CollectionModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -50,6 +52,18 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         request = collection,
         userId = userId,
     )
+
+    @PutMapping("/collections/{id}")
+    @Operation(
+        summary = "Update a collection",
+        description = "Updates a collection. Only the owner can update their collection. " +
+            "Provide only the fields you want to update.",
+    )
+    fun putCollection(
+        @RequestBody collection: CollectionUpdate,
+        @IdParameter @PathVariable id: String,
+        @UserIdParameter @RequestParam userId: String,
+    ): Collection = collectionModel.putCollection(id, collection, userId)
 
     @DeleteMapping("/collections/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

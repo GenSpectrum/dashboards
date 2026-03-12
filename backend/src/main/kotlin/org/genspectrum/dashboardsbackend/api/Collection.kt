@@ -56,6 +56,36 @@ data class CollectionRequest(
     val variants: List<VariantRequest>,
 )
 
+@Schema(
+    description = "Request to update a collection",
+    example = """
+{
+    "name": "Updated Collection Name",
+    "description": "Updated description",
+    "variants": [
+        {
+            "type": "query",
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "BA.2 in USA",
+            "description": "BA.2 lineage cases in USA",
+            "countQuery": "country='USA' & lineage='BA.2'",
+            "coverageQuery": "country='USA'"
+        },
+        {
+            "type": "query",
+            "name": "New Variant Without ID",
+            "countQuery": "country='Germany'"
+        }
+    ]
+}
+""",
+)
+data class CollectionUpdate(
+    val name: String? = null,
+    val description: String? = null,
+    val variants: List<VariantUpdate>? = null,
+)
+
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
@@ -183,4 +213,62 @@ sealed interface VariantRequest {
         val description: String? = null,
         val mutationList: MutationListDefinition,
     ) : VariantRequest
+}
+
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type",
+)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = VariantUpdate.QueryVariantUpdate::class, name = "query"),
+    JsonSubTypes.Type(value = VariantUpdate.MutationListVariantUpdate::class, name = "mutationList"),
+)
+@Schema(
+    description = "Request to update or create a variant",
+)
+sealed interface VariantUpdate {
+    val id: String?
+
+    @Schema(
+        description = "Request to update or create a query variant",
+        example = """
+{
+    "type": "query",
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "BA.2 in USA",
+    "description": "BA.2 lineage cases in USA",
+    "countQuery": "country='USA' & lineage='BA.2'",
+    "coverageQuery": "country='USA'"
+}
+""",
+    )
+    data class QueryVariantUpdate(
+        override val id: String? = null,
+        val name: String,
+        val description: String? = null,
+        val countQuery: String,
+        val coverageQuery: String? = null,
+    ) : VariantUpdate
+
+    @Schema(
+        description = "Request to update or create a mutation list variant",
+        example = """
+{
+    "type": "mutationList",
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Omicron mutations",
+    "description": "Key mutations for Omicron",
+    "mutationList": {
+        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+    }
+}
+""",
+    )
+    data class MutationListVariantUpdate(
+        override val id: String? = null,
+        val name: String,
+        val description: String? = null,
+        val mutationList: MutationListDefinition,
+    ) : VariantUpdate
 }
