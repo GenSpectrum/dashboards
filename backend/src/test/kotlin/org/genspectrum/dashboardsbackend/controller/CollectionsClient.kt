@@ -7,6 +7,7 @@ import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -48,6 +49,13 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         getCollectionRaw(id)
             .andExpect(status().isOk),
     )
+
+    fun deleteCollectionRaw(id: String, userId: String): ResultActions =
+        mockMvc.perform(delete("/collections/$id?userId=$userId"))
+
+    fun deleteCollection(id: String, userId: String) {
+        deleteCollectionRaw(id, userId).andExpect(status().isNoContent)
+    }
 
     private inline fun <reified T> deserializeJsonResponse(resultActions: ResultActions): T {
         val content =

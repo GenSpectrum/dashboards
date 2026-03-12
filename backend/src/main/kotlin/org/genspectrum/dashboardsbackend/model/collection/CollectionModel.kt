@@ -5,6 +5,7 @@ import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
+import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.jetbrains.exposed.sql.Database
@@ -109,5 +110,16 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
             description = collectionEntity.description,
             variants = variantEntities.map { it.toVariant() },
         )
+    }
+
+    fun deleteCollection(id: String, userId: String) {
+        val uuid = convertToUuid(id)
+
+        // Find with ownership check
+        val entity = CollectionEntity.findForUser(uuid, userId)
+            ?: throw ForbiddenException("Collection $id not found or you don't have permission to delete it")
+
+        // Delete (variants cascade automatically via DB constraint)
+        entity.delete()
     }
 }
