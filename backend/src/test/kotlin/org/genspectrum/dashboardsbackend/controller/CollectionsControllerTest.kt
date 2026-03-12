@@ -22,6 +22,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -435,5 +436,49 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
         assertThat(variant.mutationList.aaInsertions, equalTo(listOf("ins_S:214:EPE")))
         assertThat(variant.mutationList.nucInsertions, equalTo(listOf("ins_22204:GAG")))
+    }
+
+    @Test
+    fun `WHEN owner deletes collection THEN succeeds and collection is removed`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        collectionsClient.deleteCollection(createdCollection.id, userId)
+
+        collectionsClient.getCollectionRaw(createdCollection.id)
+            .andExpect(status().isNotFound)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.detail").value("Collection ${createdCollection.id} not found"))
+    }
+
+    @Test
+    fun `WHEN non-owner deletes collection THEN returns 403 forbidden`() {
+        val owner = getNewUserId()
+        val nonOwner = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, owner)
+
+        collectionsClient.deleteCollectionRaw(createdCollection.id, nonOwner)
+            .andExpect(status().isForbidden)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(
+                jsonPath("$.detail").value(
+                    org.hamcrest.Matchers.containsString("you don't have permission to delete it"),
+                ),
+            )
+    }
+
+    @Test
+    fun `WHEN deleting non-existent collection THEN returns 403`() {
+        val userId = getNewUserId()
+        val nonExistentId = UUID.randomUUID().toString()
+
+        collectionsClient.deleteCollectionRaw(nonExistentId, userId)
+            .andExpect(status().isForbidden)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(
+                jsonPath("$.detail").value(
+                    org.hamcrest.Matchers.containsString("not found or you don't have permission"),
+                ),
+            )
     }
 }
