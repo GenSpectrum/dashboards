@@ -15,6 +15,10 @@ if (!parsedOrganism.success) {
     return Astro.redirect('/404');
 }
 
+if (id === undefined) {
+    return Astro.redirect('/404');
+}
+
 const orgConfig = organismConfig[parsedOrganism.data];
 const session = await getSession(Astro.request);
 ---
@@ -25,13 +29,13 @@ const session = await getSession(Astro.request);
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
         { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id!) },
-        { name: 'Edit', href: Page.editCollection(parsedOrganism.data, id!) },
+        { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id) },
+        { name: 'Edit', href: Page.editCollection(parsedOrganism.data, id) },
     ]}
 >
     {
         session?.user?.id !== undefined ? (
-            <CollectionEdit client:load organism={parsedOrganism.data} id={id!} />
+            <CollectionEdit client:load organism={parsedOrganism.data} id={id} />
         ) : (
             <NotLoggedIn />
         )

@@ -96,9 +96,7 @@ function QueryVariantFields({
                     className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
                     rows={2}
                     value={variant.coverageQuery ?? ''}
-                    onChange={(e) =>
-                        onChange({ ...variant, coverageQuery: e.currentTarget.value || undefined })
-                    }
+                    onChange={(e) => onChange({ ...variant, coverageQuery: e.currentTarget.value || undefined })}
                 />
             </InputLabel>
         </div>

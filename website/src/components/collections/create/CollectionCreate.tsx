@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { CollectionForm, type CollectionFormValues } from '../form/CollectionForm.tsx';
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
@@ -9,6 +8,7 @@ import type { Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
+import { CollectionForm, type CollectionFormValues } from '../form/CollectionForm.tsx';
 
 export const CollectionCreate = withQueryProvider(CollectionCreateInner);
 

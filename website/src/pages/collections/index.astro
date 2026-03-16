@@ -7,12 +7,9 @@ import { allOrganisms, organismConfig } from '../../types/Organism';
 
 <ContaineredPageLayout
     title='Collections'
-    breadcrumbs={[
-        ...defaultBreadcrumbs,
-        { name: 'Collections', href: Page.collectionsOverview },
-    ]}
+    breadcrumbs={[...defaultBreadcrumbs, { name: 'Collections', href: Page.collectionsOverview }]}
 >
-    <h1 class='text-2xl font-bold mb-4'>Collections</h1>
+    <h1 class='mb-4 text-2xl font-bold'>Collections</h1>
     <p class='mb-6'>Select an organism to browse and manage variant collections.</p>
     <ul class='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         {
@@ -20,7 +17,7 @@ import { allOrganisms, organismConfig } from '../../types/Organism';
                 <li>
                     <a
                         href={Page.collectionsForOrganism(organism)}
-                        class='block p-4 rounded-lg border hover:bg-base-200 transition-colors'
+                        class='hover:bg-base-200 block rounded-lg border p-4 transition-colors'
                     >
                         {organismConfig[organism].label}
                     </a>
