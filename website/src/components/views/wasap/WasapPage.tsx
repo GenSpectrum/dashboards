@@ -8,6 +8,7 @@ import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
 import { toMutationAnnotations } from './resistanceMutations';
 import { useWasapPageData } from './useWasapPageData';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
@@ -21,7 +22,6 @@ import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPag
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
-import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider';
 import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {

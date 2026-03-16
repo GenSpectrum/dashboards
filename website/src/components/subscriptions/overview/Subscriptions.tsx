@@ -3,15 +3,15 @@ import { useState } from 'react';
 
 import { SubscriptionEntry } from './SubscriptionEntry.tsx';
 import { FilterDropdown, getFilters, getSelectedFilters } from './SubscriptionFilter.tsx';
+import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
+import { querySubscriptions } from '../../../backendApi/querySubscriptions.ts';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Organism } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
-import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
-import { querySubscriptions } from '../backendApi/querySubscriptions.ts';
-import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
 
 type SubscriptionsProps = {
     organismsFromUrl: Organism[];

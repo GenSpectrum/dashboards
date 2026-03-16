@@ -1,5 +1,5 @@
 import { type BackendService } from './backendService.ts';
-import type { Subscription } from '../../../types/Subscription.ts';
+import type { Subscription } from '../types/Subscription.ts';
 
 // export function fetchNotificationChannels(): NotificationChannels {
 //     return {
