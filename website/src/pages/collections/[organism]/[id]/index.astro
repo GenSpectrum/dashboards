@@ -1,7 +1,6 @@
 ---
 import { getSession } from 'auth-astro/server';
 
-import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
@@ -28,11 +27,5 @@ const session = await getSession(Astro.request);
         { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id!) },
     ]}
 >
-    {
-        session?.user?.id !== undefined ? (
-            <CollectionDetail client:load organism={parsedOrganism.data} id={id!} />
-        ) : (
-            <NotLoggedIn />
-        )
-    }
+    <CollectionDetail client:load organism={parsedOrganism.data} id={id!} userId={session?.user?.id} />
 </ContaineredPageLayout>

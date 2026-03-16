@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { CollectionForm, type CollectionFormValues } from '../form/CollectionForm.tsx';
@@ -20,6 +22,22 @@ function CollectionEditInner({ organism, id }: { organism: Organism; id: string 
     const { isLoading, isError, data: collection, error: fetchError } = useQuery({
         queryKey: ['collection', id],
         queryFn: () => getBackendServiceForClientside().getCollection({ id }),
+    });
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    const deleteCollection = useMutation({
+        mutationFn: () => getBackendServiceForClientside().deleteCollection({ id }),
+        onSuccess: () => {
+            window.location.href = Page.collectionsForOrganism(organism);
+        },
+        onError: (error) => {
+            showErrorToast({
+                error,
+                logMessage: `Failed to delete collection: ${getErrorLogMessage(error)}`,
+                errorToastMessages: ['We could not delete your collection. Please try again later.'],
+            });
+        },
     });
 
     const updateCollection = useMutation({
@@ -78,7 +96,45 @@ function CollectionEditInner({ organism, id }: { organism: Organism; id: string 
 
     return (
         <>
-            <PageHeadline>Edit collection</PageHeadline>
+            <div className='flex items-center justify-between mb-2'>
+                <PageHeadline>Edit collection</PageHeadline>
+                <button
+                    type='button'
+                    className='btn btn-error btn-sm'
+                    onClick={() => setShowDeleteConfirm(true)}
+                >
+                    Delete
+                </button>
+            </div>
+
+            {showDeleteConfirm && (
+                <div className='alert alert-warning flex items-center justify-between mb-4'>
+                    <span>Are you sure you want to delete this collection? This cannot be undone.</span>
+                    <div className='flex gap-2'>
+                        <button
+                            type='button'
+                            className='btn btn-sm'
+                            onClick={() => setShowDeleteConfirm(false)}
+                            disabled={deleteCollection.isPending}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type='button'
+                            className='btn btn-error btn-sm'
+                            onClick={() => deleteCollection.mutate()}
+                            disabled={deleteCollection.isPending}
+                        >
+                            {deleteCollection.isPending ? (
+                                <span className='loading loading-spinner loading-sm' />
+                            ) : (
+                                'Confirm delete'
+                            )}
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <CollectionForm
                 initialValues={initialValues}
                 onSubmit={updateCollection.mutate}

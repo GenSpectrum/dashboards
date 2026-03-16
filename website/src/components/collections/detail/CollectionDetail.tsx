@@ -17,7 +17,7 @@ export const CollectionDetail = withQueryProvider(CollectionDetailInner);
 
 const logger = getClientLogger('CollectionDetail');
 
-function CollectionDetailInner({ organism, id }: { organism: Organism; id: string }) {
+function CollectionDetailInner({ organism, id, userId }: { organism: Organism; id: string; userId?: string }) {
     const { isLoading, isError, data: collection, error } = useQuery({
         queryKey: ['collection', id],
         queryFn: () => getBackendServiceForClientside().getCollection({ id }),
@@ -45,9 +45,11 @@ function CollectionDetailInner({ organism, id }: { organism: Organism; id: strin
                         <p className='text-base-content/70 mt-1'>{collection.description}</p>
                     )}
                 </div>
-                <a href={Page.editCollection(organism, id)} className='btn btn-secondary btn-sm'>
-                    Edit
-                </a>
+                {userId === collection.ownedBy && (
+                    <a href={Page.editCollection(organism, id)} className='btn btn-secondary btn-sm'>
+                        Edit
+                    </a>
+                )}
             </div>
 
             <BorderedCard>
