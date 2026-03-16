@@ -4,8 +4,8 @@ const mutationListDefinitionSchema = z.record(z.union([z.string(), z.array(z.str
 
 const queryVariantSchema = z.object({
     type: z.literal('query'),
-    id: z.string(),
-    collectionId: z.string(),
+    id: z.number(),
+    collectionId: z.number(),
     name: z.string(),
     description: z.string().nullable(),
     countQuery: z.string(),
@@ -14,8 +14,8 @@ const queryVariantSchema = z.object({
 
 const mutationListVariantSchema = z.object({
     type: z.literal('mutationList'),
-    id: z.string(),
-    collectionId: z.string(),
+    id: z.number(),
+    collectionId: z.number(),
     name: z.string(),
     description: z.string().nullable(),
     mutationList: mutationListDefinitionSchema,
@@ -24,7 +24,7 @@ const mutationListVariantSchema = z.object({
 const variantSchema = z.discriminatedUnion('type', [queryVariantSchema, mutationListVariantSchema]);
 
 export const collectionSchema = z.object({
-    id: z.string(),
+    id: z.number(),
     name: z.string(),
     ownedBy: z.string(),
     organism: z.string(),
@@ -68,8 +68,8 @@ export type CollectionRequest = z.infer<typeof collectionRequestSchema>;
 export type VariantRequest = z.infer<typeof variantRequestSchema>;
 
 // Update schemas (partial, variants have optional id)
-const queryVariantUpdateSchema = queryVariantRequestSchema.extend({ id: z.string().optional() });
-const mutationListVariantUpdateSchema = mutationListVariantRequestSchema.extend({ id: z.string().optional() });
+const queryVariantUpdateSchema = queryVariantRequestSchema.extend({ id: z.number().optional() });
+const mutationListVariantUpdateSchema = mutationListVariantRequestSchema.extend({ id: z.number().optional() });
 
 const variantUpdateSchema = z.discriminatedUnion('type', [queryVariantUpdateSchema, mutationListVariantUpdateSchema]);
 
