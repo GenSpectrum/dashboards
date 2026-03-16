@@ -45,10 +45,14 @@ function CollectionDetailInner({ organism, id, userId }: { organism: Organism; i
         <div className='flex flex-col gap-4'>
             <div className='flex items-start justify-between'>
                 <div>
-                    <PageHeadline>{collection.name}</PageHeadline>
-                    {collection.description !== null && (
-                        <p className='text-base-content/70 mt-1'>{collection.description}</p>
-                    )}
+                    <PageHeadline>
+                        <span className='mr-2 font-normal text-gray-400'>#{collection.id}</span>
+                        {collection.name}
+                    </PageHeadline>
+                    {collection.description !== null && <p className='mt-1 text-gray-500'>{collection.description}</p>}
+                    <p className='mt-1 text-sm text-gray-500'>
+                        {collection.organism} collection owned by {collection.ownedBy}
+                    </p>
                 </div>
                 {userId === collection.ownedBy && (
                     <a href={Page.editCollection(organism, id)} className='btn btn-secondary btn-sm'>
@@ -56,22 +60,6 @@ function CollectionDetailInner({ organism, id, userId }: { organism: Organism; i
                     </a>
                 )}
             </div>
-
-            <BorderedCard>
-                <CardHeader>
-                    <CardDescription title='Details' />
-                </CardHeader>
-                <CardContent>
-                    <dl className='grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-sm'>
-                        <dt className='text-base-content/50'>ID</dt>
-                        <dd className='font-mono'>{collection.id}</dd>
-                        <dt className='text-base-content/50'>Organism</dt>
-                        <dd>{collection.organism}</dd>
-                        <dt className='text-base-content/50'>Owner</dt>
-                        <dd>{collection.ownedBy}</dd>
-                    </dl>
-                </CardContent>
-            </BorderedCard>
 
             <VariantsCard collection={collection} />
         </div>
@@ -86,7 +74,7 @@ function VariantsCard({ collection }: { collection: Collection }) {
             </CardHeader>
             <CardContent>
                 {collection.variants.length === 0 ? (
-                    <p className='text-base-content/50 text-sm'>No variants defined.</p>
+                    <p className='text-sm text-gray-500'>No variants defined.</p>
                 ) : (
                     <div className='flex flex-col gap-3'>
                         {collection.variants.map((variant) => (
@@ -108,7 +96,7 @@ function VariantCard({ variant }: { variant: Variant }) {
                     {variant.type === 'query' ? 'Query' : 'Mutation list'}
                 </span>
             </div>
-            {variant.description !== null && <p className='text-base-content/60 mb-3 text-sm'>{variant.description}</p>}
+            {variant.description !== null && <p className='mb-3 text-sm text-gray-500'>{variant.description}</p>}
             {variant.type === 'query' ? (
                 <QueryVariantDetails variant={variant} />
             ) : (
@@ -121,11 +109,11 @@ function VariantCard({ variant }: { variant: Variant }) {
 function QueryVariantDetails({ variant }: { variant: Extract<Variant, { type: 'query' }> }) {
     return (
         <dl className='grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm'>
-            <dt className='text-base-content/50'>Count query</dt>
+            <dt className='text-gray-500'>Count query</dt>
             <dd className='font-mono'>{variant.countQuery}</dd>
             {variant.coverageQuery !== null && (
                 <>
-                    <dt className='text-base-content/50'>Coverage query</dt>
+                    <dt className='text-gray-500'>Coverage query</dt>
                     <dd className='font-mono'>{variant.coverageQuery}</dd>
                 </>
             )}
@@ -147,7 +135,7 @@ function MutationListVariantDetails({ variant }: { variant: Extract<Variant, { t
     });
 
     if (presentFields.length === 0) {
-        return <p className='text-base-content/50 text-sm'>No mutations defined.</p>;
+        return <p className='text-sm text-gray-500'>No mutations defined.</p>;
     }
 
     return (
@@ -156,7 +144,7 @@ function MutationListVariantDetails({ variant }: { variant: Extract<Variant, { t
                 const val = (variant.mutationList as Record<string, string[]>)[key];
                 return (
                     <>
-                        <dt key={`${key}-dt`} className='text-base-content/50'>
+                        <dt key={`${key}-dt`} className='text-gray-500'>
                             {label}
                         </dt>
                         <dd key={`${key}-dd`} className='font-mono'>

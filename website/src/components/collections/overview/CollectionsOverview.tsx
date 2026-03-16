@@ -5,7 +5,7 @@ import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Collection } from '../../../types/Collection.ts';
-import type { Organism } from '../../../types/Organism.ts';
+import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
@@ -36,16 +36,16 @@ function CollectionsOverviewInner({ organism }: { organism: Organism }) {
     return (
         <div>
             <div className='mb-6 flex items-baseline justify-between'>
-                <PageHeadline>Collections</PageHeadline>
-                <a href={Page.createCollection(organism)} className='btn btn-primary btn-sm'>
+                <PageHeadline>{organismConfig[organism].label} Collections</PageHeadline>
+                <a href={Page.createCollection(organism)} className='btn btn-sm'>
                     New collection
                 </a>
             </div>
             {collections === undefined || collections.length === 0 ? (
-                <div className='text-base-content/60'>
+                <div className='text-gray-500'>
                     No collections yet.{' '}
                     <a href={Page.createCollection(organism)} className='link'>
-                        Create your first one.
+                        Create the first one.
                     </a>
                 </div>
             ) : (
@@ -64,7 +64,7 @@ function CollectionsTable({ collections, organism }: { collections: Collection[]
                         <th>ID</th>
                         <th>Name</th>
                         <th>Description</th>
-                        <th>Variants</th>
+                        <th className='text-right'>Variants</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,25 +81,23 @@ function CollectionRow({ collection, organism }: { collection: Collection; organ
     const href = Page.viewCollection(organism, String(collection.id));
 
     return (
-        <tr className='hover cursor-pointer' onClick={() => (window.location.href = href)}>
-            <td className='text-base-content/50 font-mono text-xs'>{collection.id}</td>
-            <td>
-                <a href={href} className='link link-hover font-medium' onClick={(e) => e.stopPropagation()}>
-                    {collection.name}
-                </a>
-            </td>
-            <td className='text-base-content/70 max-w-sm'>
-                {collection.description !== null ? (
-                    collection.description.length > 80 ? (
-                        collection.description.slice(0, 80) + '…'
+        <tr className='hover:bg-base-300'>
+            <a href={href} className='contents'>
+                <td className='font-mono text-xs text-gray-500'>{collection.id}</td>
+                <td className='font-medium'>{collection.name}</td>
+                <td className='max-w-sm text-gray-500'>
+                    {collection.description ? (
+                        collection.description.length > 80 ? (
+                            collection.description.slice(0, 80) + '…'
+                        ) : (
+                            collection.description
+                        )
                     ) : (
-                        collection.description
-                    )
-                ) : (
-                    <span className='text-base-content/30'>—</span>
-                )}
-            </td>
-            <td>{collection.variants.length}</td>
+                        <span className='text-gray-300'>—</span>
+                    )}
+                </td>
+                <td className='text-right'>{collection.variants.length}</td>
+            </a>
         </tr>
     );
 }
