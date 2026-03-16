@@ -78,11 +78,11 @@ function CollectionsTable({ collections, organism }: { collections: Collection[]
 }
 
 function CollectionRow({ collection, organism }: { collection: Collection; organism: Organism }) {
-    const href = Page.viewCollection(organism, collection.id);
+    const href = Page.viewCollection(organism, String(collection.id));
 
     return (
         <tr className='hover cursor-pointer' onClick={() => (window.location.href = href)}>
-            <td className='text-base-content/50 font-mono text-xs'>{collection.id.slice(0, 8)}</td>
+            <td className='text-base-content/50 font-mono text-xs'>{collection.id}</td>
             <td>
                 <a href={href} className='link link-hover font-medium' onClick={(e) => e.stopPropagation()}>
                     {collection.name}
