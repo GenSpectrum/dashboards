@@ -1,0 +1,41 @@
+---
+import { getSession } from 'auth-astro/server';
+
+import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
+import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { organismConfig, organismSchema } from '../../../../types/Organism';
+import { Page } from '../../../../types/pages';
+
+const { organism, id } = Astro.params;
+
+const parsedOrganism = organismSchema.safeParse(organism);
+if (!parsedOrganism.success) {
+    return Astro.redirect('/404');
+}
+
+const orgConfig = organismConfig[parsedOrganism.data];
+const session = await getSession(Astro.request);
+---
+
+<ContaineredPageLayout
+    title='Edit Collection'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Collections', href: Page.collectionsOverview },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
+        { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id!) },
+        { name: 'Edit', href: Page.editCollection(parsedOrganism.data, id!) },
+    ]}
+>
+    {
+        session?.user?.id !== undefined ? (
+            <div>
+                <h1 class='text-2xl font-bold mb-6'>Edit Collection</h1>
+                <p class='text-base-content/60'>Edit collection form coming soon.</p>
+            </div>
+        ) : (
+            <NotLoggedIn />
+        )
+    }
+</ContaineredPageLayout>
