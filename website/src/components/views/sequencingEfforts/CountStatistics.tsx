@@ -2,8 +2,8 @@ import type { LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 import type { FC } from 'react';
 
+import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getTotalCount } from '../../../lapis/getTotalCount';
-import { withQueryProvider } from '../../subscriptions/backendApi/withQueryProvider.tsx';
 
 export type CountStatisticsProps = {
     lapisFilter: LapisFilter;

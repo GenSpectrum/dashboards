@@ -7,6 +7,8 @@ import { IntervalInput } from './IntervalInput.tsx';
 import { NameInput } from './NameInput.tsx';
 import { OrganismInput } from './OrganismInput.tsx';
 import { TriggerInput } from './TriggerInput.tsx';
+import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import type { DashboardsConfig } from '../../../config.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
@@ -21,8 +23,6 @@ import type { SubscriptionRequest, Trigger } from '../../../types/Subscription.t
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { GsApp } from '../../genspectrum/GsApp.tsx';
-import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
-import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
 
 export const SubscriptionsCreate = withQueryProvider(SubscriptionsCreateInner);
 

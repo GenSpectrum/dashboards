@@ -1,14 +1,14 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { z, type ZodSchema } from 'zod';
 
-import { type ProblemDetail, problemDetailSchema } from '../../../types/ProblemDetail.ts';
+import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
+import { type ProblemDetail, problemDetailSchema } from '../types/ProblemDetail.ts';
 import {
     type SubscriptionPutRequest,
     type SubscriptionRequest,
     subscriptionResponseSchema,
     triggerEvaluationResponseSchema,
-} from '../../../types/Subscription.ts';
-import { UserFacingError } from '../../ErrorReportInstruction.tsx';
+} from '../types/Subscription.ts';
 
 const X_REQUEST_ID_HEADER = 'x-request-id';
 
