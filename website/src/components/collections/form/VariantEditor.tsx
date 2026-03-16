@@ -1,16 +1,16 @@
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
-import type { VariantRequest } from '../../../types/Collection.ts';
+import type { VariantUpdate } from '../../../types/Collection.ts';
 
 type Props = {
-    variant: VariantRequest;
+    variant: VariantUpdate;
     index: number;
-    onChange: (variant: VariantRequest) => void;
+    onChange: (variant: VariantUpdate) => void;
     onRemove: () => void;
 };
 
 export function VariantEditor({ variant, index, onChange, onRemove }: Props) {
-    function setField(fields: Partial<VariantRequest>) {
-        onChange({ ...variant, ...fields } as VariantRequest);
+    function setField(fields: Partial<VariantUpdate>) {
+        onChange({ ...variant, ...fields } as VariantUpdate);
     }
 
     function switchType(type: 'query' | 'mutationList') {
@@ -72,8 +72,8 @@ function QueryVariantFields({
     variant,
     onChange,
 }: {
-    variant: Extract<VariantRequest, { type: 'query' }>;
-    onChange: (v: VariantRequest) => void;
+    variant: Extract<VariantUpdate, { type: 'query' }>;
+    onChange: (v: VariantUpdate) => void;
 }) {
     return (
         <div className='flex flex-col gap-4'>
@@ -109,8 +109,8 @@ function MutationListVariantFields({
     variant,
     onChange,
 }: {
-    variant: Extract<VariantRequest, { type: 'mutationList' }>;
-    onChange: (v: VariantRequest) => void;
+    variant: Extract<VariantUpdate, { type: 'mutationList' }>;
+    onChange: (v: VariantUpdate) => void;
 }) {
     function setMutationField(key: string, value: string) {
         const list = value

@@ -2,6 +2,7 @@
 import { getSession } from 'auth-astro/server';
 
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
+import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { organismConfig, organismSchema } from '../../../../types/Organism';
@@ -30,10 +31,7 @@ const session = await getSession(Astro.request);
 >
     {
         session?.user?.id !== undefined ? (
-            <div>
-                <h1 class='text-2xl font-bold mb-6'>Edit Collection</h1>
-                <p class='text-base-content/60'>Edit collection form coming soon.</p>
-            </div>
+            <CollectionEdit client:load organism={parsedOrganism.data} id={id!} />
         ) : (
             <NotLoggedIn />
         )
