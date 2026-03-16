@@ -5,7 +5,6 @@ import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardContent } from '../../../styles/containers/CardContent.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
 import { CardHeader } from '../../../styles/containers/CardHeader.tsx';
-import { InputLabel } from '../../../styles/input/InputLabel.tsx';
 import type { VariantUpdate } from '../../../types/Collection.ts';
 
 export type CollectionFormValues = {
@@ -49,30 +48,27 @@ export function CollectionForm({
 
     return (
         <div className='flex flex-col gap-4'>
-            <BorderedCard>
-                <CardHeader>
-                    <CardDescription title='General' />
-                </CardHeader>
-                <CardContent>
-                    <div className='flex flex-col gap-4'>
-                        <InputLabel title='Name' description='A name to identify this collection.'>
-                            <input
-                                className='input input-sm input-bordered w-full max-w-xl'
-                                value={name}
-                                onChange={(e) => setName(e.currentTarget.value)}
-                            />
-                        </InputLabel>
-                        <InputLabel title='Description' description='Optional description for this collection.'>
-                            <textarea
-                                className='textarea textarea-bordered w-full max-w-xl'
-                                rows={3}
-                                value={description}
-                                onChange={(e) => setDescription(e.currentTarget.value)}
-                            />
-                        </InputLabel>
-                    </div>
-                </CardContent>
-            </BorderedCard>
+            <div className='grid grid-cols-[2fr_3fr] gap-x-12 gap-y-6'>
+                <div>
+                    <div className='font-medium'>Name</div>
+                    <p className='mt-1 text-sm text-gray-400'>A name to identify this collection.</p>
+                </div>
+                <input
+                    className='input input-sm input-bordered w-full'
+                    value={name}
+                    onChange={(e) => setName(e.currentTarget.value)}
+                />
+                <div>
+                    <div className='font-medium'>Description</div>
+                    <p className='mt-1 text-sm text-gray-400'>Optional description for this collection.</p>
+                </div>
+                <textarea
+                    className='textarea textarea-bordered w-full'
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.currentTarget.value)}
+                />
+            </div>
 
             <BorderedCard>
                 <CardHeader>
