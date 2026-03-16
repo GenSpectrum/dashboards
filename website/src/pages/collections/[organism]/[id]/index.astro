@@ -31,5 +31,10 @@ const session = await getSession(Astro.request);
         { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id) },
     ]}
 >
-    <CollectionDetail client:load organism={parsedOrganism.data} id={id} userId={session?.user?.id} />
+    <CollectionDetail
+        client:load
+        organism={parsedOrganism.data}
+        id={id}
+        userId={session?.user?.id !== undefined ? String(session.user.id) : undefined}
+    />
 </ContaineredPageLayout>
