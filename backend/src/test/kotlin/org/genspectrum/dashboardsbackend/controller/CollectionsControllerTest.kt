@@ -23,15 +23,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.UUID
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(CollectionsClient::class)
-class CollectionsControllerTest(@param:Autowired private val collectionsClient: CollectionsClient) {
+class CollectionsControllerTest(
+    @param:Autowired private val collectionsClient: CollectionsClient,
+    @param:Autowired private val mockMvc: MockMvc,
+) {
 
     @Test
     fun `GIVEN collection with variants WHEN creating THEN returns with generated IDs`() {
@@ -310,7 +314,7 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
 
     @Test
     fun `WHEN getting collection with non-existent ID THEN returns 404`() {
-        val nonExistentId = "00000000-0000-0000-0000-000000000000"
+        val nonExistentId = 999999L
 
         collectionsClient.getCollectionRaw(nonExistentId)
             .andExpect(status().isNotFound)
@@ -319,13 +323,9 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
     }
 
     @Test
-    fun `WHEN getting collection with invalid UUID format THEN returns 400`() {
-        val invalidId = "not-a-uuid"
-
-        collectionsClient.getCollectionRaw(invalidId)
+    fun `WHEN getting collection with non-numeric ID THEN returns 400`() {
+        mockMvc.perform(get("/collections/not-a-number"))
             .andExpect(status().isBadRequest)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.detail").value("Invalid UUID $invalidId"))
     }
 
     // MutationListDefinition Tests
@@ -474,7 +474,7 @@ class CollectionsControllerTest(@param:Autowired private val collectionsClient: 
     @Test
     fun `WHEN deleting non-existent collection THEN returns 403`() {
         val userId = getNewUserId()
-        val nonExistentId = UUID.randomUUID().toString()
+        val nonExistentId = 999999L
 
         collectionsClient.deleteCollectionRaw(nonExistentId, userId)
             .andExpect(status().isForbidden)

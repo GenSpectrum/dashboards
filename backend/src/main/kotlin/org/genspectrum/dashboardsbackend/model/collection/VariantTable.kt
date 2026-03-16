@@ -2,12 +2,11 @@ package org.genspectrum.dashboardsbackend.model.collection
 
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.model.subscription.jacksonSerializableJsonb
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import java.util.UUID
 
 const val VARIANT_TABLE = "variants_table"
 
@@ -30,7 +29,7 @@ enum class VariantType {
     }
 }
 
-object VariantTable : UUIDTable(VARIANT_TABLE) {
+object VariantTable : LongIdTable(VARIANT_TABLE) {
     val collectionId = reference(
         "collection_id",
         CollectionTable,
@@ -48,9 +47,9 @@ object VariantTable : UUIDTable(VARIANT_TABLE) {
     ).nullable()
 }
 
-class VariantEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<VariantEntity>(VariantTable) {
-        fun findForCollection(collectionId: UUID): List<VariantEntity> =
+class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<VariantEntity>(VariantTable) {
+        fun findForCollection(collectionId: Long): List<VariantEntity> =
             find { VariantTable.collectionId eq collectionId }.toList()
     }
 
@@ -89,16 +88,16 @@ class VariantEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     fun toVariant(): Variant = when (variantType) {
         VariantType.QUERY -> Variant.QueryVariant(
-            id = id.value.toString(),
-            collectionId = collectionId.value.toString(),
+            id = id.value,
+            collectionId = collectionId.value,
             name = name,
             description = description,
             countQuery = countQuery!!,
             coverageQuery = coverageQuery,
         )
         VariantType.MUTATION_LIST -> Variant.MutationListVariant(
-            id = id.value.toString(),
-            collectionId = collectionId.value.toString(),
+            id = id.value,
+            collectionId = collectionId.value,
             name = name,
             description = description,
             mutationList = mutationList!!,

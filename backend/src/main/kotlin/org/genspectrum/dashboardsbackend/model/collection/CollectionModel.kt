@@ -9,13 +9,11 @@ import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
-import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 import javax.sql.DataSource
 
 @Service
@@ -44,7 +42,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
         return query.map { it.toCollection() }
     }
 
-    fun getCollection(id: String): Collection = CollectionEntity.findById(convertToUuid(id))
+    fun getCollection(id: Long): Collection = CollectionEntity.findById(id)
         ?.toCollection()
         ?: throw NotFoundException("Collection $id not found")
 
@@ -106,7 +104,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
         }
 
         return Collection(
-            id = collectionEntity.id.value.toString(),
+            id = collectionEntity.id.value,
             name = collectionEntity.name,
             ownedBy = collectionEntity.ownedBy,
             organism = collectionEntity.organism,
@@ -115,21 +113,17 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
         )
     }
 
-    fun deleteCollection(id: String, userId: String) {
-        val uuid = convertToUuid(id)
-
+    fun deleteCollection(id: Long, userId: String) {
         // Find with ownership check
-        val entity = CollectionEntity.findForUser(uuid, userId)
+        val entity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to delete it")
 
         // Delete (variants cascade automatically via DB constraint)
         entity.delete()
     }
 
-    fun putCollection(id: String, update: CollectionUpdate, userId: String): Collection {
-        val uuid = convertToUuid(id)
-
-        val collectionEntity = CollectionEntity.findForUser(uuid, userId)
+    fun putCollection(id: Long, update: CollectionUpdate, userId: String): Collection {
+        val collectionEntity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to update it")
 
         if (update.name != null) {
@@ -142,7 +136,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
 
         if (update.variants != null) {
             // Track which variant IDs should be kept
-            val variantIdsToKeep = mutableSetOf<UUID>()
+            val variantIdsToKeep = mutableSetOf<Long>()
 
             update.variants.forEach { variantUpdate ->
                 when {
@@ -156,15 +150,14 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                     }
                     // Case 2: Has ID = Update existing variant
                     else -> {
-                        val idString = variantUpdate.id!!
-                        val variantId = convertToUuid(idString)
+                        val variantId = variantUpdate.id!!
                         val variantEntity = VariantEntity.findById(variantId)
                             ?: throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
-                                "Variant $idString not found",
+                                "Variant $variantId not found",
                             )
 
                         // Verify the variant belongs to this collection
-                        if (variantEntity.collectionId.value != uuid) {
+                        if (variantEntity.collectionId.value != id) {
                             throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
                                 "Variant ${variantUpdate.id} does not belong to collection $id",
                             )
@@ -179,7 +172,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
             }
 
             // Case 3: Delete variants not in the update list
-            VariantEntity.find { VariantTable.collectionId eq uuid }
+            VariantEntity.find { VariantTable.collectionId eq id }
                 .filter { it.id.value !in variantIdsToKeep }
                 .forEach { it.delete() }
         }

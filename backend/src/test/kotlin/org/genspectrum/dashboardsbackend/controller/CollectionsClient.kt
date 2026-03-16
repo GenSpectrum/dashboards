@@ -45,28 +45,28 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
             .andExpect(status().isOk),
     )
 
-    fun getCollectionRaw(id: String): ResultActions = mockMvc.perform(get("/collections/$id"))
+    fun getCollectionRaw(id: Long): ResultActions = mockMvc.perform(get("/collections/$id"))
 
-    fun getCollection(id: String): Collection = deserializeJsonResponse(
+    fun getCollection(id: Long): Collection = deserializeJsonResponse(
         getCollectionRaw(id)
             .andExpect(status().isOk),
     )
 
-    fun putCollectionRaw(collection: CollectionUpdate, id: String, userId: String): ResultActions = mockMvc.perform(
+    fun putCollectionRaw(collection: CollectionUpdate, id: Long, userId: String): ResultActions = mockMvc.perform(
         put("/collections/$id?userId=$userId")
             .content(objectMapper.writeValueAsString(collection))
             .contentType(MediaType.APPLICATION_JSON),
     )
 
-    fun putCollection(collection: CollectionUpdate, id: String, userId: String): Collection = deserializeJsonResponse(
+    fun putCollection(collection: CollectionUpdate, id: Long, userId: String): Collection = deserializeJsonResponse(
         putCollectionRaw(collection, id, userId)
             .andExpect(status().isOk),
     )
 
-    fun deleteCollectionRaw(id: String, userId: String): ResultActions =
+    fun deleteCollectionRaw(id: Long, userId: String): ResultActions =
         mockMvc.perform(delete("/collections/$id?userId=$userId"))
 
-    fun deleteCollection(id: String, userId: String) {
+    fun deleteCollection(id: Long, userId: String) {
         deleteCollectionRaw(id, userId).andExpect(status().isNoContent)
     }
 

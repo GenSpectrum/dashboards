@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
     description = "A collection of variants",
     example = """
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "id": 1,
     "name": "My Collection",
     "ownedBy": "user123",
     "organism": "covid",
@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 """,
 )
 data class Collection(
-    val id: String,
+    val id: Long,
     val name: String,
     val ownedBy: String,
     val organism: String,
@@ -59,7 +59,7 @@ data class CollectionRequest(
     "variants": [
         {
             "type": "query",
-            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "id": 1,
             "name": "BA.2 in USA",
             "description": "BA.2 lineage cases in USA",
             "countQuery": "country='USA' & lineage='BA.2'",

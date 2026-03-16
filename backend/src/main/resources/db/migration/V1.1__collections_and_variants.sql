@@ -1,6 +1,6 @@
 -- Collections table
 create table collections_table (
-    id uuid primary key,
+    id bigserial primary key,
     name text not null,
     owned_by varchar(255) not null,
     organism varchar(255) not null,
@@ -9,8 +9,8 @@ create table collections_table (
 
 -- Variants table with polymorphic data storage
 create table variants_table (
-    id uuid primary key,
-    collection_id uuid not null,
+    id bigserial primary key,
+    collection_id bigint not null,
     variant_type varchar(50) not null,
     name text not null,
     description text,

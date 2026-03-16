@@ -1,24 +1,23 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
 import org.genspectrum.dashboardsbackend.api.Collection
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.UUIDTable
-import java.util.UUID
+import org.jetbrains.exposed.dao.id.LongIdTable
 
 const val COLLECTION_TABLE = "collections_table"
 
-object CollectionTable : UUIDTable(COLLECTION_TABLE) {
+object CollectionTable : LongIdTable(COLLECTION_TABLE) {
     val name = text("name")
     val ownedBy = varchar("owned_by", 255)
     val organism = varchar("organism", 255)
     val description = text("description").nullable()
 }
 
-class CollectionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<CollectionEntity>(CollectionTable) {
-        fun findForUser(id: UUID, userId: String) = findById(id)
+class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<CollectionEntity>(CollectionTable) {
+        fun findForUser(id: Long, userId: String) = findById(id)
             ?.takeIf { it.ownedBy == userId }
 
         // TODO we probably want to have a 'find by organism' as well
@@ -33,7 +32,7 @@ class CollectionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val variants by VariantEntity referrersOn VariantTable.collectionId
 
     fun toCollection() = Collection(
-        id = id.value.toString(),
+        id = id.value,
         name = name,
         ownedBy = ownedBy,
         organism = organism,

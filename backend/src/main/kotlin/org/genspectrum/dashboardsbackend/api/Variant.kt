@@ -21,8 +21,8 @@ import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
     description = "Base interface for different variant types",
 )
 sealed interface Variant {
-    val id: String
-    val collectionId: String
+    val id: Long
+    val collectionId: Long
 
     enum class QueryVariantType {
         @JsonProperty("query")
@@ -39,8 +39,8 @@ sealed interface Variant {
         example = """
 {
     "type": "query",
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "collectionId": "660e8400-e29b-41d4-a716-446655440000",
+    "id": 1,
+    "collectionId": 2,
     "name": "BA.2 in USA",
     "description": "BA.2 lineage cases in USA",
     "countQuery": "country='USA' & lineage='BA.2'",
@@ -49,8 +49,8 @@ sealed interface Variant {
 """,
     )
     data class QueryVariant @JsonCreator constructor(
-        override val id: String,
-        override val collectionId: String,
+        override val id: Long,
+        override val collectionId: Long,
         val name: String,
         val description: String?,
         val countQuery: String,
@@ -64,8 +64,8 @@ sealed interface Variant {
         example = """
 {
     "type": "mutationList",
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "collectionId": "660e8400-e29b-41d4-a716-446655440000",
+    "id": 1,
+    "collectionId": 2,
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
     "mutationList": {
@@ -75,8 +75,8 @@ sealed interface Variant {
 """,
     )
     data class MutationListVariant @JsonCreator constructor(
-        override val id: String,
-        override val collectionId: String,
+        override val id: Long,
+        override val collectionId: Long,
         val name: String,
         val description: String?,
         val mutationList: MutationListDefinition,
@@ -150,14 +150,14 @@ sealed interface VariantRequest {
     description = "Request to update or create a variant",
 )
 sealed interface VariantUpdate {
-    val id: String?
+    val id: Long?
 
     @Schema(
         description = "Request to update or create a query variant",
         example = """
 {
     "type": "query",
-    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "id": 1,
     "name": "BA.2 in USA",
     "description": "BA.2 lineage cases in USA",
     "countQuery": "country='USA' & lineage='BA.2'",
@@ -166,7 +166,7 @@ sealed interface VariantUpdate {
 """,
     )
     data class QueryVariantUpdate(
-        override val id: String? = null,
+        override val id: Long? = null,
         val name: String,
         val description: String? = null,
         val countQuery: String,
@@ -178,7 +178,7 @@ sealed interface VariantUpdate {
         example = """
 {
     "type": "mutationList",
-    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "id": 1,
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
     "mutationList": {
@@ -188,7 +188,7 @@ sealed interface VariantUpdate {
 """,
     )
     data class MutationListVariantUpdate(
-        override val id: String? = null,
+        override val id: Long? = null,
         val name: String,
         val description: String? = null,
         val mutationList: MutationListDefinition,

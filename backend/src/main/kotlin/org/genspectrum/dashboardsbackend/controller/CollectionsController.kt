@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
@@ -37,7 +38,9 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         summary = "Get a collection by ID",
         description = "Returns a single collection with all its variants.",
     )
-    fun getCollection(@IdParameter @PathVariable id: String): Collection = collectionModel.getCollection(id)
+    fun getCollection(
+        @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
+    ): Collection = collectionModel.getCollection(id)
 
     @PostMapping("/collections")
     @ResponseStatus(HttpStatus.CREATED)
@@ -61,7 +64,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     )
     fun putCollection(
         @RequestBody collection: CollectionUpdate,
-        @IdParameter @PathVariable id: String,
+        @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
         @UserIdParameter @RequestParam userId: String,
     ): Collection = collectionModel.putCollection(id, collection, userId)
 
@@ -71,6 +74,8 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         summary = "Delete a collection",
         description = "Deletes a collection. Only the owner can delete their collection.",
     )
-    fun deleteCollection(@IdParameter @PathVariable id: String, @UserIdParameter @RequestParam userId: String) =
-        collectionModel.deleteCollection(id, userId)
+    fun deleteCollection(
+        @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
+        @UserIdParameter @RequestParam userId: String,
+    ) = collectionModel.deleteCollection(id, userId)
 }
