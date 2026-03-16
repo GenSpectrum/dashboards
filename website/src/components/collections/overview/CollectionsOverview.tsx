@@ -14,7 +14,12 @@ export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 const logger = getClientLogger('CollectionsOverview');
 
 function CollectionsOverviewInner({ organism }: { organism: Organism }) {
-    const { isLoading, isError, data: collections, error } = useQuery({
+    const {
+        isLoading,
+        isError,
+        data: collections,
+        error,
+    } = useQuery({
         queryKey: ['collections', organism],
         queryFn: () => getBackendServiceForClientside().getCollections({ organism }),
     });
@@ -30,7 +35,7 @@ function CollectionsOverviewInner({ organism }: { organism: Organism }) {
 
     return (
         <div>
-            <div className='flex items-baseline justify-between mb-6'>
+            <div className='mb-6 flex items-baseline justify-between'>
                 <PageHeadline>Collections</PageHeadline>
                 <a href={Page.createCollection(organism)} className='btn btn-primary btn-sm'>
                     New collection
@@ -53,7 +58,7 @@ function CollectionsOverviewInner({ organism }: { organism: Organism }) {
 function CollectionsTable({ collections, organism }: { collections: Collection[]; organism: Organism }) {
     return (
         <div className='overflow-x-auto'>
-            <table className='table table-zebra w-full'>
+            <table className='table-zebra table w-full'>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -77,18 +82,22 @@ function CollectionRow({ collection, organism }: { collection: Collection; organ
 
     return (
         <tr className='hover cursor-pointer' onClick={() => (window.location.href = href)}>
-            <td className='font-mono text-xs text-base-content/50'>{collection.id.slice(0, 8)}</td>
+            <td className='text-base-content/50 font-mono text-xs'>{collection.id.slice(0, 8)}</td>
             <td>
                 <a href={href} className='link link-hover font-medium' onClick={(e) => e.stopPropagation()}>
                     {collection.name}
                 </a>
             </td>
             <td className='text-base-content/70 max-w-sm'>
-                {collection.description !== null
-                    ? collection.description.length > 80
-                        ? collection.description.slice(0, 80) + '…'
-                        : collection.description
-                    : <span className='text-base-content/30'>—</span>}
+                {collection.description !== null ? (
+                    collection.description.length > 80 ? (
+                        collection.description.slice(0, 80) + '…'
+                    ) : (
+                        collection.description
+                    )
+                ) : (
+                    <span className='text-base-content/30'>—</span>
+                )}
             </td>
             <td>{collection.variants.length}</td>
         </tr>

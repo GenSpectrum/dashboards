@@ -18,7 +18,12 @@ export const CollectionDetail = withQueryProvider(CollectionDetailInner);
 const logger = getClientLogger('CollectionDetail');
 
 function CollectionDetailInner({ organism, id, userId }: { organism: Organism; id: string; userId?: string }) {
-    const { isLoading, isError, data: collection, error } = useQuery({
+    const {
+        isLoading,
+        isError,
+        data: collection,
+        error,
+    } = useQuery({
         queryKey: ['collection', id],
         queryFn: () => getBackendServiceForClientside().getCollection({ id }),
     });
@@ -81,7 +86,7 @@ function VariantsCard({ collection }: { collection: Collection }) {
             </CardHeader>
             <CardContent>
                 {collection.variants.length === 0 ? (
-                    <p className='text-sm text-base-content/50'>No variants defined.</p>
+                    <p className='text-base-content/50 text-sm'>No variants defined.</p>
                 ) : (
                     <div className='flex flex-col gap-3'>
                         {collection.variants.map((variant) => (
@@ -97,15 +102,13 @@ function VariantsCard({ collection }: { collection: Collection }) {
 function VariantCard({ variant }: { variant: Variant }) {
     return (
         <div className='rounded-lg border border-gray-200 p-4'>
-            <div className='flex items-center gap-2 mb-1'>
+            <div className='mb-1 flex items-center gap-2'>
                 <span className='font-medium'>{variant.name}</span>
                 <span className='badge badge-sm badge-ghost'>
                     {variant.type === 'query' ? 'Query' : 'Mutation list'}
                 </span>
             </div>
-            {variant.description !== null && (
-                <p className='text-sm text-base-content/60 mb-3'>{variant.description}</p>
-            )}
+            {variant.description !== null && <p className='text-base-content/60 mb-3 text-sm'>{variant.description}</p>}
             {variant.type === 'query' ? (
                 <QueryVariantDetails variant={variant} />
             ) : (
@@ -144,7 +147,7 @@ function MutationListVariantDetails({ variant }: { variant: Extract<Variant, { t
     });
 
     if (presentFields.length === 0) {
-        return <p className='text-sm text-base-content/50'>No mutations defined.</p>;
+        return <p className='text-base-content/50 text-sm'>No mutations defined.</p>;
     }
 
     return (
@@ -153,8 +156,12 @@ function MutationListVariantDetails({ variant }: { variant: Extract<Variant, { t
                 const val = (variant.mutationList as Record<string, string[]>)[key];
                 return (
                     <>
-                        <dt key={`${key}-dt`} className='text-base-content/50'>{label}</dt>
-                        <dd key={`${key}-dd`} className='font-mono'>{val.join(', ')}</dd>
+                        <dt key={`${key}-dt`} className='text-base-content/50'>
+                            {label}
+                        </dt>
+                        <dd key={`${key}-dd`} className='font-mono'>
+                            {val.join(', ')}
+                        </dd>
                     </>
                 );
             })}

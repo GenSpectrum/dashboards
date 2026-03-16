@@ -1,8 +1,6 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
-
-import { CollectionForm, type CollectionFormValues } from '../form/CollectionForm.tsx';
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
@@ -11,6 +9,7 @@ import type { Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
+import { CollectionForm, type CollectionFormValues } from '../form/CollectionForm.tsx';
 
 export const CollectionEdit = withQueryProvider(CollectionEditInner);
 
@@ -19,7 +18,12 @@ const logger = getClientLogger('CollectionEdit');
 function CollectionEditInner({ organism, id }: { organism: Organism; id: string }) {
     const { showErrorToast } = useErrorToast(logger);
 
-    const { isLoading, isError, data: collection, error: fetchError } = useQuery({
+    const {
+        isLoading,
+        isError,
+        data: collection,
+        error: fetchError,
+    } = useQuery({
         queryKey: ['collection', id],
         queryFn: () => getBackendServiceForClientside().getCollection({ id }),
     });
@@ -96,19 +100,15 @@ function CollectionEditInner({ organism, id }: { organism: Organism; id: string 
 
     return (
         <>
-            <div className='flex items-center justify-between mb-2'>
+            <div className='mb-2 flex items-center justify-between'>
                 <PageHeadline>Edit collection</PageHeadline>
-                <button
-                    type='button'
-                    className='btn btn-error btn-sm'
-                    onClick={() => setShowDeleteConfirm(true)}
-                >
+                <button type='button' className='btn btn-error btn-sm' onClick={() => setShowDeleteConfirm(true)}>
                     Delete
                 </button>
             </div>
 
             {showDeleteConfirm && (
-                <div className='alert alert-warning flex items-center justify-between mb-4'>
+                <div className='alert alert-warning mb-4 flex items-center justify-between'>
                     <span>Are you sure you want to delete this collection? This cannot be undone.</span>
                     <div className='flex gap-2'>
                         <button
