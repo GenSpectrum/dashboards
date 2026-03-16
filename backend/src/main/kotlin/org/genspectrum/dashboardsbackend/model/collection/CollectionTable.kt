@@ -19,8 +19,6 @@ class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<CollectionEntity>(CollectionTable) {
         fun findForUser(id: Long, userId: String) = findById(id)
             ?.takeIf { it.ownedBy == userId }
-
-        // TODO we probably want to have a 'find by organism' as well
     }
 
     var name by CollectionTable.name

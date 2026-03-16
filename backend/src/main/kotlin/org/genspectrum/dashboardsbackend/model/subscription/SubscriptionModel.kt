@@ -7,18 +7,12 @@ import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.util.convertToUuid
-import org.jetbrains.exposed.sql.Database
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import javax.sql.DataSource
 
 @Service
 @Transactional
-class SubscriptionModel(pool: DataSource, private val dashboardsConfig: DashboardsConfig) {
-    init {
-        Database.connect(pool)
-    }
-
+class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
     fun getSubscription(subscriptionId: String, userId: String): Subscription =
         SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?.toSubscription()

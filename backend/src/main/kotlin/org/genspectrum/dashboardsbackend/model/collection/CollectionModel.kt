@@ -7,22 +7,17 @@ import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
+import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import javax.sql.DataSource
 
 @Service
 @Transactional
-class CollectionModel(pool: DataSource, private val dashboardsConfig: DashboardsConfig) {
-    init {
-        Database.connect(pool)
-    }
-
+class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun getCollections(userId: String?, organism: String?): List<Collection> {
         val query = if (userId == null && organism == null) {
             CollectionEntity.all()
@@ -81,7 +76,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                         } else {
                             "valid fields are: ${validLineageFields.joinToString(", ")}"
                         }
-                        throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                        throw BadRequestException(
                             "Invalid lineage fields for organism '${request.organism}': ${invalidFields.joinToString(
                                 ", ",
                             )}. $validFieldsStr",
@@ -152,13 +147,13 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                     else -> {
                         val variantId = variantUpdate.id!!
                         val variantEntity = VariantEntity.findById(variantId)
-                            ?: throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                            ?: throw BadRequestException(
                                 "Variant $variantId not found",
                             )
 
                         // Verify the variant belongs to this collection
                         if (variantEntity.collectionId.value != id) {
-                            throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                            throw BadRequestException(
                                 "Variant ${variantUpdate.id} does not belong to collection $id",
                             )
                         }
@@ -206,7 +201,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                     } else {
                         "valid fields are: ${validLineageFields.joinToString(", ")}"
                     }
-                    throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                    throw BadRequestException(
                         "Invalid lineage fields for organism '${collectionEntity.organism}': " +
                             "${invalidFields.joinToString(", ")}. $validFieldsStr",
                     )
@@ -233,7 +228,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
             is VariantUpdate.QueryVariantUpdate -> {
                 // Verify type matches
                 if (variantEntity.variantType != VariantType.QUERY) {
-                    throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                    throw BadRequestException(
                         "Cannot change variant type from ${variantEntity.variantType} to QUERY",
                     )
                 }
@@ -245,7 +240,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
             is VariantUpdate.MutationListVariantUpdate -> {
                 // Verify type matches
                 if (variantEntity.variantType != VariantType.MUTATION_LIST) {
-                    throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                    throw BadRequestException(
                         "Cannot change variant type from ${variantEntity.variantType} to MUTATION_LIST",
                     )
                 }
@@ -261,7 +256,7 @@ class CollectionModel(pool: DataSource, private val dashboardsConfig: Dashboards
                     } else {
                         "valid fields are: ${validLineageFields.joinToString(", ")}"
                     }
-                    throw org.genspectrum.dashboardsbackend.controller.BadRequestException(
+                    throw BadRequestException(
                         "Invalid lineage fields for organism '${collectionEntity.organism}': " +
                             "${invalidFields.joinToString(", ")}. $validFieldsStr",
                     )
