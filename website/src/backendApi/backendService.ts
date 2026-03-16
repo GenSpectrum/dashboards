@@ -2,6 +2,11 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse 
 import { z, type ZodSchema } from 'zod';
 
 import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
+import {
+    collectionSchema,
+    type CollectionRequest,
+    type CollectionUpdate,
+} from '../types/Collection.ts';
 import { type ProblemDetail, problemDetailSchema } from '../types/ProblemDetail.ts';
 import {
     type SubscriptionPutRequest,
@@ -164,6 +169,43 @@ export class BackendService extends ApiService {
         const url = `/subscriptions/${subscriptionId}`;
         return this.delete({
             url,
+            requestParams: { userId },
+            schema: z.literal('').refine((input): input is never => true),
+        });
+    }
+
+    public async getCollections({ userId, organism }: { userId?: string; organism?: string }) {
+        const requestParams = Object.fromEntries(
+            Object.entries({ userId, organism }).filter(([, v]) => v !== undefined),
+        ) as Record<string, string>;
+        return this.get({ url: '/collections', requestParams, schema: z.array(collectionSchema) });
+    }
+
+    public async getCollection({ id }: { id: string }) {
+        return this.get({ url: `/collections/${id}`, requestParams: {}, schema: collectionSchema });
+    }
+
+    public async postCollection({ collection, userId }: { collection: CollectionRequest; userId: string }) {
+        return this.post({
+            url: '/collections',
+            data: collection,
+            requestParams: { userId },
+            schema: collectionSchema,
+        });
+    }
+
+    public async putCollection({ id, collection, userId }: { id: string; collection: CollectionUpdate; userId: string }) {
+        return this.put({
+            url: `/collections/${id}`,
+            data: collection,
+            requestParams: { userId },
+            schema: collectionSchema,
+        });
+    }
+
+    public async deleteCollection({ id, userId }: { id: string; userId: string }) {
+        return this.delete({
+            url: `/collections/${id}`,
             requestParams: { userId },
             schema: z.literal('').refine((input): input is never => true),
         });
