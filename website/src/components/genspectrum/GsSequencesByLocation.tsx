@@ -32,7 +32,7 @@ export const GsSequencesByLocation: FC<GsSequencesByLocationProps> = ({
                     lapisLocationField={lapisLocationField}
                     lapisFilter={lapisFilter}
                     pageSize={pageSize ?? defaultTablePageSize}
-                    views={['table']}
+                    views={[views.table]}
                     width='100%'
                     height={height ? '100%' : undefined}
                 />
