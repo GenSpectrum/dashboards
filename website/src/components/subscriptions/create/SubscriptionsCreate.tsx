@@ -30,12 +30,10 @@ const logger = getClientLogger('SubscriptionsCreate');
 
 export function SubscriptionsCreateInner({
     config,
-    userId,
     // TODO: Enable notificationChannels in #82, #128
     // notificationChannels,
 }: {
     config: DashboardsConfig;
-    userId: string;
     // TODO: Enable notificationChannels in #82, #128
     // notificationChannels: NotificationChannels;
 }) {
@@ -45,7 +43,6 @@ export function SubscriptionsCreateInner({
         mutationFn: () =>
             getBackendServiceForClientside().postSubscription({
                 subscription: getSubscription(),
-                userId,
             }),
         onError: (error) => {
             showErrorToast({

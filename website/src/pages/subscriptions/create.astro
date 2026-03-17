@@ -26,11 +26,5 @@ const config = getDashboardsConfig();
         },
     ]}
 >
-    {
-        session?.user?.id !== undefined ? (
-            <SubscriptionsCreate config={config} client:only='react' userId={session.user.id} />
-        ) : (
-            <NotLoggedIn />
-        )
-    }
+    {session?.user?.id !== undefined ? <SubscriptionsCreate config={config} client:only='react' /> : <NotLoggedIn />}
 </SubscriptionPageLayout>
