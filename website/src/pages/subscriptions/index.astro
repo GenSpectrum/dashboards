@@ -22,11 +22,5 @@ const breadcrumbs = [
 ---
 
 <SubscriptionPageLayout title='Subscriptions overview' breadcrumbs={breadcrumbs}>
-    {
-        session?.user?.id !== undefined ? (
-            <Subscriptions client:load organismsFromUrl={organisms} userId={session.user.id} />
-        ) : (
-            <NotLoggedIn />
-        )
-    }
+    {session?.user?.id !== undefined ? <Subscriptions client:load organismsFromUrl={organisms} /> : <NotLoggedIn />}
 </SubscriptionPageLayout>

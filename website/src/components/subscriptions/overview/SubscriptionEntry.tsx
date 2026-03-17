@@ -19,11 +19,9 @@ const logger = getClientLogger('SubscriptionEntry');
 
 export function SubscriptionEntry({
     subscription,
-    userId,
     refetchSubscriptions,
 }: {
     subscription: Subscription;
-    userId: string;
     refetchSubscriptions: () => void;
 }) {
     const getConditionIcon = () => {
@@ -68,7 +66,7 @@ export function SubscriptionEntry({
                         <SubscriptionDisplay subscription={subscription} />
                     </div>
                 </details>
-                <MoreDropdown subscription={subscription} userId={userId} refetchSubscriptions={refetchSubscriptions} />
+                <MoreDropdown subscription={subscription} refetchSubscriptions={refetchSubscriptions} />
             </div>
         </BorderedCard>
     );
@@ -94,11 +92,9 @@ export function SubscriptionEntry({
 
 function MoreDropdown({
     subscription,
-    userId,
     refetchSubscriptions,
 }: {
     subscription: Subscription;
-    userId: string;
     refetchSubscriptions: () => void;
 }) {
     const { showErrorToast } = useErrorToast(logger);
@@ -107,7 +103,6 @@ function MoreDropdown({
         mutationFn: () =>
             getBackendServiceForClientside().deleteSubscription({
                 subscriptionId: subscription.id,
-                userId,
             }),
         onSuccess: () => {
             refetchSubscriptions();

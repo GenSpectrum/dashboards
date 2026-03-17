@@ -164,17 +164,11 @@ export class LapisRouteMocker {
 export class BackendRouteMocker {
     constructor(private workerOrServer: MSWWorkerOrServer) {}
 
-    mockGetSubscriptions(requestParam: { userId: string }, response: SubscriptionResponse[], statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, response, requestParam }])),
-        );
+    mockGetSubscriptions(response: SubscriptionResponse[], statusCode = 200) {
+        this.workerOrServer.use(http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, response }])));
     }
 
-    mockGetEvaluateTrigger(
-        requestParam: { userId: string; id: string },
-        response: TriggerEvaluationResponse,
-        statusCode = 200,
-    ) {
+    mockGetEvaluateTrigger(requestParam: { id: string }, response: TriggerEvaluationResponse, statusCode = 200) {
         this.workerOrServer.use(
             http.get(
                 `${DUMMY_BACKEND_URL}/subscriptions/evaluateTrigger`,
@@ -183,20 +177,14 @@ export class BackendRouteMocker {
         );
     }
 
-    mockPostSubscription(
-        body: SubscriptionRequest,
-        requestParam: { userId: string },
-        response: SubscriptionResponse,
-        statusCode = 200,
-    ) {
+    mockPostSubscription(body: SubscriptionRequest, response: SubscriptionResponse, statusCode = 200) {
         this.workerOrServer.use(
-            http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, body, response, requestParam }])),
+            http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, body, response }])),
         );
     }
 
     mockPutSubscription(
         body: SubscriptionPutRequest,
-        requestParam: { userId: string },
         pathVariables: { subscriptionId: string },
         response: SubscriptionResponse,
         statusCode = 200,
@@ -204,20 +192,16 @@ export class BackendRouteMocker {
         this.workerOrServer.use(
             http.put(
                 `${DUMMY_BACKEND_URL}/subscriptions/${pathVariables.subscriptionId}`,
-                resolver([{ statusCode, body, response, requestParam }]),
+                resolver([{ statusCode, body, response }]),
             ),
         );
     }
 
-    mockDeleteSubscription(
-        requestParam: { userId: string },
-        pathVariables: { subscriptionId: string },
-        statusCode = 204,
-    ) {
+    mockDeleteSubscription(pathVariables: { subscriptionId: string }, statusCode = 204) {
         this.workerOrServer.use(
             http.delete(
                 `${DUMMY_BACKEND_URL}/subscriptions/${pathVariables.subscriptionId}`,
-                resolver([{ statusCode, requestParam }]),
+                resolver([{ statusCode }]),
             ),
         );
     }

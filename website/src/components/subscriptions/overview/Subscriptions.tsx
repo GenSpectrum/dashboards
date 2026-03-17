@@ -15,14 +15,13 @@ import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 type SubscriptionsProps = {
     organismsFromUrl: Organism[];
-    userId: string;
 };
 
 const logger = getClientLogger('Subscriptions');
 
 export const Subscriptions = withQueryProvider(SubscriptionsInner);
 
-export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsProps) {
+export function SubscriptionsInner({ organismsFromUrl }: SubscriptionsProps) {
     const {
         isLoading,
         isError,
@@ -30,9 +29,9 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
         error,
         refetch: refetchSubscriptions,
     } = useQuery({
-        queryKey: ['subscriptions', userId],
+        queryKey: ['subscriptions'],
         queryFn: () => {
-            return querySubscriptions(userId, getBackendServiceForClientside());
+            return querySubscriptions(getBackendServiceForClientside());
         },
     });
 
@@ -49,7 +48,6 @@ export function SubscriptionsInner({ userId, organismsFromUrl }: SubscriptionsPr
 
     return (
         <SubscriptionsDisplay
-            userId={userId}
             subscriptions={subscriptions}
             organismsFromUrl={organismsFromUrl}
             refetchSubscriptions={() => void refetchSubscriptions()}
@@ -94,12 +92,10 @@ function NoSubscriptions() {
 }
 
 export function SubscriptionsDisplay({
-    userId,
     subscriptions,
     organismsFromUrl,
     refetchSubscriptions,
 }: {
-    userId: string;
     subscriptions: Subscription[];
     organismsFromUrl: Organism[];
     refetchSubscriptions: () => void;
@@ -124,11 +120,7 @@ export function SubscriptionsDisplay({
                     <AddSubscriptionButton />
                 </div>
             </div>
-            <SubscriptionsList
-                subscriptions={filteredSubscriptions}
-                userId={userId}
-                refetchSubscriptions={refetchSubscriptions}
-            />
+            <SubscriptionsList subscriptions={filteredSubscriptions} refetchSubscriptions={refetchSubscriptions} />
         </>
     );
 }
@@ -143,11 +135,9 @@ function AddSubscriptionButton() {
 
 function SubscriptionsList({
     subscriptions,
-    userId,
     refetchSubscriptions,
 }: {
     subscriptions: Subscription[];
-    userId: string;
     refetchSubscriptions: () => void;
 }) {
     return (
@@ -156,7 +146,6 @@ function SubscriptionsList({
                 <SubscriptionEntry
                     key={subscription.id}
                     subscription={subscription}
-                    userId={userId}
                     refetchSubscriptions={refetchSubscriptions}
                 />
             ))}
