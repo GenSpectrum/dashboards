@@ -7,6 +7,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class DashboardsConfig(val organisms: Map<String, OrganismConfig>) {
     fun getOrganismConfig(organism: String) = organisms[organism]
         ?: throw IllegalArgumentException("No configuration found for organism $organism")
+
+    fun validateIsValidOrganism(organism: String) {
+        if (!organisms.containsKey(organism)) {
+            throw BadRequestException("Organism '$organism' is not supported")
+        }
+    }
 }
 
 data class OrganismConfig(val lapis: LapisConfig, val externalNavigationLinks: List<ExternalNavigationLink>?)
@@ -19,9 +25,3 @@ data class LapisConfig(
 )
 
 data class ExternalNavigationLink(val url: String, val label: String, val menuIcon: String, val description: String)
-
-fun DashboardsConfig.validateIsValidOrganism(organism: String) {
-    if (!organisms.containsKey(organism)) {
-        throw BadRequestException("Organism '$organism' is not supported")
-    }
-}
