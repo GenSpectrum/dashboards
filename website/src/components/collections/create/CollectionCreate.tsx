@@ -14,7 +14,7 @@ export const CollectionCreate = withQueryProvider(CollectionCreateInner);
 
 const logger = getClientLogger('CollectionCreate');
 
-function CollectionCreateInner({ organism, userId }: { organism: Organism; userId: string }) {
+function CollectionCreateInner({ organism }: { organism: Organism }) {
     const { showErrorToast } = useErrorToast(logger);
 
     const createCollection = useMutation({
