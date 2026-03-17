@@ -17,22 +17,22 @@ You have to provide config information to the backend:
 
 ### Start local database
 
-Start the local PostgreSQL database using Docker Compose:
+Start the local PostgreSQL database using Docker Compose (from the repo root):
 
 ```bash
-docker-compose -f docker-compose.dev.yaml up -d
+docker compose up -d database
 ```
 
 Stop the database:
 
 ```bash
-docker-compose -f docker-compose.dev.yaml down
+docker compose down database
 ```
 
 Stop and remove data volumes:
 
 ```bash
-docker-compose -f docker-compose.dev.yaml down -v
+docker compose down -v database
 ```
 
 ### Run the backend
