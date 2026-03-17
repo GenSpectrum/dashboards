@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -733,5 +734,33 @@ class CollectionsControllerTest(
             .andExpect(
                 jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("does not belong to collection")),
             )
+    }
+
+    @Test
+    fun `WHEN creating collection with lineageFilters as a field THEN returns 400 with message`() {
+        val userId = getNewUserId()
+        val body = """
+            {
+                "name": "Test",
+                "organism": "Covid",
+                "description": "Test",
+                "variants": [{
+                    "type": "mutationList",
+                    "name": "Test variant",
+                    "mutationList": {
+                        "lineageFilters": {"lineage": "B.1.1.7"}
+                    }
+                }]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("lineageFilters")))
     }
 }

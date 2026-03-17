@@ -1,11 +1,13 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.log
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -74,6 +76,20 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
                 it.detail = detail
             },
         )
+
+    override fun handleHttpMessageNotReadable(
+        ex: HttpMessageNotReadableException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest,
+    ): ResponseEntity<Any>? {
+        val cause = ex.cause?.cause
+        if (cause is BadRequestException) {
+            log.info { "Caught ${cause.javaClass}: ${cause.message}" }
+            return responseEntity(HttpStatus.BAD_REQUEST, cause.message) as ResponseEntity<Any>
+        }
+        return super.handleHttpMessageNotReadable(ex, headers, status, request)
+    }
 
     override fun createProblemDetail(
         ex: java.lang.Exception,

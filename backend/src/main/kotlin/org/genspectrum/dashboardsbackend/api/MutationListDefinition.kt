@@ -3,12 +3,15 @@ package org.genspectrum.dashboardsbackend.api
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonSetter
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 
 /**
  * A JSON object with mutation lists (keys: aaMutations, nucMutations, ...)
  * as well as lineage filtering (keys are defined by the organism config)
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class MutationListDefinition(
     val aaMutations: List<String>? = null,
     val nucMutations: List<String>? = null,
@@ -18,12 +21,16 @@ data class MutationListDefinition(
     @JsonIgnore
     private val lineageFiltersInternal: MutableMap<String, String> = mutableMapOf()
 
+    @get:JsonAnyGetter
     val lineageFilters: Map<String, String>
         get() = lineageFiltersInternal
 
-    @get:JsonAnyGetter
-    val additionalProperties: Map<String, String>
-        get() = lineageFiltersInternal
+    @JsonSetter("lineageFilters")
+    fun rejectLineageFiltersField(value: Any) {
+        throw BadRequestException(
+            "'lineageFilters' is not a valid field. Provide lineage filters as individual top-level fields.",
+        )
+    }
 
     @JsonAnySetter
     fun put(key: String, value: Any) {
