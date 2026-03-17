@@ -15,7 +15,7 @@ const X_REQUEST_ID_HEADER = 'x-request-id';
 
 type EndpointParameters<Response> = {
     url: string;
-    requestParams: Record<string, string>;
+    requestParams?: Record<string, string>;
     schema: ZodSchema<Response>;
 };
 
@@ -124,66 +124,61 @@ export class BackendNotAvailable extends UserFacingError {
 }
 
 export class BackendService extends ApiService {
-    public async getSubscriptions({ userId }: { userId: string }) {
+    public async getSubscriptions() {
         const url = `/subscriptions`;
-        return this.get({ url, requestParams: { userId }, schema: z.array(subscriptionResponseSchema) });
+        return this.get({ url, schema: z.array(subscriptionResponseSchema) });
     }
 
-    public async getEvaluateTrigger({ subscriptionId, userId }: { subscriptionId: string; userId: string }) {
+    public async getEvaluateTrigger({ subscriptionId }: { subscriptionId: string }) {
         const url = `/subscriptions/evaluateTrigger`;
         return this.get({
             url,
-            requestParams: { userId, id: subscriptionId },
+            requestParams: { id: subscriptionId },
             schema: triggerEvaluationResponseSchema,
         });
     }
 
-    public async postSubscription({ subscription, userId }: { subscription: SubscriptionRequest; userId: string }) {
+    public async postSubscription({ subscription }: { subscription: SubscriptionRequest }) {
         const url = `/subscriptions`;
-        return this.post({ url, data: subscription, requestParams: { userId }, schema: subscriptionResponseSchema });
+        return this.post({ url, data: subscription, schema: subscriptionResponseSchema });
     }
 
     public async putSubscription({
         subscription,
-        userId,
         subscriptionId,
     }: {
         subscription: SubscriptionPutRequest;
-        userId: string;
         subscriptionId: string;
     }) {
         const url = `/subscriptions/${subscriptionId}`;
         return this.put({
             url,
             data: subscription,
-            requestParams: { userId },
             schema: subscriptionResponseSchema,
         });
     }
 
-    public async deleteSubscription({ subscriptionId, userId }: { subscriptionId: string; userId: string }) {
+    public async deleteSubscription({ subscriptionId }: { subscriptionId: string }) {
         const url = `/subscriptions/${subscriptionId}`;
         return this.delete({
             url,
-            requestParams: { userId },
             schema: z.literal('').refine((input): input is never => true),
         });
     }
 
     public async getCollections({ organism }: { organism?: string } = {}) {
-        const requestParams = organism !== undefined ? { organism } : {};
+        const requestParams = organism !== undefined ? { organism } : undefined;
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSchema) });
     }
 
     public async getCollection({ id }: { id: string }) {
-        return this.get({ url: `/collections/${id}`, requestParams: {}, schema: collectionSchema });
+        return this.get({ url: `/collections/${id}`, schema: collectionSchema });
     }
 
     public async postCollection({ collection }: { collection: CollectionRequest }) {
         return this.post({
             url: '/collections',
             data: collection,
-            requestParams: {},
             schema: collectionSchema,
         });
     }
@@ -192,7 +187,6 @@ export class BackendService extends ApiService {
         return this.put({
             url: `/collections/${id}`,
             data: collection,
-            requestParams: {},
             schema: collectionSchema,
         });
     }
@@ -200,7 +194,6 @@ export class BackendService extends ApiService {
     public async deleteCollection({ id }: { id: string }) {
         return this.delete({
             url: `/collections/${id}`,
-            requestParams: {},
             schema: z.literal('').refine((input): input is never => true),
         });
     }
