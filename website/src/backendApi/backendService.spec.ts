@@ -3,11 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { BackendError, BackendService, UnknownBackendError } from './backendService.ts';
 import { DUMMY_BACKEND_URL } from '../../routeMocker.ts';
 import { backendRouteMocker } from '../../vitest.setup.ts';
-import type {
-    SubscriptionRequest,
-    SubscriptionResponse,
-    TriggerEvaluationResponse,
-} from '../types/Subscription.ts';
+import type { SubscriptionRequest, SubscriptionResponse, TriggerEvaluationResponse } from '../types/Subscription.ts';
 
 describe('backendService', () => {
     const backendService = new BackendService(DUMMY_BACKEND_URL);

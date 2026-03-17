@@ -2,11 +2,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse 
 import { z, type ZodSchema } from 'zod';
 
 import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
-import {
-    collectionSchema,
-    type CollectionRequest,
-    type CollectionUpdate,
-} from '../types/Collection.ts';
+import { collectionSchema, type CollectionRequest, type CollectionUpdate } from '../types/Collection.ts';
 import { type ProblemDetail, problemDetailSchema } from '../types/ProblemDetail.ts';
 import {
     type SubscriptionPutRequest,
@@ -194,7 +190,15 @@ export class BackendService extends ApiService {
         });
     }
 
-    public async putCollection({ id, collection, userId }: { id: string; collection: CollectionUpdate; userId: string }) {
+    public async putCollection({
+        id,
+        collection,
+        userId,
+    }: {
+        id: string;
+        collection: CollectionUpdate;
+        userId: string;
+    }) {
         return this.put({
             url: `/collections/${id}`,
             data: collection,
