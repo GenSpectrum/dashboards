@@ -3,6 +3,7 @@ package org.genspectrum.dashboardsbackend.api
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.genspectrum.dashboardsbackend.controller.BadRequestException
 
 /**
  * A JSON object with mutation lists (keys: aaMutations, nucMutations, ...)
@@ -26,9 +27,15 @@ data class MutationListDefinition(
 
     @JsonAnySetter
     fun put(key: String, value: Any) {
-        if (key !in KNOWN_FIELDS && value is String) {
-            lineageFiltersInternal[key] = value
+        if (key in KNOWN_FIELDS) {
+            return
         }
+        if (value !is String) {
+            throw BadRequestException(
+                "Invalid value for lineage filter '$key': expected a string but got ${value::class.qualifiedName}",
+            )
+        }
+        lineageFiltersInternal[key] = value
     }
 
     companion object {
