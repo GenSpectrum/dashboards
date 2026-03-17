@@ -4,7 +4,6 @@ import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
-import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.springframework.stereotype.Service

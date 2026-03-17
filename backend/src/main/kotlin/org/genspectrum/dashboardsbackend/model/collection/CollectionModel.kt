@@ -6,12 +6,14 @@ import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
-import org.genspectrum.dashboardsbackend.config.validateIsValidOrganism
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -167,6 +169,14 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             }
 
             // Case 3: Delete variants not in the update list
+            if (variantIdsToKeep.isEmpty()) {
+                VariantTable.deleteWhere { collectionId eq id }
+            } else {
+                // Delete all variants for this collection whose IDs are not in the keep-set
+                VariantTable.deleteWhere {
+                    (collectionId eq id) and (VariantTable.id notInList variantIdsToKeep.toList())
+                }
+            }
             VariantEntity.find { VariantTable.collectionId eq id }
                 .filter { it.id.value !in variantIdsToKeep }
                 .forEach { it.delete() }
