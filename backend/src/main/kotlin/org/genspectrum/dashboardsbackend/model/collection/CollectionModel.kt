@@ -37,7 +37,27 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             }
         }
 
-        return query.map { it.toCollection() }
+        // Materialize the collections first to avoid re-running the query
+        val collectionEntities = query.toList()
+        if (collectionEntities.isEmpty()) {
+            return emptyList()
+        }
+        // Batch-load all variants
+        val allCollectionIds = collectionEntities.map { it.id }
+        val variantsByCollectionId = VariantEntity
+            .find { VariantTable.collectionId inList allCollectionIds }
+            .groupBy { it.collectionId }
+        return collectionEntities.map { collectionEntity ->
+            val variants = variantsByCollectionId[collectionEntity.id].orEmpty().map { it.toVariant() }
+            Collection(
+                id = collectionEntity.id.value,
+                name = collectionEntity.name,
+                ownedBy = collectionEntity.ownedBy,
+                organism = collectionEntity.organism,
+                description = collectionEntity.description,
+                variants = variants,
+            )
+        }
     }
 
     fun getCollection(id: Long): Collection = CollectionEntity.findById(id)
