@@ -9,6 +9,11 @@ const logger = getInstanceLogger('BackendProxy');
 
 const API_PATHNAME_LENGTH = '/api'.length;
 
+/**
+ * Calls the backend. If the user is logged in, the user ID is added from the session.
+ * This proxying through the frontend server is used, so we do the user login handling
+ * in here, instead of in the backend.
+ */
 export async function proxyToBackend({ request }: { request: Request }): Promise<Response> {
     const session = await getSession(request);
 
