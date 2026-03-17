@@ -170,10 +170,8 @@ export class BackendService extends ApiService {
         });
     }
 
-    public async getCollections({ userId, organism }: { userId?: string; organism?: string }) {
-        const requestParams = Object.fromEntries(
-            Object.entries({ userId, organism }).filter(([, v]) => v !== undefined),
-        ) as Record<string, string>;
+    public async getCollections({ organism }: { organism?: string } = {}) {
+        const requestParams = organism !== undefined ? { organism } : {};
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSchema) });
     }
 
@@ -181,36 +179,28 @@ export class BackendService extends ApiService {
         return this.get({ url: `/collections/${id}`, requestParams: {}, schema: collectionSchema });
     }
 
-    public async postCollection({ collection, userId }: { collection: CollectionRequest; userId: string }) {
+    public async postCollection({ collection }: { collection: CollectionRequest }) {
         return this.post({
             url: '/collections',
             data: collection,
-            requestParams: { userId },
+            requestParams: {},
             schema: collectionSchema,
         });
     }
 
-    public async putCollection({
-        id,
-        collection,
-        userId,
-    }: {
-        id: string;
-        collection: CollectionUpdate;
-        userId: string;
-    }) {
+    public async putCollection({ id, collection }: { id: string; collection: CollectionUpdate }) {
         return this.put({
             url: `/collections/${id}`,
             data: collection,
-            requestParams: { userId },
+            requestParams: {},
             schema: collectionSchema,
         });
     }
 
-    public async deleteCollection({ id, userId }: { id: string; userId: string }) {
+    public async deleteCollection({ id }: { id: string }) {
         return this.delete({
             url: `/collections/${id}`,
-            requestParams: { userId },
+            requestParams: {},
             schema: z.literal('').refine((input): input is never => true),
         });
     }
