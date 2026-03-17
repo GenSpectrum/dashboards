@@ -73,9 +73,12 @@ const mutationListVariantUpdateSchema = mutationListVariantRequestSchema.extend(
 
 const variantUpdateSchema = z.discriminatedUnion('type', [queryVariantUpdateSchema, mutationListVariantUpdateSchema]);
 
-export const collectionUpdateSchema = collectionRequestSchema.omit({ organism: true }).partial().extend({
-    variants: z.array(variantUpdateSchema).optional(),
-});
+export const collectionUpdateSchema = collectionRequestSchema
+    .omit({ organism: true })
+    .partial()
+    .extend({
+        variants: z.array(variantUpdateSchema).optional(),
+    });
 
 export type CollectionUpdate = z.infer<typeof collectionUpdateSchema>;
 export type VariantUpdate = z.infer<typeof variantUpdateSchema>;
