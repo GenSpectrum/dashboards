@@ -192,7 +192,7 @@ class CollectionsControllerTest(
     }
 
     @Test
-    fun `WHEN getting collections for organism with no collections THEN returns empty array`() {
+    fun `GIVEN no collections for organism WHEN getting collections for organism THEN returns empty array`() {
         val collections = collectionsClient.getCollections(organism = KnownTestOrganisms.WestNile.name)
 
         assertThat(collections, empty())
