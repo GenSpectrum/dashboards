@@ -93,6 +93,18 @@ class CollectionsGetTest(
     }
 
     @Test
+    fun `GIVEN collection with both variant types WHEN getting collections THEN type field is present on variants`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        collectionsClient.getCollectionsRaw(userId = userId)
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].id").value(createdCollection.id))
+            .andExpect(jsonPath("$[0].variants[0].type").value("query"))
+            .andExpect(jsonPath("$[0].variants[1].type").value("mutationList"))
+    }
+
+    @Test
     fun `GIVEN user has no collections WHEN getting collections for user THEN returns empty array`() {
         val nonexistentUserId = getNewUserId()
 
