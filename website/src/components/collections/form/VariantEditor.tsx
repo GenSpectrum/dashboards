@@ -3,13 +3,12 @@ import type { VariantUpdate } from '../../../types/Collection.ts';
 
 type Props = {
     variant: VariantUpdate;
-    index: number;
     onChange: (variant: VariantUpdate) => void;
     onRemove: () => void;
     canRemove?: boolean;
 };
 
-export function VariantEditor({ variant, index, onChange, onRemove, canRemove = true }: Props) {
+export function VariantEditor({ variant, onChange, onRemove, canRemove = true }: Props) {
     function setField(fields: Partial<VariantUpdate>) {
         onChange({ ...variant, ...fields } as VariantUpdate);
     }

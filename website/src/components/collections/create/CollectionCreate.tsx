@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
+import type { DashboardsConfig } from '../../../config.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
@@ -14,7 +15,7 @@ export const CollectionCreate = withQueryProvider(CollectionCreateInner);
 
 const logger = getClientLogger('CollectionCreate');
 
-function CollectionCreateInner({ organism }: { organism: Organism }) {
+function CollectionCreateInner({ organism, config }: { organism: Organism; config: DashboardsConfig }) {
     const { showErrorToast } = useErrorToast(logger);
 
     const createCollection = useMutation({
@@ -48,6 +49,8 @@ function CollectionCreateInner({ organism }: { organism: Organism }) {
                 isSuccess={createCollection.isSuccess}
                 successMessage='Collection created'
                 submitLabel='Create collection'
+                organism={organism}
+                config={config}
             />
         </>
     );

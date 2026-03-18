@@ -1,7 +1,10 @@
 import { useState } from 'react';
 
 import { VariantEditor } from './VariantEditor.tsx';
+import type { DashboardsConfig } from '../../../config.ts';
 import type { VariantUpdate } from '../../../types/Collection.ts';
+import type { Organism } from '../../../types/Organism.ts';
+import { GsApp } from '../../genspectrum/GsApp.tsx';
 
 export type CollectionFormValues = {
     name: string;
@@ -16,6 +19,8 @@ type Props = {
     isSuccess: boolean;
     successMessage: string;
     submitLabel: string;
+    organism: Organism;
+    config: DashboardsConfig;
 };
 
 export function CollectionForm({
@@ -25,7 +30,10 @@ export function CollectionForm({
     isSuccess,
     successMessage,
     submitLabel,
+    organism,
+    config,
 }: Props) {
+    const lapisUrl = config.dashboards.organisms[organism].lapis.url;
     const [name, setName] = useState(initialValues?.name ?? '');
     const [description, setDescription] = useState(initialValues?.description ?? '');
     const [variants, setVariants] = useState<VariantUpdate[]>(
@@ -48,6 +56,7 @@ export function CollectionForm({
     }
 
     return (
+        <GsApp lapis={lapisUrl}>
         <div className='flex flex-col gap-6'>
             <div className='grid grid-cols-3 gap-x-8'>
                 <div className='text-sm text-gray-500'>
@@ -91,7 +100,6 @@ export function CollectionForm({
                         <VariantEditor
                             key={index}
                             variant={variant}
-                            index={index}
                             onChange={(v) => updateVariant(index, v)}
                             onRemove={() => removeVariant(index)}
                             canRemove={variants.length > 1}
@@ -114,6 +122,7 @@ export function CollectionForm({
                 onClick={() => onSubmit({ name, description, variants })}
             />
         </div>
+        </GsApp>
     );
 }
 
