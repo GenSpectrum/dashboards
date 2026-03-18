@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
+import org.genspectrum.dashboardsbackend.api.MutationListDefinition
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.model.subscription.jacksonSerializableJsonb
 import org.jetbrains.exposed.dao.LongEntity
@@ -42,7 +43,7 @@ object VariantTable : LongIdTable(VARIANT_TABLE) {
     val countQuery = text("count_query").nullable()
     val coverageQuery = text("coverage_query").nullable()
 
-    val mutationList = jacksonSerializableJsonb<org.genspectrum.dashboardsbackend.api.MutationListDefinition>(
+    val mutationList = jacksonSerializableJsonb<MutationListDefinition>(
         "mutation_list",
     ).nullable()
 }
