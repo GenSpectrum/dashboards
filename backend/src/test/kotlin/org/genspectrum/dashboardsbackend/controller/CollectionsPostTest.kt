@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.controller
 
+import org.genspectrum.dashboardsbackend.api.MutationListDefinition
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.dummyCollectionRequest
@@ -97,7 +98,7 @@ class CollectionsPostTest(
         val variantWithLineage = VariantRequest.MutationListVariantRequest(
             name = "BA.2 lineage",
             description = "BA.2 variant",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+            mutationList = MutationListDefinition(
                 aaMutations = listOf("S:N501Y"),
                 filters = mapOf("pangoLineage" to "BA.2*"),
             ),
@@ -118,7 +119,7 @@ class CollectionsPostTest(
         val variantWithInvalidLineage = VariantRequest.MutationListVariantRequest(
             name = "Invalid lineage",
             description = "Has invalid lineage field",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+            mutationList = MutationListDefinition(
                 aaMutations = emptyList(),
                 filters = mapOf("invalidLineageField" to "value"),
             ),
@@ -137,7 +138,7 @@ class CollectionsPostTest(
         val variantWithMultipleLineages = VariantRequest.MutationListVariantRequest(
             name = "Multiple lineages",
             description = "Has multiple lineage filters",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+            mutationList = MutationListDefinition(
                 aaMutations = listOf("S:K417N"),
                 filters = mapOf(
                     "pangoLineage" to "BA.2*",
@@ -160,7 +161,7 @@ class CollectionsPostTest(
         val variantWithOnlyAaMutations = VariantRequest.MutationListVariantRequest(
             name = "Only AA mutations",
             description = "Only has amino acid mutations",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+            mutationList = MutationListDefinition(
                 aaMutations = listOf("S:N501Y", "S:E484K"),
             ),
         )
@@ -179,7 +180,7 @@ class CollectionsPostTest(
         val variantWithInsertions = VariantRequest.MutationListVariantRequest(
             name = "With insertions",
             description = "Has insertions",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+            mutationList = MutationListDefinition(
                 aaMutations = listOf("S:N501Y"),
                 aaInsertions = listOf("ins_S:214:EPE"),
                 nucInsertions = listOf("ins_22204:GAG"),
