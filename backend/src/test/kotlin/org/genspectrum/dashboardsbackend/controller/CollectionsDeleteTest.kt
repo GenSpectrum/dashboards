@@ -15,9 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(CollectionsClient::class)
-class CollectionsDeleteTest(
-    @param:Autowired private val collectionsClient: CollectionsClient,
-) {
+class CollectionsDeleteTest(@param:Autowired private val collectionsClient: CollectionsClient) {
 
     @Test
     fun `WHEN owner deletes collection THEN succeeds and collection is removed`() {

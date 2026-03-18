@@ -22,9 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(CollectionsClient::class)
-class CollectionsPutTest(
-    @param:Autowired private val collectionsClient: CollectionsClient,
-) {
+class CollectionsPutTest(@param:Autowired private val collectionsClient: CollectionsClient) {
 
     @Test
     fun `WHEN owner updates all fields THEN collection is updated`() {
