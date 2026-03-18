@@ -93,7 +93,7 @@ class CollectionsGetTest(
     }
 
     @Test
-    fun `WHEN getting collections for user with no collections THEN returns empty array`() {
+    fun `GIVEN user has no collections WHEN getting collections for user THEN returns empty array`() {
         val nonexistentUserId = getNewUserId()
 
         val collections = collectionsClient.getCollections(userId = nonexistentUserId)
