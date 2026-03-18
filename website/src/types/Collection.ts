@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-const mutationListDefinitionSchema = z.record(z.union([z.string(), z.array(z.string())]));
+const mutationListDefinitionSchema = z.object({
+    aaMutations: z.array(z.string()).optional(),
+    nucMutations: z.array(z.string()).optional(),
+    aaInsertions: z.array(z.string()).optional(),
+    nucInsertions: z.array(z.string()).optional(),
+    filters: z.record(z.string()).optional(),
+});
 
 const queryVariantSchema = z.object({
     type: z.literal('query'),
