@@ -218,6 +218,11 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             }
         }
 
+    /**
+     * The list of known lineage fields is configured in the organism config.
+     * This function checks a MutationListDefinition against that list, and raises an error
+     * if invalid lineage fields are found.
+     */
     private fun validateLineageFilters(organism: String, mutationList: MutationListDefinition) {
         val validLineageFields = dashboardsConfig.getOrganismConfig(organism).lapis.lineageFields ?: emptyList()
         val invalidFields = mutationList.filters.orEmpty().keys - validLineageFields.toSet()
