@@ -154,6 +154,7 @@ async function fetchCollectionModeData(
     const variantData: {
         name: string;
         queryString: string;
+        description?: string;
     }[] = [];
 
     const invalidVariants: {
@@ -183,6 +184,7 @@ async function fetchCollectionModeData(
         variantData.push({
             name: variant.name,
             queryString: queryString,
+            description: variant.description !== '' ? variant.description : undefined,
         });
     }
 
@@ -195,11 +197,12 @@ async function fetchCollectionModeData(
     // Process results and validate
     const queries: {
         displayLabel: string;
+        description?: string;
         countQuery: string;
         coverageQuery: string;
     }[] = [];
 
-    variantData.forEach(({ name, queryString }, index) => {
+    variantData.forEach(({ name, queryString, description }, index) => {
         const parseResult = parseResults[index];
 
         // Check if parsing failed
@@ -226,6 +229,7 @@ async function fetchCollectionModeData(
         const coverageQuery = `(${queryString}) or (not maybe(${queryString}))`;
         queries.push({
             displayLabel: name,
+            description,
             countQuery: queryString,
             coverageQuery,
         });
@@ -292,6 +296,7 @@ export type WasapCollectionData = {
             displayLabel: string;
             countQuery: string;
             coverageQuery: string;
+            description?: string;
         }[];
     };
     invalidVariants?: {
