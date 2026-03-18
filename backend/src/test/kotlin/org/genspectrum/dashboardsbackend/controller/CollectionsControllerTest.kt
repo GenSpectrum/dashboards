@@ -337,9 +337,9 @@ class CollectionsControllerTest(
         val variantWithLineage = VariantRequest.MutationListVariantRequest(
             name = "BA.2 lineage",
             description = "BA.2 variant",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition.create(
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
                 aaMutations = listOf("S:N501Y"),
-                lineageFilters = mapOf("pangoLineage" to "BA.2*"),
+                filters = mapOf("pangoLineage" to "BA.2*"),
             ),
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithLineage))
@@ -349,7 +349,7 @@ class CollectionsControllerTest(
         assertThat(createdCollection.variants, hasSize(1))
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
         assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y")))
-        assertThat(variant.mutationList.lineageFilters["pangoLineage"], equalTo("BA.2*"))
+        assertThat(variant.mutationList.filters!!["pangoLineage"], equalTo("BA.2*"))
     }
 
     @Test
@@ -358,9 +358,9 @@ class CollectionsControllerTest(
         val variantWithInvalidLineage = VariantRequest.MutationListVariantRequest(
             name = "Invalid lineage",
             description = "Has invalid lineage field",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition.create(
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
                 aaMutations = emptyList(),
-                lineageFilters = mapOf("invalidLineageField" to "value"),
+                filters = mapOf("invalidLineageField" to "value"),
             ),
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithInvalidLineage))
@@ -386,9 +386,9 @@ class CollectionsControllerTest(
         val variantWithMultipleLineages = VariantRequest.MutationListVariantRequest(
             name = "Multiple lineages",
             description = "Has multiple lineage filters",
-            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition.create(
+            mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
                 aaMutations = listOf("S:K417N"),
-                lineageFilters = mapOf(
+                filters = mapOf(
                     "pangoLineage" to "BA.2*",
                     "nextcladePangoLineage" to "BA.2.75*",
                 ),
@@ -399,8 +399,8 @@ class CollectionsControllerTest(
         val createdCollection = collectionsClient.postCollection(request, userId)
 
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.lineageFilters["pangoLineage"], equalTo("BA.2*"))
-        assertThat(variant.mutationList.lineageFilters["nextcladePangoLineage"], equalTo("BA.2.75*"))
+        assertThat(variant.mutationList.filters!!["pangoLineage"], equalTo("BA.2*"))
+        assertThat(variant.mutationList.filters!!["nextcladePangoLineage"], equalTo("BA.2.75*"))
     }
 
     @Test
@@ -674,9 +674,9 @@ class CollectionsControllerTest(
 
         val invalidVariant = VariantUpdate.MutationListVariantUpdate(
             name = "Invalid Variant",
-            mutationList = MutationListDefinition.create(
+            mutationList = MutationListDefinition(
                 aaMutations = listOf("S:N501Y"),
-                lineageFilters = mapOf("invalidField" to "value"),
+                filters = mapOf("invalidField" to "value"),
             ),
         )
 
@@ -737,7 +737,7 @@ class CollectionsControllerTest(
     }
 
     @Test
-    fun `WHEN creating collection with lineageFilters as a field THEN returns 400 with message`() {
+    fun `WHEN creating collection with lineage filter in filters field THEN succeeds`() {
         val userId = getNewUserId()
         val body = """
             {
@@ -748,7 +748,7 @@ class CollectionsControllerTest(
                     "type": "mutationList",
                     "name": "Test variant",
                     "mutationList": {
-                        "lineageFilters": {"lineage": "B.1.1.7"}
+                        "filters": {"pangoLineage": "B.1.1.7"}
                     }
                 }]
             }
@@ -759,8 +759,6 @@ class CollectionsControllerTest(
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON),
         )
-            .andExpect(status().isBadRequest)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("lineageFilters")))
+            .andExpect(status().isCreated)
     }
 }

@@ -220,7 +220,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
 
     private fun validateLineageFilters(organism: String, mutationList: MutationListDefinition) {
         val validLineageFields = dashboardsConfig.getOrganismConfig(organism).lapis.lineageFields ?: emptyList()
-        val invalidFields = mutationList.lineageFilters.keys - validLineageFields.toSet()
+        val invalidFields = mutationList.filters.orEmpty().keys - validLineageFields.toSet()
         if (invalidFields.isNotEmpty()) {
             val validFieldsStr = if (validLineageFields.isEmpty()) {
                 "no lineage fields are configured"
