@@ -26,10 +26,9 @@ import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
     wastewaterOrganism: WastewaterOrganismName;
-    isStaging: boolean;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStaging }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
     const config = wastewaterOrganismConfigs[wastewaterOrganism];
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
@@ -92,7 +91,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism, isStagi
                             initialBaseFilterState={base}
                             initialAnalysisFilterState={analysis}
                             setPageState={setPageState}
-                            isStaging={isStaging}
                         />
                     </div>
                     {isError ? (
