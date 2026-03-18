@@ -32,7 +32,7 @@ const session = await getSession(Astro.request);
 >
     {
         session?.user?.id !== undefined ? (
-            <CollectionCreate client:load organism={parsedOrganism.data} userId={session.user.id} config={config} />
+            <CollectionCreate client:only='react' organism={parsedOrganism.data} userId={session.user.id} config={config} />
         ) : (
             <NotLoggedIn />
         )

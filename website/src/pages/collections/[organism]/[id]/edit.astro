@@ -37,7 +37,7 @@ const session = await getSession(Astro.request);
 >
     {
         session?.user?.id !== undefined ? (
-            <CollectionEdit client:load organism={parsedOrganism.data} id={id} config={config} />
+            <CollectionEdit client:only='react' organism={parsedOrganism.data} id={id} config={config} />
         ) : (
             <NotLoggedIn />
         )
