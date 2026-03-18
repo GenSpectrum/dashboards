@@ -1,10 +1,6 @@
 import { useState } from 'react';
 
 import { VariantEditor } from './VariantEditor.tsx';
-import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
-import { CardContent } from '../../../styles/containers/CardContent.tsx';
-import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
-import { CardHeader } from '../../../styles/containers/CardHeader.tsx';
 import type { VariantUpdate } from '../../../types/Collection.ts';
 
 export type CollectionFormValues = {
@@ -32,10 +28,15 @@ export function CollectionForm({
 }: Props) {
     const [name, setName] = useState(initialValues?.name ?? '');
     const [description, setDescription] = useState(initialValues?.description ?? '');
-    const [variants, setVariants] = useState<VariantUpdate[]>(initialValues?.variants ?? []);
+    const [variants, setVariants] = useState<VariantUpdate[]>(
+        initialValues?.variants ?? [{ type: 'query', name: 'Variant 1', countQuery: '' }],
+    );
 
     function addVariant() {
-        setVariants((prev) => [...prev, { type: 'query', name: '', countQuery: '' }]);
+        setVariants((prev) => [
+            ...prev,
+            { type: 'query', name: `Variant ${prev.length + 1}`, countQuery: '' },
+        ]);
     }
 
     function updateVariant(index: number, variant: VariantUpdate) {
@@ -47,54 +48,62 @@ export function CollectionForm({
     }
 
     return (
-        <div className='flex flex-col gap-4'>
-            <div className='grid grid-cols-[2fr_3fr] gap-x-12 gap-y-6'>
-                <div>
-                    <div className='font-medium'>Name</div>
-                    <p className='mt-1 text-sm text-gray-400'>A name to identify this collection.</p>
+        <div className='flex flex-col gap-6'>
+            <div className='grid grid-cols-3 gap-x-8'>
+                <div className='text-sm text-gray-500'>
+                    General information about this collection, such as its name and an optional description.
                 </div>
-                <input
-                    className='input input-sm input-bordered w-full'
-                    value={name}
-                    onChange={(e) => setName(e.currentTarget.value)}
-                />
-                <div>
-                    <div className='font-medium'>Description</div>
-                    <p className='mt-1 text-sm text-gray-400'>Optional description for this collection.</p>
+                <div className='col-span-2 flex flex-col gap-4'>
+                    <div className='flex flex-col gap-1'>
+                        <label className='text-sm font-medium'>Name</label>
+                        <input
+                            className='input input-sm input-bordered w-full'
+                            placeholder='A name to identify this collection.'
+                            value={name}
+                            onChange={(e) => setName(e.currentTarget.value)}
+                        />
+                    </div>
+                    <div className='flex flex-col gap-1'>
+                        <label className='text-sm font-medium'>Description</label>
+                        <textarea
+                            className='textarea textarea-bordered w-full'
+                            rows={3}
+                            placeholder='Optional description for this collection.'
+                            value={description}
+                            onChange={(e) => setDescription(e.currentTarget.value)}
+                        />
+                    </div>
                 </div>
-                <textarea
-                    className='textarea textarea-bordered w-full'
-                    rows={3}
-                    value={description}
-                    onChange={(e) => setDescription(e.currentTarget.value)}
-                />
             </div>
 
-            <BorderedCard>
-                <CardHeader>
-                    <CardDescription title='Variants' />
-                    <button type='button' className='btn btn-secondary btn-sm' onClick={addVariant}>
-                        Add variant
-                    </button>
-                </CardHeader>
-                <CardContent>
-                    {variants.length === 0 ? (
-                        <p className='text-sm text-gray-400'>No variants yet. Click "Add variant" to define one.</p>
-                    ) : (
-                        <div className='flex flex-col gap-4'>
-                            {variants.map((variant, index) => (
-                                <VariantEditor
-                                    key={index}
-                                    variant={variant}
-                                    index={index}
-                                    onChange={(v) => updateVariant(index, v)}
-                                    onRemove={() => removeVariant(index)}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </CardContent>
-            </BorderedCard>
+            <div className='divider' />
+
+            <div className='grid grid-cols-3 gap-x-8'>
+                <div className='text-sm text-gray-500'>
+                    <p className='font-medium text-gray-700'>Variants</p>
+                    <p className='mt-1'>
+                        Define the variants to track in this collection. Each variant can be defined as a query or a
+                        mutation list.
+                    </p>
+                </div>
+                <div className='col-span-2 flex flex-col gap-4'>
+                    {variants.map((variant, index) => (
+                        <VariantEditor
+                            key={index}
+                            variant={variant}
+                            index={index}
+                            onChange={(v) => updateVariant(index, v)}
+                            onRemove={() => removeVariant(index)}
+                            canRemove={variants.length > 1}
+                        />
+                    ))}
+                    <div>
+                        <button type='button' className='btn btn-secondary btn-sm' onClick={addVariant}>
+                            Add variant
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <SubmitButton
                 isSuccess={isSuccess}

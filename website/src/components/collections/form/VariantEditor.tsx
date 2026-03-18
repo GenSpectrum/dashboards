@@ -6,9 +6,10 @@ type Props = {
     index: number;
     onChange: (variant: VariantUpdate) => void;
     onRemove: () => void;
+    canRemove?: boolean;
 };
 
-export function VariantEditor({ variant, index, onChange, onRemove }: Props) {
+export function VariantEditor({ variant, index, onChange, onRemove, canRemove = true }: Props) {
     function setField(fields: Partial<VariantUpdate>) {
         onChange({ ...variant, ...fields } as VariantUpdate);
     }
@@ -24,40 +25,42 @@ export function VariantEditor({ variant, index, onChange, onRemove }: Props) {
     return (
         <div className='flex flex-col gap-4 rounded-lg border border-gray-200 p-4'>
             <div className='flex items-center justify-between'>
-                <span className='font-medium'>Variant {index + 1}</span>
-                <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
-                    Remove
-                </button>
-            </div>
-
-            <div className='flex flex-col gap-4 sm:flex-row'>
-                <InputLabel title='Name' description='A name to identify this variant.'>
-                    <input
-                        className='input input-sm input-bordered w-full max-w-xl'
-                        value={variant.name}
-                        onChange={(e) => setField({ name: e.currentTarget.value })}
-                    />
-                </InputLabel>
-
-                <InputLabel title='Type' description='How this variant is defined.'>
-                    <select
-                        className='select select-sm select-bordered'
-                        value={variant.type}
-                        onChange={(e) => switchType(e.currentTarget.value as 'query' | 'mutationList')}
-                    >
-                        <option value='query'>Query</option>
-                        <option value='mutationList'>Mutation list</option>
-                    </select>
-                </InputLabel>
-            </div>
-
-            <InputLabel title='Description' description='Optional description for this variant.'>
                 <input
-                    className='input input-sm input-bordered w-full max-w-xl'
-                    value={variant.description ?? ''}
-                    onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
+                    className='input input-sm input-bordered font-medium'
+                    placeholder='Variant name'
+                    value={variant.name}
+                    onChange={(e) => setField({ name: e.currentTarget.value })}
                 />
-            </InputLabel>
+                {canRemove && (
+                    <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
+                        Remove
+                    </button>
+                )}
+            </div>
+
+            <input
+                className='input input-sm input-bordered w-full max-w-xl'
+                placeholder='Optional description for this variant.'
+                value={variant.description ?? ''}
+                onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
+            />
+
+            <div className='flex gap-2 text-sm'>
+                {(['query', 'mutationList'] as const).map((type) => (
+                    <label
+                        key={type}
+                        className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
+                    >
+                        <input
+                            type='radio'
+                            className='hidden'
+                            checked={variant.type === type}
+                            onChange={() => switchType(type)}
+                        />
+                        {type === 'query' ? 'Query' : 'Mutation list'}
+                    </label>
+                ))}
+            </div>
 
             {variant.type === 'query' ? (
                 <QueryVariantFields variant={variant} onChange={onChange} />
