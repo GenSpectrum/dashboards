@@ -1,3 +1,4 @@
+import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 import { InputLabel } from '../../../styles/input/InputLabel.tsx';
 import type { VariantUpdate } from '../../../types/Collection.ts';
 
@@ -112,44 +113,25 @@ function MutationListVariantFields({
     variant: Extract<VariantUpdate, { type: 'mutationList' }>;
     onChange: (v: VariantUpdate) => void;
 }) {
-    function setMutationField(key: string, value: string) {
-        const list = value
-            .split(/[\n,]/)
-            .map((s) => s.trim())
-            .filter(Boolean);
-        onChange({
-            ...variant,
-            mutationList: {
-                ...variant.mutationList,
-                [key]: list.length > 0 ? list : undefined,
-            },
-        });
-    }
-
-    function getMutationField(key: string): string {
-        const val = (variant.mutationList as Record<string, unknown>)[key];
-        return Array.isArray(val) ? val.join('\n') : '';
-    }
-
-    const fields: { key: string; title: string }[] = [
-        { key: 'aaMutations', title: 'AA mutations' },
-        { key: 'nucMutations', title: 'Nucleotide mutations' },
-        { key: 'aaInsertions', title: 'AA insertions' },
-        { key: 'nucInsertions', title: 'Nucleotide insertions' },
-    ];
-
     return (
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-            {fields.map(({ key, title }) => (
-                <InputLabel key={key} title={title} description='One entry per line.'>
-                    <textarea
-                        className='textarea textarea-bordered w-full font-mono text-sm'
-                        rows={3}
-                        value={getMutationField(key)}
-                        onChange={(e) => setMutationField(key, e.currentTarget.value)}
-                    />
-                </InputLabel>
-            ))}
-        </div>
+        <GsMutationFilter
+            initialValue={{
+                aminoAcidMutations: variant.mutationList.aaMutations ?? [],
+                nucleotideMutations: variant.mutationList.nucMutations ?? [],
+                aminoAcidInsertions: variant.mutationList.aaInsertions ?? [],
+                nucleotideInsertions: variant.mutationList.nucInsertions ?? [],
+            }}
+            onMutationChange={(mutationFilter) => {
+                onChange({
+                    ...variant,
+                    mutationList: {
+                        aaMutations: mutationFilter?.aminoAcidMutations,
+                        nucMutations: mutationFilter?.nucleotideMutations,
+                        aaInsertions: mutationFilter?.aminoAcidInsertions,
+                        nucInsertions: mutationFilter?.nucleotideInsertions,
+                    },
+                });
+            }}
+        />
     );
 }
