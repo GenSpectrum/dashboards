@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
+import type { DashboardsConfig } from '../../../config.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
@@ -15,7 +16,7 @@ export const CollectionEdit = withQueryProvider(CollectionEditInner);
 
 const logger = getClientLogger('CollectionEdit');
 
-function CollectionEditInner({ organism, id }: { organism: Organism; id: string }) {
+function CollectionEditInner({ organism, id, config }: { organism: Organism; id: string; config: DashboardsConfig }) {
     const { showErrorToast } = useErrorToast(logger);
 
     const {
@@ -142,6 +143,8 @@ function CollectionEditInner({ organism, id }: { organism: Organism; id: string 
                 isSuccess={updateCollection.isSuccess}
                 successMessage='Collection updated'
                 submitLabel='Save changes'
+                organism={organism}
+                config={config}
             />
         </>
     );

@@ -3,6 +3,7 @@ import { getSession } from 'auth-astro/server';
 
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
+import { getDashboardsConfig } from '../../../../config';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { organismConfig, organismSchema } from '../../../../types/Organism';
@@ -20,6 +21,7 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
+const config = getDashboardsConfig();
 const session = await getSession(Astro.request);
 ---
 
@@ -35,7 +37,7 @@ const session = await getSession(Astro.request);
 >
     {
         session?.user?.id !== undefined ? (
-            <CollectionEdit client:load organism={parsedOrganism.data} id={id} />
+            <CollectionEdit client:load organism={parsedOrganism.data} id={id} config={config} />
         ) : (
             <NotLoggedIn />
         )
