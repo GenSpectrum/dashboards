@@ -23,50 +23,53 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true }:
     }
 
     return (
-        <div className='flex flex-col gap-4 rounded-lg border border-gray-200 p-4'>
-            <div className='flex items-center justify-between'>
+        <div className='grid grid-cols-3 gap-x-8 rounded-lg border border-gray-200 p-4'>
+            <div className='flex flex-col gap-2 h-full'>
                 <input
                     className='input input-sm input-bordered font-medium'
                     placeholder='Variant name'
                     value={variant.name}
                     onChange={(e) => setField({ name: e.currentTarget.value })}
                 />
-                {canRemove && (
-                    <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
-                        Remove
-                    </button>
+                <textarea
+                    className='textarea textarea-bordered flex-1 resize-none'
+                    placeholder='Optional description for this variant.'
+                    value={variant.description ?? ''}
+                    onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
+                />
+            </div>
+
+            <div className='col-span-2 flex flex-col gap-4'>
+                <div className='flex items-center justify-between'>
+                    <div className='flex gap-2 text-sm'>
+                        {(['query', 'mutationList'] as const).map((type) => (
+                            <label
+                                key={type}
+                                className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
+                            >
+                                <input
+                                    type='radio'
+                                    className='hidden'
+                                    checked={variant.type === type}
+                                    onChange={() => switchType(type)}
+                                />
+                                {type === 'query' ? 'Query' : 'Mutation list'}
+                            </label>
+                        ))}
+                    </div>
+                    {canRemove && (
+                        <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
+                            Remove
+                        </button>
+                    )}
+                </div>
+
+                {variant.type === 'query' ? (
+                    <QueryVariantFields variant={variant} onChange={onChange} />
+                ) : (
+                    <MutationListVariantFields variant={variant} onChange={onChange} />
                 )}
             </div>
-
-            <input
-                className='input input-sm input-bordered w-full max-w-xl'
-                placeholder='Optional description for this variant.'
-                value={variant.description ?? ''}
-                onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
-            />
-
-            <div className='flex gap-2 text-sm'>
-                {(['query', 'mutationList'] as const).map((type) => (
-                    <label
-                        key={type}
-                        className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
-                    >
-                        <input
-                            type='radio'
-                            className='hidden'
-                            checked={variant.type === type}
-                            onChange={() => switchType(type)}
-                        />
-                        {type === 'query' ? 'Query' : 'Mutation list'}
-                    </label>
-                ))}
-            </div>
-
-            {variant.type === 'query' ? (
-                <QueryVariantFields variant={variant} onChange={onChange} />
-            ) : (
-                <MutationListVariantFields variant={variant} onChange={onChange} />
-            )}
         </div>
     );
 }
