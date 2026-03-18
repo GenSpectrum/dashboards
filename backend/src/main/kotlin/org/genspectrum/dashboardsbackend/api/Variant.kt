@@ -137,6 +137,23 @@ sealed interface VariantRequest {
     ) : VariantRequest
 }
 
+fun VariantUpdate.toVariantRequest(): VariantRequest {
+    require(id == null) { "Cannot convert a VariantUpdate with an existing id to a VariantRequest: $id" }
+    return when (this) {
+        is VariantUpdate.QueryVariantUpdate -> VariantRequest.QueryVariantRequest(
+            name = name,
+            description = description,
+            countQuery = countQuery,
+            coverageQuery = coverageQuery,
+        )
+        is VariantUpdate.MutationListVariantUpdate -> VariantRequest.MutationListVariantRequest(
+            name = name,
+            description = description,
+            mutationList = mutationList,
+        )
+    }
+}
+
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,

@@ -6,6 +6,7 @@ import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.api.MutationListDefinition
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
+import org.genspectrum.dashboardsbackend.api.toVariantRequest
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
@@ -75,32 +76,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         }
 
         val variantEntities = request.variants.map { variantRequest ->
-            val variantEntity = when (variantRequest) {
-                is VariantRequest.QueryVariantRequest -> {
-                    VariantEntity.new {
-                        this.collectionId = collectionEntity.id
-                        this.variantType = VariantType.QUERY
-                        this.name = variantRequest.name
-                        this.description = variantRequest.description
-                        this.countQuery = variantRequest.countQuery
-                        this.coverageQuery = variantRequest.coverageQuery
-                        this.mutationList = null
-                    }
-                }
-                is VariantRequest.MutationListVariantRequest -> {
-                    validateLineageFilters(request.organism, variantRequest.mutationList)
-
-                    VariantEntity.new {
-                        this.collectionId = collectionEntity.id
-                        this.variantType = VariantType.MUTATION_LIST
-                        this.name = variantRequest.name
-                        this.description = variantRequest.description
-                        this.mutationList = variantRequest.mutationList
-                        this.countQuery = null
-                        this.coverageQuery = null
-                    }
-                }
-            }
+            val variantEntity = createVariantEntity(collectionEntity, variantRequest)
             variantEntity.validate()
             variantEntity
         }
@@ -145,7 +121,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                     variantUpdate.id == null -> {
                         val variantEntity = createVariantEntity(
                             collectionEntity,
-                            variantUpdate,
+                            variantUpdate.toVariantRequest(),
                         )
                         variantEntity.validate()
                         variantIdsToKeep.add(variantEntity.id.value)
@@ -189,29 +165,29 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
 
         return collectionEntity.toCollection()
     }
-
-    private fun createVariantEntity(collectionEntity: CollectionEntity, variantUpdate: VariantUpdate): VariantEntity =
-        when (variantUpdate) {
-            is VariantUpdate.QueryVariantUpdate -> {
+    
+    private fun createVariantEntity(collectionEntity: CollectionEntity, variantRequest: VariantRequest): VariantEntity =
+        when (variantRequest) {
+            is VariantRequest.QueryVariantRequest -> {
                 VariantEntity.new {
                     this.collectionId = collectionEntity.id
                     this.variantType = VariantType.QUERY
-                    this.name = variantUpdate.name
-                    this.description = variantUpdate.description
-                    this.countQuery = variantUpdate.countQuery
-                    this.coverageQuery = variantUpdate.coverageQuery
+                    this.name = variantRequest.name
+                    this.description = variantRequest.description
+                    this.countQuery = variantRequest.countQuery
+                    this.coverageQuery = variantRequest.coverageQuery
                     this.mutationList = null
                 }
             }
-            is VariantUpdate.MutationListVariantUpdate -> {
-                validateLineageFilters(collectionEntity.organism, variantUpdate.mutationList)
+            is VariantRequest.MutationListVariantRequest -> {
+                validateLineageFilters(collectionEntity.organism, variantRequest.mutationList)
 
                 VariantEntity.new {
                     this.collectionId = collectionEntity.id
                     this.variantType = VariantType.MUTATION_LIST
-                    this.name = variantUpdate.name
-                    this.description = variantUpdate.description
-                    this.mutationList = variantUpdate.mutationList
+                    this.name = variantRequest.name
+                    this.description = variantRequest.description
+                    this.mutationList = variantRequest.mutationList
                     this.countQuery = null
                     this.coverageQuery = null
                 }
