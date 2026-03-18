@@ -118,6 +118,7 @@ function MutationListVariantFields({
 }) {
     return (
         <GsMutationFilter
+            showLabel={false}
             initialValue={{
                 aminoAcidMutations: variant.mutationList.aaMutations ?? [],
                 nucleotideMutations: variant.mutationList.nucMutations ?? [],
