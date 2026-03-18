@@ -98,16 +98,6 @@ sealed interface Variant {
     description = "Request to create a variant",
 )
 sealed interface VariantRequest {
-    enum class QueryVariantRequestType {
-        @JsonProperty("query")
-        QUERY,
-    }
-
-    enum class MutationListVariantRequestType {
-        @JsonProperty("mutationList")
-        MUTATION_LIST,
-    }
-
     @Schema(
         description = "Request to create a query variant",
         example = """
@@ -125,9 +115,7 @@ sealed interface VariantRequest {
         val description: String? = null,
         val countQuery: String,
         val coverageQuery: String? = null,
-    ) : VariantRequest {
-        val type: QueryVariantRequestType = QueryVariantRequestType.QUERY
-    }
+    ) : VariantRequest
 
     @Schema(
         description = "Request to create a mutation list variant",
@@ -146,9 +134,7 @@ sealed interface VariantRequest {
         val name: String,
         val description: String? = null,
         val mutationList: MutationListDefinition,
-    ) : VariantRequest {
-        val type: MutationListVariantRequestType = MutationListVariantRequestType.MUTATION_LIST
-    }
+    ) : VariantRequest
 }
 
 fun VariantUpdate.toVariantRequest(): VariantRequest {
