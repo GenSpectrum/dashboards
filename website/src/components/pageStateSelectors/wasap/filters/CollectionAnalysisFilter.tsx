@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getCollections } from '../../../../covspectrum/getCollections';
 import type { WasapCollectionFilter } from '../../../views/wasap/wasapPageConfig';
+import { CollectionInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
 
 export function CollectionAnalysisFilter({
@@ -25,7 +26,7 @@ export function CollectionAnalysisFilter({
     });
 
     return (
-        <LabeledField label='Collection'>
+        <LabeledField label='Collection' info={<CollectionInfo />}>
             {isPending ? (
                 <div className='text-sm text-gray-500'>Loading collections...</div>
             ) : isError ? (
