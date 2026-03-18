@@ -1,6 +1,5 @@
-import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
-import { InputLabel } from '../../../styles/input/InputLabel.tsx';
 import type { VariantUpdate } from '../../../types/Collection.ts';
+import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 
 type Props = {
     variant: VariantUpdate;
@@ -24,7 +23,7 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true }:
 
     return (
         <div className='grid grid-cols-3 gap-x-8 rounded-lg border border-gray-200 p-4'>
-            <div className='flex flex-col gap-2 h-full'>
+            <div className='flex h-full flex-col gap-2'>
                 <input
                     className='input input-sm input-bordered font-medium'
                     placeholder='Variant name'
@@ -42,7 +41,7 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true }:
             <div className='col-span-2 flex flex-col gap-4'>
                 <div className='flex items-center justify-between'>
                     <div className='flex gap-2 text-sm'>
-                        {(['query', 'mutationList'] as const).map((type) => (
+                        {(['mutationList', 'query'] as const).map((type) => (
                             <label
                                 key={type}
                                 className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
@@ -83,28 +82,26 @@ function QueryVariantFields({
 }) {
     return (
         <div className='flex flex-col gap-4'>
-            <InputLabel
-                title='Count query'
-                description='LAPIS filter expression for counting sequences matching this variant.'
-            >
+            <div className='flex flex-col gap-1'>
+                <label className='text-sm font-medium'>Count query</label>
                 <textarea
                     className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
                     rows={2}
+                    placeholder='LAPIS filter expression for counting sequences matching this variant.'
                     value={variant.countQuery}
                     onChange={(e) => onChange({ ...variant, countQuery: e.currentTarget.value })}
                 />
-            </InputLabel>
-            <InputLabel
-                title='Coverage query'
-                description='Optional LAPIS filter for the denominator (baseline). Defaults to all sequences.'
-            >
+            </div>
+            <div className='flex flex-col gap-1'>
+                <label className='text-sm font-medium'>Coverage query</label>
                 <textarea
                     className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
                     rows={2}
+                    placeholder='Optional LAPIS filter for the denominator (baseline).'
                     value={variant.coverageQuery ?? ''}
                     onChange={(e) => onChange({ ...variant, coverageQuery: e.currentTarget.value || undefined })}
                 />
-            </InputLabel>
+            </div>
         </div>
     );
 }
