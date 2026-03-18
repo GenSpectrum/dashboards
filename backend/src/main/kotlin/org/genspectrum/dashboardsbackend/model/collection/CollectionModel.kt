@@ -117,8 +117,8 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             val variantIdsToKeep = mutableSetOf<Long>()
 
             update.variants.forEach { variantUpdate ->
-                when {
-                    variantUpdate.id == null -> {
+                when (val variantId = variantUpdate.id) {
+                    null -> {
                         val variantEntity = createVariantEntity(
                             collectionEntity,
                             variantUpdate.toVariantRequest(),
@@ -128,7 +128,6 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                     }
                     // Case 2: Has ID = Update existing variant
                     else -> {
-                        val variantId = variantUpdate.id!!
                         val variantEntity = VariantEntity.findById(variantId)
                             ?: throw BadRequestException(
                                 "Variant $variantId not found",
@@ -137,7 +136,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                         // Verify the variant belongs to this collection
                         if (variantEntity.collectionId.value != id) {
                             throw BadRequestException(
-                                "Variant ${variantUpdate.id} does not belong to collection $id",
+                                "Variant $variantId does not belong to collection $id",
                             )
                         }
 
@@ -165,7 +164,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
 
         return collectionEntity.toCollection()
     }
-    
+
     private fun createVariantEntity(collectionEntity: CollectionEntity, variantRequest: VariantRequest): VariantEntity =
         when (variantRequest) {
             is VariantRequest.QueryVariantRequest -> {
