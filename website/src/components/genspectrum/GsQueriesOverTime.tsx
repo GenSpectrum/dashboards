@@ -3,8 +3,8 @@ import {
     type CustomColumn,
     type LapisFilter,
     type MeanProportionInterval,
-    type QueryDefinition,
     type TemporalGranularity,
+    type CountCoverageQuery,
 } from '@genspectrum/dashboard-components/util';
 import { type FC } from 'react';
 
@@ -13,7 +13,7 @@ import { ComponentWrapper } from '../ComponentWrapper';
 export type GsQueriesOverTimeProps = {
     collectionTitle?: string;
     lapisFilter: LapisFilter;
-    queries: QueryDefinition[];
+    queries: CountCoverageQuery[];
     granularity: TemporalGranularity;
     lapisDateField: string;
     height?: string;
