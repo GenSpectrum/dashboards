@@ -14,11 +14,13 @@ export function GsMutationFilter({
     width,
     enabledMutationTypes,
     onMutationChange,
+    showLabel = true,
 }: {
     width?: string;
     initialValue?: MutationFilter | string[] | undefined;
     enabledMutationTypes?: MutationType[];
     onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
+    showLabel?: boolean;
 }) {
     const mutationFilterRef = useRef<HTMLElement>(null);
 
@@ -43,9 +45,11 @@ export function GsMutationFilter({
 
     return (
         <label className='form-control'>
-            <div className='label'>
-                <span className='label-text'>Mutations</span>
-            </div>
+            {showLabel && (
+                <div className='label'>
+                    <span className='label-text'>Mutations</span>
+                </div>
+            )}
             <gs-mutation-filter
                 width={width}
                 initialValue={initialValue ?? []}
