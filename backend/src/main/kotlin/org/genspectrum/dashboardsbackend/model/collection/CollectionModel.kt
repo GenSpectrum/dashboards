@@ -177,7 +177,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                     this.filterObject = null
                 }
             }
-            is VariantRequest.MutationListVariantRequest -> {
+            is VariantRequest.FilterObjectVariantRequest -> {
                 validateLineageFilters(collectionEntity.organism, variantRequest.filterObject)
 
                 VariantEntity.new {
@@ -230,7 +230,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                 variantEntity.countQuery = variantUpdate.countQuery
                 variantEntity.coverageQuery = variantUpdate.coverageQuery
             }
-            is VariantUpdate.MutationListVariantUpdate -> {
+            is VariantUpdate.FilterObjectVariantUpdate -> {
                 // Verify type matches
                 if (variantEntity.variantType != VariantType.FILTER_OBJECT) {
                     throw BadRequestException(

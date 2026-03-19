@@ -86,7 +86,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val originalVariantCount = createdCollection.variants.size
 
-        val newVariant = VariantUpdate.MutationListVariantUpdate(
+        val newVariant = VariantUpdate.FilterObjectVariantUpdate(
             id = null,
             name = "New Variant",
             filterObject = FilterObject().apply {
@@ -103,7 +103,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
                     countQuery = variant.countQuery,
                     coverageQuery = variant.coverageQuery,
                 )
-                is Variant.MutationListVariant -> VariantUpdate.MutationListVariantUpdate(
+                is Variant.FilterObjectVariant -> VariantUpdate.FilterObjectVariantUpdate(
                     id = variant.id,
                     name = variant.name,
                     description = variant.description,
@@ -121,7 +121,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
             updated.variants.any { variant ->
                 when (variant) {
                     is Variant.QueryVariant -> variant.name == "New Variant"
-                    is Variant.MutationListVariant -> variant.name == "New Variant"
+                    is Variant.FilterObjectVariant -> variant.name == "New Variant"
                 }
             },
             equalTo(true),
@@ -205,7 +205,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val invalidVariant = VariantUpdate.MutationListVariantUpdate(
+        val invalidVariant = VariantUpdate.FilterObjectVariantUpdate(
             name = "Invalid Variant",
             filterObject = FilterObject().apply {
                 aminoAcidMutations = listOf("S:N501Y")
@@ -227,7 +227,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val firstVariant = createdCollection.variants[0] as Variant.QueryVariant
 
-        val invalidUpdate = VariantUpdate.MutationListVariantUpdate(
+        val invalidUpdate = VariantUpdate.FilterObjectVariantUpdate(
             id = firstVariant.id,
             name = "Changed Type",
             filterObject = FilterObject().apply {

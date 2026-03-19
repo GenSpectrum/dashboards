@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
-import org.genspectrum.dashboardsbackend.api.Variant.MutationListVariant
+import org.genspectrum.dashboardsbackend.api.Variant.FilterObjectVariant
 import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
 
 enum class QueryVariantType {
@@ -25,7 +25,7 @@ enum class FilterObjectVariantType {
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = QueryVariant::class, name = "query"),
-    JsonSubTypes.Type(value = MutationListVariant::class, name = "filterObject"),
+    JsonSubTypes.Type(value = FilterObjectVariant::class, name = "filterObject"),
 )
 @Schema(
     description = "Base interface for different variant types",
@@ -74,7 +74,7 @@ sealed interface Variant {
 }
 """,
     )
-    data class MutationListVariant @JsonCreator constructor(
+    data class FilterObjectVariant @JsonCreator constructor(
         override val id: Long,
         override val collectionId: Long,
         val name: String,
@@ -92,7 +92,7 @@ sealed interface Variant {
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = VariantRequest.QueryVariantRequest::class, name = "query"),
-    JsonSubTypes.Type(value = VariantRequest.MutationListVariantRequest::class, name = "filterObject"),
+    JsonSubTypes.Type(value = VariantRequest.FilterObjectVariantRequest::class, name = "filterObject"),
 )
 @Schema(
     description = "Request to create a variant",
@@ -132,7 +132,7 @@ sealed interface VariantRequest {
 }
 """,
     )
-    data class MutationListVariantRequest(
+    data class FilterObjectVariantRequest(
         val name: String,
         val description: String? = null,
         val filterObject: FilterObject,
@@ -148,7 +148,7 @@ sealed interface VariantRequest {
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = VariantUpdate.QueryVariantUpdate::class, name = "query"),
-    JsonSubTypes.Type(value = VariantUpdate.MutationListVariantUpdate::class, name = "filterObject"),
+    JsonSubTypes.Type(value = VariantUpdate.FilterObjectVariantUpdate::class, name = "filterObject"),
 )
 @Schema(
     description = "Request to update or create a variant",
@@ -193,7 +193,7 @@ sealed interface VariantUpdate {
 }
 """,
     )
-    data class MutationListVariantUpdate(
+    data class FilterObjectVariantUpdate(
         override val id: Long? = null,
         val name: String,
         val description: String? = null,
@@ -212,7 +212,7 @@ sealed interface VariantUpdate {
                 coverageQuery = coverageQuery,
             )
 
-            is MutationListVariantUpdate -> VariantRequest.MutationListVariantRequest(
+            is FilterObjectVariantUpdate -> VariantRequest.FilterObjectVariantRequest(
                 name = name,
                 description = description,
                 filterObject = filterObject,

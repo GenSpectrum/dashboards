@@ -93,7 +93,7 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
             countQuery = countQuery!!,
             coverageQuery = coverageQuery,
         )
-        VariantType.FILTER_OBJECT -> Variant.MutationListVariant(
+        VariantType.FILTER_OBJECT -> Variant.FilterObjectVariant(
             id = id.value,
             collectionId = collectionId.value,
             name = name,
