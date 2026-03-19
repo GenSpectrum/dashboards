@@ -194,6 +194,32 @@ class CollectionsPostTest(
     }
 
     @Test
+    fun `WHEN creating variant with non-string extra property value THEN returns 400`() {
+        val userId = getNewUserId()
+        val body = """
+            {
+                "name": "Test",
+                "organism": "Covid",
+                "description": "Test",
+                "variants": [{
+                    "type": "filterObject",
+                    "name": "Test variant",
+                    "filterObject": {
+                        "foo": ["bar", "baz"]
+                    }
+                }]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `WHEN creating collection with lineage filter in filters field THEN succeeds`() {
         val userId = getNewUserId()
         val body = """
