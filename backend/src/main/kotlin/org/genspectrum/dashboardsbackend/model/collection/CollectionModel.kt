@@ -6,7 +6,6 @@ import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.api.MutationListDefinition
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
-import org.genspectrum.dashboardsbackend.api.toVariantRequest
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
