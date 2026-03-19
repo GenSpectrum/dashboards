@@ -244,6 +244,17 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
     }
 
     @Test
+    fun `WHEN updating non-existent collection THEN returns 403`() {
+        val userId = getNewUserId()
+        val nonExistentId = 999999L
+
+        collectionsClient.putCollectionRaw(CollectionUpdate(name = "Updated Name"), nonExistentId, userId)
+            .andExpect(status().isForbidden)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.detail").value(containsString("you don't have permission to update it")))
+    }
+
+    @Test
     fun `WHEN updating with variant ID from different collection THEN returns 400`() {
         val userId = getNewUserId()
         val collection1 = collectionsClient.postCollection(dummyCollectionRequest, userId)
