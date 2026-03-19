@@ -1,0 +1,82 @@
+package org.genspectrum.dashboardsbackend.controller
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import org.genspectrum.dashboardsbackend.api.Collection
+import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionUpdate
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+
+class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
+    fun postCollectionRaw(collection: CollectionRequest, userId: String): ResultActions = mockMvc.perform(
+        post("/collections?userId=$userId")
+            .content(objectMapper.writeValueAsString(collection))
+            .contentType(MediaType.APPLICATION_JSON),
+    )
+
+    fun postCollection(collection: CollectionRequest, userId: String): Collection = deserializeJsonResponse(
+        postCollectionRaw(collection, userId)
+            .andExpect(status().isCreated),
+    )
+
+    fun getCollectionsRaw(userId: String? = null, organism: String? = null): ResultActions {
+        val params = buildString {
+            val queryParams = mutableListOf<String>()
+            if (userId != null) queryParams.add("userId=$userId")
+            if (organism != null) queryParams.add("organism=$organism")
+            if (queryParams.isNotEmpty()) {
+                append("?")
+                append(queryParams.joinToString("&"))
+            }
+        }
+        return mockMvc.perform(get("/collections$params"))
+    }
+
+    fun getCollections(userId: String? = null, organism: String? = null): List<Collection> = deserializeJsonResponse(
+        getCollectionsRaw(userId, organism)
+            .andExpect(status().isOk),
+    )
+
+    fun getCollectionRaw(id: Long): ResultActions = mockMvc.perform(get("/collections/$id"))
+
+    fun getCollection(id: Long): Collection = deserializeJsonResponse(
+        getCollectionRaw(id)
+            .andExpect(status().isOk),
+    )
+
+    fun putCollectionRaw(collection: CollectionUpdate, id: Long, userId: String): ResultActions = mockMvc.perform(
+        put("/collections/$id?userId=$userId")
+            .content(objectMapper.writeValueAsString(collection))
+            .contentType(MediaType.APPLICATION_JSON),
+    )
+
+    fun putCollection(collection: CollectionUpdate, id: Long, userId: String): Collection = deserializeJsonResponse(
+        putCollectionRaw(collection, id, userId)
+            .andExpect(status().isOk),
+    )
+
+    fun deleteCollectionRaw(id: Long, userId: String): ResultActions =
+        mockMvc.perform(delete("/collections/$id?userId=$userId"))
+
+    fun deleteCollection(id: Long, userId: String) {
+        deleteCollectionRaw(id, userId).andExpect(status().isNoContent)
+    }
+
+    private inline fun <reified T> deserializeJsonResponse(resultActions: ResultActions): T {
+        val content =
+            resultActions
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .response
+                .contentAsString
+        return objectMapper.readValue(content)
+    }
+}

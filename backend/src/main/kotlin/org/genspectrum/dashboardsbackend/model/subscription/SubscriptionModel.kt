@@ -4,21 +4,14 @@ import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
-import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
-import org.jetbrains.exposed.sql.Database
+import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
-import javax.sql.DataSource
 
 @Service
 @Transactional
-class SubscriptionModel(pool: DataSource, private val dashboardsConfig: DashboardsConfig) {
-    init {
-        Database.connect(pool)
-    }
-
+class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
     fun getSubscription(subscriptionId: String, userId: String): Subscription =
         SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?.toSubscription()
@@ -31,7 +24,7 @@ class SubscriptionModel(pool: DataSource, private val dashboardsConfig: Dashboar
     }
 
     fun postSubscriptions(request: SubscriptionRequest, userId: String): Subscription {
-        validateIsValidOrganism(request.organism)
+        dashboardsConfig.validateIsValidOrganism(request.organism)
 
         return SubscriptionEntity
             .new {
@@ -54,7 +47,7 @@ class SubscriptionModel(pool: DataSource, private val dashboardsConfig: Dashboar
     }
 
     fun putSubscription(subscriptionId: String, subscriptionUpdate: SubscriptionUpdate, userId: String): Subscription {
-        subscriptionUpdate.organism?.also { validateIsValidOrganism(it) }
+        subscriptionUpdate.organism?.also { dashboardsConfig.validateIsValidOrganism(it) }
 
         val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?: throw NotFoundException("Subscription $subscriptionId not found")
@@ -79,17 +72,5 @@ class SubscriptionModel(pool: DataSource, private val dashboardsConfig: Dashboar
         }
 
         return subscription.toSubscription()
-    }
-
-    private fun validateIsValidOrganism(organism: String) {
-        if (!dashboardsConfig.organisms.containsKey(organism)) {
-            throw BadRequestException("Organism '$organism' is not supported")
-        }
-    }
-
-    private fun convertToUuid(id: String) = try {
-        UUID.fromString(id)
-    } catch (_: IllegalArgumentException) {
-        throw BadRequestException("Invalid UUID $id")
     }
 }

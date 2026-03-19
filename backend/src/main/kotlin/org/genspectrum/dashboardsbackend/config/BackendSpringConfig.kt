@@ -7,6 +7,7 @@ import org.flywaydb.core.Flyway
 import org.genspectrum.dashboardsbackend.logging.REQUEST_ID_HEADER
 import org.genspectrum.dashboardsbackend.logging.REQUEST_ID_HEADER_DESCRIPTION
 import org.jetbrains.exposed.spring.autoconfigure.ExposedAutoConfiguration
+import org.jetbrains.exposed.sql.Database
 import org.springdoc.core.customizers.OperationCustomizer
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
@@ -31,6 +32,10 @@ class BackendSpringConfig {
             .validateMigrationNaming(true)
         val flyway = Flyway(configuration)
         flyway.migrate()
+
+        // Set up exposed database connection after migration is done
+        Database.connect(dataSource)
+
         return flyway
     }
 
