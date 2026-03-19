@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
  * as well as lineage filtering under the "filters" key
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class MutationListDefinition(
+data class FilterObject(
     val aaMutations: List<String>? = null,
     val nucMutations: List<String>? = null,
     val aaInsertions: List<String>? = null,

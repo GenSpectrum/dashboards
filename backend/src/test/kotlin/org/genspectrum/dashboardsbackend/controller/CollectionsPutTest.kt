@@ -1,7 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
-import org.genspectrum.dashboardsbackend.api.MutationListDefinition
+import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
@@ -89,7 +89,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val newVariant = VariantUpdate.MutationListVariantUpdate(
             id = null,
             name = "New Variant",
-            mutationList = MutationListDefinition(
+            filterObject = FilterObject(
                 aaMutations = listOf("S:N501Y"),
             ),
         )
@@ -207,7 +207,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
 
         val invalidVariant = VariantUpdate.MutationListVariantUpdate(
             name = "Invalid Variant",
-            mutationList = MutationListDefinition(
+            filterObject = FilterObject(
                 aaMutations = listOf("S:N501Y"),
                 filters = mapOf("invalidField" to "value"),
             ),
@@ -230,7 +230,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val invalidUpdate = VariantUpdate.MutationListVariantUpdate(
             id = firstVariant.id,
             name = "Changed Type",
-            mutationList = MutationListDefinition(
+            filterObject = FilterObject(
                 aaMutations = listOf("S:N501Y"),
             ),
         )

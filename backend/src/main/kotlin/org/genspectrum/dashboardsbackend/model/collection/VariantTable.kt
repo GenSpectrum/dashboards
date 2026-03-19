@@ -1,6 +1,6 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
-import org.genspectrum.dashboardsbackend.api.MutationListDefinition
+import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.model.subscription.jacksonSerializableJsonb
 import org.jetbrains.exposed.dao.LongEntity
@@ -13,18 +13,18 @@ const val VARIANT_TABLE = "variants_table"
 
 enum class VariantType {
     QUERY,
-    MUTATION_LIST,
+    FILTER_OBJECT,
     ;
 
     fun toDatabaseValue(): String = when (this) {
         QUERY -> "query"
-        MUTATION_LIST -> "mutationList"
+        FILTER_OBJECT -> "filterObject"
     }
 
     companion object {
         fun fromDatabaseValue(value: String): VariantType = when (value) {
             "query" -> QUERY
-            "mutationList" -> MUTATION_LIST
+            "filterObject" -> FILTER_OBJECT
             else -> throw IllegalArgumentException("Unknown variant type: $value")
         }
     }
@@ -43,8 +43,8 @@ object VariantTable : LongIdTable(VARIANT_TABLE) {
     val countQuery = text("count_query").nullable()
     val coverageQuery = text("coverage_query").nullable()
 
-    val mutationList = jacksonSerializableJsonb<MutationListDefinition>(
-        "mutation_list",
+    val filterObject = jacksonSerializableJsonb<FilterObject>(
+        "filter_object",
     ).nullable()
 }
 
@@ -59,7 +59,7 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
     // Polymorphic property access
     var countQuery by VariantTable.countQuery
     var coverageQuery by VariantTable.coverageQuery
-    var mutationList by VariantTable.mutationList
+    var filterObject by VariantTable.filterObject
 
     // Type-safe variant type accessor
     var variantType: VariantType
@@ -75,10 +75,10 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
                 require(countQuery != null) { "Query variant must have count_query" }
                 require(mutationList == null) { "Query variant must not have mutation_list" }
             }
-            VariantType.MUTATION_LIST -> {
-                require(mutationList != null) { "MutationList variant must have mutation_list" }
+            VariantType.FILTER_OBJECT -> {
+                require(filterObject != null) { "FilterObject variant must have filter_object" }
                 require(countQuery == null && coverageQuery == null) {
-                    "MutationList variant must not have query columns"
+                    "FilterObject variant must not have query columns"
                 }
             }
         }
@@ -93,12 +93,12 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
             countQuery = countQuery!!,
             coverageQuery = coverageQuery,
         )
-        VariantType.MUTATION_LIST -> Variant.MutationListVariant(
+        VariantType.FILTER_OBJECT -> Variant.MutationListVariant(
             id = id.value,
             collectionId = collectionId.value,
             name = name,
             description = description,
-            mutationList = mutationList!!,
+            filterObject = filterObject!!,
         )
     }
 }

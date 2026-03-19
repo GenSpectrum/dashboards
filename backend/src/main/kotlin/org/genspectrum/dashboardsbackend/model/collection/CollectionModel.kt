@@ -3,7 +3,7 @@ package org.genspectrum.dashboardsbackend.model.collection
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
-import org.genspectrum.dashboardsbackend.api.MutationListDefinition
+import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
@@ -174,18 +174,18 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                     this.description = variantRequest.description
                     this.countQuery = variantRequest.countQuery
                     this.coverageQuery = variantRequest.coverageQuery
-                    this.mutationList = null
+                    this.filterObject = null
                 }
             }
             is VariantRequest.MutationListVariantRequest -> {
-                validateLineageFilters(collectionEntity.organism, variantRequest.mutationList)
+                validateLineageFilters(collectionEntity.organism, variantRequest.filterObject)
 
                 VariantEntity.new {
                     this.collectionId = collectionEntity.id
-                    this.variantType = VariantType.MUTATION_LIST
+                    this.variantType = VariantType.FILTER_OBJECT
                     this.name = variantRequest.name
                     this.description = variantRequest.description
-                    this.mutationList = variantRequest.mutationList
+                    this.filterObject = variantRequest.filterObject
                     this.countQuery = null
                     this.coverageQuery = null
                 }
@@ -194,12 +194,12 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
 
     /**
      * The list of known lineage fields is configured in the organism config.
-     * This function checks a MutationListDefinition against that list, and raises an error
+     * This function checks a FilterObject against that list, and raises an error
      * if invalid lineage fields are found.
      */
-    private fun validateLineageFilters(organism: String, mutationList: MutationListDefinition) {
+    private fun validateLineageFilters(organism: String, filterObject: FilterObject) {
         val validLineageFields = dashboardsConfig.getOrganismConfig(organism).lapis.lineageFields ?: emptyList()
-        val invalidFields = mutationList.filters.orEmpty().keys - validLineageFields.toSet()
+        val invalidFields = filterObject.filters.orEmpty().keys - validLineageFields.toSet()
         if (invalidFields.isNotEmpty()) {
             val validFieldsStr = if (validLineageFields.isEmpty()) {
                 "no lineage fields are configured"
@@ -232,17 +232,17 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             }
             is VariantUpdate.MutationListVariantUpdate -> {
                 // Verify type matches
-                if (variantEntity.variantType != VariantType.MUTATION_LIST) {
+                if (variantEntity.variantType != VariantType.FILTER_OBJECT) {
                     throw BadRequestException(
-                        "Cannot change variant type from ${variantEntity.variantType} to MUTATION_LIST",
+                        "Cannot change variant type from ${variantEntity.variantType} to FILTER_OBJECT",
                     )
                 }
 
-                validateLineageFilters(collectionEntity.organism, variantUpdate.mutationList)
+                validateLineageFilters(collectionEntity.organism, variantUpdate.filterObject)
 
                 variantEntity.name = variantUpdate.name
                 variantEntity.description = variantUpdate.description
-                variantEntity.mutationList = variantUpdate.mutationList
+                variantEntity.filterObject = variantUpdate.filterObject
             }
         }
     }

@@ -39,7 +39,7 @@ val dummyQueryVariantRequest = VariantRequest.QueryVariantRequest(
 val dummyMutationListVariantRequest = VariantRequest.MutationListVariantRequest(
     name = "Omicron mutations",
     description = "Key mutations",
-    mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
+    filterObject = org.genspectrum.dashboardsbackend.api.FilterObject(
         aaMutations = listOf("S:N501Y", "S:E484K", "S:K417N"),
     ),
 )
