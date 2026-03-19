@@ -202,10 +202,10 @@ class CollectionsPostTest(
                 "organism": "Covid",
                 "description": "Test",
                 "variants": [{
-                    "type": "mutationList",
+                    "type": "filterObject",
                     "name": "Test variant",
-                    "mutationList": {
-                        "filters": {"pangoLineage": "B.1.1.7"}
+                    "filterObject": {
+                        "pangoLineage": "B.1.1.7"
                     }
                 }]
             }

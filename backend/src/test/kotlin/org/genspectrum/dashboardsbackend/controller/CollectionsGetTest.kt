@@ -100,7 +100,7 @@ class CollectionsGetTest(
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].id").value(createdCollection.id))
             .andExpect(jsonPath("$[0].variants[0].type").value("query"))
-            .andExpect(jsonPath("$[0].variants[1].type").value("mutationList"))
+            .andExpect(jsonPath("$[0].variants[1].type").value("filterObject"))
     }
 
     @Test
