@@ -24,4 +24,22 @@ class FilterObject {
     fun set(key: String, value: String) {
         filters[key] = value
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FilterObject) return false
+        return aminoAcidMutations == other.aminoAcidMutations &&
+            nucleotideMutations == other.nucleotideMutations &&
+            aminoAcidInsertions == other.aminoAcidInsertions &&
+            nucleotideInsertions == other.nucleotideInsertions &&
+            filters == other.filters
+    }
+
+    override fun hashCode(): Int = arrayOf(
+        aminoAcidMutations,
+        nucleotideMutations,
+        aminoAcidInsertions,
+        nucleotideInsertions,
+        filters,
+    ).contentHashCode()
 }
