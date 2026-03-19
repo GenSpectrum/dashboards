@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 /**
  * A JSON object with mutation lists (keys: aminoAcidMutations, nucleotideMutations, ...)
  * as well as arbitrary extra properties (e.g. lineage filters) as top-level fields.
+ * In a validation step, the extra properties are validated to make sure only valid
+ * fields are used.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class FilterObject {
