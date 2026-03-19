@@ -73,7 +73,7 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
         when (variantType) {
             VariantType.QUERY -> {
                 require(countQuery != null) { "Query variant must have count_query" }
-                require(mutationList == null) { "Query variant must not have mutation_list" }
+                require(filterObject == null) { "Query variant must not have filter_object" }
             }
             VariantType.FILTER_OBJECT -> {
                 require(filterObject != null) { "FilterObject variant must have filter_object" }

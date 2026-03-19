@@ -217,7 +217,7 @@ class CollectionsGetTest(
         assertThat(mutationListVariants, hasSize(1))
 
         assertThat(queryVariants[0].countQuery, notNullValue())
-        assertThat(mutationListVariants[0].mutationList, notNullValue())
+        assertThat(mutationListVariants[0].filterObject, notNullValue())
     }
 
     @Test

@@ -89,9 +89,9 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val newVariant = VariantUpdate.MutationListVariantUpdate(
             id = null,
             name = "New Variant",
-            filterObject = FilterObject(
-                aminoAcidMutations = listOf("S:N501Y"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+            },
         )
 
         val existingVariants = createdCollection.variants.map { variant ->
@@ -107,7 +107,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
                     id = variant.id,
                     name = variant.name,
                     description = variant.description,
-                    mutationList = variant.mutationList,
+                    filterObject = variant.filterObject,
                 )
             }
         }
@@ -207,10 +207,10 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
 
         val invalidVariant = VariantUpdate.MutationListVariantUpdate(
             name = "Invalid Variant",
-            filterObject = FilterObject(
-                aminoAcidMutations = listOf("S:N501Y"),
-                filters = mapOf("invalidField" to "value"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+                set("invalidField", "value")
+            },
         )
 
         val update = CollectionUpdate(variants = listOf(invalidVariant))
@@ -230,9 +230,9 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val invalidUpdate = VariantUpdate.MutationListVariantUpdate(
             id = firstVariant.id,
             name = "Changed Type",
-            filterObject = FilterObject(
-                aminoAcidMutations = listOf("S:N501Y"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+            },
         )
 
         val update = CollectionUpdate(variants = listOf(invalidUpdate))

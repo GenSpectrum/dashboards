@@ -1,9 +1,11 @@
 package org.genspectrum.dashboardsbackend.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -13,42 +15,69 @@ class FilterObjectTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun `serializes mutation lists`() {
-        val underTest = FilterObject(
-            aminoAcidMutations = listOf("S:N501Y", "S:E484K"),
-            nucleotideMutations = listOf("A23403G"),
-        )
+    fun `serializes full object with all fields and extra filter`() {
+        val underTest = FilterObject().apply {
+            aminoAcidMutations = listOf("S:N501Y", "S:E484K")
+            nucleotideMutations = listOf("A23403G")
+            aminoAcidInsertions = listOf("ins_S:214:EPE")
+            nucleotideInsertions = listOf("ins_22204:GAG")
+            set("foo", "bar")
+        }
 
         val json = objectMapper.writeValueAsString(underTest)
 
         assertThat(
             json,
-            equalTo("""{"aminoAcidMutations":["S:N501Y","S:E484K"],"nucleotideMutations":["A23403G"]}"""),
+            equalTo(
+                """{"aminoAcidMutations":["S:N501Y","S:E484K"],"nucleotideMutations":["A23403G"],"aminoAcidInsertions":["ins_S:214:EPE"],"nucleotideInsertions":["ins_22204:GAG"],"foo":"bar"}""",
+            ),
         )
     }
 
     @Test
-    fun `serializes lineage filters under filters key`() {
-        val underTest = FilterObject(
-            aminoAcidMutations = listOf("S:N501Y"),
-            filters = mapOf("lineage" to "B.1.1.7"),
-        )
+    fun `serializes object with only nucleotideMutations`() {
+        val underTest = FilterObject().apply {
+            nucleotideMutations = listOf("A23403G")
+        }
 
         val json = objectMapper.writeValueAsString(underTest)
 
         assertThat(
             json,
-            equalTo("""{"aminoAcidMutations":["S:N501Y"],"filters":{"lineage":"B.1.1.7"}}"""),
+            equalTo("""{"nucleotideMutations":["A23403G"]}"""),
         )
     }
 
     @Test
-    fun `deserializes lineage filters from filters key`() {
-        val json = """{"aminoAcidMutations":["S:N501Y"],"filters":{"lineage":"B.1.1.7"}}"""
+    fun `deserializes full object with all fields and extra filter`() {
+        val json =
+            """{"aminoAcidMutations":["S:N501Y","S:E484K"],"nucleotideMutations":["A23403G"],"aminoAcidInsertions":["ins_S:214:EPE"],"nucleotideInsertions":["ins_22204:GAG"],"foo":"bar"}"""
 
         val result = objectMapper.readValue(json, FilterObject::class.java)
 
-        assertThat(result.aminoAcidMutations, equalTo(listOf("S:N501Y")))
-        assertThat(result.filters, equalTo(mapOf("lineage" to "B.1.1.7")))
+        assertThat(result.aminoAcidMutations, equalTo(listOf("S:N501Y", "S:E484K")))
+        assertThat(result.nucleotideMutations, equalTo(listOf("A23403G")))
+        assertThat(result.aminoAcidInsertions, equalTo(listOf("ins_S:214:EPE")))
+        assertThat(result.nucleotideInsertions, equalTo(listOf("ins_22204:GAG")))
+        assertThat(result.getFilters(), equalTo(mapOf("foo" to "bar")))
+    }
+
+    @Test
+    fun `deserializes object with only nucleotideMutations and extra filter`() {
+        val json = """{"nucleotideMutations":["A23403G"],"foo":"bar"}"""
+
+        val result = objectMapper.readValue(json, FilterObject::class.java)
+
+        assertThat(result.nucleotideMutations, equalTo(listOf("A23403G")))
+        assertThat(result.getFilters(), equalTo(mapOf("foo" to "bar")))
+    }
+
+    @Test
+    fun `deserializing extra property with non-string value throws error`() {
+        val json = """{"foo": ["bar", "baz"]}"""
+
+        assertThrows<MismatchedInputException> {
+            objectMapper.readValue(json, FilterObject::class.java)
+        }
     }
 }
