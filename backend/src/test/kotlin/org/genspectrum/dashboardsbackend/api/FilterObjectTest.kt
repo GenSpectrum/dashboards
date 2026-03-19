@@ -15,7 +15,7 @@ class FilterObjectTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun `WHEN serializing full object with all fields and extra filter THEN produces correct JSON`() {
+    fun `GIVEN FilterObject with all fields and extra filter WHEN serializing THEN produces correct JSON`() {
         val underTest = FilterObject().apply {
             aminoAcidMutations = listOf("S:N501Y", "S:E484K")
             nucleotideMutations = listOf("A23403G")
@@ -35,7 +35,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `WHEN serializing object with only nucleotideMutations THEN omits null fields`() {
+    fun `GIVEN FilterObject with only nucleotideMutations WHEN serializing THEN omits null fields`() {
         val underTest = FilterObject().apply {
             nucleotideMutations = listOf("A23403G")
         }
@@ -49,7 +49,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `WHEN deserializing full object with all fields and extra filter THEN all properties are set`() {
+    fun `GIVEN JSON with all fields and extra filter WHEN deserializing THEN all properties are set`() {
         val json =
             """{"aminoAcidMutations":["S:N501Y","S:E484K"],"nucleotideMutations":["A23403G"],"aminoAcidInsertions":["ins_S:214:EPE"],"nucleotideInsertions":["ins_22204:GAG"],"foo":"bar"}"""
 
@@ -63,7 +63,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `WHEN deserializing object with only nucleotideMutations and extra filter THEN succeeds`() {
+    fun `GIVEN JSON with only nucleotideMutations and extra filter WHEN deserializing THEN succeeds`() {
         val json = """{"nucleotideMutations":["A23403G"],"foo":"bar"}"""
 
         val result = objectMapper.readValue(json, FilterObject::class.java)
@@ -73,7 +73,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `WHEN deserializing extra property with non-string value THEN throws error`() {
+    fun `GIVEN JSON with non-string extra property value WHEN deserializing THEN throws error`() {
         val json = """{"foo": ["bar", "baz"]}"""
 
         assertThrows<MismatchedInputException> {
