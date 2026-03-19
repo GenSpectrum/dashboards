@@ -47,6 +47,17 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
+    @ExceptionHandler(ForbiddenException::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    fun handleForbiddenException(e: Exception): ResponseEntity<ProblemDetail> {
+        log.info { "Caught ${e.javaClass}: ${e.message}" }
+
+        return responseEntity(
+            HttpStatus.FORBIDDEN,
+            e.message,
+        )
+    }
+
     private fun responseEntity(httpStatus: HttpStatus, detail: String?): ResponseEntity<ProblemDetail> =
         responseEntity(httpStatus, httpStatus.reasonPhrase, detail)
 
@@ -80,3 +91,4 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
 
 class BadRequestException(message: String) : RuntimeException(message)
 class NotFoundException(message: String) : RuntimeException(message)
+class ForbiddenException(message: String) : RuntimeException(message)

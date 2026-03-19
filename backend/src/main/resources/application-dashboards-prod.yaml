@@ -4,6 +4,9 @@ dashboards:
       lapis:
         url: "https://lapis.cov-spectrum.org/open/v2"
         mainDateField: "date"
+        lineageFields:
+          - "pangoLineage"
+          - "nextcladePangoLineage"
       externalNavigationLinks:
         - url: "https://cov-spectrum.org"
           label: "CoV-Spectrum"
