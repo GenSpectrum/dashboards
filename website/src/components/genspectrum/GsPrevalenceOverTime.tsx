@@ -40,12 +40,12 @@ export const GsPrevalenceOverTime: FC<GsPrevalenceOverTimeProps> = ({
     return (
         <ComponentWrapper title='Prevalence over time' height={height}>
             <gs-prevalence-over-time
-                numeratorFilters={JSON.stringify(numeratorFilters)}
-                denominatorFilter={JSON.stringify(denominatorFilter)}
+                numeratorFilters={numeratorFilters}
+                denominatorFilter={denominatorFilter}
                 granularity={granularity}
                 smoothingWindow={smoothingWindow}
-                views={JSON.stringify(views)}
-                confidenceIntervalMethods={JSON.stringify(confidenceIntervalMethods)}
+                views={views}
+                confidenceIntervalMethods={confidenceIntervalMethods}
                 width={width}
                 height={height ? '100%' : undefined}
                 lapisDateField={lapisDateField}

@@ -224,7 +224,7 @@ function ConfirmDeletionModal({
     modalRef,
 }: {
     onDelete: JSX.IntrinsicElements['button']['onClick'];
-    modalRef: RefObject<HTMLDialogElement>;
+    modalRef: RefObject<HTMLDialogElement | null>;
 }) {
     return (
         <Modal modalRef={modalRef}>

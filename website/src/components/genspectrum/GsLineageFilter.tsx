@@ -24,7 +24,7 @@ export function GsLineageFilter<Lineage extends string>({
     hideCounts?: true;
     multiSelect?: true;
 }) {
-    const lineageFilterRef = useRef<HTMLElement>();
+    const lineageFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentLineageFilterRef = lineageFilterRef.current;
@@ -63,16 +63,14 @@ export function GsLineageFilter<Lineage extends string>({
         };
     }, [onLineageMultiChange]);
 
-    const valueProperty = value === undefined ? (multiSelect ? '[]' : '') : multiSelect ? JSON.stringify(value) : value;
-
     return (
         <gs-lineage-filter
             lapisField={lapisField}
             placeholderText={placeholderText}
-            value={valueProperty}
+            value={value ?? (multiSelect ? [] : '')}
             width={width}
             ref={lineageFilterRef}
-            lapisFilter={JSON.stringify(lapisFilter)}
+            lapisFilter={lapisFilter}
             hideCounts={hideCounts}
             multiSelect={multiSelect}
         ></gs-lineage-filter>

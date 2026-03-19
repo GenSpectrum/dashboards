@@ -108,6 +108,25 @@ export function DefineClinicalSignatureInfo() {
     );
 }
 
+export function CollectionInfo() {
+    return (
+        <InfoBlock title='Collection'>
+            <p className='text-gray-700'>
+                Collections are sourced from{' '}
+                <a className='link' href='https://cov-spectrum.org/collections'>
+                    CovSpectrum
+                </a>
+                . Only collections whose title contains the word <span className='font-semibold'>wastewater</span> are
+                shown here.
+            </p>
+            <p className='mt-2 text-gray-700'>
+                To add a new collection, create it on CovSpectrum and make sure its title includes the word
+                &ldquo;wastewater&rdquo; so it appears in this list.
+            </p>
+        </InfoBlock>
+    );
+}
+
 export function ExplorationModeInfo() {
     return (
         <InfoBlock title='Exploration Modes'>
@@ -137,6 +156,13 @@ export function ExplorationModeInfo() {
                     attributed to major variants. Variant-specific mutations are computed from clinical sequences from{' '}
                     <a className='link' href='https://cov-spectrum.org'>
                         CovSpectrum
+                    </a>
+                    .
+                </li>
+                <li>
+                    <span className='font-semibold text-gray-900'>Collection:</span> explore mutations defined by a{' '}
+                    <a className='link' href='https://cov-spectrum.org/collections'>
+                        CovSpectrum collection
                     </a>
                     .
                 </li>

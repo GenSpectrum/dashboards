@@ -22,7 +22,7 @@ export function GsLocationFilter<Field extends string>({
     value?: LapisLocation;
     hideCounts?: true;
 }) {
-    const locationFilterRef = useRef<HTMLElement>();
+    const locationFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentLocationFilterRef = locationFilterRef.current;
@@ -42,12 +42,12 @@ export function GsLocationFilter<Field extends string>({
 
     return (
         <gs-location-filter
-            fields={JSON.stringify(fields)}
+            fields={fields}
             placeholderText={placeholderText}
-            lapisFilter={JSON.stringify(lapisFilter)}
+            lapisFilter={lapisFilter}
             width={width}
             ref={locationFilterRef}
-            value={JSON.stringify(value)}
+            value={value}
             hideCounts={hideCounts}
         ></gs-location-filter>
     );

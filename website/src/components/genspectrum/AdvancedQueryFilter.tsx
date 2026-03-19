@@ -1,4 +1,4 @@
-import { type ChangeEvent, type FC, useEffect, useState } from 'react';
+import { type InputEvent, type FC, useEffect, useState } from 'react';
 
 export const advancedQueryUrlParamForVariant = 'advancedQueryVariant';
 export const advancedQueryUrlParam = 'advancedQuery';
@@ -29,8 +29,8 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 className='input input-bordered w-full'
                 placeholder={'Advanced query: A123T & ins_123:TA'}
                 value={inputValue}
-                onInput={(event: ChangeEvent<HTMLInputElement>) => {
-                    const newValue = event.target.value;
+                onInput={(event: InputEvent<HTMLInputElement>) => {
+                    const newValue = event.currentTarget.value;
                     setInputValue(newValue === '' ? undefined : newValue);
                 }}
                 onBlur={() => {

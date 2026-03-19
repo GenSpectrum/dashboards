@@ -26,7 +26,7 @@ export const OrganismViewPageLayout: FC<OrganismViewPageLayoutProps> = ({
             lapisUrl={lapisUrl}
             accessionDownloadFields={view.organismConstants.accessionDownloadFields}
         >
-            <gs-app lapis={lapisUrl} mutationAnnotations={JSON.stringify(view.organismConstants.mutationAnnotations)}>
+            <gs-app lapis={lapisUrl} mutationAnnotations={view.organismConstants.mutationAnnotations}>
                 {children}
             </gs-app>
         </DataPageLayout>

@@ -43,18 +43,16 @@ export const GsMutationsOverTime: FC<GsMutationsOverTimeProps> = ({
             <gs-mutations-over-time
                 width='100%'
                 height={height ? '100%' : undefined}
-                lapisFilter={JSON.stringify(lapisFilter)}
+                lapisFilter={lapisFilter}
                 sequenceType={sequenceType}
-                views={JSON.stringify([views.grid])}
+                views={[views.grid]}
                 granularity={granularity}
                 lapisDateField={lapisDateField}
-                displayMutations={displayMutations ? JSON.stringify(displayMutations) : undefined}
+                displayMutations={displayMutations}
                 hideGaps={hideGaps}
-                pageSizes={JSON.stringify(pageSizes ?? [10, 20, 30, 40, 50])}
-                initialMeanProportionInterval={
-                    initialMeanProportionInterval ? JSON.stringify(initialMeanProportionInterval) : undefined
-                }
-                customColumns={customColumns ? JSON.stringify(customColumns) : undefined}
+                pageSizes={pageSizes ?? [10, 20, 30, 40, 50]}
+                initialMeanProportionInterval={initialMeanProportionInterval}
+                customColumns={customColumns}
             ></gs-mutations-over-time>
         </ComponentWrapper>
     );
