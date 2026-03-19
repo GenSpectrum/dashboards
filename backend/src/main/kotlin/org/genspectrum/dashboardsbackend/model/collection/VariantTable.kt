@@ -49,10 +49,7 @@ object VariantTable : LongIdTable(VARIANT_TABLE) {
 }
 
 class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<VariantEntity>(VariantTable) {
-        fun findForCollection(collectionId: Long): List<VariantEntity> =
-            find { VariantTable.collectionId eq collectionId }.toList()
-    }
+    companion object : LongEntityClass<VariantEntity>(VariantTable)
 
     var collectionId by VariantTable.collectionId
     private var variantTypeString by VariantTable.variantType
