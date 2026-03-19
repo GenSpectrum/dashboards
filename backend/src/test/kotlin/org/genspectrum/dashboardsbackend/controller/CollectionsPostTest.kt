@@ -1,10 +1,10 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import org.genspectrum.dashboardsbackend.api.MutationListDefinition
+import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.dummyCollectionRequest
-import org.genspectrum.dashboardsbackend.dummyMutationListVariantRequest
+import org.genspectrum.dashboardsbackend.dummyFilterObjectVariantRequest
 import org.genspectrum.dashboardsbackend.dummyQueryVariantRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
@@ -65,13 +65,13 @@ class CollectionsPostTest(
     fun `WHEN creating collection with only mutation list variants THEN succeeds`() {
         val userId = getNewUserId()
         val request = dummyCollectionRequest.copy(
-            variants = listOf(dummyMutationListVariantRequest),
+            variants = listOf(dummyFilterObjectVariantRequest),
         )
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
         assertThat(createdCollection.variants, hasSize(1))
-        assertThat(createdCollection.variants[0], instanceOf(Variant.MutationListVariant::class.java))
+        assertThat(createdCollection.variants[0], instanceOf(Variant.FilterObjectVariant::class.java))
     }
 
     @Test
@@ -95,34 +95,34 @@ class CollectionsPostTest(
     @Test
     fun `WHEN creating variant with lineage filter THEN succeeds`() {
         val userId = getNewUserId()
-        val variantWithLineage = VariantRequest.MutationListVariantRequest(
+        val variantWithLineage = VariantRequest.FilterObjectVariantRequest(
             name = "BA.2 lineage",
             description = "BA.2 variant",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:N501Y"),
-                filters = mapOf("pangoLineage" to "BA.2*"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+                set("pangoLineage", "BA.2*")
+            },
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithLineage))
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
         assertThat(createdCollection.variants, hasSize(1))
-        val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y")))
-        assertThat(variant.mutationList.filters!!["pangoLineage"], equalTo("BA.2*"))
+        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        assertThat(variant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y")))
+        assertThat(variant.filterObject.getFilters()["pangoLineage"], equalTo("BA.2*"))
     }
 
     @Test
     fun `WHEN creating variant with invalid lineage field THEN returns 400`() {
         val userId = getNewUserId()
-        val variantWithInvalidLineage = VariantRequest.MutationListVariantRequest(
+        val variantWithInvalidLineage = VariantRequest.FilterObjectVariantRequest(
             name = "Invalid lineage",
             description = "Has invalid lineage field",
-            mutationList = MutationListDefinition(
-                aaMutations = emptyList(),
-                filters = mapOf("invalidLineageField" to "value"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = emptyList()
+                set("invalidLineageField", "value")
+            },
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithInvalidLineage))
 
@@ -135,64 +135,88 @@ class CollectionsPostTest(
     @Test
     fun `WHEN creating variant with multiple lineage filters THEN succeeds`() {
         val userId = getNewUserId()
-        val variantWithMultipleLineages = VariantRequest.MutationListVariantRequest(
+        val variantWithMultipleLineages = VariantRequest.FilterObjectVariantRequest(
             name = "Multiple lineages",
             description = "Has multiple lineage filters",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:K417N"),
-                filters = mapOf(
-                    "pangoLineage" to "BA.2*",
-                    "nextcladePangoLineage" to "BA.2.75*",
-                ),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:K417N")
+                set("pangoLineage", "BA.2*")
+                set("nextcladePangoLineage", "BA.2.75*")
+            },
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithMultipleLineages))
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.filters!!["pangoLineage"], equalTo("BA.2*"))
-        assertThat(variant.mutationList.filters!!["nextcladePangoLineage"], equalTo("BA.2.75*"))
+        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        assertThat(variant.filterObject.getFilters()["pangoLineage"], equalTo("BA.2*"))
+        assertThat(variant.filterObject.getFilters()["nextcladePangoLineage"], equalTo("BA.2.75*"))
     }
 
     @Test
-    fun `WHEN creating variant with only aaMutations THEN succeeds`() {
+    fun `WHEN creating variant with only aminoAcidMutations THEN succeeds`() {
         val userId = getNewUserId()
-        val variantWithOnlyAaMutations = VariantRequest.MutationListVariantRequest(
+        val variantWithOnlyAaMutations = VariantRequest.FilterObjectVariantRequest(
             name = "Only AA mutations",
             description = "Only has amino acid mutations",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:N501Y", "S:E484K"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y", "S:E484K")
+            },
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithOnlyAaMutations))
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y", "S:E484K")))
-        assertThat(variant.mutationList.nucMutations, nullValue())
+        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        assertThat(variant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y", "S:E484K")))
+        assertThat(variant.filterObject.nucleotideMutations, nullValue())
     }
 
     @Test
     fun `WHEN creating variant with insertions THEN succeeds`() {
         val userId = getNewUserId()
-        val variantWithInsertions = VariantRequest.MutationListVariantRequest(
+        val variantWithInsertions = VariantRequest.FilterObjectVariantRequest(
             name = "With insertions",
             description = "Has insertions",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:N501Y"),
-                aaInsertions = listOf("ins_S:214:EPE"),
-                nucInsertions = listOf("ins_22204:GAG"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+                aminoAcidInsertions = listOf("ins_S:214:EPE")
+                nucleotideInsertions = listOf("ins_22204:GAG")
+            },
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithInsertions))
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.aaInsertions, equalTo(listOf("ins_S:214:EPE")))
-        assertThat(variant.mutationList.nucInsertions, equalTo(listOf("ins_22204:GAG")))
+        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        assertThat(variant.filterObject.aminoAcidInsertions, equalTo(listOf("ins_S:214:EPE")))
+        assertThat(variant.filterObject.nucleotideInsertions, equalTo(listOf("ins_22204:GAG")))
+    }
+
+    @Test
+    fun `WHEN creating variant with non-string extra property value THEN returns 400`() {
+        val userId = getNewUserId()
+        val body = """
+            {
+                "name": "Test",
+                "organism": "Covid",
+                "description": "Test",
+                "variants": [{
+                    "type": "filterObject",
+                    "name": "Test variant",
+                    "filterObject": {
+                        "foo": ["bar", "baz"]
+                    }
+                }]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -204,10 +228,10 @@ class CollectionsPostTest(
                 "organism": "Covid",
                 "description": "Test",
                 "variants": [{
-                    "type": "mutationList",
+                    "type": "filterObject",
                     "name": "Test variant",
-                    "mutationList": {
-                        "filters": {"pangoLineage": "B.1.1.7"}
+                    "filterObject": {
+                        "pangoLineage": "B.1.1.7"
                     }
                 }]
             }

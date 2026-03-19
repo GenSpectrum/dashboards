@@ -1,7 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
-import org.genspectrum.dashboardsbackend.api.MutationListDefinition
+import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
@@ -86,12 +86,12 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val originalVariantCount = createdCollection.variants.size
 
-        val newVariant = VariantUpdate.MutationListVariantUpdate(
+        val newVariant = VariantUpdate.FilterObjectVariantUpdate(
             id = null,
             name = "New Variant",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:N501Y"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+            },
         )
 
         val existingVariants = createdCollection.variants.map { variant ->
@@ -103,11 +103,11 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
                     countQuery = variant.countQuery,
                     coverageQuery = variant.coverageQuery,
                 )
-                is Variant.MutationListVariant -> VariantUpdate.MutationListVariantUpdate(
+                is Variant.FilterObjectVariant -> VariantUpdate.FilterObjectVariantUpdate(
                     id = variant.id,
                     name = variant.name,
                     description = variant.description,
-                    mutationList = variant.mutationList,
+                    filterObject = variant.filterObject,
                 )
             }
         }
@@ -121,7 +121,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
             updated.variants.any { variant ->
                 when (variant) {
                     is Variant.QueryVariant -> variant.name == "New Variant"
-                    is Variant.MutationListVariant -> variant.name == "New Variant"
+                    is Variant.FilterObjectVariant -> variant.name == "New Variant"
                 }
             },
             equalTo(true),
@@ -205,12 +205,12 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val invalidVariant = VariantUpdate.MutationListVariantUpdate(
+        val invalidVariant = VariantUpdate.FilterObjectVariantUpdate(
             name = "Invalid Variant",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:N501Y"),
-                filters = mapOf("invalidField" to "value"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+                set("invalidField", "value")
+            },
         )
 
         val update = CollectionUpdate(variants = listOf(invalidVariant))
@@ -227,12 +227,12 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val firstVariant = createdCollection.variants[0] as Variant.QueryVariant
 
-        val invalidUpdate = VariantUpdate.MutationListVariantUpdate(
+        val invalidUpdate = VariantUpdate.FilterObjectVariantUpdate(
             id = firstVariant.id,
             name = "Changed Type",
-            mutationList = MutationListDefinition(
-                aaMutations = listOf("S:N501Y"),
-            ),
+            filterObject = FilterObject().apply {
+                aminoAcidMutations = listOf("S:N501Y")
+            },
         )
 
         val update = CollectionUpdate(variants = listOf(invalidUpdate))

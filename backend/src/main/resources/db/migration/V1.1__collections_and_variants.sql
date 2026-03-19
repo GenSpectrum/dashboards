@@ -17,15 +17,15 @@ create table variants_table (
     -- Query variant columns (nullable, only used when variant_type='query')
     count_query text,
     coverage_query text,
-    -- MutationList variant column (nullable, only used when variant_type='mutationList')
-    mutation_list jsonb,
+    -- FilterObject variant column (nullable, only used when variant_type='filterObject')
+    filter_object jsonb,
     -- Constraints
     constraint fk_collection foreign key (collection_id) references collections_table(id) on delete cascade,
-    constraint chk_variant_type check (variant_type in ('query', 'mutationList')),
+    constraint chk_variant_type check (variant_type in ('query', 'filterObject')),
     -- Ensure correct columns are populated based on type
     constraint chk_query_columns check (
-        (variant_type = 'query' and count_query is not null and mutation_list is null) or
-        (variant_type = 'mutationList' and mutation_list is not null and count_query is null and coverage_query is null)
+        (variant_type = 'query' and count_query is not null and filter_object is null) or
+        (variant_type = 'filterObject' and filter_object is not null and count_query is null and coverage_query is null)
     )
 );
 
