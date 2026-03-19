@@ -69,7 +69,7 @@ sealed interface Variant {
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
     "filterObject": {
-        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+        "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
     }
 }
 """,
@@ -127,7 +127,7 @@ sealed interface VariantRequest {
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
     "filterObject": {
-        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+        "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
     }
 }
 """,
@@ -188,7 +188,7 @@ sealed interface VariantUpdate {
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
     "filterObject": {
-        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+        "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
     }
 }
 """,

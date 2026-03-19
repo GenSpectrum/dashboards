@@ -90,7 +90,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
             id = null,
             name = "New Variant",
             filterObject = FilterObject(
-                aaMutations = listOf("S:N501Y"),
+                aminoAcidMutations = listOf("S:N501Y"),
             ),
         )
 
@@ -208,7 +208,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
         val invalidVariant = VariantUpdate.MutationListVariantUpdate(
             name = "Invalid Variant",
             filterObject = FilterObject(
-                aaMutations = listOf("S:N501Y"),
+                aminoAcidMutations = listOf("S:N501Y"),
                 filters = mapOf("invalidField" to "value"),
             ),
         )
@@ -231,7 +231,7 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
             id = firstVariant.id,
             name = "Changed Type",
             filterObject = FilterObject(
-                aaMutations = listOf("S:N501Y"),
+                aminoAcidMutations = listOf("S:N501Y"),
             ),
         )
 

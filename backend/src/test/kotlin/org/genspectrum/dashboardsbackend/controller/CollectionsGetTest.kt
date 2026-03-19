@@ -199,7 +199,7 @@ class CollectionsGetTest(
             retrievedCollection.variants.first { it is Variant.MutationListVariant } as Variant.MutationListVariant
         assertThat(mutationListVariant.name, equalTo("Omicron mutations"))
         assertThat(mutationListVariant.description, equalTo("Key mutations"))
-        assertThat(mutationListVariant.mutationList.aaMutations, equalTo(listOf("S:N501Y", "S:E484K", "S:K417N")))
+        assertThat(mutationListVariant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y", "S:E484K", "S:K417N")))
     }
 
     @Test

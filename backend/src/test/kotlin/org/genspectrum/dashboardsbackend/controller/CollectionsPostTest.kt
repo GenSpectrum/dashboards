@@ -99,7 +99,7 @@ class CollectionsPostTest(
             name = "BA.2 lineage",
             description = "BA.2 variant",
             filterObject = FilterObject(
-                aaMutations = listOf("S:N501Y"),
+                aminoAcidMutations = listOf("S:N501Y"),
                 filters = mapOf("pangoLineage" to "BA.2*"),
             ),
         )
@@ -109,8 +109,8 @@ class CollectionsPostTest(
 
         assertThat(createdCollection.variants, hasSize(1))
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y")))
-        assertThat(variant.mutationList.filters!!["pangoLineage"], equalTo("BA.2*"))
+        assertThat(variant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y")))
+        assertThat(variant.filterObject.filters!!["pangoLineage"], equalTo("BA.2*"))
     }
 
     @Test
@@ -120,7 +120,7 @@ class CollectionsPostTest(
             name = "Invalid lineage",
             description = "Has invalid lineage field",
             filterObject = FilterObject(
-                aaMutations = emptyList(),
+                aminoAcidMutations = emptyList(),
                 filters = mapOf("invalidLineageField" to "value"),
             ),
         )
@@ -139,7 +139,7 @@ class CollectionsPostTest(
             name = "Multiple lineages",
             description = "Has multiple lineage filters",
             filterObject = FilterObject(
-                aaMutations = listOf("S:K417N"),
+                aminoAcidMutations = listOf("S:K417N"),
                 filters = mapOf(
                     "pangoLineage" to "BA.2*",
                     "nextcladePangoLineage" to "BA.2.75*",
@@ -151,18 +151,18 @@ class CollectionsPostTest(
         val createdCollection = collectionsClient.postCollection(request, userId)
 
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.filters!!["pangoLineage"], equalTo("BA.2*"))
-        assertThat(variant.mutationList.filters!!["nextcladePangoLineage"], equalTo("BA.2.75*"))
+        assertThat(variant.filterObject.filters!!["pangoLineage"], equalTo("BA.2*"))
+        assertThat(variant.filterObject.filters!!["nextcladePangoLineage"], equalTo("BA.2.75*"))
     }
 
     @Test
-    fun `WHEN creating variant with only aaMutations THEN succeeds`() {
+    fun `WHEN creating variant with only aminoAcidMutations THEN succeeds`() {
         val userId = getNewUserId()
         val variantWithOnlyAaMutations = VariantRequest.MutationListVariantRequest(
             name = "Only AA mutations",
             description = "Only has amino acid mutations",
             filterObject = FilterObject(
-                aaMutations = listOf("S:N501Y", "S:E484K"),
+                aminoAcidMutations = listOf("S:N501Y", "S:E484K"),
             ),
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithOnlyAaMutations))
@@ -170,8 +170,8 @@ class CollectionsPostTest(
         val createdCollection = collectionsClient.postCollection(request, userId)
 
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.aaMutations, equalTo(listOf("S:N501Y", "S:E484K")))
-        assertThat(variant.mutationList.nucMutations, nullValue())
+        assertThat(variant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y", "S:E484K")))
+        assertThat(variant.filterObject.nucleotideMutations, nullValue())
     }
 
     @Test
@@ -181,9 +181,9 @@ class CollectionsPostTest(
             name = "With insertions",
             description = "Has insertions",
             filterObject = FilterObject(
-                aaMutations = listOf("S:N501Y"),
-                aaInsertions = listOf("ins_S:214:EPE"),
-                nucInsertions = listOf("ins_22204:GAG"),
+                aminoAcidMutations = listOf("S:N501Y"),
+                aminoAcidInsertions = listOf("ins_S:214:EPE"),
+                nucleotideInsertions = listOf("ins_22204:GAG"),
             ),
         )
         val request = dummyCollectionRequest.copy(variants = listOf(variantWithInsertions))
@@ -191,8 +191,8 @@ class CollectionsPostTest(
         val createdCollection = collectionsClient.postCollection(request, userId)
 
         val variant = createdCollection.variants[0] as Variant.MutationListVariant
-        assertThat(variant.mutationList.aaInsertions, equalTo(listOf("ins_S:214:EPE")))
-        assertThat(variant.mutationList.nucInsertions, equalTo(listOf("ins_22204:GAG")))
+        assertThat(variant.filterObject.aminoAcidInsertions, equalTo(listOf("ins_S:214:EPE")))
+        assertThat(variant.filterObject.nucleotideInsertions, equalTo(listOf("ins_22204:GAG")))
     }
 
     @Test
