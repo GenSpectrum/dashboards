@@ -8,6 +8,16 @@ import io.swagger.v3.oas.annotations.media.Schema
 import org.genspectrum.dashboardsbackend.api.Variant.MutationListVariant
 import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
 
+enum class QueryVariantType {
+    @JsonProperty("query")
+    QUERY,
+}
+
+enum class MutationListVariantType {
+    @JsonProperty("mutationList")
+    MUTATION_LIST,
+}
+
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
@@ -23,16 +33,6 @@ import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
 sealed interface Variant {
     val id: Long
     val collectionId: Long
-
-    enum class QueryVariantType {
-        @JsonProperty("query")
-        QUERY,
-    }
-
-    enum class MutationListVariantType {
-        @JsonProperty("mutationList")
-        MUTATION_LIST,
-    }
 
     @Schema(
         description = "A variant defined by LAPIS queries",
@@ -115,7 +115,9 @@ sealed interface VariantRequest {
         val description: String? = null,
         val countQuery: String,
         val coverageQuery: String? = null,
-    ) : VariantRequest
+    ) : VariantRequest {
+        val type: QueryVariantType = QueryVariantType.QUERY
+    }
 
     @Schema(
         description = "Request to create a mutation list variant",
@@ -134,23 +136,8 @@ sealed interface VariantRequest {
         val name: String,
         val description: String? = null,
         val mutationList: MutationListDefinition,
-    ) : VariantRequest
-}
-
-fun VariantUpdate.toVariantRequest(): VariantRequest {
-    require(id == null) { "Cannot convert a VariantUpdate with an existing id to a VariantRequest: $id" }
-    return when (this) {
-        is VariantUpdate.QueryVariantUpdate -> VariantRequest.QueryVariantRequest(
-            name = name,
-            description = description,
-            countQuery = countQuery,
-            coverageQuery = coverageQuery,
-        )
-        is VariantUpdate.MutationListVariantUpdate -> VariantRequest.MutationListVariantRequest(
-            name = name,
-            description = description,
-            mutationList = mutationList,
-        )
+    ) : VariantRequest {
+        val type: MutationListVariantType = MutationListVariantType.MUTATION_LIST
     }
 }
 
@@ -188,7 +175,9 @@ sealed interface VariantUpdate {
         val description: String? = null,
         val countQuery: String,
         val coverageQuery: String? = null,
-    ) : VariantUpdate
+    ) : VariantUpdate {
+        val type: QueryVariantType = QueryVariantType.QUERY
+    }
 
     @Schema(
         description = "Request to update or create a mutation list variant",
@@ -209,5 +198,25 @@ sealed interface VariantUpdate {
         val name: String,
         val description: String? = null,
         val mutationList: MutationListDefinition,
-    ) : VariantUpdate
+    ) : VariantUpdate {
+        val type: MutationListVariantType = MutationListVariantType.MUTATION_LIST
+    }
+
+    fun toVariantRequest(): VariantRequest {
+        require(id == null) { "Cannot convert a VariantUpdate with an existing id to a VariantRequest: $id" }
+        return when (this) {
+            is QueryVariantUpdate -> VariantRequest.QueryVariantRequest(
+                name = name,
+                description = description,
+                countQuery = countQuery,
+                coverageQuery = coverageQuery,
+            )
+
+            is MutationListVariantUpdate -> VariantRequest.MutationListVariantRequest(
+                name = name,
+                description = description,
+                mutationList = mutationList,
+            )
+        }
+    }
 }
