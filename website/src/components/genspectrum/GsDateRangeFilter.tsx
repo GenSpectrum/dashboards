@@ -24,7 +24,7 @@ export function GsDateRangeFilter({
     dateRangeOptions?: DateRangeOption[];
     width?: string;
 }) {
-    const dateRangeSelectorRef = useRef<HTMLElement>();
+    const dateRangeSelectorRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentDateRangeSelectorRef = dateRangeSelectorRef.current;
@@ -73,8 +73,8 @@ export function GsDateRangeFilter({
     return (
         <gs-date-range-filter
             ref={dateRangeSelectorRef}
-            dateRangeOptions={JSON.stringify(dateRangeOptions)}
-            value={JSON.stringify(isCustom ? value : value?.label)}
+            dateRangeOptions={dateRangeOptions}
+            value={(isCustom ? value : value?.label) ?? null}
             lapisDateField={lapisDateField}
             width={width}
         ></gs-date-range-filter>

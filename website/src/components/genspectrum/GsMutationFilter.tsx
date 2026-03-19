@@ -20,7 +20,7 @@ export function GsMutationFilter({
     enabledMutationTypes?: MutationType[];
     onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
 }) {
-    const mutationFilterRef = useRef<HTMLElement>();
+    const mutationFilterRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         const currentMutationFilterRef = mutationFilterRef.current;
@@ -48,10 +48,8 @@ export function GsMutationFilter({
             </div>
             <gs-mutation-filter
                 width={width}
-                initialValue={JSON.stringify(initialValue ?? [])}
-                enabledMutationTypes={
-                    enabledMutationTypes !== undefined ? JSON.stringify(enabledMutationTypes) : undefined
-                }
+                initialValue={initialValue ?? []}
+                enabledMutationTypes={enabledMutationTypes}
                 ref={mutationFilterRef}
             ></gs-mutation-filter>
         </label>
