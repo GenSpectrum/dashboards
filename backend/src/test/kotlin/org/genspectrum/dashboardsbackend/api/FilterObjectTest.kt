@@ -15,7 +15,7 @@ class FilterObjectTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun `serializes full object with all fields and extra filter`() {
+    fun `WHEN serializing full object with all fields and extra filter THEN produces correct JSON`() {
         val underTest = FilterObject().apply {
             aminoAcidMutations = listOf("S:N501Y", "S:E484K")
             nucleotideMutations = listOf("A23403G")
@@ -35,7 +35,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `serializes object with only nucleotideMutations`() {
+    fun `WHEN serializing object with only nucleotideMutations THEN omits null fields`() {
         val underTest = FilterObject().apply {
             nucleotideMutations = listOf("A23403G")
         }
@@ -49,7 +49,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `deserializes full object with all fields and extra filter`() {
+    fun `WHEN deserializing full object with all fields and extra filter THEN all properties are set`() {
         val json =
             """{"aminoAcidMutations":["S:N501Y","S:E484K"],"nucleotideMutations":["A23403G"],"aminoAcidInsertions":["ins_S:214:EPE"],"nucleotideInsertions":["ins_22204:GAG"],"foo":"bar"}"""
 
@@ -63,7 +63,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `deserializes object with only nucleotideMutations and extra filter`() {
+    fun `WHEN deserializing object with only nucleotideMutations and extra filter THEN succeeds`() {
         val json = """{"nucleotideMutations":["A23403G"],"foo":"bar"}"""
 
         val result = objectMapper.readValue(json, FilterObject::class.java)
@@ -73,7 +73,7 @@ class FilterObjectTest {
     }
 
     @Test
-    fun `deserializing extra property with non-string value throws error`() {
+    fun `WHEN deserializing extra property with non-string value THEN throws error`() {
         val json = """{"foo": ["bar", "baz"]}"""
 
         assertThrows<MismatchedInputException> {
