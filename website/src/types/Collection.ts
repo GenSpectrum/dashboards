@@ -1,12 +1,13 @@
 import { z } from 'zod';
 
-const mutationListDefinitionSchema = z.object({
-    aaMutations: z.array(z.string()).optional(),
-    nucMutations: z.array(z.string()).optional(),
-    aaInsertions: z.array(z.string()).optional(),
-    nucInsertions: z.array(z.string()).optional(),
-    filters: z.record(z.string()).optional(),
-});
+const filterObjectSchema = z
+    .object({
+        aminoAcidMutations: z.array(z.string()).optional(),
+        nucleotideMutations: z.array(z.string()).optional(),
+        aminoAcidInsertions: z.array(z.string()).optional(),
+        nucleotideInsertions: z.array(z.string()).optional(),
+    })
+    .catchall(z.string());
 
 const queryVariantSchema = z.object({
     type: z.literal('query'),
@@ -18,16 +19,16 @@ const queryVariantSchema = z.object({
     coverageQuery: z.string().nullable(),
 });
 
-const mutationListVariantSchema = z.object({
-    type: z.literal('mutationList'),
+const filterObjectVariantSchema = z.object({
+    type: z.literal('filterObject'),
     id: z.number(),
     collectionId: z.number(),
     name: z.string(),
     description: z.string().nullable(),
-    mutationList: mutationListDefinitionSchema,
+    filterObject: filterObjectSchema,
 });
 
-const variantSchema = z.discriminatedUnion('type', [queryVariantSchema, mutationListVariantSchema]);
+const variantSchema = z.discriminatedUnion('type', [queryVariantSchema, filterObjectVariantSchema]);
 
 export const collectionSchema = z.object({
     id: z.number(),
@@ -40,7 +41,7 @@ export const collectionSchema = z.object({
 
 export type Collection = z.infer<typeof collectionSchema>;
 export type Variant = z.infer<typeof variantSchema>;
-export type MutationListDefinition = z.infer<typeof mutationListDefinitionSchema>;
+export type FilterObject = z.infer<typeof filterObjectSchema>;
 
 // Request schemas (create)
 const queryVariantRequestSchema = z.object({
@@ -51,16 +52,16 @@ const queryVariantRequestSchema = z.object({
     coverageQuery: z.string().optional(),
 });
 
-const mutationListVariantRequestSchema = z.object({
-    type: z.literal('mutationList'),
+const filterObjectVariantRequestSchema = z.object({
+    type: z.literal('filterObject'),
     name: z.string(),
     description: z.string().optional(),
-    mutationList: mutationListDefinitionSchema,
+    filterObject: filterObjectSchema,
 });
 
 const variantRequestSchema = z.discriminatedUnion('type', [
     queryVariantRequestSchema,
-    mutationListVariantRequestSchema,
+    filterObjectVariantRequestSchema,
 ]);
 
 export const collectionRequestSchema = z.object({
@@ -75,9 +76,9 @@ export type VariantRequest = z.infer<typeof variantRequestSchema>;
 
 // Update schemas (partial, variants have optional id)
 const queryVariantUpdateSchema = queryVariantRequestSchema.extend({ id: z.number().optional() });
-const mutationListVariantUpdateSchema = mutationListVariantRequestSchema.extend({ id: z.number().optional() });
+const filterObjectVariantUpdateSchema = filterObjectVariantRequestSchema.extend({ id: z.number().optional() });
 
-const variantUpdateSchema = z.discriminatedUnion('type', [queryVariantUpdateSchema, mutationListVariantUpdateSchema]);
+const variantUpdateSchema = z.discriminatedUnion('type', [queryVariantUpdateSchema, filterObjectVariantUpdateSchema]);
 
 export const collectionUpdateSchema = collectionRequestSchema
     .omit({ organism: true })
