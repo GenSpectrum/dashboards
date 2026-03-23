@@ -289,4 +289,5 @@ create_collection "Empty placeholder" '{
 run_organism covid
 run_organism h5n1
 
+echo
 echo "Done."

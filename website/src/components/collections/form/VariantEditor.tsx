@@ -1,4 +1,5 @@
 import type { FilterObject, VariantUpdate } from '../../../types/Collection.ts';
+import { GsLineageFilter } from '../../genspectrum/GsLineageFilter.tsx';
 import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 
 type Props = {
@@ -6,14 +7,15 @@ type Props = {
     onChange: (variant: VariantUpdate) => void;
     onRemove: () => void;
     canRemove?: boolean;
+    lineageFields: string[];
 };
 
-export function VariantEditor({ variant, onChange, onRemove, canRemove = true }: Props) {
+export function VariantEditor({ variant, onChange, onRemove, canRemove = true, lineageFields }: Props) {
     function setField(fields: Partial<VariantUpdate>) {
         onChange({ ...variant, ...fields } as VariantUpdate);
     }
 
-    function switchType(type: 'query' | 'mutationList') {
+    function switchType(type: 'query' | 'filterObject') {
         if (type === 'query') {
             onChange({ type: 'query', name: variant.name, description: variant.description, countQuery: '' });
         } else {
@@ -41,7 +43,7 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true }:
             <div className='col-span-2 flex flex-col gap-4'>
                 <div className='flex items-center justify-between'>
                     <div className='flex gap-2 text-sm'>
-                        {(['mutationList', 'query'] as const).map((type) => (
+                        {(['filterObject', 'query'] as const).map((type) => (
                             <label
                                 key={type}
                                 className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
@@ -66,7 +68,7 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true }:
                 {variant.type === 'query' ? (
                     <QueryVariantFields variant={variant} onChange={onChange} />
                 ) : (
-                    <MutationListVariantFields variant={variant} onChange={onChange} />
+                    <MutationListVariantFields variant={variant} onChange={onChange} lineageFields={lineageFields} />
                 )}
             </div>
         </div>
@@ -109,32 +111,51 @@ function QueryVariantFields({
 function MutationListVariantFields({
     variant,
     onChange,
+    lineageFields,
 }: {
     variant: Extract<VariantUpdate, { type: 'filterObject' }>;
     onChange: (v: VariantUpdate) => void;
+    lineageFields: string[];
 }) {
+    function updateFilterObject(fields: Partial<FilterObject>) {
+        onChange({
+            ...variant,
+            filterObject: { ...variant.filterObject, ...fields } as FilterObject,
+        });
+    }
+
     return (
-        <GsMutationFilter
-            showLabel={false}
-            initialValue={{
-                aminoAcidMutations: variant.filterObject.aminoAcidMutations ?? [],
-                nucleotideMutations: variant.filterObject.nucleotideMutations ?? [],
-                aminoAcidInsertions: variant.filterObject.aminoAcidInsertions ?? [],
-                nucleotideInsertions: variant.filterObject.nucleotideInsertions ?? [],
-            }}
-            onMutationChange={(mutationFilter) => {
-                onChange({
-                    ...variant,
-                    type: 'filterObject',
-                    filterObject: {
-                        ...variant.filterObject,
+        <div className='flex flex-col gap-3'>
+            {lineageFields.map((field) => (
+                <label key={field} className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>{field}</span>
+                    </div>
+                    <GsLineageFilter
+                        lapisField={field}
+                        value={variant.filterObject[field] as string | undefined}
+                        lapisFilter={{}}
+                        onLineageChange={(lineage) => updateFilterObject({ [field]: lineage[field] ?? undefined })}
+                    />
+                </label>
+            ))}
+            <GsMutationFilter
+                showLabel={false}
+                initialValue={{
+                    aminoAcidMutations: variant.filterObject.aminoAcidMutations ?? [],
+                    nucleotideMutations: variant.filterObject.nucleotideMutations ?? [],
+                    aminoAcidInsertions: variant.filterObject.aminoAcidInsertions ?? [],
+                    nucleotideInsertions: variant.filterObject.nucleotideInsertions ?? [],
+                }}
+                onMutationChange={(mutationFilter) => {
+                    updateFilterObject({
                         aminoAcidMutations: mutationFilter?.aminoAcidMutations,
                         nucleotideMutations: mutationFilter?.nucleotideMutations,
                         aminoAcidInsertions: mutationFilter?.aminoAcidInsertions,
                         nucleotideInsertions: mutationFilter?.nucleotideInsertions,
-                    } as FilterObject,
-                });
-            }}
-        />
+                    } as Partial<FilterObject>);
+                }}
+            />
+        </div>
     );
 }

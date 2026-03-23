@@ -54,7 +54,7 @@ export function GsMutationFilter({
             )}
             <gs-mutation-filter
                 width={width}
-                initialValue={JSON.stringify(initialValue ?? [])}
+                initialValue={initialValue ?? []}
                 enabledMutationTypes={enabledMutationTypes}
                 ref={mutationFilterRef}
             ></gs-mutation-filter>
