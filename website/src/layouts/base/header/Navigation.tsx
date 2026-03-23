@@ -1,9 +1,8 @@
 import type { PropsWithChildren } from 'react';
 
-import { MegaMenu, MegaMenuListEntry, MegaMenuSection } from './MegaMenu.tsx'; // MegaMenuListEntry used by Pathogens section
+import { MegaMenu, MegaMenuListEntry, MegaMenuSection } from './MegaMenu.tsx';
 import { getPathogenMegaMenuSections } from './getPathogenMegaMenuSections.ts';
 import { headerHeight } from './headerConstants.ts';
-import { organismConfig } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 
 export function Navigation() {
@@ -24,15 +23,13 @@ export function Navigation() {
                                             externalLink={entry.externalLink}
                                             href={entry.href}
                                             className={entry.underlineColor}
+                                            hasSeparatorAbove={entry.hasSeparatorAbove}
                                         />
                                     ))}
                                 </MegaMenuSection>
                             ))}
                         </MegaMenu>
                     </MegaMenuNavigationEntry>
-                </li>
-                <li>
-                    <CollectionsDropdown />
                 </li>
                 <li className='h-full'>
                     <SimpleNavigationEntry href={Page.dataSources}>Data sources</SimpleNavigationEntry>
@@ -62,25 +59,6 @@ const overlayThatClosesMenuOnClickOutside =
 const expandableIndicator = 'after:iconify after:ml-1 after:mdi--chevron-down';
 
 const openIndicator = 'group-open:border-b-2 group-open:border-black group-open:text-black';
-
-function CollectionsDropdown() {
-    const organisms = Object.values(organismConfig);
-
-    return (
-        <MegaMenuNavigationEntry label='Collections'>
-            <MegaMenu>
-                {organisms.map((config) => (
-                    <MegaMenuSection
-                        key={config.organism}
-                        headline={config.label}
-                        headlineBackgroundColor={config.backgroundColor}
-                        href={Page.collectionsForOrganism(config.organism)}
-                    />
-                ))}
-            </MegaMenu>
-        </MegaMenuNavigationEntry>
-    );
-}
 
 function MegaMenuNavigationEntry({ label, children }: PropsWithChildren<{ label: string }>) {
     return (

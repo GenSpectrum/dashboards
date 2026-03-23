@@ -3,14 +3,16 @@ type Props = {
     href?: string;
     externalLink?: boolean;
     itemType: 'toplevel' | 'subitem';
+    hasSeparatorAbove?: boolean;
 };
 
-const { href, externalLink, itemType } = Astro.props;
+const { href, externalLink, itemType, hasSeparatorAbove } = Astro.props;
 
 const liClass = itemType === 'toplevel' ? 'text-xl font-bold ml-4 py-4' : 'text-md font-light ml-8 pt-2';
+const separatorClass = hasSeparatorAbove ? 'mt-2 border-t border-gray-200' : '';
 ---
 
-<li class={liClass}>
+<li class={`${liClass} ${separatorClass}`}>
     {
         href === undefined ? (
             <slot />
