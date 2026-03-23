@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
-import org.genspectrum.dashboardsbackend.api.Variant.MutationListVariant
+import org.genspectrum.dashboardsbackend.api.Variant.FilterObjectVariant
 import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
 
 enum class QueryVariantType {
@@ -13,9 +13,9 @@ enum class QueryVariantType {
     QUERY,
 }
 
-enum class MutationListVariantType {
-    @JsonProperty("mutationList")
-    MUTATION_LIST,
+enum class FilterObjectVariantType {
+    @JsonProperty("filterObject")
+    FILTER_OBJECT,
 }
 
 @JsonTypeInfo(
@@ -25,7 +25,7 @@ enum class MutationListVariantType {
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = QueryVariant::class, name = "query"),
-    JsonSubTypes.Type(value = MutationListVariant::class, name = "mutationList"),
+    JsonSubTypes.Type(value = FilterObjectVariant::class, name = "filterObject"),
 )
 @Schema(
     description = "Base interface for different variant types",
@@ -63,25 +63,25 @@ sealed interface Variant {
         description = "A variant defined by a list of mutations",
         example = """
 {
-    "type": "mutationList",
+    "type": "filterObject",
     "id": 1,
     "collectionId": 2,
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
-    "mutationList": {
-        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+    "filterObject": {
+        "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
     }
 }
 """,
     )
-    data class MutationListVariant @JsonCreator constructor(
+    data class FilterObjectVariant @JsonCreator constructor(
         override val id: Long,
         override val collectionId: Long,
         val name: String,
         val description: String?,
-        val mutationList: MutationListDefinition,
+        val filterObject: FilterObject,
     ) : Variant {
-        val type: MutationListVariantType = MutationListVariantType.MUTATION_LIST
+        val type: FilterObjectVariantType = FilterObjectVariantType.FILTER_OBJECT
     }
 }
 
@@ -92,7 +92,7 @@ sealed interface Variant {
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = VariantRequest.QueryVariantRequest::class, name = "query"),
-    JsonSubTypes.Type(value = VariantRequest.MutationListVariantRequest::class, name = "mutationList"),
+    JsonSubTypes.Type(value = VariantRequest.FilterObjectVariantRequest::class, name = "filterObject"),
 )
 @Schema(
     description = "Request to create a variant",
@@ -123,21 +123,21 @@ sealed interface VariantRequest {
         description = "Request to create a mutation list variant",
         example = """
 {
-    "type": "mutationList",
+    "type": "filterObject",
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
-    "mutationList": {
-        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+    "filterObject": {
+        "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
     }
 }
 """,
     )
-    data class MutationListVariantRequest(
+    data class FilterObjectVariantRequest(
         val name: String,
         val description: String? = null,
-        val mutationList: MutationListDefinition,
+        val filterObject: FilterObject,
     ) : VariantRequest {
-        val type: MutationListVariantType = MutationListVariantType.MUTATION_LIST
+        val type: FilterObjectVariantType = FilterObjectVariantType.FILTER_OBJECT
     }
 }
 
@@ -148,7 +148,7 @@ sealed interface VariantRequest {
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = VariantUpdate.QueryVariantUpdate::class, name = "query"),
-    JsonSubTypes.Type(value = VariantUpdate.MutationListVariantUpdate::class, name = "mutationList"),
+    JsonSubTypes.Type(value = VariantUpdate.FilterObjectVariantUpdate::class, name = "filterObject"),
 )
 @Schema(
     description = "Request to update or create a variant",
@@ -183,23 +183,23 @@ sealed interface VariantUpdate {
         description = "Request to update or create a mutation list variant",
         example = """
 {
-    "type": "mutationList",
+    "type": "filterObject",
     "id": 1,
     "name": "Omicron mutations",
     "description": "Key mutations for Omicron",
-    "mutationList": {
-        "aaMutations": ["S:N501Y", "S:E484K", "S:K417N"]
+    "filterObject": {
+        "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
     }
 }
 """,
     )
-    data class MutationListVariantUpdate(
+    data class FilterObjectVariantUpdate(
         override val id: Long? = null,
         val name: String,
         val description: String? = null,
-        val mutationList: MutationListDefinition,
+        val filterObject: FilterObject,
     ) : VariantUpdate {
-        val type: MutationListVariantType = MutationListVariantType.MUTATION_LIST
+        val type: FilterObjectVariantType = FilterObjectVariantType.FILTER_OBJECT
     }
 
     fun toVariantRequest(): VariantRequest {
@@ -212,10 +212,10 @@ sealed interface VariantUpdate {
                 coverageQuery = coverageQuery,
             )
 
-            is MutationListVariantUpdate -> VariantRequest.MutationListVariantRequest(
+            is FilterObjectVariantUpdate -> VariantRequest.FilterObjectVariantRequest(
                 name = name,
                 description = description,
-                mutationList = mutationList,
+                filterObject = filterObject,
             )
         }
     }

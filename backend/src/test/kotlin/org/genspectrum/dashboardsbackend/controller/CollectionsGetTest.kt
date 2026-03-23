@@ -100,7 +100,7 @@ class CollectionsGetTest(
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].id").value(createdCollection.id))
             .andExpect(jsonPath("$[0].variants[0].type").value("query"))
-            .andExpect(jsonPath("$[0].variants[1].type").value("mutationList"))
+            .andExpect(jsonPath("$[0].variants[1].type").value("filterObject"))
     }
 
     @Test
@@ -195,11 +195,14 @@ class CollectionsGetTest(
         assertThat(queryVariant.countQuery, equalTo("country='USA' & lineage='BA.2'"))
         assertThat(queryVariant.coverageQuery, equalTo("country='USA'"))
 
-        val mutationListVariant =
-            retrievedCollection.variants.first { it is Variant.MutationListVariant } as Variant.MutationListVariant
-        assertThat(mutationListVariant.name, equalTo("Omicron mutations"))
-        assertThat(mutationListVariant.description, equalTo("Key mutations"))
-        assertThat(mutationListVariant.mutationList.aaMutations, equalTo(listOf("S:N501Y", "S:E484K", "S:K417N")))
+        val filterObjectVariant =
+            retrievedCollection.variants.first { it is Variant.FilterObjectVariant } as Variant.FilterObjectVariant
+        assertThat(filterObjectVariant.name, equalTo("Omicron mutations"))
+        assertThat(filterObjectVariant.description, equalTo("Key mutations"))
+        assertThat(
+            filterObjectVariant.filterObject.aminoAcidMutations,
+            equalTo(listOf("S:N501Y", "S:E484K", "S:K417N")),
+        )
     }
 
     @Test
@@ -211,13 +214,13 @@ class CollectionsGetTest(
         val retrievedCollection = collections.first { it.id == createdCollection.id }
 
         val queryVariants = retrievedCollection.variants.filterIsInstance<Variant.QueryVariant>()
-        val mutationListVariants = retrievedCollection.variants.filterIsInstance<Variant.MutationListVariant>()
+        val filterObjectVariants = retrievedCollection.variants.filterIsInstance<Variant.FilterObjectVariant>()
 
         assertThat(queryVariants, hasSize(1))
-        assertThat(mutationListVariants, hasSize(1))
+        assertThat(filterObjectVariants, hasSize(1))
 
         assertThat(queryVariants[0].countQuery, notNullValue())
-        assertThat(mutationListVariants[0].mutationList, notNullValue())
+        assertThat(filterObjectVariants[0].filterObject, notNullValue())
     }
 
     @Test
