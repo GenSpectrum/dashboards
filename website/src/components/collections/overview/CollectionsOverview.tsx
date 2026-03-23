@@ -32,7 +32,7 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
             <div className='flex items-start justify-between'>
                 <PageHeadline>{organismConfig[organism].label} Collections</PageHeadline>
                 {isLoggedIn && (
-                    <a href={Page.createCollection(organism)} className='btn btn-sm btn-primary'>
+                    <a href={Page.createCollection(organism)} className='btn btn-sm'>
                         New collection
                     </a>
                 )}
