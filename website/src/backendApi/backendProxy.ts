@@ -21,7 +21,21 @@ export async function proxyToBackend({ request }: { request: Request }): Promise
         return getUnauthorizedResponse(request.url);
     }
 
-    const backendUrl = getBackendUrl(request, session.user.id);
+    return proxyRequest(request, session.user.id);
+}
+
+/**
+ * Like proxyToBackend, but authentication is optional. If the user is logged in, the user ID
+ * is forwarded to the backend; if not, the request is proxied without a user ID.
+ */
+export async function proxyToBackendOptionalAuth({ request }: { request: Request }): Promise<Response> {
+    const session = await getSession(request);
+
+    return proxyRequest(request, session?.user?.id);
+}
+
+async function proxyRequest(request: Request, userId: string | undefined): Promise<Response> {
+    const backendUrl = getBackendUrl(request, userId);
 
     try {
         const response = await fetch(backendUrl, request);
@@ -36,7 +50,7 @@ export async function proxyToBackend({ request }: { request: Request }): Promise
     }
 }
 
-function getBackendUrl(request: Request, userId: string) {
+function getBackendUrl(request: Request, userId: string | undefined) {
     const backendEndpoint = new URL(request.url).pathname.slice(API_PATHNAME_LENGTH);
     const backendUrl = new URL(backendEndpoint, getBackendHost());
 
@@ -44,7 +58,9 @@ function getBackendUrl(request: Request, userId: string) {
         backendUrl.searchParams.set(key, value);
     });
 
-    backendUrl.searchParams.set('userId', userId);
+    if (userId !== undefined) {
+        backendUrl.searchParams.set('userId', userId);
+    }
 
     return backendUrl;
 }
