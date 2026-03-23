@@ -1,77 +1,74 @@
-import { useCallback } from 'react';
-
 import type { FilterObject, VariantUpdate } from '../../../types/Collection.ts';
-import { type MutationFilter, GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
+import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 
 type Props = {
     variant: VariantUpdate;
     onChange: (variant: VariantUpdate) => void;
     onRemove: () => void;
+    canRemove?: boolean;
 };
 
-export function VariantEditor({ variant, onChange, onRemove }: Props) {
-    const handleTypeChange = (type: 'query' | 'filterObject') => {
+export function VariantEditor({ variant, onChange, onRemove, canRemove = true }: Props) {
+    function setField(fields: Partial<VariantUpdate>) {
+        onChange({ ...variant, ...fields } as VariantUpdate);
+    }
+
+    function switchType(type: 'query' | 'mutationList') {
         if (type === 'query') {
             onChange({ type: 'query', name: variant.name, description: variant.description, countQuery: '' });
         } else {
             onChange({ type: 'filterObject', name: variant.name, description: variant.description, filterObject: {} });
         }
-    };
+    }
 
     return (
-        <div className='flex flex-col gap-3 rounded-lg border border-gray-200 p-4'>
-            <div className='flex items-start gap-3'>
-                <div className='flex flex-1 flex-col gap-3'>
-                    <div className='form-control'>
-                        <label className='label'>
-                            <span className='label-text'>Name</span>
-                        </label>
-                        <input
-                            type='text'
-                            className='input input-bordered input-sm'
-                            value={variant.name}
-                            onChange={(e) => onChange({ ...variant, name: e.target.value })}
-                            required
-                        />
+        <div className='grid grid-cols-3 gap-x-8 rounded-lg border border-gray-200 p-4'>
+            <div className='flex h-full flex-col gap-2'>
+                <input
+                    className='input input-sm input-bordered font-medium'
+                    placeholder='Variant name'
+                    value={variant.name}
+                    onChange={(e) => setField({ name: e.currentTarget.value })}
+                />
+                <textarea
+                    className='textarea textarea-bordered flex-1 resize-none'
+                    placeholder='Optional description for this variant.'
+                    value={variant.description ?? ''}
+                    onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
+                />
+            </div>
+
+            <div className='col-span-2 flex flex-col gap-4'>
+                <div className='flex items-center justify-between'>
+                    <div className='flex gap-2 text-sm'>
+                        {(['mutationList', 'query'] as const).map((type) => (
+                            <label
+                                key={type}
+                                className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
+                            >
+                                <input
+                                    type='radio'
+                                    className='hidden'
+                                    checked={variant.type === type}
+                                    onChange={() => switchType(type)}
+                                />
+                                {type === 'query' ? 'Query' : 'Mutation list'}
+                            </label>
+                        ))}
                     </div>
-                    <div className='form-control'>
-                        <label className='label'>
-                            <span className='label-text'>Description</span>
-                        </label>
-                        <input
-                            type='text'
-                            className='input input-bordered input-sm'
-                            value={variant.description ?? ''}
-                            onChange={(e) =>
-                                onChange({ ...variant, description: e.target.value || undefined })
-                            }
-                        />
-                    </div>
+                    {canRemove && (
+                        <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
+                            Remove
+                        </button>
+                    )}
                 </div>
-                <button type='button' className='btn btn-sm btn-ghost text-error' onClick={onRemove}>
-                    Remove
-                </button>
-            </div>
 
-            <div className='form-control'>
-                <label className='label'>
-                    <span className='label-text'>Type</span>
-                </label>
-                <select
-                    className='select select-bordered select-sm'
-                    value={variant.type}
-                    onChange={(e) => handleTypeChange(e.target.value as 'query' | 'filterObject')}
-                >
-                    <option value='filterObject'>Filter object</option>
-                    <option value='query'>Query</option>
-                </select>
+                {variant.type === 'query' ? (
+                    <QueryVariantFields variant={variant} onChange={onChange} />
+                ) : (
+                    <MutationListVariantFields variant={variant} onChange={onChange} />
+                )}
             </div>
-
-            {variant.type === 'query' ? (
-                <QueryVariantFields variant={variant} onChange={onChange} />
-            ) : (
-                <FilterObjectVariantFields variant={variant} onChange={onChange} />
-            )}
         </div>
     );
 }
@@ -81,65 +78,63 @@ function QueryVariantFields({
     onChange,
 }: {
     variant: Extract<VariantUpdate, { type: 'query' }>;
-    onChange: (variant: VariantUpdate) => void;
+    onChange: (v: VariantUpdate) => void;
 }) {
     return (
-        <>
-            <div className='form-control'>
-                <label className='label'>
-                    <span className='label-text'>Count query</span>
-                </label>
-                <input
-                    type='text'
-                    className='input input-bordered input-sm font-mono'
+        <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-1'>
+                <label className='text-sm font-medium'>Count query</label>
+                <textarea
+                    className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
+                    rows={2}
+                    placeholder='LAPIS filter expression for counting sequences matching this variant.'
                     value={variant.countQuery}
-                    onChange={(e) => onChange({ ...variant, countQuery: e.target.value })}
-                    required
+                    onChange={(e) => onChange({ ...variant, countQuery: e.currentTarget.value })}
                 />
             </div>
-            <div className='form-control'>
-                <label className='label'>
-                    <span className='label-text'>Coverage query (optional)</span>
-                </label>
-                <input
-                    type='text'
-                    className='input input-bordered input-sm font-mono'
+            <div className='flex flex-col gap-1'>
+                <label className='text-sm font-medium'>Coverage query</label>
+                <textarea
+                    className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
+                    rows={2}
+                    placeholder='Optional LAPIS filter for the denominator (baseline).'
                     value={variant.coverageQuery ?? ''}
-                    onChange={(e) => onChange({ ...variant, coverageQuery: e.target.value || undefined })}
+                    onChange={(e) => onChange({ ...variant, coverageQuery: e.currentTarget.value || undefined })}
                 />
             </div>
-        </>
+        </div>
     );
 }
 
-function FilterObjectVariantFields({
+function MutationListVariantFields({
     variant,
     onChange,
 }: {
     variant: Extract<VariantUpdate, { type: 'filterObject' }>;
-    onChange: (variant: VariantUpdate) => void;
+    onChange: (v: VariantUpdate) => void;
 }) {
-    const handleMutationChange = useCallback(
-        (mutationFilter: MutationFilter | undefined) => {
-            onChange({
-                ...variant,
-                filterObject: {
-                    aminoAcidMutations: mutationFilter?.aminoAcidMutations,
-                    nucleotideMutations: mutationFilter?.nucleotideMutations,
-                    aminoAcidInsertions: mutationFilter?.aminoAcidInsertions,
-                    nucleotideInsertions: mutationFilter?.nucleotideInsertions,
-                } as FilterObject,
-            });
-        },
-        [onChange, variant],
+    return (
+        <GsMutationFilter
+            showLabel={false}
+            initialValue={{
+                aminoAcidMutations: variant.filterObject.aminoAcidMutations ?? [],
+                nucleotideMutations: variant.filterObject.nucleotideMutations ?? [],
+                aminoAcidInsertions: variant.filterObject.aminoAcidInsertions ?? [],
+                nucleotideInsertions: variant.filterObject.nucleotideInsertions ?? [],
+            }}
+            onMutationChange={(mutationFilter) => {
+                onChange({
+                    ...variant,
+                    type: 'filterObject',
+                    filterObject: {
+                        ...variant.filterObject,
+                        aminoAcidMutations: mutationFilter?.aminoAcidMutations,
+                        nucleotideMutations: mutationFilter?.nucleotideMutations,
+                        aminoAcidInsertions: mutationFilter?.aminoAcidInsertions,
+                        nucleotideInsertions: mutationFilter?.nucleotideInsertions,
+                    } as FilterObject,
+                });
+            }}
+        />
     );
-
-    const initialValue: MutationFilter = {
-        aminoAcidMutations: variant.filterObject.aminoAcidMutations ?? [],
-        nucleotideMutations: variant.filterObject.nucleotideMutations ?? [],
-        aminoAcidInsertions: variant.filterObject.aminoAcidInsertions ?? [],
-        nucleotideInsertions: variant.filterObject.nucleotideInsertions ?? [],
-    };
-
-    return <GsMutationFilter initialValue={initialValue} onMutationChange={handleMutationChange} />;
 }
