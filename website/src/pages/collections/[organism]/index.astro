@@ -1,7 +1,6 @@
 ---
 import { getSession } from 'auth-astro/server';
 
-import NotLoggedIn from '../../../components/auth/NotLoggedIn.astro';
 import { CollectionsOverview } from '../../../components/collections/overview/CollectionsOverview';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
@@ -17,6 +16,7 @@ if (!parsedOrganism.success) {
 
 const orgConfig = organismConfig[parsedOrganism.data];
 const session = await getSession(Astro.request);
+const isLoggedIn = session?.user?.id !== undefined;
 ---
 
 <ContaineredPageLayout
@@ -27,11 +27,5 @@ const session = await getSession(Astro.request);
         { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
     ]}
 >
-    {
-        session?.user?.id !== undefined ? (
-            <CollectionsOverview client:load organism={parsedOrganism.data} />
-        ) : (
-            <NotLoggedIn />
-        )
-    }
+    <CollectionsOverview client:load organism={parsedOrganism.data} isLoggedIn={isLoggedIn} />
 </ContaineredPageLayout>

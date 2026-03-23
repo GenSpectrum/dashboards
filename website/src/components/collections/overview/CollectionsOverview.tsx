@@ -13,7 +13,7 @@ export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
 const logger = getClientLogger('CollectionsOverview');
 
-function CollectionsOverviewInner({ organism }: { organism: Organism }) {
+function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism; isLoggedIn: boolean }) {
     const {
         isLoading,
         isError,
@@ -37,16 +37,23 @@ function CollectionsOverviewInner({ organism }: { organism: Organism }) {
         <div>
             <div className='mb-6 flex items-baseline justify-between'>
                 <PageHeadline>{organismConfig[organism].label} Collections</PageHeadline>
-                <a href={Page.createCollection(organism)} className='btn btn-sm'>
-                    New collection
-                </a>
+                {isLoggedIn && (
+                    <a href={Page.createCollection(organism)} className='btn btn-sm'>
+                        New collection
+                    </a>
+                )}
             </div>
             {collections === undefined || collections.length === 0 ? (
                 <div className='text-gray-500'>
-                    No collections yet.{' '}
-                    <a href={Page.createCollection(organism)} className='link'>
-                        Create the first one.
-                    </a>
+                    No collections yet.
+                    {isLoggedIn && (
+                        <>
+                            {' '}
+                            <a href={Page.createCollection(organism)} className='link'>
+                                Create the first one.
+                            </a>
+                        </>
+                    )}
                 </div>
             ) : (
                 <CollectionsTable collections={collections} organism={organism} />
