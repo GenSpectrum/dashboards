@@ -7,4 +7,6 @@ export const Page = {
     collectionsOverview: '/collections',
     collectionsForOrganism: (organism: Organism) => `/collections/${organism}`,
     viewCollection: (organism: Organism, id: string) => `/collections/${organism}/${id}`,
+    editCollection: (organism: Organism, id: string) => `/collections/${organism}/${id}/edit`,
+    createCollection: (organism: Organism) => `/collections/${organism}/create`,
 } as const;
