@@ -11,18 +11,23 @@ import { Page } from '../../types/pages';
 >
     <h1 class='mb-4 text-2xl font-bold'>Collections</h1>
     <p class='mb-6'>Select an organism to browse variant collections.</p>
-    <ul class='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+    <ul class='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
         {
-            allOrganisms.map((organism) => (
-                <li>
-                    <a
-                        href={Page.collectionsForOrganism(organism)}
-                        class='hover:bg-base-200 block rounded-lg border p-4 transition-colors'
-                    >
-                        {organismConfig[organism].label}
-                    </a>
-                </li>
-            ))
+            allOrganisms.map((organism) => {
+                const config = organismConfig[organism];
+                return (
+                    <li class='group'>
+                        <a
+                            href={Page.collectionsForOrganism(organism)}
+                            class={`${config.borderEntryDecoration} block rounded-md border-2 border-gray-100 transition-colors`}
+                        >
+                            <div class={`rounded-md ${config.backgroundColor} ${config.backgroundColorFocus} p-4 text-lg font-medium`}>
+                                {config.label}
+                            </div>
+                        </a>
+                    </li>
+                );
+            })
         }
     </ul>
 </ContaineredPageLayout>
