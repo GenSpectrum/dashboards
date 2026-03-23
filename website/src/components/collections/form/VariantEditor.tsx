@@ -55,7 +55,7 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true, l
                             checked={variant.type === 'query'}
                             onChange={(e) => switchType(e.currentTarget.checked ? 'query' : 'filterObject')}
                         />
-                        Use query string instead
+                        Use advanced query instead
                     </label>
                     {canRemove && (
                         <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
@@ -76,27 +76,15 @@ function QueryVariantFields({
     onChange: (v: VariantUpdate) => void;
 }) {
     return (
-        <div className='flex flex-col gap-4'>
-            <div className='flex flex-col gap-1'>
-                <label className='text-sm font-medium'>Count query</label>
-                <textarea
-                    className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
-                    rows={2}
-                    placeholder='LAPIS filter expression for counting sequences matching this variant.'
-                    value={variant.countQuery}
-                    onChange={(e) => onChange({ ...variant, countQuery: e.currentTarget.value })}
-                />
-            </div>
-            <div className='flex flex-col gap-1'>
-                <label className='text-sm font-medium'>Coverage query</label>
-                <textarea
-                    className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
-                    rows={2}
-                    placeholder='Optional LAPIS filter for the denominator (baseline).'
-                    value={variant.coverageQuery ?? ''}
-                    onChange={(e) => onChange({ ...variant, coverageQuery: e.currentTarget.value || undefined })}
-                />
-            </div>
+        <div className='flex flex-col gap-1'>
+            <label className='text-sm font-medium'>Query</label>
+            <textarea
+                className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
+                rows={2}
+                placeholder='LAPIS filter expression for counting sequences matching this variant.'
+                value={variant.countQuery}
+                onChange={(e) => onChange({ ...variant, countQuery: e.currentTarget.value })}
+            />
         </div>
     );
 }
