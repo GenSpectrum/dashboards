@@ -25,13 +25,10 @@ export async function proxyToBackend({ request }: { request: Request }): Promise
 }
 
 /**
- * Like proxyToBackend, but authentication is optional. If the user is logged in, the user ID
- * is forwarded to the backend; if not, the request is proxied without a user ID.
+ * Proxies the request to the backend without any user ID, regardless of login state.
  */
-export async function proxyToBackendOptionalAuth({ request }: { request: Request }): Promise<Response> {
-    const session = await getSession(request);
-
-    return proxyRequest(request, session?.user?.id);
+export async function proxyToBackendNoAuth({ request }: { request: Request }): Promise<Response> {
+    return proxyRequest(request, undefined);
 }
 
 async function proxyRequest(request: Request, userId: string | undefined): Promise<Response> {
