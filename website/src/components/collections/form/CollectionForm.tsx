@@ -34,6 +34,7 @@ export function CollectionForm({
     config,
 }: Props) {
     const lapisUrl = config.dashboards.organisms[organism].lapis.url;
+    const lineageFields = config.dashboards.organisms[organism].lapis.lineageFields ?? [];
     const [name, setName] = useState(initialValues?.name ?? '');
     const [description, setDescription] = useState(initialValues?.description ?? '');
     const [variants, setVariants] = useState<VariantUpdate[]>(
@@ -100,6 +101,7 @@ export function CollectionForm({
                                 onChange={(v) => updateVariant(index, v)}
                                 onRemove={() => removeVariant(index)}
                                 canRemove={variants.length > 1}
+                                lineageFields={lineageFields}
                             />
                         ))}
                         <div>
