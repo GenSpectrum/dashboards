@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { BackendError, BackendService, UnknownBackendError } from './backendService.ts';
 import { DUMMY_BACKEND_URL } from '../../routeMocker.ts';
 import { backendRouteMocker } from '../../vitest.setup.ts';
+import type { Collection } from '../types/Collection.ts';
 import type { SubscriptionRequest, SubscriptionResponse, TriggerEvaluationResponse } from '../types/Subscription.ts';
 
 describe('backendService', () => {
@@ -169,5 +170,26 @@ describe('backendService', () => {
         await expect(backendService.getSubscriptions()).rejects.to.deep.equal(
             new UnknownBackendError('Bad Request', 400, '/subscriptions'),
         );
+    });
+
+    const aCollection: Collection = {
+        id: 1,
+        name: 'Test collection',
+        ownedBy: 'user123',
+        organism: 'covid',
+        description: 'A test collection',
+        variants: [],
+    };
+
+    test('should GET collections without organism filter', async () => {
+        backendRouteMocker.mockGetCollections([aCollection]);
+
+        await expect(backendService.getCollections()).resolves.to.deep.equal([aCollection]);
+    });
+
+    test('should GET collections filtered by organism', async () => {
+        backendRouteMocker.mockGetCollections([aCollection], 'covid');
+
+        await expect(backendService.getCollections({ organism: 'covid' })).resolves.to.deep.equal([aCollection]);
     });
 });

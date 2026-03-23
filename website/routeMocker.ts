@@ -8,6 +8,7 @@ import { type OrganismsConfig } from './src/config';
 import type { CollectionRaw } from './src/covspectrum/types.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
 import type { ParsedQueryResult } from './src/lapis/parseQuery.ts';
+import type { Collection } from './src/types/Collection.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -211,6 +212,15 @@ export class BackendRouteMocker {
             http.get(`${DUMMY_BACKEND_URL}/subscriptions`, () => {
                 return new Response(JSON.stringify(response), { status: statusCode });
             }),
+        );
+    }
+
+    mockGetCollections(response: Collection[], organism?: string, statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(
+                `${DUMMY_BACKEND_URL}/collections`,
+                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+            ),
         );
     }
 }
