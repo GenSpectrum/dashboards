@@ -1,0 +1,28 @@
+---
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { allOrganisms, organismConfig } from '../../types/Organism';
+import { Page } from '../../types/pages';
+---
+
+<ContaineredPageLayout
+    title='Collections'
+    breadcrumbs={[...defaultBreadcrumbs, { name: 'Collections', href: Page.collectionsOverview }]}
+>
+    <h1 class='mb-4 text-2xl font-bold'>Collections</h1>
+    <p class='mb-6'>Select an organism to browse variant collections.</p>
+    <ul class='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+        {
+            allOrganisms.map((organism) => (
+                <li>
+                    <a
+                        href={Page.collectionsForOrganism(organism)}
+                        class='hover:bg-base-200 block rounded-lg border p-4 transition-colors'
+                    >
+                        {organismConfig[organism].label}
+                    </a>
+                </li>
+            ))
+        }
+    </ul>
+</ContaineredPageLayout>
