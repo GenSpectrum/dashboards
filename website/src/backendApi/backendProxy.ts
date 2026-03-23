@@ -1,9 +1,9 @@
 import { getSession } from 'auth-astro/server';
 
-import { getBackendHost } from '../../config.ts';
-import { getInstanceLogger } from '../../logger.ts';
-import type { ProblemDetail } from '../../types/ProblemDetail.ts';
-import { getErrorLogMessage } from '../../util/getErrorLogMessage.ts';
+import { getBackendHost } from '../config.ts';
+import { getInstanceLogger } from '../logger.ts';
+import type { ProblemDetail } from '../types/ProblemDetail.ts';
+import { getErrorLogMessage } from '../util/getErrorLogMessage.ts';
 
 const logger = getInstanceLogger('BackendProxy');
 
