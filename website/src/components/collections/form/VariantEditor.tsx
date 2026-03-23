@@ -41,35 +41,28 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true, l
             </div>
 
             <div className='col-span-2 flex flex-col gap-4'>
+                {variant.type === 'query' ? (
+                    <QueryVariantFields variant={variant} onChange={onChange} />
+                ) : (
+                    <MutationListVariantFields variant={variant} onChange={onChange} lineageFields={lineageFields} />
+                )}
+
                 <div className='flex items-center justify-between'>
-                    <div className='flex gap-2 text-sm'>
-                        {(['filterObject', 'query'] as const).map((type) => (
-                            <label
-                                key={type}
-                                className={`cursor-pointer rounded-md border px-3 py-1.5 ${variant.type === type ? 'border-primary' : 'border-gray-300'}`}
-                            >
-                                <input
-                                    type='radio'
-                                    className='hidden'
-                                    checked={variant.type === type}
-                                    onChange={() => switchType(type)}
-                                />
-                                {type === 'query' ? 'Query' : 'Mutation list'}
-                            </label>
-                        ))}
-                    </div>
+                    <label className='flex cursor-pointer items-center gap-2 text-sm text-gray-500'>
+                        <input
+                            type='checkbox'
+                            className='checkbox checkbox-xs'
+                            checked={variant.type === 'query'}
+                            onChange={(e) => switchType(e.currentTarget.checked ? 'query' : 'filterObject')}
+                        />
+                        Use query string instead
+                    </label>
                     {canRemove && (
                         <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
                             Remove
                         </button>
                     )}
                 </div>
-
-                {variant.type === 'query' ? (
-                    <QueryVariantFields variant={variant} onChange={onChange} />
-                ) : (
-                    <MutationListVariantFields variant={variant} onChange={onChange} lineageFields={lineageFields} />
-                )}
             </div>
         </div>
     );
@@ -126,21 +119,7 @@ function MutationListVariantFields({
 
     return (
         <div className='flex flex-col gap-3'>
-            {lineageFields.map((field) => (
-                <label key={field} className='form-control'>
-                    <div className='label'>
-                        <span className='label-text'>{field}</span>
-                    </div>
-                    <GsLineageFilter
-                        lapisField={field}
-                        value={variant.filterObject[field] as string | undefined}
-                        lapisFilter={{}}
-                        onLineageChange={(lineage) => updateFilterObject({ [field]: lineage[field] ?? undefined })}
-                    />
-                </label>
-            ))}
             <GsMutationFilter
-                showLabel={false}
                 initialValue={{
                     aminoAcidMutations: variant.filterObject.aminoAcidMutations ?? [],
                     nucleotideMutations: variant.filterObject.nucleotideMutations ?? [],
@@ -156,6 +135,19 @@ function MutationListVariantFields({
                     } as Partial<FilterObject>);
                 }}
             />
+            {lineageFields.map((field) => (
+                <label key={field} className='form-control'>
+                    <div className='label'>
+                        <span className='label-text'>{field}</span>
+                    </div>
+                    <GsLineageFilter
+                        lapisField={field}
+                        value={variant.filterObject[field] as string | undefined}
+                        lapisFilter={{}}
+                        onLineageChange={(lineage) => updateFilterObject({ [field]: lineage[field] ?? undefined })}
+                    />
+                </label>
+            ))}
         </div>
     );
 }
