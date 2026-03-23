@@ -8,5 +8,9 @@ export function LoginButton() {
         signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain }).catch(() => {});
     };
 
-    return <button onClick={login}>Login</button>;
+    return (
+        <button className='cursor-pointer' onClick={login}>
+            Login
+        </button>
+    );
 }
