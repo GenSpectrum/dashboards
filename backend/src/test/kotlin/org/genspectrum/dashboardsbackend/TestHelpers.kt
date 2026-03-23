@@ -36,17 +36,17 @@ val dummyQueryVariantRequest = VariantRequest.QueryVariantRequest(
     coverageQuery = "country='USA'",
 )
 
-val dummyMutationListVariantRequest = VariantRequest.MutationListVariantRequest(
+val dummyFilterObjectVariantRequest = VariantRequest.FilterObjectVariantRequest(
     name = "Omicron mutations",
     description = "Key mutations",
-    mutationList = org.genspectrum.dashboardsbackend.api.MutationListDefinition(
-        aaMutations = listOf("S:N501Y", "S:E484K", "S:K417N"),
-    ),
+    filterObject = org.genspectrum.dashboardsbackend.api.FilterObject().apply {
+        aminoAcidMutations = listOf("S:N501Y", "S:E484K", "S:K417N")
+    },
 )
 
 val dummyCollectionRequest = CollectionRequest(
     name = "Test Collection",
     organism = KnownTestOrganisms.Covid.name,
     description = "Test collection description",
-    variants = listOf(dummyQueryVariantRequest, dummyMutationListVariantRequest),
+    variants = listOf(dummyQueryVariantRequest, dummyFilterObjectVariantRequest),
 )
