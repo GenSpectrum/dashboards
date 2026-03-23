@@ -20,7 +20,12 @@ const { navigationEntries } = Astro.props;
         <ul>
             {
                 navigationEntries.map((entry) => (
-                    <HamburgerMenuItem itemType='subitem' href={entry.href} externalLink={entry.externalLink} hasSeparatorAbove={entry.hasSeparatorAbove}>
+                    <HamburgerMenuItem
+                        itemType='subitem'
+                        href={entry.href}
+                        externalLink={entry.externalLink}
+                        hasSeparatorAbove={entry.hasSeparatorAbove}
+                    >
                         {entry.label}
                     </HamburgerMenuItem>
                 ))

@@ -21,7 +21,9 @@ import { Page } from '../../types/pages';
                             href={Page.collectionsForOrganism(organism)}
                             class={`${config.borderEntryDecoration} block rounded-md border-2 border-gray-100 transition-colors`}
                         >
-                            <div class={`rounded-md ${config.backgroundColor} ${config.backgroundColorFocus} p-4 text-lg font-medium`}>
+                            <div
+                                class={`rounded-md ${config.backgroundColor} ${config.backgroundColorFocus} p-4 text-lg font-medium`}
+                            >
                                 {config.label}
                             </div>
                         </a>
