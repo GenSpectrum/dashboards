@@ -43,6 +43,8 @@ export function GsMutationFilter({
         };
     }, [onMutationChange]);
 
+    // TODO - the JSON stringify below shouldn't be needed.
+
     return (
         <label className='form-control'>
             {showLabel && (
@@ -52,7 +54,7 @@ export function GsMutationFilter({
             )}
             <gs-mutation-filter
                 width={width}
-                initialValue={initialValue ?? []}
+                initialValue={JSON.stringify(initialValue ?? [])}
                 enabledMutationTypes={enabledMutationTypes}
                 ref={mutationFilterRef}
             ></gs-mutation-filter>
