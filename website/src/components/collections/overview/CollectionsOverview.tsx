@@ -6,6 +6,7 @@ import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Collection } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
+import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
@@ -37,13 +38,13 @@ function CollectionsOverviewInner({ organism, isLoggedIn: _isLoggedIn }: { organ
             ) : collections === undefined || collections.length === 0 ? (
                 <div className='mt-6 text-gray-500'>No collections yet.</div>
             ) : (
-                <CollectionsTable collections={collections} />
+                <CollectionsTable collections={collections} organism={organism} />
             )}
         </div>
     );
 }
 
-function CollectionsTable({ collections }: { collections: Collection[] }) {
+function CollectionsTable({ collections, organism }: { collections: Collection[]; organism: Organism }) {
     return (
         <div className='my-6 overflow-x-auto'>
             <table className='table-zebra table w-full'>
@@ -57,21 +58,23 @@ function CollectionsTable({ collections }: { collections: Collection[] }) {
                 </thead>
                 <tbody>
                     {collections.map((collection) => (
-                        <tr key={collection.id}>
-                            <td className='font-mono text-xs text-gray-500'>{collection.id}</td>
-                            <td className='font-medium'>{collection.name}</td>
-                            <td className='max-w-sm text-gray-500'>
-                                {collection.description ? (
-                                    collection.description.length > 80 ? (
-                                        collection.description.slice(0, 80) + '…'
+                        <tr key={collection.id} className='hover:bg-base-300'>
+                            <a href={Page.viewCollection(organism, String(collection.id))} className='contents'>
+                                <td className='font-mono text-xs text-gray-500'>{collection.id}</td>
+                                <td className='font-medium'>{collection.name}</td>
+                                <td className='max-w-sm text-gray-500'>
+                                    {collection.description ? (
+                                        collection.description.length > 80 ? (
+                                            collection.description.slice(0, 80) + '…'
+                                        ) : (
+                                            collection.description
+                                        )
                                     ) : (
-                                        collection.description
-                                    )
-                                ) : (
-                                    <span className='text-gray-300'>—</span>
-                                )}
-                            </td>
-                            <td className='text-right'>{collection.variants.length}</td>
+                                        <span className='text-gray-300'>—</span>
+                                    )}
+                                </td>
+                                <td className='text-right'>{collection.variants.length}</td>
+                            </a>
                         </tr>
                     ))}
                 </tbody>
