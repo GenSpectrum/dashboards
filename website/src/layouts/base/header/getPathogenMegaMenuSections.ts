@@ -52,7 +52,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             label: 'Collections',
             href: Page.collectionsForOrganism(config.organism),
             underlineColor: config.menuListEntryDecoration,
-            iconType: 'table' as const,
+            iconType: 'table',
             externalLink: false,
             description: `Browse ${config.label} variant collections`,
             hasSeparatorAbove: true,
