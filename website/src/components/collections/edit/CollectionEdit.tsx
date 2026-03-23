@@ -113,7 +113,7 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
             )}
 
             <div className='border-t border-gray-200 pt-6'>
-                <h2 className='mb-3 text-lg font-semibold text-error'>Danger zone</h2>
+                <h2 className='text-error mb-3 text-lg font-semibold'>Danger zone</h2>
                 {!showDeleteConfirm ? (
                     <button
                         type='button'
@@ -123,7 +123,7 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
                         Delete collection
                     </button>
                 ) : (
-                    <div className='rounded-lg border border-error p-4'>
+                    <div className='border-error rounded-lg border p-4'>
                         <p className='mb-3 text-sm'>
                             Are you sure you want to delete <strong>{collection.name}</strong>? This cannot be undone.
                         </p>
@@ -134,9 +134,7 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
                                 onClick={() => deleteMutation.mutate()}
                                 disabled={deleteMutation.isPending}
                             >
-                                {deleteMutation.isPending && (
-                                    <span className='loading loading-spinner loading-sm' />
-                                )}
+                                {deleteMutation.isPending && <span className='loading loading-spinner loading-sm' />}
                                 Yes, delete
                             </button>
                             <button
@@ -148,7 +146,7 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
                             </button>
                         </div>
                         {deleteMutation.isError && (
-                            <div className='mt-2 text-sm text-error'>
+                            <div className='text-error mt-2 text-sm'>
                                 Failed to delete: {getErrorLogMessage(deleteMutation.error)}
                             </div>
                         )}
