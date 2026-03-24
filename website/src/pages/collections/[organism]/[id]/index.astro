@@ -23,12 +23,12 @@ const session = await getSession(Astro.request);
 ---
 
 <ContaineredPageLayout
-    title='Collection'
+    title={`Collection #${id}`}
     breadcrumbs={[
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
         { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id) },
+        { name: `Collection #${id}`, href: Page.viewCollection(parsedOrganism.data, id) },
     ]}
 >
     <CollectionDetail
