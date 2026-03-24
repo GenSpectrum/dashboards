@@ -38,12 +38,6 @@ export class AstroApiRouteMocker {
             ),
         );
     }
-
-    mockGetCollection(id: string, response: Collection, statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(`${ASTRO_SERVER_URL}/collections/${id}`, resolver([{ statusCode, response }])),
-        );
-    }
 }
 
 type ReferenceSequence = { name: string; sequence: string };
@@ -69,14 +63,6 @@ export class CovSpectrumRouteMocker {
     mockGetCollections(baseUrl: string, response: CollectionRaw[], statusCode = 200) {
         this.workerOrServer.use(
             http.get(`${baseUrl}/resource/collection`, () => {
-                return new Response(JSON.stringify(response), { status: statusCode });
-            }),
-        );
-    }
-
-    mockGetCollection(baseUrl: string, id: number, response: CollectionRaw, statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(`${baseUrl}/resource/collection/${id}`, () => {
                 return new Response(JSON.stringify(response), { status: statusCode });
             }),
         );
