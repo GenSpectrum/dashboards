@@ -1,5 +1,10 @@
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
-import type { Collection, Variant } from '../../../types/Collection.ts';
+import {
+    FILTER_OBJECT_ARRAY_FIELD_LABELS,
+    getLineageFields,
+    type Collection,
+    type Variant,
+} from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 
 export function CollectionDetail({ collection }: { collection: Collection }) {
@@ -65,49 +70,48 @@ function QueryVariantDetails({ variant }: { variant: Extract<Variant, { type: 'q
     );
 }
 
-const KNOWN_FILTER_OBJECT_KEYS = [
-    'aminoAcidMutations',
-    'nucleotideMutations',
-    'aminoAcidInsertions',
-    'nucleotideInsertions',
-] as const;
-
 function FilterObjectVariantDetails({ variant }: { variant: Extract<Variant, { type: 'filterObject' }> }) {
-    const arrayFields: { key: (typeof KNOWN_FILTER_OBJECT_KEYS)[number]; label: string }[] = [
-        { key: 'aminoAcidMutations', label: 'AA mutations' },
-        { key: 'nucleotideMutations', label: 'Nucleotide mutations' },
-        { key: 'aminoAcidInsertions', label: 'AA insertions' },
-        { key: 'nucleotideInsertions', label: 'Nucleotide insertions' },
-    ];
+    const { filterObject } = variant;
+    const lineageFields = getLineageFields(filterObject);
 
-    const presentArrayFields = arrayFields.filter(({ key }) => {
-        const val = variant.filterObject[key];
-        return Array.isArray(val) && val.length > 0;
-    });
+    const { aminoAcidMutations, nucleotideMutations, aminoAcidInsertions, nucleotideInsertions } = filterObject;
 
-    const lineageFields = Object.entries(variant.filterObject).filter(
-        ([key]) => !(KNOWN_FILTER_OBJECT_KEYS as readonly string[]).includes(key),
-    ) as [string, string][];
+    const hasArrayFields =
+        (aminoAcidMutations?.length ?? 0) > 0 ||
+        (nucleotideMutations?.length ?? 0) > 0 ||
+        (aminoAcidInsertions?.length ?? 0) > 0 ||
+        (nucleotideInsertions?.length ?? 0) > 0;
 
-    if (presentArrayFields.length === 0 && lineageFields.length === 0) {
+    if (!hasArrayFields && lineageFields.length === 0) {
         return <p className='text-sm text-gray-500'>No mutations defined.</p>;
     }
 
     return (
         <dl className='grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm'>
-            {presentArrayFields.map(({ key, label }) => {
-                const val = variant.filterObject[key];
-                return (
-                    <>
-                        <dt key={`${key}-dt`} className='text-gray-500'>
-                            {label}
-                        </dt>
-                        <dd key={`${key}-dd`} className='font-mono'>
-                            {Array.isArray(val) ? val.join(', ') : ''}
-                        </dd>
-                    </>
-                );
-            })}
+            {aminoAcidMutations !== undefined && aminoAcidMutations.length > 0 && (
+                <>
+                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.aminoAcidMutations}</dt>
+                    <dd className='font-mono'>{aminoAcidMutations.join(', ')}</dd>
+                </>
+            )}
+            {nucleotideMutations !== undefined && nucleotideMutations.length > 0 && (
+                <>
+                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.nucleotideMutations}</dt>
+                    <dd className='font-mono'>{nucleotideMutations.join(', ')}</dd>
+                </>
+            )}
+            {aminoAcidInsertions !== undefined && aminoAcidInsertions.length > 0 && (
+                <>
+                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.aminoAcidInsertions}</dt>
+                    <dd className='font-mono'>{aminoAcidInsertions.join(', ')}</dd>
+                </>
+            )}
+            {nucleotideInsertions !== undefined && nucleotideInsertions.length > 0 && (
+                <>
+                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.nucleotideInsertions}</dt>
+                    <dd className='font-mono'>{nucleotideInsertions.join(', ')}</dd>
+                </>
+            )}
             {lineageFields.map(([key, val]) => (
                 <>
                     <dt key={`${key}-dt`} className='text-gray-500'>
