@@ -23,6 +23,7 @@ export function Navigation() {
                                             externalLink={entry.externalLink}
                                             href={entry.href}
                                             className={entry.underlineColor}
+                                            hasSeparatorAbove={entry.hasSeparatorAbove}
                                         />
                                     ))}
                                 </MegaMenuSection>

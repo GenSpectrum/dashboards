@@ -1,0 +1,31 @@
+---
+import { getSession } from 'auth-astro/server';
+
+import { CollectionsOverview } from '../../../components/collections/overview/CollectionsOverview';
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { organismConfig, organismSchema } from '../../../types/Organism';
+import { Page } from '../../../types/pages';
+
+const { organism } = Astro.params;
+
+const parsedOrganism = organismSchema.safeParse(organism);
+if (!parsedOrganism.success) {
+    return Astro.redirect('/404');
+}
+
+const orgConfig = organismConfig[parsedOrganism.data];
+const session = await getSession(Astro.request);
+const isLoggedIn = session?.user?.id !== undefined;
+---
+
+<ContaineredPageLayout
+    title={`${orgConfig.label} Collections`}
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Collections', href: Page.collectionsOverview },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
+    ]}
+>
+    <CollectionsOverview client:load organism={parsedOrganism.data} isLoggedIn={isLoggedIn} />
+</ContaineredPageLayout>

@@ -29,6 +29,15 @@ export class AstroApiRouteMocker {
     mockLog() {
         this.workerOrServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
     }
+
+    mockGetCollections(response: Collection[], organism?: string, statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(
+                `${ASTRO_SERVER_URL}/collections`,
+                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+            ),
+        );
+    }
 }
 
 type ReferenceSequence = { name: string; sequence: string };
