@@ -1,41 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
-import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
-import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Collection, Variant } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
-import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
-export const CollectionDetail = withQueryProvider(CollectionDetailInner);
-
-const logger = getClientLogger('CollectionDetail');
-
-function CollectionDetailInner({ id }: { organism: Organism; id: string; userId?: string }) {
-    const {
-        isLoading,
-        isError,
-        data: collection,
-        error,
-    } = useQuery({
-        queryKey: ['collection', id],
-        queryFn: () => getBackendServiceForClientside().getCollection({ id }),
-    });
-
-    if (isLoading) {
-        return <span className='loading loading-spinner loading-sm' />;
-    }
-
-    if (isError) {
-        logger.error(`Failed to fetch collection: ${getErrorLogMessage(error)}`);
-        return <div className='text-error'>Failed to load collection. Please try reloading the page.</div>;
-    }
-
-    if (collection === undefined) {
-        return null;
-    }
-
+export function CollectionDetail({ collection }: { collection: Collection }) {
     const organismName = organismConfig[collection.organism as Organism].label;
 
     return (
@@ -51,24 +18,18 @@ function CollectionDetailInner({ id }: { organism: Organism; id: string; userId?
                 </p>
             </div>
 
-            <VariantsCard collection={collection} />
-        </div>
-    );
-}
-
-function VariantsCard({ collection }: { collection: Collection }) {
-    return (
-        <div>
-            <h2 className='mb-3 text-lg font-semibold'>Variants ({collection.variants.length})</h2>
-            {collection.variants.length === 0 ? (
-                <p className='text-sm text-gray-500'>No variants defined.</p>
-            ) : (
-                <div className='flex flex-col gap-3'>
-                    {collection.variants.map((variant) => (
-                        <VariantCard key={variant.id} variant={variant} />
-                    ))}
-                </div>
-            )}
+            <div>
+                <h2 className='mb-3 text-lg font-semibold'>Variants ({collection.variants.length})</h2>
+                {collection.variants.length === 0 ? (
+                    <p className='text-sm text-gray-500'>No variants defined.</p>
+                ) : (
+                    <div className='flex flex-col gap-3'>
+                        {collection.variants.map((variant) => (
+                            <VariantCard key={variant.id} variant={variant} />
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
@@ -104,7 +65,12 @@ function QueryVariantDetails({ variant }: { variant: Extract<Variant, { type: 'q
     );
 }
 
-const KNOWN_FILTER_OBJECT_KEYS = ['aminoAcidMutations', 'nucleotideMutations', 'aminoAcidInsertions', 'nucleotideInsertions'] as const;
+const KNOWN_FILTER_OBJECT_KEYS = [
+    'aminoAcidMutations',
+    'nucleotideMutations',
+    'aminoAcidInsertions',
+    'nucleotideInsertions',
+] as const;
 
 function FilterObjectVariantDetails({ variant }: { variant: Extract<Variant, { type: 'filterObject' }> }) {
     const arrayFields: { key: (typeof KNOWN_FILTER_OBJECT_KEYS)[number]; label: string }[] = [
