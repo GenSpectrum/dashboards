@@ -43,6 +43,18 @@ export type Collection = z.infer<typeof collectionSchema>;
 export type Variant = z.infer<typeof variantSchema>;
 export type FilterObject = z.infer<typeof filterObjectSchema>;
 
+export const FILTER_OBJECT_ARRAY_FIELD_LABELS = {
+    aminoAcidMutations: 'Amino acid mutations',
+    nucleotideMutations: 'Nucleotide mutations',
+    aminoAcidInsertions: 'Amino acid insertions',
+    nucleotideInsertions: 'Nucleotide insertions',
+} as const;
+
+export function getLineageFields(filterObject: FilterObject): [string, string][] {
+    const knownKeys = Object.keys(FILTER_OBJECT_ARRAY_FIELD_LABELS);
+    return Object.entries(filterObject).filter(([key]) => !knownKeys.includes(key)) as [string, string][];
+}
+
 // Request schemas (create)
 const queryVariantRequestSchema = z.object({
     type: z.literal('query'),
