@@ -1,10 +1,9 @@
-import { describe, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { CollectionDetail } from './CollectionDetail';
-import { it } from '../../../../test-extend';
-import { Organisms } from '../../../types/Organism';
 import type { FilterObject } from '../../../types/Collection';
+import { Organisms } from '../../../types/Organism';
 
 const ORGANISM = Organisms.covid;
 const LINEAGE_FIELD = 'pangoLineage';
@@ -33,17 +32,15 @@ const mockCollection = {
             description: 'A filter-object variant',
             filterObject: {
                 nucleotideMutations: ['A123T', 'G456C'],
-                [LINEAGE_FIELD]: 'A.B.1'
+                [LINEAGE_FIELD]: 'A.B.1',
             } as unknown as FilterObject,
         },
     ],
 };
 
 describe('CollectionDetail', () => {
-    it('shows the collection name and variants on success', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollection('1', mockCollection);
-
-        const { getByText } = render(<CollectionDetail organism={ORGANISM} id='1' />);
+    it('shows the collection name and variants on success', async () => {
+        const { getByText } = render(<CollectionDetail collection={mockCollection} />);
 
         await expect.element(getByText('My first collection')).toBeVisible();
         await expect.element(getByText('A test collection')).toBeVisible();
@@ -55,14 +52,5 @@ describe('CollectionDetail', () => {
         await expect.element(getByText('A filter-object variant')).toBeVisible();
         await expect.element(getByText('A123T, G456C')).toBeVisible();
         await expect.element(getByText('A.B.1')).toBeVisible();
-    });
-
-    it('shows an error message when the fetch fails', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollection('1', mockCollection, 500);
-        astro.mockLog();
-
-        const { getByText } = render(<CollectionDetail organism={ORGANISM} id='1' />);
-
-        await expect.element(getByText('Failed to load collection. Please try reloading the page.')).toBeVisible();
     });
 });

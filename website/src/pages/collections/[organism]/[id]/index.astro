@@ -1,11 +1,16 @@
 ---
-import { getSession } from 'auth-astro/server';
-
+import { BackendService, BackendError } from '../../../../backendApi/backendService.ts';
 import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
+import { getBackendHost } from '../../../../config.ts';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { getInstanceLogger } from '../../../../logger.ts';
+import type { Collection } from '../../../../types/Collection.ts';
 import { organismConfig, organismSchema } from '../../../../types/Organism';
 import { Page } from '../../../../types/pages';
+import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
+
+const logger = getInstanceLogger('CollectionDetailPage');
 
 const { organism, id } = Astro.params;
 
@@ -19,22 +24,38 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const session = await getSession(Astro.request);
+
+let collection: Collection | undefined;
+let fetchError = false;
+
+try {
+    collection = await new BackendService(getBackendHost()).getCollection({ id });
+} catch (error) {
+    if (error instanceof BackendError && error.status === 404) {
+        return Astro.redirect('/404');
+    }
+    logger.error(`Failed to fetch collection ${id}: ${getErrorLogMessage(error)}`);
+    fetchError = true;
+}
+
+const collectionTitle = collection?.name ?? `Collection #${id}`;
 ---
 
 <ContaineredPageLayout
-    title={`Collection #${id}`}
+    title={collectionTitle}
     breadcrumbs={[
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
         { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: `Collection #${id}`, href: Page.viewCollection(parsedOrganism.data, id) },
+        { name: collectionTitle, href: Page.viewCollection(parsedOrganism.data, id) },
     ]}
 >
-    <CollectionDetail
-        client:load
-        organism={parsedOrganism.data}
-        id={id}
-        userId={session?.user?.id !== undefined ? String(session.user.id) : undefined}
-    />
+    {
+        fetchError ? (
+            <div class='text-error'>Failed to load collection. Please try reloading the page.</div>
+        ) : (
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            <CollectionDetail collection={collection!} />
+        )
+    }
 </ContaineredPageLayout>
