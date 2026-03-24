@@ -5,7 +5,7 @@ import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Collection, Variant } from '../../../types/Collection.ts';
-import type { Organism } from '../../../types/Organism.ts';
+import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 export const CollectionDetail = withQueryProvider(CollectionDetailInner);
@@ -36,6 +36,8 @@ function CollectionDetailInner({ id }: { organism: Organism; id: string; userId?
         return null;
     }
 
+    const organismName = organismConfig[collection.organism as Organism].label;
+
     return (
         <div className='flex flex-col gap-4'>
             <div>
@@ -45,7 +47,7 @@ function CollectionDetailInner({ id }: { organism: Organism; id: string; userId?
                 </PageHeadline>
                 {collection.description !== null && <p className='mt-1 text-gray-500'>{collection.description}</p>}
                 <p className='mt-1 text-sm text-gray-500'>
-                    {collection.organism} collection owned by {collection.ownedBy}
+                    {organismName} collection owned by {collection.ownedBy}
                 </p>
             </div>
 
@@ -74,11 +76,8 @@ function VariantsCard({ collection }: { collection: Collection }) {
 function VariantCard({ variant }: { variant: Variant }) {
     return (
         <div className='rounded-lg border border-gray-200 p-4'>
-            <div className='mb-1 flex items-center gap-2'>
+            <div className='mb-1'>
                 <span className='font-medium'>{variant.name}</span>
-                <span className='badge badge-sm badge-ghost'>
-                    {variant.type === 'query' ? 'Query' : 'Mutation list'}
-                </span>
             </div>
             {variant.description !== null && <p className='mb-3 text-sm text-gray-500'>{variant.description}</p>}
             {variant.type === 'query' ? (
@@ -105,26 +104,32 @@ function QueryVariantDetails({ variant }: { variant: Extract<Variant, { type: 'q
     );
 }
 
+const KNOWN_FILTER_OBJECT_KEYS = ['aminoAcidMutations', 'nucleotideMutations', 'aminoAcidInsertions', 'nucleotideInsertions'] as const;
+
 function FilterObjectVariantDetails({ variant }: { variant: Extract<Variant, { type: 'filterObject' }> }) {
-    const fields: { key: keyof typeof variant.filterObject; label: string }[] = [
+    const arrayFields: { key: (typeof KNOWN_FILTER_OBJECT_KEYS)[number]; label: string }[] = [
         { key: 'aminoAcidMutations', label: 'AA mutations' },
         { key: 'nucleotideMutations', label: 'Nucleotide mutations' },
         { key: 'aminoAcidInsertions', label: 'AA insertions' },
         { key: 'nucleotideInsertions', label: 'Nucleotide insertions' },
     ];
 
-    const presentFields = fields.filter(({ key }) => {
+    const presentArrayFields = arrayFields.filter(({ key }) => {
         const val = variant.filterObject[key];
         return Array.isArray(val) && val.length > 0;
     });
 
-    if (presentFields.length === 0) {
+    const lineageFields = Object.entries(variant.filterObject).filter(
+        ([key]) => !(KNOWN_FILTER_OBJECT_KEYS as readonly string[]).includes(key),
+    ) as [string, string][];
+
+    if (presentArrayFields.length === 0 && lineageFields.length === 0) {
         return <p className='text-sm text-gray-500'>No mutations defined.</p>;
     }
 
     return (
         <dl className='grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm'>
-            {presentFields.map(({ key, label }) => {
+            {presentArrayFields.map(({ key, label }) => {
                 const val = variant.filterObject[key];
                 return (
                     <>
@@ -137,6 +142,16 @@ function FilterObjectVariantDetails({ variant }: { variant: Extract<Variant, { t
                     </>
                 );
             })}
+            {lineageFields.map(([key, val]) => (
+                <>
+                    <dt key={`${key}-dt`} className='text-gray-500'>
+                        {key}
+                    </dt>
+                    <dd key={`${key}-dd`} className='font-mono'>
+                        {val}
+                    </dd>
+                </>
+            ))}
         </dl>
     );
 }
