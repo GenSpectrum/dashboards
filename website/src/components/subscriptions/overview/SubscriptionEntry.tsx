@@ -3,6 +3,7 @@ import { type JSX, type RefObject } from 'react';
 import { toast } from 'react-toastify';
 
 import { SubscriptionDisplay } from './SubscriptionDisplay.tsx';
+import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { getClientLogger } from '../../../clientLogger.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
 import { CardDescription } from '../../../styles/containers/CardDescription.tsx';
@@ -13,17 +14,14 @@ import { organismConfig } from '../../../types/Organism.ts';
 import type { Subscription } from '../../../types/Subscription.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
-import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
 
 const logger = getClientLogger('SubscriptionEntry');
 
 export function SubscriptionEntry({
     subscription,
-    userId,
     refetchSubscriptions,
 }: {
     subscription: Subscription;
-    userId: string;
     refetchSubscriptions: () => void;
 }) {
     const getConditionIcon = () => {
@@ -68,7 +66,7 @@ export function SubscriptionEntry({
                         <SubscriptionDisplay subscription={subscription} />
                     </div>
                 </details>
-                <MoreDropdown subscription={subscription} userId={userId} refetchSubscriptions={refetchSubscriptions} />
+                <MoreDropdown subscription={subscription} refetchSubscriptions={refetchSubscriptions} />
             </div>
         </BorderedCard>
     );
@@ -94,11 +92,9 @@ export function SubscriptionEntry({
 
 function MoreDropdown({
     subscription,
-    userId,
     refetchSubscriptions,
 }: {
     subscription: Subscription;
-    userId: string;
     refetchSubscriptions: () => void;
 }) {
     const { showErrorToast } = useErrorToast(logger);
@@ -107,7 +103,6 @@ function MoreDropdown({
         mutationFn: () =>
             getBackendServiceForClientside().deleteSubscription({
                 subscriptionId: subscription.id,
-                userId,
             }),
         onSuccess: () => {
             refetchSubscriptions();

@@ -1,20 +1,15 @@
 import { describe, expect, test } from 'vitest';
 
 import { BackendError, BackendService, UnknownBackendError } from './backendService.ts';
-import { DUMMY_BACKEND_URL } from '../../../../routeMocker.ts';
-import { backendRouteMocker } from '../../../../vitest.setup.ts';
-import type {
-    SubscriptionRequest,
-    SubscriptionResponse,
-    TriggerEvaluationResponse,
-} from '../../../types/Subscription.ts';
+import { DUMMY_BACKEND_URL } from '../../routeMocker.ts';
+import { backendRouteMocker } from '../../vitest.setup.ts';
+import type { Collection } from '../types/Collection.ts';
+import type { SubscriptionRequest, SubscriptionResponse, TriggerEvaluationResponse } from '../types/Subscription.ts';
 
 describe('backendService', () => {
     const backendService = new BackendService(DUMMY_BACKEND_URL);
 
     test('should GET subscriptions', async () => {
-        const userId = '123';
-
         const subscriptions: SubscriptionResponse[] = [
             {
                 id: '1',
@@ -45,9 +40,9 @@ describe('backendService', () => {
             },
         ];
 
-        backendRouteMocker.mockGetSubscriptions({ userId }, subscriptions);
+        backendRouteMocker.mockGetSubscriptions(subscriptions);
 
-        await expect(backendService.getSubscriptions({ userId })).resolves.to.deep.equal(subscriptions);
+        await expect(backendService.getSubscriptions()).resolves.to.deep.equal(subscriptions);
     });
 
     const evaluateTriggerResponses: { description: string; evaluationResult: TriggerEvaluationResponse }[] = [
@@ -88,19 +83,17 @@ describe('backendService', () => {
     test.each(evaluateTriggerResponses)(
         'should GET evaluate trigger for type $description',
         async ({ evaluationResult }) => {
-            const userId = '123';
             const subscriptionId = '1';
 
-            backendRouteMocker.mockGetEvaluateTrigger({ userId, id: subscriptionId }, evaluationResult);
+            backendRouteMocker.mockGetEvaluateTrigger({ id: subscriptionId }, evaluationResult);
 
-            await expect(backendService.getEvaluateTrigger({ subscriptionId, userId })).resolves.to.deep.equal(
+            await expect(backendService.getEvaluateTrigger({ subscriptionId })).resolves.to.deep.equal(
                 evaluationResult,
             );
         },
     );
 
     test('should POST subscription', async () => {
-        const userId = '123';
         const subscription: SubscriptionRequest = {
             name: 'Subscription 1',
             active: true,
@@ -119,12 +112,11 @@ describe('backendService', () => {
             ...subscription,
         };
 
-        backendRouteMocker.mockPostSubscription(subscription, { userId }, response);
-        await expect(backendService.postSubscription({ subscription, userId })).resolves.to.deep.equal(response);
+        backendRouteMocker.mockPostSubscription(subscription, response);
+        await expect(backendService.postSubscription({ subscription })).resolves.to.deep.equal(response);
     });
 
     test('should PUT subscription', async () => {
-        const userId = '123';
         const subscriptionId = '1';
         const subscription = {
             name: 'Subscription 1',
@@ -144,22 +136,20 @@ describe('backendService', () => {
             ...subscription,
         };
 
-        backendRouteMocker.mockPutSubscription(subscription, { userId }, { subscriptionId }, response);
+        backendRouteMocker.mockPutSubscription(subscription, { subscriptionId }, response);
         await expect(
             backendService.putSubscription({
                 subscription,
-                userId,
                 subscriptionId,
             }),
         ).resolves.to.deep.equal(response);
     });
 
     test('should DELETE subscription', async () => {
-        const userId = '123';
         const subscriptionId = '1';
 
-        backendRouteMocker.mockDeleteSubscription({ userId }, { subscriptionId });
-        await expect(backendService.deleteSubscription({ subscriptionId, userId })).resolves.to.deep.equal('');
+        backendRouteMocker.mockDeleteSubscription({ subscriptionId });
+        await expect(backendService.deleteSubscription({ subscriptionId })).resolves.to.deep.equal('');
     });
 
     test('should pass backend error response from GET subscriptions', async () => {
@@ -167,7 +157,7 @@ describe('backendService', () => {
 
         backendRouteMocker.mockGetSubscriptionsBackendError(errorResponse, 400);
 
-        await expect(backendService.getSubscriptions({ userId: '123' })).rejects.to.deep.equal(
+        await expect(backendService.getSubscriptions()).rejects.to.deep.equal(
             new BackendError('Some error detail', 400, errorResponse, '/subscriptions', undefined),
         );
     });
@@ -177,8 +167,29 @@ describe('backendService', () => {
 
         backendRouteMocker.mockGetSubscriptionsBackendError(errorResponse, 400);
 
-        await expect(backendService.getSubscriptions({ userId: '123' })).rejects.to.deep.equal(
+        await expect(backendService.getSubscriptions()).rejects.to.deep.equal(
             new UnknownBackendError('Bad Request', 400, '/subscriptions'),
         );
+    });
+
+    const aCollection: Collection = {
+        id: 1,
+        name: 'Test collection',
+        ownedBy: 'user123',
+        organism: 'covid',
+        description: 'A test collection',
+        variants: [],
+    };
+
+    test('should GET collections without organism filter', async () => {
+        backendRouteMocker.mockGetCollections([aCollection]);
+
+        await expect(backendService.getCollections()).resolves.to.deep.equal([aCollection]);
+    });
+
+    test('should GET collections filtered by organism', async () => {
+        backendRouteMocker.mockGetCollections([aCollection], 'covid');
+
+        await expect(backendService.getCollections({ organism: 'covid' })).resolves.to.deep.equal([aCollection]);
     });
 });
