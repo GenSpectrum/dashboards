@@ -23,19 +23,18 @@ function CollectionsOverviewInner({ organism, isLoggedIn: _isLoggedIn }: { organ
         queryFn: () => getBackendServiceForClientside().getCollections({ organism }),
     });
 
-    if (isLoading) {
-        return <span className='loading loading-spinner loading-sm' />;
-    }
-
     if (isError) {
         logger.error(`Failed to fetch collections: ${getErrorLogMessage(error)}`);
-        return <div className='text-error'>Failed to load collections. Please try reloading the page.</div>;
     }
 
     return (
         <div>
             <PageHeadline>{organismConfig[organism].label} Collections</PageHeadline>
-            {collections === undefined || collections.length === 0 ? (
+            {isLoading ? (
+                <span className='loading loading-spinner loading-sm' />
+            ) : isError ? (
+                <div className='text-error'>Failed to load collections. Please try reloading the page.</div>
+            ) : collections === undefined || collections.length === 0 ? (
                 <div className='mt-6 text-gray-500'>No collections yet.</div>
             ) : (
                 <CollectionsTable collections={collections} />
@@ -46,7 +45,7 @@ function CollectionsOverviewInner({ organism, isLoggedIn: _isLoggedIn }: { organ
 
 function CollectionsTable({ collections }: { collections: Collection[] }) {
     return (
-        <div className='mt-6 overflow-x-auto'>
+        <div className='my-6 overflow-x-auto'>
             <table className='table-zebra table w-full'>
                 <thead>
                     <tr>
