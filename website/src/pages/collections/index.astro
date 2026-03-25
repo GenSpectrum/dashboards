@@ -1,8 +1,14 @@
 ---
+import { isStaging } from '../../config';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { allOrganisms, organismConfig } from '../../types/Organism';
 import { Page } from '../../types/pages';
+
+// only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1108
+if (!isStaging()) {
+    return Astro.redirect('/404');
+}
 ---
 
 <ContaineredPageLayout
