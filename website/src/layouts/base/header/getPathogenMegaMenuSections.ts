@@ -1,4 +1,5 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
+import { isStaging } from '../../../config.ts';
 import { type Organism, organismConfig, paths } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import {
@@ -48,15 +49,18 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 };
             });
 
-        megaMenuSections.push({
-            label: 'Collections',
-            href: Page.collectionsForOrganism(config.organism),
-            underlineColor: config.menuListEntryDecoration,
-            iconType: 'table',
-            externalLink: false,
-            description: `Browse ${config.label} variant collections`,
-            hasSeparatorAbove: true,
-        });
+        // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1108
+        if (isStaging()) {
+            megaMenuSections.push({
+                label: 'Collections',
+                href: Page.collectionsForOrganism(config.organism),
+                underlineColor: config.menuListEntryDecoration,
+                iconType: 'table',
+                externalLink: false,
+                description: `Browse ${config.label} variant collections`,
+                hasSeparatorAbove: true,
+            });
+        }
 
         megaMenuSections.push(
             ...ServerSide.routing.externalPages[config.organism].map((externalPage) => ({
