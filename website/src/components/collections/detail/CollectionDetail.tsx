@@ -7,16 +7,23 @@ import {
 } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 
-export function CollectionDetail({ collection }: { collection: Collection }) {
+export function CollectionDetail({ collection, editHref }: { collection: Collection; editHref?: string }) {
     const organismName = organismConfig[collection.organism as Organism].label;
 
     return (
         <div className='flex flex-col gap-4'>
             <div>
-                <PageHeadline>
-                    <span className='mr-2 font-normal text-gray-400'>#{collection.id}</span>
-                    {collection.name}
-                </PageHeadline>
+                <div className='flex items-start justify-between'>
+                    <PageHeadline>
+                        <span className='mr-2 font-normal text-gray-400'>#{collection.id}</span>
+                        {collection.name}
+                    </PageHeadline>
+                    {editHref !== undefined && (
+                        <a href={editHref} className='btn btn-sm'>
+                            Edit
+                        </a>
+                    )}
+                </div>
                 {collection.description !== null && <p className='mt-1 text-gray-500'>{collection.description}</p>}
                 <p className='mt-1 text-sm text-gray-500'>
                     {organismName} collection owned by {collection.ownedBy}

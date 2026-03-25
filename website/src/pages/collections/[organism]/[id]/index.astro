@@ -1,4 +1,6 @@
 ---
+import { getSession } from 'auth-astro/server';
+
 import { BackendService, BackendError } from '../../../../backendApi/backendService.ts';
 import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
 import { getBackendHost } from '../../../../config.ts';
@@ -24,6 +26,7 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
+const session = await getSession(Astro.request);
 
 let collection: Collection | undefined;
 
@@ -37,6 +40,8 @@ try {
 }
 
 const collectionTitle = collection?.name ?? `Collection #${id}`;
+const isOwner = collection !== undefined && String(session?.user?.id) === collection.ownedBy;
+const editHref = isOwner ? Page.editCollection(parsedOrganism.data, id) : undefined;
 ---
 
 <ContaineredPageLayout
@@ -50,7 +55,7 @@ const collectionTitle = collection?.name ?? `Collection #${id}`;
 >
     {
         collection !== undefined ? (
-            <CollectionDetail collection={collection} />
+            <CollectionDetail collection={collection} editHref={editHref} />
         ) : (
             <div class='text-error'>Failed to load collection. Please try reloading the page.</div>
         )
