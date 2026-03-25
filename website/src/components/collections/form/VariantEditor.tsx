@@ -1,25 +1,40 @@
+import { memo } from 'react';
+
 import type { FilterObject, VariantUpdate } from '../../../types/Collection.ts';
 import { GsLineageFilter } from '../../genspectrum/GsLineageFilter.tsx';
 import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 
 type Props = {
+    index: number;
     variant: VariantUpdate;
-    onChange: (variant: VariantUpdate) => void;
-    onRemove: () => void;
+    onChange: (index: number, variant: VariantUpdate) => void;
+    onRemove: (index: number) => void;
     canRemove?: boolean;
     lineageFields: string[];
 };
 
-export function VariantEditor({ variant, onChange, onRemove, canRemove = true, lineageFields }: Props) {
+export const VariantEditor = memo(function VariantEditor({
+    index,
+    variant,
+    onChange,
+    onRemove,
+    canRemove = true,
+    lineageFields,
+}: Props) {
     function setField(fields: Partial<VariantUpdate>) {
-        onChange({ ...variant, ...fields } as VariantUpdate);
+        onChange(index, { ...variant, ...fields } as VariantUpdate);
     }
 
     function switchType(type: 'query' | 'filterObject') {
         if (type === 'query') {
-            onChange({ type: 'query', name: variant.name, description: variant.description, countQuery: '' });
+            onChange(index, { type: 'query', name: variant.name, description: variant.description, countQuery: '' });
         } else {
-            onChange({ type: 'filterObject', name: variant.name, description: variant.description, filterObject: {} });
+            onChange(index, {
+                type: 'filterObject',
+                name: variant.name,
+                description: variant.description,
+                filterObject: {},
+            });
         }
     }
 
@@ -58,7 +73,11 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true, l
                         Use advanced query instead
                     </label>
                     {canRemove && (
-                        <button type='button' className='btn btn-ghost btn-xs text-error' onClick={onRemove}>
+                        <button
+                            type='button'
+                            className='btn btn-ghost btn-xs text-error'
+                            onClick={() => onRemove(index)}
+                        >
                             Remove
                         </button>
                     )}
@@ -66,7 +85,7 @@ export function VariantEditor({ variant, onChange, onRemove, canRemove = true, l
             </div>
         </div>
     );
-}
+});
 
 function QueryVariantFields({
     variant,
