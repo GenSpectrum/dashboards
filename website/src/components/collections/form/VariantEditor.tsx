@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback, useRef } from 'react';
 
 import type { FilterObject, VariantUpdate } from '../../../types/Collection.ts';
 import { GsLineageFilter } from '../../genspectrum/GsLineageFilter.tsx';
@@ -21,6 +21,9 @@ export const VariantEditor = memo(function VariantEditor({
     canRemove = true,
     lineageFields,
 }: Props) {
+    const variantRef = useRef(variant);
+    variantRef.current = variant;
+
     function setField(fields: Partial<VariantUpdate>) {
         onChange(index, { ...variant, ...fields } as VariantUpdate);
     }
@@ -37,6 +40,13 @@ export const VariantEditor = memo(function VariantEditor({
             });
         }
     }
+
+    const handleFilterObjectChange = useCallback(
+        (filterObject: FilterObject) => {
+            onChange(index, { ...variantRef.current, filterObject } as VariantUpdate);
+        },
+        [index, onChange],
+    );
 
     return (
         <div className='grid grid-cols-3 gap-x-8 rounded-lg border border-gray-200 p-4'>
@@ -57,9 +67,13 @@ export const VariantEditor = memo(function VariantEditor({
 
             <div className='col-span-2 flex flex-col gap-4'>
                 {variant.type === 'query' ? (
-                    <QueryVariantFields variant={variant} onChange={onChange} />
+                    <QueryVariantFields variant={variant} onChange={(v) => onChange(index, v)} />
                 ) : (
-                    <MutationListVariantFields variant={variant} onChange={onChange} lineageFields={lineageFields} />
+                    <MutationListVariantFields
+                        filterObject={variant.filterObject}
+                        onChange={handleFilterObjectChange}
+                        lineageFields={lineageFields}
+                    />
                 )}
 
                 <div className='flex items-center justify-between'>
@@ -108,38 +122,32 @@ function QueryVariantFields({
     );
 }
 
-function MutationListVariantFields({
-    variant,
+const MutationListVariantFields = memo(function MutationListVariantFields({
+    filterObject,
     onChange,
     lineageFields,
 }: {
-    variant: Extract<VariantUpdate, { type: 'filterObject' }>;
-    onChange: (v: VariantUpdate) => void;
+    filterObject: Extract<VariantUpdate, { type: 'filterObject' }>['filterObject'];
+    onChange: (filterObject: FilterObject) => void;
     lineageFields: string[];
 }) {
-    function updateFilterObject(fields: Partial<FilterObject>) {
-        onChange({
-            ...variant,
-            filterObject: { ...variant.filterObject, ...fields } as FilterObject,
-        });
-    }
-
     return (
         <div className='flex flex-col gap-3'>
             <GsMutationFilter
                 initialValue={{
-                    aminoAcidMutations: variant.filterObject.aminoAcidMutations ?? [],
-                    nucleotideMutations: variant.filterObject.nucleotideMutations ?? [],
-                    aminoAcidInsertions: variant.filterObject.aminoAcidInsertions ?? [],
-                    nucleotideInsertions: variant.filterObject.nucleotideInsertions ?? [],
+                    aminoAcidMutations: filterObject.aminoAcidMutations ?? [],
+                    nucleotideMutations: filterObject.nucleotideMutations ?? [],
+                    aminoAcidInsertions: filterObject.aminoAcidInsertions ?? [],
+                    nucleotideInsertions: filterObject.nucleotideInsertions ?? [],
                 }}
                 onMutationChange={(mutationFilter) => {
-                    updateFilterObject({
+                    onChange({
+                        ...filterObject,
                         aminoAcidMutations: mutationFilter?.aminoAcidMutations,
                         nucleotideMutations: mutationFilter?.nucleotideMutations,
                         aminoAcidInsertions: mutationFilter?.aminoAcidInsertions,
                         nucleotideInsertions: mutationFilter?.nucleotideInsertions,
-                    } as Partial<FilterObject>);
+                    } as FilterObject);
                 }}
             />
             {lineageFields.map((field) => (
@@ -149,12 +157,14 @@ function MutationListVariantFields({
                     </div>
                     <GsLineageFilter
                         lapisField={field}
-                        value={variant.filterObject[field] as string | undefined}
+                        value={filterObject[field] as string | undefined}
                         lapisFilter={{}}
-                        onLineageChange={(lineage) => updateFilterObject({ [field]: lineage[field] ?? undefined })}
+                        onLineageChange={(lineage) =>
+                            onChange({ ...filterObject, [field]: lineage[field] ?? undefined } as FilterObject)
+                        }
                     />
                 </label>
             ))}
         </div>
     );
-}
+});
