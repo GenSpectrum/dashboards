@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { VariantEditor } from './VariantEditor.tsx';
 import type { DashboardsConfig } from '../../../config.ts';
@@ -41,17 +41,17 @@ export function CollectionForm({
         initialValues?.variants ?? [{ type: 'query', name: 'Variant 1', countQuery: '' }],
     );
 
-    function addVariant() {
+    const addVariant = useCallback(() => {
         setVariants((prev) => [...prev, { type: 'query', name: `Variant ${prev.length + 1}`, countQuery: '' }]);
-    }
+    }, []);
 
-    function updateVariant(index: number, variant: VariantUpdate) {
+    const updateVariant = useCallback((index: number, variant: VariantUpdate) => {
         setVariants((prev) => prev.map((v, i) => (i === index ? variant : v)));
-    }
+    }, []);
 
-    function removeVariant(index: number) {
+    const removeVariant = useCallback((index: number) => {
         setVariants((prev) => prev.filter((_, i) => i !== index));
-    }
+    }, []);
 
     return (
         <GsApp lapis={lapisUrl}>
@@ -97,9 +97,10 @@ export function CollectionForm({
                         {variants.map((variant, index) => (
                             <VariantEditor
                                 key={index}
+                                index={index}
                                 variant={variant}
-                                onChange={(v) => updateVariant(index, v)}
-                                onRemove={() => removeVariant(index)}
+                                onChange={updateVariant}
+                                onRemove={removeVariant}
                                 canRemove={variants.length > 1}
                                 lineageFields={lineageFields}
                             />
