@@ -1,4 +1,5 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
+import { isStaging } from '../../../config.ts';
 import { type Organism, organismConfig, paths } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import {
@@ -102,14 +103,19 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
-            {
-                label: 'RSV-B',
-                iconType: 'table',
-                href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].path,
-                description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].description,
-                underlineColor: wastewaterConfig.menuListEntryDecoration,
-                externalLink: false,
-            },
+            // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1110
+            ...(isStaging()
+                ? [
+                      {
+                          label: 'RSV-B',
+                          iconType: 'table' as MenuIconType,
+                          href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].path,
+                          description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].description,
+                          underlineColor: wastewaterConfig.menuListEntryDecoration,
+                          externalLink: false,
+                      },
+                  ]
+                : []),
             {
                 label: 'RSV (non-interactive)',
                 iconType: 'table',

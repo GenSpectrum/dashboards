@@ -1,6 +1,12 @@
 ---
 import Wasap from '../../components/views/wasap/Wasap.astro';
+import { isStaging } from '../../config';
 import { wastewaterOrganisms } from '../../types/wastewaterConfig';
+
+// only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1110
+if (!isStaging()) {
+    return Astro.redirect('/404');
+}
 ---
 
 <Wasap wastewaterOrganism={wastewaterOrganisms.rsvB} />

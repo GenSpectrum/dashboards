@@ -139,7 +139,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         },
         browseDataUrl: 'https://db.wasap.genspectrum.org/rsvb/search',
         browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-        defaultLocationName: 'Geneva',
+        defaultLocationName: 'Zurich',
         clinicalSequenceCountWarningThreshold: 50,
         filterDefaults: {
             manual: {
@@ -150,7 +150,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             variant: {
                 mode: 'variant',
                 sequenceType: 'nucleotide',
-                variant: 'XFG*',
+                variant: 'B.D.E.1*',
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
