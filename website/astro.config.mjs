@@ -11,5 +11,17 @@ export default defineConfig({
     adapter: node({
         mode: 'standalone',
     }),
+    security: {
+        allowedDomains: [
+            {
+                hostname: 'genspectrum.org',
+                protocol: 'https',
+            },
+            {
+                hostname: 'staging.genspectrum.org',
+                protocol: 'https',
+            },
+        ],
+    },
     vite: { plugins: [tailwindcss()] },
 });
