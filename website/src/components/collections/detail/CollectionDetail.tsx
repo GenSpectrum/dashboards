@@ -1,14 +1,30 @@
+import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+
+import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
+import { getTotalCount } from '../../../lapis/getTotalCount.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import {
     FILTER_OBJECT_ARRAY_FIELD_LABELS,
     getLineageFields,
+    getVariantFilter,
     type Collection,
+    type FilterObject,
     type Variant,
 } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 
-export function CollectionDetail({ collection }: { collection: Collection }) {
+type LapisConfig = {
+    url: string;
+    mainDateField: string;
+    additionalFilters?: Record<string, string>;
+};
+
+function CollectionDetailInner({ collection, lapisConfig }: { collection: Collection; lapisConfig: LapisConfig }) {
     const organismName = organismConfig[collection.organism as Organism].label;
+    const dateFrom30 = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
+    const dateFrom90 = dayjs().subtract(90, 'day').format('YYYY-MM-DD');
 
     return (
         <div className='flex flex-col gap-4'>
@@ -28,100 +44,118 @@ export function CollectionDetail({ collection }: { collection: Collection }) {
                 {collection.variants.length === 0 ? (
                     <p className='text-sm text-gray-500'>No variants defined.</p>
                 ) : (
-                    <div className='flex flex-col gap-3'>
-                        {collection.variants.map((variant) => (
-                            <VariantCard key={variant.id} variant={variant} />
-                        ))}
-                    </div>
+                    <table className='w-full border-collapse text-sm'>
+                        <thead>
+                            <tr className='border-b border-gray-200 text-left text-gray-500'>
+                                <th className='pr-4 pb-2 font-medium'>Name</th>
+                                <th className='pr-4 pb-2 font-medium'>Description</th>
+                                <th className='pr-4 pb-2 font-medium'>Query</th>
+                                <th className='pr-4 pb-2 text-right font-medium'>Total</th>
+                                <th className='pr-4 pb-2 text-right font-medium'>Last 30d</th>
+                                <th className='pb-2 text-right font-medium'>Last 90d</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {collection.variants.map((variant) => (
+                                <VariantRow
+                                    key={variant.id}
+                                    variant={variant}
+                                    lapisConfig={lapisConfig}
+                                    dateFrom30={dateFrom30}
+                                    dateFrom90={dateFrom90}
+                                />
+                            ))}
+                        </tbody>
+                    </table>
                 )}
             </div>
         </div>
     );
 }
 
-function VariantCard({ variant }: { variant: Variant }) {
+export const CollectionDetail = withQueryProvider(CollectionDetailInner);
+
+function VariantRow({
+    variant,
+    lapisConfig,
+    dateFrom30,
+    dateFrom90,
+}: {
+    variant: Variant;
+    lapisConfig: LapisConfig;
+    dateFrom30: string;
+    dateFrom90: string;
+}) {
+    const { url: lapisUrl, mainDateField, additionalFilters } = lapisConfig;
+    const variantFilter = getVariantFilter(variant);
+
+    const totalQuery = useQuery({
+        queryKey: ['variantCount', lapisUrl, variant.id, 'total'],
+        queryFn: () => getTotalCount(lapisUrl, { ...additionalFilters, ...variantFilter } as LapisFilter),
+    });
+
+    const last30Query = useQuery({
+        queryKey: ['variantCount', lapisUrl, variant.id, '30d', dateFrom30],
+        queryFn: () =>
+            getTotalCount(lapisUrl, {
+                ...additionalFilters,
+                ...variantFilter,
+                [`${mainDateField}From`]: dateFrom30,
+            } as LapisFilter),
+    });
+
+    const last90Query = useQuery({
+        queryKey: ['variantCount', lapisUrl, variant.id, '90d', dateFrom90],
+        queryFn: () =>
+            getTotalCount(lapisUrl, {
+                ...additionalFilters,
+                ...variantFilter,
+                [`${mainDateField}From`]: dateFrom90,
+            } as LapisFilter),
+    });
+
+    const queryDisplay =
+        variant.type === 'query' ? (
+            <span className='font-mono text-xs'>{variant.countQuery}</span>
+        ) : (
+            <span className='text-xs'>{formatFilterObjectQuery(variant.filterObject)}</span>
+        );
+
     return (
-        <div className='rounded-lg border border-gray-200 p-4'>
-            <div className='mb-1'>
-                <span className='font-medium'>{variant.name}</span>
-            </div>
-            {variant.description !== null && <p className='mb-3 text-sm text-gray-500'>{variant.description}</p>}
-            {variant.type === 'query' ? (
-                <QueryVariantDetails variant={variant} />
-            ) : (
-                <FilterObjectVariantDetails variant={variant} />
-            )}
-        </div>
+        <tr className='border-b border-gray-100 last:border-0'>
+            <td className='py-2 pr-4 font-medium'>{variant.name}</td>
+            <td className='py-2 pr-4 text-sm text-gray-500'>{variant.description ?? '—'}</td>
+            <td className='py-2 pr-4'>{queryDisplay}</td>
+            <CountCell {...totalQuery} />
+            <CountCell {...last30Query} />
+            <CountCell {...last90Query} />
+        </tr>
     );
 }
 
-function QueryVariantDetails({ variant }: { variant: Extract<Variant, { type: 'query' }> }) {
-    return (
-        <dl className='grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm'>
-            <dt className='text-gray-500'>Count query</dt>
-            <dd className='font-mono'>{variant.countQuery}</dd>
-            {variant.coverageQuery !== null && (
-                <>
-                    <dt className='text-gray-500'>Coverage query</dt>
-                    <dd className='font-mono'>{variant.coverageQuery}</dd>
-                </>
-            )}
-        </dl>
-    );
+function CountCell({ isPending, isError, data }: { isPending: boolean; isError: boolean; data?: number }) {
+    if (isPending) return <td className='px-4 py-2 text-right text-gray-400'>…</td>;
+    if (isError) return <td className='text-error px-4 py-2 text-right'>error</td>;
+    return <td className='px-4 py-2 text-right tabular-nums'>{data?.toLocaleString()}</td>;
 }
 
-function FilterObjectVariantDetails({ variant }: { variant: Extract<Variant, { type: 'filterObject' }> }) {
-    const { filterObject } = variant;
+function formatFilterObjectQuery(filterObject: FilterObject): string {
     const lineageFields = getLineageFields(filterObject);
+    const parts: string[] = [];
 
-    const { aminoAcidMutations, nucleotideMutations, aminoAcidInsertions, nucleotideInsertions } = filterObject;
-
-    const hasArrayFields =
-        (aminoAcidMutations?.length ?? 0) > 0 ||
-        (nucleotideMutations?.length ?? 0) > 0 ||
-        (aminoAcidInsertions?.length ?? 0) > 0 ||
-        (nucleotideInsertions?.length ?? 0) > 0;
-
-    if (!hasArrayFields && lineageFields.length === 0) {
-        return <p className='text-sm text-gray-500'>No mutations defined.</p>;
+    for (const [key, val] of lineageFields) {
+        parts.push(`${key}: ${val}`);
     }
 
-    return (
-        <dl className='grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm'>
-            {aminoAcidMutations !== undefined && aminoAcidMutations.length > 0 && (
-                <>
-                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.aminoAcidMutations}</dt>
-                    <dd className='font-mono'>{aminoAcidMutations.join(', ')}</dd>
-                </>
-            )}
-            {nucleotideMutations !== undefined && nucleotideMutations.length > 0 && (
-                <>
-                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.nucleotideMutations}</dt>
-                    <dd className='font-mono'>{nucleotideMutations.join(', ')}</dd>
-                </>
-            )}
-            {aminoAcidInsertions !== undefined && aminoAcidInsertions.length > 0 && (
-                <>
-                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.aminoAcidInsertions}</dt>
-                    <dd className='font-mono'>{aminoAcidInsertions.join(', ')}</dd>
-                </>
-            )}
-            {nucleotideInsertions !== undefined && nucleotideInsertions.length > 0 && (
-                <>
-                    <dt className='text-gray-500'>{FILTER_OBJECT_ARRAY_FIELD_LABELS.nucleotideInsertions}</dt>
-                    <dd className='font-mono'>{nucleotideInsertions.join(', ')}</dd>
-                </>
-            )}
-            {lineageFields.map(([key, val]) => (
-                <>
-                    <dt key={`${key}-dt`} className='text-gray-500'>
-                        {key}
-                    </dt>
-                    <dd key={`${key}-dd`} className='font-mono'>
-                        {val}
-                    </dd>
-                </>
-            ))}
-        </dl>
-    );
+    const arrayFields = Object.keys(
+        FILTER_OBJECT_ARRAY_FIELD_LABELS,
+    ) as (keyof typeof FILTER_OBJECT_ARRAY_FIELD_LABELS)[];
+    for (const field of arrayFields) {
+        const values = filterObject[field];
+        if (values && values.length > 0) {
+            parts.push(values.join(', '));
+        }
+    }
+
+    return parts.join(' · ') || '—';
 }
