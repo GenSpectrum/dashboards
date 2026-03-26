@@ -34,6 +34,30 @@ class CollectionsPostTest(
 ) {
 
     @Test
+    fun `WHEN creating collection THEN createdAt and updatedAt are set`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        assertThat(createdCollection.createdAt, notNullValue())
+        assertThat(createdCollection.updatedAt, notNullValue())
+        assertThat(createdCollection.createdAt, equalTo(createdCollection.updatedAt))
+        createdCollection.variants.forEach { variant ->
+            when (variant) {
+                is Variant.QueryVariant -> {
+                    assertThat(variant.createdAt, notNullValue())
+                    assertThat(variant.updatedAt, notNullValue())
+                    assertThat(variant.createdAt, equalTo(variant.updatedAt))
+                }
+                is Variant.FilterObjectVariant -> {
+                    assertThat(variant.createdAt, notNullValue())
+                    assertThat(variant.updatedAt, notNullValue())
+                    assertThat(variant.createdAt, equalTo(variant.updatedAt))
+                }
+            }
+        }
+    }
+
+    @Test
     fun `GIVEN collection with variants WHEN creating THEN returns with generated IDs`() {
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
