@@ -16,6 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -23,7 +25,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(CollectionsClient::class)
-class CollectionsPutTest(@param:Autowired private val collectionsClient: CollectionsClient) {
+class CollectionsPutTest(
+    @param:Autowired private val collectionsClient: CollectionsClient,
+    @param:Autowired private val mockMvc: MockMvc,
+) {
 
     @Test
     fun `WHEN owner updates all fields THEN collection is updated`() {
@@ -95,6 +100,30 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
 
         assertThat(updated.createdAt, equalTo(createdCollection.createdAt))
         assertThat(updated.updatedAt, greaterThanOrEqualTo(createdCollection.updatedAt))
+    }
+
+    @Test
+    fun `WHEN updating collection with createdAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        mockMvc.perform(
+            put("/collections/${createdCollection.id}?userId=$userId")
+                .content("""{"createdAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `WHEN updating collection with updatedAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        mockMvc.perform(
+            put("/collections/${createdCollection.id}?userId=$userId")
+                .content("""{"updatedAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
     }
 
     @Test
