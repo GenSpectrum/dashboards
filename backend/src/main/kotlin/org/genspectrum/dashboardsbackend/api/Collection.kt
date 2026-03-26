@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.api
 
 import io.swagger.v3.oas.annotations.media.Schema
+import kotlinx.datetime.Instant
 
 @Schema(
     description = "A collection of variants",
@@ -11,7 +12,9 @@ import io.swagger.v3.oas.annotations.media.Schema
     "ownedBy": "user123",
     "organism": "covid",
     "description": "A collection of interesting variants",
-    "variants": []
+    "variants": [],
+    "createdAt": "2026-01-01T00:00:00Z",
+    "updatedAt": "2026-01-02T00:00:00Z"
 }
 """,
 )
@@ -22,6 +25,8 @@ data class Collection(
     val organism: String,
     val description: String?,
     val variants: List<Variant>,
+    val createdAt: Instant,
+    val updatedAt: Instant,
 )
 
 @Schema(

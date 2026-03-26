@@ -99,6 +99,8 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
             description = description,
             countQuery = countQuery!!,
             coverageQuery = coverageQuery,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
         VariantType.FILTER_OBJECT -> Variant.FilterObjectVariant(
             id = id.value,
@@ -106,6 +108,8 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
             name = name,
             description = description,
             filterObject = filterObject!!,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 }
