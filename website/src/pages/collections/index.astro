@@ -19,7 +19,7 @@ if (!isStaging()) {
     <p class='mb-6'>Select an organism to browse variant collections.</p>
     <ul class='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
         {
-            allOrganisms.map((organism) => {
+            allOrganisms.filter((o) => organismConfig[o].hasCollections).map((organism) => {
                 const config = organismConfig[organism];
                 return (
                     <li class='group'>

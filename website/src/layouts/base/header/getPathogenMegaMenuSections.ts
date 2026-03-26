@@ -50,7 +50,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             });
 
         // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1108
-        if (isStaging()) {
+        if (isStaging() && config.hasCollections) {
             megaMenuSections.push({
                 label: 'Collections',
                 href: Page.collectionsForOrganism(config.organism),
