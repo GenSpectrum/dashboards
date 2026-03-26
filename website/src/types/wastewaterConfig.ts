@@ -109,7 +109,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             variant: {
                 mode: 'variant',
                 sequenceType: 'nucleotide',
-                variant: 'A.D.1*',
+                variant: 'XFG*',
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
