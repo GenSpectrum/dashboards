@@ -9,6 +9,7 @@ import org.genspectrum.dashboardsbackend.dummyCollectionRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.greaterThanOrEqualTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -69,15 +70,31 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
     }
 
     @Test
-    fun `WHEN owner sends empty update THEN nothing changes`() {
+    fun `WHEN owner sends empty update THEN name, description and variants are unchanged`() {
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val update = CollectionUpdate()
+        val updated = collectionsClient.putCollection(CollectionUpdate(), createdCollection.id, userId)
 
-        val updated = collectionsClient.putCollection(update, createdCollection.id, userId)
+        assertThat(updated.name, equalTo(createdCollection.name))
+        assertThat(updated.description, equalTo(createdCollection.description))
+        assertThat(updated.variants.size, equalTo(createdCollection.variants.size))
+        assertThat(updated.createdAt, equalTo(createdCollection.createdAt))
+    }
 
-        assertThat(updated, equalTo(createdCollection))
+    @Test
+    fun `WHEN collection is updated THEN updatedAt advances but createdAt stays the same`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        val updated = collectionsClient.putCollection(
+            CollectionUpdate(name = "Updated Name"),
+            createdCollection.id,
+            userId,
+        )
+
+        assertThat(updated.createdAt, equalTo(createdCollection.createdAt))
+        assertThat(updated.updatedAt, greaterThanOrEqualTo(createdCollection.updatedAt))
     }
 
     @Test
