@@ -58,6 +58,26 @@ class CollectionsPostTest(
     }
 
     @Test
+    fun `WHEN creating collection with createdAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content("""{"name":"Test","organism":"Covid","variants":[],"createdAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `WHEN creating collection with updatedAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content("""{"name":"Test","organism":"Covid","variants":[],"updatedAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `GIVEN collection with variants WHEN creating THEN returns with generated IDs`() {
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
