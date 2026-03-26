@@ -14,6 +14,7 @@ import {
     type Variant,
 } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
+import { Page } from '../../../types/pages.ts';
 
 type LapisConfig = {
     url: string;
@@ -60,6 +61,7 @@ function CollectionDetailInner({ collection, lapisConfig }: { collection: Collec
                                 <VariantRow
                                     key={variant.id}
                                     variant={variant}
+                                    organism={collection.organism as Organism}
                                     lapisConfig={lapisConfig}
                                     dateFrom30={dateFrom30}
                                     dateFrom90={dateFrom90}
@@ -77,11 +79,13 @@ export const CollectionDetail = withQueryProvider(CollectionDetailInner);
 
 function VariantRow({
     variant,
+    organism,
     lapisConfig,
     dateFrom30,
     dateFrom90,
 }: {
     variant: Variant;
+    organism: Organism;
     lapisConfig: LapisConfig;
     dateFrom30: string;
     dateFrom90: string;
@@ -123,7 +127,11 @@ function VariantRow({
 
     return (
         <tr className='border-b border-gray-100 last:border-0'>
-            <td className='py-2 pr-4 font-medium'>{variant.name}</td>
+            <td className='py-2 pr-4 font-medium'>
+                <a className='underline' href={Page.singleVariantView(organism, variant)} title='Analyze this variant'>
+                    {variant.name}
+                </a>
+            </td>
             <td className='py-2 pr-4 text-sm text-gray-500'>{variant.description ?? '—'}</td>
             <td className='py-2 pr-4'>{queryDisplay}</td>
             <CountCell {...totalQuery} />
