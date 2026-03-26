@@ -8,6 +8,7 @@ import type { Collection } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
+import { Page } from '../../../types/pages.ts';
 
 export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
