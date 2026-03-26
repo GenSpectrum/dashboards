@@ -47,7 +47,6 @@ const earliestDate = '2020-01-06';
 const hostField = 'host';
 
 const mainDateFilterColumn = 'date';
-const mainLocationFields = ['region', 'country', 'division'];
 
 const NEXTCLADE_PANGO_LINEAGE_FIELD_NAME = 'nextcladePangoLineage';
 const NEXTSTRAIN_CLADE_FIELD_NAME = 'nextstrainClade';
@@ -73,7 +72,7 @@ class CovidConstants implements OrganismConstants {
     public readonly organism = Organisms.covid;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields = mainLocationFields;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: NEXTCLADE_PANGO_LINEAGE_FIELD_NAME,
@@ -82,45 +81,7 @@ class CovidConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = true;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        {
-            type: 'location',
-            locationFields: mainLocationFields,
-            placeholderText: 'Sampling location',
-            label: 'Sampling location',
-        },
-        {
-            type: 'date',
-            dateRangeOptions,
-            dateColumn: mainDateFilterColumn,
-            label: 'Date',
-        },
-        {
-            lapisField: hostField,
-            placeholderText: 'Host',
-            type: 'text' as const,
-            label: 'Host',
-        },
-        {
-            lapisField: 'samplingStrategy',
-            placeholderText: 'Sampling strategy',
-            type: 'text' as const,
-            label: 'Sampling strategy',
-        },
-        {
-            type: 'date',
-            dateRangeOptions,
-            dateColumn: 'dateSubmitted',
-            label: 'Date submitted',
-        },
-        {
-            type: 'location',
-            locationFields: ['regionExposure', 'countryExposure', 'divisionExposure'],
-            placeholderText: 'Exposure location',
-            label: 'Exposure location',
-        },
-        { type: 'advancedQuery' },
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly hostField: string = hostField;
     public readonly originatingLabField = 'originatingLab';
     public readonly submittingLabField = 'submittingLab';
@@ -163,8 +124,48 @@ class CovidConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.covid.lapis.locationFields;
         this.mainDateField = organismsConfig.covid.lapis.mainDateField;
         this.additionalFilters = organismsConfig.covid.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            {
+                type: 'location',
+                locationFields: this.locationFields,
+                placeholderText: 'Sampling location',
+                label: 'Sampling location',
+            },
+            {
+                type: 'date',
+                dateRangeOptions,
+                dateColumn: mainDateFilterColumn,
+                label: 'Date',
+            },
+            {
+                lapisField: hostField,
+                placeholderText: 'Host',
+                type: 'text' as const,
+                label: 'Host',
+            },
+            {
+                lapisField: 'samplingStrategy',
+                placeholderText: 'Sampling strategy',
+                type: 'text' as const,
+                label: 'Sampling strategy',
+            },
+            {
+                type: 'date',
+                dateRangeOptions,
+                dateColumn: 'dateSubmitted',
+                label: 'Date submitted',
+            },
+            {
+                type: 'location',
+                locationFields: ['regionExposure', 'countryExposure', 'divisionExposure'],
+                placeholderText: 'Exposure location',
+                label: 'Exposure location',
+            },
+            { type: 'advancedQuery' },
+        ];
     }
 }
 
