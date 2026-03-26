@@ -11,6 +11,9 @@ dashboards:
       lapis:
         url: "https://covid.lapis.dummy"
         mainDateField: "covid_date"
+        lineageFields:
+          - "pangoLineage"
+          - "nextcladePangoLineage"
         additionalFilters:
           someAdditionalFilter: "covid_additional_filter"
     Mpox:

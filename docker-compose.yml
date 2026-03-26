@@ -19,7 +19,7 @@ services:
     depends_on:
       - database
     command:
-      - --spring.datasource.url=jdbc:postgresql://database:5432/subscriptions
+      - --spring.datasource.url=jdbc:postgresql://database:5432/dashboards-backend-db
       - --spring.datasource.username=postgres
       - --spring.datasource.password=unsecure
       - --spring.profiles.active=dashboards-prod
@@ -29,6 +29,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: unsecure
-      POSTGRES_DB: subscriptions
+      POSTGRES_DB: dashboards-backend-db
     ports:
       - "127.0.0.1:9022:5432"
