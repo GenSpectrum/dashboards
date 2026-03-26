@@ -6,7 +6,7 @@ import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wa
 export const wastewaterOrganisms = {
     covid: 'covid',
     rsvA: 'rsv-a',
-    rsvB: 'rsv-B',
+    rsvB: 'rsv-b',
 } as const;
 
 export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof wastewaterOrganisms];
