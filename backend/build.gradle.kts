@@ -34,6 +34,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.2.0")
     implementation("org.jetbrains.exposed:exposed-json:1.2.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:1.2.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 

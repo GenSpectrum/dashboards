@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
+import kotlin.time.Clock
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
@@ -68,11 +69,14 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun createCollection(request: CollectionRequest, userId: String): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)
 
+        val now = Clock.System.now()
         val collectionEntity = CollectionEntity.new {
             name = request.name
             organism = request.organism
             description = request.description
             ownedBy = userId
+            createdAt = now
+            updatedAt = now
         }
 
         val variantEntities = request.variants.map { variantRequest ->
@@ -103,6 +107,9 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun putCollection(id: Long, update: CollectionUpdate, userId: String): Collection {
         val collectionEntity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to update it")
+
+        val now = Clock.System.now()
+        collectionEntity.updatedAt = now
 
         if (update.name != null) {
             collectionEntity.name = update.name
@@ -165,8 +172,9 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         return collectionEntity.toCollection()
     }
 
-    private fun createVariantEntity(collectionEntity: CollectionEntity, variantRequest: VariantRequest): VariantEntity =
-        when (variantRequest) {
+    private fun createVariantEntity(collectionEntity: CollectionEntity, variantRequest: VariantRequest): VariantEntity {
+        val now = Clock.System.now()
+        return when (variantRequest) {
             is VariantRequest.QueryVariantRequest -> {
                 VariantEntity.new {
                     this.collectionId = collectionEntity.id
@@ -176,6 +184,8 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                     this.countQuery = variantRequest.countQuery
                     this.coverageQuery = variantRequest.coverageQuery
                     this.filterObject = null
+                    this.createdAt = now
+                    this.updatedAt = now
                 }
             }
             is VariantRequest.FilterObjectVariantRequest -> {
@@ -189,9 +199,12 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                     this.filterObject = variantRequest.filterObject
                     this.countQuery = null
                     this.coverageQuery = null
+                    this.createdAt = now
+                    this.updatedAt = now
                 }
             }
         }
+    }
 
     /**
      * The list of known lineage fields is configured in the organism config.
@@ -218,6 +231,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         variantUpdate: VariantUpdate,
         collectionEntity: CollectionEntity,
     ) {
+        variantEntity.updatedAt = Clock.System.now()
         when (variantUpdate) {
             is VariantUpdate.QueryVariantUpdate -> {
                 // Verify type matches

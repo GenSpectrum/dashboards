@@ -8,6 +8,8 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.dao.LongEntity
 import org.jetbrains.exposed.v1.dao.LongEntityClass
+import org.jetbrains.exposed.v1.datetime.timestamp
+// TODO - timestmap class is missing
 
 const val VARIANT_TABLE = "variants_table"
 
@@ -46,6 +48,9 @@ object VariantTable : LongIdTable(VARIANT_TABLE) {
     val filterObject = jacksonSerializableJsonb<FilterObject>(
         "filter_object",
     ).nullable()
+
+    val createdAt = timestamp("created_at")
+    val updatedAt = timestamp("updated_at")
 }
 
 class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -60,6 +65,8 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
     var countQuery by VariantTable.countQuery
     var coverageQuery by VariantTable.coverageQuery
     var filterObject by VariantTable.filterObject
+    var createdAt by VariantTable.createdAt
+    var updatedAt by VariantTable.updatedAt
 
     // Type-safe variant type accessor
     var variantType: VariantType
