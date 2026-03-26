@@ -25,7 +25,6 @@ import {
     type OrganismConstants,
     PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
     PATHOPLEXUS_HOST_FIELD,
-    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -43,7 +42,7 @@ class RsvBConstants implements OrganismConstants {
     public readonly organism = Organisms.rsvB;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
@@ -52,11 +51,7 @@ class RsvBConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getPathoplexusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
@@ -86,8 +81,15 @@ class RsvBConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.rsvB.lapis.locationFields;
         this.mainDateField = organismsConfig.rsvB.lapis.mainDateField;
         this.additionalFilters = organismsConfig.rsvB.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getPathoplexusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
+            }),
+        ];
     }
 }
 

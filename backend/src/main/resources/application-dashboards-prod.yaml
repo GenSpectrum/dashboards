@@ -4,6 +4,10 @@ dashboards:
       lapis:
         url: "https://lapis.cov-spectrum.org/open/v2"
         mainDateField: "date"
+        locationFields:
+          - "region"
+          - "country"
+          - "division"
         lineageFields:
           - "pangoLineage"
           - "nextcladePangoLineage"
@@ -16,6 +20,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/h5n1"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "country"
+          - "division"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -28,6 +35,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/h1n1pdm"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "country"
+          - "division"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -40,6 +50,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/h3n2"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "country"
+          - "division"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -52,6 +65,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-a"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "country"
+          - "division"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -64,6 +80,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-b"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "country"
+          - "division"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -76,6 +95,9 @@ dashboards:
       lapis:
         url: "https://api.loculus.genspectrum.org/b-victoria"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "country"
+          - "division"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -88,6 +110,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/mpox"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -100,6 +125,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -112,6 +140,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/rsv-a"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -124,6 +155,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/rsv-b"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -136,6 +170,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-sudan"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -148,6 +185,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/ebola-zaire"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -160,6 +200,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/cchf"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -240,6 +283,9 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/measles"
         mainDateField: "sampleCollectionDateRangeLower"
+        locationFields:
+          - "geoLocCountry"
+          - "geoLocAdmin1"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"

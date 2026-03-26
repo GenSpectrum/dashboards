@@ -25,7 +25,6 @@ import {
     type OrganismConstants,
     PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
     PATHOPLEXUS_HOST_FIELD,
-    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -41,13 +40,9 @@ const dateRangeOptions = defaultDateRangeOptions(earliestDate);
 class EbolaSudanConstants implements OrganismConstants {
     public readonly organism = Organisms.ebolaSudan;
     public readonly earliestDate = earliestDate;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getPathoplexusFilters({
-            dateRangeOptions,
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly mainDateField: string;
-    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useVariantQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
@@ -81,8 +76,15 @@ class EbolaSudanConstants implements OrganismConstants {
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.ebolaSudan.lapis.locationFields;
         this.mainDateField = organismsConfig.ebolaSudan.lapis.mainDateField;
         this.additionalFilters = organismsConfig.ebolaSudan.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getPathoplexusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions,
+            }),
+        ];
     }
 }
 

@@ -25,7 +25,6 @@ import {
     type OrganismConstants,
     PATHOPLEXUS_COMMON_DOWNLOAD_FIELDS,
     PATHOPLEXUS_HOST_FIELD,
-    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -41,18 +40,9 @@ const dateRangeOptions = defaultDateRangeOptions(earliestDate);
 class CchfConstants implements OrganismConstants {
     public readonly organism = Organisms.cchf;
     public readonly earliestDate = earliestDate;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getPathoplexusFilters({
-            dateRangeOptions,
-            completenessSuffixes: [
-                { suffix: 'M', suffixLabel: 'M' },
-                { suffix: 'L', suffixLabel: 'L' },
-                { suffix: 'S', suffixLabel: 'S' },
-            ],
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly mainDateField: string;
-    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [];
     public readonly useVariantQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
@@ -91,8 +81,20 @@ class CchfConstants implements OrganismConstants {
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.cchf.lapis.locationFields;
         this.mainDateField = organismsConfig.cchf.lapis.mainDateField;
         this.additionalFilters = organismsConfig.cchf.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getPathoplexusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions,
+                completenessSuffixes: [
+                    { suffix: 'M', suffixLabel: 'M' },
+                    { suffix: 'L', suffixLabel: 'L' },
+                    { suffix: 'S', suffixLabel: 'S' },
+                ],
+            }),
+        ];
     }
 }
 

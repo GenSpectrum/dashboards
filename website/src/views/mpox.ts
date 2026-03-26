@@ -25,7 +25,6 @@ import {
     type OrganismConstants,
     PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
     PATHOPLEXUS_HOST_FIELD,
-    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -44,7 +43,7 @@ class MpoxConstants implements OrganismConstants {
     public readonly organism = Organisms.mpox;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
@@ -58,30 +57,7 @@ class MpoxConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getPathoplexusFilters({
-            dateRangeOptions: () => {
-                const presets = dateRangeOptionPresets();
-                return [
-                    presets.lastMonth,
-                    presets.last2Months,
-                    presets.last3Months,
-                    presets.last6Months,
-                    presets.lastYear,
-                    defaultDateRangeOption.year2024,
-                    defaultDateRangeOption.year2023,
-                    defaultDateRangeOption.year2022,
-                    defaultDateRangeOption.year2021,
-                    defaultDateRangeOption.since2021,
-                    defaultDateRangeOption.before2021,
-                    defaultDateRangeOption.since2017,
-                    defaultDateRangeOption.from2017to2020,
-                    defaultDateRangeOption.before2017,
-                    { label: ALL_TIMES_LABEL, dateFrom: earliestDate },
-                ];
-            },
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
@@ -112,8 +88,34 @@ class MpoxConstants implements OrganismConstants {
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.mpox.lapis.locationFields;
         this.mainDateField = organismsConfig.mpox.lapis.mainDateField;
         this.additionalFilters = organismsConfig.mpox.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getPathoplexusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions: () => {
+                    const presets = dateRangeOptionPresets();
+                    return [
+                        presets.lastMonth,
+                        presets.last2Months,
+                        presets.last3Months,
+                        presets.last6Months,
+                        presets.lastYear,
+                        defaultDateRangeOption.year2024,
+                        defaultDateRangeOption.year2023,
+                        defaultDateRangeOption.year2022,
+                        defaultDateRangeOption.year2021,
+                        defaultDateRangeOption.since2021,
+                        defaultDateRangeOption.before2021,
+                        defaultDateRangeOption.since2017,
+                        defaultDateRangeOption.from2017to2020,
+                        defaultDateRangeOption.before2017,
+                        { label: ALL_TIMES_LABEL, dateFrom: earliestDate },
+                    ];
+                },
+            }),
+        ];
     }
 }
 
