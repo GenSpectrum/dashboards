@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
+import kotlinx.datetime.Instant
 import org.genspectrum.dashboardsbackend.api.Variant.FilterObjectVariant
 import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
 
@@ -44,7 +45,9 @@ sealed interface Variant {
     "name": "BA.2 in USA",
     "description": "BA.2 lineage cases in USA",
     "countQuery": "country='USA' & lineage='BA.2'",
-    "coverageQuery": "country='USA'"
+    "coverageQuery": "country='USA'",
+    "createdAt": "2026-01-01T00:00:00Z",
+    "updatedAt": "2026-01-02T00:00:00Z"
 }
 """,
     )
@@ -55,6 +58,8 @@ sealed interface Variant {
         val description: String?,
         val countQuery: String,
         val coverageQuery: String? = null,
+        val createdAt: Instant,
+        val updatedAt: Instant,
     ) : Variant {
         val type: QueryVariantType = QueryVariantType.QUERY
     }
@@ -70,7 +75,9 @@ sealed interface Variant {
     "description": "Key mutations for Omicron",
     "filterObject": {
         "aminoAcidMutations": ["S:N501Y", "S:E484K", "S:K417N"]
-    }
+    },
+    "createdAt": "2026-01-01T00:00:00Z",
+    "updatedAt": "2026-01-02T00:00:00Z"
 }
 """,
     )
@@ -80,6 +87,8 @@ sealed interface Variant {
         val name: String,
         val description: String?,
         val filterObject: FilterObject,
+        val createdAt: Instant,
+        val updatedAt: Instant,
     ) : Variant {
         val type: FilterObjectVariantType = FilterObjectVariantType.FILTER_OBJECT
     }

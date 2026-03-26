@@ -41,5 +41,7 @@ class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
         organism = organism,
         description = description,
         variants = variants.map { it.toVariant() },
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }

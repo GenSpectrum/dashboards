@@ -57,6 +57,8 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                 organism = collectionEntity.organism,
                 description = collectionEntity.description,
                 variants = variants,
+                createdAt = collectionEntity.createdAt,
+                updatedAt = collectionEntity.updatedAt,
             )
         }
     }
@@ -91,6 +93,8 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             organism = collectionEntity.organism,
             description = collectionEntity.description,
             variants = variantEntities.map { it.toVariant() },
+            createdAt = collectionEntity.createdAt,
+            updatedAt = collectionEntity.updatedAt,
         )
     }
 
