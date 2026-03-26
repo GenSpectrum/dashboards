@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
 import kotlin.time.Clock
+import kotlin.time.Instant
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
@@ -23,6 +24,12 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
+    // Truncate to milliseconds to avoid mismatches between the in-memory value
+    // we return and what is read back from the DB.
+    private fun now(): Instant = Clock.System.now().run {
+        Instant.fromEpochMilliseconds(toEpochMilliseconds())
+    }
+
     fun getCollections(userId: String?, organism: String?): List<Collection> {
         val query = if (userId == null && organism == null) {
             CollectionEntity.all()
@@ -71,7 +78,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun createCollection(request: CollectionRequest, userId: String): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)
 
-        val now = Clock.System.now()
+        val now = now()
         val collectionEntity = CollectionEntity.new {
             name = request.name
             organism = request.organism
@@ -112,7 +119,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         val collectionEntity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to update it")
 
-        val now = Clock.System.now()
+        val now = now()
         collectionEntity.updatedAt = now
 
         if (update.name != null) {
@@ -177,7 +184,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     }
 
     private fun createVariantEntity(collectionEntity: CollectionEntity, variantRequest: VariantRequest): VariantEntity {
-        val now = Clock.System.now()
+        val now = now()
         return when (variantRequest) {
             is VariantRequest.QueryVariantRequest -> {
                 VariantEntity.new {
@@ -235,7 +242,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         variantUpdate: VariantUpdate,
         collectionEntity: CollectionEntity,
     ) {
-        variantEntity.updatedAt = Clock.System.now()
+        variantEntity.updatedAt = now()
         when (variantUpdate) {
             is VariantUpdate.QueryVariantUpdate -> {
                 // Verify type matches

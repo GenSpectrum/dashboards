@@ -1,7 +1,7 @@
 package org.genspectrum.dashboardsbackend.api
 
 import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Schema(
     description = "A collection of variants",
