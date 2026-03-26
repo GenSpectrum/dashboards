@@ -67,14 +67,6 @@ export class CovSpectrumRouteMocker {
             }),
         );
     }
-
-    mockGetCollection(baseUrl: string, id: number, response: CollectionRaw, statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(`${baseUrl}/resource/collection/${id}`, () => {
-                return new Response(JSON.stringify(response), { status: statusCode });
-            }),
-        );
-    }
 }
 
 /**
