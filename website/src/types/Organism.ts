@@ -33,6 +33,7 @@ export const organismConfig = {
         backgroundColor: 'bg-sandMuted',
         backgroundColorFocus: 'group-hover:bg-sand',
         borderEntryDecoration: 'hover:border-sand',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/sars-cov-2.gff3',
@@ -48,6 +49,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        hasCollections: false,
     },
     [Organisms.h5n1]: {
         organism: Organisms.h5n1,
@@ -57,6 +59,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/h5n1/seg1.gff3',
@@ -108,6 +111,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/h1n1pdm/seg1.gff3',
@@ -159,6 +163,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-cyan',
         menuListEntryDecoration: 'decoration-cyan',
         borderEntryDecoration: 'hover:border-cyan',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/h3n2/seg1.gff3',
@@ -210,6 +215,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
         borderEntryDecoration: 'hover:border-indigo',
+        hasCollections: false,
     },
     [Organisms.victoria]: {
         organism: Organisms.victoria,
@@ -219,6 +225,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-indigo',
         menuListEntryDecoration: 'decoration-indigo',
         borderEntryDecoration: 'hover:border-indigo',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/victoria/seg1.gff3',
@@ -270,6 +277,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-green',
         menuListEntryDecoration: 'hover:decoration-green',
         borderEntryDecoration: 'hover:border-green',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/west-nile.gff3',
@@ -285,6 +293,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/rsv-a.gff3',
@@ -300,6 +309,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-purple',
         menuListEntryDecoration: 'hover:decoration-purple',
         borderEntryDecoration: 'hover:border-purple',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/rsv-b.gff3',
@@ -315,6 +325,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-rose',
         menuListEntryDecoration: 'hover:decoration-rose',
         borderEntryDecoration: 'hover:border-rose',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/mpox.gff3',
@@ -330,6 +341,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-wine',
         menuListEntryDecoration: 'hover:decoration-wine',
         borderEntryDecoration: 'hover:border-wine',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/ebola-sudan.gff3',
@@ -345,6 +357,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-wine',
         menuListEntryDecoration: 'hover:decoration-wine',
         borderEntryDecoration: 'hover:border-wine',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/ebola-zaire.gff3',
@@ -360,6 +373,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-olive',
         menuListEntryDecoration: 'hover:decoration-olive',
         borderEntryDecoration: 'hover:border-olive',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/cchf/L.gff3',
@@ -386,6 +400,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-lime',
         menuListEntryDecoration: 'hover:decoration-lime',
         borderEntryDecoration: 'hover:border-lime',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/denv1.gff3',
@@ -401,6 +416,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-lime',
         menuListEntryDecoration: 'hover:decoration-lime',
         borderEntryDecoration: 'hover:border-lime',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/denv2.gff3',
@@ -416,6 +432,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-lime',
         menuListEntryDecoration: 'hover:decoration-lime',
         borderEntryDecoration: 'hover:border-lime',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/denv3.gff3',
@@ -431,6 +448,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-lime',
         menuListEntryDecoration: 'hover:decoration-lime',
         borderEntryDecoration: 'hover:border-lime',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/denv4.gff3',
@@ -446,6 +464,7 @@ export const organismConfig = {
         backgroundColorFocus: 'group-hover:bg-green',
         menuListEntryDecoration: 'hover:decoration-green',
         borderEntryDecoration: 'hover:border-green',
+        hasCollections: true,
         genome: [
             {
                 gff3Source: '/gff3Files/measles.gff3',
