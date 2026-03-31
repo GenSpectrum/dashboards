@@ -106,6 +106,19 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: false,
             },
+            // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1110
+            ...(isStaging()
+                ? [
+                      {
+                          label: 'RSV-B',
+                          iconType: 'table' as MenuIconType,
+                          href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].path,
+                          description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].description,
+                          underlineColor: wastewaterConfig.menuListEntryDecoration,
+                          externalLink: false,
+                      },
+                  ]
+                : []),
             {
                 label: 'RSV (non-interactive)',
                 iconType: 'table',
@@ -138,6 +151,19 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
                 externalLink: true,
             },
+            // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1110
+            ...(isStaging()
+                ? [
+                      {
+                          label: 'Browse RSV-B data',
+                          iconType: 'database' as MenuIconType,
+                          href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].browseDataUrl,
+                          description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].browseDataDescription,
+                          underlineColor: wastewaterConfig.menuListEntryDecoration,
+                          externalLink: true,
+                      },
+                  ]
+                : []),
             {
                 label: 'Browse non-interactive RSV & Influenza data',
                 iconType: 'database',
