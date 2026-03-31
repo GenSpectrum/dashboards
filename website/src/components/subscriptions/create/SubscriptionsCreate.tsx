@@ -59,7 +59,7 @@ export function SubscriptionsCreateInner({
         filter: {},
     });
     const [dateWindow, setDateWindow] = useState<DateWindow>(DateWindows.last6Months);
-    const [name, setName] = useState<string>('');
+    const [name, setName] = useState('');
     const [organism, setOrganism] = useState<Organism>(Organisms.covid);
     const [interval, setInterval] = useState<EvaluationInterval>(EvaluationIntervals.daily);
     // TODO: Enable notificationChannels in #82, #128
