@@ -33,7 +33,7 @@ describe('ApplyFilterButton', () => {
     it('should render enabled link for short URL', async () => {
         const shortState: DummyPageState = { data: 'short' };
 
-        const { result: state } = renderHook(() => useState<DummyPageState>({ data: 'initial' }));
+        const { result: state } = renderHook(() => useState({ data: 'initial' }));
 
         const { getByRole } = render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={shortState} setPageState={state.current[1]} />,
@@ -48,7 +48,7 @@ describe('ApplyFilterButton', () => {
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
 
-        const { result: state } = renderHook(() => useState<DummyPageState>({ data: 'initial' }));
+        const { result: state } = renderHook(() => useState({ data: 'initial' }));
 
         const { getByRole, container } = render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={longState} setPageState={state.current[1]} />,
@@ -64,7 +64,7 @@ describe('ApplyFilterButton', () => {
     it('should update when state changes from short to long', async () => {
         const shortState: DummyPageState = { data: 'short' };
 
-        const { result: state } = renderHook(() => useState<DummyPageState>({ data: 'initial' }));
+        const { result: state } = renderHook(() => useState({ data: 'initial' }));
 
         const { getByRole, container, rerender } = render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={shortState} setPageState={state.current[1]} />,
@@ -91,7 +91,7 @@ describe('ApplyFilterButton', () => {
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
 
-        const { result: state } = renderHook(() => useState<DummyPageState>({ data: 'initial' }));
+        const { result: state } = renderHook(() => useState({ data: 'initial' }));
 
         const { getByRole, container, rerender } = render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={longState} setPageState={state.current[1]} />,
