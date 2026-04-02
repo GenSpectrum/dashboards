@@ -7,6 +7,8 @@ import { IntervalInput } from './IntervalInput.tsx';
 import { NameInput } from './NameInput.tsx';
 import { OrganismInput } from './OrganismInput.tsx';
 import { TriggerInput } from './TriggerInput.tsx';
+import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import type { DashboardsConfig } from '../../../config.ts';
 import { BorderedCard } from '../../../styles/containers/BorderedCard.tsx';
@@ -21,8 +23,6 @@ import type { SubscriptionRequest, Trigger } from '../../../types/Subscription.t
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { useErrorToast } from '../../ErrorReportInstruction.tsx';
 import { GsApp } from '../../genspectrum/GsApp.tsx';
-import { getBackendServiceForClientside } from '../backendApi/backendService.ts';
-import { withQueryProvider } from '../backendApi/withQueryProvider.tsx';
 
 export const SubscriptionsCreate = withQueryProvider(SubscriptionsCreateInner);
 
@@ -30,12 +30,10 @@ const logger = getClientLogger('SubscriptionsCreate');
 
 export function SubscriptionsCreateInner({
     config,
-    userId,
     // TODO: Enable notificationChannels in #82, #128
     // notificationChannels,
 }: {
     config: DashboardsConfig;
-    userId: string;
     // TODO: Enable notificationChannels in #82, #128
     // notificationChannels: NotificationChannels;
 }) {
@@ -45,7 +43,6 @@ export function SubscriptionsCreateInner({
         mutationFn: () =>
             getBackendServiceForClientside().postSubscription({
                 subscription: getSubscription(),
-                userId,
             }),
         onError: (error) => {
             showErrorToast({
@@ -62,7 +59,7 @@ export function SubscriptionsCreateInner({
         filter: {},
     });
     const [dateWindow, setDateWindow] = useState<DateWindow>(DateWindows.last6Months);
-    const [name, setName] = useState<string>('');
+    const [name, setName] = useState('');
     const [organism, setOrganism] = useState<Organism>(Organisms.covid);
     const [interval, setInterval] = useState<EvaluationInterval>(EvaluationIntervals.daily);
     // TODO: Enable notificationChannels in #82, #128

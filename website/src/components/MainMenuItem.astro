@@ -5,12 +5,13 @@ interface Props {
     menuListEntryDecoration: string;
     href: string;
     external?: boolean;
+    hasSeparatorAbove?: boolean;
 }
 
-const { iconType, menuListEntryDecoration, href, external } = Astro.props;
+const { iconType, menuListEntryDecoration, href, external, hasSeparatorAbove } = Astro.props;
 ---
 
-<li class='flex items-center pt-2'>
+<li class={`flex items-center pt-2 ${hasSeparatorAbove ? 'mt-2 border-t border-gray-200' : ''}`}>
     <span class={`iconify mr-2 shrink-0 ${iconMapping[iconType]}`}></span>
     <a
         class={`hover:underline hover:decoration-4 ${menuListEntryDecoration} ${external === true ? externalLinkIconCss : ''}`}

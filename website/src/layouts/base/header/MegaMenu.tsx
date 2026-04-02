@@ -47,13 +47,15 @@ export function MegaMenuListEntry({
     label,
     className,
     externalLink = false,
+    hasSeparatorAbove = false,
 }: WithClassName<{
     href: string;
     label: string;
     externalLink?: boolean;
+    hasSeparatorAbove?: boolean;
 }>) {
     return (
-        <li>
+        <li className={hasSeparatorAbove ? 'mt-1 border-t border-gray-200 pt-1' : ''}>
             <a
                 className={`flex items-center p-2 hover:underline hover:decoration-4 ${className} ${externalLink ? 'after:iconify after:mdi--external-link after:ml-0.5' : ''}`}
                 href={href}

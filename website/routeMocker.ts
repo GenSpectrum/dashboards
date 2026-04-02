@@ -8,6 +8,7 @@ import { type OrganismsConfig } from './src/config';
 import type { CollectionRaw } from './src/covspectrum/types.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
 import type { ParsedQueryResult } from './src/lapis/parseQuery.ts';
+import type { Collection } from './src/types/Collection.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -27,6 +28,15 @@ export class AstroApiRouteMocker {
 
     mockLog() {
         this.workerOrServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
+    }
+
+    mockGetCollections(response: Collection[], organism?: string, statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(
+                `${ASTRO_SERVER_URL}/collections`,
+                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+            ),
+        );
     }
 }
 
@@ -164,17 +174,11 @@ export class LapisRouteMocker {
 export class BackendRouteMocker {
     constructor(private workerOrServer: MSWWorkerOrServer) {}
 
-    mockGetSubscriptions(requestParam: { userId: string }, response: SubscriptionResponse[], statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, response, requestParam }])),
-        );
+    mockGetSubscriptions(response: SubscriptionResponse[], statusCode = 200) {
+        this.workerOrServer.use(http.get(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, response }])));
     }
 
-    mockGetEvaluateTrigger(
-        requestParam: { userId: string; id: string },
-        response: TriggerEvaluationResponse,
-        statusCode = 200,
-    ) {
+    mockGetEvaluateTrigger(requestParam: { id: string }, response: TriggerEvaluationResponse, statusCode = 200) {
         this.workerOrServer.use(
             http.get(
                 `${DUMMY_BACKEND_URL}/subscriptions/evaluateTrigger`,
@@ -183,20 +187,14 @@ export class BackendRouteMocker {
         );
     }
 
-    mockPostSubscription(
-        body: SubscriptionRequest,
-        requestParam: { userId: string },
-        response: SubscriptionResponse,
-        statusCode = 200,
-    ) {
+    mockPostSubscription(body: SubscriptionRequest, response: SubscriptionResponse, statusCode = 200) {
         this.workerOrServer.use(
-            http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, body, response, requestParam }])),
+            http.post(`${DUMMY_BACKEND_URL}/subscriptions`, resolver([{ statusCode, body, response }])),
         );
     }
 
     mockPutSubscription(
         body: SubscriptionPutRequest,
-        requestParam: { userId: string },
         pathVariables: { subscriptionId: string },
         response: SubscriptionResponse,
         statusCode = 200,
@@ -204,20 +202,16 @@ export class BackendRouteMocker {
         this.workerOrServer.use(
             http.put(
                 `${DUMMY_BACKEND_URL}/subscriptions/${pathVariables.subscriptionId}`,
-                resolver([{ statusCode, body, response, requestParam }]),
+                resolver([{ statusCode, body, response }]),
             ),
         );
     }
 
-    mockDeleteSubscription(
-        requestParam: { userId: string },
-        pathVariables: { subscriptionId: string },
-        statusCode = 204,
-    ) {
+    mockDeleteSubscription(pathVariables: { subscriptionId: string }, statusCode = 204) {
         this.workerOrServer.use(
             http.delete(
                 `${DUMMY_BACKEND_URL}/subscriptions/${pathVariables.subscriptionId}`,
-                resolver([{ statusCode, requestParam }]),
+                resolver([{ statusCode }]),
             ),
         );
     }
@@ -227,6 +221,15 @@ export class BackendRouteMocker {
             http.get(`${DUMMY_BACKEND_URL}/subscriptions`, () => {
                 return new Response(JSON.stringify(response), { status: statusCode });
             }),
+        );
+    }
+
+    mockGetCollections(response: Collection[], organism?: string, statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(
+                `${DUMMY_BACKEND_URL}/collections`,
+                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+            ),
         );
     }
 }

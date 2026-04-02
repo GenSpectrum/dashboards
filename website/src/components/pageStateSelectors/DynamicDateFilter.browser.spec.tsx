@@ -4,8 +4,8 @@ import { render } from 'vitest-browser-react';
 import { DynamicDateFilter } from './DynamicDateFilter.tsx';
 import { DUMMY_LAPIS_URL, LapisRouteMocker } from '../../../routeMocker.ts';
 import { it } from '../../../test-extend.ts';
+import { withQueryProvider } from '../../backendApi/withQueryProvider.tsx';
 import { recentDaysDateRangeOptions } from '../../util/recentDaysDateRangeOptions.ts';
-import { withQueryProvider } from '../subscriptions/backendApi/withQueryProvider.tsx';
 
 const WrappedDynamicDateFilter = withQueryProvider(DynamicDateFilter);
 

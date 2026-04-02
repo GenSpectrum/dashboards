@@ -1,0 +1,41 @@
+---
+import { isStaging } from '../../config';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { allOrganisms, organismConfig } from '../../types/Organism';
+import { Page } from '../../types/pages';
+
+// only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1108
+if (!isStaging()) {
+    return Astro.redirect('/404');
+}
+---
+
+<ContaineredPageLayout
+    title='Collections'
+    breadcrumbs={[...defaultBreadcrumbs, { name: 'Collections', href: Page.collectionsOverview }]}
+>
+    <h1 class='mb-4 text-2xl font-bold'>Collections</h1>
+    <p class='mb-6'>Select an organism to browse variant collections.</p>
+    <ul class='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
+        {
+            allOrganisms.map((organism) => {
+                const config = organismConfig[organism];
+                return (
+                    <li class='group'>
+                        <a
+                            href={Page.collectionsForOrganism(organism)}
+                            class={`${config.borderEntryDecoration} block rounded-md border-2 border-gray-100 transition-colors`}
+                        >
+                            <div
+                                class={`rounded-md ${config.backgroundColor} ${config.backgroundColorFocus} p-4 text-lg font-medium`}
+                            >
+                                {config.label}
+                            </div>
+                        </a>
+                    </li>
+                );
+            })
+        }
+    </ul>
+</ContaineredPageLayout>
