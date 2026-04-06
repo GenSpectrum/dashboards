@@ -188,9 +188,6 @@ export const INSDC_ACCESSION_DOWNLOAD_FILES = ['insdcAccessionFull'];
 export const LOCULUS_AUTHORS_FIELD = 'authors';
 export const LOCULUS_AUTHORS_AFFILIATIONS_FIELD = 'authorAffiliations';
 
-export const PATHOPLEXUS_LOCATION_FIELDS = ['geoLocCountry', 'geoLocAdmin1'];
-export const GENSPECTRUM_LOCULUS_LOCATION_FIELDS = ['country', 'division'];
-
 export const INFLUENZA_ACCESSION_DOWNLOAD_FIELDS = [
     'insdcAccessionFull_seg1',
     'insdcAccessionFull_seg2',
@@ -205,18 +202,20 @@ export const INFLUENZA_ACCESSION_DOWNLOAD_FIELDS = [
 export const PATHOPLEXUS_HOST_FIELD = 'hostNameScientific';
 
 type FiltersConfig = {
+    locationFields: string[];
     dateRangeOptions: () => DateRangeOption[];
     completenessSuffixes?: SuffixConfig[];
 };
 
 export function getPathoplexusFilters({
+    locationFields,
     dateRangeOptions,
     completenessSuffixes,
 }: FiltersConfig): BaselineFilterConfig[] {
     return [
         {
             type: 'location',
-            locationFields: PATHOPLEXUS_LOCATION_FIELDS,
+            locationFields,
             label: 'Sampling location',
             placeholderText: 'Sampling location',
         },
@@ -289,13 +288,14 @@ export const INFLUENZA_COMPLETENESS_SUFFIXES = [
 export const GENSPECTRUM_LOCULUS_HOST_FIELD = 'hostNameScientific';
 
 export function getGenspectrumLoculusFilters({
+    locationFields,
     dateRangeOptions,
     completenessSuffixes,
 }: FiltersConfig): BaselineFilterConfig[] {
     return [
         {
             type: 'location',
-            locationFields: GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
+            locationFields,
             placeholderText: 'Sampling location',
             label: 'Sampling location',
         },

@@ -25,7 +25,6 @@ import {
     type OrganismConstants,
     PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS,
     PATHOPLEXUS_HOST_FIELD,
-    PATHOPLEXUS_LOCATION_FIELDS,
 } from './OrganismConstants.ts';
 import { compareSideBySideViewConstants } from './ViewConstants.ts';
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
@@ -43,7 +42,7 @@ class WestNileConstants implements OrganismConstants {
     public readonly organism = Organisms.westNile;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields = PATHOPLEXUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
@@ -51,17 +50,7 @@ class WestNileConstants implements OrganismConstants {
             filterType: 'text' as const,
         },
     ];
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getPathoplexusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
-        }),
-        {
-            lapisField: 'collectionDevice',
-            placeholderText: 'Collection device',
-            type: 'text' as const,
-            label: 'Collection device',
-        },
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly useVariantQuery = false;
     public readonly hostField: string = PATHOPLEXUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
@@ -93,8 +82,21 @@ class WestNileConstants implements OrganismConstants {
     public readonly dataOrigins: DataOrigin[] = [dataOrigins.pathoplexus];
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.westNile.lapis.locationFields;
         this.mainDateField = organismsConfig.westNile.lapis.mainDateField;
         this.additionalFilters = organismsConfig.westNile.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getPathoplexusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
+            }),
+            {
+                lapisField: 'collectionDevice',
+                placeholderText: 'Collection device',
+                type: 'text' as const,
+                label: 'Collection device',
+            },
+        ];
     }
 }
 

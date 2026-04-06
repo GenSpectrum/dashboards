@@ -10,6 +10,7 @@ import { allOrganisms, type Organism } from './types/Organism.ts';
 const lapisConfigSchema = z.object({
     url: z.string(),
     mainDateField: z.string(),
+    locationFields: z.array(z.string()),
     additionalFilters: z.optional(z.record(z.string())),
 });
 

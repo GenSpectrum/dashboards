@@ -19,7 +19,6 @@ import {
 } from './BaseView.ts';
 import {
     GENSPECTRUM_LOCULUS_HOST_FIELD,
-    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenSpectrumLoculusAggregatedVisualizations,
     getGenspectrumLoculusFilters,
     INSDC_ACCESSION_DOWNLOAD_FILES,
@@ -43,7 +42,7 @@ class Denv4Constants implements OrganismConstants {
     public readonly organism = Organisms.denv4;
     public readonly mainDateField: string;
     public readonly earliestDate = earliestDate;
-    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
@@ -52,11 +51,7 @@ class Denv4Constants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getGenspectrumLoculusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly hostField: string = GENSPECTRUM_LOCULUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
@@ -86,8 +81,15 @@ class Denv4Constants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.denv4.lapis.locationFields;
         this.mainDateField = organismsConfig.denv4.lapis.mainDateField;
         this.additionalFilters = organismsConfig.denv4.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getGenspectrumLoculusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
+            }),
+        ];
     }
 }
 

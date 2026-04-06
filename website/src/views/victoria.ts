@@ -19,7 +19,6 @@ import {
 } from './BaseView.ts';
 import {
     GENSPECTRUM_LOCULUS_HOST_FIELD,
-    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenSpectrumLoculusAggregatedVisualizations,
     getGenspectrumLoculusFilters,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
@@ -45,7 +44,7 @@ class VictoriaConstants implements OrganismConstants {
     public readonly organism = Organisms.victoria;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: CLADE_HA_FIELD_NAME,
@@ -59,12 +58,7 @@ class VictoriaConstants implements OrganismConstants {
         },
     ];
     public readonly useVariantQuery = false;
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getGenspectrumLoculusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
-            completenessSuffixes: INFLUENZA_COMPLETENESS_SUFFIXES,
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly hostField: string = GENSPECTRUM_LOCULUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
     public readonly authorAffiliationsField = LOCULUS_AUTHORS_AFFILIATIONS_FIELD;
@@ -90,8 +84,16 @@ class VictoriaConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.victoria.lapis.locationFields;
         this.mainDateField = organismsConfig.victoria.lapis.mainDateField;
         this.additionalFilters = organismsConfig.victoria.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getGenspectrumLoculusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
+                completenessSuffixes: INFLUENZA_COMPLETENESS_SUFFIXES,
+            }),
+        ];
     }
 }
 

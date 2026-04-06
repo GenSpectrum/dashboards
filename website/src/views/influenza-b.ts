@@ -11,7 +11,6 @@ import type { OrganismsConfig } from '../config.ts';
 import { BaseView, GenericSequencingEffortsView } from './BaseView.ts';
 import {
     GENSPECTRUM_LOCULUS_HOST_FIELD,
-    GENSPECTRUM_LOCULUS_LOCATION_FIELDS,
     getGenSpectrumLoculusAggregatedVisualizations,
     getGenspectrumLoculusFilters,
     INFLUENZA_ACCESSION_DOWNLOAD_FIELDS,
@@ -35,7 +34,7 @@ class InfluenzaBConstants implements OrganismConstants {
     public readonly organism = Organisms.influenzaB;
     public readonly earliestDate = earliestDate;
     public readonly mainDateField: string;
-    public readonly locationFields = GENSPECTRUM_LOCULUS_LOCATION_FIELDS;
+    public readonly locationFields: string[];
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_HA_FIELD_NAME,
@@ -43,12 +42,7 @@ class InfluenzaBConstants implements OrganismConstants {
             filterType: 'text' as const,
         },
     ];
-    public readonly baselineFilterConfigs: BaselineFilterConfig[] = [
-        ...getGenspectrumLoculusFilters({
-            dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
-            completenessSuffixes: [],
-        }),
-    ];
+    public readonly baselineFilterConfigs: BaselineFilterConfig[];
     public readonly useVariantQuery = false;
     public readonly hostField: string = GENSPECTRUM_LOCULUS_HOST_FIELD;
     public readonly authorsField = LOCULUS_AUTHORS_FIELD;
@@ -68,8 +62,16 @@ class InfluenzaBConstants implements OrganismConstants {
     }
 
     constructor(organismsConfig: OrganismsConfig) {
+        this.locationFields = organismsConfig.influenzaB.lapis.locationFields;
         this.mainDateField = organismsConfig.influenzaB.lapis.mainDateField;
         this.additionalFilters = organismsConfig.influenzaB.lapis.additionalFilters;
+        this.baselineFilterConfigs = [
+            ...getGenspectrumLoculusFilters({
+                locationFields: this.locationFields,
+                dateRangeOptions: fineGrainedDefaultDateRangeOptions(earliestDate),
+                completenessSuffixes: [],
+            }),
+        ];
     }
 }
 
