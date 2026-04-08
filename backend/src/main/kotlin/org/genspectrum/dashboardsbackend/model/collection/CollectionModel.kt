@@ -89,7 +89,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         }
 
         val variantEntities = request.variants.map { variantRequest ->
-            val variantEntity = createVariantEntity(collectionEntity, variantRequest)
+            val variantEntity = createVariantEntity(collectionEntity, variantRequest, now)
             variantEntity.validate()
             variantEntity
         }
@@ -140,6 +140,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                         val variantEntity = createVariantEntity(
                             collectionEntity,
                             variantUpdate.toVariantRequest(),
+                            now,
                         )
                         variantEntity.validate()
                         variantIdsToKeep.add(variantEntity.id.value)
@@ -159,7 +160,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                         }
 
                         // Update the variant fields
-                        updateVariantEntity(variantEntity, variantUpdate, collectionEntity)
+                        updateVariantEntity(variantEntity, variantUpdate, collectionEntity, now)
                         variantEntity.validate()
                         variantIdsToKeep.add(variantId)
                     }
@@ -183,36 +184,37 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         return collectionEntity.toCollection()
     }
 
-    private fun createVariantEntity(collectionEntity: CollectionEntity, variantRequest: VariantRequest): VariantEntity {
-        val now = now()
-        return when (variantRequest) {
-            is VariantRequest.QueryVariantRequest -> {
-                VariantEntity.new {
-                    this.collectionId = collectionEntity.id
-                    this.variantType = VariantType.QUERY
-                    this.name = variantRequest.name
-                    this.description = variantRequest.description
-                    this.countQuery = variantRequest.countQuery
-                    this.coverageQuery = variantRequest.coverageQuery
-                    this.filterObject = null
-                    this.createdAt = now
-                    this.updatedAt = now
-                }
+    private fun createVariantEntity(
+        collectionEntity: CollectionEntity,
+        variantRequest: VariantRequest,
+        now: Instant,
+    ): VariantEntity = when (variantRequest) {
+        is VariantRequest.QueryVariantRequest -> {
+            VariantEntity.new {
+                this.collectionId = collectionEntity.id
+                this.variantType = VariantType.QUERY
+                this.name = variantRequest.name
+                this.description = variantRequest.description
+                this.countQuery = variantRequest.countQuery
+                this.coverageQuery = variantRequest.coverageQuery
+                this.filterObject = null
+                this.createdAt = now
+                this.updatedAt = now
             }
-            is VariantRequest.FilterObjectVariantRequest -> {
-                validateLineageFilters(collectionEntity.organism, variantRequest.filterObject)
+        }
+        is VariantRequest.FilterObjectVariantRequest -> {
+            validateLineageFilters(collectionEntity.organism, variantRequest.filterObject)
 
-                VariantEntity.new {
-                    this.collectionId = collectionEntity.id
-                    this.variantType = VariantType.FILTER_OBJECT
-                    this.name = variantRequest.name
-                    this.description = variantRequest.description
-                    this.filterObject = variantRequest.filterObject
-                    this.countQuery = null
-                    this.coverageQuery = null
-                    this.createdAt = now
-                    this.updatedAt = now
-                }
+            VariantEntity.new {
+                this.collectionId = collectionEntity.id
+                this.variantType = VariantType.FILTER_OBJECT
+                this.name = variantRequest.name
+                this.description = variantRequest.description
+                this.filterObject = variantRequest.filterObject
+                this.countQuery = null
+                this.coverageQuery = null
+                this.createdAt = now
+                this.updatedAt = now
             }
         }
     }
@@ -241,8 +243,9 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         variantEntity: VariantEntity,
         variantUpdate: VariantUpdate,
         collectionEntity: CollectionEntity,
+        now: Instant,
     ) {
-        variantEntity.updatedAt = now()
+        variantEntity.updatedAt = now
         when (variantUpdate) {
             is VariantUpdate.QueryVariantUpdate -> {
                 // Verify type matches
