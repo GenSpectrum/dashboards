@@ -121,7 +121,7 @@ function processEnvOrMetaEnv<T>(key: string, schema: z.ZodType<T>) {
     );
 }
 
-function readTypedConfigFile<T>(fileName: string, schema: z.ZodType<T>) {
+function readTypedConfigFile<T>(fileName: string, schema: z.ZodType<T, z.ZodTypeDef, unknown>) {
     const configFilePath = path.join(getConfigDir(), fileName);
     const yaml = YAML.parse(fs.readFileSync(configFilePath, 'utf8'));
     try {
