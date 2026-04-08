@@ -1,5 +1,5 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
-import { isStaging } from '../../../config.ts';
+import { getOrganismConfig, isStaging } from '../../../config.ts';
 import { type Organism, organismConfig, paths } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import {
@@ -52,7 +52,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
         const supplementaryEntries: MegaMenuSection[] = [];
 
         // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1108
-        if (isStaging() && config.hasCollections) {
+        if (isStaging() && getOrganismConfig(config.organism).hasCollections) {
             supplementaryEntries.push({
                 label: 'Collections',
                 href: Page.collectionsForOrganism(config.organism),

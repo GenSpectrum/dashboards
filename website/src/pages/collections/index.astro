@@ -1,5 +1,5 @@
 ---
-import { isStaging } from '../../config';
+import { getOrganismConfig, isStaging } from '../../config';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { allOrganisms, organismConfig } from '../../types/Organism';
@@ -20,7 +20,7 @@ if (!isStaging()) {
     <ul class='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
         {
             allOrganisms
-                .filter((o) => organismConfig[o].hasCollections)
+                .filter((o) => getOrganismConfig(o).hasCollections)
                 .map((organism) => {
                     const config = organismConfig[organism];
                     return (

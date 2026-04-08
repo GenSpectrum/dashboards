@@ -25,6 +25,7 @@ const externalNavigationLinksSchema = z.optional(z.array(externalNavigationLinkS
 const organismConfigSchema = z.object({
     lapis: lapisConfigSchema,
     externalNavigationLinks: externalNavigationLinksSchema,
+    hasCollections: z.boolean().default(true),
 });
 export type OrganismConfig = z.infer<typeof organismConfigSchema>;
 
