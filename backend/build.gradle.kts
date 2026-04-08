@@ -58,7 +58,20 @@ kotlin {
     }
 }
 
+val checkDockerAvailable by tasks.registering(Exec::class) {
+    commandLine("docker", "info")
+    standardOutput = java.io.ByteArrayOutputStream()
+    errorOutput = java.io.ByteArrayOutputStream()
+    isIgnoreExitValue = true
+    doLast {
+        if (executionResult.get().exitValue != 0) {
+            throw GradleException("Docker is not available. Please start Docker before running tests.")
+        }
+    }
+}
+
 tasks.withType<Test> {
+    dependsOn(checkDockerAvailable)
     useJUnitPlatform()
     testLogging {
         events("FAILED")
