@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "2.3.20"
@@ -60,8 +61,8 @@ kotlin {
 
 val checkDockerAvailable by tasks.registering(Exec::class) {
     commandLine("docker", "info")
-    standardOutput = java.io.ByteArrayOutputStream()
-    errorOutput = java.io.ByteArrayOutputStream()
+    standardOutput = ByteArrayOutputStream()
+    errorOutput = ByteArrayOutputStream()
     isIgnoreExitValue = true
     doLast {
         if (executionResult.get().exitValue != 0) {
