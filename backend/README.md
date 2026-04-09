@@ -52,6 +52,13 @@ Run tests:
 ./gradlew test
 ```
 
+## Authentication
+While the backend uses user IDs internally, for example to track owners
+of collections or subscriptions, it doesn't handle authentication of users.
+This is done in the frontend. All requests are proxied through the frontend
+server, where authentication is handled, and then the authenticated requests
+are sent to the backend.
+
 ## Logging
 Logs to rotating files are stored in `./logs` and written to stdout.
 In the Docker container, log files are stored in `/workspace/logs`
