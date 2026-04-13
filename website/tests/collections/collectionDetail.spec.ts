@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const BACKEND_URL = 'http://localhost:8080';
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
 const USER_ID = 'e2e-test';
 
 const TEST_COLLECTION = {
