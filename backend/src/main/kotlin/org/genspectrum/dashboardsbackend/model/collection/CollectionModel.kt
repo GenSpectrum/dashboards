@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
-import kotlin.time.Clock
-import kotlin.time.Instant
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
@@ -20,6 +18,8 @@ import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Service
 @Transactional

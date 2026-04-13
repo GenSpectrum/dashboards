@@ -9,7 +9,6 @@ import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.dao.LongEntity
 import org.jetbrains.exposed.v1.dao.LongEntityClass
 import org.jetbrains.exposed.v1.datetime.timestamp
-// TODO - timestmap class is missing
 
 const val VARIANT_TABLE = "variants_table"
 

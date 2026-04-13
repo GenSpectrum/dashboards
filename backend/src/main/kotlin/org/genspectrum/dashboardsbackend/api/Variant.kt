@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.datetime.Instant
 import org.genspectrum.dashboardsbackend.api.Variant.FilterObjectVariant
 import org.genspectrum.dashboardsbackend.api.Variant.QueryVariant
+import kotlin.time.Instant
 
 enum class QueryVariantType {
     @JsonProperty("query")
