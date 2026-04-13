@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "2.3.20"
@@ -59,7 +60,20 @@ kotlin {
     }
 }
 
+val checkDockerAvailable by tasks.registering(Exec::class) {
+    commandLine("docker", "info")
+    standardOutput = ByteArrayOutputStream()
+    errorOutput = ByteArrayOutputStream()
+    isIgnoreExitValue = true
+    doLast {
+        if (executionResult.get().exitValue != 0) {
+            throw GradleException("Docker is not available. Please start Docker before running tests.")
+        }
+    }
+}
+
 tasks.withType<Test> {
+    dependsOn(checkDockerAvailable)
     useJUnitPlatform()
     testLogging {
         events("FAILED")
