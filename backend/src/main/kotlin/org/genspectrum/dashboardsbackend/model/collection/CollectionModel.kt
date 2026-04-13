@@ -67,7 +67,6 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun getCollection(id: Long): Collection {
         val entity = CollectionEntity.findById(id)
             ?: throw NotFoundException("Collection $id not found")
-        dashboardsConfig.validateCollectionsEnabled(entity.organism)
         return entity.toCollection()
     }
 
@@ -102,7 +101,6 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         // Find with ownership check
         val entity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to delete it")
-        dashboardsConfig.validateCollectionsEnabled(entity.organism)
 
         // Delete (variants cascade automatically via DB constraint)
         entity.delete()
