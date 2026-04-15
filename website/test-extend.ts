@@ -28,7 +28,22 @@ export const covSpectrumRouteMocker = new CovSpectrumRouteMocker(worker);
  *         });
  *         ...
  */
-export const it = itBase.extend<{
+const workerFixture = itBase.extend<
+    Record<string, never>,
+    { mswWorker: undefined }
+>({
+    mswWorker: [
+        // eslint-disable-next-line no-empty-pattern -- vitest needs the 1st arg to be an object destructor
+        async ({}, use) => {
+            await worker.start({ onUnhandledRequest: 'error' });
+            await use();
+            worker.stop();
+        },
+        { scope: 'file', auto: true },
+    ],
+});
+
+export const it = workerFixture.extend<{
     routeMockers: {
         lapis: LapisRouteMocker;
         astro: AstroApiRouteMocker;
@@ -39,8 +54,6 @@ export const it = itBase.extend<{
     routeMockers: [
         // eslint-disable-next-line no-empty-pattern -- vitest needs the 1st arg to be an object destructor
         async ({}, use) => {
-            await worker.start({ onUnhandledRequest: 'error' });
-
             await use({
                 lapis: lapisRouteMocker,
                 astro: astroApiRouteMocker,
@@ -49,7 +62,6 @@ export const it = itBase.extend<{
             });
 
             worker.resetHandlers();
-            worker.stop();
         },
         {
             auto: true,
