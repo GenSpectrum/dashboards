@@ -9,12 +9,15 @@ import org.genspectrum.dashboardsbackend.dummyCollectionRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.greaterThanOrEqualTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -22,7 +25,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(CollectionsClient::class)
-class CollectionsPutTest(@param:Autowired private val collectionsClient: CollectionsClient) {
+class CollectionsPutTest(
+    @param:Autowired private val collectionsClient: CollectionsClient,
+    @param:Autowired private val mockMvc: MockMvc,
+) {
 
     @Test
     fun `WHEN owner updates all fields THEN collection is updated`() {
@@ -69,15 +75,55 @@ class CollectionsPutTest(@param:Autowired private val collectionsClient: Collect
     }
 
     @Test
-    fun `WHEN owner sends empty update THEN nothing changes`() {
+    fun `WHEN owner sends empty update THEN name, description and variants are unchanged`() {
         val userId = getNewUserId()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val update = CollectionUpdate()
+        val updated = collectionsClient.putCollection(CollectionUpdate(), createdCollection.id, userId)
 
-        val updated = collectionsClient.putCollection(update, createdCollection.id, userId)
+        assertThat(updated.name, equalTo(createdCollection.name))
+        assertThat(updated.description, equalTo(createdCollection.description))
+        assertThat(updated.variants.size, equalTo(createdCollection.variants.size))
+        assertThat(updated.createdAt, equalTo(createdCollection.createdAt))
+    }
 
-        assertThat(updated, equalTo(createdCollection))
+    @Test
+    fun `WHEN collection is updated THEN updatedAt advances but createdAt stays the same`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        val updated = collectionsClient.putCollection(
+            CollectionUpdate(name = "Updated Name"),
+            createdCollection.id,
+            userId,
+        )
+
+        assertThat(updated.createdAt, equalTo(createdCollection.createdAt))
+        assertThat(updated.updatedAt, greaterThanOrEqualTo(createdCollection.updatedAt))
+    }
+
+    @Test
+    fun `WHEN updating collection with createdAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        mockMvc.perform(
+            put("/collections/${createdCollection.id}?userId=$userId")
+                .content("""{"createdAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `WHEN updating collection with updatedAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        mockMvc.perform(
+            put("/collections/${createdCollection.id}?userId=$userId")
+                .content("""{"updatedAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
     }
 
     @Test
