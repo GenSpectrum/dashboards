@@ -143,7 +143,7 @@ function VariantRow({
 
 function CountCell({ isPending, isError, data }: { isPending: boolean; isError: boolean; data?: number }) {
     if (isPending) return <td className='px-4 py-2 text-right text-gray-400'>…</td>;
-    if (isError) return <td className='text-error px-4 py-2 text-right'>error</td>;
+    if (isError) return <td className='text-error px-4 py-2 text-right'>Count unavailable</td>;
     return <td className='px-4 py-2 text-right tabular-nums'>{data?.toLocaleString()}</td>;
 }
 
