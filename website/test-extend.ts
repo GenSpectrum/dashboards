@@ -1,4 +1,4 @@
-import { type SetupWorker, setupWorker } from 'msw/browser';
+import { setupWorker } from 'msw/browser';
 import '@testing-library/jest-dom/vitest';
 import { it as itBase } from 'vitest';
 
