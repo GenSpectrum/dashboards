@@ -22,8 +22,16 @@ type LapisConfig = {
     additionalFilters?: Record<string, string>;
 };
 
-function CollectionDetailInner({ collection, lapisConfig }: { collection: Collection; lapisConfig: LapisConfig }) {
-    const organismName = organismConfig[collection.organism as Organism].label;
+function CollectionDetailInner({
+    organism,
+    collection,
+    lapisConfig,
+}: {
+    organism: Organism;
+    collection: Collection;
+    lapisConfig: LapisConfig;
+}) {
+    const organismName = organismConfig[organism].label;
     const dateFrom30 = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
     const dateFrom90 = dayjs().subtract(90, 'day').format('YYYY-MM-DD');
 
