@@ -48,7 +48,7 @@ test.afterAll(async ({ request }) => {
         return;
     }
     const response = await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${USER_ID}`);
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(204);
 });
 
 test.describe('Collection detail page', () => {

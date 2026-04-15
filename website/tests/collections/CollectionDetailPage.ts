@@ -16,7 +16,7 @@ export class CollectionDetailPage {
     }
 
     public idText(collectionId: number) {
-        return this.page.getByText(`#${collectionId}`);
+        return this.page.getByText(`#${collectionId}`, { exact: true });
     }
 
     public metadataText(organismLabel: string) {
