@@ -23,7 +23,7 @@ const TEST_COLLECTION = {
     ],
 };
 
-let collectionId: number;
+let collectionId: number | undefined;
 
 test.beforeAll(async ({ request }) => {
     const response = await request.post(`${BACKEND_URL}/collections?userId=${USER_ID}`, {
@@ -35,7 +35,11 @@ test.beforeAll(async ({ request }) => {
 });
 
 test.afterAll(async ({ request }) => {
-    await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${USER_ID}`);
+    if (collectionId === undefined) {
+        return;
+    }
+    const response = await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${USER_ID}`);
+    expect(response.status()).toBe(200);
 });
 
 test.describe('Collection detail page', () => {
