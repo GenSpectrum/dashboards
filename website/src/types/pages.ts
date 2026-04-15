@@ -23,7 +23,6 @@ export const Page = {
                 }
             }
         }
-        const params = search.toString();
-        return `${basePath}/single-variant${params ? `?${params}` : ''}`;
+        return `${basePath}/single-variant?${search.toString()}`;
     },
 } as const;
