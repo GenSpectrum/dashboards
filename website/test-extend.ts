@@ -1,4 +1,4 @@
-import { setupWorker } from 'msw/browser';
+import { type SetupWorker, setupWorker } from 'msw/browser';
 import '@testing-library/jest-dom/vitest';
 import { it as itBase } from 'vitest';
 
@@ -14,12 +14,12 @@ export const astroApiRouteMocker = new AstroApiRouteMocker(worker);
 export const backendRouteMocker = new BackendRouteMocker(worker);
 export const covSpectrumRouteMocker = new CovSpectrumRouteMocker(worker);
 
-const workerFixture = itBase.extend<Record<string, never>, { mswWorker: undefined }>({
+const workerFixture = itBase.extend<{ mswWorker: never }>({
     mswWorker: [
         // eslint-disable-next-line no-empty-pattern -- vitest needs the 1st arg to be an object destructor
         async ({}, use) => {
             await worker.start({ onUnhandledRequest: 'error' });
-            await use();
+            await use(undefined as never);
             worker.stop();
         },
         { scope: 'file', auto: true },
