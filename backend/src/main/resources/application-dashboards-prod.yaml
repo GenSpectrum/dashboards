@@ -57,6 +57,7 @@ dashboards:
           menuIcon: "database"
           description: "Browse the underlying data in the Loculus database."
     influenzaA:
+      hasCollections: false
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-a"
         mainDateField: "sampleCollectionDateRangeLower"
@@ -72,6 +73,7 @@ dashboards:
           menuIcon: "database"
           description: "Browse the underlying data in the Loculus database."
     influenzaB:
+      hasCollections: false
       lapis:
         url: "https://api.loculus.genspectrum.org/influenza-b"
         mainDateField: "sampleCollectionDateRangeLower"

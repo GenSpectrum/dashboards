@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.controller
 
+import org.genspectrum.dashboardsbackend.ORGANISM_WITHOUT_COLLECTIONS
 import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.api.VariantRequest
@@ -90,6 +91,17 @@ class CollectionsPostTest(
         collectionsClient.postCollectionRaw(dummyCollectionRequest.copy(organism = "unknown organism"), userId)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.detail").value("Organism 'unknown organism' is not supported"))
+    }
+
+    @Test
+    fun `WHEN creating collection for organism with collections disabled THEN returns 400`() {
+        val userId = getNewUserId()
+        collectionsClient.postCollectionRaw(
+            dummyCollectionRequest.copy(organism = ORGANISM_WITHOUT_COLLECTIONS),
+            userId,
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.detail").value("Collections are not supported for organism 'InfluenzaA'"))
     }
 
     @Test

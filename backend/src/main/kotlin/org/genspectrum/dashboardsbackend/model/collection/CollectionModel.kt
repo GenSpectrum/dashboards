@@ -23,6 +23,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun getCollections(userId: String?, organism: String?): List<Collection> {
+        if (organism != null) {
+            dashboardsConfig.validateIsValidOrganism(organism)
+            dashboardsConfig.validateCollectionsEnabled(organism)
+        }
         val query = if (userId == null && organism == null) {
             CollectionEntity.all()
         } else {
@@ -61,12 +65,15 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         }
     }
 
-    fun getCollection(id: Long): Collection = CollectionEntity.findById(id)
-        ?.toCollection()
-        ?: throw NotFoundException("Collection $id not found")
+    fun getCollection(id: Long): Collection {
+        val entity = CollectionEntity.findById(id)
+            ?: throw NotFoundException("Collection $id not found")
+        return entity.toCollection()
+    }
 
     fun createCollection(request: CollectionRequest, userId: String): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)
+        dashboardsConfig.validateCollectionsEnabled(request.organism)
 
         val collectionEntity = CollectionEntity.new {
             name = request.name
@@ -103,6 +110,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun putCollection(id: Long, update: CollectionUpdate, userId: String): Collection {
         val collectionEntity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to update it")
+        dashboardsConfig.validateCollectionsEnabled(collectionEntity.organism)
 
         if (update.name != null) {
             collectionEntity.name = update.name
