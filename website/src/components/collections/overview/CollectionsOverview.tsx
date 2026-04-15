@@ -57,26 +57,41 @@ function CollectionsTable({ collections, organism }: { collections: Collection[]
                     </tr>
                 </thead>
                 <tbody>
-                    {collections.map((collection) => (
-                        <tr key={collection.id} className='hover:bg-base-300'>
-                            <a href={Page.viewCollection(organism, String(collection.id))} className='contents'>
-                                <td className='font-mono text-xs text-gray-500'>{collection.id}</td>
-                                <td className='font-medium'>{collection.name}</td>
-                                <td className='max-w-sm text-gray-500'>
-                                    {collection.description ? (
-                                        collection.description.length > 80 ? (
-                                            collection.description.slice(0, 80) + '…'
-                                        ) : (
-                                            collection.description
-                                        )
-                                    ) : (
-                                        <span className='text-gray-300'>—</span>
-                                    )}
+                    {collections.map((collection) => {
+                        const href = Page.viewCollection(organism, String(collection.id));
+                        return (
+                            <tr key={collection.id} className='hover:bg-base-300'>
+                                <td className='p-0'>
+                                    <a href={href} className='block px-4 py-3 font-mono text-xs text-gray-500'>
+                                        {collection.id}
+                                    </a>
                                 </td>
-                                <td className='text-right'>{collection.variants.length}</td>
-                            </a>
-                        </tr>
-                    ))}
+                                <td className='p-0'>
+                                    <a href={href} className='block px-4 py-3 font-medium'>
+                                        {collection.name}
+                                    </a>
+                                </td>
+                                <td className='max-w-sm p-0'>
+                                    <a href={href} className='block px-4 py-3 text-gray-500'>
+                                        {collection.description ? (
+                                            collection.description.length > 80 ? (
+                                                collection.description.slice(0, 80) + '…'
+                                            ) : (
+                                                collection.description
+                                            )
+                                        ) : (
+                                            <span className='text-gray-300'>—</span>
+                                        )}
+                                    </a>
+                                </td>
+                                <td className='p-0'>
+                                    <a href={href} className='block px-4 py-3 text-right'>
+                                        {collection.variants.length}
+                                    </a>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>
