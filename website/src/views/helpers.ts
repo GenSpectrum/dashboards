@@ -1,6 +1,6 @@
 import type { VariantFilter } from './View.ts';
-import { advancedQueryUrlParamForVariant } from '../components/genspectrum/AdvancedQueryFilter.tsx';
 import type { MutationFilter } from '../components/genspectrum/GsMutationFilter.tsx';
+import { advancedQueryUrlParamForVariant } from '../components/genspectrum/advancedQueryUrlParamConstants.ts';
 
 export const setSearchFromString = (
     search: URLSearchParams,

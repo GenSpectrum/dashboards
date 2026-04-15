@@ -1,6 +1,6 @@
 import type { Variant } from './Collection.ts';
 import { paths, type Organism } from './Organism.ts';
-import { advancedQueryUrlParamForVariant } from '../components/genspectrum/AdvancedQueryFilter.tsx';
+import { advancedQueryUrlParamForVariant } from '../components/genspectrum/advancedQueryUrlParamConstants.ts';
 
 export const Page = {
     createSubscription: '/subscriptions/create',

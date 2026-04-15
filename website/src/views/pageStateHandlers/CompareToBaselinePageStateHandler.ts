@@ -17,7 +17,7 @@ import { decodeFiltersFromSearch, searchParamsFromFilterMap } from './multipleFi
 import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
 import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
 import { toLapisFilterWithoutVariant } from './toLapisFilterWithoutVariant.ts';
-import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
+import { advancedQueryUrlParam } from '../../components/genspectrum/advancedQueryUrlParamConstants.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class CompareToBaselineStateHandler implements PageStateHandler<CompareToBaselineData> {

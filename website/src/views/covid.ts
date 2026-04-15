@@ -41,7 +41,7 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 import { ALL_TIMES_LABEL, defaultDateRangeOption } from '../util/defaultDateRangeOption.ts';
 import { formatUrl } from '../util/formatUrl.ts';
 import { setSearchFromTextFilters } from './pageStateHandlers/textFilterFromToUrl.ts';
-import { advancedQueryUrlParam } from '../components/genspectrum/AdvancedQueryFilter.tsx';
+import { advancedQueryUrlParam } from '../components/genspectrum/advancedQueryUrlParamConstants.ts';
 
 const earliestDate = '2020-01-06';
 const hostField = 'host';
