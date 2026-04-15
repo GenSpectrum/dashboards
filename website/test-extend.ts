@@ -14,6 +14,18 @@ export const astroApiRouteMocker = new AstroApiRouteMocker(worker);
 export const backendRouteMocker = new BackendRouteMocker(worker);
 export const covSpectrumRouteMocker = new CovSpectrumRouteMocker(worker);
 
+const workerFixture = itBase.extend<Record<string, never>, { mswWorker: undefined }>({
+    mswWorker: [
+        // eslint-disable-next-line no-empty-pattern -- vitest needs the 1st arg to be an object destructor
+        async ({}, use) => {
+            await worker.start({ onUnhandledRequest: 'error' });
+            await use();
+            worker.stop();
+        },
+        { scope: 'file', auto: true },
+    ],
+});
+
 /**
  * Test extension to access the mocks. Import it:
  *
@@ -28,21 +40,6 @@ export const covSpectrumRouteMocker = new CovSpectrumRouteMocker(worker);
  *         });
  *         ...
  */
-const workerFixture = itBase.extend<
-    Record<string, never>,
-    { mswWorker: undefined }
->({
-    mswWorker: [
-        // eslint-disable-next-line no-empty-pattern -- vitest needs the 1st arg to be an object destructor
-        async ({}, use) => {
-            await worker.start({ onUnhandledRequest: 'error' });
-            await use();
-            worker.stop();
-        },
-        { scope: 'file', auto: true },
-    ],
-});
-
 export const it = workerFixture.extend<{
     routeMockers: {
         lapis: LapisRouteMocker;
