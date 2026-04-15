@@ -51,7 +51,12 @@ const collectionTitle = collection?.name ?? `Collection #${id}`;
 >
     {
         collection !== undefined ? (
-            <CollectionDetail collection={collection} lapisConfig={lapisConfig} client:load />
+            <CollectionDetail
+                organism={parsedOrganism.data}
+                collection={collection}
+                lapisConfig={lapisConfig}
+                client:load
+            />
         ) : (
             <div class='text-error'>Failed to load collection. Please try reloading the page.</div>
         )
