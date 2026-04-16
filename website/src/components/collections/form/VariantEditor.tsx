@@ -49,20 +49,26 @@ export const VariantEditor = memo(function VariantEditor({
     );
 
     return (
-        <div className='grid grid-cols-3 gap-x-8 rounded-lg border border-gray-200 p-4'>
+        <div className='grid grid-cols-3 gap-x-8 rounded bg-gray-50 p-4'>
             <div className='flex h-full flex-col gap-2'>
-                <input
-                    className='input input-sm input-bordered font-medium'
-                    placeholder='Variant name'
-                    value={variant.name}
-                    onChange={(e) => setField({ name: e.currentTarget.value })}
-                />
-                <textarea
-                    className='textarea textarea-bordered flex-1 resize-none'
-                    placeholder='Optional description for this variant.'
-                    value={variant.description ?? ''}
-                    onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
-                />
+                <div>
+                    <label className='label'>Name</label>
+                    <input
+                        className='input input-bordered font-medium'
+                        placeholder='Variant name'
+                        value={variant.name}
+                        onChange={(e) => setField({ name: e.currentTarget.value })}
+                    />
+                </div>
+                <div className='flex flex-1 flex-col'>
+                    <label className='label'>Description</label>
+                    <textarea
+                        className='textarea textarea-bordered flex-1'
+                        placeholder='Optional description for this variant.'
+                        value={variant.description ?? ''}
+                        onChange={(e) => setField({ description: e.currentTarget.value || undefined })}
+                    />
+                </div>
             </div>
 
             <div className='col-span-2 flex flex-col gap-4'>
@@ -89,7 +95,7 @@ export const VariantEditor = memo(function VariantEditor({
                     {canRemove && (
                         <button
                             type='button'
-                            className='btn btn-ghost btn-xs text-error'
+                            className='btn btn-error btn-outline btn-xs'
                             onClick={() => onRemove(index)}
                         >
                             Remove
@@ -109,11 +115,10 @@ function QueryVariantFields({
     onChange: (v: VariantUpdate) => void;
 }) {
     return (
-        <div className='flex flex-col gap-1'>
-            <label className='text-sm font-medium'>Query</label>
+        <div className='flex flex-col'>
+            <label className='label'>Query</label>
             <textarea
                 className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
-                rows={2}
                 placeholder='LAPIS filter expression for counting sequences matching this variant.'
                 value={variant.countQuery}
                 onChange={(e) => onChange({ ...variant, countQuery: e.currentTarget.value })}

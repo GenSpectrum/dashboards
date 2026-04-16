@@ -6,8 +6,8 @@ import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Collection } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
-import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import { Page } from '../../../types/pages.ts';
+import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 

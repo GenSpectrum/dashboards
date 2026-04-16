@@ -33,7 +33,7 @@ function CollectionCreateInner({ organism, config }: { organism: Organism; confi
     });
 
     return (
-        <>
+        <div className='pb-6'>
             <CollectionForm
                 onSubmit={(values) => createMutation.mutate(values)}
                 isSubmitting={createMutation.isPending}
@@ -48,6 +48,6 @@ function CollectionCreateInner({ organism, config }: { organism: Organism; confi
                     Failed to create collection: {getErrorLogMessage(createMutation.error)}
                 </div>
             )}
-        </>
+        </div>
     );
 }
