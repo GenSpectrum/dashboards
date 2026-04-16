@@ -27,6 +27,13 @@ jobs:
       - name: Execute Tests
         run: ./gradlew test
 
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: backend-test-report
+          path: backend/build/reports/tests/test/
+
       - name: Check Format And Lint
         run: ./gradlew ktlintCheck
 
