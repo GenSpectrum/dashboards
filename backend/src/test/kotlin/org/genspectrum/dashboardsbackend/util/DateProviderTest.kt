@@ -14,9 +14,4 @@ class DateProviderTest {
 
         assertThat(currentDate, instanceOf(LocalDate::class.java))
     }
-
-    @Test
-    fun `THIS TEST INTENTIONALLY FAILS to verify test report upload works`() {
-        assertThat("expected", org.hamcrest.Matchers.equalTo("actual"))
-    }
 }
