@@ -1,8 +1,5 @@
 import { type InputEvent, type FC, useEffect, useState } from 'react';
 
-export const advancedQueryUrlParamForVariant = 'advancedQueryVariant';
-export const advancedQueryUrlParam = 'advancedQuery';
-
 type AdvancedQueryFilterProps = {
     value?: string;
     onInput?: (newValue: string | undefined) => void;
