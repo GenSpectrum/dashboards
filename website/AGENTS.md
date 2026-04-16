@@ -34,7 +34,7 @@ npx vitest run --reporter=verbose -t "test name pattern"
 npm run e2e                       # All Playwright e2e tests
 ```
 
-Check the package.json for more details execution commands.
+Check `package.json` for more details on available commands.
 
 **Test file conventions:**
 
