@@ -162,7 +162,7 @@ export class BackendService extends ApiService {
         const url = `/subscriptions/${subscriptionId}`;
         return this.delete({
             url,
-            schema: z.literal('').refine((input): input is never => true),
+            schema: z.literal('').refine((_input): _input is never => true),
         });
     }
 
@@ -194,7 +194,7 @@ export class BackendService extends ApiService {
     public async deleteCollection({ id }: { id: string }) {
         return this.delete({
             url: `/collections/${id}`,
-            schema: z.literal('').refine((input): input is never => true),
+            schema: z.literal('').refine((_input): _input is never => true),
         });
     }
 }
