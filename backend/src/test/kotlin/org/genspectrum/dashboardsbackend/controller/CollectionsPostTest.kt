@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.controller
 
+import org.genspectrum.dashboardsbackend.ORGANISM_WITHOUT_COLLECTIONS
 import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.api.VariantRequest
@@ -32,6 +33,50 @@ class CollectionsPostTest(
     @param:Autowired private val collectionsClient: CollectionsClient,
     @param:Autowired private val mockMvc: MockMvc,
 ) {
+
+    @Test
+    fun `WHEN creating collection THEN createdAt and updatedAt are set`() {
+        val userId = getNewUserId()
+        val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        assertThat(createdCollection.createdAt, notNullValue())
+        assertThat(createdCollection.updatedAt, notNullValue())
+        assertThat(createdCollection.createdAt, equalTo(createdCollection.updatedAt))
+        createdCollection.variants.forEach { variant ->
+            when (variant) {
+                is Variant.QueryVariant -> {
+                    assertThat(variant.createdAt, notNullValue())
+                    assertThat(variant.updatedAt, notNullValue())
+                    assertThat(variant.createdAt, equalTo(variant.updatedAt))
+                }
+                is Variant.FilterObjectVariant -> {
+                    assertThat(variant.createdAt, notNullValue())
+                    assertThat(variant.updatedAt, notNullValue())
+                    assertThat(variant.createdAt, equalTo(variant.updatedAt))
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `WHEN creating collection with createdAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content("""{"name":"Test","organism":"Covid","variants":[],"createdAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `WHEN creating collection with updatedAt in body THEN returns 400`() {
+        val userId = getNewUserId()
+        mockMvc.perform(
+            post("/collections?userId=$userId")
+                .content("""{"name":"Test","organism":"Covid","variants":[],"updatedAt":"2000-01-01T00:00:00Z"}""")
+                .contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(status().isBadRequest)
+    }
 
     @Test
     fun `GIVEN collection with variants WHEN creating THEN returns with generated IDs`() {
@@ -90,6 +135,17 @@ class CollectionsPostTest(
         collectionsClient.postCollectionRaw(dummyCollectionRequest.copy(organism = "unknown organism"), userId)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.detail").value("Organism 'unknown organism' is not supported"))
+    }
+
+    @Test
+    fun `WHEN creating collection for organism with collections disabled THEN returns 400`() {
+        val userId = getNewUserId()
+        collectionsClient.postCollectionRaw(
+            dummyCollectionRequest.copy(organism = ORGANISM_WITHOUT_COLLECTIONS),
+            userId,
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.detail").value("Collections are not supported for organism 'InfluenzaA'"))
     }
 
     @Test

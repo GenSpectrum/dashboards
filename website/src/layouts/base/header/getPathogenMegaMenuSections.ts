@@ -1,5 +1,5 @@
 import type { MenuIconType } from '../../../components/iconCss.ts';
-import { isStaging } from '../../../config.ts';
+import { getOrganismConfig, isStaging } from '../../../config.ts';
 import { type Organism, organismConfig, paths } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import {
@@ -49,20 +49,21 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 };
             });
 
+        const supplementaryEntries: MegaMenuSection[] = [];
+
         // only on staging for now, remove when enabling on prod: https://github.com/GenSpectrum/dashboards/issues/1108
-        if (isStaging()) {
-            megaMenuSections.push({
+        if (isStaging() && getOrganismConfig(config.organism).hasCollections) {
+            supplementaryEntries.push({
                 label: 'Collections',
                 href: Page.collectionsForOrganism(config.organism),
                 underlineColor: config.menuListEntryDecoration,
                 iconType: 'table',
                 externalLink: false,
                 description: `Browse ${config.label} variant collections`,
-                hasSeparatorAbove: true,
             });
         }
 
-        megaMenuSections.push(
+        supplementaryEntries.push(
             ...ServerSide.routing.externalPages[config.organism].map((externalPage) => ({
                 label: externalPage.label,
                 href: externalPage.url,
@@ -72,6 +73,12 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
                 description: externalPage.description,
             })),
         );
+
+        if (supplementaryEntries.length > 0) {
+            supplementaryEntries[0] = { ...supplementaryEntries[0], hasSeparatorAbove: true };
+        }
+
+        megaMenuSections.push(...supplementaryEntries);
 
         acc[config.organism] = {
             headline: config.label,

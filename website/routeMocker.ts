@@ -272,12 +272,14 @@ function getError(error: unknown) {
 
 export const testOrganismsConfig = {
     covid: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'date',
         },
     },
     influenzaA: {
+        hasCollections: false,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -288,6 +290,7 @@ export const testOrganismsConfig = {
         },
     },
     h3n2: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -298,6 +301,7 @@ export const testOrganismsConfig = {
         },
     },
     h1n1pdm: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -308,6 +312,7 @@ export const testOrganismsConfig = {
         },
     },
     h5n1: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -318,6 +323,7 @@ export const testOrganismsConfig = {
         },
     },
     influenzaB: {
+        hasCollections: false,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -328,6 +334,7 @@ export const testOrganismsConfig = {
         },
     },
     victoria: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -338,6 +345,7 @@ export const testOrganismsConfig = {
         },
     },
     westNile: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -348,6 +356,7 @@ export const testOrganismsConfig = {
         },
     },
     rsvA: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -358,6 +367,7 @@ export const testOrganismsConfig = {
         },
     },
     rsvB: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -368,6 +378,7 @@ export const testOrganismsConfig = {
         },
     },
     mpox: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -378,6 +389,7 @@ export const testOrganismsConfig = {
         },
     },
     ebolaSudan: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -388,6 +400,7 @@ export const testOrganismsConfig = {
         },
     },
     ebolaZaire: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -398,6 +411,7 @@ export const testOrganismsConfig = {
         },
     },
     cchf: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -408,6 +422,7 @@ export const testOrganismsConfig = {
         },
     },
     denv1: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -418,6 +433,7 @@ export const testOrganismsConfig = {
         },
     },
     denv2: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -428,6 +444,7 @@ export const testOrganismsConfig = {
         },
     },
     denv3: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -438,6 +455,7 @@ export const testOrganismsConfig = {
         },
     },
     denv4: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',
@@ -448,6 +466,7 @@ export const testOrganismsConfig = {
         },
     },
     measles: {
+        hasCollections: true,
         lapis: {
             url: DUMMY_LAPIS_URL,
             mainDateField: 'sampleCollectionDateRangeLower',

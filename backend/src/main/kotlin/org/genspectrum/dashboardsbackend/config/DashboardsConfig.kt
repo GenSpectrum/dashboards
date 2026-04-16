@@ -13,9 +13,19 @@ data class DashboardsConfig(val organisms: Map<String, OrganismConfig>) {
             throw BadRequestException("Organism '$organism' is not supported")
         }
     }
+
+    fun validateCollectionsEnabled(organism: String) {
+        if (!getOrganismConfig(organism).hasCollections) {
+            throw BadRequestException("Collections are not supported for organism '$organism'")
+        }
+    }
 }
 
-data class OrganismConfig(val lapis: LapisConfig, val externalNavigationLinks: List<ExternalNavigationLink>?)
+data class OrganismConfig(
+    val lapis: LapisConfig,
+    val externalNavigationLinks: List<ExternalNavigationLink>?,
+    val hasCollections: Boolean = true,
+)
 
 data class LapisConfig(
     val url: String,

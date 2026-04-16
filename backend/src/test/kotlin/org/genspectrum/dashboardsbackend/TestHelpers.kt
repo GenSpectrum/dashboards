@@ -13,6 +13,8 @@ enum class KnownTestOrganisms {
     WestNile,
 }
 
+const val ORGANISM_WITHOUT_COLLECTIONS = "InfluenzaA"
+
 val dummySubscriptionRequest = SubscriptionRequest(
     name = "My search",
     interval = EvaluationInterval.MONTHLY,

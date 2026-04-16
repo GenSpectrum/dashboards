@@ -1,9 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "2.3.20"
     kotlin("plugin.spring") version "2.3.20"
-    id("org.springframework.boot") version "3.4.0"
+    id("org.springframework.boot") version "3.5.13"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
@@ -27,11 +28,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
     implementation("org.postgresql:postgresql:42.7.10")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.56.0")
-    implementation("org.jetbrains.exposed:exposed-json:0.56.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.2.0")
+    implementation("org.jetbrains.exposed:exposed-json:1.2.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.2.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
@@ -58,7 +61,20 @@ kotlin {
     }
 }
 
+val checkDockerAvailable by tasks.registering(Exec::class) {
+    commandLine("docker", "info")
+    standardOutput = ByteArrayOutputStream()
+    errorOutput = ByteArrayOutputStream()
+    isIgnoreExitValue = true
+    doLast {
+        if (executionResult.get().exitValue != 0) {
+            throw GradleException("Docker is not available. Please start Docker before running tests.")
+        }
+    }
+}
+
 tasks.withType<Test> {
+    dependsOn(checkDockerAvailable)
     useJUnitPlatform()
     testLogging {
         events("FAILED")
