@@ -13,7 +13,7 @@ Kotlin + Spring Boot backend. All commands run from `backend/`. Docker must be r
 ```
 
 The backend will be available at `http://localhost:8080`. Swagger UI at `http://localhost:8080/swagger-ui/index.html`.
-The database from the top level Docker compose file needs to be running.
+The database from the top-level Docker Compose file needs to be running.
 
 ## Running a Single Test
 
