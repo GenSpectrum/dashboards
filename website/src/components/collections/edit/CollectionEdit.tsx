@@ -94,7 +94,7 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
     };
 
     return (
-        <div className='flex flex-col gap-8'>
+        <div className='flex flex-col gap-8 pb-6'>
             <CollectionForm
                 initialValues={initialValues}
                 onSubmit={(values) => updateMutation.mutate(values)}
