@@ -37,6 +37,7 @@ npm run e2e                       # All Playwright e2e tests
 Check the package.json for more details execution commands.
 
 **Test file conventions:**
+
 - Unit tests: `*.spec.ts` or `*.spec.tsx` (co-located with source)
 - Browser component tests: `*.browser.spec.tsx` (for testing things that involve React)
 - E2e tests: `tests/` directory
@@ -48,6 +49,7 @@ Check the package.json for more details execution commands.
 Format with prettier. Use eslint to check code style issues.
 
 ### React & Astro
+
 - Use **Astro** for static/server-rendered pages; use **React** for interactive components.
   Most of the pages are interactive, i.e. we only use Astro for routing. Most of the rendering happens in React.
 - Prefer **CSS / Tailwind** over JavaScript for interactivity (modals, dropdowns, etc.).
@@ -55,7 +57,9 @@ Format with prettier. Use eslint to check code style issues.
 - No React import needed in JSX files (`react/react-in-jsx-scope` is off).
 
 ### Constants / Magic Values
+
 Use typed constant collections instead of raw string literals:
+
 ```typescript
 export const myConstants = {
     value1: 'value1',
@@ -65,15 +69,19 @@ export const myConstants = {
 ```
 
 ### Logging
+
 Server-side only — use `getInstanceLogger`:
+
 ```typescript
 import { getInstanceLogger } from '../logger.ts';
 const logger = getInstanceLogger('my-module');
 logger.info('message', { extraContext: 'value' });
 ```
+
 For client-side logging, use `getClientLogger` instead.
 
 ### Error Handling
+
 - API responses are validated with Zod schemas; invalid responses throw typed errors.
 - Use `UserFacingError` for errors that should be shown to the user.
 - HTTP errors from the backend follow the RFC 9457 `ProblemDetail` format.
