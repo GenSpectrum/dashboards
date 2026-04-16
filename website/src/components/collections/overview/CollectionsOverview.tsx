@@ -6,13 +6,14 @@ import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
 import type { Collection } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
+import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 
 export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
 const logger = getClientLogger('CollectionsOverview');
 
-function CollectionsOverviewInner({ organism, isLoggedIn: _isLoggedIn }: { organism: Organism; isLoggedIn: boolean }) {
+function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism; isLoggedIn: boolean }) {
     const {
         isLoading,
         isError,
@@ -29,13 +30,31 @@ function CollectionsOverviewInner({ organism, isLoggedIn: _isLoggedIn }: { organ
 
     return (
         <div>
-            <PageHeadline>{organismConfig[organism].label} Collections</PageHeadline>
+            <div className='flex items-start justify-between'>
+                <PageHeadline>{organismConfig[organism].label} Collections</PageHeadline>
+                {isLoggedIn && (
+                    <a href={Page.createCollection(organism)} className='btn btn-sm'>
+                        New collection
+                    </a>
+                )}
+            </div>
             {isLoading ? (
                 <span className='loading loading-spinner loading-sm' />
             ) : isError ? (
                 <div className='text-error'>Failed to load collections. Please try reloading the page.</div>
             ) : collections === undefined || collections.length === 0 ? (
-                <div className='mt-6 text-gray-500'>No collections yet.</div>
+                <div className='mt-6 text-gray-500'>
+                    No collections yet.
+                    {isLoggedIn && (
+                        <>
+                            {' '}
+                            <a href={Page.createCollection(organism)} className='link'>
+                                Create one
+                            </a>
+                            .
+                        </>
+                    )}
+                </div>
             ) : (
                 <CollectionsTable collections={collections} />
             )}
