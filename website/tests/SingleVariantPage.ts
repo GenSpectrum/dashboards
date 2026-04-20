@@ -1,8 +1,8 @@
 import { type Page } from '@playwright/test';
 
 import { ViewPage } from './ViewPage.ts';
-import { type OrganismWithViewKey } from '../src/views/routing';
 import { paths } from '../src/types/Organism.ts';
+import { type OrganismWithViewKey } from '../src/views/routing';
 import { singleVariantViewKey } from '../src/views/viewKeys';
 
 export class SingleVariantPage extends ViewPage {
