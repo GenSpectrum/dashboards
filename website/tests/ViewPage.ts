@@ -26,7 +26,7 @@ export abstract class ViewPage {
 
     public async fillLineageField(locator: Locator, lineage: string) {
         await locator.fill(lineage);
-        const selectedLineage = this.page.getByRole('option', { name: lineage, exact: false });
+        const selectedLineage = this.page.getByRole('listbox').getByRole('option', { name: lineage, exact: false });
         await selectedLineage.first().click();
     }
 

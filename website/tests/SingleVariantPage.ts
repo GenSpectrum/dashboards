@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 import { ViewPage } from './ViewPage.ts';
 import { paths } from '../src/types/Organism.ts';
@@ -18,13 +18,14 @@ export class SingleVariantPage extends ViewPage {
     }
 
     public async selectVariant(options: { lineage?: string; lineageFieldPlaceholder?: string; mutation?: string }) {
-        if (options.lineage && options.lineageFieldPlaceholder) {
+        if (options.lineage !== undefined && options.lineageFieldPlaceholder !== undefined) {
             const { lineage, lineageFieldPlaceholder } = options;
             const lineageFieldLocator = this.page.getByPlaceholder(lineageFieldPlaceholder);
+            await expect(lineageFieldLocator).toBeVisible();
             await this.fillLineageField(lineageFieldLocator, lineage);
         }
 
-        if (options.mutation) {
+        if (options.mutation !== undefined) {
             await this.fillMutationField(this.mutationField, options.mutation);
         }
     }
