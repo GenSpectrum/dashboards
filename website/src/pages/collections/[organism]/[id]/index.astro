@@ -1,4 +1,6 @@
 ---
+import { getSession } from 'auth-astro/server';
+
 import { BackendService, BackendError } from '../../../../backendApi/backendService.ts';
 import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
 import { getBackendHost, getOrganismConfig } from '../../../../config.ts';
@@ -25,6 +27,9 @@ if (id === undefined) {
 
 const orgConfig = organismConfig[parsedOrganism.data];
 const lapisConfig = getOrganismConfig(parsedOrganism.data).lapis;
+
+const session = await getSession(Astro.request);
+const currentUserId = session?.user?.id;
 
 let collection: Collection | undefined;
 
@@ -59,6 +64,7 @@ if (collection !== undefined && collection.organism !== parsedOrganism.data) {
                 organism={parsedOrganism.data}
                 collection={collection}
                 lapisConfig={lapisConfig}
+                isOwner={currentUserId !== undefined && String(currentUserId) === collection.ownedBy}
                 client:load
             />
         ) : (
