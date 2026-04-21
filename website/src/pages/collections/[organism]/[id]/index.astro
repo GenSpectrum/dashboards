@@ -37,7 +37,11 @@ try {
     logger.error(`Failed to fetch collection ${id}: ${getErrorLogMessage(error)}`);
 }
 
-const collectionTitle = collection?.name ?? `Collection #${id}`;
+const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` : `Collection #${id}`;
+
+if (collection !== undefined && collection.organism !== parsedOrganism.data) {
+    return Astro.redirect('/404');
+}
 ---
 
 <ContaineredPageLayout
@@ -46,7 +50,7 @@ const collectionTitle = collection?.name ?? `Collection #${id}`;
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
         { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: `#${id} ${collectionTitle}`, href: Page.viewCollection(parsedOrganism.data, id) },
+        { name: collectionTitle, href: Page.viewCollection(parsedOrganism.data, id) },
     ]}
 >
     {

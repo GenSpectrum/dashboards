@@ -69,7 +69,7 @@ function CollectionDetailInner({
                                 <VariantRow
                                     key={variant.id}
                                     variant={variant}
-                                    organism={collection.organism as Organism}
+                                    organism={organism}
                                     lapisConfig={lapisConfig}
                                     dateFrom30={dateFrom30}
                                     dateFrom90={dateFrom90}
