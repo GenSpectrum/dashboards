@@ -11,4 +11,8 @@ export class LandingPage extends ViewPage {
     public organismHeading(organism: Organism) {
         return this.page.getByRole('heading', { name: organismConfig[organism].label, level: 1 });
     }
+
+    public geneLabel(name: string) {
+        return this.page.getByText(name, { exact: true }).first();
+    }
 }
