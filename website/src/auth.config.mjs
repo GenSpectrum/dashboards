@@ -28,5 +28,4 @@ export default defineConfig({
             clientSecret: getGitHubClientSecret(),
         }),
     ],
-    secret: crypto.randomUUID(),
 });
