@@ -6,8 +6,8 @@ import io.swagger.v3.oas.models.parameters.HeaderParameter
 import org.flywaydb.core.Flyway
 import org.genspectrum.dashboardsbackend.logging.REQUEST_ID_HEADER
 import org.genspectrum.dashboardsbackend.logging.REQUEST_ID_HEADER_DESCRIPTION
-import org.jetbrains.exposed.spring.autoconfigure.ExposedAutoConfiguration
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.spring.boot.autoconfigure.ExposedAutoConfiguration
 import org.springdoc.core.customizers.OperationCustomizer
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration

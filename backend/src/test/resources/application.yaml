@@ -28,3 +28,8 @@ dashboards:
         mainDateField: "westnile_date"
         additionalFilters:
           someAdditionalFilter: "westnile_additional_filter"
+    InfluenzaA:
+      hasCollections: false
+      lapis:
+        url: "https://influenzaA.lapis.dummy"
+        mainDateField: "influenzaA_date"

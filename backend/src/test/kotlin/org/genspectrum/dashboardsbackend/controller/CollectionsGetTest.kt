@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.KnownTestOrganisms
+import org.genspectrum.dashboardsbackend.ORGANISM_WITHOUT_COLLECTIONS
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.dummyCollectionRequest
 import org.hamcrest.MatcherAssert.assertThat
@@ -265,5 +266,12 @@ class CollectionsGetTest(
     fun `WHEN getting collection with non-numeric ID THEN returns 400`() {
         mockMvc.perform(get("/collections/not-a-number"))
             .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `WHEN getting collections for organism with collections disabled THEN returns 400`() {
+        collectionsClient.getCollectionsRaw(organism = ORGANISM_WITHOUT_COLLECTIONS)
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.detail").value("Collections are not supported for organism 'InfluenzaA'"))
     }
 }

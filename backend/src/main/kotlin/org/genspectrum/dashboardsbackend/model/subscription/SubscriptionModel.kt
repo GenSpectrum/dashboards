@@ -6,6 +6,7 @@ import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.util.convertToUuid
+import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

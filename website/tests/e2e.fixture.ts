@@ -4,12 +4,14 @@ import { CompareSideBySidePage } from './CompareSideBySidePage.ts';
 import { CompareToBaselinePage } from './CompareToBaselinePage.ts';
 import { CompareVariantsPage } from './CompareVariantsPage.ts';
 import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
+import { SingleVariantPage } from './SingleVariantPage.ts';
 
 type E2EFixture = {
     compareVariantsPage: CompareVariantsPage;
     sequencingEffortsPage: SequencingEffortsPage;
     compareToBaselinePage: CompareToBaselinePage;
     compareSideBySidePage: CompareSideBySidePage;
+    singleVariantPage: SingleVariantPage;
 };
 
 export const test = base.extend<E2EFixture>({
@@ -24,5 +26,8 @@ export const test = base.extend<E2EFixture>({
     },
     compareSideBySidePage: async ({ page }, use) => {
         await use(new CompareSideBySidePage(page));
+    },
+    singleVariantPage: async ({ page }, use) => {
+        await use(new SingleVariantPage(page));
     },
 });
