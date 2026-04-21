@@ -13,6 +13,7 @@ type Props = {
     lineageFields: string[];
 };
 
+// Memoized to prevent re-rendering all variant cards when only one changes in the parent list.
 export const VariantEditor = memo(function VariantEditor({
     index,
     variant,
@@ -41,6 +42,7 @@ export const VariantEditor = memo(function VariantEditor({
         }
     }
 
+    // useCallback ensures a stable reference so that memo on MutationListVariantFields is effective.
     const handleFilterObjectChange = useCallback(
         (filterObject: FilterObject) => {
             onChange(index, { ...variantRef.current, filterObject } as VariantUpdate);
@@ -127,6 +129,8 @@ function QueryVariantFields({
     );
 }
 
+// Memoized because GsMutationFilter is expensive to re-render. Relies on handleFilterObjectChange
+// being stable (via useCallback) in the parent — otherwise memo would have no effect.
 const MutationListVariantFields = memo(function MutationListVariantFields({
     filterObject,
     onChange,
