@@ -3,6 +3,7 @@ import { test as base, type Page } from '@playwright/test';
 import { CompareSideBySidePage } from './CompareSideBySidePage.ts';
 import { CompareToBaselinePage } from './CompareToBaselinePage.ts';
 import { CompareVariantsPage } from './CompareVariantsPage.ts';
+import { LandingPage } from './LandingPage.ts';
 import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
 import { SingleVariantPage } from './SingleVariantPage.ts';
 import { CollectionDetailPage } from './collections/CollectionDetailPage.ts';
@@ -14,6 +15,7 @@ type E2EFixture = {
     compareToBaselinePage: CompareToBaselinePage;
     compareSideBySidePage: CompareSideBySidePage;
     singleVariantPage: SingleVariantPage;
+    landingPage: LandingPage;
     collectionDetailPage: CollectionDetailPage;
     authenticatedPage: Page;
 };
@@ -33,6 +35,9 @@ export const test = base.extend<E2EFixture>({
     },
     singleVariantPage: async ({ page }, use) => {
         await use(new SingleVariantPage(page));
+    },
+    landingPage: async ({ page }, use) => {
+        await use(new LandingPage(page));
     },
     collectionDetailPage: async ({ page }, use) => {
         await use(new CollectionDetailPage(page));

@@ -1,18 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { allOrganisms, organismConfig, paths } from '../src/types/Organism.ts';
+import { test } from './e2e.fixture.ts';
+import { allOrganisms, organismConfig } from '../src/types/Organism.ts';
 
 const organismsWithGenome = allOrganisms.filter((organism) => 'genome' in organismConfig[organism]);
 
 test.describe('Organism landing pages', () => {
     for (const organism of organismsWithGenome) {
-        test(`should render genome viewer for ${organism}`, async ({ page }) => {
-            await page.goto(paths[organism].basePath);
+        test(`should render genome viewer for ${organism}`, async ({ landingPage }) => {
+            await landingPage.goto(organism);
 
-            await expect(page.getByRole('heading', { name: organismConfig[organism].label, level: 1 })).toBeVisible();
-            await expect(page.getByRole('heading', { name: 'Genome Data Viewer' })).toBeVisible();
-            await expect(page.getByText('Error -', { exact: false })).not.toBeVisible();
-            await expect(page.getByText('Something went wrong', { exact: false })).not.toBeVisible();
+            await expect(landingPage.organismHeading(organism)).toBeVisible();
+            await expect(landingPage.genomeViewerHeading).toBeVisible();
+            await landingPage.expectToSeeNoComponentErrors();
         });
     }
 });
