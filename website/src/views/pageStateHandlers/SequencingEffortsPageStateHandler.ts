@@ -13,7 +13,7 @@ import { parseDateRangesFromUrl, setSearchFromDateFilters } from './dateFilterFr
 import { parseLocationFiltersFromUrl, setSearchFromLocationFilters } from './locationFilterFromToUrl.ts';
 import { parseNumberRangeFilterFromUrl, setSearchFromNumberRangeFilters } from './numberRangeFilterFromToUrl.ts';
 import { parseTextFiltersFromUrl, setSearchFromTextFilters } from './textFilterFromToUrl.ts';
-import { advancedQueryUrlParam } from '../../components/genspectrum/AdvancedQueryFilter.tsx';
+import { advancedQueryUrlParam } from '../../components/genspectrum/advancedQueryUrlParamConstants.ts';
 import { formatUrl } from '../../util/formatUrl.ts';
 
 export class SequencingEffortsStateHandler<

@@ -60,10 +60,14 @@ jobs:
     - name: Run Playwright tests (all browsers)
       if: github.ref == 'refs/heads/main'
       run: npm run e2e
+      env:
+        BACKEND_URL: http://localhost:9021
 
     - name: Run Playwright tests (chromium only)
       if: github.ref != 'refs/heads/main'
       run: npm run e2e:chromium
+      env:
+        BACKEND_URL: http://localhost:9021
 
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
