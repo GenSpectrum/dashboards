@@ -60,8 +60,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
         }, DEBOUNCE_MS);
 
         return () => clearTimeout(timeout);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inputValue, lapisUrl]);
+    }, [inputValue, lapisUrl, onInput]);
 
     if (!enabled) {
         return null;
