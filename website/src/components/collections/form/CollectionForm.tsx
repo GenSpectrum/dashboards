@@ -38,13 +38,13 @@ export function CollectionForm({
     const [name, setName] = useState(initialValues?.name ?? '');
     const [description, setDescription] = useState(initialValues?.description ?? '');
     const [variants, setVariants] = useState(
-        initialValues?.variants ?? [{ type: 'filterObject', name: 'Variant 1', filterObject: {} }],
+        initialValues?.variants ?? [{ type: 'filterObject' as const, name: 'Variant 1', filterObject: {} }],
     );
 
     const addVariant = useCallback(() => {
         setVariants((prev) => [
             ...prev,
-            { type: 'filterObject', name: `Variant ${prev.length + 1}`, filterObject: {} },
+            { type: 'filterObject' as const, name: `Variant ${prev.length + 1}`, filterObject: {} },
         ]);
     }, []);
 
