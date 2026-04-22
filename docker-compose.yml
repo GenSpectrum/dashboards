@@ -10,6 +10,7 @@ services:
       DASHBOARDS_ENVIRONMENT: dashboards-prod
       GITHUB_CLIENT_ID: "dummy"
       GITHUB_CLIENT_SECRET: "dummy"
+      AUTH_SECRET: "e2e-test-auth-secret-do-not-use-in-production"
 
   backend:
     image: ghcr.io/genspectrum/dashboards/backend:${BACKEND_TAG}
