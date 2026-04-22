@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { type InputEvent, type FC, useEffect, useRef, useState } from 'react';
 
 import { getClientLogger } from '../../clientLogger.ts';
@@ -25,6 +26,23 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
 
+    const { mutate: validateQuery } = useMutation({
+        mutationFn: (query: string) => parseQuery(lapisUrl, [query]),
+        onSuccess: (results, query) => {
+            const result = results[0];
+            if (result.type === 'success') {
+                setValidationState({ type: 'valid' });
+                onInput?.(query);
+            } else {
+                setValidationState({ type: 'error', message: result.error });
+            }
+        },
+        onError: () => {
+            logger.error(`Failed to validate advanced query`);
+            setValidationState({ type: 'error', message: 'Validation is not possible right now.' });
+        },
+    });
+
     useEffect(() => {
         userEditedRef.current = false;
         setInputValue(value);
@@ -43,24 +61,10 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
 
         setValidationState({ type: 'validating' });
 
-        const timeout = setTimeout(async () => {
-            try {
-                const results = await parseQuery(lapisUrl, [inputValue]);
-                const result = results[0];
-                if (result.type === 'success') {
-                    setValidationState({ type: 'valid' });
-                    onInput?.(inputValue);
-                } else {
-                    setValidationState({ type: 'error', message: result.error });
-                }
-            } catch {
-                logger.error(`Failed to validate advanced query`);
-                setValidationState({ type: 'error', message: 'Validation is not possible right now.' });
-            }
-        }, DEBOUNCE_MS);
+        const timeout = setTimeout(() => validateQuery(inputValue), DEBOUNCE_MS);
 
         return () => clearTimeout(timeout);
-    }, [inputValue, lapisUrl, onInput]);
+    }, [inputValue, lapisUrl, onInput, validateQuery]);
 
     if (!enabled) {
         return null;
@@ -85,7 +89,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 }}
             />
             {isError && (
-                <div className='label'>
+                <div>
                     <span className='label-text-alt text-error'>{validationState.message}</span>
                 </div>
             )}
