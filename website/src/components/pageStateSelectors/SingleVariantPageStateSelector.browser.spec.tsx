@@ -38,6 +38,7 @@ describe('SingleVariantPageStateSelector', () => {
                     pageState={result.current[0]}
                     setPageState={result.current[1]}
                     enableAdvancedQueryFilter={true}
+                    lapisUrl={DUMMY_LAPIS_URL}
                 />
             </gs-app>,
         );
