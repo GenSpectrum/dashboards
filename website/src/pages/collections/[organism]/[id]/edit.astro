@@ -1,13 +1,18 @@
 ---
 import { getSession } from 'auth-astro/server';
 
+import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
-import { getDashboardsConfig } from '../../../../config';
+import { getDashboardsConfig, getBackendHost } from '../../../../config';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { getInstanceLogger } from '../../../../logger.ts';
 import { organismConfig, organismSchema } from '../../../../types/Organism';
 import { Page } from '../../../../types/pages';
+import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
+
+const logger = getInstanceLogger('CollectionEditPage');
 
 const { organism, id } = Astro.params;
 
@@ -23,6 +28,20 @@ if (id === undefined) {
 const orgConfig = organismConfig[parsedOrganism.data];
 const session = await getSession(Astro.request);
 const config = getDashboardsConfig();
+
+if (session?.user?.id !== undefined) {
+    try {
+        const collection = await new BackendService(getBackendHost()).getCollection({ id });
+        if (String(session.user.id) !== collection.ownedBy) {
+            return Astro.redirect('/404');
+        }
+    } catch (error) {
+        if (error instanceof BackendError && error.status === 404) {
+            return Astro.redirect('/404');
+        }
+        logger.error(`Failed to fetch collection ${id}: ${getErrorLogMessage(error)}`);
+    }
+}
 ---
 
 <ContaineredPageLayout

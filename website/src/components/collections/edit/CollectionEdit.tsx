@@ -147,7 +147,7 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
                         </div>
                         {deleteMutation.isError && (
                             <div className='text-error mt-2 text-sm'>
-                                Failed to delete: {getErrorLogMessage(deleteMutation.error)}
+                                Failed to delete collection: {getErrorLogMessage(deleteMutation.error)}
                             </div>
                         )}
                     </div>
