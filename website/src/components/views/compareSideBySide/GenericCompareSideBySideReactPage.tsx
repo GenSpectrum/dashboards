@@ -69,6 +69,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
                                     draftPageState={draftPageState}
                                     setDraftPageState={setDraftPageState}
                                     enableAdvancedQueryFilter={isStaging}
+                                    lapisUrl={organismsConfig[organism].lapis.url}
                                 />
                             </div>
                         ))}

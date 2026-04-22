@@ -49,12 +49,14 @@ export function BaselineSelector({
     setDatasetFilter,
     lapisFilter,
     enableAdvancedQueryFilter,
+    lapisUrl,
 }: {
     datasetFilter: DatasetFilter;
     setDatasetFilter: (datasetFilter: DatasetFilter) => void;
     lapisFilter: LapisFilter;
     baselineFilterConfigs?: BaselineFilterConfig[];
     enableAdvancedQueryFilter: boolean;
+    lapisUrl: string;
 }) {
     return (
         <div className={`flex flex-col gap-2`}>
@@ -174,6 +176,7 @@ export function BaselineSelector({
                                 }}
                                 value={datasetFilter.advancedQuery ?? ''}
                                 enabled={enableAdvancedQueryFilter}
+                                lapisUrl={lapisUrl}
                             />
                         );
                     }

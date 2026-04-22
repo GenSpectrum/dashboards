@@ -15,11 +15,13 @@ export function CompareVariantsToBaselineStateSelector({
     pageState,
     setPageState,
     enableAdvancedQueryFilter,
+    lapisUrl,
 }: {
     view: GenericCompareToBaselineView<OrganismConstants>;
     pageState: CompareToBaselineData;
     setPageState: Dispatch<SetStateAction<CompareToBaselineData>>;
     enableAdvancedQueryFilter: boolean;
+    lapisUrl: string;
 }) {
     const [draftPageState, setDraftPageState] = useState(pageState);
     useEffect(() => setDraftPageState(pageState), [pageState]);
@@ -54,6 +56,7 @@ export function CompareVariantsToBaselineStateSelector({
                                 }));
                             }}
                             enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                            lapisUrl={lapisUrl}
                         />
                     </div>
                 </Inset>
@@ -72,6 +75,7 @@ export function CompareVariantsToBaselineStateSelector({
                         variantFilter={draftPageState.baselineFilter}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>
@@ -90,6 +94,7 @@ export function CompareVariantsToBaselineStateSelector({
                         }}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>

@@ -56,6 +56,7 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
                         pageState={pageState}
                         setPageState={setPageState}
                         enableAdvancedQueryFilter={isStaging}
+                        lapisUrl={organismsConfig.covid.lapis.url}
                     />
                     <hr className='my-4 border-gray-200' />
                     <div className='mt-4'>

@@ -15,12 +15,14 @@ export function CompareSideBySidePageStateSelector({
     draftPageState,
     setDraftPageState,
     enableAdvancedQueryFilter,
+    lapisUrl,
 }: {
     view: BaseView<CompareSideBySideData, OrganismConstants, CompareSideBySideStateHandler>;
     filterId: number;
     draftPageState: CompareSideBySideData;
     setDraftPageState: Dispatch<SetStateAction<CompareSideBySideData>>;
     enableAdvancedQueryFilter: boolean;
+    lapisUrl: string;
 }) {
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
@@ -66,6 +68,7 @@ export function CompareSideBySidePageStateSelector({
                             });
                         }}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>
@@ -87,6 +90,7 @@ export function CompareSideBySidePageStateSelector({
                         variantFilter={filterOfCurrentId.variantFilter}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>

@@ -50,6 +50,7 @@ export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPage
                     pageState={pageState}
                     setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
+                    lapisUrl={organismsConfig[organism].lapis.url}
                 />
             }
             dataDisplay={<GenericCompareVariantsDataDisplay view={view} pageState={pageState} />}

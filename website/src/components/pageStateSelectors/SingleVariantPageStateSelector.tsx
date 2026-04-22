@@ -14,11 +14,13 @@ export function SingleVariantPageStateSelector({
     pageState,
     setPageState,
     enableAdvancedQueryFilter,
+    lapisUrl,
 }: {
     view: GenericSingleVariantView<OrganismConstants>;
     pageState: DatasetAndVariantData;
     setPageState: Dispatch<SetStateAction<DatasetAndVariantData>>;
     enableAdvancedQueryFilter: boolean;
+    lapisUrl: string;
 }) {
     const variantFilterConfig = useMemo(
         () => makeVariantFilterConfig(view.organismConstants),
@@ -50,6 +52,7 @@ export function SingleVariantPageStateSelector({
                             }));
                         }}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>
@@ -68,6 +71,7 @@ export function SingleVariantPageStateSelector({
                         variantFilter={draftPageState.variantFilter}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>
