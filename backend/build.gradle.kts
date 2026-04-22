@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     kotlin("jvm") version "2.3.20"
     kotlin("plugin.spring") version "2.3.20"
-    id("org.springframework.boot") version "3.5.13"
+    id("org.springframework.boot") version "4.0.5"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
