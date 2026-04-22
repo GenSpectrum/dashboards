@@ -14,13 +14,11 @@ export function GsMutationFilter({
     width,
     enabledMutationTypes,
     onMutationChange,
-    showLabel = true,
 }: {
     width?: string;
     initialValue?: MutationFilter | string[] | undefined;
     enabledMutationTypes?: MutationType[];
     onMutationChange: (mutationFilter: MutationFilter | undefined) => void;
-    showLabel?: boolean;
 }) {
     const mutationFilterRef = useRef<HTMLElement>(null);
 
@@ -43,15 +41,11 @@ export function GsMutationFilter({
         };
     }, [onMutationChange]);
 
-    // TODO - the JSON stringify below shouldn't be needed.
-
     return (
         <label className='form-control'>
-            {showLabel && (
-                <div className='label'>
-                    <span className='label-text'>Mutations</span>
-                </div>
-            )}
+            <div className='label'>
+                <span className='label-text'>Mutations</span>
+            </div>
             <gs-mutation-filter
                 width={width}
                 initialValue={initialValue ?? []}
