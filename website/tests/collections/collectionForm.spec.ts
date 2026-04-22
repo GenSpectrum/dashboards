@@ -51,90 +51,100 @@ test.afterAll(async ({ request }) => {
 });
 
 test.describe('New collection page', () => {
-    test('shows "New collection" heading', async ({ collectionFormPage }) => {
+    test('shows "Please login" when not authenticated', async ({ collectionFormPage }) => {
         await collectionFormPage.gotoCreate(ORGANISM);
 
-        await expect(collectionFormPage.heading()).toHaveText('New collection');
+        await expect(collectionFormPage.page.getByRole('heading', { name: 'Please login' })).toBeVisible();
     });
 
-    test('"Use advanced query" checkbox is unticked by default', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoCreate(ORGANISM);
+    test('shows "New collection" heading', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoCreate(ORGANISM);
 
-        await expect(collectionFormPage.advancedQueryCheckbox()).not.toBeChecked();
+        await expect(authenticatedCollectionFormPage.heading()).toHaveText('New collection');
     });
 
-    test('"Add variant" adds a variant row', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoCreate(ORGANISM);
+    test('"Use advanced query" checkbox is unticked by default', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoCreate(ORGANISM);
 
-        await expect(collectionFormPage.variantNameInputs()).toHaveCount(1);
-
-        await collectionFormPage.addVariantButton().click();
-
-        await expect(collectionFormPage.variantNameInputs()).toHaveCount(2);
+        await expect(authenticatedCollectionFormPage.advancedQueryCheckbox()).not.toBeChecked();
     });
 
-    test('Remove button is hidden when only one variant', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoCreate(ORGANISM);
+    test('"Add variant" adds a variant row', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoCreate(ORGANISM);
 
-        await expect(collectionFormPage.removeVariantButton()).not.toBeVisible();
+        await expect(authenticatedCollectionFormPage.variantNameInputs()).toHaveCount(1);
+
+        await authenticatedCollectionFormPage.addVariantButton().click();
+
+        await expect(authenticatedCollectionFormPage.variantNameInputs()).toHaveCount(2);
     });
 
-    test('Remove button appears after adding a second variant', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoCreate(ORGANISM);
+    test('Remove button is hidden when only one variant', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoCreate(ORGANISM);
 
-        await collectionFormPage.addVariantButton().click();
+        await expect(authenticatedCollectionFormPage.removeVariantButton()).not.toBeVisible();
+    });
 
-        await expect(collectionFormPage.removeVariantButton().first()).toBeVisible();
+    test('Remove button appears after adding a second variant', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoCreate(ORGANISM);
+
+        await authenticatedCollectionFormPage.addVariantButton().click();
+
+        await expect(authenticatedCollectionFormPage.removeVariantButton().first()).toBeVisible();
     });
 });
 
 test.describe('Edit collection page', () => {
-    test('shows "Edit collection" heading', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+    test('shows "Edit collection" heading', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
-        await expect(collectionFormPage.heading()).toHaveText('Edit collection');
+        await expect(authenticatedCollectionFormPage.heading()).toHaveText('Edit collection');
     });
 
-    test('pre-fills the collection name', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+    test('pre-fills the collection name', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
-        await expect(collectionFormPage.collectionNameInput()).toHaveValue(SEED_COLLECTION.name);
+        await expect(authenticatedCollectionFormPage.collectionNameInput()).toHaveValue(SEED_COLLECTION.name);
     });
 
-    test('filterObject variant has "Use advanced query" unchecked', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+    test('filterObject variant has "Use advanced query" unchecked', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
         // First variant is filterObject
-        await expect(collectionFormPage.advancedQueryCheckbox(0)).not.toBeChecked();
+        await expect(authenticatedCollectionFormPage.advancedQueryCheckbox(0)).not.toBeChecked();
     });
 
-    test('query variant has "Use advanced query" checked', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+    test('query variant has "Use advanced query" checked', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
         // Second variant is query type
-        await expect(collectionFormPage.advancedQueryCheckbox(1)).toBeChecked();
+        await expect(authenticatedCollectionFormPage.advancedQueryCheckbox(1)).toBeChecked();
     });
 
-    test('saving changes redirects to the detail page', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+    test('saving changes redirects to the detail page', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
         const updatedName = 'Updated E2E Collection Name';
-        await collectionFormPage.collectionNameInput().fill(updatedName);
-        await collectionFormPage.submitButton('Save changes').click();
+        await authenticatedCollectionFormPage.collectionNameInput().fill(updatedName);
+        await authenticatedCollectionFormPage.submitButton('Save changes').click();
 
-        await expect(collectionFormPage.page).toHaveURL(new RegExp(`/collections/${ORGANISM}/${getCollectionId()}$`));
-        await expect(collectionFormPage.page.getByRole('heading', { name: updatedName })).toBeVisible();
+        await expect(authenticatedCollectionFormPage.page).toHaveURL(
+            new RegExp(`/collections/${ORGANISM}/${getCollectionId()}$`),
+        );
+        await expect(authenticatedCollectionFormPage.page.getByRole('heading', { name: updatedName })).toBeVisible();
     });
 
-    test('"Delete collection" shows confirmation dialog; Cancel dismisses it', async ({ collectionFormPage }) => {
-        await collectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+    test('"Delete collection" shows confirmation dialog; Cancel dismisses it', async ({
+        authenticatedCollectionFormPage,
+    }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
-        await collectionFormPage.deleteCollectionButton().click();
+        await authenticatedCollectionFormPage.deleteCollectionButton().click();
 
-        await expect(collectionFormPage.page.getByText('Are you sure')).toBeVisible();
+        await expect(authenticatedCollectionFormPage.page.getByText('Are you sure')).toBeVisible();
 
-        await collectionFormPage.cancelDeleteButton().click();
+        await authenticatedCollectionFormPage.cancelDeleteButton().click();
 
-        await expect(collectionFormPage.page.getByText('Are you sure')).not.toBeVisible();
+        await expect(authenticatedCollectionFormPage.page.getByText('Are you sure')).not.toBeVisible();
     });
 });

@@ -5,6 +5,7 @@ import { CompareToBaselinePage } from './CompareToBaselinePage.ts';
 import { CompareVariantsPage } from './CompareVariantsPage.ts';
 import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
 import { SingleVariantPage } from './SingleVariantPage.ts';
+import { setupAuthCookie } from './auth/authHelper.ts';
 import { CollectionDetailPage } from './collections/CollectionDetailPage.ts';
 import { CollectionFormPage } from './collections/CollectionFormPage.ts';
 import { setupAuthCookie } from './helpers/auth.ts';
