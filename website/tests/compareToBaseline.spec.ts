@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './e2e.fixture.ts';
-import { organismOptions, organismsWithView } from './helpers.ts';
+import { organismOptions, organismsWithView } from './helpers/organisms.ts';
 import { compareToBaselineViewKey } from '../src/views/viewKeys';
 
 test.describe('The Compare To Baseline page', () => {
