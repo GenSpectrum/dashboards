@@ -9,22 +9,17 @@ export function parseTextFiltersFromUrl(
     const textFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'text');
 
     return (
-        textFilterConfigs?.reduce(
-            (acc, config) => {
-                const value = getStringFromSearch(search, config.lapisField);
-                if (value === undefined) {
-                    return acc;
-                }
+        textFilterConfigs?.reduce<Record<string, string | undefined>>((acc, config) => {
+            const value = getStringFromSearch(search, config.lapisField);
+            if (value === undefined) {
+                return acc;
+            }
 
-                return {
-                    ...acc,
-                    [config.lapisField]: getStringFromSearch(search, config.lapisField),
-                };
-            },
-            {} as {
-                [key: string]: string | undefined;
-            },
-        ) ?? {}
+            return {
+                ...acc,
+                [config.lapisField]: getStringFromSearch(search, config.lapisField),
+            };
+        }, {}) ?? {}
     );
 }
 

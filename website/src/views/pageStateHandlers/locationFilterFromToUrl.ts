@@ -11,23 +11,18 @@ export function parseLocationFiltersFromUrl(
     const locationFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'location');
 
     return (
-        locationFilterConfigs?.reduce(
-            (acc, config) => {
-                const location = getLapisLocationFromSearch(search, config.locationFields);
+        locationFilterConfigs?.reduce<Record<string, LapisLocation | undefined>>((acc, config) => {
+            const location = getLapisLocationFromSearch(search, config.locationFields);
 
-                if (Object.keys(location).length === 0) {
-                    return acc;
-                }
+            if (Object.keys(location).length === 0) {
+                return acc;
+            }
 
-                return {
-                    ...acc,
-                    [locationFieldsToFilterIdentifier(config.locationFields)]: location,
-                };
-            },
-            {} as {
-                [key: string]: LapisLocation | undefined;
-            },
-        ) ?? {}
+            return {
+                ...acc,
+                [locationFieldsToFilterIdentifier(config.locationFields)]: location,
+            };
+        }, {}) ?? {}
     );
 }
 
