@@ -37,14 +37,14 @@ jobs:
       run: echo "branchTag=${TAG##*:}" >> $GITHUB_OUTPUT
 
     - name: Wait for website Docker image
-      uses: lewagon/wait-on-check-action@v1.6.1
+      uses: lewagon/wait-on-check-action@v1.7.0
       with:
         ref: ${{ github.sha }}
         check-name: Build Website Docker Image
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 10
     - name: Wait for backend Docker image
-      uses: lewagon/wait-on-check-action@v1.6.1
+      uses: lewagon/wait-on-check-action@v1.7.0
       with:
         ref: ${{ github.sha }}
         check-name: Build Backend Docker Image
@@ -60,10 +60,14 @@ jobs:
     - name: Run Playwright tests (all browsers)
       if: github.ref == 'refs/heads/main'
       run: npm run e2e
+      env:
+        BACKEND_URL: http://localhost:9021
 
     - name: Run Playwright tests (chromium only)
       if: github.ref != 'refs/heads/main'
       run: npm run e2e:chromium
+      env:
+        BACKEND_URL: http://localhost:9021
 
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}

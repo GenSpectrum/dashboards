@@ -42,8 +42,8 @@ dependencies {
         exclude(group = "org.mockito")
     }
     testImplementation("com.ninja-squad:springmockk:4.0.2")
-    testImplementation("org.testcontainers:testcontainers:2.0.4")
-    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.4")
+    testImplementation("org.testcontainers:testcontainers:2.0.5")
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
 

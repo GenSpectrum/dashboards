@@ -10,22 +10,17 @@ export function parseNumberRangeFilterFromUrl(
     const numberRangeFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'number');
 
     return (
-        numberRangeFilterConfigs?.reduce(
-            (acc, config) => {
-                const numberRange = getNumberRangeFromSearch(search, config.lapisField);
-                if (numberRange === undefined) {
-                    return acc;
-                }
+        numberRangeFilterConfigs?.reduce<Record<string, NumberRange | undefined>>((acc, config) => {
+            const numberRange = getNumberRangeFromSearch(search, config.lapisField);
+            if (numberRange === undefined) {
+                return acc;
+            }
 
-                return {
-                    ...acc,
-                    [config.lapisField]: numberRange,
-                };
-            },
-            {} as {
-                [key: string]: NumberRange | undefined;
-            },
-        ) ?? {}
+            return {
+                ...acc,
+                [config.lapisField]: numberRange,
+            };
+        }, {}) ?? {}
     );
 }
 
