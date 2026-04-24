@@ -32,7 +32,7 @@ export class CollectionFormPage {
     }
 
     public advancedQueryCheckbox(index = 0) {
-        return this.page.getByRole('checkbox').nth(index);
+        return this.page.getByRole('checkbox', { name: 'Use advanced query instead' }).nth(index);
     }
 
     public removeVariantButton() {
