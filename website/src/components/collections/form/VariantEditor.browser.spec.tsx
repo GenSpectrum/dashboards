@@ -45,7 +45,7 @@ describe('VariantEditor', () => {
             />,
         );
 
-        await expect.element(getByRole('checkbox')).not.toBeChecked();
+        await expect.element(getByRole('checkbox', { name: 'Use advanced query instead' })).not.toBeChecked();
     });
 
     itVitest('"Use advanced query" checkbox is checked for query variant', async () => {
@@ -60,7 +60,7 @@ describe('VariantEditor', () => {
             />,
         );
 
-        await expect.element(getByRole('checkbox')).toBeChecked();
+        await expect.element(getByRole('checkbox', { name: 'Use advanced query instead' })).toBeChecked();
     });
 
     it('clicking the checkbox calls onChange with type query', async ({ routeMockers: { lapis } }) => {
@@ -79,7 +79,7 @@ describe('VariantEditor', () => {
             />,
         );
 
-        await getByRole('checkbox').click();
+        await getByRole('checkbox', { name: 'Use advanced query instead' }).click();
 
         expect(onChange).toHaveBeenCalledWith(0, expect.objectContaining({ type: 'query' }));
     });
