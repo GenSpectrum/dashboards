@@ -12,6 +12,13 @@ export type CollectionFormValues = {
     variants: VariantUpdate[];
 };
 
+// The clientKey is used as the 'key' in the component list, and stripped before submitting
+type VariantWithKey = VariantUpdate & { clientKey: string };
+
+function withKey(variant: VariantUpdate): VariantWithKey {
+    return { ...variant, clientKey: variant.id !== undefined ? String(variant.id) : crypto.randomUUID() };
+}
+
 type Props = {
     initialValues?: CollectionFormValues;
     onSubmit: (values: CollectionFormValues) => void;
@@ -37,19 +44,21 @@ export function CollectionForm({
     const lineageFields = config.dashboards.organisms[organism].lapis.lineageFields ?? [];
     const [name, setName] = useState(initialValues?.name ?? '');
     const [description, setDescription] = useState(initialValues?.description ?? '');
-    const [variants, setVariants] = useState(
-        initialValues?.variants ?? [{ type: 'filterObject' as const, name: 'Variant 1', filterObject: {} }],
+    const [variants, setVariants] = useState<VariantWithKey[]>(() =>
+        (initialValues?.variants ?? [{ type: 'filterObject' as const, name: 'Variant 1', filterObject: {} }]).map(
+            withKey,
+        ),
     );
 
     const addVariant = useCallback(() => {
         setVariants((prev) => [
             ...prev,
-            { type: 'filterObject' as const, name: `Variant ${prev.length + 1}`, filterObject: {} },
+            withKey({ type: 'filterObject' as const, name: `Variant ${prev.length + 1}`, filterObject: {} }),
         ]);
     }, []);
 
     const updateVariant = useCallback((index: number, variant: VariantUpdate) => {
-        setVariants((prev) => prev.map((v, i) => (i === index ? variant : v)));
+        setVariants((prev) => prev.map((v, i) => (i === index ? { ...variant, clientKey: v.clientKey } : v)));
     }, []);
 
     const removeVariant = useCallback((index: number) => {
@@ -99,7 +108,7 @@ export function CollectionForm({
                     <div className='col-span-2 flex flex-col gap-4'>
                         {variants.map((variant, index) => (
                             <VariantEditor
-                                key={index}
+                                key={variant.clientKey}
                                 index={index}
                                 variant={variant}
                                 onChange={updateVariant}
@@ -120,7 +129,13 @@ export function CollectionForm({
                     isDisabled={name.trim() === ''}
                     successMessage={successMessage}
                     submitLabel={submitLabel}
-                    onClick={() => onSubmit({ name, description, variants })}
+                    onClick={() =>
+                        onSubmit({
+                            name,
+                            description,
+                            variants: variants.map(({ clientKey: _key, ...v }) => v),
+                        })
+                    }
                 />
             </div>
         </GsApp>
