@@ -66,7 +66,7 @@ describe('CollectionForm', () => {
 
         const { getByRole } = render(<CollectionForm {...DEFAULT_PROPS} />);
 
-        await expect.element(getByRole('checkbox')).not.toBeChecked();
+        await expect.element(getByRole('checkbox', { name: 'Use advanced query instead' })).not.toBeChecked();
     });
 
     it('calls onSubmit with the correct values when the form is submitted', async ({ routeMockers: { lapis } }) => {
