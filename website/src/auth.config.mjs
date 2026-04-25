@@ -4,6 +4,7 @@ import { defineConfig } from 'auth-astro';
 import { getGitHubClientId, getGitHubClientSecret } from './config';
 
 export default defineConfig({
+    secret: process.env.AUTH_SECRET,
     callbacks: {
         session: async ({ session, token }) => {
             session.user.id = token.userIdFromProvider;
