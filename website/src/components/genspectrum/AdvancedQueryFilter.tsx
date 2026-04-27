@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { type InputEvent, type FC, useEffect, useRef, useState } from 'react';
+import { type FC, type InputEvent, useEffect, useRef, useState } from 'react';
 
 import { getClientLogger } from '../../clientLogger.ts';
 import { parseQuery } from '../../lapis/parseQuery.ts';
@@ -79,9 +79,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
             <div className='label'>
                 <span className='label-text'>Advanced query</span>
             </div>
-            <label
-                className={`input input-bordered flex w-full items-center gap-2 ${isError ? 'input-error' : ''} ${isValid ? 'input-success' : ''}`}
-            >
+            <label className={`input input-bordered flex w-full items-center gap-2 ${isError ? 'input-error' : ''}`}>
                 <input
                     className='grow'
                     placeholder={'Advanced query: A123T & ins_123:TA'}
@@ -92,7 +90,8 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                         setInputValue(newValue === '' ? undefined : newValue);
                     }}
                 />
-                {isValidating && <span className='loading loading-spinner loading-xs' aria-label='Validating' />}
+                {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
+                {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
             </label>
             {isError && (
                 <div>

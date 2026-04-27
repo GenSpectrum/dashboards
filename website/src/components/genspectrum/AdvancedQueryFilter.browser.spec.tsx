@@ -1,5 +1,5 @@
 import { userEvent } from '@vitest/browser/context';
-import { http, delay } from 'msw';
+import { delay, http } from 'msw';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
@@ -55,6 +55,21 @@ describe('AdvancedQueryFilter', () => {
         expect(onInput).not.toHaveBeenCalledWith(undefined);
     });
 
+    it('shows checkmark after successful validation', async ({ routeMockers }) => {
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['A123T'] },
+            { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
+        );
+
+        const { getByRole, getByTitle } = render(
+            <AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />,
+        );
+
+        await userEvent.type(getByRole('textbox'), 'A123T');
+
+        await expect.element(getByTitle('Advanced query is valid')).toBeVisible();
+    });
+
     it('shows error message and does not call onInput on parse failure', async ({ routeMockers }) => {
         const onInput = vi.fn();
 
@@ -80,13 +95,13 @@ describe('AdvancedQueryFilter', () => {
             }),
         );
 
-        const { getByRole, getByLabelText } = render(
+        const { getByRole, getByTitle } = render(
             <AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
         await userEvent.type(getByRole('textbox'), 'A123T');
 
-        await expect.element(getByLabelText('Validating')).toBeVisible();
+        await expect.element(getByTitle('Validating')).toBeVisible();
     });
 
     it('shows network error message when LAPIS is unreachable', async ({ routeMockers }) => {
