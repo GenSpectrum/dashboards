@@ -1,6 +1,7 @@
 import { signIn } from 'auth-astro/client';
 
 import { getClientLogger } from '../../clientLogger.ts';
+import { getErrorLogMessage } from '../../util/getErrorLogMessage.ts';
 import { useErrorToast } from '../ErrorReportInstruction.tsx';
 
 const logger = getClientLogger('LoginButton');
@@ -15,7 +16,7 @@ export function LoginButton() {
         signIn('github', { callbackUrl: callbackUrlThatDoesNotImmediatelyLogoutAgain }).catch((error: unknown) => {
             showErrorToast({
                 error: error instanceof Error ? error : new Error(String(error)),
-                logMessage: 'Login failed',
+                logMessage: `Login failed: ${getErrorLogMessage(error)}`,
                 errorToastMessages: ['Login failed. Please try again.'],
             });
         });
