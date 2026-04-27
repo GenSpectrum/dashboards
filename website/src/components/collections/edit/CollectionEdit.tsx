@@ -1,11 +1,11 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import type { DashboardsConfig } from '../../../config.ts';
-import type { VariantUpdate } from '../../../types/Collection.ts';
+import type { Collection, VariantUpdate } from '../../../types/Collection.ts';
 import type { Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
@@ -15,18 +15,18 @@ export const CollectionEdit = withQueryProvider(CollectionEditInner);
 
 const logger = getClientLogger('CollectionEdit');
 
-function CollectionEditInner({ id, organism, config }: { id: string; organism: Organism; config: DashboardsConfig }) {
+function CollectionEditInner({
+    id,
+    organism,
+    config,
+    collection,
+}: {
+    id: string;
+    organism: Organism;
+    config: DashboardsConfig;
+    collection: Collection;
+}) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-    const {
-        isLoading,
-        isError,
-        data: collection,
-        error,
-    } = useQuery({
-        queryKey: ['collection', id],
-        queryFn: () => getBackendServiceForClientside().getCollection({ id }),
-    });
 
     const updateMutation = useMutation({
         mutationFn: (values: CollectionFormValues) =>
@@ -55,19 +55,6 @@ function CollectionEditInner({ id, organism, config }: { id: string; organism: O
             logger.error(`Failed to delete collection: ${getErrorLogMessage(err)}`);
         },
     });
-
-    if (isLoading) {
-        return <span className='loading loading-spinner loading-sm' />;
-    }
-
-    if (isError) {
-        logger.error(`Failed to fetch collection: ${getErrorLogMessage(error)}`);
-        return <div className='text-error'>Failed to load collection. Please try reloading the page.</div>;
-    }
-
-    if (collection === undefined) {
-        return null;
-    }
 
     const initialValues: CollectionFormValues = {
         name: collection.name,
