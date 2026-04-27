@@ -26,8 +26,6 @@ function CollectionEditInner({
     config: DashboardsConfig;
     collection: Collection;
 }) {
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
     const updateMutation = useMutation({
         mutationFn: (values: CollectionFormValues) =>
             getBackendServiceForClientside().putCollection({
@@ -43,16 +41,6 @@ function CollectionEditInner({
         },
         onError: (err) => {
             logger.error(`Failed to update collection: ${getErrorLogMessage(err)}`);
-        },
-    });
-
-    const deleteMutation = useMutation({
-        mutationFn: () => getBackendServiceForClientside().deleteCollection({ id }),
-        onSuccess: () => {
-            window.location.href = Page.collectionsForOrganism(organism);
-        },
-        onError: (err) => {
-            logger.error(`Failed to delete collection: ${getErrorLogMessage(err)}`);
         },
     });
 
@@ -99,47 +87,73 @@ function CollectionEditInner({
                 </div>
             )}
 
-            <div className='border-t border-gray-200 pt-6'>
-                <h2 className='text-error mb-3 text-lg font-semibold'>Danger zone</h2>
-                {!showDeleteConfirm ? (
-                    <button
-                        type='button'
-                        className='btn btn-sm btn-error btn-outline'
-                        onClick={() => setShowDeleteConfirm(true)}
-                    >
-                        Delete collection
-                    </button>
-                ) : (
-                    <div className='border-error rounded-lg border p-4'>
-                        <p className='mb-3 text-sm'>
-                            Are you sure you want to delete <strong>{collection.name}</strong>? This cannot be undone.
-                        </p>
-                        <div className='flex gap-2'>
-                            <button
-                                type='button'
-                                className='btn btn-sm btn-error'
-                                onClick={() => deleteMutation.mutate()}
-                                disabled={deleteMutation.isPending}
-                            >
-                                {deleteMutation.isPending && <span className='loading loading-spinner loading-sm' />}
-                                Yes, delete
-                            </button>
-                            <button
-                                type='button'
-                                className='btn btn-sm btn-ghost'
-                                onClick={() => setShowDeleteConfirm(false)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                        {deleteMutation.isError && (
-                            <div className='text-error mt-2 text-sm'>
-                                Failed to delete collection: {getErrorLogMessage(deleteMutation.error)}
-                            </div>
-                        )}
+            <DeleteCollectionSection id={id} organism={organism} collectionName={collection.name} />
+        </div>
+    );
+}
+
+function DeleteCollectionSection({
+    id,
+    organism,
+    collectionName,
+}: {
+    id: string;
+    organism: Organism;
+    collectionName: string;
+}) {
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    const deleteMutation = useMutation({
+        mutationFn: () => getBackendServiceForClientside().deleteCollection({ id }),
+        onSuccess: () => {
+            window.location.href = Page.collectionsForOrganism(organism);
+        },
+        onError: (err) => {
+            logger.error(`Failed to delete collection: ${getErrorLogMessage(err)}`);
+        },
+    });
+
+    return (
+        <div className='border-t border-gray-200 pt-6'>
+            <h2 className='text-error mb-3 text-lg font-semibold'>Danger zone</h2>
+            {!showDeleteConfirm ? (
+                <button
+                    type='button'
+                    className='btn btn-sm btn-error btn-outline'
+                    onClick={() => setShowDeleteConfirm(true)}
+                >
+                    Delete collection
+                </button>
+            ) : (
+                <div className='border-error rounded-lg border p-4'>
+                    <p className='mb-3 text-sm'>
+                        Are you sure you want to delete <strong>{collectionName}</strong>? This cannot be undone.
+                    </p>
+                    <div className='flex gap-2'>
+                        <button
+                            type='button'
+                            className='btn btn-sm btn-error'
+                            onClick={() => deleteMutation.mutate()}
+                            disabled={deleteMutation.isPending}
+                        >
+                            {deleteMutation.isPending && <span className='loading loading-spinner loading-sm' />}
+                            Yes, delete
+                        </button>
+                        <button
+                            type='button'
+                            className='btn btn-sm btn-ghost'
+                            onClick={() => setShowDeleteConfirm(false)}
+                        >
+                            Cancel
+                        </button>
                     </div>
-                )}
-            </div>
+                    {deleteMutation.isError && (
+                        <div className='text-error mt-2 text-sm'>
+                            Failed to delete collection: {getErrorLogMessage(deleteMutation.error)}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
