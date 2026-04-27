@@ -8,7 +8,7 @@ import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.api.TriggerEvaluationResponse
 import org.genspectrum.dashboardsbackend.model.subscription.SubscriptionModel
 import org.genspectrum.dashboardsbackend.model.triggerevaluation.TriggerEvaluationModel
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 // TODO: Remove once subscriptions are ready for prod (https://github.com/GenSpectrum/dashboards/issues/1163)
-@ConditionalOnExpression("'\${DASHBOARDS_ENVIRONMENT:}' != 'prod'")
+@ConditionalOnProperty(name = ["dashboards.features.subscriptions.enabled"], matchIfMissing = true)
 @RestController
 class SubscriptionsController(
     private val subscriptionModel: SubscriptionModel,

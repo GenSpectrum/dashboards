@@ -1,4 +1,7 @@
 dashboards:
+  features:
+    subscriptions:
+      enabled: false
   organisms:
     covid:
       lapis:
