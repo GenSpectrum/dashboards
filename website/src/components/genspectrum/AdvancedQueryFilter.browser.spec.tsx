@@ -70,7 +70,7 @@ describe('AdvancedQueryFilter', () => {
         await expect.element(getByTitle('Advanced query is valid')).toBeVisible();
     });
 
-    it('shows error message and does not call onInput on parse failure', async ({ routeMockers }) => {
+    it('shows error icon with message tooltip on parse failure', async ({ routeMockers }) => {
         const onInput = vi.fn();
 
         routeMockers.lapis.mockPostQueryParse(
@@ -78,13 +78,13 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
         );
 
-        const { getByRole, getByText } = render(
+        const { getByRole, getByTitle } = render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
         await userEvent.type(getByRole('textbox'), 'invalid!!');
 
-        await expect.element(getByText('Unexpected token at position 7')).toBeVisible();
+        await expect.element(getByTitle('Invalid advanced query: Unexpected token at position 7')).toBeVisible();
         expect(onInput).not.toHaveBeenCalled();
     });
 
@@ -104,18 +104,20 @@ describe('AdvancedQueryFilter', () => {
         await expect.element(getByTitle('Validating')).toBeVisible();
     });
 
-    it('shows network error message when LAPIS is unreachable', async ({ routeMockers }) => {
+    it('shows error icon with network error tooltip when LAPIS is unreachable', async ({ routeMockers }) => {
         routeMockers.lapis.mockLapisDown();
 
         const onInput = vi.fn();
 
-        const { getByRole, getByText } = render(
+        const { getByRole, getByTitle } = render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
         await userEvent.type(getByRole('textbox'), 'A123T');
 
-        await expect.element(getByText('Validation is not possible right now.')).toBeVisible();
+        await expect.element(
+            getByTitle('Invalid advanced query: Validation is not possible right now.'),
+        ).toBeVisible();
         expect(onInput).not.toHaveBeenCalled();
     });
 });
