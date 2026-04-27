@@ -72,22 +72,28 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
 
     const isError = validationState.type === 'error';
     const isValid = validationState.type === 'valid';
+    const isValidating = validationState.type === 'validating';
 
     return (
         <div className='form-control'>
             <div className='label'>
                 <span className='label-text'>Advanced query</span>
             </div>
-            <input
-                className={`input input-bordered w-full ${isError ? 'input-error' : ''} ${isValid ? 'input-success' : ''}`}
-                placeholder={'Advanced query: A123T & ins_123:TA'}
-                value={inputValue ?? ''}
-                onInput={(event: InputEvent<HTMLInputElement>) => {
-                    userEditedRef.current = true;
-                    const newValue = event.currentTarget.value;
-                    setInputValue(newValue === '' ? undefined : newValue);
-                }}
-            />
+            <label
+                className={`input input-bordered flex w-full items-center gap-2 ${isError ? 'input-error' : ''} ${isValid ? 'input-success' : ''}`}
+            >
+                <input
+                    className='grow'
+                    placeholder={'Advanced query: A123T & ins_123:TA'}
+                    value={inputValue ?? ''}
+                    onInput={(event: InputEvent<HTMLInputElement>) => {
+                        userEditedRef.current = true;
+                        const newValue = event.currentTarget.value;
+                        setInputValue(newValue === '' ? undefined : newValue);
+                    }}
+                />
+                {isValidating && <span className='loading loading-spinner loading-xs' aria-label='Validating' />}
+            </label>
             {isError && (
                 <div>
                     <span className='label-text-alt text-error'>{validationState.message}</span>

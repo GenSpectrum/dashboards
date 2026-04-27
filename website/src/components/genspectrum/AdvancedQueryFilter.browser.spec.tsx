@@ -1,10 +1,11 @@
 import { userEvent } from '@vitest/browser/context';
+import { http, delay } from 'msw';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { AdvancedQueryFilter } from './AdvancedQueryFilter.tsx';
 import { DUMMY_LAPIS_URL } from '../../../routeMocker.ts';
-import { it } from '../../../test-extend';
+import { it, worker } from '../../../test-extend';
 import { withQueryProvider } from '../../backendApi/withQueryProvider.tsx';
 
 const AdvancedQueryFilterWithProvider = withQueryProvider(AdvancedQueryFilter);
@@ -70,6 +71,22 @@ describe('AdvancedQueryFilter', () => {
 
         await expect.element(getByText('Unexpected token at position 7')).toBeVisible();
         expect(onInput).not.toHaveBeenCalled();
+    });
+
+    it('shows validating indicator while waiting for validation result', async () => {
+        worker.use(
+            http.post(`${DUMMY_LAPIS_URL}/query/parse`, async () => {
+                await delay('infinite');
+            }),
+        );
+
+        const { getByRole, getByLabelText } = render(
+            <AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />,
+        );
+
+        await userEvent.type(getByRole('textbox'), 'A123T');
+
+        await expect.element(getByLabelText('Validating')).toBeVisible();
     });
 
     it('shows network error message when LAPIS is unreachable', async ({ routeMockers }) => {
