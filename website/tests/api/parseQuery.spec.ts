@@ -8,7 +8,7 @@ test.describe('parseQuery integration', () => {
     test('should parse a simple query against real LAPIS', async () => {
         const queries = ["country = 'Switzerland'"];
 
-        const result = await parseQuery(LAPIS_URL, queries);
+        const result = await parseQuery(LAPIS_URL, { queries });
 
         expect(result).toHaveLength(1);
         expect(result[0].type).toBe('success');
@@ -17,10 +17,22 @@ test.describe('parseQuery integration', () => {
         }
     });
 
+    test('should recognize genome out of bounds when doing full validation', async () => {
+        const queries = ['1234567890'];
+
+        const result = await parseQuery(LAPIS_URL, { queries, doFullValidation: true });
+
+        expect(result).toHaveLength(1);
+        expect(result[0].type).toBe('failure');
+        if (result[0].type === 'failure') {
+            expect(result[0].error).toBe('TODO - insert correct error message');
+        }
+    });
+
     test('should handle invalid query syntax', async () => {
         const queries = ['this is invalid syntax !!!!'];
 
-        const result = await parseQuery(LAPIS_URL, queries);
+        const result = await parseQuery(LAPIS_URL, { queries });
 
         expect(result).toHaveLength(1);
         expect(result[0].type).toBe('failure');
@@ -37,7 +49,7 @@ test.describe('parseQuery integration', () => {
             "pangoLineage = 'BA.1*'", // valid
         ];
 
-        const result = await parseQuery(LAPIS_URL, queries);
+        const result = await parseQuery(LAPIS_URL, { queries });
 
         // Should get 3 results total (HTTP 200 with partial results)
         expect(result).toHaveLength(3);
@@ -66,7 +78,7 @@ test.describe('parseQuery integration', () => {
             "(country = 'Switzerland' | country = 'Germany') & ((age >= 30 & age <= 50) | pangoLineage = 'BA.1*')",
         ];
 
-        const result = await parseQuery(LAPIS_URL, queries);
+        const result = await parseQuery(LAPIS_URL, { queries });
 
         expect(result).toHaveLength(1);
         expect(result[0].type).toBe('success');
