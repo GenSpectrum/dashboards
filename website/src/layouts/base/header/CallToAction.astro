@@ -1,6 +1,5 @@
 ---
 import LoginState from '../../../components/auth/LoginState.astro';
-import { isLoginEnabled } from '../../../config';
 
 interface Props {
     forceLoggedOutState?: boolean;
@@ -10,5 +9,5 @@ const { forceLoggedOutState = false } = Astro.props;
 ---
 
 <div class='mr-2 flex w-32 justify-end'>
-    {isLoginEnabled() ? <LoginState forceLoggedOutState={forceLoggedOutState} /> : null}
+    <LoginState forceLoggedOutState={forceLoggedOutState} />
 </div>
