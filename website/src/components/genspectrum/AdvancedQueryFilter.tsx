@@ -27,7 +27,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
     const userEditedRef = useRef(false);
 
     const { mutate: validateQuery } = useMutation({
-        mutationFn: (query: string) => parseQuery(lapisUrl, [query]),
+        mutationFn: (query: string) => parseQuery(lapisUrl, { queries: [query] }),
         onSuccess: (results, query) => {
             const result = results[0];
             if (result.type === 'success') {
@@ -92,12 +92,13 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 />
                 {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
                 {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
+                {isError && (
+                    <div
+                        className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
+                        title={`Invalid advanced query: ${validationState.message}`}
+                    />
+                )}
             </label>
-            {isError && (
-                <div>
-                    <span className='label-text-alt text-error'>{validationState.message}</span>
-                </div>
-            )}
         </div>
     );
 };
