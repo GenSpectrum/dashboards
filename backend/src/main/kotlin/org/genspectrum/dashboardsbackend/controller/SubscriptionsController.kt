@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
+// TODO: Remove once subscriptions are ready for prod (https://github.com/GenSpectrum/dashboards/issues/1163)
 @ConditionalOnExpression("'\${DASHBOARDS_ENVIRONMENT:}' != 'prod'")
 @RestController
 class SubscriptionsController(
