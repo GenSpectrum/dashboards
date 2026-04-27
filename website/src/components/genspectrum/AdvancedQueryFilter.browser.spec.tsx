@@ -115,9 +115,7 @@ describe('AdvancedQueryFilter', () => {
 
         await userEvent.type(getByRole('textbox'), 'A123T');
 
-        await expect.element(
-            getByTitle('Invalid advanced query: Validation is not possible right now.'),
-        ).toBeVisible();
+        await expect.element(getByTitle('Invalid advanced query: Validation is not possible right now.')).toBeVisible();
         expect(onInput).not.toHaveBeenCalled();
     });
 });
