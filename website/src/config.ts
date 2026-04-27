@@ -106,10 +106,6 @@ function getEnvironment() {
     return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
 }
 
-export function isLoginEnabled() {
-    return getEnvironment() !== 'dashboards-prod';
-}
-
 function processEnvOrMetaEnv<T>(key: string, schema: z.ZodType<T>) {
     const envValue = process.env[key] ?? import.meta.env[key];
     const parsedValue = schema.safeParse(envValue);
