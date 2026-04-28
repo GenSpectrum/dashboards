@@ -1,6 +1,6 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
+import type { ResistanceMutationCollectionConfig } from '../components/views/wasap/wasapPageConfig';
 import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
 export const wastewaterOrganisms = {
@@ -29,7 +29,35 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         resistanceAnalysisModeEnabled: true,
         untrackedAnalysisModeEnabled: true,
         collectionAnalysisModeEnabled: true,
-        resistanceMutationSets: covidResistanceMutations,
+        resistanceMutationCollections: [
+            // TODO - the IDs below are what I created locally now, but we need to create them in upstream
+            // The IDs also need to be stable. How do the IDs relate to the config here? How coupled are they,
+            // when reasoning about it all?
+            {
+                collectionId: 191,
+                name: '3CLpro',
+                annotationSymbol: 'c',
+                description:
+                    'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+                offset: -3263,
+            },
+            {
+                collectionId: 192,
+                name: 'RdRp',
+                annotationSymbol: 'r',
+                description:
+                    'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+                offset: 9,
+            },
+            {
+                collectionId: 193,
+                name: 'Spike',
+                annotationSymbol: 's',
+                description:
+                    'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+                offset: 0,
+            },
+        ] satisfies ResistanceMutationCollectionConfig[],
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
