@@ -93,10 +93,9 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
                 {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
                 {isError && (
-                    <div
-                        className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
-                        title={`Invalid advanced query: ${validationState.message}`}
-                    />
+                    <div className='tooltip tooltip-left lg:tooltip-top' data-tip={validationState.message}>
+                        <div className='iconify mdi--alert-circle text-error size-4' aria-label='Error' />
+                    </div>
                 )}
             </label>
         </div>
