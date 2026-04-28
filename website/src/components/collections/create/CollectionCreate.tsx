@@ -24,8 +24,8 @@ function CollectionCreateInner({ organism, config }: { organism: Organism; confi
                     variants: values.variants,
                 },
             }),
-        onSuccess: () => {
-            window.location.href = Page.collectionsForOrganism(organism);
+        onSuccess: (created) => {
+            window.location.href = Page.viewCollection(organism, String(created.id));
         },
         onError: (err) => {
             logger.error(`Failed to create collection: ${getErrorLogMessage(err)}`);
