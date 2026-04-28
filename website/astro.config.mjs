@@ -23,7 +23,7 @@ export default defineConfig({
             },
             {
                 hostname: 'localhost',
-                port: 4321,
+                port: '4321',
                 protocol: 'http',
             },
         ],
