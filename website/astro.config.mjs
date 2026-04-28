@@ -21,6 +21,11 @@ export default defineConfig({
                 hostname: 'staging.genspectrum.org',
                 protocol: 'https',
             },
+            {
+                hostname: 'localhost',
+                port: 4321,
+                protocol: 'http',
+            },
         ],
     },
     vite: { plugins: [tailwindcss()] },
