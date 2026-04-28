@@ -23,6 +23,7 @@ type AdvancedQueryFilterProps = {
 
 export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl }) => {
     const [inputValue, setInputValue] = useState(value);
+    const [isErrorTooltipOpen, setIsErrorTooltipOpen] = useState(false);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
 
@@ -79,7 +80,9 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
             <div className='label'>
                 <span className='label-text'>Advanced query</span>
             </div>
-            <label className={`input input-bordered flex w-full items-center gap-2 ${isError ? 'input-error' : ''}`}>
+            <label
+                className={`input input-bordered isolation-auto flex w-full items-center gap-2 ${isError ? 'input-error' : ''}`}
+            >
                 <input
                     className='grow'
                     placeholder={'Advanced query: A123T & ins_123:TA'}
@@ -93,8 +96,15 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
                 {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
                 {isError && (
-                    <div className='tooltip tooltip-left lg:tooltip-top' data-tip={validationState.message}>
-                        <div className='iconify mdi--alert-circle text-error size-4' aria-label='Error' />
+                    <div
+                        className={`tooltip tooltip-left lg:tooltip-right z-1000 ${isErrorTooltipOpen ? 'tooltip-open' : ''}`}
+                    >
+                        <div className='tooltip-content'>{validationState.message}</div>
+                        <button
+                            className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
+                            onClick={() => setIsErrorTooltipOpen((open) => !open)}
+                            aria-label='Error'
+                        />
                     </div>
                 )}
             </label>
