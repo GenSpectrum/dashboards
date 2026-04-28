@@ -23,7 +23,6 @@ type AdvancedQueryFilterProps = {
 
 export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl }) => {
     const [inputValue, setInputValue] = useState(value);
-    const [isErrorTooltipOpen, setIsErrorTooltipOpen] = useState(false);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
 
@@ -95,33 +94,37 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 />
                 {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
                 {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
-                {isError && (
-                    <div
-                        className={`tooltip tooltip-left lg:tooltip-right z-1000 ${isErrorTooltipOpen ? 'tooltip-open' : ''}`}
-                    >
-                        <div className='tooltip-content z-1000'>
-                            <div className='flex items-start gap-1'>
-                                <span>{validationState.message}</span>
-                                {isErrorTooltipOpen && (
-                                    <button
-                                        className='iconify mdi--close pointer-events-auto shrink-0 cursor-pointer text-xs'
-                                        aria-label='Close tooltip'
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsErrorTooltipOpen(false);
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                        <button
-                            className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
-                            onClick={() => setIsErrorTooltipOpen((open) => !open)}
-                            aria-label='Error'
-                        />
-                    </div>
-                )}
+                {isError && <ErrorIconWithTooltip message={validationState.message} />}
             </label>
+        </div>
+    );
+};
+
+const ErrorIconWithTooltip: FC<{ message: string }> = ({ message }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className={`tooltip tooltip-left lg:tooltip-right z-1000 ${isOpen ? 'tooltip-open' : ''}`}>
+            <div className='tooltip-content z-1000'>
+                <div className='flex items-start gap-1'>
+                    <span>{message}</span>
+                    {isOpen && (
+                        <button
+                            className='iconify mdi--close pointer-events-auto shrink-0 cursor-pointer text-xs'
+                            aria-label='Close tooltip'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsOpen(false);
+                            }}
+                        />
+                    )}
+                </div>
+            </div>
+            <button
+                className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
+                onClick={() => setIsOpen((open) => !open)}
+                aria-label='Error'
+            />
         </div>
     );
 };
