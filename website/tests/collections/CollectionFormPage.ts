@@ -46,4 +46,8 @@ export class CollectionFormPage {
     public cancelDeleteButton() {
         return this.page.getByRole('button', { name: 'Cancel' });
     }
+
+    public collectionDescriptionTextarea() {
+        return this.page.getByPlaceholder('Optional description for this collection.');
+    }
 }

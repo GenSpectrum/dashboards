@@ -92,6 +92,21 @@ test.describe('New collection page', () => {
 
         await expect(authenticatedCollectionFormPage.removeVariantButton().first()).toBeVisible();
     });
+
+    test('creating a collection redirects to its detail page', async ({ authenticatedCollectionFormPage, request }) => {
+        await authenticatedCollectionFormPage.gotoCreate(ORGANISM);
+
+        await authenticatedCollectionFormPage.collectionNameInput().fill('E2E Create Redirect Test');
+        await authenticatedCollectionFormPage.submitButton('Create collection').click();
+
+        await expect(authenticatedCollectionFormPage.page).toHaveURL(new RegExp(`/collections/${ORGANISM}/\\d+$`));
+
+        const url = authenticatedCollectionFormPage.page.url();
+        const id = /\/collections\/\w+\/(\d+)$/.exec(url)?.[1];
+        if (id !== undefined) {
+            await request.delete(`${BACKEND_URL}/collections/${id}?userId=${USER_ID}`);
+        }
+    });
 });
 
 test.describe('Edit collection page', () => {
@@ -132,6 +147,20 @@ test.describe('Edit collection page', () => {
             new RegExp(`/collections/${ORGANISM}/${getCollectionId()}$`),
         );
         await expect(authenticatedCollectionFormPage.page.getByRole('heading', { name: updatedName })).toBeVisible();
+    });
+
+    test('clearing the description and saving removes it', async ({ authenticatedCollectionFormPage }) => {
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+
+        await authenticatedCollectionFormPage.collectionDescriptionTextarea().clear();
+        await authenticatedCollectionFormPage.submitButton('Save changes').click();
+        await authenticatedCollectionFormPage.page.waitForURL(
+            new RegExp(`/collections/${ORGANISM}/${getCollectionId()}$`),
+        );
+
+        await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
+
+        await expect(authenticatedCollectionFormPage.collectionDescriptionTextarea()).toHaveValue('');
     });
 
     test('"Delete collection" shows confirmation dialog; Cancel dismisses it', async ({
