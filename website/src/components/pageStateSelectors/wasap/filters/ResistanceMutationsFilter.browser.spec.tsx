@@ -3,7 +3,7 @@ import { render } from 'vitest-browser-react';
 
 import { ResistanceMutationsFilter } from './ResistanceMutationsFilter';
 import { it } from '../../../../../test-extend';
-import { covidResistanceMutations } from '../../../views/wasap/resistanceMutations';
+import type { ResistanceMutationSet } from '../../../views/wasap/resistanceMutations';
 import type { WasapResistanceFilter } from '../../../views/wasap/wasapPageConfig';
 
 describe('ResistanceMutationsFilter', () => {
@@ -13,7 +13,11 @@ describe('ResistanceMutationsFilter', () => {
         resistanceSet: '3CLpro',
     };
 
-    const resistanceMutationSets = covidResistanceMutations;
+    const resistanceMutationSets: ResistanceMutationSet[] = [
+        { name: '3CLpro', annotationSymbol: 'c', description: '', mutations: [], offset: -3263 },
+        { name: 'RdRp', annotationSymbol: 'r', description: '', mutations: [], offset: 9 },
+        { name: 'Spike', annotationSymbol: 's', description: '', mutations: [], offset: 0 },
+    ];
 
     it('renders with initial resistance set', async () => {
         const mockSetPageState = vi.fn();

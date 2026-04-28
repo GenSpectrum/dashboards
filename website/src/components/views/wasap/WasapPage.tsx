@@ -7,6 +7,7 @@ import { NoDataHelperText } from './components/NoDataHelperText';
 import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
 import { toMutationAnnotations } from './resistanceMutations';
+import { useResistanceMutationSets } from './useResistanceMutationSets';
 import { useWasapPageData } from './useWasapPageData';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
@@ -38,8 +39,12 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         setPageState,
     } = usePageState(pageStateHandler);
 
+    const { data: resistanceMutationSets = [] } = useResistanceMutationSets(config);
+    // TODO - we can probably optimize this, because this call above and the one below could be
+    //        parallelized
+
     // fetch which mutations should be analyzed
-    const { data, isPending, isError } = useWasapPageData(config, analysis);
+    const { data, isPending, isError } = useWasapPageData(config, resistanceMutationSets, analysis);
 
     let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {
@@ -53,13 +58,8 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
     };
 
     const memoizedMutationAnnotations = useMemo(
-        () =>
-            config.resistanceAnalysisModeEnabled
-                ? config.resistanceMutationSets.flatMap((resistanceMutation) =>
-                      toMutationAnnotations(resistanceMutation),
-                  )
-                : [],
-        [config],
+        () => resistanceMutationSets.flatMap(toMutationAnnotations),
+        [resistanceMutationSets],
     );
 
     return (
@@ -88,6 +88,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                             initialBaseFilterState={base}
                             initialAnalysisFilterState={analysis}
                             setPageState={setPageState}
+                            resistanceMutationSets={resistanceMutationSets}
                         />
                     </div>
                     {isError ? (

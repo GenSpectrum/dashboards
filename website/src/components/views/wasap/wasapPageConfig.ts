@@ -1,7 +1,5 @@
 import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
-import type { ResistanceMutationSet } from './resistanceMutations';
-
 /**
  * All config settings for a W-ASAP dashboard page.
  */
@@ -87,7 +85,7 @@ type ResistanceAnalysisModeConfig =
       }
     | {
           resistanceAnalysisModeEnabled: true;
-          resistanceMutationSets: ResistanceMutationSet[];
+          resistanceMutationCollections: ResistanceMutationCollectionConfig[];
           filterDefaults: {
               resistance: WasapResistanceFilter;
           };
@@ -235,4 +233,15 @@ export type WasapAnalysisFilter =
 export type WasapFilter = {
     base: WasapBaseFilter;
     analysis: WasapAnalysisFilter;
+};
+
+/**
+ * Resistance mutations defined in a collection, which is specified via the collection ID.
+ */
+export type ResistanceMutationCollectionConfig = {
+    collectionId: number;
+    name: string; // TODO - do we want to pull this from the collection instead?
+    description: string; // TODO - same as above
+    annotationSymbol: string;
+    offset: number;
 };

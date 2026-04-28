@@ -2,6 +2,7 @@ import type { CustomColumn, LapisFilter } from '@genspectrum/dashboard-component
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
+import type { ResistanceMutationSet } from './resistanceMutations';
 import type {
     VariantTimeFrame,
     WasapAnalysisFilter,
@@ -22,22 +23,32 @@ import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 /**
  * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
  * depending on the analysis mode and analysis mode settings.
+ * The resistanceMutationSets are needed since that is also a possible
+ * analysis mode.
  */
-export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
+export function useWasapPageData(
+    config: WasapPageConfig,
+    resistanceMutationSets: ResistanceMutationSet[],
+    analysis: WasapAnalysisFilter,
+) {
     return useQuery({
-        queryKey: ['wasap', analysis],
-        queryFn: () => fetchWasapPageData(config, analysis),
+        queryKey: ['wasap', analysis, JSON.stringify(resistanceMutationSets)],
+        queryFn: () => fetchWasapPageData(config, analysis, resistanceMutationSets),
     });
 }
 
-async function fetchWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter): Promise<WasapPageData> {
+async function fetchWasapPageData(
+    config: WasapPageConfig,
+    analysis: WasapAnalysisFilter,
+    resistanceMutationSets: ResistanceMutationSet[],
+): Promise<WasapPageData> {
     switch (analysis.mode) {
         case 'manual':
             return fetchManualModeData(config, analysis);
         case 'variant':
             return fetchVariantModeData(config, analysis);
         case 'resistance':
-            return fetchResistanceModeData(config, analysis);
+            return fetchResistanceModeData(resistanceMutationSets, analysis);
         case 'untracked':
             return fetchUntrackedModeData(config, analysis);
         case 'collection':
@@ -87,14 +98,13 @@ async function fetchVariantModeData(
     };
 }
 
-function fetchResistanceModeData(config: WasapPageConfig, analysis: WasapResistanceFilter): WasapMutationsData {
-    if (!config.resistanceAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
-    }
+function fetchResistanceModeData(
+    resistanceMutationSets: ResistanceMutationSet[],
+    analysis: WasapResistanceFilter,
+): WasapMutationsData {
     return {
         type: 'mutations',
-        displayMutations:
-            config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
+        displayMutations: resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
     };
 }
 
