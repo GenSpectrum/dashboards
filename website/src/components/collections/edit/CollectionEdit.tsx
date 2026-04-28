@@ -32,7 +32,7 @@ function CollectionEditInner({
                 id,
                 collection: {
                     name: values.name,
-                    description: values.description || undefined,
+                    description: values.description,
                     variants: values.variants,
                 },
             }),
