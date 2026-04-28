@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './e2e.fixture.ts';
-import { organismOptions } from './helpers.ts';
+import { organismOptions } from './helpers/organisms.ts';
 import { allOrganisms, organismConfig } from '../src/types/Organism.ts';
 
 const organismsWithGenome = allOrganisms.filter((organism) => 'genome' in organismConfig[organism]);
