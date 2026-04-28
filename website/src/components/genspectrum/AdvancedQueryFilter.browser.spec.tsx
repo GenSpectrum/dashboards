@@ -85,7 +85,7 @@ describe('AdvancedQueryFilter', () => {
         await userEvent.type(getByRole('textbox'), 'invalid!!');
 
         await expect.element(getByLabelText('Error')).toBeVisible();
-        await expect.poll(() => container.querySelector('[data-tip]')?.getAttribute('data-tip')).toBe(
+        await expect.poll(() => container.querySelector('.tooltip-content')?.textContent).toContain(
             'Unexpected token at position 7',
         );
         expect(onInput).not.toHaveBeenCalled();
@@ -119,7 +119,7 @@ describe('AdvancedQueryFilter', () => {
         await userEvent.type(getByRole('textbox'), 'A123T');
 
         await expect.element(getByLabelText('Error')).toBeVisible();
-        await expect.poll(() => container.querySelector('[data-tip]')?.getAttribute('data-tip')).toBe(
+        await expect.poll(() => container.querySelector('.tooltip-content')?.textContent).toContain(
             'Validation is not possible right now.',
         );
         expect(onInput).not.toHaveBeenCalled();

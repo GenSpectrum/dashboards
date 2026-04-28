@@ -99,7 +99,21 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                     <div
                         className={`tooltip tooltip-left lg:tooltip-right z-1000 ${isErrorTooltipOpen ? 'tooltip-open' : ''}`}
                     >
-                        <div className='tooltip-content'>{validationState.message}</div>
+                        <div className='tooltip-content z-1000'>
+                            <div className='flex items-start gap-1'>
+                                <span>{validationState.message}</span>
+                                {isErrorTooltipOpen && (
+                                    <button
+                                        className='iconify mdi--close pointer-events-auto shrink-0 cursor-pointer text-xs'
+                                        aria-label='Close tooltip'
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsErrorTooltipOpen(false);
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        </div>
                         <button
                             className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
                             onClick={() => setIsErrorTooltipOpen((open) => !open)}
