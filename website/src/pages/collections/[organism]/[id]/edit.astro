@@ -44,6 +44,8 @@ if (session?.user?.id !== undefined) {
         return new Response(null, { status: 500 });
     }
 }
+
+const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` : `Collection #${id}`;
 ---
 
 <ContaineredPageLayout
@@ -52,7 +54,7 @@ if (session?.user?.id !== undefined) {
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
         { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: 'Collection', href: Page.viewCollection(parsedOrganism.data, id) },
+        { name: collectionTitle, href: Page.viewCollection(parsedOrganism.data, id) },
         { name: 'Edit', href: Page.editCollection(parsedOrganism.data, id) },
     ]}
 >
