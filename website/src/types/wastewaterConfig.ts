@@ -39,7 +39,6 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 annotationSymbol: 'c',
                 description:
                     'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-                offset: -3263,
             },
             {
                 collectionId: 192,
@@ -47,7 +46,6 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 annotationSymbol: 'r',
                 description:
                     'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-                offset: 9,
             },
             {
                 collectionId: 193,
@@ -55,7 +53,6 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 annotationSymbol: 's',
                 description:
                     'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-                offset: 0,
             },
         ] satisfies ResistanceMutationCollectionConfig[],
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',

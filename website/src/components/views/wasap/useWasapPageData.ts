@@ -104,7 +104,10 @@ function fetchResistanceModeData(
 ): WasapMutationsData {
     return {
         type: 'mutations',
-        displayMutations: resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
+        displayMutations:
+            resistanceMutationSets
+                .find((set) => set.name === analysis.resistanceSet)
+                ?.mutations.map((m) => m.aminoAcidMutation) ?? [],
     };
 }
 

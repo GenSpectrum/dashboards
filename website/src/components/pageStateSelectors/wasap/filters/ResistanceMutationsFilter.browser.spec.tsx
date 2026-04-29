@@ -14,9 +14,9 @@ describe('ResistanceMutationsFilter', () => {
     };
 
     const resistanceMutationSets: ResistanceMutationSet[] = [
-        { name: '3CLpro', annotationSymbol: 'c', description: '', mutations: [], offset: -3263 },
-        { name: 'RdRp', annotationSymbol: 'r', description: '', mutations: [], offset: 9 },
-        { name: 'Spike', annotationSymbol: 's', description: '', mutations: [], offset: 0 },
+        { name: '3CLpro', annotationSymbol: 'c', description: '', mutations: [] },
+        { name: 'RdRp', annotationSymbol: 'r', description: '', mutations: [] },
+        { name: 'Spike', annotationSymbol: 's', description: '', mutations: [] },
     ];
 
     it('renders with initial resistance set', async () => {

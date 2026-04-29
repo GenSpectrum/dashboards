@@ -38,15 +38,17 @@ function collectionToResistanceMutationSet(
     config: ResistanceMutationCollectionConfig,
     collection: Collection,
 ): ResistanceMutationSet {
-    const mutations = collection.variants.flatMap((variant) =>
-        variant.type === 'filterObject' ? (variant.filterObject.aminoAcidMutations ?? []) : [],
-    );
-    // TODO - maybe we can sort the mutations? Not sure if they are sorted already ...
+    const mutations = collection.variants.flatMap((variant) => {
+        if (variant.type !== 'filterObject') return [];
+        return (variant.filterObject.aminoAcidMutations ?? []).map((aminoAcidMutation) => ({
+            name: variant.name,
+            aminoAcidMutation,
+        }));
+    });
     return {
         name: config.name,
         annotationSymbol: config.annotationSymbol,
         description: config.description,
-        offset: config.offset,
         mutations,
     };
 }

@@ -243,5 +243,4 @@ export type ResistanceMutationCollectionConfig = {
     name: string; // TODO - do we want to pull this from the collection instead?
     description: string; // TODO - same as above
     annotationSymbol: string;
-    offset: number;
 };
