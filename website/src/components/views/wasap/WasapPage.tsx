@@ -6,7 +6,7 @@ import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
 import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
-import { useResistanceMutationSets } from './useResistanceMutationSets';
+import type { ResistanceData } from './resistanceData';
 import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
@@ -23,9 +23,10 @@ import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
     config: WasapPageConfig;
+    resistanceData: ResistanceData;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ config }) => {
+export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) => {
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
 
@@ -34,7 +35,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config }) => {
         setPageState,
     } = usePageState(pageStateHandler);
 
-    const { data: { mutationAnnotations = [], displayMutationsBySet = {} } = {} } = useResistanceMutationSets(config);
+    const { mutationAnnotations, displayMutationsBySet } = resistanceData;
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
 
