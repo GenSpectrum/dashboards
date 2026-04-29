@@ -25,7 +25,9 @@ test.describe('parseQuery integration', () => {
         expect(result).toHaveLength(1);
         expect(result[0].type).toBe('failure');
         if (result[0].type === 'failure') {
-            expect(result[0].error).toBe('TODO - insert correct error message');
+            expect(result[0].error).toBe(
+                'Error from SILO: HasNucleotideMutation position is out of bounds 1234567890 > 29903',
+            );
         }
     });
 
