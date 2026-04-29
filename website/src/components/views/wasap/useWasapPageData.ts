@@ -2,7 +2,6 @@ import type { CustomColumn, LapisFilter } from '@genspectrum/dashboard-component
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
-import type { ResistanceMutationSet } from './resistanceMutations';
 import type {
     VariantTimeFrame,
     WasapAnalysisFilter,
@@ -28,19 +27,19 @@ import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
  */
 export function useWasapPageData(
     config: WasapPageConfig,
-    resistanceMutationSets: ResistanceMutationSet[],
+    resistanceMutationsBySet: Record<string, string[]>,
     analysis: WasapAnalysisFilter,
 ) {
     return useQuery({
-        queryKey: ['wasap', analysis, JSON.stringify(resistanceMutationSets)],
-        queryFn: () => fetchWasapPageData(config, analysis, resistanceMutationSets),
+        queryKey: ['wasap', analysis, resistanceMutationsBySet],
+        queryFn: () => fetchWasapPageData(config, resistanceMutationsBySet, analysis),
     });
 }
 
 async function fetchWasapPageData(
     config: WasapPageConfig,
+    resistanceMutationsBySet: Record<string, string[]>,
     analysis: WasapAnalysisFilter,
-    resistanceMutationSets: ResistanceMutationSet[],
 ): Promise<WasapPageData> {
     switch (analysis.mode) {
         case 'manual':
@@ -48,7 +47,7 @@ async function fetchWasapPageData(
         case 'variant':
             return fetchVariantModeData(config, analysis);
         case 'resistance':
-            return fetchResistanceModeData(resistanceMutationSets, analysis);
+            return fetchResistanceModeData(resistanceMutationsBySet, analysis);
         case 'untracked':
             return fetchUntrackedModeData(config, analysis);
         case 'collection':
@@ -99,15 +98,12 @@ async function fetchVariantModeData(
 }
 
 function fetchResistanceModeData(
-    resistanceMutationSets: ResistanceMutationSet[],
+    displayMutationsBySet: Record<string, string[]>,
     analysis: WasapResistanceFilter,
 ): WasapMutationsData {
     return {
         type: 'mutations',
-        displayMutations:
-            resistanceMutationSets
-                .find((set) => set.name === analysis.resistanceSet)
-                ?.mutations.map((m) => m.aminoAcidMutation) ?? [],
+        displayMutations: displayMutationsBySet[analysis.resistanceSet ?? ''] ?? [],
     };
 }
 

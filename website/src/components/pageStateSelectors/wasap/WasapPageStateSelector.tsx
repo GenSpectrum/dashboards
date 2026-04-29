@@ -17,7 +17,6 @@ import { Inset } from '../../../styles/Inset';
 import { recentDaysDateRangeOptions } from '../../../util/recentDaysDateRangeOptions';
 import { type PageStateHandler } from '../../../views/pageStateHandlers/PageStateHandler';
 import { GsTextFilter } from '../../genspectrum/GsTextFilter';
-import type { ResistanceMutationSet } from '../../views/wasap/resistanceMutations';
 import {
     enabledAnalysisModes,
     type WasapAnalysisFilter,
@@ -33,14 +32,14 @@ import {
  */
 export function WasapPageStateSelector({
     config,
-    resistanceMutationSets,
+    resistanceSetNames,
     pageStateHandler,
     initialBaseFilterState,
     initialAnalysisFilterState,
     setPageState,
 }: {
     config: WasapPageConfig;
-    resistanceMutationSets: ResistanceMutationSet[];
+    resistanceSetNames: string[];
     pageStateHandler: PageStateHandler<WasapFilter>;
     initialBaseFilterState: WasapBaseFilter;
     initialAnalysisFilterState: WasapAnalysisFilter;
@@ -192,7 +191,7 @@ export function WasapPageStateSelector({
                                 <ResistanceMutationsFilter
                                     pageState={resistanceFilter}
                                     setPageState={setResistanceFilter}
-                                    resistanceMutationSets={resistanceMutationSets}
+                                    resistanceSetNames={resistanceSetNames}
                                 />
                             );
                         case 'untracked':
