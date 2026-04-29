@@ -36,8 +36,7 @@ export function useResistanceMutationSets(config: WasapPageConfig) {
             );
             return buildResistanceData(config.resistanceMutationCollections, collections);
         },
-        // TODO - infinity is probably excessive, around 1h is maybe fine?
-        staleTime: Infinity,
+        staleTime: 60 * 60 * 1000,
         enabled: config.resistanceAnalysisModeEnabled === true,
     });
 }
