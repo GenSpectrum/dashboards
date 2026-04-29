@@ -3,6 +3,10 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 USER_ID="${1:-testuser}"
+# When SESSION_TOKEN is set, the website proxy injects the user ID — do not set it manually.
+# Optional: set SESSION_TOKEN to authenticate against a deployed instance.
+# The cookie name must match what the server expects (e.g. __Secure-authjs.session-token for HTTPS).
+SESSION_TOKEN="${SESSION_TOKEN:-}"
 
 create_collection() {
     local name="$1"
@@ -10,8 +14,25 @@ create_collection() {
     local body_out http_code
     local tmp
     tmp=$(mktemp)
+
+    local cookie_args=()
+    if [ -n "$SESSION_TOKEN" ]; then
+        if [[ "$BASE_URL" == https://* ]]; then
+            cookie_args=(-b "__Secure-authjs.session-token=${SESSION_TOKEN}")
+        else
+            cookie_args=(-b "authjs.session-token=${SESSION_TOKEN}")
+        fi
+    fi
+
+    if [ -n "$SESSION_TOKEN" ]; then
+        local url="${BASE_URL}/api/collections"
+    else
+        local url="${BASE_URL}/collections?userId=${USER_ID}"
+    fi
+
     http_code=$(curl -s -o "$tmp" -w "%{http_code}" -X POST \
-        "${BASE_URL}/collections?userId=${USER_ID}" \
+        "${cookie_args[@]}" \
+        "$url" \
         -H "Content-Type: application/json" \
         -d "$body")
     body_out=$(cat "$tmp")
@@ -39,7 +60,11 @@ build_variants_json() {
     echo "$variants"
 }
 
-echo "Creating resistance mutation collections against $BASE_URL as user '$USER_ID'..."
+if [ -n "$SESSION_TOKEN" ]; then
+    echo "Creating resistance mutation collections against $BASE_URL using session token..."
+else
+    echo "Creating resistance mutation collections against $BASE_URL as user '$USER_ID'..."
+fi
 echo
 
 # --- 3CLpro ---
