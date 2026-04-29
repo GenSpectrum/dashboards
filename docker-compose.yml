@@ -33,3 +33,20 @@ services:
       POSTGRES_DB: dashboards-backend-db
     ports:
       - "127.0.0.1:9022:5432"
+    volumes:
+      - database-data:/var/lib/postgresql/data
+
+  example-data-seeder:
+    build:
+      context: ./example-data
+    profiles:
+      - staging
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:8080
+      SEED_USER_ID: example-data-seeder
+    restart: "no"
+
+volumes:
+  database-data:
