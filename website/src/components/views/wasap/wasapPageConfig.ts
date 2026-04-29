@@ -240,7 +240,7 @@ export type WasapFilter = {
  */
 export type ResistanceMutationCollectionConfig = {
     collectionId: number;
-    name: string; // TODO - do we want to pull this from the collection instead?
-    description: string; // TODO - same as above
+    name: string;
+    description: string;
     annotationSymbol: string;
 };
