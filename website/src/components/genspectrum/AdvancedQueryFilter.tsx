@@ -27,7 +27,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
     const userEditedRef = useRef(false);
 
     const { mutate: validateQuery } = useMutation({
-        mutationFn: (query: string) => parseQuery(lapisUrl, { queries: [query] }),
+        mutationFn: (query: string) => parseQuery(lapisUrl, { queries: [query], doFullValidation: true }),
         onSuccess: (results, query) => {
             const result = results[0];
             if (result.type === 'success') {
@@ -37,8 +37,8 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 setValidationState({ type: 'error', message: result.error });
             }
         },
-        onError: () => {
-            logger.error(`Failed to validate advanced query`);
+        onError: (error) => {
+            logger.error(`Failed to validate advanced query: ${error.message}`);
             setValidationState({ type: 'error', message: 'Validation is not possible right now.' });
         },
     });

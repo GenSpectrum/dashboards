@@ -40,7 +40,7 @@ describe('AdvancedQueryFilter', () => {
         const onInput = vi.fn();
 
         routeMockers.lapis.mockPostQueryParse(
-            { queries: ['A123T'] },
+            { queries: ['A123T'], doFullValidation: true },
             { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
         );
 
@@ -57,7 +57,7 @@ describe('AdvancedQueryFilter', () => {
 
     it('shows checkmark after successful validation', async ({ routeMockers }) => {
         routeMockers.lapis.mockPostQueryParse(
-            { queries: ['A123T'] },
+            { queries: ['A123T'], doFullValidation: true },
             { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
         );
 
@@ -74,7 +74,7 @@ describe('AdvancedQueryFilter', () => {
         const onInput = vi.fn();
 
         routeMockers.lapis.mockPostQueryParse(
-            { queries: ['invalid!!'] },
+            { queries: ['invalid!!'], doFullValidation: true },
             { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
         );
 
