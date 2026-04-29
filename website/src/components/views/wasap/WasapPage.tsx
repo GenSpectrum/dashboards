@@ -12,11 +12,8 @@ import { withQueryProvider } from '../../../backendApi/withQueryProvider';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
-import {
-    wastewaterBreadcrumb,
-    wastewaterOrganismConfigs,
-    type WastewaterOrganismName,
-} from '../../../types/wastewaterConfig';
+import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
+import type { WasapPageConfig } from './wasapPageConfig';
 import { Loading } from '../../../util/Loading';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
@@ -25,11 +22,10 @@ import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPage
 import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
-    wastewaterOrganism: WastewaterOrganismName;
+    config: WasapPageConfig;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
-    const config = wastewaterOrganismConfigs[wastewaterOrganism];
+export const WasapPageInner: FC<WasapPageProps> = ({ config }) => {
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
 
