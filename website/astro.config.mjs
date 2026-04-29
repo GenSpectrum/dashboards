@@ -21,6 +21,7 @@ export default defineConfig({
                 hostname: 'staging.genspectrum.org',
                 protocol: 'https',
             },
+            // for the e2e tests that run the container locally
             {
                 hostname: 'localhost',
                 port: '4321',
