@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# This script creates resistance mutation collections.
+# By default, it's running against a locally ran backend (localhost:8080), and you should
+# set the USER_ID env var, which is then used as the user ID for creating the collections locally.
+# You can also set a SESSION_TOKEN which you can take out of the cookie storage of the GenSpectrum
+# website when you're logged in (__Secure-authjs.session-token). With this, you can create collections
+# on staging or prod.
+#
+# Example calls:
+#
+# Local (backend running on :8080):
+#   USER_ID=myuser ./create-resistance-mutation-collections.sh
+#
+# Staging (grab __Secure-authjs.session-token from browser DevTools → Application → Cookies):
+#   BASE_URL=https://staging.genspectrum.org SESSION_TOKEN=eyJhbG... ./create-resistance-mutation-collections.sh
+
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 USER_ID="${1:-testuser}"
 # When SESSION_TOKEN is set, the website proxy injects the user ID — do not set it manually.
 # Optional: set SESSION_TOKEN to authenticate against a deployed instance.
 # The cookie name must match what the server expects (e.g. __Secure-authjs.session-token for HTTPS).
 SESSION_TOKEN="${SESSION_TOKEN:-}"
+
+# TODO: We need to be able to _update_ a collection with this script. but maybe this can be a follow up issue as well.
+# (I.e. we should be able to accept a collection ID which we then update instead of creating new ones all the time)
 
 create_collection() {
     local name="$1"
@@ -47,15 +65,34 @@ create_collection() {
     fi
 }
 
+# Converts a genomic mutation code to a mature protein name with the given offset.
+# E.g. mature_name "ORF1a:T3284I" "3CLpro" -3263  =>  "3CLpro:T21I"
+mature_name() {
+    local mutation="$1" set_name="$2" offset="$3"
+    local mutation_part="${mutation#*:}"
+    local original_base="${mutation_part:0:1}"
+    local new_base="${mutation_part: -1}"
+    local position
+    position=$(echo "$mutation_part" | grep -o '[0-9]*')
+    echo "${set_name}:${original_base}$((position + offset))${new_base}"
+}
+
 # Build a JSON variants array from mutation strings passed as arguments.
-# Each mutation becomes one filterObject variant.
+# Usage: build_variants_json <set_name> <offset> <mutation> [<mutation> ...]
+# Each mutation becomes one filterObject variant whose display name uses the
+# mature protein coordinate (set_name + position adjusted by offset).
 build_variants_json() {
+    local set_name="$1" offset="$2"
+    shift 2
     local variants="[]"
     for mutation in "$@"; do
+        local display_name
+        display_name=$(mature_name "$mutation" "$set_name" "$offset")
         variants=$(jq -n \
             --argjson existing "$variants" \
-            --arg name "$mutation" \
-            '$existing + [{"type": "filterObject", "name": $name, "filterObject": {"aminoAcidMutations": [$name]}}]')
+            --arg name "$display_name" \
+            --arg mutation "$mutation" \
+            '$existing + [{"type": "filterObject", "name": $name, "filterObject": {"aminoAcidMutations": [$mutation]}}]')
     done
     echo "$variants"
 }
@@ -85,7 +122,7 @@ CLPRO_MUTATIONS=(
     "ORF1a:A3457S" "ORF1a:P3515L" "ORF1a:V3560A" "ORF1a:S3564P" "ORF1a:T3567I"
     "ORF1a:F3568L"
 )
-variants_json=$(build_variants_json "${CLPRO_MUTATIONS[@]}")
+variants_json=$(build_variants_json "3CLpro" -3263 "${CLPRO_MUTATIONS[@]}")
 body=$(jq -n \
     --argjson variants "$variants_json" \
     '{
@@ -103,7 +140,7 @@ RDRP_MUTATIONS=(
     "ORF1b:G662S" "ORF1b:S750A" "ORF1b:V783I" "ORF1b:E787G" "ORF1b:C790F"
     "ORF1b:C790R" "ORF1b:E793A" "ORF1b:E793D" "ORF1b:M915R"
 )
-variants_json=$(build_variants_json "${RDRP_MUTATIONS[@]}")
+variants_json=$(build_variants_json "RdRp" 9 "${RDRP_MUTATIONS[@]}")
 body=$(jq -n \
     --argjson variants "$variants_json" \
     '{
@@ -160,7 +197,7 @@ SPIKE_MUTATIONS=(
     "S:P507A"
     "S:N856K" "S:N969K" "S:E990A" "S:T1009I"
 )
-variants_json=$(build_variants_json "${SPIKE_MUTATIONS[@]}")
+variants_json=$(build_variants_json "Spike" 0 "${SPIKE_MUTATIONS[@]}")
 body=$(jq -n \
     --argjson variants "$variants_json" \
     '{
