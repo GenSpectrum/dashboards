@@ -115,7 +115,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             },
             {
                 label: 'RSV-B',
-                iconType: 'table' as MenuIconType,
+                iconType: 'table',
                 href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].path,
                 description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].description,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,
@@ -155,7 +155,7 @@ export function getPathogenMegaMenuSections(): PathogenMegaMenuSections {
             },
             {
                 label: 'Browse RSV-B data',
-                iconType: 'database' as MenuIconType,
+                iconType: 'database',
                 href: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].browseDataUrl,
                 description: wastewaterOrganismConfigs[wastewaterOrganisms.rsvB].browseDataDescription,
                 underlineColor: wastewaterConfig.menuListEntryDecoration,

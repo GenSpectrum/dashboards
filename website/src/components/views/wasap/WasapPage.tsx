@@ -103,7 +103,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                                     ) : (
                                         <GsMutationsOverTime
                                             lapisFilter={lapisFilter}
-                                            granularity={base.granularity as 'day' | 'week'}
+                                            granularity={base.granularity}
                                             lapisDateField={config.samplingDateField}
                                             sequenceType={
                                                 'sequenceType' in analysis ? analysis.sequenceType : 'nucleotide'

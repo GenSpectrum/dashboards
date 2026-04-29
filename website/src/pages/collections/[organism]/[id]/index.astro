@@ -1,0 +1,68 @@
+---
+import { BackendService, BackendError } from '../../../../backendApi/backendService.ts';
+import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
+import { getBackendHost, getOrganismConfig } from '../../../../config.ts';
+import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { getInstanceLogger } from '../../../../logger.ts';
+import type { Collection } from '../../../../types/Collection.ts';
+import { organismConfig, organismSchema } from '../../../../types/Organism';
+import { Page } from '../../../../types/pages';
+import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
+
+const logger = getInstanceLogger('CollectionDetailPage');
+
+const { organism, id } = Astro.params;
+
+const parsedOrganism = organismSchema.safeParse(organism);
+if (!parsedOrganism.success) {
+    return Astro.redirect('/404');
+}
+
+if (id === undefined) {
+    return Astro.redirect('/404');
+}
+
+const orgConfig = organismConfig[parsedOrganism.data];
+const lapisConfig = getOrganismConfig(parsedOrganism.data).lapis;
+
+let collection: Collection | undefined;
+
+try {
+    collection = await new BackendService(getBackendHost()).getCollection({ id });
+} catch (error) {
+    if (error instanceof BackendError && error.status === 404) {
+        return Astro.redirect('/404');
+    }
+    logger.error(`Failed to fetch collection ${id}: ${getErrorLogMessage(error)}`);
+}
+
+const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` : `Collection #${id}`;
+
+if (collection !== undefined && collection.organism !== parsedOrganism.data) {
+    return Astro.redirect('/404');
+}
+---
+
+<ContaineredPageLayout
+    title={collectionTitle}
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Collections', href: Page.collectionsOverview },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
+        { name: collectionTitle, href: Page.viewCollection(parsedOrganism.data, id) },
+    ]}
+>
+    {
+        collection !== undefined ? (
+            <CollectionDetail
+                organism={parsedOrganism.data}
+                collection={collection}
+                lapisConfig={lapisConfig}
+                client:load
+            />
+        ) : (
+            <div class='text-error'>Failed to load collection. Please try reloading the page.</div>
+        )
+    }
+</ContaineredPageLayout>

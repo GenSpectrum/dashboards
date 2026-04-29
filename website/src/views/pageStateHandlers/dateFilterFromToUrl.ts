@@ -11,22 +11,17 @@ export function parseDateRangesFromUrl(
     const dateRangeFilterConfigs = baselineFilterConfigs?.filter((config) => config.type === 'date');
 
     return (
-        dateRangeFilterConfigs?.reduce(
-            (acc, config) => {
-                const dateRange = getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions());
-                if (dateRange === undefined) {
-                    return acc;
-                }
+        dateRangeFilterConfigs?.reduce<Record<string, DateRangeOption | undefined>>((acc, config) => {
+            const dateRange = getDateRangeFromSearch(search, config.dateColumn, config.dateRangeOptions());
+            if (dateRange === undefined) {
+                return acc;
+            }
 
-                return {
-                    ...acc,
-                    [config.dateColumn]: dateRange,
-                };
-            },
-            {} as {
-                [key: string]: DateRangeOption | undefined;
-            },
-        ) ?? {}
+            return {
+                ...acc,
+                [config.dateColumn]: dateRange,
+            };
+        }, {}) ?? {}
     );
 }
 

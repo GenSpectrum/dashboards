@@ -16,8 +16,6 @@ dashboards:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h5n1"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "clade"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -30,9 +28,6 @@ dashboards:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h1n1pdm"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "cladeHA"
-          - "cladeNA"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -45,9 +40,6 @@ dashboards:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/h3n2"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "cladeHA"
-          - "cladeNA"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -61,9 +53,6 @@ dashboards:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-a"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "subtypeHA"
-          - "subtypeNA"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -77,8 +66,6 @@ dashboards:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/influenza-b"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "lineageHA"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -91,9 +78,6 @@ dashboards:
       lapis:
         url: "https://api.loculus.staging.genspectrum.org/b-victoria"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "cladeHA"
-          - "cladeNA"
         locationFields:
           - "country"
           - "division"
@@ -111,9 +95,6 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/mpox"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "lineage"
-          - "clade"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -126,8 +107,6 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/west-nile"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "lineage"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
@@ -282,8 +261,6 @@ dashboards:
       lapis:
         url: "https://lapis.pathoplexus.org/measles"
         mainDateField: "sampleCollectionDateRangeLower"
-        lineageFields:
-          - "genotype"
         additionalFilters:
           versionStatus: "LATEST_VERSION"
           isRevocation: "false"
