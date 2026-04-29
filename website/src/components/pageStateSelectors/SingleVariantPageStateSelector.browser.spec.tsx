@@ -6,8 +6,11 @@ import { render, renderHook } from 'vitest-browser-react';
 import { SingleVariantPageStateSelector } from './SingleVariantPageStateSelector.tsx';
 import { DUMMY_LAPIS_URL, testOrganismsConfig } from '../../../routeMocker.ts';
 import { it } from '../../../test-extend';
+import { withQueryProvider } from '../../backendApi/withQueryProvider.tsx';
 import type { CovidVariantData } from '../../views/covid.ts';
 import { Routing } from '../../views/routing.ts';
+
+const SingleVariantPageStateSelectorWithProvider = withQueryProvider(SingleVariantPageStateSelector);
 
 describe('SingleVariantPageStateSelector', () => {
     it('should remember the covid collection id', async ({ routeMockers }) => {
@@ -33,7 +36,7 @@ describe('SingleVariantPageStateSelector', () => {
 
         const { getByRole } = render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
-                <SingleVariantPageStateSelector
+                <SingleVariantPageStateSelectorWithProvider
                     view={new Routing(testOrganismsConfig).getOrganismView('covid.singleVariantView')}
                     pageState={result.current[0]}
                     setPageState={result.current[1]}
