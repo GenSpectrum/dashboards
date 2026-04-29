@@ -30,25 +30,22 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         untrackedAnalysisModeEnabled: true,
         collectionAnalysisModeEnabled: true,
         resistanceMutationCollections: [
-            // TODO - the IDs below are what I created locally now, but we need to create them in upstream
-            // The IDs also need to be stable. How do the IDs relate to the config here? How coupled are they,
-            // when reasoning about it all?
             {
-                collectionId: 191,
+                collectionId: 1,
                 name: '3CLpro',
                 annotationSymbol: 'c',
                 description:
                     'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
             },
             {
-                collectionId: 192,
+                collectionId: 2,
                 name: 'RdRp',
                 annotationSymbol: 'r',
                 description:
                     'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
             },
             {
-                collectionId: 193,
+                collectionId: 3,
                 name: 'Spike',
                 annotationSymbol: 's',
                 description:
