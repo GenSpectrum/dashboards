@@ -35,9 +35,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config }) => {
     } = usePageState(pageStateHandler);
 
     const { data: { mutationAnnotations = [], displayMutationsBySet = {} } = {} } = useResistanceMutationSets(config);
-    // TODO, would be great to have useResistanceMutationSets and useWasapPageData fetched in parallel.
-    // could be done if we pass a promise into useWasapPageData.
-
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
 
