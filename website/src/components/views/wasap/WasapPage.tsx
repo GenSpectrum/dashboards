@@ -6,7 +6,6 @@ import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
 import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
-import { toMutationAnnotations } from './resistanceMutations';
 import { useResistanceMutationSets } from './useResistanceMutationSets';
 import { useWasapPageData } from './useWasapPageData';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
@@ -39,12 +38,12 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         setPageState,
     } = usePageState(pageStateHandler);
 
-    const { data: resistanceMutationSets = [] } = useResistanceMutationSets(config);
-    // TODO - we can probably optimize this, because this call above and the one below could be
-    //        parallelized
+    const { data: { mutationAnnotations = [], displayMutationsBySet = {} } = {} } = useResistanceMutationSets(config);
+    // TODO, would be great to have useResistanceMutationSets and useWasapPageData fetched in parallel.
+    // could be done if we pass a promise into useWasapPageData.
 
     // fetch which mutations should be analyzed
-    const { data, isPending, isError } = useWasapPageData(config, resistanceMutationSets, analysis);
+    const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
 
     let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {
@@ -56,11 +55,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         ...(base.samplingDate?.dateFrom && { samplingDateFrom: base.samplingDate.dateFrom }),
         ...(base.samplingDate?.dateTo && { samplingDateTo: base.samplingDate.dateTo }),
     };
-
-    const memoizedMutationAnnotations = useMemo(
-        () => resistanceMutationSets.flatMap(toMutationAnnotations),
-        [resistanceMutationSets],
-    );
 
     return (
         <DataPageLayout
@@ -77,7 +71,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         >
             <gs-app
                 lapis={config.lapisBaseUrl}
-                mutationAnnotations={memoizedMutationAnnotations}
+                mutationAnnotations={mutationAnnotations}
                 mutationLinkTemplate={config.linkTemplate}
             >
                 <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
@@ -88,7 +82,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                             initialBaseFilterState={base}
                             initialAnalysisFilterState={analysis}
                             setPageState={setPageState}
-                            resistanceMutationSets={resistanceMutationSets}
+                            resistanceSetNames={Object.keys(displayMutationsBySet)}
                         />
                     </div>
                     {isError ? (
