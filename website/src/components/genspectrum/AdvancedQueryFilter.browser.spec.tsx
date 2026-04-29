@@ -78,16 +78,14 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
         );
 
-        const { getByRole, getByLabelText, container } = render(
+        const { getByRole, getByLabelText, getByText } = render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
         await userEvent.type(getByRole('textbox'), 'invalid!!');
 
         await expect.element(getByLabelText('Error')).toBeVisible();
-        await expect
-            .poll(() => container.querySelector('.tooltip-content')?.textContent)
-            .toContain('Unexpected token at position 7');
+        await expect.element(getByText('Unexpected token at position 7')).toBeVisible();
         expect(onInput).not.toHaveBeenCalled();
     });
 
@@ -112,16 +110,14 @@ describe('AdvancedQueryFilter', () => {
 
         const onInput = vi.fn();
 
-        const { getByRole, getByLabelText, container } = render(
+        const { getByRole, getByLabelText, getByText } = render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
         await userEvent.type(getByRole('textbox'), 'A123T');
 
         await expect.element(getByLabelText('Error')).toBeVisible();
-        await expect
-            .poll(() => container.querySelector('.tooltip-content')?.textContent)
-            .toContain('Validation is not possible right now.');
+        await expect.element(getByText('Validation is not possible right now.')).toBeVisible();
         expect(onInput).not.toHaveBeenCalled();
     });
 });
