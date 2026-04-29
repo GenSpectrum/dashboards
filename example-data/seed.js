@@ -1,13 +1,82 @@
 #!/usr/bin/env node
 // Seeds example collections into the backend.
-// Only runs when DASHBOARDS_ENVIRONMENT=dashboards-staging.
 // Idempotent: skips any collection whose name already exists for the seed user.
+//
+// Run with --help for usage.
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://backend:8080';
-const SEED_USER_ID = process.env.SEED_USER_ID ?? 'example-data-seeder';
+import { parseArgs } from 'node:util';
+
+const HELP = `\
+Usage: node seed.js [options]
+
+Options:
+  -u, --url <url>              Backend base URL (default: $BACKEND_URL or http://localhost:8080)
+      --user-id <id>           User ID for direct backend access (default: $SEED_USER_ID or example-data-seeder)
+  -t, --session-token <token>  Session token for staging/prod (uses website proxy, injects user from session)
+      --wait                   Retry until backend is ready (auto-enabled when no TTY)
+  -h, --help                   Show this help
+
+Examples:
+  # Local backend running on :8080
+  node seed.js
+
+  # Local backend on a different port
+  node seed.js --url http://localhost:9021
+
+  # Staging via session token (grab __Secure-authjs.session-token from browser DevTools → Application → Cookies)
+  node seed.js --url https://staging.genspectrum.org --session-token eyJhbG...
+
+  # Prod
+  node seed.js --url https://genspectrum.org --session-token eyJhbG...
+`;
+
+let parsedArgs;
+try {
+    parsedArgs = parseArgs({
+        options: {
+            url:            { type: 'string',  short: 'u' },
+            'user-id':      { type: 'string' },
+            'session-token':{ type: 'string',  short: 't' },
+            wait:           { type: 'boolean' },
+            help:           { type: 'boolean', short: 'h' },
+        },
+    });
+} catch (err) {
+    console.error(`Error: ${err.message}\n`);
+    console.error(HELP);
+    process.exit(1);
+}
+
+const { values } = parsedArgs;
+
+if (values.help) {
+    console.log(HELP);
+    process.exit(0);
+}
+
+const BACKEND_URL   = values.url            ?? process.env.BACKEND_URL   ?? 'http://localhost:8080';
+const SEED_USER_ID  = values['user-id']     ?? process.env.SEED_USER_ID  ?? 'example-data-seeder';
+const SESSION_TOKEN = values['session-token'] ?? null;
+// Auto-enable wait when there's no TTY (e.g. running inside Docker).
+const WAIT          = values.wait ?? !process.stdout.isTTY;
 
 const RETRY_ATTEMPTS = 30;
 const RETRY_DELAY_MS = 2000;
+
+// When a session token is provided we go through the website proxy at /api/collections,
+// which resolves the user from the session. The cookie name differs by scheme.
+const USE_SESSION_AUTH = SESSION_TOKEN !== null;
+const COLLECTIONS_BASE = USE_SESSION_AUTH
+    ? `${BACKEND_URL}/api/collections`
+    : `${BACKEND_URL}/collections`;
+
+function authHeaders() {
+    if (!USE_SESSION_AUTH) return {};
+    const cookieName = BACKEND_URL.startsWith('https://')
+        ? '__Secure-authjs.session-token'
+        : 'authjs.session-token';
+    return { Cookie: `${cookieName}=${SESSION_TOKEN}` };
+}
 
 // Converts a genomic mutation code to a mature protein name with the given offset.
 // e.g. matureName("ORF1a:T3284I", "3CLpro", -3263) => "3CLpro:T21I"
@@ -133,10 +202,11 @@ async function sleep(ms) {
 async function waitForBackend() {
     for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
         try {
-            const response = await fetch(`${BACKEND_URL}/collections?userId=${SEED_USER_ID}&organism=covid`);
-            if (response.ok || response.status === 404) {
-                return;
-            }
+            const response = await fetch(
+                `${BACKEND_URL}/collections?userId=${SEED_USER_ID}&organism=covid`,
+                { headers: authHeaders() },
+            );
+            if (response.ok || response.status === 404) return;
         } catch {
             // backend not ready yet
         }
@@ -148,9 +218,10 @@ async function waitForBackend() {
 }
 
 async function fetchExistingCollections(organism) {
-    const response = await fetch(
-        `${BACKEND_URL}/collections?userId=${encodeURIComponent(SEED_USER_ID)}&organism=${encodeURIComponent(organism)}`,
-    );
+    const url = USE_SESSION_AUTH
+        ? `${COLLECTIONS_BASE}?organism=${encodeURIComponent(organism)}`
+        : `${COLLECTIONS_BASE}?userId=${encodeURIComponent(SEED_USER_ID)}&organism=${encodeURIComponent(organism)}`;
+    const response = await fetch(url, { headers: authHeaders() });
     if (!response.ok) {
         throw new Error(`GET /collections failed: ${response.status} ${await response.text()}`);
     }
@@ -158,14 +229,14 @@ async function fetchExistingCollections(organism) {
 }
 
 async function createCollection(collection) {
-    const response = await fetch(
-        `${BACKEND_URL}/collections?userId=${encodeURIComponent(SEED_USER_ID)}`,
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(collection),
-        },
-    );
+    const url = USE_SESSION_AUTH
+        ? COLLECTIONS_BASE
+        : `${COLLECTIONS_BASE}?userId=${encodeURIComponent(SEED_USER_ID)}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify(collection),
+    });
     if (response.status !== 201) {
         throw new Error(`POST /collections failed: ${response.status} ${await response.text()}`);
     }
@@ -176,9 +247,15 @@ async function createCollection(collection) {
 // --- Main ---
 
 async function main() {
-    console.log(`Seeding example data against ${BACKEND_URL} as user '${SEED_USER_ID}'...`);
+    if (USE_SESSION_AUTH) {
+        console.log(`Seeding example data against ${BACKEND_URL} using session token...`);
+    } else {
+        console.log(`Seeding example data against ${BACKEND_URL} as user '${SEED_USER_ID}'...`);
+    }
 
-    await waitForBackend();
+    if (WAIT) {
+        await waitForBackend();
+    }
 
     // Group collections by organism to minimise GET requests
     const byOrganism = {};
@@ -212,9 +289,3 @@ main().catch((err) => {
     console.error(err);
     process.exit(1);
 });
-
-
-// TODO - it would be nice if we could run this as a utility script by hand,
-// can we add a readme on how we can do that? Also it should be possible to manually provide
-// an auth token, and run it agains the live staging environment, or even prod.
-// Maybe we can also have a proper commandline interface, but it's nice that so far we don't have dependencies.
