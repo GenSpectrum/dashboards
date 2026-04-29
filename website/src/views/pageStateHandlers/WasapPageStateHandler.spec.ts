@@ -26,11 +26,9 @@ const config: WasapPageConfig = {
     resistanceAnalysisModeEnabled: true,
     untrackedAnalysisModeEnabled: true,
     resistanceMutationCollections: [
-        // TODO - can we leave these hardcoded IDs here? Probably not?
-        // For the test we probably need some sort of setup so the collections are present?
-        { name: '3CLpro', annotationSymbol: 'c', description: '', collectionId: 191 },
-        { name: 'RdRp', annotationSymbol: 'r', description: '', collectionId: 192 },
-        { name: 'Spike', annotationSymbol: 's', description: '', collectionId: 193 },
+        { name: '3CLpro', annotationSymbol: 'c', description: '', collectionId: 1 },
+        { name: 'RdRp', annotationSymbol: 'r', description: '', collectionId: 2 },
+        { name: 'Spike', annotationSymbol: 's', description: '', collectionId: 3 },
     ],
     lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
     samplingDateField: 'samplingDate',
