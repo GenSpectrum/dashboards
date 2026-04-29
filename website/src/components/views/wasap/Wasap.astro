@@ -1,16 +1,21 @@
 ---
 import { WasapPage } from './WasapPage';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
+import { isStaging } from '../../../config.ts';
+import {
+    wastewaterOrganismConfigs,
+    wastewaterOrganismStagingConfigs,
+    type WastewaterOrganismName,
+} from '../../../types/wastewaterConfig';
 
 type Props = {
     wastewaterOrganism: WastewaterOrganismName;
 };
 
 const { wastewaterOrganism } = Astro.props;
-const { name } = wastewaterOrganismConfigs[wastewaterOrganism];
+const config = (isStaging() ? wastewaterOrganismStagingConfigs : wastewaterOrganismConfigs)[wastewaterOrganism];
 ---
 
-<BaseLayout title={`Swiss wastewater - ${name}`}>
-    <WasapPage wastewaterOrganism={wastewaterOrganism} client:only='react' />
+<BaseLayout title={`Swiss wastewater - ${config.name}`}>
+    <WasapPage config={config} client:only='react' />
 </BaseLayout>
