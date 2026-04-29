@@ -110,6 +110,7 @@ const ErrorIconWithTooltip: FC<{ message: string }> = ({ message }) => {
                     <span>{message}</span>
                     {isOpen && (
                         <button
+                            type='button'
                             className='iconify mdi--close pointer-events-auto shrink-0 cursor-pointer text-xs'
                             aria-label='Close tooltip'
                             onClick={(e) => {
@@ -121,6 +122,7 @@ const ErrorIconWithTooltip: FC<{ message: string }> = ({ message }) => {
                 </div>
             </div>
             <button
+                type='button'
                 className='iconify mdi--alert-circle text-error size-4 cursor-pointer'
                 onClick={() => setIsOpen((open) => !open)}
                 aria-label='Error'
