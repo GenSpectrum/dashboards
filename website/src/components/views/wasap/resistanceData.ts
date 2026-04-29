@@ -1,8 +1,7 @@
 import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
-import { useQuery } from '@tanstack/react-query';
 
 import type { ResistanceMutationCollectionConfig, WasapPageConfig } from './wasapPageConfig';
-import { getBackendServiceForClientside } from '../../../backendApi/backendService';
+import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
 
 export type ResistanceData = {
@@ -12,33 +11,19 @@ export type ResistanceData = {
     displayMutationsBySet: Record<string, string[]>;
 };
 
-/**
- * Fetches resistance mutation data from the backend collections API.
- * Each configured collection (e.g. 3CLpro, RdRp, Spike) is fetched in parallel and mapped into:
- * - mutationAnnotations: ready to pass to <gs-app> for genome view annotations
- * - displayMutationsBySet: keyed by set name, for use in the resistance analysis mode
- */
-export function useResistanceMutationSets(config: WasapPageConfig) {
-    return useQuery({
-        queryKey: [
-            'resistanceCollections',
-            config.resistanceAnalysisModeEnabled ? config.resistanceMutationCollections.map((s) => s.collectionId) : [],
-        ],
-        queryFn: async (): Promise<ResistanceData> => {
-            if (!config.resistanceAnalysisModeEnabled) {
-                return { mutationAnnotations: [], displayMutationsBySet: {} };
-            }
-            const backendService = getBackendServiceForClientside();
-            const collections = await Promise.all(
-                config.resistanceMutationCollections.map((setConfig) =>
-                    backendService.getCollection({ id: String(setConfig.collectionId) }),
-                ),
-            );
-            return buildResistanceData(config.resistanceMutationCollections, collections);
-        },
-        staleTime: 60 * 60 * 1000,
-        enabled: config.resistanceAnalysisModeEnabled === true,
-    });
+export async function fetchResistanceData(
+    config: WasapPageConfig,
+    backendService: BackendService,
+): Promise<ResistanceData> {
+    if (!config.resistanceAnalysisModeEnabled) {
+        return { mutationAnnotations: [], displayMutationsBySet: {} };
+    }
+    const collections = await Promise.all(
+        config.resistanceMutationCollections.map((setConfig) =>
+            backendService.getCollection({ id: String(setConfig.collectionId) }),
+        ),
+    );
+    return buildResistanceData(config.resistanceMutationCollections, collections);
 }
 
 function buildResistanceData(

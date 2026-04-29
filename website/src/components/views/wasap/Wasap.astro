@@ -1,6 +1,8 @@
 ---
 import { WasapPage } from './WasapPage';
-import { isStaging } from '../../../config.ts';
+import { fetchResistanceData } from './resistanceData';
+import { BackendService } from '../../../backendApi/backendService.ts';
+import { isStaging, getBackendHost } from '../../../config.ts';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import {
     wastewaterOrganismConfigs,
@@ -14,8 +16,9 @@ type Props = {
 
 const { wastewaterOrganism } = Astro.props;
 const config = (isStaging() ? wastewaterOrganismStagingConfigs : wastewaterOrganismConfigs)[wastewaterOrganism];
+const resistanceData = await fetchResistanceData(config, new BackendService(getBackendHost()));
 ---
 
 <BaseLayout title={`Swiss wastewater - ${config.name}`}>
-    <WasapPage config={config} client:only='react' />
+    <WasapPage config={config} resistanceData={resistanceData} client:only='react' />
 </BaseLayout>
