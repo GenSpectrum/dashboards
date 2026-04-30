@@ -1,5 +1,5 @@
 ---
-import { getSession } from 'auth-astro/server';
+import { auth } from '../../../auth';
 
 import HamburgerMenuItem from './HamburgerMenuItem.astro';
 import HamburgerMenuSection from './HamburgerMenuSection.astro';
@@ -16,7 +16,7 @@ const { forceLoggedOutState } = Astro.props;
 
 const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
 
-const session = await getSession(Astro.request);
+const session = await auth.api.getSession({ headers: Astro.request.headers });
 const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
 const showSubscriptions = isStaging();
 ---

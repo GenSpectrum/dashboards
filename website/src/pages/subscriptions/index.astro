@@ -1,5 +1,5 @@
 ---
-import { getSession } from 'auth-astro/server';
+import { auth } from '../../auth';
 
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { Subscriptions } from '../../components/subscriptions/overview/Subscriptions';
@@ -8,7 +8,7 @@ import SubscriptionPageLayout from '../../layouts/ContaineredPage/ContaineredPag
 import { organismsSchema } from '../../types/Organism';
 import { Page } from '../../types/pages';
 
-const session = await getSession(Astro.request);
+const session = await auth.api.getSession({ headers: Astro.request.headers });
 
 const organisms = organismsSchema.parse(Astro.url.searchParams.getAll('organism'));
 

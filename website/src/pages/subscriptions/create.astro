@@ -1,5 +1,5 @@
 ---
-import { getSession } from 'auth-astro/server';
+import { auth } from '../../auth';
 
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
@@ -7,7 +7,7 @@ import { getDashboardsConfig } from '../../config';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import SubscriptionPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 
-const session = await getSession(Astro.request);
+const session = await auth.api.getSession({ headers: Astro.request.headers });
 
 const config = getDashboardsConfig();
 ---
