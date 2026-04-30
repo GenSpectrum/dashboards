@@ -1,16 +1,34 @@
 ---
 import { WasapPage } from './WasapPage';
+import { fetchResistanceData, type ResistanceData } from './resistanceData';
+import { BackendService } from '../../../backendApi/backendService.ts';
+import { isStaging, getBackendHost } from '../../../config.ts';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
-import { wastewaterOrganismConfigs, type WastewaterOrganismName } from '../../../types/wastewaterConfig';
+import { getInstanceLogger } from '../../../logger.ts';
+import {
+    wastewaterOrganismConfigs,
+    wastewaterOrganismStagingConfigs,
+    type WastewaterOrganismName,
+} from '../../../types/wastewaterConfig';
 
 type Props = {
     wastewaterOrganism: WastewaterOrganismName;
 };
 
 const { wastewaterOrganism } = Astro.props;
-const { name } = wastewaterOrganismConfigs[wastewaterOrganism];
+const config = (isStaging() ? wastewaterOrganismStagingConfigs : wastewaterOrganismConfigs)[wastewaterOrganism];
+const backendService = new BackendService(getBackendHost());
+let resistanceData: ResistanceData = { mutationAnnotations: [], displayMutationsBySet: {} };
+
+try {
+    resistanceData = await fetchResistanceData(config, backendService);
+} catch (error) {
+    getInstanceLogger('WasapPage').error(
+        `Failed to fetch resistance data for WASAP page (organism: ${wastewaterOrganism}): ${error}`,
+    );
+}
 ---
 
-<BaseLayout title={`Swiss wastewater - ${name}`}>
-    <WasapPage wastewaterOrganism={wastewaterOrganism} client:only='react' />
+<BaseLayout title={`Swiss wastewater - ${config.name}`}>
+    <WasapPage config={config} resistanceData={resistanceData} client:only='react' />
 </BaseLayout>

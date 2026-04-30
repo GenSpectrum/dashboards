@@ -32,12 +32,14 @@ import {
  */
 export function WasapPageStateSelector({
     config,
+    resistanceSetNames,
     pageStateHandler,
     initialBaseFilterState,
     initialAnalysisFilterState,
     setPageState,
 }: {
     config: WasapPageConfig;
+    resistanceSetNames: string[];
     pageStateHandler: PageStateHandler<WasapFilter>;
     initialBaseFilterState: WasapBaseFilter;
     initialAnalysisFilterState: WasapAnalysisFilter;
@@ -189,7 +191,7 @@ export function WasapPageStateSelector({
                                 <ResistanceMutationsFilter
                                     pageState={resistanceFilter}
                                     setPageState={setResistanceFilter}
-                                    resistanceMutationSets={config.resistanceMutationSets}
+                                    resistanceSetNames={resistanceSetNames}
                                 />
                             );
                         case 'untracked':
