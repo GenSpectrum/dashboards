@@ -42,7 +42,6 @@ This monorepo contains the following packages:
 
 - [`example-data/`](./example-data):
   A Node.js seeder script and Dockerfile that populate the backend with example collections (resistance mutation data for 3CLpro, RdRp, and Spike).
-  Activated via the `staging` Docker Compose profile (see below).
 
 
 ## Local setup
@@ -57,10 +56,9 @@ BACKEND_TAG=latest WEBSITE_TAG=latest docker compose up
 ### Seeding example data
 
 The `example-data-seeder` service seeds the backend with example collections.
-It only starts when the `staging` Docker Compose profile is active:
 
 ```bash
-BACKEND_TAG=latest WEBSITE_TAG=latest docker compose --profile staging up
+BACKEND_TAG=latest WEBSITE_TAG=latest docker compose up
 ```
 
 The seeder is idempotent — running it multiple times will not create duplicate collections.
