@@ -50,7 +50,7 @@ Check the [Docker compose file](docker-compose.yml) for an example on how to run
 
 Use Docker Compose to run the dashboards:
 ```bash
-BACKEND_TAG=latest WEBSITE_TAG=latest docker compose up
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
 ```
 
 ### Seeding example data
@@ -58,7 +58,7 @@ BACKEND_TAG=latest WEBSITE_TAG=latest docker compose up
 The `example-data-seeder` service seeds the backend with example collections.
 
 ```bash
-BACKEND_TAG=latest WEBSITE_TAG=latest docker compose up
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
 ```
 
 The seeder is idempotent — running it multiple times will not create duplicate collections.
