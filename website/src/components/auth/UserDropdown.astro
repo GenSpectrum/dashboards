@@ -1,10 +1,8 @@
 ---
-import type { Session } from '@auth/core/types';
-
 import { isStaging } from '../../config';
 
 interface Props {
-    session: Session;
+    session: { user: { name: string | null } };
 }
 
 const { session } = Astro.props;
