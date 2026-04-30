@@ -1,6 +1,6 @@
 ---
 import { WasapPage } from './WasapPage';
-import { fetchResistanceData } from './resistanceData';
+import { fetchResistanceData, type ResistanceData } from './resistanceData';
 import { BackendService } from '../../../backendApi/backendService.ts';
 import { isStaging, getBackendHost } from '../../../config.ts';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
@@ -18,17 +18,14 @@ type Props = {
 const { wastewaterOrganism } = Astro.props;
 const config = (isStaging() ? wastewaterOrganismStagingConfigs : wastewaterOrganismConfigs)[wastewaterOrganism];
 const backendService = new BackendService(getBackendHost());
-let resistanceData: Awaited<ReturnType<typeof fetchResistanceData>> = [] as Awaited<
-    ReturnType<typeof fetchResistanceData>
->;
+let resistanceData: ResistanceData = { mutationAnnotations: [], displayMutationsBySet: {} };
 
 try {
     resistanceData = await fetchResistanceData(config, backendService);
 } catch (error) {
-    getInstanceLogger('WasapPage').error('Failed to fetch resistance data for WASAP page', {
-        wastewaterOrganism,
-        error,
-    });
+    getInstanceLogger('WasapPage').error(
+        `Failed to fetch resistance data for WASAP page (organism: ${wastewaterOrganism}): ${error}`,
+    );
 }
 ---
 
