@@ -34,11 +34,14 @@ This monorepo contains the following packages:
 - [`backend/`](./backend): 
   The backend for additional features of the dashboard website, currently the notification features.
 
-- [`website/`](./website): 
+- [`website/`](./website):
   The dashboard website: delivery of the (basically static, via Astro) HTML pages with the embedded Dashboard Components
-  (which are included via npm), 
+  (which are included via npm),
   which retrieve data from LAPIS instances directly,
   and some additional client side features accessing the backend.
+
+- [`example-data/`](./example-data):
+  A Node.js seeder script and Dockerfile that populate the backend with example collections (resistance mutation data for 3CLpro, RdRp, and Spike).
 
 
 ## Local setup
@@ -47,5 +50,24 @@ Check the [Docker compose file](docker-compose.yml) for an example on how to run
 
 Use Docker Compose to run the dashboards:
 ```bash
-BACKEND_TAG=latest WEBSITE_TAG=latest docker compose up
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
 ```
+
+### Seeding example data
+
+The `example-data-seeder` service seeds the backend with example collections.
+
+```bash
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
+```
+
+The seeder is idempotent — running it multiple times will not create duplicate collections.
+Collections are owned by the `example-data-seeder` user and can be inspected via:
+
+```
+GET /collections?userId=example-data-seeder&organism=covid
+```
+
+### Deleting data
+
+`docker compose down` won't delete the postgres volume. Use `... down -v` to also delete the DB volume.

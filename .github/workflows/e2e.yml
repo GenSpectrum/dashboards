@@ -56,6 +56,7 @@ jobs:
       env:
         WEBSITE_TAG: ${{ steps.branchTag.outputs.branchTag }}
         BACKEND_TAG: ${{ steps.branchTag.outputs.branchTag }}
+        SEEDER_TAG: ${{ steps.branchTag.outputs.branchTag }}
 
     - name: Run Playwright tests (all browsers)
       if: github.ref == 'refs/heads/main'

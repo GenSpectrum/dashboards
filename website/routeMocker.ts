@@ -7,7 +7,7 @@ import { expect } from 'vitest';
 import { type OrganismsConfig } from './src/config';
 import type { CollectionRaw } from './src/covspectrum/types.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
-import type { ParsedQueryResult } from './src/lapis/parseQuery.ts';
+import type { ParsedQueryResult, ParseQueryRequest } from './src/lapis/parseQuery.ts';
 import type { Collection } from './src/types/Collection.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
@@ -148,7 +148,7 @@ export class LapisRouteMocker {
         this.workerOrServer.use(http.post(`${DUMMY_LAPIS_URL}/sample/aminoAcidMutations`, resolver(cases)));
     }
 
-    mockPostQueryParse(body: { queries: string[] }, response: { data: ParsedQueryResult[] }, statusCode = 200) {
+    mockPostQueryParse(body: ParseQueryRequest, response: { data: ParsedQueryResult[] }, statusCode = 200) {
         this.workerOrServer.use(
             http.post(`${DUMMY_LAPIS_URL}/query/parse`, resolver([{ statusCode, body, response }])),
         );

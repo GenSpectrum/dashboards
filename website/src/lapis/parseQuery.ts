@@ -27,18 +27,23 @@ const queryParseResponseSchema = z.object({
     data: z.array(parsedQueryResultSchema),
 });
 
+export type ParseQueryRequest = {
+    queries: string[];
+    doFullValidation?: boolean;
+};
+
 /**
  * Parses a list of advanced query strings into SILO filter expressions.
  * Returns partial results: successfully parsed queries will have a "filter" field,
  * while failed queries will have an "error" field with the error message.
  *
  * @param lapisUrl The base API URL
- * @param queries Array of advanced query strings to parse
+ * @param request
  * @returns Array of parsed query results (success or failure for each query)
  */
-export async function parseQuery(lapisUrl: string, queries: string[]): Promise<ParsedQueryResult[]> {
+export async function parseQuery(lapisUrl: string, request: ParseQueryRequest): Promise<ParsedQueryResult[]> {
     const url = `${lapisUrl}/query/parse`;
-    const body = { queries };
+    const body = request;
 
     let response;
     try {
