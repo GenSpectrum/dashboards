@@ -7,7 +7,7 @@
 import { parseArgs } from 'node:util';
 
 const HELP = `\
-Usage: node seed.js [options]
+Usage: node seed.mjs [options]
 
 Options:
   -u, --url <url>              Backend base URL (default: $BACKEND_URL or http://localhost:8080)
@@ -18,16 +18,16 @@ Options:
 
 Examples:
   # Local backend running on :8080
-  node seed.js
+  node seed.mjs
 
   # Local backend on a different port
-  node seed.js --url http://localhost:9021
+  node seed.mjs --url http://localhost:9021
 
   # Staging via session token (grab __Secure-authjs.session-token from browser DevTools → Application → Cookies)
-  node seed.js --url https://staging.genspectrum.org --session-token eyJhbG...
+  node seed.mjs --url https://staging.genspectrum.org --session-token eyJhbG...
 
   # Prod
-  node seed.js --url https://genspectrum.org --session-token eyJhbG...
+  node seed.mjs --url https://genspectrum.org --session-token eyJhbG...
 `;
 
 let parsedArgs;

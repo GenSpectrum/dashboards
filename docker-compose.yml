@@ -39,8 +39,6 @@ services:
   example-data-seeder:
     build:
       context: ./example-data
-    profiles:
-      - staging
     depends_on:
       - backend
     environment:
