@@ -10,11 +10,10 @@ const HELP = `\
 Usage: node seed.mjs [options]
 
 Options:
-  -u, --url <url>              Backend base URL (default: $BACKEND_URL or http://localhost:8080)
-      --user-id <id>           User ID for direct backend access (default: $SEED_USER_ID or example-data-seeder)
-  -t, --session-token <token>  Session token for staging/prod (uses website proxy, injects user from session)
-      --wait                   Retry until backend is ready (auto-enabled when no TTY)
-  -h, --help                   Show this help
+  -u, --url <url>    Backend base URL (default: $BACKEND_URL or http://localhost:8080)
+      --user-id <id> User ID (default: $SEED_USER_ID or example-data-seeder)
+      --wait         Retry until backend is ready (auto-enabled when no TTY)
+  -h, --help         Show this help
 
 Examples:
   # Local backend running on :8080
@@ -22,23 +21,16 @@ Examples:
 
   # Local backend on a different port
   node seed.mjs --url http://localhost:9021
-
-  # Staging via session token (grab __Secure-authjs.session-token from browser DevTools → Application → Cookies)
-  node seed.mjs --url https://staging.genspectrum.org --session-token eyJhbG...
-
-  # Prod
-  node seed.mjs --url https://genspectrum.org --session-token eyJhbG...
 `;
 
 let parsedArgs;
 try {
     parsedArgs = parseArgs({
         options: {
-            url:            { type: 'string',  short: 'u' },
-            'user-id':      { type: 'string' },
-            'session-token':{ type: 'string',  short: 't' },
-            wait:           { type: 'boolean' },
-            help:           { type: 'boolean', short: 'h' },
+            url:       { type: 'string',  short: 'u' },
+            'user-id': { type: 'string' },
+            wait:      { type: 'boolean' },
+            help:      { type: 'boolean', short: 'h' },
         },
     });
 } catch (err) {
@@ -54,29 +46,14 @@ if (values.help) {
     process.exit(0);
 }
 
-const BACKEND_URL   = values.url            ?? process.env.BACKEND_URL   ?? 'http://localhost:8080';
-const SEED_USER_ID  = values['user-id']     ?? process.env.SEED_USER_ID  ?? 'example-data-seeder';
-const SESSION_TOKEN = values['session-token'] ?? null;
+const BACKEND_URL  = values.url        ?? process.env.BACKEND_URL  ?? 'http://localhost:8080';
+const SEED_USER_ID = values['user-id'] ?? process.env.SEED_USER_ID ?? 'example-data-seeder';
 // Auto-enable wait when there's no TTY (e.g. running inside Docker).
-const WAIT          = values.wait ?? !process.stdout.isTTY;
+const WAIT         = values.wait ?? !process.stdout.isTTY;
 
-const RETRY_ATTEMPTS = 30;
-const RETRY_DELAY_MS = 2000;
-
-// When a session token is provided we go through the website proxy at /api/collections,
-// which resolves the user from the session. The cookie name differs by scheme.
-const USE_SESSION_AUTH = SESSION_TOKEN !== null;
-const COLLECTIONS_BASE = USE_SESSION_AUTH
-    ? `${BACKEND_URL}/api/collections`
-    : `${BACKEND_URL}/collections`;
-
-function authHeaders() {
-    if (!USE_SESSION_AUTH) return {};
-    const cookieName = BACKEND_URL.startsWith('https://')
-        ? '__Secure-authjs.session-token'
-        : 'authjs.session-token';
-    return { Cookie: `${cookieName}=${SESSION_TOKEN}` };
-}
+const RETRY_ATTEMPTS   = 30;
+const RETRY_DELAY_MS   = 2000;
+const COLLECTIONS_BASE = `${BACKEND_URL}/collections`;
 
 // Converts a genomic mutation code to a mature protein name with the given offset.
 // e.g. matureName("ORF1a:T3284I", "3CLpro", -3263) => "3CLpro:T21I"
@@ -204,7 +181,6 @@ async function waitForBackend() {
         try {
             const response = await fetch(
                 `${BACKEND_URL}/collections?userId=${SEED_USER_ID}&organism=covid`,
-                { headers: authHeaders() },
             );
             if (response.ok || response.status === 404) return;
         } catch {
@@ -218,10 +194,8 @@ async function waitForBackend() {
 }
 
 async function fetchExistingCollections(organism) {
-    const url = USE_SESSION_AUTH
-        ? `${COLLECTIONS_BASE}?organism=${encodeURIComponent(organism)}`
-        : `${COLLECTIONS_BASE}?userId=${encodeURIComponent(SEED_USER_ID)}&organism=${encodeURIComponent(organism)}`;
-    const response = await fetch(url, { headers: authHeaders() });
+    const url = `${COLLECTIONS_BASE}?userId=${encodeURIComponent(SEED_USER_ID)}&organism=${encodeURIComponent(organism)}`;
+    const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`GET /collections failed: ${response.status} ${await response.text()}`);
     }
@@ -229,12 +203,10 @@ async function fetchExistingCollections(organism) {
 }
 
 async function createCollection(collection) {
-    const url = USE_SESSION_AUTH
-        ? COLLECTIONS_BASE
-        : `${COLLECTIONS_BASE}?userId=${encodeURIComponent(SEED_USER_ID)}`;
+    const url = `${COLLECTIONS_BASE}?userId=${encodeURIComponent(SEED_USER_ID)}`;
     const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(collection),
     });
     if (response.status !== 201) {
@@ -247,11 +219,7 @@ async function createCollection(collection) {
 // --- Main ---
 
 async function main() {
-    if (USE_SESSION_AUTH) {
-        console.log(`Seeding example data against ${BACKEND_URL} using session token...`);
-    } else {
-        console.log(`Seeding example data against ${BACKEND_URL} as user '${SEED_USER_ID}'...`);
-    }
+    console.log(`Seeding example data against ${BACKEND_URL} as user '${SEED_USER_ID}'...`);
 
     if (WAIT) {
         await waitForBackend();
@@ -285,7 +253,9 @@ async function main() {
     console.log(`\nDone. Created: ${created}, skipped (already exist): ${skipped}.`);
 }
 
-main().catch((err) => {
+try {
+    await main();
+} catch (err) {
     console.error(err);
     process.exit(1);
-});
+}
