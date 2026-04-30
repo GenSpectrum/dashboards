@@ -63,6 +63,7 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
                     pageState={pageState}
                     setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
+                    lapisUrl={organismsConfig[organism].lapis.url}
                 />
             }
             dataDisplay={

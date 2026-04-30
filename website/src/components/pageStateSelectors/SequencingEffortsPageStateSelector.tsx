@@ -14,11 +14,13 @@ export function SequencingEffortsPageStateSelector({
     pageState,
     setPageState,
     enableAdvancedQueryFilter,
+    lapisUrl,
 }: {
     view: GenericSequencingEffortsView<OrganismConstants>;
     pageState: DatasetAndVariantData;
     setPageState: Dispatch<SetStateAction<DatasetAndVariantData>>;
     enableAdvancedQueryFilter: boolean;
+    lapisUrl: string;
 }) {
     const [draftPageState, setDraftPageState] = useState(pageState);
     useEffect(() => setDraftPageState(pageState), [pageState]);
@@ -43,6 +45,7 @@ export function SequencingEffortsPageStateSelector({
                             }));
                         }}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                     {view.organismConstants.lineageFilters.map((lineageFilterConfig) => (
                         <LineageFilterInput

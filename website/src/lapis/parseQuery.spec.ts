@@ -28,7 +28,7 @@ describe('parseQuery', () => {
             },
         );
 
-        const result = await parseQuery(DUMMY_LAPIS_URL, queries);
+        const result = await parseQuery(DUMMY_LAPIS_URL, { queries });
 
         expect(result).toHaveLength(1);
         expect(result[0]).toEqual({
@@ -39,6 +39,19 @@ describe('parseQuery', () => {
                 value: 'USA',
             },
         });
+    });
+
+    test('should pass the doFullValidation parameter', async () => {
+        const queries = [''];
+
+        lapisRouteMocker.mockPostQueryParse(
+            { queries, doFullValidation: true },
+            { data: [{ type: 'success', filter: { type: 'True' } }] },
+        );
+
+        const result = await parseQuery(DUMMY_LAPIS_URL, { queries, doFullValidation: true });
+
+        expect(result).toHaveLength(1);
     });
 
     test('should handle failed query parsing', async () => {
@@ -56,7 +69,7 @@ describe('parseQuery', () => {
             },
         );
 
-        const result = await parseQuery(DUMMY_LAPIS_URL, queries);
+        const result = await parseQuery(DUMMY_LAPIS_URL, { queries });
 
         expect(result).toHaveLength(1);
         expect(result[0]).toEqual({
@@ -70,7 +83,9 @@ describe('parseQuery', () => {
 
         lapisRouteMocker.mockPostQueryParse({ queries }, { data: [] }, 500);
 
-        await expect(parseQuery(DUMMY_LAPIS_URL, queries)).rejects.toThrow(/Failed to make parse queries API request/);
+        await expect(parseQuery(DUMMY_LAPIS_URL, { queries })).rejects.toThrow(
+            /Failed to make parse queries API request/,
+        );
     });
 
     test('should throw when LAPIS returns unexpected data', async () => {
@@ -79,6 +94,6 @@ describe('parseQuery', () => {
         // @ts-expect-error -- intentionally passing wrong data
         lapisRouteMocker.mockPostQueryParse({ queries }, { data: 'something unexpected' });
 
-        await expect(parseQuery(DUMMY_LAPIS_URL, queries)).rejects.toThrow(/Failed to parse API response/);
+        await expect(parseQuery(DUMMY_LAPIS_URL, { queries })).rejects.toThrow(/Failed to parse API response/);
     });
 });

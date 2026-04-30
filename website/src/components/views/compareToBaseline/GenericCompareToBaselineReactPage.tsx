@@ -50,6 +50,7 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
                     pageState={pageState}
                     setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
+                    lapisUrl={organismsConfig[organism].lapis.url}
                 />
             }
             dataDisplay={<GenericCompareToBaselineDataDisplay view={view} pageState={pageState} />}
