@@ -22,8 +22,8 @@ import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 /**
  * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
  * depending on the analysis mode and analysis mode settings.
- * The resistanceMutationSets are needed since that is also a possible
- * analysis mode.
+ * The `resistanceMutationsBySet` data, derived from server-fetched collections,
+ * is needed because resistance is also a possible analysis mode.
  */
 export function useWasapPageData(
     config: WasapPageConfig,
