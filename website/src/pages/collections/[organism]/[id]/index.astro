@@ -1,4 +1,6 @@
 ---
+import { getSession } from 'auth-astro/server';
+
 import { BackendService, BackendError } from '../../../../backendApi/backendService.ts';
 import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
 import { getBackendHost, getOrganismConfig } from '../../../../config.ts';
@@ -25,6 +27,10 @@ if (id === undefined) {
 
 const orgConfig = organismConfig[parsedOrganism.data];
 const lapisConfig = getOrganismConfig(parsedOrganism.data).lapis;
+
+const session = await getSession(Astro.request);
+// GitHub user IDs are numbers, but ownedBy is stored as a string in the backend.
+const currentUserId = session?.user?.id !== undefined ? String(session.user.id) : undefined;
 
 let collection: Collection | undefined;
 
@@ -59,6 +65,7 @@ if (collection !== undefined && collection.organism !== parsedOrganism.data) {
                 organism={parsedOrganism.data}
                 collection={collection}
                 lapisConfig={lapisConfig}
+                isOwner={currentUserId !== undefined && currentUserId === collection.ownedBy}
                 client:load
             />
         ) : (
