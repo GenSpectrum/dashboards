@@ -1,0 +1,45 @@
+name: Example Data Seeder
+
+on: [push]
+
+env:
+  DOCKER_IMAGE_NAME: ghcr.io/genspectrum/dashboards/example-data-seeder
+
+jobs:
+  dockerImage:
+    name: Build Example Data Seeder Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: dockerMetadata
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.DOCKER_IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./example-data
+          tags: ${{ steps.dockerMetadata.outputs.tags }}
+          cache-from: type=gha,scope=example-data-seeder-${{ github.ref }}
+          cache-to: type=gha,mode=max,scope=example-data-seeder-${{ github.ref }}
+          platforms: ${{ github.ref == 'refs/heads/main' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+          push: true
