@@ -37,8 +37,7 @@ services:
       - database-data:/var/lib/postgresql/data
 
   example-data-seeder:
-    build:
-      context: ./example-data
+    image: ghcr.io/genspectrum/dashboards/example-data-seeder:${SEEDER_TAG}
     depends_on:
       - backend
     environment:
