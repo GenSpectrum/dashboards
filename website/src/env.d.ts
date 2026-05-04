@@ -4,9 +4,7 @@
 declare namespace App {
     // Note: 'import {} from ""' syntax does not work in .d.ts files.
     // We derive the User type from the auth config so that additionalFields (e.g. githubId) are included.
-    type AuthUser = NonNullable<
-        Awaited<ReturnType<(typeof import('./auth').auth)['api']['getSession']>>
-    >['user'];
+    type AuthUser = NonNullable<Awaited<ReturnType<(typeof import('./auth').auth)['api']['getSession']>>>['user'];
 
     interface Locals {
         user: AuthUser | null;

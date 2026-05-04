@@ -8,12 +8,13 @@ interface Props {
 
 const { forceLoggedOutState = false } = Astro.props;
 
-const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== null;
+const user = Astro.locals.user;
+const showLoggedInState = !forceLoggedOutState && user !== null;
 ---
 
 {
-    showLoggedInState ? (
-        <UserDropdown session={{ user: Astro.locals.user! }} />
+    showLoggedInState && user ? (
+        <UserDropdown session={{ user }} />
     ) : (
         <div class='mr-2 font-bold'>
             <LoginButton client:load />

@@ -1,5 +1,5 @@
-import { makeSignature, symmetricEncodeJWT } from 'better-auth/crypto';
 import type { Cookie, Page } from '@playwright/test';
+import { makeSignature, symmetricEncodeJWT } from 'better-auth/crypto';
 
 // NOTE: for getSession to use the session_data cookie (bypassing the in-memory store lookup),
 // cookieCache must be enabled in auth.ts:
