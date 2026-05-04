@@ -27,7 +27,7 @@ export const auth = betterAuth({
             // store the GitHub user ID (i.e. 45882389) in the 'user' object,
             // which is easy to access from context later on.
             // the 'id' property cannot be overwritten.
-            mapProfileToUser: (profile) => ({ githubId: profile.id }),
+            mapProfileToUser: (profile) => ({ githubId: String(profile.id) }),
         },
     },
     advanced: {
