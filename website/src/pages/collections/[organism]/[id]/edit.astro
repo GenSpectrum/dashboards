@@ -1,6 +1,4 @@
 ---
-import { getGitHubUserId } from '../../../../auth/getGitHubUserId';
-
 import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
@@ -26,7 +24,7 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const currentUserId = await getGitHubUserId(Astro.request.headers);
+const currentUserId = Astro.locals.user?.githubId;
 const config = getDashboardsConfig();
 
 let collection;

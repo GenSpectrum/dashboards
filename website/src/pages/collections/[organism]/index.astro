@@ -1,6 +1,4 @@
 ---
-import { auth } from '../../../auth';
-
 import { CollectionsOverview } from '../../../components/collections/overview/CollectionsOverview';
 import { isStaging } from '../../../config';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
@@ -21,8 +19,7 @@ if (!parsedOrganism.success) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const session = await auth.api.getSession({ headers: Astro.request.headers });
-const isLoggedIn = session?.user?.id !== undefined;
+const isLoggedIn = Astro.locals.user !== null;
 ---
 
 <ContaineredPageLayout

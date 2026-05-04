@@ -1,14 +1,10 @@
 ---
-import { auth } from '../../auth';
-
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { Subscriptions } from '../../components/subscriptions/overview/Subscriptions';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import SubscriptionPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { organismsSchema } from '../../types/Organism';
 import { Page } from '../../types/pages';
-
-const session = await auth.api.getSession({ headers: Astro.request.headers });
 
 const organisms = organismsSchema.parse(Astro.url.searchParams.getAll('organism'));
 
@@ -22,5 +18,5 @@ const breadcrumbs = [
 ---
 
 <SubscriptionPageLayout title='Subscriptions overview' breadcrumbs={breadcrumbs}>
-    {session?.user?.id !== undefined ? <Subscriptions client:load organismsFromUrl={organisms} /> : <NotLoggedIn />}
+    {Astro.locals.user !== null ? <Subscriptions client:load organismsFromUrl={organisms} /> : <NotLoggedIn />}
 </SubscriptionPageLayout>
