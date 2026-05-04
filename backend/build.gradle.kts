@@ -30,7 +30,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
-    implementation("org.postgresql:postgresql:42.7.10")
+    implementation("org.postgresql:postgresql:42.7.11")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.2.0")
     implementation("org.jetbrains.exposed:exposed-json:1.2.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:1.2.0")
