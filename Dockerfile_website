@@ -3,7 +3,7 @@
 FROM node:24-alpine AS base
 WORKDIR /app
 
-COPY website/package.json website/package-lock.json website/patches ./
+COPY website/package.json website/package-lock.json ./
 
 FROM base AS prod-deps
 RUN npm clean-install --omit=dev
