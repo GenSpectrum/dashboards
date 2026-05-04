@@ -5,6 +5,8 @@ import { makeSignature, symmetricEncodeJWT } from 'better-auth/crypto';
 // cookieCache must be enabled in auth.ts:
 //   session: { cookieCache: { enabled: true, maxAge: 60 * 60, strategy: 'jwe' } }
 
+export const E2E_GITHUB_ID = '1234567';
+
 const SECRET = process.env.AUTH_SECRET ?? '';
 const COOKIE_PREFIX = 'gen-spectrum';
 const DOMAIN = 'localhost';
