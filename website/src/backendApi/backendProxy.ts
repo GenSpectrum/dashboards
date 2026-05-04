@@ -1,5 +1,5 @@
 import { getBackendHost } from '../config.ts';
-import { auth } from '../auth.ts';
+import { getGitHubUserId } from '../auth/getGitHubUserId.ts';
 import { getInstanceLogger } from '../logger.ts';
 import type { ProblemDetail } from '../types/ProblemDetail.ts';
 import { getErrorLogMessage } from '../util/getErrorLogMessage.ts';
@@ -14,13 +14,13 @@ const API_PATHNAME_LENGTH = '/api'.length;
  * in here, instead of in the backend.
  */
 export async function proxyToBackend({ request }: { request: Request }): Promise<Response> {
-    const session = await auth.api.getSession({ headers: request.headers });
+    const userId = await getGitHubUserId(request.headers);
 
-    if (session?.user?.id === undefined) {
+    if (userId === undefined) {
         return getUnauthorizedResponse(request.url);
     }
 
-    return proxyRequest(request, session.user.id);
+    return proxyRequest(request, userId);
 }
 
 /**

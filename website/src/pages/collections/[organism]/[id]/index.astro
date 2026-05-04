@@ -1,5 +1,5 @@
 ---
-import { auth } from '../../../../auth';
+import { getGitHubUserId } from '../../../../auth/getGitHubUserId';
 
 import { BackendService, BackendError } from '../../../../backendApi/backendService.ts';
 import { CollectionDetail } from '../../../../components/collections/detail/CollectionDetail';
@@ -28,9 +28,7 @@ if (id === undefined) {
 const orgConfig = organismConfig[parsedOrganism.data];
 const lapisConfig = getOrganismConfig(parsedOrganism.data).lapis;
 
-const session = await auth.api.getSession({ headers: Astro.request.headers });
-// GitHub user IDs are numbers, but ownedBy is stored as a string in the backend.
-const currentUserId = session?.user?.id !== undefined ? String(session.user.id) : undefined;
+const currentUserId = await getGitHubUserId(Astro.request.headers);
 
 let collection: Collection | undefined;
 

@@ -1,5 +1,5 @@
 ---
-import { auth } from '../../../../auth';
+import { getGitHubUserId } from '../../../../auth/getGitHubUserId';
 
 import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
@@ -26,14 +26,14 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const session = await auth.api.getSession({ headers: Astro.request.headers });
+const currentUserId = await getGitHubUserId(Astro.request.headers);
 const config = getDashboardsConfig();
 
 let collection;
-if (session?.user?.id !== undefined) {
+if (currentUserId !== undefined) {
     try {
         collection = await new BackendService(getBackendHost()).getCollection({ id });
-        if (String(session.user.id) !== collection.ownedBy) {
+        if (currentUserId !== collection.ownedBy) {
             return Astro.redirect('/404');
         }
     } catch (error) {
@@ -59,7 +59,7 @@ const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` :
     ]}
 >
     {
-        session?.user?.id !== undefined ? (
+        currentUserId !== undefined ? (
             <CollectionEdit
                 client:only='react'
                 organism={parsedOrganism.data}
