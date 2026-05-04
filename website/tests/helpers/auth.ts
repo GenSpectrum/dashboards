@@ -15,6 +15,7 @@ const COOKIE_BASE = {
     httpOnly: true,
     secure: false,
     sameSite: 'Lax' as const,
+    expires: -1,
 };
 
 export async function createAuthCookies(
