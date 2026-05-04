@@ -25,5 +25,6 @@ export const auth = betterAuth({
     },
     advanced: {
         trustedProxyHeaders: true,
+        cookiePrefix: 'gen-spectrum',
     },
 });
