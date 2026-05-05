@@ -21,7 +21,7 @@ import kotlin.time.Instant
 data class Collection(
     val id: Long,
     val name: String,
-    val ownedBy: String,
+    val ownedBy: Long,
     val organism: String,
     val description: String?,
     val variants: List<Variant>,
