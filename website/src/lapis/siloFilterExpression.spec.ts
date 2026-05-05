@@ -1,6 +1,10 @@
 import { describe, expect, test } from 'vitest';
 
-import { type SiloFilterExpression, extractMetadataFields, siloFilterExpressionSchema } from './siloFilterExpression.ts';
+import {
+    type SiloFilterExpression,
+    extractMetadataFields,
+    siloFilterExpressionSchema,
+} from './siloFilterExpression.ts';
 
 describe('siloFilterExpressionSchema', () => {
     test('should parse StringEquals', () => {
