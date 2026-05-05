@@ -229,6 +229,7 @@ describe('siloFilterExpressionSchema', () => {
 
         expect(result.success).toBe(false);
     });
+});
 
 describe('extractMetadataFields', () => {
     test('extracts column names from nested And/Or expressions', () => {

@@ -23,7 +23,13 @@ type AdvancedQueryFilterProps = {
     allowedFields?: string[];
 };
 
-export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl, allowedFields }) => {
+export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
+    value,
+    onInput,
+    enabled,
+    lapisUrl,
+    allowedFields,
+}) => {
     const [inputValue, setInputValue] = useState(value);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
