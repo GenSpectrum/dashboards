@@ -13,18 +13,18 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
-    fun getSubscription(subscriptionId: String, userId: String): Subscription =
+    fun getSubscription(subscriptionId: String, userId: Long): Subscription =
         SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?.toSubscription()
             ?: throw NotFoundException("Subscription $subscriptionId not found")
 
-    fun getSubscriptions(userId: String): List<Subscription> = SubscriptionEntity.find {
+    fun getSubscriptions(userId: Long): List<Subscription> = SubscriptionEntity.find {
         SubscriptionTable.userId eq userId
     }.map {
         it.toSubscription()
     }
 
-    fun postSubscriptions(request: SubscriptionRequest, userId: String): Subscription {
+    fun postSubscriptions(request: SubscriptionRequest, userId: Long): Subscription {
         dashboardsConfig.validateIsValidOrganism(request.organism)
 
         return SubscriptionEntity
@@ -40,14 +40,14 @@ class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
             .toSubscription()
     }
 
-    fun deleteSubscription(subscriptionId: String, userId: String) {
+    fun deleteSubscription(subscriptionId: String, userId: Long) {
         val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?: throw NotFoundException("Subscription $subscriptionId not found")
 
         subscription.delete()
     }
 
-    fun putSubscription(subscriptionId: String, subscriptionUpdate: SubscriptionUpdate, userId: String): Subscription {
+    fun putSubscription(subscriptionId: String, subscriptionUpdate: SubscriptionUpdate, userId: Long): Subscription {
         subscriptionUpdate.organism?.also { dashboardsConfig.validateIsValidOrganism(it) }
 
         val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
