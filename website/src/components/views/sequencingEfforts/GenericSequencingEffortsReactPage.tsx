@@ -48,6 +48,7 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
                     pageState={pageState}
                     setPageState={setPageState}
                     enableAdvancedQueryFilter={isStaging}
+                    lapisUrl={organismsConfig[organism].lapis.url}
                 />
             }
             dataDisplay={

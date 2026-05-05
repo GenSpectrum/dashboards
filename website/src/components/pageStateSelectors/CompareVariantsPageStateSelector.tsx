@@ -15,11 +15,13 @@ export function CompareVariantsPageStateSelector({
     pageState,
     setPageState,
     enableAdvancedQueryFilter,
+    lapisUrl,
 }: {
     view: GenericCompareVariantsView<OrganismConstants>;
     pageState: CompareVariantsData;
     setPageState: Dispatch<SetStateAction<CompareVariantsData>>;
     enableAdvancedQueryFilter: boolean;
+    lapisUrl: string;
 }) {
     const [draftPageState, setDraftPageState] = useState(pageState);
     useEffect(() => setDraftPageState(pageState), [pageState]);
@@ -50,6 +52,7 @@ export function CompareVariantsPageStateSelector({
                             }));
                         }}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>
@@ -67,6 +70,7 @@ export function CompareVariantsPageStateSelector({
                         }}
                         lapisFilter={currentLapisFilter}
                         enableAdvancedQueryFilter={enableAdvancedQueryFilter}
+                        lapisUrl={lapisUrl}
                     />
                 </Inset>
             </div>

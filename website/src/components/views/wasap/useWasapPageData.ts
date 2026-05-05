@@ -189,10 +189,7 @@ async function fetchCollectionModeData(
     }
 
     // Parse all variant queries through LAPIS
-    const parseResults = await parseQuery(
-        config.lapisBaseUrl,
-        variantData.map((vd) => vd.queryString),
-    );
+    const parseResults = await parseQuery(config.lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
 
     // Process results and validate
     const queries: {

@@ -1,0 +1,40 @@
+---
+import { getSession } from 'auth-astro/server';
+
+import NotLoggedIn from '../../../components/auth/NotLoggedIn.astro';
+import { CollectionCreate } from '../../../components/collections/create/CollectionCreate';
+import { getDashboardsConfig } from '../../../config';
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { organismConfig, organismSchema } from '../../../types/Organism';
+import { Page } from '../../../types/pages';
+
+const { organism } = Astro.params;
+
+const parsedOrganism = organismSchema.safeParse(organism);
+if (!parsedOrganism.success) {
+    return Astro.redirect('/404');
+}
+
+const orgConfig = organismConfig[parsedOrganism.data];
+const session = await getSession(Astro.request);
+const config = getDashboardsConfig();
+---
+
+<ContaineredPageLayout
+    title='New collection'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Collections', href: Page.collectionsOverview },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
+        { name: 'New collection', href: Page.createCollection(parsedOrganism.data) },
+    ]}
+>
+    {
+        session?.user?.id !== undefined ? (
+            <CollectionCreate client:only='react' organism={parsedOrganism.data} config={config} />
+        ) : (
+            <NotLoggedIn />
+        )
+    }
+</ContaineredPageLayout>

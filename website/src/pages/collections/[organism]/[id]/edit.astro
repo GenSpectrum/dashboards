@@ -1,0 +1,77 @@
+---
+import { getSession } from 'auth-astro/server';
+
+import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
+import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
+import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
+import { getDashboardsConfig, getBackendHost } from '../../../../config';
+import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { getInstanceLogger } from '../../../../logger.ts';
+import { organismConfig, organismSchema } from '../../../../types/Organism';
+import { Page } from '../../../../types/pages';
+import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
+
+const logger = getInstanceLogger('CollectionEditPage');
+
+const { organism, id } = Astro.params;
+
+const parsedOrganism = organismSchema.safeParse(organism);
+if (!parsedOrganism.success) {
+    return Astro.redirect('/404');
+}
+
+if (id === undefined) {
+    return Astro.redirect('/404');
+}
+
+const orgConfig = organismConfig[parsedOrganism.data];
+const session = await getSession(Astro.request);
+const config = getDashboardsConfig();
+
+let collection;
+if (session?.user?.id !== undefined) {
+    try {
+        collection = await new BackendService(getBackendHost()).getCollection({ id });
+        if (String(session.user.id) !== collection.ownedBy) {
+            return Astro.redirect('/404');
+        }
+    } catch (error) {
+        if (error instanceof BackendError && error.status === 404) {
+            return Astro.redirect('/404');
+        }
+        logger.error(`Failed to fetch collection ${id}: ${getErrorLogMessage(error)}`);
+        return new Response(null, { status: 500 });
+    }
+}
+
+const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` : `Collection #${id}`;
+---
+
+<ContaineredPageLayout
+    title='Edit collection'
+    breadcrumbs={[
+        ...defaultBreadcrumbs,
+        { name: 'Collections', href: Page.collectionsOverview },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
+        { name: collectionTitle, href: Page.viewCollection(parsedOrganism.data, id) },
+        { name: 'Edit', href: Page.editCollection(parsedOrganism.data, id) },
+    ]}
+>
+    {
+        session?.user?.id !== undefined ? (
+            <CollectionEdit
+                client:only='react'
+                organism={parsedOrganism.data}
+                id={id}
+                config={config}
+                collection={
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- collection is always defined here: fetched successfully or we returned 404/500 above
+                    collection!
+                }
+            />
+        ) : (
+            <NotLoggedIn />
+        )
+    }
+</ContaineredPageLayout>

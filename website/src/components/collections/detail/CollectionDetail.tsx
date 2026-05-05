@@ -26,10 +26,12 @@ function CollectionDetailInner({
     organism,
     collection,
     lapisConfig,
+    isOwner,
 }: {
     organism: Organism;
     collection: Collection;
     lapisConfig: LapisConfig;
+    isOwner: boolean;
 }) {
     const organismName = organismConfig[organism].label;
     const dateFrom30 = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
@@ -38,10 +40,20 @@ function CollectionDetailInner({
     return (
         <div className='flex flex-col gap-4'>
             <div>
-                <PageHeadline>
-                    <span className='mr-2 font-normal text-gray-400'>#{collection.id}</span>
-                    {collection.name}
-                </PageHeadline>
+                <div className='flex items-start justify-between gap-4'>
+                    <PageHeadline>
+                        <span className='mr-2 font-normal text-gray-400'>#{collection.id}</span>
+                        {collection.name}
+                    </PageHeadline>
+                    {isOwner && (
+                        <a
+                            href={Page.editCollection(organism, String(collection.id))}
+                            className='btn btn-sm mt-1 shrink-0'
+                        >
+                            Edit
+                        </a>
+                    )}
+                </div>
                 {collection.description !== null && <p className='mt-1 text-gray-500'>{collection.description}</p>}
                 <p className='mt-1 text-sm text-gray-500'>
                     {organismName} collection owned by {collection.ownedBy}
