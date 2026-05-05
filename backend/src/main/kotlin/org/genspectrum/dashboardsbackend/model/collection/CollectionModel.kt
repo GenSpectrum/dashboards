@@ -30,7 +30,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         Instant.fromEpochMilliseconds(toEpochMilliseconds())
     }
 
-    fun getCollections(userId: String?, organism: String?): List<Collection> {
+    fun getCollections(userId: Long?, organism: String?): List<Collection> {
         if (organism != null) {
             dashboardsConfig.validateIsValidOrganism(organism)
             dashboardsConfig.validateCollectionsEnabled(organism)
@@ -81,7 +81,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         return entity.toCollection()
     }
 
-    fun createCollection(request: CollectionRequest, userId: String): Collection {
+    fun createCollection(request: CollectionRequest, userId: Long): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)
         dashboardsConfig.validateCollectionsEnabled(request.organism)
 
@@ -113,7 +113,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         )
     }
 
-    fun deleteCollection(id: Long, userId: String) {
+    fun deleteCollection(id: Long, userId: Long) {
         // Find with ownership check
         val entity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to delete it")
@@ -122,7 +122,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         entity.delete()
     }
 
-    fun putCollection(id: Long, update: CollectionUpdate, userId: String): Collection {
+    fun putCollection(id: Long, update: CollectionUpdate, userId: Long): Collection {
         val collectionEntity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to update it")
         dashboardsConfig.validateCollectionsEnabled(collectionEntity.organism)

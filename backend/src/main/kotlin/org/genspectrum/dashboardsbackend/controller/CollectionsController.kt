@@ -26,7 +26,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         description = "Returns collections filtered by optional userId and/or organism parameters.",
     )
     fun getCollections(
-        @RequestParam(required = false) userId: String?,
+        @RequestParam(required = false) userId: Long?,
         @RequestParam(required = false) organism: String?,
     ): List<Collection> = collectionModel.getCollections(
         userId = userId,
@@ -50,7 +50,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     )
     fun postCollection(
         @RequestBody collection: CollectionRequest,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Collection = collectionModel.createCollection(
         request = collection,
         userId = userId,
@@ -65,7 +65,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     fun putCollection(
         @RequestBody collection: CollectionUpdate,
         @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Collection = collectionModel.putCollection(id, collection, userId)
 
     @DeleteMapping("/collections/{id}")
@@ -76,6 +76,6 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     )
     fun deleteCollection(
         @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ) = collectionModel.deleteCollection(id, userId)
 }
