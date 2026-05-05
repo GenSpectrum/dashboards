@@ -105,6 +105,22 @@ describe('AdvancedQueryFilter', () => {
         await expect.element(getByTitle('Validating')).toBeVisible();
     });
 
+    // TODO: allowedFields - shows error when query references a disallowed metadata field
+    //   - mock a successful parse returning e.g. { type: 'StringEquals', column: 'host', value: 'Human' }
+    //   - render with allowedFields={['nextcladePangoLineage']}
+    //   - assert error icon is shown and message contains the disallowed field name and the allowed list
+    //   - assert onInput was NOT called
+
+    // TODO: allowedFields - does not show error when all referenced fields are in the allowed list
+    //   - mock a successful parse returning a Lineage filter on 'nextcladePangoLineage'
+    //   - render with allowedFields={['nextcladePangoLineage']}
+    //   - assert checkmark is shown and onInput was called with the query
+
+    // TODO: allowedFields - mutation-only query passes even with a restrictive allowedFields list
+    //   - mock a successful parse returning e.g. { type: 'NucleotideEquals', position: 123, symbol: 'A' }
+    //   - render with allowedFields={['nextcladePangoLineage']}
+    //   - assert checkmark is shown (no metadata columns referenced, so nothing to block)
+
     it('shows error icon with network error tooltip when LAPIS is unreachable', async ({ routeMockers }) => {
         routeMockers.lapis.mockLapisDown();
 
