@@ -2,6 +2,7 @@ import { describe, expect, it as itVitest, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { VariantEditor } from './VariantEditor.tsx';
+import { DUMMY_LAPIS_URL } from '../../../../routeMocker.ts';
 import { it } from '../../../../test-extend.ts';
 import type { VariantUpdate } from '../../../types/Collection.ts';
 
@@ -24,6 +25,7 @@ describe('VariantEditor', () => {
                 onRemove={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
@@ -42,6 +44,7 @@ describe('VariantEditor', () => {
                 onRemove={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
@@ -57,6 +60,7 @@ describe('VariantEditor', () => {
                 onRemove={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
@@ -76,6 +80,7 @@ describe('VariantEditor', () => {
                 onRemove={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
@@ -95,6 +100,7 @@ describe('VariantEditor', () => {
                 onRemove={vi.fn()}
                 canRemove={true}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
@@ -114,6 +120,7 @@ describe('VariantEditor', () => {
                 onRemove={onRemove}
                 canRemove={true}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
@@ -133,6 +140,7 @@ describe('VariantEditor', () => {
                 onRemove={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
             />,
         );
 
