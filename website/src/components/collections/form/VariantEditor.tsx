@@ -1,6 +1,7 @@
 import { memo, useCallback, useRef } from 'react';
 
 import type { FilterObject, VariantUpdate } from '../../../types/Collection.ts';
+import { AdvancedQueryFilter } from '../../genspectrum/AdvancedQueryFilter.tsx';
 import { GsLineageFilter } from '../../genspectrum/GsLineageFilter.tsx';
 import { GsMutationFilter } from '../../genspectrum/GsMutationFilter.tsx';
 
@@ -11,6 +12,7 @@ type Props = {
     onRemove: (index: number) => void;
     canRemove?: boolean;
     lineageFields: string[];
+    lapisUrl: string;
 };
 
 // Memoized to prevent re-rendering all variant cards when only one changes in the parent list.
@@ -21,6 +23,7 @@ export const VariantEditor = memo(function VariantEditor({
     onRemove,
     canRemove = true,
     lineageFields,
+    lapisUrl,
 }: Props) {
     const variantRef = useRef(variant);
     variantRef.current = variant;
@@ -75,7 +78,13 @@ export const VariantEditor = memo(function VariantEditor({
 
             <div className='col-span-2 flex flex-col gap-4'>
                 {variant.type === 'query' ? (
-                    <QueryVariantFields variant={variant} onChange={(v) => onChange(index, v)} />
+                    <AdvancedQueryFilter
+                        enabled
+                        lapisUrl={lapisUrl}
+                        value={variant.countQuery}
+                        allowedFields={lineageFields.length > 0 ? lineageFields : undefined}
+                        onInput={(newValue) => onChange(index, { ...variant, countQuery: newValue ?? '' })}
+                    />
                 ) : (
                     <MutationListVariantFields
                         filterObject={variant.filterObject}
@@ -108,26 +117,6 @@ export const VariantEditor = memo(function VariantEditor({
         </div>
     );
 });
-
-function QueryVariantFields({
-    variant,
-    onChange,
-}: {
-    variant: Extract<VariantUpdate, { type: 'query' }>;
-    onChange: (v: VariantUpdate) => void;
-}) {
-    return (
-        <div className='flex flex-col'>
-            <label className='label'>Query</label>
-            <textarea
-                className='textarea textarea-bordered w-full max-w-xl font-mono text-sm'
-                placeholder='LAPIS filter expression for counting sequences matching this variant.'
-                value={variant.countQuery}
-                onChange={(e) => onChange({ ...variant, countQuery: e.currentTarget.value })}
-            />
-        </div>
-    );
-}
 
 // Memoized because GsMutationFilter is expensive to re-render. Relies on handleFilterObjectChange
 // being stable (via useCallback) in the parent — otherwise memo would have no effect.

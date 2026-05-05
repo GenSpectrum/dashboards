@@ -115,6 +115,7 @@ export function CollectionForm({
                                 onRemove={removeVariant}
                                 canRemove={variants.length > 1}
                                 lineageFields={lineageFields}
+                                lapisUrl={lapisUrl}
                             />
                         ))}
                         <button type='button' className='btn btn-sm w-full' onClick={addVariant}>
