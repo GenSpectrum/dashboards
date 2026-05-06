@@ -27,28 +27,23 @@ const SEED_COLLECTION = {
 };
 
 let collectionId: number | undefined;
-let userId: number | undefined;
+let userId: number;
 
 function getCollectionId(): number {
     if (collectionId === undefined) throw new Error('collectionId was not set in beforeAll');
     return collectionId;
 }
 
-function getUserId(): number {
-    if (userId === undefined) throw new Error('userId was not set in beforeAll');
-    return userId;
-}
-
 test.beforeAll(async ({ request }) => {
     userId = await syncUser(request, E2E_GITHUB_ID);
-    collectionId = await createCollection(request, getUserId(), SEED_COLLECTION);
+    collectionId = await createCollection(request, userId, SEED_COLLECTION);
 });
 
 test.afterAll(async ({ request }) => {
     if (collectionId === undefined) {
         return;
     }
-    await deleteCollection(request, collectionId, getUserId());
+    await deleteCollection(request, collectionId, userId);
 });
 
 test.describe('New collection page', () => {
@@ -105,7 +100,7 @@ test.describe('New collection page', () => {
         const url = authenticatedCollectionFormPage.page.url();
         const id = /\/collections\/\w+\/(\d+)$/.exec(url)?.[1];
         if (id !== undefined) {
-            await deleteCollection(request, Number(id), getUserId());
+            await deleteCollection(request, Number(id), userId);
         }
     });
 });

@@ -22,5 +22,5 @@ const config = getDashboardsConfig();
         },
     ]}
 >
-    {Astro.locals.user !== null ? <SubscriptionsCreate config={config} client:only='react' /> : <NotLoggedIn />}
+    {Astro.locals.user !== undefined ? <SubscriptionsCreate config={config} client:only='react' /> : <NotLoggedIn />}
 </SubscriptionPageLayout>

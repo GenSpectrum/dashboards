@@ -77,6 +77,7 @@ export async function setupAuthCookie(page: Page, name: string): Promise<void> {
                 createdAt: now.toISOString(),
                 updatedAt: now.toISOString(),
                 githubId: E2E_GITHUB_ID,
+                gsUserId: '1',
             },
             updatedAt: now.getTime(),
             version: '1',
