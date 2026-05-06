@@ -23,16 +23,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(CollectionsClient::class)
+@Import(CollectionsClient::class, UsersClient::class)
 class CollectionsGetTest(
     @param:Autowired private val collectionsClient: CollectionsClient,
     @param:Autowired private val mockMvc: MockMvc,
+    @param:Autowired private val usersClient: UsersClient,
 ) {
 
     @Test
     fun `GIVEN collections for multiple users WHEN getting collections THEN users get separate collections`() {
-        val userA = getNewUserId()
-        val userB = getNewUserId()
+        val userA = usersClient.createUser()
+        val userB = usersClient.createUser()
 
         val collectionA = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "User A Collection"),
@@ -55,8 +56,8 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN multiple collections WHEN getting all THEN returns all`() {
-        val userA = getNewUserId()
-        val userB = getNewUserId()
+        val userA = usersClient.createUser()
+        val userB = usersClient.createUser()
 
         val covidCollectionA = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "Covid A", organism = KnownTestOrganisms.Covid.name),
@@ -80,8 +81,8 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN collections for multiple users WHEN getting by userId THEN returns only that user's collections`() {
-        val userA = getNewUserId()
-        val userB = getNewUserId()
+        val userA = usersClient.createUser()
+        val userB = usersClient.createUser()
 
         val collectionA = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User A"), userA)
         val collectionB = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User B"), userB)
@@ -94,7 +95,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN collection with both variant types WHEN getting collections THEN type field is present on variants`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         collectionsClient.getCollectionsRaw(userId = userId)
@@ -106,7 +107,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN user has no collections WHEN getting collections for user THEN returns empty array`() {
-        val nonexistentUserId = getNewUserId()
+        val nonexistentUserId = usersClient.createUser()
 
         val collections = collectionsClient.getCollections(userId = nonexistentUserId)
 
@@ -115,7 +116,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN covid and mpox collections WHEN getting by organism THEN returns only that organism's collections`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
 
         val covidCollection = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "Covid", organism = KnownTestOrganisms.Covid.name),
@@ -141,8 +142,8 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN multiple collections WHEN filtering by userId AND organism THEN returns subset`() {
-        val userA = getNewUserId()
-        val userB = getNewUserId()
+        val userA = usersClient.createUser()
+        val userB = usersClient.createUser()
 
         val covidCollectionA = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "Covid A", organism = KnownTestOrganisms.Covid.name),
@@ -169,7 +170,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN collections WHEN filtering by userId and organism with no matches THEN returns empty array`() {
-        val userA = getNewUserId()
+        val userA = usersClient.createUser()
         collectionsClient.postCollection(
             dummyCollectionRequest.copy(organism = KnownTestOrganisms.Covid.name),
             userA,
@@ -182,7 +183,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN collection with variants WHEN getting collection THEN all variant fields are present`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val collections = collectionsClient.getCollections(userId = userId)
@@ -208,7 +209,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN both variant types WHEN getting collection THEN types are discriminated`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val collections = collectionsClient.getCollections(userId = userId)
@@ -226,7 +227,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN collection exists WHEN getting collection by ID THEN returns collection with all fields and variants`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val retrievedCollection = collectionsClient.getCollection(createdCollection.id)
@@ -241,7 +242,7 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN different user's collection WHEN getting by ID THEN returns (public access)`() {
-        val userA = getNewUserId()
+        val userA = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "User A Collection"),
             userA,

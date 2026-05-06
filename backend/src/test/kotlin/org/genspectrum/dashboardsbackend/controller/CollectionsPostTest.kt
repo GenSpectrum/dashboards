@@ -28,15 +28,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(CollectionsClient::class)
+@Import(CollectionsClient::class, UsersClient::class)
 class CollectionsPostTest(
     @param:Autowired private val collectionsClient: CollectionsClient,
     @param:Autowired private val mockMvc: MockMvc,
+    @param:Autowired private val usersClient: UsersClient,
 ) {
 
     @Test
     fun `WHEN creating collection THEN createdAt and updatedAt are set`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         assertThat(createdCollection.createdAt, notNullValue())
@@ -60,7 +61,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with createdAt in body THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         mockMvc.perform(
             post("/collections?userId=$userId")
                 .content("""{"name":"Test","organism":"Covid","variants":[],"createdAt":"2000-01-01T00:00:00Z"}""")
@@ -70,7 +71,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with updatedAt in body THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         mockMvc.perform(
             post("/collections?userId=$userId")
                 .content("""{"name":"Test","organism":"Covid","variants":[],"updatedAt":"2000-01-01T00:00:00Z"}""")
@@ -80,7 +81,7 @@ class CollectionsPostTest(
 
     @Test
     fun `GIVEN collection with variants WHEN creating THEN returns with generated IDs`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         assertThat(createdCollection.id, notNullValue())
@@ -95,7 +96,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with only query variants THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val request = dummyCollectionRequest.copy(
             variants = listOf(dummyQueryVariantRequest),
         )
@@ -108,7 +109,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with only mutation list variants THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val request = dummyCollectionRequest.copy(
             variants = listOf(dummyFilterObjectVariantRequest),
         )
@@ -121,7 +122,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with no variants THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val request = dummyCollectionRequest.copy(variants = emptyList())
 
         val createdCollection = collectionsClient.postCollection(request, userId)
@@ -131,7 +132,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with unknown organism THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         collectionsClient.postCollectionRaw(dummyCollectionRequest.copy(organism = "unknown organism"), userId)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.detail").value("Organism 'unknown organism' is not supported"))
@@ -139,7 +140,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection for organism with collections disabled THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         collectionsClient.postCollectionRaw(
             dummyCollectionRequest.copy(organism = ORGANISM_WITHOUT_COLLECTIONS),
             userId,
@@ -150,7 +151,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating variant with lineage filter THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val variantWithLineage = VariantRequest.FilterObjectVariantRequest(
             name = "BA.2 lineage",
             description = "BA.2 variant",
@@ -171,7 +172,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating variant with invalid lineage field THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val variantWithInvalidLineage = VariantRequest.FilterObjectVariantRequest(
             name = "Invalid lineage",
             description = "Has invalid lineage field",
@@ -190,7 +191,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating variant with multiple lineage filters THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val variantWithMultipleLineages = VariantRequest.FilterObjectVariantRequest(
             name = "Multiple lineages",
             description = "Has multiple lineage filters",
@@ -211,7 +212,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating variant with only aminoAcidMutations THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val variantWithOnlyAaMutations = VariantRequest.FilterObjectVariantRequest(
             name = "Only AA mutations",
             description = "Only has amino acid mutations",
@@ -230,7 +231,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating variant with insertions THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val variantWithInsertions = VariantRequest.FilterObjectVariantRequest(
             name = "With insertions",
             description = "Has insertions",
@@ -251,7 +252,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating variant with non-string extra property value THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val body = """
             {
                 "name": "Test",
@@ -277,7 +278,7 @@ class CollectionsPostTest(
 
     @Test
     fun `WHEN creating collection with lineage filter in filters field THEN succeeds`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val body = """
             {
                 "name": "Test",

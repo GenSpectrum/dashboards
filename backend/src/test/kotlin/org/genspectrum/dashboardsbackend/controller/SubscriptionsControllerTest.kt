@@ -21,17 +21,17 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.*
-
-fun getNewUserId(): String = UUID.randomUUID().toString()
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(SubscriptionsClient::class)
-class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClient: SubscriptionsClient) {
+@Import(SubscriptionsClient::class, UsersClient::class)
+class SubscriptionsControllerTest(
+    @param:Autowired private val subscriptionsClient: SubscriptionsClient,
+    @param:Autowired private val usersClient: UsersClient,
+) {
     @Test
     fun `GIVEN I created a subscription WHEN getting subscriptions THEN contains created subscription`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         val subscriptions = subscriptionsClient.getSubscriptions(userId)
@@ -41,10 +41,10 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscriptions for multiple users WHEN getting subscriptions THEN contains subscriptions of user`() {
-        val otherUserId = getNewUserId()
+        val otherUserId = usersClient.createUser()
         val otherCreatedSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, otherUserId)
 
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         val subscriptions = subscriptionsClient.getSubscriptions(userId)
@@ -55,7 +55,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `WHEN getting subscriptions with invalid UUID THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.getSubscriptionRaw("this-is-not-a-uuid", userId)
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -64,7 +64,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `WHEN getting subscriptions that does not exist THEN returns 404`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.getSubscriptionRaw("00000000-0000-0000-0000-000000000000", userId)
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -73,7 +73,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscription exists WHEN getting subscription THEN returns its data`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         val subscription = subscriptionsClient.getSubscription(createdSubscription.id, userId)
@@ -83,10 +83,10 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscription exists for another user WHEN getting subscription THEN returns 404`() {
-        val otherUserId = getNewUserId()
+        val otherUserId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, otherUserId)
 
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.getSubscriptionRaw(createdSubscription.id, userId)
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -95,7 +95,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `WHEN I create a subscription for unknown organism THEN returns bad request`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.postSubscriptionRaw(dummySubscriptionRequest.copy(organism = "unknown organism"), userId)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.detail").value("Organism 'unknown organism' is not supported"))
@@ -103,7 +103,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `WHEN I delete a subscription that does not exist THEN returns 404`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.deleteSubscriptionRaw("00000000-0000-0000-0000-000000000000", userId)
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -112,10 +112,10 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `WHEN I delete a subscription that exist for other user THEN returns 404`() {
-        val otherUserId = getNewUserId()
+        val otherUserId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, otherUserId)
 
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.deleteSubscriptionRaw(createdSubscription.id, userId)
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -124,7 +124,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `WHEN I delete a subscription with invalid UUID THEN return 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.deleteSubscriptionRaw("this-is-not-a-uuid", userId)
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -133,7 +133,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscription exists WHEN I delete it THEN it does not exist anymore`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         subscriptionsClient.deleteSubscriptionRaw(createdSubscription.id, userId)
@@ -150,7 +150,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscription exists WHEN I edit all fields THEN it is updated`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         val updatedSubscriptionRequest = SubscriptionUpdate(
@@ -184,7 +184,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscription exists WHEN I change organism to unknown organism THEN rejects update`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         subscriptionsClient.putSubscriptionRaw(
@@ -202,7 +202,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN subscription exists WHEN I edit one entry THEN it is updated`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
         val updatedSubscriptionRequest = SubscriptionUpdate(
@@ -224,10 +224,10 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN a subscription from another user WHEN I edit it THEN returns 404`() {
-        val otherUserId = getNewUserId()
+        val otherUserId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, otherUserId)
 
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.putSubscriptionRaw(SubscriptionUpdate(), createdSubscription.id, userId)
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -236,7 +236,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN a subscription with invalid UUID WHEN I edit it THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.putSubscriptionRaw(SubscriptionUpdate(), "this-is-not-a-uuid", userId)
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -245,7 +245,7 @@ class SubscriptionsControllerTest(@param:Autowired private val subscriptionsClie
 
     @Test
     fun `GIVEN no subscription WHEN I edit it THEN returns 404`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         subscriptionsClient.putSubscriptionRaw(SubscriptionUpdate(), "00000000-0000-0000-0000-000000000000", userId)
             .andExpect(status().isNotFound)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))

@@ -24,15 +24,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(CollectionsClient::class)
+@Import(CollectionsClient::class, UsersClient::class)
 class CollectionsPutTest(
     @param:Autowired private val collectionsClient: CollectionsClient,
     @param:Autowired private val mockMvc: MockMvc,
+    @param:Autowired private val usersClient: UsersClient,
 ) {
 
     @Test
     fun `WHEN owner updates all fields THEN collection is updated`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val updatedVariants = listOf(
@@ -61,7 +62,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN owner updates only name THEN only name changes`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val originalVariantCount = createdCollection.variants.size
 
@@ -76,7 +77,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN owner sends empty update THEN name, description and variants are unchanged`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val updated = collectionsClient.putCollection(CollectionUpdate(), createdCollection.id, userId)
@@ -89,7 +90,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN collection is updated THEN updatedAt advances but createdAt stays the same`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val updated = collectionsClient.putCollection(
@@ -104,7 +105,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN updating collection with createdAt in body THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         mockMvc.perform(
@@ -116,7 +117,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN updating collection with updatedAt in body THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         mockMvc.perform(
@@ -128,7 +129,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN owner adds new variant without ID THEN variant is created`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val originalVariantCount = createdCollection.variants.size
 
@@ -176,8 +177,8 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN non-owner updates collection THEN returns 403 forbidden`() {
-        val owner = getNewUserId()
-        val nonOwner = getNewUserId()
+        val owner = usersClient.createUser()
+        val nonOwner = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, owner)
 
         collectionsClient.putCollectionRaw(
@@ -192,7 +193,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN owner updates existing variant with ID THEN variant is updated in place`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val firstVariant = createdCollection.variants[0] as Variant.QueryVariant
 
@@ -217,7 +218,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN owner omits variant from update THEN variant is deleted`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val originalVariants = listOf(
             VariantRequest.QueryVariantRequest(
                 name = "Variant 1",
@@ -248,7 +249,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN updating with invalid lineage fields THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         val invalidVariant = VariantUpdate.FilterObjectVariantUpdate(
@@ -269,7 +270,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN updating variant type THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val firstVariant = createdCollection.variants[0] as Variant.QueryVariant
 
@@ -291,7 +292,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN updating non-existent collection THEN returns 403`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val nonExistentId = 999999L
 
         collectionsClient.putCollectionRaw(CollectionUpdate(name = "Updated Name"), nonExistentId, userId)
@@ -302,7 +303,7 @@ class CollectionsPutTest(
 
     @Test
     fun `WHEN updating with variant ID from different collection THEN returns 400`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val collection1 = collectionsClient.postCollection(dummyCollectionRequest, userId)
         val collection2 = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "Collection 2"),
