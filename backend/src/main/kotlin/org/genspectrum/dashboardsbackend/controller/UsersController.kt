@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.genspectrum.dashboardsbackend.api.PublicUser
 import org.genspectrum.dashboardsbackend.api.User
 import org.genspectrum.dashboardsbackend.api.UserSyncRequest
 import org.genspectrum.dashboardsbackend.model.user.UserModel
@@ -25,5 +26,5 @@ class UsersController(private val userModel: UserModel) {
         summary = "Get user by internal ID",
         description = "Returns public user info by internal UUID.",
     )
-    fun getUser(@PathVariable id: Long): User = userModel.getUser(id)
+    fun getUser(@PathVariable id: Long): PublicUser = userModel.getUser(id)
 }
