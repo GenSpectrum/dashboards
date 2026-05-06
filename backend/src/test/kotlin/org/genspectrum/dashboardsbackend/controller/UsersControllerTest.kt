@@ -62,7 +62,9 @@ class UsersControllerTest(@param:Autowired private val usersClient: UsersClient)
 
     @Test
     fun `WHEN getting user by ID THEN returns public user info`() {
-        val created = usersClient.syncUser(UserSyncRequest(githubId = UUID.randomUUID().toString(), name = "Dave", email = null))
+        val created = usersClient.syncUser(
+            UserSyncRequest(githubId = UUID.randomUUID().toString(), name = "Dave", email = null),
+        )
 
         val fetched = usersClient.getUser(created.id)
 
