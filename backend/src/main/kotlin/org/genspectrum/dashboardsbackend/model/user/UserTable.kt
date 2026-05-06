@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.model.user
 
+import org.genspectrum.dashboardsbackend.api.PublicUser
 import org.genspectrum.dashboardsbackend.api.User
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
@@ -28,6 +29,8 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
     var email by UserTable.email
     var createdAt by UserTable.createdAt
     var updatedAt by UserTable.updatedAt
+
+    fun toPublicUser() = PublicUser(id = id.value, name = name)
 
     fun toUser() = User(
         id = id.value,

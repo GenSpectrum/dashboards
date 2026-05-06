@@ -12,3 +12,5 @@ data class User(
 )
 
 data class UserSyncRequest(val githubId: String, val name: String, val email: String?)
+
+data class PublicUser(val id: Long, val name: String)
