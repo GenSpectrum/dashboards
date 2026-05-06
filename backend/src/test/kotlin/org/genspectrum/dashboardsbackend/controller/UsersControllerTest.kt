@@ -4,6 +4,7 @@ import org.genspectrum.dashboardsbackend.api.UserSyncRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
