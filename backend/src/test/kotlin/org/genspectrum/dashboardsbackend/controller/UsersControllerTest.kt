@@ -4,7 +4,6 @@ import org.genspectrum.dashboardsbackend.api.UserSyncRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
-import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -62,15 +61,13 @@ class UsersControllerTest(@param:Autowired private val usersClient: UsersClient)
     }
 
     @Test
-    fun `WHEN getting user by ID THEN returns user`() {
-        val githubId = UUID.randomUUID().toString()
-        val created = usersClient.syncUser(UserSyncRequest(githubId = githubId, name = "Dave", email = null))
+    fun `WHEN getting user by ID THEN returns public user info`() {
+        val created = usersClient.syncUser(UserSyncRequest(githubId = UUID.randomUUID().toString(), name = "Dave", email = null))
 
         val fetched = usersClient.getUser(created.id)
 
         assertThat(fetched.id, equalTo(created.id))
         assertThat(fetched.name, equalTo("Dave"))
-        assertThat(fetched.githubId, equalTo(githubId))
     }
 
     @Test

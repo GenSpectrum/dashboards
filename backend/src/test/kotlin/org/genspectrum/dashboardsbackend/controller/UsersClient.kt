@@ -2,6 +2,7 @@ package org.genspectrum.dashboardsbackend.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.genspectrum.dashboardsbackend.api.PublicUser
 import org.genspectrum.dashboardsbackend.api.User
 import org.genspectrum.dashboardsbackend.api.UserSyncRequest
 import org.springframework.http.MediaType
@@ -26,7 +27,7 @@ class UsersClient(private val mockMvc: MockMvc, private val objectMapper: Object
 
     fun getUserRaw(id: Long): ResultActions = mockMvc.perform(get("/users/$id"))
 
-    fun getUser(id: Long): User = deserializeJsonResponse(
+    fun getUser(id: Long): PublicUser = deserializeJsonResponse(
         getUserRaw(id).andExpect(status().isOk),
     )
 
