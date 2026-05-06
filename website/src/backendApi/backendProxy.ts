@@ -15,7 +15,7 @@ const API_PATHNAME_LENGTH = '/api'.length;
  * in here, instead of in the backend.
  */
 export async function proxyToBackend(context: APIContext): Promise<Response> {
-    const userId = context.locals.user?.githubId;
+    const userId = context.locals.gsUserId;
 
     if (userId === undefined) {
         return getUnauthorizedResponse(context.request.url);
@@ -31,7 +31,7 @@ export async function proxyToBackendNoAuth(context: APIContext): Promise<Respons
     return proxyRequest(context.request, undefined);
 }
 
-async function proxyRequest(request: Request, userId: string | undefined): Promise<Response> {
+async function proxyRequest(request: Request, userId: number | undefined): Promise<Response> {
     const backendUrl = getBackendUrl(request, userId);
 
     try {
@@ -47,7 +47,7 @@ async function proxyRequest(request: Request, userId: string | undefined): Promi
     }
 }
 
-function getBackendUrl(request: Request, userId: string | undefined) {
+function getBackendUrl(request: Request, userId: number | undefined) {
     const backendEndpoint = new URL(request.url).pathname.slice(API_PATHNAME_LENGTH);
     const backendUrl = new URL(backendEndpoint, getBackendHost());
 
@@ -56,7 +56,7 @@ function getBackendUrl(request: Request, userId: string | undefined) {
     });
 
     if (userId !== undefined) {
-        backendUrl.searchParams.set('userId', userId);
+        backendUrl.searchParams.set('userId', String(userId));
     }
 
     return backendUrl;

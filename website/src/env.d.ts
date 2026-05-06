@@ -3,12 +3,13 @@
 
 declare namespace App {
     // Note: 'import {} from ""' syntax does not work in .d.ts files.
-    // We derive the User type from the auth config so that additionalFields (e.g. githubId) are included.
+    // We derive the User type from the auth config so that additionalFields (e.g. gsUserId) are included.
     type AuthUser = NonNullable<Awaited<ReturnType<(typeof import('./auth').auth)['api']['getSession']>>>['user'];
 
     interface Locals {
-        user: AuthUser | null;
-        session: import('better-auth').Session | null;
+        user: AuthUser | undefined;
+        session: import('better-auth').Session | undefined;
+        gsUserId: number | undefined;
     }
 }
 

@@ -4,6 +4,7 @@ import { z, type ZodSchema } from 'zod';
 import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
 import { collectionSchema, type CollectionRequest, type CollectionUpdate } from '../types/Collection.ts';
 import { type ProblemDetail, problemDetailSchema } from '../types/ProblemDetail.ts';
+import { publicUserSchema } from '../types/PublicUser.ts';
 import {
     type SubscriptionPutRequest,
     type SubscriptionRequest,
@@ -164,6 +165,10 @@ export class BackendService extends ApiService {
             url,
             schema: z.literal('').refine((_input): _input is never => true),
         });
+    }
+
+    public async getUser({ id }: { id: number }) {
+        return this.get({ url: `/users/${id}`, schema: publicUserSchema });
     }
 
     public async getCollections({ organism }: { organism?: string } = {}) {

@@ -26,8 +26,6 @@ if (id === undefined) {
 const orgConfig = organismConfig[parsedOrganism.data];
 const lapisConfig = getOrganismConfig(parsedOrganism.data).lapis;
 
-const currentUserId = Astro.locals.user?.githubId;
-
 let collection: Collection | undefined;
 
 try {
@@ -39,11 +37,29 @@ try {
     logger.error(`Failed to fetch collection ${id}: ${getErrorLogMessage(error)}`);
 }
 
-const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` : `Collection #${id}`;
-
-if (collection !== undefined && collection.organism !== parsedOrganism.data) {
+if (collection === undefined) {
     return Astro.redirect('/404');
 }
+
+// It's possible a collection with the ID exists, but the organism in the path is different.
+// In that case, we want to treat this as 'not found'.
+if (collection.organism !== parsedOrganism.data) {
+    return Astro.redirect('/404');
+}
+
+const collectionTitle = `#${id} ${collection.name}`;
+
+let ownerName = String(collection.ownedBy);
+try {
+    const owner = await new BackendService(getBackendHost()).getUser({ id: collection.ownedBy });
+    ownerName = owner.name;
+} catch (error) {
+    logger.warn(`Failed to fetch owner for collection ${id}: ${getErrorLogMessage(error)}`);
+}
+
+const currentUserId = Astro.locals.gsUserId;
+const userIsLoggedIn = currentUserId !== undefined;
+const userIsOwner = userIsLoggedIn && currentUserId === collection.ownedBy;
 ---
 
 <ContaineredPageLayout
@@ -61,7 +77,8 @@ if (collection !== undefined && collection.organism !== parsedOrganism.data) {
                 organism={parsedOrganism.data}
                 collection={collection}
                 lapisConfig={lapisConfig}
-                isOwner={currentUserId !== undefined && currentUserId === collection.ownedBy}
+                isOwner={userIsOwner}
+                ownerName={ownerName}
                 client:load
             />
         ) : (

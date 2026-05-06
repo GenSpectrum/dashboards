@@ -4,7 +4,6 @@ import { test } from '../e2e.fixture.ts';
 import { E2E_GITHUB_ID } from '../helpers/auth.ts';
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
-const USER_ID = E2E_GITHUB_ID;
 const ORGANISM = 'covid';
 
 const SEED_COLLECTION = {
@@ -28,6 +27,7 @@ const SEED_COLLECTION = {
 };
 
 let collectionId: number | undefined;
+let userId: number;
 
 function getCollectionId(): number {
     if (collectionId === undefined) throw new Error('collectionId was not set in beforeAll');
@@ -35,7 +35,14 @@ function getCollectionId(): number {
 }
 
 test.beforeAll(async ({ request }) => {
-    const response = await request.post(`${BACKEND_URL}/collections?userId=${USER_ID}`, {
+    const syncResponse = await request.post(`${BACKEND_URL}/users/sync`, {
+        data: { githubId: E2E_GITHUB_ID, name: 'e2e-test', email: null },
+    });
+    expect(syncResponse.status()).toBe(200);
+    const userBody = (await syncResponse.json()) as { id: number };
+    userId = userBody.id;
+
+    const response = await request.post(`${BACKEND_URL}/collections?userId=${userId}`, {
         data: SEED_COLLECTION,
     });
     expect(response.status()).toBe(201);
@@ -47,7 +54,7 @@ test.afterAll(async ({ request }) => {
     if (collectionId === undefined) {
         return;
     }
-    const response = await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${USER_ID}`);
+    const response = await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${userId}`);
     expect(response.status()).toBe(204);
 });
 
@@ -105,7 +112,7 @@ test.describe('New collection page', () => {
         const url = authenticatedCollectionFormPage.page.url();
         const id = /\/collections\/\w+\/(\d+)$/.exec(url)?.[1];
         if (id !== undefined) {
-            await request.delete(`${BACKEND_URL}/collections/${id}?userId=${USER_ID}`);
+            await request.delete(`${BACKEND_URL}/collections/${id}?userId=${userId}`);
         }
     });
 });
