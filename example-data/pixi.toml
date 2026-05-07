@@ -15,3 +15,13 @@ seed = "python seed.py"
 seed-lineages = "python seed.py covid-pango-lineages"
 seed-all-lineages = "python seed.py covid-pango-lineages --limit 0"
 seed-resistance = "python seed.py covid-resistance-mutations"
+
+[feature.test.pypi-dependencies]
+pytest = "*"
+responses = "*"
+
+[feature.test.tasks]
+test = "pytest"
+
+[environments]
+test = { features = ["test"] }
