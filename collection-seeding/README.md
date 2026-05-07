@@ -1,4 +1,4 @@
-# example-data
+# collection-seeding
 
 Seeds the backend with example collections:
 
@@ -6,6 +6,8 @@ Seeds the backend with example collections:
 - **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
 
 The script is idempotent — re-running it will create new collections or update existing ones (matched by name).
+
+Collections are seeded under the [genspectrum-bot](https://github.com/genspectrum-bot) account (GitHub ID `218605180`), which is upserted automatically via `POST /users/sync` before seeding.
 
 ## Via Docker Compose
 
