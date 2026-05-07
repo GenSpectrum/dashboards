@@ -1,6 +1,9 @@
 # example-data
 
-Seeds the backend with example collections (resistance mutation data for 3CLpro, RdRp, and Spike mAb).
+Seeds the backend with example collections:
+
+- **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
+- **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
 
 The script is idempotent — re-running it will skip collections that already exist.
 
@@ -12,16 +15,27 @@ The seeder runs automatically as part of Docker Compose:
 BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
 ```
 
-## Running locally by hand
+## Running locally
 
-Requires a current version of NodeJS. No `npm install` needed.
+Requires [pixi](https://pixi.sh). Install dependencies once:
 
 ```bash
-# Local backend running on :8080
-node seed.mjs
-
-# Local backend on a different port
-node seed.mjs --url http://localhost:9021
+pixi install
 ```
 
-Run `node seed.mjs --help` for all options.
+Then use the provided tasks:
+
+```bash
+pixi run seed                    # all sources (resistance mutations + first 10 lineages)
+pixi run seed-resistance         # resistance mutations only
+pixi run seed-lineages           # pango lineages (first 10)
+pixi run seed-all-lineages       # all ~4976 pango lineages
+```
+
+To target a different backend:
+
+```bash
+pixi run seed --url http://localhost:9021
+```
+
+Run `pixi run seed --help` or `pixi run seed <source> --help` for all options.
