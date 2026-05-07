@@ -9,7 +9,7 @@ RETRY_ATTEMPTS = 30
 RETRY_DELAY_S = 2
 
 
-SYNC_GITHUB_ID = "9999999999"
+SYNC_GITHUB_ID = "218605180"  # https://github.com/genspectrum-bot
 SYNC_NAME = "GenSpectrum Team"
 
 
