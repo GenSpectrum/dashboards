@@ -4,6 +4,8 @@ Three collections covering 3CLpro, RdRp, and Spike mAb resistance mutations
 as per the Stanford Coronavirus Antiviral & Resistance database.
 """
 
+from models import Collection, Variant
+
 NAME = "covid-resistance-mutations"
 
 CLPRO_MUTATIONS = [
@@ -90,7 +92,7 @@ def _mature_name(mutation: str, set_name: str, offset: int) -> str:
     return f"{set_name}:{original_base}{position + offset}{new_base}"
 
 
-def _build_variants(mutations: list[str], set_name: str, offset: int) -> list[dict]:
+def _build_variants(mutations: list[str], set_name: str, offset: int) -> list[Variant]:
     return [
         {
             "type": "filterObject",
@@ -101,7 +103,7 @@ def _build_variants(mutations: list[str], set_name: str, offset: int) -> list[di
     ]
 
 
-def get_collections(limit: int = 0) -> list[dict]:
+def get_collections(limit: int = 0) -> list[Collection]:
     return [
         {
             "name": "3CLpro resistance mutations",

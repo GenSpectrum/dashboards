@@ -5,6 +5,8 @@ Creates one collection per lineage, with nucleotide substitutions as variants.
 
 import requests
 
+from models import Collection, Variant
+
 NAME = "covid-pango-lineages"
 
 DATA_URL = (
@@ -13,14 +15,14 @@ DATA_URL = (
 )
 
 
-def _build_collection(entry: dict) -> dict:
-    lineage = entry["lineage"]
-    parent = entry.get("parent") or "—"
-    clade = entry.get("nextstrainClade") or "—"
-    date = entry.get("designationDate") or "unknown"
+def _build_collection(entry: dict) -> Collection:
+    lineage: str = entry["lineage"]
+    parent: str = entry.get("parent") or "—"
+    clade: str = entry.get("nextstrainClade") or "—"
+    date: str = entry.get("designationDate") or "unknown"
 
     subs = [s for s in entry.get("nucSubstitutions", []) if s]
-    variants = [
+    variants: list[Variant] = [
         {
             "type": "filterObject",
             "name": sub,
@@ -36,15 +38,15 @@ def _build_collection(entry: dict) -> dict:
         f"Designated: {date}."
     )
 
-    return {
-        "name": lineage,
-        "organism": "covid",
-        "description": description,
-        "variants": variants,
-    }
+    return Collection(
+        name=lineage,
+        organism="covid",
+        description=description,
+        variants=variants,
+    )
 
 
-def get_collections(limit: int = 0) -> list[dict]:
+def get_collections(limit: int = 0) -> list[Collection]:
     print(f"Fetching lineage data from {DATA_URL} ...")
     response = requests.get(DATA_URL, timeout=60)
     response.raise_for_status()
