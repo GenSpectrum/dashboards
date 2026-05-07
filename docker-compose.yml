@@ -42,7 +42,6 @@ services:
       - backend
     environment:
       BACKEND_URL: http://backend:8080
-      SEED_USER_ID: example-data-seeder
     restart: "no"
 
 volumes:
