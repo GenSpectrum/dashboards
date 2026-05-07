@@ -9,20 +9,32 @@ RETRY_ATTEMPTS = 30
 RETRY_DELAY_S = 2
 
 
+SYNC_GITHUB_ID = "9999999999"
+SYNC_NAME = "GenSpectrum Team"
+
+
 class BackendClient:
-    def __init__(self, base_url: str, user_id: str):
+    def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
-        self.user_id = user_id
+        self.user_id: int | None = None
         self._collections_url = f"{self.base_url}/collections"
 
+    def sync_user(self, github_id: str = SYNC_GITHUB_ID, name: str = SYNC_NAME, email: str | None = None) -> int:
+        """Upsert the seed user and store the returned internal id."""
+        body = {"githubId": github_id, "name": name, "email": email}
+        r = requests.post(f"{self.base_url}/users/sync", json=body, timeout=10)
+        if not r.ok:
+            raise RuntimeError(f"POST /users/sync failed: {r.status_code} {r.text}")
+        self.user_id = r.json()["id"]
+        return self.user_id
+
     def wait_for_backend(self, attempts: int = RETRY_ATTEMPTS, delay: float = RETRY_DELAY_S):
-        params = {"userId": self.user_id, "organism": "covid"}
+        """Poll until the backend is ready by repeatedly attempting user sync."""
         for attempt in range(1, attempts + 1):
             try:
-                r = requests.get(self._collections_url, params=params, timeout=5)
-                if r.ok or r.status_code == 404:
-                    return
-            except requests.RequestException:
+                self.sync_user()
+                return
+            except (requests.RequestException, RuntimeError):
                 pass
             print(f"Waiting for backend... (attempt {attempt}/{attempts})")
             time.sleep(delay)
