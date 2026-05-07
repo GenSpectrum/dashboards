@@ -25,11 +25,6 @@ def make_parser() -> argparse.ArgumentParser:
         help="Backend base URL (default: $BACKEND_URL or http://localhost:8080)",
     )
     parent.add_argument(
-        "--user-id",
-        default=os.environ.get("SEED_USER_ID", "example-data-seeder"),
-        help="User ID (default: $SEED_USER_ID or example-data-seeder)",
-    )
-    parent.add_argument(
         "--wait",
         action="store_true",
         default=not sys.stdout.isatty(),
@@ -94,11 +89,15 @@ def main():
     parser = make_parser()
     args = parser.parse_args()
 
-    client = BackendClient(args.url, args.user_id)
-    print(f"Seeding collections against {args.url} as user '{args.user_id}'...")
+    client = BackendClient(args.url)
+    print(f"Seeding collections against {args.url} ...")
 
     if args.wait:
-        client.wait_for_backend()
+        client.wait_for_backend()  # syncs user as part of polling
+    else:
+        client.sync_user()
+
+    print(f"Seeding as user id={client.user_id}.")
 
     lineage_limit = getattr(args, "limit", DEFAULT_LINEAGE_LIMIT)
 
