@@ -57,3 +57,9 @@ class BackendClient:
         if r.status_code != 201:
             raise RuntimeError(f"POST /collections failed: {r.status_code} {r.text}")
         return r.json()["id"]
+
+    def update_collection(self, collection_id: int, collection: dict) -> None:
+        params = {"userId": self.user_id}
+        r = requests.put(f"{self._collections_url}/{collection_id}", params=params, json=collection, timeout=10)
+        if not r.ok:
+            raise RuntimeError(f"PUT /collections/{collection_id} failed: {r.status_code} {r.text}")
