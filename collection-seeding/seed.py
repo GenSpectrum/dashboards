@@ -11,6 +11,7 @@ import os
 import sys
 
 from backend import BackendClient
+from models import Collection
 from sources import pango_lineages, resistance_mutations
 
 ALL_SOURCES = [resistance_mutations, pango_lineages]
@@ -60,7 +61,7 @@ def make_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def seed_source(client: BackendClient, source_name: str, collections: list[dict]):
+def seed_source(client: BackendClient, source_name: str, collections: list[Collection]) -> tuple[int, int]:
     print(f"\n[{source_name}]")
 
     organisms = {}
