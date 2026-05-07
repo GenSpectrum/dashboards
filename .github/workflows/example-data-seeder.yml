@@ -37,7 +37,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v7
         with:
-          context: ./example-data
+          context: ./collection-seeding
           tags: ${{ steps.dockerMetadata.outputs.tags }}
           cache-from: type=gha,scope=example-data-seeder-${{ github.ref }}
           cache-to: type=gha,mode=max,scope=example-data-seeder-${{ github.ref }}
