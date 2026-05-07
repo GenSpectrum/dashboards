@@ -5,7 +5,7 @@ Seeds the backend with example collections:
 - **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
 - **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
 
-The script is idempotent — re-running it will skip collections that already exist.
+The script is idempotent — re-running it will create new collections or update existing ones (matched by name).
 
 ## Via Docker Compose
 

@@ -68,21 +68,23 @@ def seed_source(client: BackendClient, source_name: str, collections: list[dict]
         organisms.setdefault(c["organism"], []).append(c)
 
     created = 0
-    skipped = 0
+    updated = 0
     for organism, org_collections in organisms.items():
         existing = client.fetch_existing_collections(organism)
-        existing_names = {c["name"] for c in existing}
+        existing_by_name = {c["name"]: c for c in existing}
         for collection in org_collections:
-            if collection["name"] in existing_names:
-                print(f"  SKIP  {collection['name']}")
-                skipped += 1
+            existing_entry = existing_by_name.get(collection["name"])
+            if existing_entry:
+                client.update_collection(existing_entry["id"], collection)
+                print(f"  UPDATE id={existing_entry['id']}  {collection['name']}")
+                updated += 1
             else:
                 col_id = client.create_collection(collection)
-                print(f"  OK    id={col_id}  {collection['name']}")
+                print(f"  CREATE id={col_id}  {collection['name']}")
                 created += 1
 
-    print(f"  Created: {created}, skipped: {skipped}.")
-    return created, skipped
+    print(f"  Created: {created}, updated: {updated}.")
+    return created, updated
 
 
 def main():
@@ -113,15 +115,15 @@ def main():
         ]
 
     total_created = 0
-    total_skipped = 0
+    total_updated = 0
     for source, kwargs in active:
         collections = source.get_collections(**kwargs)
-        c, s = seed_source(client, source.NAME, collections)
+        c, u = seed_source(client, source.NAME, collections)
         total_created += c
-        total_skipped += s
+        total_updated += u
 
     if len(active) > 1:
-        print(f"\nTotal — created: {total_created}, skipped: {total_skipped}.")
+        print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
 
 
 if __name__ == "__main__":
