@@ -19,9 +19,17 @@ type AdvancedQueryFilterProps = {
     onInput?: (newValue: string | undefined) => void;
     enabled: boolean;
     lapisUrl: string;
+    /**
+     * Tailwind classes controlling the direction of the validation error tooltip.
+     * Defaults to `'tooltip-left lg:tooltip-right'`.
+     *
+     * Common values: `tooltip-left`, `tooltip-right`, `tooltip-top`, `tooltip-bottom`.
+     * Responsive variants are also valid, e.g. `'tooltip-left lg:tooltip-right'`.
+     */
+    errorTooltipClass?: string;
 };
 
-export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl }) => {
+export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl, errorTooltipClass }) => {
     const [inputValue, setInputValue] = useState(value);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
@@ -94,17 +102,20 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
                 />
                 {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
                 {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
-                {isError && <ErrorIconWithTooltip message={validationState.message} />}
+                {isError && <ErrorIconWithTooltip message={validationState.message} tooltipClass={errorTooltipClass} />}
             </label>
         </div>
     );
 };
 
-const ErrorIconWithTooltip: FC<{ message: string }> = ({ message }) => {
+const ErrorIconWithTooltip: FC<{ message: string; tooltipClass?: string }> = ({
+    message,
+    tooltipClass = 'tooltip-left lg:tooltip-right',
+}) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className={`tooltip tooltip-left lg:tooltip-right z-1000 ${isOpen ? 'tooltip-open' : ''}`}>
+        <div className={`tooltip ${tooltipClass} z-1000 ${isOpen ? 'tooltip-open' : ''}`}>
             <div className='tooltip-content z-1000'>
                 <div className='flex items-start gap-1'>
                     <span>{message}</span>
