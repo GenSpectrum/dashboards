@@ -29,7 +29,13 @@ type AdvancedQueryFilterProps = {
     errorTooltipClass?: string;
 };
 
-export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl, errorTooltipClass }) => {
+export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
+    value,
+    onInput,
+    enabled,
+    lapisUrl,
+    errorTooltipClass,
+}) => {
     const [inputValue, setInputValue] = useState(value);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
