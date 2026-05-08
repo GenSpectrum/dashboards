@@ -33,7 +33,7 @@ const variantSchema = z.discriminatedUnion('type', [queryVariantSchema, filterOb
 export const collectionSchema = z.object({
     id: z.number(),
     name: z.string(),
-    ownedBy: z.string(),
+    ownedBy: z.number(),
     organism: z.string(),
     description: z.string().nullable(),
     variants: z.array(variantSchema),

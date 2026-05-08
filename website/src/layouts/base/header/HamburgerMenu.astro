@@ -14,7 +14,7 @@ const { forceLoggedOutState } = Astro.props;
 
 const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
 
-const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== null;
+const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== undefined;
 const showSubscriptions = isStaging();
 ---
 

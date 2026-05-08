@@ -19,7 +19,7 @@ if (!parsedOrganism.success) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const isLoggedIn = Astro.locals.user !== null;
+const isLoggedIn = Astro.locals.user !== undefined;
 ---
 
 <ContaineredPageLayout

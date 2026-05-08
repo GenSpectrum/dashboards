@@ -28,7 +28,7 @@ const config = getDashboardsConfig();
     ]}
 >
     {
-        Astro.locals.user !== null ? (
+        Astro.locals.user !== undefined ? (
             <CollectionCreate client:only='react' organism={parsedOrganism.data} config={config} />
         ) : (
             <NotLoggedIn />

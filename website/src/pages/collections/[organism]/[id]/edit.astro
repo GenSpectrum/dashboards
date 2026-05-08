@@ -24,7 +24,7 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const currentUserId = Astro.locals.user?.githubId;
+const currentUserId = Astro.locals.gsUserId;
 const config = getDashboardsConfig();
 
 let collection;
