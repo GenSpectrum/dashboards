@@ -29,7 +29,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
-    implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.6.0")
     implementation("org.postgresql:postgresql:42.7.11")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.2.0")
     implementation("org.jetbrains.exposed:exposed-json:1.2.0")
