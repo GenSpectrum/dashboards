@@ -1,8 +1,29 @@
 import { betterAuth } from 'better-auth';
 
 import { getGitHubClientId, getGitHubClientSecret, getTrustedOrigins } from './config';
+import { getInstanceLogger } from './logger';
+
+const logger = getInstanceLogger('auth');
 
 export const auth = betterAuth({
+    logger: {
+        level: 'debug',
+        log: (level, message) => {
+            switch (level) {
+                case 'warn':
+                    logger.warn(message);
+                    break;
+                case 'error':
+                    logger.error(message);
+                    break;
+                case 'debug':
+                    logger.debug(message);
+                    break;
+                default:
+                    logger.info(message);
+            }
+        },
+    },
     trustedOrigins: getTrustedOrigins(),
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
