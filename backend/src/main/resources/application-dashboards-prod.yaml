@@ -270,3 +270,6 @@ dashboards:
   auth:
     github:
       clientId: "Iv23liLcTmoYOEje50sW"
+    trustedOrigins:
+      - "https://genspectrum.org"
+      - "http://localhost:4321"

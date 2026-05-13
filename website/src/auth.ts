@@ -1,8 +1,9 @@
 import { betterAuth } from 'better-auth';
 
-import { getGitHubClientId, getGitHubClientSecret } from './config';
+import { getGitHubClientId, getGitHubClientSecret, getTrustedOrigins } from './config';
 
 export const auth = betterAuth({
+    trustedOrigins: getTrustedOrigins(),
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
         // The cookie cache in combination with refreshCache: true, means that all the session
