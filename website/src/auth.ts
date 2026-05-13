@@ -3,8 +3,6 @@ import { betterAuth } from 'better-auth';
 import { getGitHubClientId, getGitHubClientSecret } from './config';
 
 export const auth = betterAuth({
-    // TODO - maybe we can check again if this is read automatically? Should be, according to the docs.
-    secret: process.env.AUTH_SECRET,
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
         // The cookie cache in combination with refreshCache: true, means that all the session
