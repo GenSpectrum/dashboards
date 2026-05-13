@@ -14,7 +14,7 @@ const showLoggedInState = !forceLoggedOutState && user !== null;
 
 {
     showLoggedInState && user ? (
-        <UserDropdown session={{ user }} />
+        <UserDropdown user={user} />
     ) : (
         <div class='mr-2 font-bold'>
             <LoginButton client:load />

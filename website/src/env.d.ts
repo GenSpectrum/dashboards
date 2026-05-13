@@ -2,12 +2,13 @@
 /// <reference types="astro/client" />
 
 declare namespace App {
-    // Note: 'import {} from ""' syntax does not work in .d.ts files.
-    // We derive the User type from the auth config so that additionalFields (e.g. githubId) are included.
+    // In auth.ts we define 'additionalFields' for the user type, so we need to define our own AuthUser type
+    // here, based on that (we can't use the plain 'User' from better-auth).  This properly defines the
+    // additional fields.
     type AuthUser = NonNullable<Awaited<ReturnType<(typeof import('./auth').auth)['api']['getSession']>>>['user'];
 
     interface Locals {
-        user: AuthUser | null;
+        user: AuthUser | null; // we use our own user type, see not above
         session: import('better-auth').Session | null;
     }
 }

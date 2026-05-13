@@ -2,10 +2,10 @@
 import { isStaging } from '../../config';
 
 interface Props {
-    session: { user: { name: string | null } };
+    user: App.AuthUser;
 }
 
-const { session } = Astro.props;
+const { user } = Astro.props;
 const showSubscriptions = isStaging();
 ---
 
@@ -15,7 +15,7 @@ const showSubscriptions = isStaging();
         tabindex='0'
         class='menu dropdown-content rounded-box bg-base-100 border-neutral-content z-1 w-52 border-2 p-2 shadow-2xl'
     >
-        <li class='menu-title text-black'><a>{session.user?.name}</a></li>
+        <li class='menu-title text-black'><a>{user.name}</a></li>
         <li class='divider m-1 h-0.5'></li>
         {
             showSubscriptions && (
