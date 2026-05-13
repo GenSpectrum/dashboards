@@ -7,10 +7,11 @@ import { makeSignature, symmetricEncodeJWT } from 'better-auth/crypto';
 
 export const E2E_GITHUB_ID = '1234567';
 
-const SECRET = process.env.AUTH_SECRET;
-if (!SECRET) {
+const rawSecret = process.env.AUTH_SECRET;
+if (!rawSecret) {
     throw new Error('AUTH_SECRET environment variable is not set');
 }
+const SECRET: string = rawSecret;
 const COOKIE_PREFIX = 'genspectrum';
 const DOMAIN = 'localhost';
 
