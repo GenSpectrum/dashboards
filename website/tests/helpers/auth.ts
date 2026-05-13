@@ -46,7 +46,7 @@ export async function setupAuthCookie(page: Page, name: string): Promise<void> {
         {
             id: crypto.randomUUID(),
             providerId: 'github',
-            accountId: '1234567',
+            accountId: E2E_GITHUB_ID,
             userId,
             accessToken: 'e2e-test-access-token',
             scope: 'read:user,user:email',
@@ -72,7 +72,7 @@ export async function setupAuthCookie(page: Page, name: string): Promise<void> {
                 image: null,
                 createdAt: now.toISOString(),
                 updatedAt: now.toISOString(),
-                githubId: '1234567',
+                githubId: E2E_GITHUB_ID,
             },
             updatedAt: now.getTime(),
             version: '1',
