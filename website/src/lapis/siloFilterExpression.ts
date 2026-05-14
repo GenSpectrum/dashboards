@@ -166,6 +166,35 @@ const nOfSchema: z.ZodType<{
     }),
 );
 
+/**
+ * Given an expression, returns a list of all the metadata fields that are referenced
+ * in the expression.
+ */
+export function extractMetadataFields(expr: SiloFilterExpression): string[] {
+    switch (expr.type) {
+        case 'StringEquals':
+        case 'BooleanEquals':
+        case 'Lineage':
+        case 'DateBetween':
+        case 'IntEquals':
+        case 'IntBetween':
+        case 'FloatEquals':
+        case 'FloatBetween':
+        case 'StringSearch':
+        case 'PhyloDescendantOf':
+            return [expr.column];
+        case 'And':
+        case 'Or':
+        case 'N-Of':
+            return expr.children.flatMap(extractMetadataFields);
+        case 'Not':
+        case 'Maybe':
+            return extractMetadataFields(expr.child);
+        default:
+            return [];
+    }
+}
+
 // Combined union for all SiloFilterExpression types.
 // This schema was initially LLM generated from the LAPIS code.
 export const siloFilterExpressionSchema = z.union([

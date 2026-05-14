@@ -105,6 +105,89 @@ describe('AdvancedQueryFilter', () => {
         await expect.element(getByTitle('Validating')).toBeVisible();
     });
 
+    it('allowedFields - shows error when query references a disallowed metadata field', async ({ routeMockers }) => {
+        const onInput = vi.fn();
+
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['host:Human'], doFullValidation: true },
+            { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'host', value: 'Human' } }] },
+        );
+
+        const { getByRole, getByLabelText, getByText } = render(
+            <AdvancedQueryFilterWithProvider
+                onInput={onInput}
+                enabled
+                lapisUrl={DUMMY_LAPIS_URL}
+                allowedFields={['nextcladePangoLineage']}
+            />,
+        );
+
+        await userEvent.type(getByRole('textbox'), 'host:Human');
+
+        await expect.element(getByLabelText('Error')).toBeVisible();
+        await expect.element(getByText(/"host"/)).toBeVisible();
+        await expect.element(getByText(/nextcladePangoLineage/)).toBeVisible();
+        expect(onInput).not.toHaveBeenCalled();
+    });
+
+    it('allowedFields - does not show error when all referenced fields are in the allowed list', async ({
+        routeMockers,
+    }) => {
+        const onInput = vi.fn();
+
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['BA.1*'], doFullValidation: true },
+            {
+                data: [
+                    {
+                        type: 'success',
+                        filter: {
+                            type: 'Lineage',
+                            column: 'nextcladePangoLineage',
+                            value: 'BA.1',
+                            includeSublineages: true,
+                        },
+                    },
+                ],
+            },
+        );
+
+        const { getByRole, getByTitle } = render(
+            <AdvancedQueryFilterWithProvider
+                onInput={onInput}
+                enabled
+                lapisUrl={DUMMY_LAPIS_URL}
+                allowedFields={['nextcladePangoLineage']}
+            />,
+        );
+
+        await userEvent.type(getByRole('textbox'), 'BA.1*');
+
+        await expect.element(getByTitle('Advanced query is valid')).toBeVisible();
+        await expect.poll(() => onInput).toHaveBeenCalledWith('BA.1*');
+    });
+
+    it('allowedFields - mutation-only query passes even with a restrictive allowedFields list', async ({
+        routeMockers,
+    }) => {
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['A123T'], doFullValidation: true },
+            { data: [{ type: 'success', filter: { type: 'NucleotideEquals', position: 123, symbol: 'A' } }] },
+        );
+
+        const { getByRole, getByTitle } = render(
+            <AdvancedQueryFilterWithProvider
+                enabled
+                lapisUrl={DUMMY_LAPIS_URL}
+                allowedFields={['nextcladePangoLineage']}
+            />,
+        );
+
+        await userEvent.type(getByRole('textbox'), 'A123T');
+
+        await expect.element(getByTitle('Advanced query is valid')).toBeVisible();
+    });
+
     it('shows error icon with network error tooltip when LAPIS is unreachable', async ({ routeMockers }) => {
         routeMockers.lapis.mockLapisDown();
 

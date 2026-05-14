@@ -3,6 +3,7 @@ import { type FC, type InputEvent, useEffect, useRef, useState } from 'react';
 
 import { getClientLogger } from '../../clientLogger.ts';
 import { parseQuery } from '../../lapis/parseQuery.ts';
+import { extractMetadataFields } from '../../lapis/siloFilterExpression.ts';
 
 const logger = getClientLogger('AdvancedQueryFilter');
 
@@ -19,9 +20,16 @@ type AdvancedQueryFilterProps = {
     onInput?: (newValue: string | undefined) => void;
     enabled: boolean;
     lapisUrl: string;
+    allowedFields?: string[];
 };
 
-export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInput, enabled, lapisUrl }) => {
+export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
+    value,
+    onInput,
+    enabled,
+    lapisUrl,
+    allowedFields,
+}) => {
     const [inputValue, setInputValue] = useState(value);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
     const userEditedRef = useRef(false);
@@ -31,6 +39,18 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({ value, onInp
         onSuccess: (results, query) => {
             const result = results[0];
             if (result.type === 'success') {
+                if (allowedFields !== undefined) {
+                    const usedFields = [...new Set(extractMetadataFields(result.filter))];
+                    const disallowed = usedFields.filter((col) => !allowedFields.includes(col));
+                    if (disallowed.length > 0) {
+                        const listed = disallowed.map((col) => `"${col}"`).join(', ');
+                        setValidationState({
+                            type: 'error',
+                            message: `Field ${listed} is not allowed. Allowed fields: ${allowedFields.join(', ')}.`,
+                        });
+                        return;
+                    }
+                }
                 setValidationState({ type: 'valid' });
                 onInput?.(query);
             } else {
