@@ -255,7 +255,7 @@ describe('extractMetadataFields', () => {
     });
 
     test('returns no columns for mutation-only expressions', () => {
-        const expr: Parameters<typeof extractMetadataFields>[0] = {
+        const expr: SiloFilterExpression = {
             type: 'And',
             children: [
                 { type: 'NucleotideEquals', position: 123, symbol: 'A' },

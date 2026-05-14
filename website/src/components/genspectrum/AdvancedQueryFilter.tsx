@@ -40,7 +40,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
             const result = results[0];
             if (result.type === 'success') {
                 if (allowedFields !== undefined) {
-                    const usedFields = extractMetadataFields(result.filter);
+                    const usedFields = [...new Set(extractMetadataFields(result.filter))];
                     const disallowed = usedFields.filter((col) => !allowedFields.includes(col));
                     if (disallowed.length > 0) {
                         const listed = disallowed.map((col) => `"${col}"`).join(', ');
