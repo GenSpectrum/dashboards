@@ -28,9 +28,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(SubscriptionsClient::class)
+@Import(SubscriptionsClient::class, UsersClient::class)
 class SubscriptionsControllerTriggerEvaluationTest(
     @param:Autowired private val subscriptionsClient: SubscriptionsClient,
+    @param:Autowired private val usersClient: UsersClient,
 ) {
     @MockkBean
     private lateinit var lapisClientProviderMock: LapisClientProvider
@@ -42,7 +43,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
     @Test
     fun `GIVEN lapis returns count greater than threshold WHEN evaluating count trigger THEN returns condition met`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
 
         val createdSubscription = subscriptionsClient.postSubscription(
             subscription = dummySubscriptionRequest.copy(trigger = countTrigger),
@@ -65,7 +66,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
     @Test
     fun `GIVEN lapis returns count less than threshold WHEN evaluating count trigger THEN returns condition not met`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
 
         val createdSubscription = subscriptionsClient.postSubscription(
             subscription = dummySubscriptionRequest.copy(trigger = countTrigger),
@@ -88,7 +89,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
     @Test
     fun `GIVEN lapis returns error WHEN evaluating count trigger THEN returns evaluation error`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
 
         val createdSubscription = subscriptionsClient.postSubscription(dummySubscriptionRequest, userId)
 
@@ -113,7 +114,7 @@ class SubscriptionsControllerTriggerEvaluationTest(
 
     @Test
     fun `GIVEN lapis returns proportion below threshold WHEN evaluating proportion trigger THEN condition is met`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdSubscription = subscriptionsClient.postSubscription(
             dummySubscriptionRequest.copy(
                 trigger = Trigger.ProportionTrigger(

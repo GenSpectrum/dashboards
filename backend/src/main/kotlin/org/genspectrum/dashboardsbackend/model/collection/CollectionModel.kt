@@ -10,6 +10,7 @@ import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
+import org.genspectrum.dashboardsbackend.util.now
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -18,19 +19,12 @@ import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Service
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
-    // Truncate to milliseconds to avoid mismatches between the in-memory value
-    // we return and what is read back from the DB.
-    private fun now(): Instant = Clock.System.now().run {
-        Instant.fromEpochMilliseconds(toEpochMilliseconds())
-    }
-
-    fun getCollections(userId: String?, organism: String?): List<Collection> {
+    fun getCollections(userId: Long?, organism: String?): List<Collection> {
         if (organism != null) {
             dashboardsConfig.validateIsValidOrganism(organism)
             dashboardsConfig.validateCollectionsEnabled(organism)
@@ -81,7 +75,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         return entity.toCollection()
     }
 
-    fun createCollection(request: CollectionRequest, userId: String): Collection {
+    fun createCollection(request: CollectionRequest, userId: Long): Collection {
         dashboardsConfig.validateIsValidOrganism(request.organism)
         dashboardsConfig.validateCollectionsEnabled(request.organism)
 
@@ -113,7 +107,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         )
     }
 
-    fun deleteCollection(id: Long, userId: String) {
+    fun deleteCollection(id: Long, userId: Long) {
         // Find with ownership check
         val entity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to delete it")
@@ -122,7 +116,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         entity.delete()
     }
 
-    fun putCollection(id: Long, update: CollectionUpdate, userId: String): Collection {
+    fun putCollection(id: Long, update: CollectionUpdate, userId: Long): Collection {
         val collectionEntity = CollectionEntity.findForUser(id, userId)
             ?: throw ForbiddenException("Collection $id not found or you don't have permission to update it")
         dashboardsConfig.validateCollectionsEnabled(collectionEntity.organism)

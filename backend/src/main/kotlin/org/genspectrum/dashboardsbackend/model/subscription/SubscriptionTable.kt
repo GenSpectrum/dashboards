@@ -17,12 +17,12 @@ object SubscriptionTable : UUIDTable(SUBSCRIPTION_TABLE) {
     val organism = varchar("organism", 255)
     val dateWindow = varchar("date_window", 255)
     val trigger = jacksonSerializableJsonb<Trigger>("trigger")
-    val userId = varchar("user_id", 255)
+    val userId = long("user_id")
 }
 
 class SubscriptionEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<SubscriptionEntity>(SubscriptionTable) {
-        fun findForUser(id: UUID, userId: String) = findById(id)
+        fun findForUser(id: UUID, userId: Long) = findById(id)
             ?.takeIf { it.userId == userId }
     }
 
