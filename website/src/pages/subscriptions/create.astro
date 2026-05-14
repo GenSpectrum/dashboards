@@ -1,13 +1,9 @@
 ---
-import { getSession } from 'auth-astro/server';
-
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { SubscriptionsCreate } from '../../components/subscriptions/create/SubscriptionsCreate';
 import { getDashboardsConfig } from '../../config';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import SubscriptionPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
-
-const session = await getSession(Astro.request);
 
 const config = getDashboardsConfig();
 ---
@@ -26,5 +22,5 @@ const config = getDashboardsConfig();
         },
     ]}
 >
-    {session?.user?.id !== undefined ? <SubscriptionsCreate config={config} client:only='react' /> : <NotLoggedIn />}
+    {Astro.locals.user !== null ? <SubscriptionsCreate config={config} client:only='react' /> : <NotLoggedIn />}
 </SubscriptionPageLayout>

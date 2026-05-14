@@ -1,8 +1,17 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
-// declare module 'set-cookie-parser' is added, because tsc checks our dependency auth-astro/server,
-// which uses set-cookie-parser, and it doesn't have types.
-declare module 'set-cookie-parser';
+
+declare namespace App {
+    // In auth.ts we define 'additionalFields' for the user type, so we need to define our own AuthUser type
+    // here, based on that (we can't use the plain 'User' from better-auth).  This properly defines the
+    // additional fields.
+    type AuthUser = NonNullable<Awaited<ReturnType<(typeof import('./auth').auth)['api']['getSession']>>>['user'];
+
+    interface Locals {
+        user: AuthUser | null; // we use our own user type, see not above
+        session: import('better-auth').Session | null;
+    }
+}
 
 interface ImportMetaEnv {
     // eslint-disable-next-line @typescript-eslint/naming-convention

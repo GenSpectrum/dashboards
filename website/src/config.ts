@@ -54,6 +54,7 @@ const dashboardsConfigSchema = z.object({
                  */
                 clientId: z.string(),
             }),
+            trustedOrigins: z.array(z.string().url()),
         }),
     }),
 });
@@ -89,6 +90,10 @@ export function getGitHubClientId(): string {
         processEnvOrMetaEnv('GITHUB_CLIENT_ID', z.string().optional()) ??
         getDashboardsConfig().dashboards.auth.github.clientId
     );
+}
+
+export function getTrustedOrigins(): string[] {
+    return getDashboardsConfig().dashboards.auth.trustedOrigins;
 }
 
 export function getGitHubClientSecret(): string {

@@ -1,4 +1,4 @@
-import { getSession } from 'auth-astro/server';
+import type { APIContext } from 'astro';
 
 import { getBackendHost } from '../config.ts';
 import { getInstanceLogger } from '../logger.ts';
@@ -14,21 +14,21 @@ const API_PATHNAME_LENGTH = '/api'.length;
  * This proxying through the frontend server is used, so we do the user login handling
  * in here, instead of in the backend.
  */
-export async function proxyToBackend({ request }: { request: Request }): Promise<Response> {
-    const session = await getSession(request);
+export async function proxyToBackend(context: APIContext): Promise<Response> {
+    const userId = context.locals.user?.githubId;
 
-    if (session?.user?.id === undefined) {
-        return getUnauthorizedResponse(request.url);
+    if (userId === undefined) {
+        return getUnauthorizedResponse(context.request.url);
     }
 
-    return proxyRequest(request, session.user.id);
+    return proxyRequest(context.request, userId);
 }
 
 /**
  * Proxies the request to the backend without any user ID, regardless of login state.
  */
-export async function proxyToBackendNoAuth({ request }: { request: Request }): Promise<Response> {
-    return proxyRequest(request, undefined);
+export async function proxyToBackendNoAuth(context: APIContext): Promise<Response> {
+    return proxyRequest(context.request, undefined);
 }
 
 async function proxyRequest(request: Request, userId: string | undefined): Promise<Response> {

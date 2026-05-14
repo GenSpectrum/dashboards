@@ -272,3 +272,6 @@ dashboards:
   auth:
     github:
       clientId: "Iv23li4tJm7xQ3VkM3OC"
+    trustedOrigins:
+      - "https://staging.genspectrum.org"
+      - "http://localhost:4321"
