@@ -6,17 +6,14 @@ import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
 import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
-import { toMutationAnnotations } from './resistanceMutations';
+import type { ResistanceData } from './resistanceData';
 import { useWasapPageData } from './useWasapPageData';
+import type { WasapPageConfig } from './wasapPageConfig';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
-import {
-    wastewaterBreadcrumb,
-    wastewaterOrganismConfigs,
-    type WastewaterOrganismName,
-} from '../../../types/wastewaterConfig';
+import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
 import { Loading } from '../../../util/Loading';
 import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
@@ -25,11 +22,11 @@ import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPage
 import { usePageState } from '../usePageState.ts';
 
 export type WasapPageProps = {
-    wastewaterOrganism: WastewaterOrganismName;
+    config: WasapPageConfig;
+    resistanceData: ResistanceData;
 };
 
-export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
-    const config = wastewaterOrganismConfigs[wastewaterOrganism];
+export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) => {
     // initialize page state from the URL
     const pageStateHandler = useMemo(() => new WasapPageStateHandler(config), [config]);
 
@@ -38,8 +35,9 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         setPageState,
     } = usePageState(pageStateHandler);
 
+    const { mutationAnnotations, displayMutationsBySet } = resistanceData;
     // fetch which mutations should be analyzed
-    const { data, isPending, isError } = useWasapPageData(config, analysis);
+    const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
 
     let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
     if (analysis.mode === 'manual' && analysis.mutations === undefined) {
@@ -51,16 +49,6 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         ...(base.samplingDate?.dateFrom && { samplingDateFrom: base.samplingDate.dateFrom }),
         ...(base.samplingDate?.dateTo && { samplingDateTo: base.samplingDate.dateTo }),
     };
-
-    const memoizedMutationAnnotations = useMemo(
-        () =>
-            config.resistanceAnalysisModeEnabled
-                ? config.resistanceMutationSets.flatMap((resistanceMutation) =>
-                      toMutationAnnotations(resistanceMutation),
-                  )
-                : [],
-        [config],
-    );
 
     return (
         <DataPageLayout
@@ -77,7 +65,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
         >
             <gs-app
                 lapis={config.lapisBaseUrl}
-                mutationAnnotations={memoizedMutationAnnotations}
+                mutationAnnotations={mutationAnnotations}
                 mutationLinkTemplate={config.linkTemplate}
             >
                 <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
@@ -88,6 +76,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ wastewaterOrganism }) => {
                             initialBaseFilterState={base}
                             initialAnalysisFilterState={analysis}
                             setPageState={setPageState}
+                            resistanceSetNames={Object.keys(displayMutationsBySet)}
                         />
                     </div>
                     {isError ? (

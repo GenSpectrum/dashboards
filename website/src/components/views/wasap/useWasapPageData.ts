@@ -22,22 +22,32 @@ import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 /**
  * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
  * depending on the analysis mode and analysis mode settings.
+ * The `resistanceMutationsBySet` data, derived from server-fetched collections,
+ * is needed because resistance is also a possible analysis mode.
  */
-export function useWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter) {
+export function useWasapPageData(
+    config: WasapPageConfig,
+    resistanceMutationsBySet: Record<string, string[]>,
+    analysis: WasapAnalysisFilter,
+) {
     return useQuery({
-        queryKey: ['wasap', analysis],
-        queryFn: () => fetchWasapPageData(config, analysis),
+        queryKey: ['wasap', analysis, resistanceMutationsBySet],
+        queryFn: () => fetchWasapPageData(config, resistanceMutationsBySet, analysis),
     });
 }
 
-async function fetchWasapPageData(config: WasapPageConfig, analysis: WasapAnalysisFilter): Promise<WasapPageData> {
+async function fetchWasapPageData(
+    config: WasapPageConfig,
+    resistanceMutationsBySet: Record<string, string[]>,
+    analysis: WasapAnalysisFilter,
+): Promise<WasapPageData> {
     switch (analysis.mode) {
         case 'manual':
             return fetchManualModeData(config, analysis);
         case 'variant':
             return fetchVariantModeData(config, analysis);
         case 'resistance':
-            return fetchResistanceModeData(config, analysis);
+            return fetchResistanceModeData(resistanceMutationsBySet, analysis);
         case 'untracked':
             return fetchUntrackedModeData(config, analysis);
         case 'collection':
@@ -87,14 +97,13 @@ async function fetchVariantModeData(
     };
 }
 
-function fetchResistanceModeData(config: WasapPageConfig, analysis: WasapResistanceFilter): WasapMutationsData {
-    if (!config.resistanceAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'resistance' mode is not enabled.");
-    }
+function fetchResistanceModeData(
+    displayMutationsBySet: Record<string, string[]>,
+    analysis: WasapResistanceFilter,
+): WasapMutationsData {
     return {
         type: 'mutations',
-        displayMutations:
-            config.resistanceMutationSets.find((set) => set.name === analysis.resistanceSet)?.mutations ?? [],
+        displayMutations: displayMutationsBySet[analysis.resistanceSet ?? ''] ?? [],
     };
 }
 
