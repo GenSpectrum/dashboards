@@ -37,7 +37,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
     enabled,
     lapisUrl,
     errorTooltipClass,
-    allowedFields
+    allowedFields,
 }) => {
     const [inputValue, setInputValue] = useState(value);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
