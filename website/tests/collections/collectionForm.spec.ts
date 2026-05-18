@@ -1,9 +1,10 @@
 import { expect } from '@playwright/test';
 
 import { test } from '../e2e.fixture.ts';
+import { E2E_GITHUB_ID } from '../helpers/auth.ts';
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
-const USER_ID = 'e2e-test';
+const USER_ID = E2E_GITHUB_ID;
 const ORGANISM = 'covid';
 
 const SEED_COLLECTION = {

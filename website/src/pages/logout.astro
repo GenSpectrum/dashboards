@@ -2,10 +2,10 @@
 import { logout } from '../auth/logout';
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 
-const { cookies } = await logout(Astro.request);
+const signOutResponse = await logout(Astro.request);
 
-for (const cookie of cookies) {
-    Astro.cookies.delete(cookie.name);
+for (const cookie of signOutResponse.headers.getSetCookie()) {
+    Astro.response.headers.append('Set-Cookie', cookie);
 }
 ---
 

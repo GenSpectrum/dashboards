@@ -1,6 +1,4 @@
 ---
-import { getSession } from 'auth-astro/server';
-
 import HamburgerMenuItem from './HamburgerMenuItem.astro';
 import HamburgerMenuSection from './HamburgerMenuSection.astro';
 import { getPathogenMegaMenuSections } from './getPathogenMegaMenuSections';
@@ -16,8 +14,7 @@ const { forceLoggedOutState } = Astro.props;
 
 const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
 
-const session = await getSession(Astro.request);
-const showLoggedInState = !forceLoggedOutState && session?.user !== undefined;
+const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== null;
 const showSubscriptions = isStaging();
 ---
 
@@ -44,7 +41,7 @@ const showSubscriptions = isStaging();
             showLoggedInState ? (
                 <HamburgerMenuSection
                     navigationEntries={[
-                        { label: session.user?.name ?? 'My Account' },
+                        { label: Astro.locals.user?.name ?? 'My Account' },
                         ...(showSubscriptions ? [{ label: 'Subscriptions', href: '/subscriptions' }] : []),
                         { label: 'Logout', href: '/logout' },
                     ]}
