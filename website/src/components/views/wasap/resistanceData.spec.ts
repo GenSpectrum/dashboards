@@ -19,8 +19,13 @@ const collection = {
     variants: [
         {
             type: 'filterObject' as const,
-            name: 'Nirmatrelvir resistant',
-            filterObject: { aminoAcidMutations: ['S:E484K', 'S:N501Y'], foo: 'bar' },
+            name: 'fooBar:1',
+            filterObject: { aminoAcidMutations: ['S:E484K'] },
+        },
+        {
+            type: 'filterObject' as const,
+            name: 'fooBar:23',
+            filterObject: { aminoAcidMutations: ['S:N501Y'] },
         },
         {
             type: 'query' as const,
@@ -40,13 +45,13 @@ describe('buildResistanceData', () => {
 
         expect(result.mutationAnnotations).toEqual([
             {
-                name: 'Nirmatrelvir resistant',
+                name: 'fooBar:1',
                 symbol: 'R',
                 description: 'Main protease inhibitors',
                 aminoAcidMutations: ['S:E484K'],
             },
             {
-                name: 'Nirmatrelvir resistant',
+                name: 'fooBar:23',
                 symbol: 'R',
                 description: 'Main protease inhibitors',
                 aminoAcidMutations: ['S:N501Y'],
