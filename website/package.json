@@ -27,7 +27,7 @@
         "@astrojs/node": "^9.5.3",
         "@genspectrum/dashboard-components": "^1.17.0",
         "@tanstack/react-query": "^5.100.10",
-        "astro": "^5.18.1",
+        "astro": "^6.3.3",
         "axios": "^1.16.0",
         "better-auth": "^1.6.9",
         "cookie": "^1.1.1",
