@@ -55,6 +55,8 @@ The website needs the following environment variables:
   This value is not set in config files, as it usually depends on the service name of the backend.
 - `GITHUB_CLIENT_SECRET`: The client secret of the GitHub app.
   This value is supposed to be kept secret and should not be stored in the configuration files.
+- `AUTH_SECRET`: The secret used by `better-auth` for encryption, signing and hashing if cookies/sessions.
+  You can generate a good value to use with `openssl rand -base64 32`.
 
 The GitHub app client id can be overwritten via the `GITHUB_CLIENT_ID` environment variable for easier local testing.
 This should not be necessary in real deployments, as the configuration yaml files should contain the correct values.

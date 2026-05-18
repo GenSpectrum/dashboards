@@ -1,6 +1,4 @@
 ---
-import { getSession } from 'auth-astro/server';
-
 import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
@@ -26,14 +24,14 @@ if (id === undefined) {
 }
 
 const orgConfig = organismConfig[parsedOrganism.data];
-const session = await getSession(Astro.request);
+const currentUserId = Astro.locals.user?.githubId;
 const config = getDashboardsConfig();
 
 let collection;
-if (session?.user?.id !== undefined) {
+if (currentUserId !== undefined) {
     try {
         collection = await new BackendService(getBackendHost()).getCollection({ id });
-        if (String(session.user.id) !== collection.ownedBy) {
+        if (currentUserId !== collection.ownedBy) {
             return Astro.redirect('/404');
         }
     } catch (error) {
@@ -59,7 +57,7 @@ const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` :
     ]}
 >
     {
-        session?.user?.id !== undefined ? (
+        currentUserId !== undefined ? (
             <CollectionEdit
                 client:only='react'
                 organism={parsedOrganism.data}

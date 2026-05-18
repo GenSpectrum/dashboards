@@ -30,12 +30,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
-    implementation("org.postgresql:postgresql:42.7.10")
+    implementation("org.postgresql:postgresql:42.7.11")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.2.0")
     implementation("org.jetbrains.exposed:exposed-json:1.2.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:1.2.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.2.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

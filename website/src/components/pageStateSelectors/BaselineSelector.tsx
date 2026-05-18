@@ -34,6 +34,10 @@ export type NumberRangeFilterConfig = {
     sliderStep?: number;
 };
 
+export type AdvancedQueryFilterConfig = {
+    allowedFields?: string[];
+};
+
 export type BaselineFilterConfig =
     | ({
           type: 'date';
@@ -41,7 +45,7 @@ export type BaselineFilterConfig =
     | ({ type: 'text' } & TextInputConfig)
     | ({ type: 'location' } & LocationFilterConfig)
     | ({ type: 'number' } & NumberRangeFilterConfig)
-    | { type: 'advancedQuery' };
+    | ({ type: 'advancedQuery' } & AdvancedQueryFilterConfig);
 
 export function BaselineSelector({
     baselineFilterConfigs,
@@ -177,6 +181,7 @@ export function BaselineSelector({
                                 value={datasetFilter.advancedQuery ?? ''}
                                 enabled={enableAdvancedQueryFilter}
                                 lapisUrl={lapisUrl}
+                                allowedFields={config.allowedFields}
                             />
                         );
                     }
