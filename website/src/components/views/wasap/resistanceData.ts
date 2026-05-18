@@ -26,7 +26,7 @@ export async function fetchResistanceData(
     return buildResistanceData(config.resistanceMutationCollections, collections);
 }
 
-function buildResistanceData(
+export function buildResistanceData(
     setConfigs: ResistanceMutationCollectionConfig[],
     collections: Collection[],
 ): ResistanceData {
