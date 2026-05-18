@@ -10,6 +10,10 @@ export function ResistanceMutationsFilter({
     setPageState: (newState: WasapResistanceFilter) => void;
     resistanceSetNames: string[];
 }) {
+    if (resistanceSetNames.length === 0) {
+        return <p className='text-error'>Resistance mutation sets could not be loaded.</p>;
+    }
+
     return (
         <LabeledField label='Resistance mutation set'>
             <select
