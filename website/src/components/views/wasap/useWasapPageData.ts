@@ -103,7 +103,7 @@ function fetchResistanceModeData(
 ): WasapMutationsData {
     return {
         type: 'mutations',
-        displayMutations: displayMutationsBySet[analysis.resistanceSet ?? ''] ?? [],
+        displayMutations: displayMutationsBySet[analysis.resistanceSet] ?? [],
     };
 }
 

@@ -206,7 +206,7 @@ export type WasapVariantFilter = {
 export type WasapResistanceFilter = {
     mode: 'resistance';
     sequenceType: 'amino acid'; // resistance sets are only defined for amino acid mutations
-    resistanceSet?: string;
+    resistanceSet: string;
 };
 
 export type ExcludeSetName = 'predefined' | 'custom';
