@@ -40,7 +40,7 @@ export async function createAuthCookies(
     ];
 }
 
-export async function setupAuthCookie(page: Page, name: string): Promise<void> {
+export async function setupAuthCookie(page: Page, name: string, gsUserId: number): Promise<void> {
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     const userId = crypto.randomUUID();
@@ -76,8 +76,7 @@ export async function setupAuthCookie(page: Page, name: string): Promise<void> {
                 image: null,
                 createdAt: now.toISOString(),
                 updatedAt: now.toISOString(),
-                githubId: E2E_GITHUB_ID,
-                gsUserId: '1',
+                gsUserId,
             },
             updatedAt: now.getTime(),
             version: '1',

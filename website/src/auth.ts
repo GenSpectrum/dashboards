@@ -65,7 +65,7 @@ export const auth = betterAuth({
 
                     if (response.ok) {
                         const user = (await response.json()) as { id: number };
-                        return { gsUserId: String(user.id) };
+                        return { gsUserId: user.id };
                     }
 
                     throw new Error(`Failed to sync user with backend: HTTP ${response.status}`);

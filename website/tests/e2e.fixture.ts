@@ -8,7 +8,9 @@ import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
 import { SingleVariantPage } from './SingleVariantPage.ts';
 import { CollectionDetailPage } from './collections/CollectionDetailPage.ts';
 import { CollectionFormPage } from './collections/CollectionFormPage.ts';
-import { setupAuthCookie } from './helpers/auth.ts';
+import { E2E_GITHUB_ID, setupAuthCookie } from './helpers/auth.ts';
+
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
 type E2EFixture = {
     compareVariantsPage: CompareVariantsPage;
@@ -48,8 +50,12 @@ export const test = base.extend<E2EFixture>({
     collectionFormPage: async ({ page }, use) => {
         await use(new CollectionFormPage(page));
     },
-    authenticatedPage: async ({ page }, use) => {
-        await setupAuthCookie(page, 'e2e-test');
+    authenticatedPage: async ({ page, request }, use) => {
+        const syncResponse = await request.post(`${BACKEND_URL}/users/sync`, {
+            data: { githubId: E2E_GITHUB_ID, name: 'e2e-test', email: null },
+        });
+        const { id: gsUserId } = (await syncResponse.json()) as { id: number };
+        await setupAuthCookie(page, 'e2e-test', gsUserId);
         await use(page);
     },
     authenticatedCollectionFormPage: async ({ authenticatedPage }, use) => {
