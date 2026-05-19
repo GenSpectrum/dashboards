@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
 
 import { test } from '../e2e.fixture.ts';
+import { createCollection, deleteCollection, syncUser } from '../helpers/backendClient.ts';
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
 const GITHUB_ID = 'e2e-test';
 const ORGANISM = 'covid';
 const ORGANISM_LABEL = 'SARS-CoV-2';
@@ -41,27 +41,15 @@ function getUserId(): number {
 }
 
 test.beforeAll(async ({ request }) => {
-    const syncResponse = await request.post(`${BACKEND_URL}/users/sync`, {
-        data: { githubId: GITHUB_ID, name: 'E2E Test User', email: null },
-    });
-    expect(syncResponse.status()).toBe(200);
-    const syncBody = (await syncResponse.json()) as { id: number };
-    userId = syncBody.id;
-
-    const response = await request.post(`${BACKEND_URL}/collections?userId=${getUserId()}`, {
-        data: TEST_COLLECTION,
-    });
-    expect(response.status()).toBe(201);
-    const body = (await response.json()) as { id: number };
-    collectionId = body.id;
+    userId = await syncUser(request, GITHUB_ID);
+    collectionId = await createCollection(request, getUserId(), TEST_COLLECTION);
 });
 
 test.afterAll(async ({ request }) => {
     if (collectionId === undefined) {
         return;
     }
-    const response = await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${getUserId()}`);
-    expect(response.status()).toBe(204);
+    await deleteCollection(request, collectionId, getUserId());
 });
 
 test.describe('Collection detail page', () => {
