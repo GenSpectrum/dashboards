@@ -12,7 +12,7 @@ const mockCollections = [
     {
         id: 1,
         name: 'My first collection',
-        ownedBy: 'user1',
+        ownedBy: 1,
         organism: ORGANISM,
         description: 'A test collection',
         variants: [
@@ -48,7 +48,7 @@ const mockCollections = [
     {
         id: 2,
         name: 'Another collection',
-        ownedBy: 'user1',
+        ownedBy: 1,
         organism: ORGANISM,
         description: null,
         variants: [],

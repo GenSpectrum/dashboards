@@ -175,7 +175,7 @@ describe('backendService', () => {
     const aCollection: Collection = {
         id: 1,
         name: 'Test collection',
-        ownedBy: 'user123',
+        ownedBy: 123,
         organism: 'covid',
         description: 'A test collection',
         variants: [],

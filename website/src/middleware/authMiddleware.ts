@@ -10,9 +10,12 @@ export const authMiddleware = defineMiddleware(async (context, next) => {
     if (session) {
         context.locals.user = session.user;
         context.locals.session = session.session;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-conversion -- better-auth serialises all session fields as strings in the JWE cookie regardless of the declared field type
+        context.locals.gsUserId = Number(session.user.gsUserId);
     } else {
-        context.locals.user = null;
-        context.locals.session = null;
+        context.locals.user = undefined;
+        context.locals.session = undefined;
+        context.locals.gsUserId = undefined;
     }
 
     return next();
