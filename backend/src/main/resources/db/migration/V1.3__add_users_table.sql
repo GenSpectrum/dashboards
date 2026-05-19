@@ -34,3 +34,6 @@ alter table subscriptions_table alter column user_id_new set not null;
 alter table subscriptions_table add constraint fk_subscriptions_user foreign key (user_id_new) references users_table(id);
 alter table subscriptions_table drop column user_id;
 alter table subscriptions_table rename column user_id_new to user_id;
+
+create index idx_collections_owned_by on collections_table(owned_by);
+create index idx_user_id on subscriptions_table(user_id);
