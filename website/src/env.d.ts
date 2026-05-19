@@ -8,8 +8,9 @@ declare namespace App {
     type AuthUser = NonNullable<Awaited<ReturnType<(typeof import('./auth').auth)['api']['getSession']>>>['user'];
 
     interface Locals {
-        user: AuthUser | null; // we use our own user type, see not above
-        session: import('better-auth').Session | null;
+        user: AuthUser | undefined;
+        session: import('better-auth').Session | undefined;
+        gsUserId: number | undefined;
     }
 }
 

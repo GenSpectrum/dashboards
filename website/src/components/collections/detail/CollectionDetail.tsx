@@ -27,11 +27,13 @@ function CollectionDetailInner({
     collection,
     lapisConfig,
     isOwner,
+    ownerName,
 }: {
     organism: Organism;
     collection: Collection;
     lapisConfig: LapisConfig;
     isOwner: boolean;
+    ownerName: string;
 }) {
     const organismName = organismConfig[organism].label;
     const dateFrom30 = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
@@ -56,7 +58,7 @@ function CollectionDetailInner({
                 </div>
                 {collection.description !== null && <p className='mt-1 text-gray-500'>{collection.description}</p>}
                 <p className='mt-1 text-sm text-gray-500'>
-                    {organismName} collection owned by {collection.ownedBy}
+                    {organismName} collection owned by {ownerName}
                 </p>
             </div>
 

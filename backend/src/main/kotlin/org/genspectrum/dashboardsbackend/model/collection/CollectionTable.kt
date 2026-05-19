@@ -11,7 +11,7 @@ const val COLLECTION_TABLE = "collections_table"
 
 object CollectionTable : LongIdTable(COLLECTION_TABLE) {
     val name = text("name")
-    val ownedBy = varchar("owned_by", 255)
+    val ownedBy = long("owned_by")
     val organism = varchar("organism", 255)
     val description = text("description").nullable()
     val createdAt = timestamp("created_at")
@@ -20,7 +20,7 @@ object CollectionTable : LongIdTable(COLLECTION_TABLE) {
 
 class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<CollectionEntity>(CollectionTable) {
-        fun findForUser(id: Long, userId: String) = findById(id)
+        fun findForUser(id: Long, userId: Long) = findById(id)
             ?.takeIf { it.ownedBy == userId }
     }
 

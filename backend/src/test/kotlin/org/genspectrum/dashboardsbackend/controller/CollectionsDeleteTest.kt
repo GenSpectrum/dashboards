@@ -14,12 +14,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(CollectionsClient::class)
-class CollectionsDeleteTest(@param:Autowired private val collectionsClient: CollectionsClient) {
+@Import(CollectionsClient::class, UsersClient::class)
+class CollectionsDeleteTest(
+    @param:Autowired private val collectionsClient: CollectionsClient,
+    @param:Autowired private val usersClient: UsersClient,
+) {
 
     @Test
     fun `WHEN owner deletes collection THEN succeeds and collection is removed`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
         collectionsClient.deleteCollection(createdCollection.id, userId)
@@ -32,8 +35,8 @@ class CollectionsDeleteTest(@param:Autowired private val collectionsClient: Coll
 
     @Test
     fun `WHEN non-owner deletes collection THEN returns 403 forbidden`() {
-        val owner = getNewUserId()
-        val nonOwner = getNewUserId()
+        val owner = usersClient.createUser()
+        val nonOwner = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, owner)
 
         collectionsClient.deleteCollectionRaw(createdCollection.id, nonOwner)
@@ -44,7 +47,7 @@ class CollectionsDeleteTest(@param:Autowired private val collectionsClient: Coll
 
     @Test
     fun `WHEN deleting non-existent collection THEN returns 403`() {
-        val userId = getNewUserId()
+        val userId = usersClient.createUser()
         val nonExistentId = 999999L
 
         collectionsClient.deleteCollectionRaw(nonExistentId, userId)
