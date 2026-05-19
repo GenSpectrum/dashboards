@@ -24,7 +24,7 @@ class UsersController(private val userModel: UserModel) {
     @GetMapping("/users/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Get user by internal ID",
-        description = "Returns public user info by internal UUID.",
+        description = "Returns public user info by internal ID.",
     )
     fun getUser(@PathVariable id: Long): PublicUser = userModel.getUser(id)
 }
