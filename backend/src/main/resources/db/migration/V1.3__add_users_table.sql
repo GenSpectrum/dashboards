@@ -7,8 +7,6 @@ create table users_table (
     updated_at timestamp without time zone not null default date_trunc('milliseconds', timezone('UTC', current_timestamp))
 );
 
-create index idx_users_github_id on users_table(github_id);
-
 -- Backfill users from existing collections
 insert into users_table (github_id, name)
 select distinct owned_by, owned_by
