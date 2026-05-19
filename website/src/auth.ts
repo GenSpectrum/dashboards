@@ -58,6 +58,7 @@ export const auth = betterAuth({
                         body: JSON.stringify({
                             // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-conversion -- profile.id is typed as string but GitHub returns a number at runtime
                             githubId: String(profile.id),
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- profile.name is typed as string but GitHub can return null at runtime
                             name: (profile.name as string | null | undefined) ?? profile.login ?? '',
                             email: profile.email ?? null,
                         }),
