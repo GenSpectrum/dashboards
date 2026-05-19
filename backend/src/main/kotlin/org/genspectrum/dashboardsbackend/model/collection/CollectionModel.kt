@@ -10,6 +10,7 @@ import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
+import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.now
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
@@ -25,6 +26,9 @@ import kotlin.time.Instant
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     fun getCollections(userId: Long?, organism: String?): List<Collection> {
+        if (userId != null) {
+            UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
+        }
         if (organism != null) {
             dashboardsConfig.validateIsValidOrganism(organism)
             dashboardsConfig.validateCollectionsEnabled(organism)
@@ -76,6 +80,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
     }
 
     fun createCollection(request: CollectionRequest, userId: Long): Collection {
+        UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
         dashboardsConfig.validateIsValidOrganism(request.organism)
         dashboardsConfig.validateCollectionsEnabled(request.organism)
 

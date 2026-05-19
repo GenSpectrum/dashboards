@@ -277,6 +277,13 @@ class CollectionsPostTest(
     }
 
     @Test
+    fun `WHEN creating collection with nonexistent userId THEN returns 404`() {
+        collectionsClient.postCollectionRaw(dummyCollectionRequest, userId = 999999999L)
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("\$.detail").value("User 999999999 not found"))
+    }
+
+    @Test
     fun `WHEN creating collection with lineage filter in filters field THEN succeeds`() {
         val userId = usersClient.createUser()
         val body = """

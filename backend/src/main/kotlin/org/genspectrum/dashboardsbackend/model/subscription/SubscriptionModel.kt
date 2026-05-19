@@ -5,6 +5,7 @@ import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
+import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
@@ -18,13 +19,17 @@ class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
             ?.toSubscription()
             ?: throw NotFoundException("Subscription $subscriptionId not found")
 
-    fun getSubscriptions(userId: Long): List<Subscription> = SubscriptionEntity.find {
-        SubscriptionTable.userId eq userId
-    }.map {
-        it.toSubscription()
+    fun getSubscriptions(userId: Long): List<Subscription> {
+        UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
+        return SubscriptionEntity.find {
+            SubscriptionTable.userId eq userId
+        }.map {
+            it.toSubscription()
+        }
     }
 
     fun postSubscriptions(request: SubscriptionRequest, userId: Long): Subscription {
+        UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
         dashboardsConfig.validateIsValidOrganism(request.organism)
 
         return SubscriptionEntity

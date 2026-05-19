@@ -251,4 +251,20 @@ class SubscriptionsControllerTest(
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("\$.detail").value("Subscription 00000000-0000-0000-0000-000000000000 not found"))
     }
+
+    @Test
+    fun `WHEN posting subscription with nonexistent userId THEN returns 404`() {
+        subscriptionsClient.postSubscriptionRaw(dummySubscriptionRequest, userId = 999999999L)
+            .andExpect(status().isNotFound)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.detail").value("User 999999999 not found"))
+    }
+
+    @Test
+    fun `WHEN getting subscriptions with nonexistent userId THEN returns 404`() {
+        subscriptionsClient.getSubscriptionsRaw(userId = 999999999L)
+            .andExpect(status().isNotFound)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.detail").value("User 999999999 not found"))
+    }
 }

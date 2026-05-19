@@ -275,4 +275,11 @@ class CollectionsGetTest(
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.detail").value("Collections are not supported for organism 'InfluenzaA'"))
     }
+
+    @Test
+    fun `WHEN getting collections with nonexistent userId THEN returns 404`() {
+        collectionsClient.getCollectionsRaw(userId = 999999999L)
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.detail").value("User 999999999 not found"))
+    }
 }
