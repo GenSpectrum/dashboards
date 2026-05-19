@@ -84,6 +84,7 @@ export const VariantEditor = memo(function VariantEditor({
                         value={variant.countQuery}
                         allowedFields={lineageFields.length > 0 ? lineageFields : undefined}
                         onInput={(newValue) => onChange(index, { ...variant, countQuery: newValue ?? '' })}
+                        errorTooltipClass='tooltip-top'
                     />
                 ) : (
                     <MutationListVariantFields
