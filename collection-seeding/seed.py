@@ -22,14 +22,20 @@ def make_parser() -> argparse.ArgumentParser:
     parent = argparse.ArgumentParser(add_help=False)
     parent.add_argument(
         "-u", "--url",
-        default=os.environ.get("BACKEND_URL", "http://localhost:8080"),
-        help="Backend base URL (default: $BACKEND_URL or http://localhost:8080)",
+        default=os.environ.get("API_URL", "http://localhost:4321"),
+        help="API base URL (default: $API_URL or http://localhost:4321)",
+    )
+    parent.add_argument(
+        "-k", "--api-key",
+        default=os.environ.get("API_KEY"),
+        required=not os.environ.get("API_KEY"),
+        help="API key for authentication (default: $API_KEY)",
     )
     parent.add_argument(
         "--wait",
         action="store_true",
         default=not sys.stdout.isatty(),
-        help="Retry until backend is ready (auto-enabled when no TTY)",
+        help="Retry until API is ready (auto-enabled when no TTY)",
     )
 
     parser = argparse.ArgumentParser(
@@ -92,15 +98,11 @@ def main():
     parser = make_parser()
     args = parser.parse_args()
 
-    client = BackendClient(args.url)
+    client = BackendClient(args.url, args.api_key)
     print(f"Seeding collections against {args.url} ...")
 
     if args.wait:
-        client.wait_for_backend()  # syncs user as part of polling
-    else:
-        client.sync_user()
-
-    print(f"Seeding as user id={client.user_id}.")
+        client.wait_for_api()
 
     lineage_limit = getattr(args, "limit", DEFAULT_LINEAGE_LIMIT)
 

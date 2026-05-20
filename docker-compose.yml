@@ -39,9 +39,10 @@ services:
   example-data-seeder:
     image: ghcr.io/genspectrum/dashboards/example-data-seeder:${SEEDER_TAG}
     depends_on:
-      - backend
+      - website
     environment:
-      BACKEND_URL: http://backend:8080
+      API_URL: http://website:4321
+      API_KEY: ${SEEDER_API_KEY}
     restart: "no"
 
 volumes:
