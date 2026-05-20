@@ -44,15 +44,24 @@ def main():
 
     active = [source_map[args.source]] if args.source else list(source_map.values())
 
-    total_created = 0
-    total_updated = 0
-    for source in active:
-        c, u = seed_source(client, source)
-        total_created += c
-        total_updated += u
-
-    if len(active) > 1:
-        print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
+    while True:
+        try:
+            total_created = 0
+            total_updated = 0
+            for source in active:
+                c, u = seed_source(client, source)
+                total_created += c
+                total_updated += u
+            if len(active) > 1:
+                print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
+            if not args.repeat_interval_hours:
+                sys.exit(1)
+        if not args.repeat_interval_hours:
+            break
+        print(f"\nSleeping for {args.repeat_interval_hours}h ...")
+        time.sleep(args.repeat_interval_hours * 3600)
 
 
 def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
@@ -86,6 +95,7 @@ def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
 
 
 def make_parser() -> argparse.ArgumentParser:
+    _repeat_env = os.environ.get("REPEAT_INTERVAL_HOURS")
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -116,19 +126,15 @@ def make_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="List available sources and exit",
     )
+    parser.add_argument(
+        "--repeat-interval-hours",
+        type=float,
+        default=float(_repeat_env) if _repeat_env else None,
+        metavar="HOURS",
+        help="Re-seed every N hours instead of exiting (default: $REPEAT_INTERVAL_HOURS or run once)",
+    )
     return parser
 
 
 if __name__ == "__main__":
-    repeat_hours = os.environ.get("REPEAT_INTERVAL_HOURS")
-    while True:
-        try:
-            main()
-        except Exception as e:
-            print(f"Error: {e}", file=sys.stderr)
-            if not repeat_hours:
-                sys.exit(1)
-        if not repeat_hours:
-            break
-        print(f"\nSleeping for {repeat_hours}h ...")
-        time.sleep(float(repeat_hours) * 3600)
+    main()

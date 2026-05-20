@@ -7,7 +7,7 @@ Seeds the backend with example collections:
 
 The script is idempotent — re-running it will create new collections or update existing ones (matched by name). If a collection's name changes in the source, the old entry is orphaned and a new one is created.
 
-Set `REPEAT_INTERVAL_HOURS` to run on a loop (e.g. `REPEAT_INTERVAL_HOURS=8` re-seeds every 8 hours). Without it, the script runs once and exits.
+Use `--repeat-interval-hours N` (or `$REPEAT_INTERVAL_HOURS`) to run on a loop — re-seeds every N hours. Without it, the script runs once and exits.
 
 ## Via Docker Compose
 
