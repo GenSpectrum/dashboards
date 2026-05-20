@@ -60,3 +60,11 @@ class PangoLineagesSource(Source):
             description=description,
             variants=variants,
         )
+
+
+class PangoLineagesSampleSource(PangoLineagesSource):
+    """Same as PangoLineagesSource but limited to the first 10 lineages, for quick testing."""
+    name = "covid-pango-lineages-sample"
+
+    def __init__(self):
+        super().__init__(limit=10)

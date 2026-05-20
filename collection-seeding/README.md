@@ -28,7 +28,7 @@ pixi install
 Then use the provided tasks:
 
 ```bash
-pixi run seed                    # all sources (resistance mutations + all pango lineages)
+pixi run seed                    # all sources
 pixi run seed-resistance         # resistance mutations only
 pixi run seed-lineages           # pango lineages only
 pixi run seed-lineages-sample    # first 10 pango lineages (quick test)
@@ -40,4 +40,19 @@ To target a different backend:
 pixi run seed --url http://localhost:4321
 ```
 
-Run `pixi run seed --help` or `pixi run seed <source> --help` for all options.
+Run `pixi run seed --help` for all options. Use `pixi run seed --list` to print all available sources.
+
+## Adding a new source
+
+1. Create `sources/your_source.py` and implement the `Source` ABC:
+   ```python
+   from sources import Source
+   from models import Collection
+
+   class YourSource(Source):
+       name = "your-source-name"  # used with --source flag
+
+       def get_collections(self) -> list[Collection]:
+           ...
+   ```
+2. Register it in `sources/__init__.py` by adding it to `ALL_SOURCES`.

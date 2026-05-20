@@ -3,7 +3,7 @@
 
 Idempotent: skips any collection whose name already exists for the seed user.
 
-Run with --help for usage, or <source> --help for source-specific options.
+Run with --help for usage.
 """
 
 import argparse
@@ -13,57 +13,41 @@ import time
 
 from api import ApiClient
 from models import Collection
-from sources import Source
-from sources.pango_lineages import PangoLineagesSource
-from sources.resistance_mutations import ResistanceMutationsSource
+from sources import Source, ALL_SOURCES
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parent = argparse.ArgumentParser(add_help=False)
-    parent.add_argument(
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
         "-u", "--url",
         default=os.environ.get("API_URL", "http://localhost:4321"),
         help="API base URL (default: $API_URL or http://localhost:4321)",
     )
-    parent.add_argument(
+    parser.add_argument(
         "-k", "--api-key",
         default=os.environ.get("API_KEY"),
         required=not os.environ.get("API_KEY"),
         help="API key for authentication (default: $API_KEY)",
     )
-    parent.add_argument(
+    parser.add_argument(
         "--wait",
         action="store_true",
         default=not sys.stdout.isatty(),
         help="Retry until API is ready (auto-enabled when no TTY)",
     )
-
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        parents=[parent],
+    parser.add_argument(
+        "--source",
+        metavar="NAME",
+        help=f"Only run this source (default: all). Use --list to see available sources.",
     )
-    subparsers = parser.add_subparsers(dest="source", metavar="source")
-
-    subparsers.add_parser(
-        ResistanceMutationsSource.name,
-        parents=[parent],
-        help="Seed SARS-CoV-2 antiviral resistance mutation collections",
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List available sources and exit",
     )
-
-    lineages_parser = subparsers.add_parser(
-        PangoLineagesSource.name,
-        parents=[parent],
-        help="Seed pango lineage collections",
-    )
-    lineages_parser.add_argument(
-        "--limit",
-        type=int,
-        default=None,
-        metavar="N",
-        help="Only process the first N lineages (default: all)",
-    )
-
     return parser
 
 
@@ -101,18 +85,23 @@ def main():
     parser = make_parser()
     args = parser.parse_args()
 
+    source_map = {cls.name: cls() for cls in ALL_SOURCES}
+
+    if args.list:
+        for name in source_map:
+            print(name)
+        return
+
+    if args.source and args.source not in source_map:
+        print(f"Unknown source '{args.source}'. Use --list to see available sources.", file=sys.stderr)
+        sys.exit(1)
+
     client = ApiClient(args.url, args.api_key)
     print(f"Seeding collections against {args.url} ...")
 
     if args.wait:
         client.wait_for_api()
 
-    lineage_limit = getattr(args, "limit", None)
-
-    source_map: dict[str, Source] = {
-        ResistanceMutationsSource.name: ResistanceMutationsSource(),
-        PangoLineagesSource.name: PangoLineagesSource(limit=lineage_limit),
-    }
     active = [source_map[args.source]] if args.source else list(source_map.values())
 
     total_created = 0
