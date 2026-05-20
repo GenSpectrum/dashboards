@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -27,6 +28,8 @@ class SystemUserInitializerTest(
 ) {
     private val noArgs: ApplicationArguments = DefaultApplicationArguments()
 
+    private fun uniqueKey() = UUID.randomUUID().toString()
+
     private fun initializerWith(config: SystemUserConfig?) = SystemUserInitializer(
         dashboardsConfig = DashboardsConfig(organisms = emptyMap(), systemUser = config),
         userModel = userModel,
@@ -36,7 +39,7 @@ class SystemUserInitializerTest(
     @Test
     fun `WHEN systemUser config with apiKey THEN key validates and user exists`() {
         val githubId = "system-user-with-key-${System.nanoTime()}"
-        val rawKey = "a".repeat(64)
+        val rawKey = uniqueKey()
 
         initializerWith(SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = rawKey)).run(noArgs)
 
@@ -47,7 +50,7 @@ class SystemUserInitializerTest(
     @Test
     fun `WHEN run twice with same config THEN idempotent - no errors and key still valid`() {
         val githubId = "system-user-idempotent-${System.nanoTime()}"
-        val rawKey = "b".repeat(64)
+        val rawKey = uniqueKey()
         val config = SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = rawKey)
         val initializer = initializerWith(config)
 
@@ -61,8 +64,8 @@ class SystemUserInitializerTest(
     @Test
     fun `WHEN apiKey changes THEN old key is rejected and new key validates`() {
         val githubId = "system-user-rotation-${System.nanoTime()}"
-        val oldKey = "c".repeat(64)
-        val newKey = "d".repeat(64)
+        val oldKey = uniqueKey()
+        val newKey = uniqueKey()
 
         initializerWith(SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = oldKey)).run(noArgs)
         initializerWith(SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = newKey)).run(noArgs)
@@ -75,7 +78,7 @@ class SystemUserInitializerTest(
     @Test
     fun `WHEN run twice with same key THEN lastUsedAt is not reset`() {
         val githubId = "system-user-no-reset-${System.nanoTime()}"
-        val rawKey = "e".repeat(64)
+        val rawKey = uniqueKey()
         val config = SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = rawKey)
         val initializer = initializerWith(config)
 
