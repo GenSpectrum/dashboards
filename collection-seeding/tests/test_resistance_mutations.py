@@ -1,8 +1,8 @@
-from sources.resistance_mutations import _mature_name, get_collections, NAME
+from sources.resistance_mutations import ResistanceMutationsSource, _mature_name
 
 
 def test_name():
-    assert NAME == "covid-resistance-mutations"
+    assert ResistanceMutationsSource.name == "covid-resistance-mutations"
 
 
 # --- _mature_name ---
@@ -29,23 +29,19 @@ def test_mature_name_deletion():
 # --- get_collections ---
 
 def test_get_collections_returns_three():
-    cols = get_collections()
+    cols = ResistanceMutationsSource().get_collections()
     assert len(cols) == 3
 
 
 def test_get_collections_all_covid():
-    for col in get_collections():
+    for col in ResistanceMutationsSource().get_collections():
         assert col["organism"] == "covid"
 
 
 def test_get_collections_variant_structure():
-    for col in get_collections():
+    for col in ResistanceMutationsSource().get_collections():
         assert col["variants"], f"'{col['name']}' has no variants"
         for v in col["variants"]:
             assert v["type"] == "filterObject"
             assert "aminoAcidMutations" in v["filterObject"]
             assert len(v["filterObject"]["aminoAcidMutations"]) == 1
-
-
-def test_get_collections_limit_ignored():
-    assert get_collections(limit=1) == get_collections(limit=0)

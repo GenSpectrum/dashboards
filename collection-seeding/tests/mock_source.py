@@ -1,8 +1,9 @@
 """Mock data source for use in tests."""
 
-NAME = "mock-source"
+from models import Collection
+from sources import Source
 
-COLLECTIONS = [
+COLLECTIONS: list[Collection] = [
     {
         "name": "Mock Collection A",
         "organism": "covid",
@@ -18,5 +19,11 @@ COLLECTIONS = [
 ]
 
 
-def get_collections(limit: int = 0) -> list[dict]:
-    return list(COLLECTIONS)
+class MockSource(Source):
+    name = "mock-source"
+
+    def __init__(self, collections: list[Collection] | None = None):
+        self._collections = list(COLLECTIONS) if collections is None else collections
+
+    def get_collections(self) -> list[Collection]:
+        return self._collections

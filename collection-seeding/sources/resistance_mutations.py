@@ -5,8 +5,7 @@ as per the Stanford Coronavirus Antiviral & Resistance database.
 """
 
 from models import Collection, Variant
-
-NAME = "covid-resistance-mutations"
+from sources import Source
 
 CLPRO_MUTATIONS = [
     'ORF1a:T3284I', 'ORF1a:T3288A', 'ORF1a:T3288N', 'ORF1a:T3308I', 'ORF1a:D3311Y',
@@ -103,36 +102,39 @@ def _build_variants(mutations: list[str], set_name: str, offset: int) -> list[Va
     ]
 
 
-def get_collections(limit: int = 0) -> list[Collection]:
-    return [
-        {
-            "name": "3CLpro resistance mutations",
-            "organism": "covid",
-            "description": (
-                "SARS-CoV-2 3C-like protease (3CLpro/Mpro) inhibitor resistance mutations "
-                "as per Stanford Coronavirus Antiviral & Resistance database "
-                "(last updated 21 August 2024)."
-            ),
-            "variants": _build_variants(CLPRO_MUTATIONS, "3CLpro", -3263),
-        },
-        {
-            "name": "RdRp resistance mutations",
-            "organism": "covid",
-            "description": (
-                "SARS-CoV-2 RNA-dependent RNA polymerase (RdRp) inhibitor resistance mutations "
-                "as per Stanford Coronavirus Antiviral & Resistance database "
-                "(last updated 21 August 2024)."
-            ),
-            "variants": _build_variants(RDRP_MUTATIONS, "RdRp", 9),
-        },
-        {
-            "name": "Spike mAb resistance mutations",
-            "organism": "covid",
-            "description": (
-                "SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutations "
-                "as per Stanford Coronavirus Antiviral & Resistance database "
-                "(last updated 21 August 2024)."
-            ),
-            "variants": _build_variants(SPIKE_MUTATIONS, "Spike", 0),
-        },
-    ]
+class ResistanceMutationsSource(Source):
+    name = "covid-resistance-mutations"
+
+    def get_collections(self) -> list[Collection]:
+        return [
+            {
+                "name": "3CLpro resistance mutations",
+                "organism": "covid",
+                "description": (
+                    "SARS-CoV-2 3C-like protease (3CLpro/Mpro) inhibitor resistance mutations "
+                    "as per Stanford Coronavirus Antiviral & Resistance database "
+                    "(last updated 21 August 2024)."
+                ),
+                "variants": _build_variants(CLPRO_MUTATIONS, "3CLpro", -3263),
+            },
+            {
+                "name": "RdRp resistance mutations",
+                "organism": "covid",
+                "description": (
+                    "SARS-CoV-2 RNA-dependent RNA polymerase (RdRp) inhibitor resistance mutations "
+                    "as per Stanford Coronavirus Antiviral & Resistance database "
+                    "(last updated 21 August 2024)."
+                ),
+                "variants": _build_variants(RDRP_MUTATIONS, "RdRp", 9),
+            },
+            {
+                "name": "Spike mAb resistance mutations",
+                "organism": "covid",
+                "description": (
+                    "SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutations "
+                    "as per Stanford Coronavirus Antiviral & Resistance database "
+                    "(last updated 21 August 2024)."
+                ),
+                "variants": _build_variants(SPIKE_MUTATIONS, "Spike", 0),
+            },
+        ]

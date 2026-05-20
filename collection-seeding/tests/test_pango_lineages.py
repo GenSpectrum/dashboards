@@ -1,7 +1,6 @@
-import json
 import responses as rsps_lib
 
-from sources.pango_lineages import _build_collection, get_collections, DATA_URL, NAME
+from sources.pango_lineages import PangoLineagesSource, _build_collection, DATA_URL
 
 SAMPLE_DATA = {
     "BA.2": {
@@ -32,7 +31,7 @@ SAMPLE_DATA = {
 
 
 def test_name():
-    assert NAME == "covid-pango-lineages"
+    assert PangoLineagesSource.name == "covid-pango-lineages"
 
 
 # --- _build_collection ---
@@ -79,7 +78,7 @@ def test_build_collection_missing_fields_use_defaults():
 @rsps_lib.activate
 def test_get_collections_fetches_data_url():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    get_collections()
+    PangoLineagesSource(limit=0).get_collections()
     assert len(rsps_lib.calls) == 1
     assert rsps_lib.calls[0].request.url == DATA_URL
 
@@ -87,7 +86,7 @@ def test_get_collections_fetches_data_url():
 @rsps_lib.activate
 def test_get_collections_excludes_empty_variants():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = get_collections()
+    cols = PangoLineagesSource(limit=0).get_collections()
     # XBB has only blank subs → should be excluded
     names = [c["name"] for c in cols]
     assert "XBB" not in names
@@ -96,13 +95,13 @@ def test_get_collections_excludes_empty_variants():
 @rsps_lib.activate
 def test_get_collections_respects_limit():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = get_collections(limit=1)
+    cols = PangoLineagesSource(limit=1).get_collections()
     assert len(cols) <= 1
 
 
 @rsps_lib.activate
 def test_get_collections_no_limit_returns_all_valid():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = get_collections(limit=0)
+    cols = PangoLineagesSource(limit=0).get_collections()
     # BA.2 and BA.5 have valid subs; XBB does not
     assert len(cols) == 2

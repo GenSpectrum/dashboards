@@ -13,10 +13,9 @@ import time
 
 from api import ApiClient
 from models import Collection
-from sources import pango_lineages, resistance_mutations
-
-ALL_SOURCES = [resistance_mutations, pango_lineages]
-DEFAULT_LINEAGE_LIMIT = 10
+from sources import Source
+from sources.pango_lineages import PangoLineagesSource, DEFAULT_LIMIT
+from sources.resistance_mutations import ResistanceMutationsSource
 
 
 def make_parser() -> argparse.ArgumentParser:
@@ -47,33 +46,34 @@ def make_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="source", metavar="source")
 
     subparsers.add_parser(
-        resistance_mutations.NAME,
+        ResistanceMutationsSource.name,
         parents=[parent],
         help="Seed SARS-CoV-2 antiviral resistance mutation collections",
     )
 
     lineages_parser = subparsers.add_parser(
-        pango_lineages.NAME,
+        PangoLineagesSource.name,
         parents=[parent],
         help="Seed pango lineage collections",
     )
     lineages_parser.add_argument(
         "--limit",
         type=int,
-        default=DEFAULT_LINEAGE_LIMIT,
+        default=DEFAULT_LIMIT,
         metavar="N",
-        help=f"Only process the first N lineages (default: {DEFAULT_LINEAGE_LIMIT}; 0 = all)",
+        help=f"Only process the first N lineages (default: {DEFAULT_LIMIT}; 0 = all)",
     )
 
     return parser
 
 
-def seed_source(client: ApiClient, source_name: str, collections: list[Collection]) -> tuple[int, int]:
+def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
     """Upsert collections for one source, grouped by organism. Returns (created, updated) counts.
     Matching is by name — if a collection's name changes in the source, the old entry is orphaned and a new one is created."""
-    print(f"\n[{source_name}]")
+    collections = source.get_collections()
+    print(f"\n[{source.name}]")
 
-    organisms = {}
+    organisms: dict[str, list[Collection]] = {}
     for c in collections:
         organisms.setdefault(c["organism"], []).append(c)
 
@@ -107,24 +107,18 @@ def main():
     if args.wait:
         client.wait_for_api()
 
-    lineage_limit = getattr(args, "limit", DEFAULT_LINEAGE_LIMIT)
+    lineage_limit = getattr(args, "limit", DEFAULT_LIMIT)
 
-    if args.source == resistance_mutations.NAME:
-        active = [(resistance_mutations, {})]
-    elif args.source == pango_lineages.NAME:
-        active = [(pango_lineages, {"limit": lineage_limit})]
-    else:
-        # No subcommand: run all sources
-        active = [
-            (resistance_mutations, {}),
-            (pango_lineages, {"limit": lineage_limit}),
-        ]
+    source_map: dict[str, Source] = {
+        ResistanceMutationsSource.name: ResistanceMutationsSource(),
+        PangoLineagesSource.name: PangoLineagesSource(limit=lineage_limit),
+    }
+    active = [source_map[args.source]] if args.source else list(source_map.values())
 
     total_created = 0
     total_updated = 0
-    for source, kwargs in active:
-        collections = source.get_collections(**kwargs)
-        c, u = seed_source(client, source.NAME, collections)
+    for source in active:
+        c, u = seed_source(client, source)
         total_created += c
         total_updated += u
 

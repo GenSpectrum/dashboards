@@ -6,13 +6,14 @@ Creates one collection per lineage, with nucleotide substitutions as variants.
 import requests
 
 from models import Collection, Variant
-
-NAME = "covid-pango-lineages"
+from sources import Source
 
 DATA_URL = (
     "https://raw.githubusercontent.com/corneliusroemer/pango-sequences"
     "/refs/heads/main/data/pango-consensus-sequences_summary.json"
 )
+
+DEFAULT_LIMIT = 10
 
 
 def _build_collection(entry: dict) -> Collection:
@@ -46,15 +47,20 @@ def _build_collection(entry: dict) -> Collection:
     )
 
 
-def get_collections(limit: int = 0) -> list[Collection]:
-    print(f"Fetching lineage data from {DATA_URL} ...")
-    response = requests.get(DATA_URL, timeout=60)
-    response.raise_for_status()
-    entries = list(response.json().values())
-    if limit:
-        entries = entries[:limit]
-    print(f"  Loaded {len(entries)} lineage(s).")
+class PangoLineagesSource(Source):
+    name = "covid-pango-lineages"
 
-    collections = [_build_collection(e) for e in entries]
-    # Drop lineages that ended up with no variants after filtering blank subs
-    return [c for c in collections if c["variants"]]
+    def __init__(self, limit: int = DEFAULT_LIMIT):
+        self._limit = limit
+
+    def get_collections(self) -> list[Collection]:
+        print(f"Fetching lineage data from {DATA_URL} ...")
+        response = requests.get(DATA_URL, timeout=60)
+        response.raise_for_status()
+        entries = list(response.json().values())
+        if self._limit:
+            entries = entries[:self._limit]
+        print(f"  Loaded {len(entries)} lineage(s).")
+        collections = [_build_collection(e) for e in entries]
+        # Drop lineages that ended up with no variants after filtering blank subs
+        return [c for c in collections if c["variants"]]
