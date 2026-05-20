@@ -5,3 +5,5 @@ create table api_keys_table (
     created_at timestamp without time zone not null default date_trunc('milliseconds', timezone('UTC', current_timestamp)),
     last_used_at timestamp without time zone
 );
+
+create index on api_keys_table (key_hash);
