@@ -2,7 +2,7 @@ import sys
 import pytest
 import responses as rsps_lib
 
-from backend import BackendClient
+from api import ApiClient
 
 BASE = "http://localhost:8080"
 COLLECTIONS_URL = f"{BASE}/api/collections"
@@ -11,7 +11,7 @@ API_KEY = "test-api-key"
 
 @pytest.fixture
 def client():
-    return BackendClient(BASE, API_KEY)
+    return ApiClient(BASE, API_KEY)
 
 
 # --- fetch_existing_collections ---

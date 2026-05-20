@@ -10,7 +10,7 @@ import argparse
 import os
 import sys
 
-from backend import BackendClient
+from api import ApiClient
 from models import Collection
 from sources import pango_lineages, resistance_mutations
 
@@ -67,7 +67,7 @@ def make_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def seed_source(client: BackendClient, source_name: str, collections: list[Collection]) -> tuple[int, int]:
+def seed_source(client: ApiClient, source_name: str, collections: list[Collection]) -> tuple[int, int]:
     print(f"\n[{source_name}]")
 
     organisms = {}
@@ -98,7 +98,7 @@ def main():
     parser = make_parser()
     args = parser.parse_args()
 
-    client = BackendClient(args.url, args.api_key)
+    client = ApiClient(args.url, args.api_key)
     print(f"Seeding collections against {args.url} ...")
 
     if args.wait:

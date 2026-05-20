@@ -11,7 +11,7 @@ RETRY_ATTEMPTS = 30
 RETRY_DELAY_S = 2
 
 
-class BackendClient:
+class ApiClient:
     def __init__(self, base_url: str, api_key: str):
         self.base_url = base_url.rstrip("/")
         self._collections_url = f"{self.base_url}/api/collections"
