@@ -13,7 +13,8 @@ import time
 
 from api import ApiClient
 from models import Collection
-from sources import Source, ALL_SOURCES
+from sources import Source
+from sources.registry import ALL_SOURCES
 
 
 def make_parser() -> argparse.ArgumentParser:

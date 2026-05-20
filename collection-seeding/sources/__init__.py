@@ -8,7 +8,7 @@ class Source(ABC):
 
     Implement this to add a new source: set a unique `name` (used as the --source flag value)
     and implement `get_collections` to return the collections to upsert.
-    Then register it in ALL_SOURCES below.
+    Then register it in sources/registry.py.
     """
     name: str
 
@@ -17,11 +17,3 @@ class Source(ABC):
         ...
 
 
-from sources.resistance_mutations import ResistanceMutationsSource  # noqa: E402
-from sources.pango_lineages import PangoLineagesSource, PangoLineagesSampleSource  # noqa: E402
-
-ALL_SOURCES: list[type[Source]] = [
-    ResistanceMutationsSource,
-    PangoLineagesSource,
-    PangoLineagesSampleSource,
-]

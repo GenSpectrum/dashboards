@@ -55,4 +55,4 @@ Run `pixi run seed --help` for all options. Use `pixi run seed --list` to print 
        def get_collections(self) -> list[Collection]:
            ...
    ```
-2. Register it in `sources/__init__.py` by adding it to `ALL_SOURCES`.
+2. Register it in `sources/registry.py` by adding it to `ALL_SOURCES`.
