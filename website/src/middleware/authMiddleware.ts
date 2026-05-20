@@ -42,6 +42,7 @@ async function validateApiKey(key: string): Promise<number | undefined> {
     try {
         const response = await fetch(`${getBackendHost()}/internal/api-keys/validate`, {
             method: 'POST',
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ key }),
         });

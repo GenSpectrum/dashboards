@@ -15,7 +15,11 @@ function ApiKeyManagerInner() {
     const queryClient = useQueryClient();
     const [generatedKey, setGeneratedKey] = useState<string | null>(null);
 
-    const { data: metadata, isLoading, isError: fetchError } = useQuery({
+    const {
+        data: metadata,
+        isLoading,
+        isError: fetchError,
+    } = useQuery({
         queryKey: ['api-key'],
         queryFn: async () => {
             try {
@@ -76,7 +80,7 @@ function ApiKeyManagerInner() {
                                 {generateMutation.isPending ? 'Generating…' : 'Generate API key'}
                             </button>
                             {generateMutation.isError && (
-                                <p className='mt-2 text-red-600 text-sm'>Failed to generate key. Please try again.</p>
+                                <p className='mt-2 text-sm text-red-600'>Failed to generate key. Please try again.</p>
                             )}
                         </div>
                     ) : (
@@ -109,7 +113,7 @@ function ApiKeyManagerInner() {
                                 {revokeMutation.isPending ? 'Revoking…' : 'Revoke key'}
                             </button>
                             {revokeMutation.isError && (
-                                <p className='mt-2 text-red-600 text-sm'>Failed to revoke key. Please try again.</p>
+                                <p className='mt-2 text-sm text-red-600'>Failed to revoke key. Please try again.</p>
                             )}
                         </div>
                     )}
@@ -121,14 +125,12 @@ function ApiKeyManagerInner() {
                     role='dialog'
                     aria-modal='true'
                     aria-label='Your new API key'
-                    className='fixed inset-0 flex items-center justify-center bg-black/50 z-50'
+                    className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'
                 >
-                    <div className='bg-white rounded-lg p-6 max-w-lg w-full shadow-xl'>
-                        <h2 className='text-lg font-semibold mb-2'>Your new API key</h2>
-                        <p className='text-sm text-gray-600 mb-3'>
-                            Copy this key now — it will not be shown again.
-                        </p>
-                        <code className='block bg-gray-100 rounded p-3 text-sm break-all mb-4'>{generatedKey}</code>
+                    <div className='w-full max-w-lg rounded-lg bg-white p-6 shadow-xl'>
+                        <h2 className='mb-2 text-lg font-semibold'>Your new API key</h2>
+                        <p className='mb-3 text-sm text-gray-600'>Copy this key now — it will not be shown again.</p>
+                        <code className='mb-4 block rounded bg-gray-100 p-3 text-sm break-all'>{generatedKey}</code>
                         <button className='btn btn-primary' onClick={() => setGeneratedKey(null)}>
                             Done
                         </button>
