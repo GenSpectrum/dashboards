@@ -68,6 +68,8 @@ def make_parser() -> argparse.ArgumentParser:
 
 
 def seed_source(client: ApiClient, source_name: str, collections: list[Collection]) -> tuple[int, int]:
+    """Upsert collections for one source, grouped by organism. Returns (created, updated) counts.
+    Matching is by name — if a collection's name changes in the source, the old entry is orphaned and a new one is created."""
     print(f"\n[{source_name}]")
 
     organisms = {}

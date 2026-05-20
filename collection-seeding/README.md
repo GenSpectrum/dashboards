@@ -5,7 +5,7 @@ Seeds the backend with example collections:
 - **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
 - **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
 
-The script is idempotent — re-running it will create new collections or update existing ones (matched by name).
+The script is idempotent — re-running it will create new collections or update existing ones (matched by name). If a collection's name changes in the source, the old entry is orphaned and a new one is created.
 
 Collections are seeded under the [genspectrum-bot](https://github.com/genspectrum-bot) account (GitHub ID `218605180`), which is upserted automatically via `POST /users/sync` before seeding.
 
