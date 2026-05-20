@@ -1,4 +1,4 @@
-package org.genspectrum.dashboardsbackend.model.api_key
+package org.genspectrum.dashboardsbackend.model.apikey
 
 import org.genspectrum.dashboardsbackend.api.ApiKeyMetadata
 import org.jetbrains.exposed.v1.core.dao.id.EntityID

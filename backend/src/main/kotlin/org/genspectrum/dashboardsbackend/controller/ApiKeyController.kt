@@ -5,7 +5,7 @@ import org.genspectrum.dashboardsbackend.api.ApiKeyMetadata
 import org.genspectrum.dashboardsbackend.api.GeneratedApiKey
 import org.genspectrum.dashboardsbackend.api.ValidateApiKeyRequest
 import org.genspectrum.dashboardsbackend.api.ValidateApiKeyResponse
-import org.genspectrum.dashboardsbackend.model.api_key.ApiKeyModel
+import org.genspectrum.dashboardsbackend.model.apikey.ApiKeyModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -29,7 +29,8 @@ class ApiKeyController(private val apiKeyModel: ApiKeyModel) {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
         summary = "Generate a new API key",
-        description = "Generates a new API key for the user. Returns the raw key once — it is never stored. Returns 409 if a key already exists.",
+        description = "Generates a new API key for the user. Returns the raw key once - it is never stored. " +
+            "Returns 409 if a key already exists.",
     )
     fun generateApiKey(@RequestParam userId: Long): GeneratedApiKey = apiKeyModel.generateApiKey(userId)
 
@@ -45,7 +46,7 @@ class ApiKeyController(private val apiKeyModel: ApiKeyModel) {
     @Operation(
         summary = "Validate an API key",
         description = """Takes a raw API key and returns the associated userId on success (200).
-Returns 404 if the key does not match any stored hash — the proxy treats this as an invalid
+Returns 404 if the key does not match any stored hash - the proxy treats this as an invalid
 credential and falls through to the session cookie check. Only reachable within the internal
 Docker network, so no additional access control is applied.""",
     )
