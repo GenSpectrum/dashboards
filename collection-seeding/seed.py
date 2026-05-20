@@ -56,8 +56,7 @@ def main():
                 print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
         except Exception as e:
             print(f"Error: {e}", file=sys.stderr)
-            if not args.repeat_interval_hours:
-                sys.exit(1)
+            sys.exit(1)
         if not args.repeat_interval_hours:
             break
         print(f"\nSleeping for {args.repeat_interval_hours}h ...")
