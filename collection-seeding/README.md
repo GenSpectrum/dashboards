@@ -9,8 +9,6 @@ The script is idempotent — re-running it will create new collections or update
 
 Set `REPEAT_INTERVAL_HOURS` to run on a loop (e.g. `REPEAT_INTERVAL_HOURS=8` re-seeds every 8 hours). Without it, the script runs once and exits.
 
-Collections are seeded under the [genspectrum-bot](https://github.com/genspectrum-bot) account (GitHub ID `218605180`), which is upserted automatically via `POST /users/sync` before seeding.
-
 ## Via Docker Compose
 
 The seeder runs automatically as part of Docker Compose:
