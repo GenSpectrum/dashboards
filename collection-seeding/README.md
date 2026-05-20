@@ -37,7 +37,7 @@ pixi run seed-all-lineages       # all ~4976 pango lineages
 To target a different backend:
 
 ```bash
-pixi run seed --url http://localhost:9021
+pixi run seed --url http://localhost:4321
 ```
 
 Run `pixi run seed --help` or `pixi run seed <source> --help` for all options.

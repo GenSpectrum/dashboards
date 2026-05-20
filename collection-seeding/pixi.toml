@@ -8,7 +8,7 @@ platforms = ["linux-64", "osx-arm64", "osx-64", "linux-aarch64"]
 python = "3.13.*"
 
 [pypi-dependencies]
-requests = "*"
+requests = ">=2.33.1"
 
 [tasks]
 seed = "python seed.py"
@@ -17,8 +17,8 @@ seed-all-lineages = "python seed.py covid-pango-lineages --limit 0"
 seed-resistance = "python seed.py covid-resistance-mutations"
 
 [feature.test.pypi-dependencies]
-pytest = "*"
-responses = "*"
+pytest = ">=9.0.3"
+responses = ">=0.26.0"
 
 [feature.test.tasks]
 test = "pytest"
