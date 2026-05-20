@@ -28,10 +28,10 @@ pixi install
 Then use the provided tasks:
 
 ```bash
-pixi run seed                    # all sources (resistance mutations + first 10 lineages)
+pixi run seed                    # all sources (resistance mutations + all pango lineages)
 pixi run seed-resistance         # resistance mutations only
-pixi run seed-lineages           # pango lineages (first 10)
-pixi run seed-all-lineages       # all ~4976 pango lineages
+pixi run seed-lineages           # pango lineages only
+pixi run seed-lineages-sample    # first 10 pango lineages (quick test)
 ```
 
 To target a different backend:

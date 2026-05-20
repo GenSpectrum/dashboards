@@ -13,38 +13,7 @@ DATA_URL = (
     "/refs/heads/main/data/pango-consensus-sequences_summary.json"
 )
 
-DEFAULT_LIMIT = 10
-
-
-def _build_collection(entry: dict) -> Collection:
-    lineage: str = entry["lineage"]
-    parent: str = entry.get("parent") or "—"
-    clade: str = entry.get("nextstrainClade") or "—"
-    date: str = entry.get("designationDate") or "unknown"
-
-    subs = [s for s in entry.get("nucSubstitutions", []) if s]
-    variants: list[Variant] = [
-        {
-            "type": "filterObject",
-            "name": sub,
-            "filterObject": {"nucleotideMutations": [sub]},
-        }
-        for sub in subs
-    ]
-
-    description = (
-        f"Pango lineage {lineage}. "
-        f"Parent: {parent}. "
-        f"Nextstrain clade: {clade}. "
-        f"Designated: {date}."
-    )
-
-    return Collection(
-        name=lineage,
-        organism="covid",
-        description=description,
-        variants=variants,
-    )
+DEFAULT_LIMIT = 0
 
 
 class PangoLineagesSource(Source):
@@ -61,6 +30,37 @@ class PangoLineagesSource(Source):
         if self._limit:
             entries = entries[:self._limit]
         print(f"  Loaded {len(entries)} lineage(s).")
-        collections = [_build_collection(e) for e in entries]
+        collections = [self._build_collection(e) for e in entries]
         # Drop lineages that ended up with no variants after filtering blank subs
         return [c for c in collections if c["variants"]]
+
+    @staticmethod
+    def _build_collection(entry: dict) -> Collection:
+        lineage: str = entry["lineage"]
+        parent: str = entry.get("parent") or "—"
+        clade: str = entry.get("nextstrainClade") or "—"
+        date: str = entry.get("designationDate") or "unknown"
+
+        subs = [s for s in entry.get("nucSubstitutions", []) if s]
+        variants: list[Variant] = [
+            {
+                "type": "filterObject",
+                "name": sub,
+                "filterObject": {"nucleotideMutations": [sub]},
+            }
+            for sub in subs
+        ]
+
+        description = (
+            f"Pango lineage {lineage}. "
+            f"Parent: {parent}. "
+            f"Nextstrain clade: {clade}. "
+            f"Designated: {date}."
+        )
+
+        return Collection(
+            name=lineage,
+            organism="covid",
+            description=description,
+            variants=variants,
+        )

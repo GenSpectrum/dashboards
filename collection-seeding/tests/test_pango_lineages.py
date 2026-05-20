@@ -1,6 +1,6 @@
 import responses as rsps_lib
 
-from sources.pango_lineages import PangoLineagesSource, _build_collection, DATA_URL
+from sources.pango_lineages import PangoLineagesSource, DATA_URL
 
 SAMPLE_DATA = {
     "BA.2": {
@@ -37,13 +37,13 @@ def test_name():
 # --- _build_collection ---
 
 def test_build_collection_basic():
-    col = _build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
     assert col["name"] == "BA.2"
     assert col["organism"] == "covid"
 
 
 def test_build_collection_description_format():
-    col = _build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
     assert "BA.2" in col["description"]
     assert "BA" in col["description"]       # parent
     assert "22C" in col["description"]      # clade
@@ -51,7 +51,7 @@ def test_build_collection_description_format():
 
 
 def test_build_collection_filters_blank_subs():
-    col = _build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
     # nucSubstitutions has ["C241T", "A23403G", ""] — blank should be dropped
     assert len(col["variants"]) == 2
     names = [v["name"] for v in col["variants"]]
@@ -60,7 +60,7 @@ def test_build_collection_filters_blank_subs():
 
 
 def test_build_collection_variant_structure():
-    col = _build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
     for v in col["variants"]:
         assert v["type"] == "filterObject"
         assert "nucleotideMutations" in v["filterObject"]
@@ -68,7 +68,7 @@ def test_build_collection_variant_structure():
 
 
 def test_build_collection_missing_fields_use_defaults():
-    col = _build_collection(SAMPLE_DATA["XBB"])
+    col = PangoLineagesSource._build_collection(SAMPLE_DATA["XBB"])
     assert "—" in col["description"]       # parent and clade fallback
     assert "unknown" in col["description"]  # date fallback
 

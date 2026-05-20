@@ -13,7 +13,7 @@ requests = ">=2.33.1"
 [tasks]
 seed = "python seed.py"
 seed-lineages = "python seed.py covid-pango-lineages"
-seed-all-lineages = "python seed.py covid-pango-lineages --limit 0"
+seed-lineages-sample = "python seed.py covid-pango-lineages --limit 10"
 seed-resistance = "python seed.py covid-resistance-mutations"
 
 [feature.test.pypi-dependencies]
