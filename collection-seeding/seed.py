@@ -17,71 +17,6 @@ from sources import Source
 from sources.registry import ALL_SOURCES
 
 
-def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    parser.add_argument(
-        "-u", "--url",
-        default=os.environ.get("API_URL", "http://localhost:4321"),
-        help="API base URL (default: $API_URL or http://localhost:4321)",
-    )
-    parser.add_argument(
-        "-k", "--api-key",
-        default=os.environ.get("API_KEY"),
-        required=not os.environ.get("API_KEY"),
-        help="API key for authentication (default: $API_KEY)",
-    )
-    parser.add_argument(
-        "--wait",
-        action="store_true",
-        default=not sys.stdout.isatty(),
-        help="Retry until API is ready (auto-enabled when no TTY)",
-    )
-    parser.add_argument(
-        "--source",
-        metavar="NAME",
-        help=f"Only run this source (default: all). Use --list to see available sources.",
-    )
-    parser.add_argument(
-        "--list",
-        action="store_true",
-        help="List available sources and exit",
-    )
-    return parser
-
-
-def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
-    """Upsert collections for one source, grouped by organism. Returns (created, updated) counts.
-    Matching is by name — if a collection's name changes in the source, the old entry is orphaned and a new one is created."""
-    collections = source.get_collections()
-    print(f"\n[{source.name}]")
-
-    organisms: dict[str, list[Collection]] = {}
-    for c in collections:
-        organisms.setdefault(c["organism"], []).append(c)
-
-    created = 0
-    updated = 0
-    for organism, org_collections in organisms.items():
-        existing = client.fetch_existing_collections(organism)
-        existing_by_name = {c["name"]: c for c in existing}
-        for collection in org_collections:
-            existing_entry = existing_by_name.get(collection["name"])
-            if existing_entry:
-                client.update_collection(existing_entry["id"], collection)
-                print(f"  UPDATE id={existing_entry['id']}  {collection['name']}")
-                updated += 1
-            else:
-                col_id = client.create_collection(collection)
-                print(f"  CREATE id={col_id}  {collection['name']}")
-                created += 1
-
-    print(f"  Created: {created}, updated: {updated}.")
-    return created, updated
-
-
 def main():
     parser = make_parser()
     args = parser.parse_args()
@@ -114,6 +49,71 @@ def main():
 
     if len(active) > 1:
         print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
+
+
+def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
+    """Upsert collections for one source, grouped by organism. Returns (created, updated) counts.
+    Matching is by name — if a collection's name changes in the source, the old entry is orphaned and a new one is created."""
+    collections = source.get_collections()
+    print(f"\n[{source.name}]")
+
+    organisms: dict[str, list[Collection]] = {}
+    for c in collections:
+        organisms.setdefault(c["organism"], []).append(c)
+
+    created = 0
+    updated = 0
+    for organism, org_collections in organisms.items():
+        existing = client.fetch_existing_collections(organism)
+        existing_by_name = {c["name"]: c for c in existing}
+        for collection in org_collections:
+            existing_entry = existing_by_name.get(collection["name"])
+            if existing_entry:
+                client.update_collection(existing_entry["id"], collection)
+                print(f"  UPDATE id={existing_entry['id']}  {collection['name']}")
+                updated += 1
+            else:
+                col_id = client.create_collection(collection)
+                print(f"  CREATE id={col_id}  {collection['name']}")
+                created += 1
+
+    print(f"  Created: {created}, updated: {updated}.")
+    return created, updated
+
+
+def make_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "-u", "--url",
+        default=os.environ.get("API_URL", "http://localhost:4321"),
+        help="API base URL (default: $API_URL or http://localhost:4321)",
+    )
+    parser.add_argument(
+        "-k", "--api-key",
+        default=os.environ.get("API_KEY"),
+        required=not os.environ.get("API_KEY"),
+        help="API key for authentication (default: $API_KEY)",
+    )
+    parser.add_argument(
+        "--wait",
+        action="store_true",
+        default=not sys.stdout.isatty(),
+        help="Retry until API is ready (auto-enabled when no TTY)",
+    )
+    parser.add_argument(
+        "--source",
+        metavar="NAME",
+        help="Only run this source (default: all). Use --list to see available sources.",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List available sources and exit",
+    )
+    return parser
 
 
 if __name__ == "__main__":
