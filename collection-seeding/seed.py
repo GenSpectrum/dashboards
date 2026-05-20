@@ -9,6 +9,7 @@ Run with --help for usage, or <source> --help for source-specific options.
 import argparse
 import os
 import sys
+import time
 
 from api import ApiClient
 from models import Collection
@@ -132,8 +133,15 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    repeat_hours = os.environ.get("REPEAT_INTERVAL_HOURS")
+    while True:
+        try:
+            main()
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
+            if not repeat_hours:
+                sys.exit(1)
+        if not repeat_hours:
+            break
+        print(f"\nSleeping for {repeat_hours}h ...")
+        time.sleep(float(repeat_hours) * 3600)

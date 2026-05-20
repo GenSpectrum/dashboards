@@ -43,7 +43,8 @@ services:
     environment:
       API_URL: http://website:4321
       API_KEY: ${SEEDER_API_KEY}
-    restart: "no"
+      REPEAT_INTERVAL_HOURS: 8
+    restart: always
 
 volumes:
   database-data:
