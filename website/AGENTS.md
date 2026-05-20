@@ -48,6 +48,15 @@ Check `package.json` for more details on available commands.
 
 Format with prettier. Use eslint to check code style issues.
 
+### ESLint Naming Convention Exceptions
+
+HTTP header names (e.g. `Content-Type`, `Authorization`) must keep their original casing and cannot be camelCased. Suppress the `@typescript-eslint/naming-convention` error with an inline disable comment:
+
+```typescript
+// eslint-disable-next-line @typescript-eslint/naming-convention
+{ 'Content-Type': 'application/json' }
+```
+
 ### React & Astro
 
 - Use **Astro** for static/server-rendered pages; use **React** for interactive components.
