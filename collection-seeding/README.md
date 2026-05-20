@@ -4,6 +4,7 @@ Seeds the backend with example collections:
 
 - **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
 - **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
+- **covid-pango-lineages-sample** — same as above but limited to 10 lineages, for quick testing
 
 The script is idempotent — re-running it will create new collections or update existing ones (matched by name). If a collection's name changes in the source, the old entry is orphaned and a new one is created.
 
@@ -14,7 +15,7 @@ Use `--repeat-interval-hours N` (or `$REPEAT_INTERVAL_HOURS`) to run on a loop �
 The seeder runs automatically as part of Docker Compose:
 
 ```bash
-BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest SEEDER_API_KEY=... docker compose up
 ```
 
 ## Running locally
@@ -40,7 +41,7 @@ To target a different backend:
 pixi run seed --url http://localhost:4321
 ```
 
-Run `pixi run seed --help` for all options. Use `pixi run seed --list` to print all available sources.
+Run `pixi run seed --help` for all options, including `--source`, `--list`, `--repeat-interval-hours`, and `--url`.
 
 ## Adding a new source
 
