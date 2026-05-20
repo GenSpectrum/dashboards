@@ -14,7 +14,7 @@ import time
 from api import ApiClient
 from models import Collection
 from sources import Source
-from sources.pango_lineages import PangoLineagesSource, DEFAULT_LIMIT
+from sources.pango_lineages import PangoLineagesSource
 from sources.resistance_mutations import ResistanceMutationsSource
 
 
@@ -59,9 +59,9 @@ def make_parser() -> argparse.ArgumentParser:
     lineages_parser.add_argument(
         "--limit",
         type=int,
-        default=DEFAULT_LIMIT,
+        default=None,
         metavar="N",
-        help=f"Only process the first N lineages (default: {DEFAULT_LIMIT}; 0 = all)",
+        help="Only process the first N lineages (default: all)",
     )
 
     return parser
@@ -107,7 +107,7 @@ def main():
     if args.wait:
         client.wait_for_api()
 
-    lineage_limit = getattr(args, "limit", DEFAULT_LIMIT)
+    lineage_limit = getattr(args, "limit", None)
 
     source_map: dict[str, Source] = {
         ResistanceMutationsSource.name: ResistanceMutationsSource(),

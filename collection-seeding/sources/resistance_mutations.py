@@ -1,11 +1,72 @@
-"""Source: SARS-CoV-2 antiviral resistance mutations (ported from seed.mjs).
-
-Three collections covering 3CLpro, RdRp, and Spike mAb resistance mutations
-as per the Stanford Coronavirus Antiviral & Resistance database.
-"""
-
 from models import Collection, Variant
 from sources import Source
+
+
+class ResistanceMutationsSource(Source):
+    """Source: SARS-CoV-2 antiviral resistance mutations (ported from seed.mjs).
+
+    Three collections covering 3CLpro, RdRp, and Spike mAb resistance mutations
+    as per the Stanford Coronavirus Antiviral & Resistance database.
+    """
+    name = "covid-resistance-mutations"
+
+    def get_collections(self) -> list[Collection]:
+        return [
+            {
+                "name": "3CLpro resistance mutations",
+                "organism": "covid",
+                "description": (
+                    "SARS-CoV-2 3C-like protease (3CLpro/Mpro) inhibitor resistance mutations "
+                    "as per Stanford Coronavirus Antiviral & Resistance database "
+                    "(last updated 21 August 2024)."
+                ),
+                "variants": _build_variants(CLPRO_MUTATIONS, "3CLpro", -3263),
+            },
+            {
+                "name": "RdRp resistance mutations",
+                "organism": "covid",
+                "description": (
+                    "SARS-CoV-2 RNA-dependent RNA polymerase (RdRp) inhibitor resistance mutations "
+                    "as per Stanford Coronavirus Antiviral & Resistance database "
+                    "(last updated 21 August 2024)."
+                ),
+                "variants": _build_variants(RDRP_MUTATIONS, "RdRp", 9),
+            },
+            {
+                "name": "Spike mAb resistance mutations",
+                "organism": "covid",
+                "description": (
+                    "SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutations "
+                    "as per Stanford Coronavirus Antiviral & Resistance database "
+                    "(last updated 21 August 2024)."
+                ),
+                "variants": _build_variants(SPIKE_MUTATIONS, "Spike", 0),
+            },
+        ]
+
+
+def _mature_name(mutation: str, set_name: str, offset: int) -> str:
+    """Convert a genomic mutation code to a mature protein name with the given offset.
+
+    e.g. _mature_name("ORF1a:T3284I", "3CLpro", -3263) -> "3CLpro:T21I"
+    """
+    mut_part = mutation[mutation.index(':') + 1:]
+    original_base = mut_part[0]
+    new_base = mut_part[-1]
+    position = int(''.join(c for c in mut_part if c.isdigit()))
+    return f"{set_name}:{original_base}{position + offset}{new_base}"
+
+
+def _build_variants(mutations: list[str], set_name: str, offset: int) -> list[Variant]:
+    return [
+        {
+            "type": "filterObject",
+            "name": _mature_name(m, set_name, offset),
+            "filterObject": {"aminoAcidMutations": [m]},
+        }
+        for m in mutations
+    ]
+
 
 CLPRO_MUTATIONS = [
     'ORF1a:T3284I', 'ORF1a:T3288A', 'ORF1a:T3288N', 'ORF1a:T3308I', 'ORF1a:D3311Y',
@@ -77,64 +138,3 @@ SPIKE_MUTATIONS = [
     'S:P507A',
     'S:N856K', 'S:N969K', 'S:E990A', 'S:T1009I',
 ]
-
-
-def _mature_name(mutation: str, set_name: str, offset: int) -> str:
-    """Convert a genomic mutation code to a mature protein name with the given offset.
-
-    e.g. _mature_name("ORF1a:T3284I", "3CLpro", -3263) -> "3CLpro:T21I"
-    """
-    mut_part = mutation[mutation.index(':') + 1:]
-    original_base = mut_part[0]
-    new_base = mut_part[-1]
-    position = int(''.join(c for c in mut_part if c.isdigit()))
-    return f"{set_name}:{original_base}{position + offset}{new_base}"
-
-
-def _build_variants(mutations: list[str], set_name: str, offset: int) -> list[Variant]:
-    return [
-        {
-            "type": "filterObject",
-            "name": _mature_name(m, set_name, offset),
-            "filterObject": {"aminoAcidMutations": [m]},
-        }
-        for m in mutations
-    ]
-
-
-class ResistanceMutationsSource(Source):
-    name = "covid-resistance-mutations"
-
-    def get_collections(self) -> list[Collection]:
-        return [
-            {
-                "name": "3CLpro resistance mutations",
-                "organism": "covid",
-                "description": (
-                    "SARS-CoV-2 3C-like protease (3CLpro/Mpro) inhibitor resistance mutations "
-                    "as per Stanford Coronavirus Antiviral & Resistance database "
-                    "(last updated 21 August 2024)."
-                ),
-                "variants": _build_variants(CLPRO_MUTATIONS, "3CLpro", -3263),
-            },
-            {
-                "name": "RdRp resistance mutations",
-                "organism": "covid",
-                "description": (
-                    "SARS-CoV-2 RNA-dependent RNA polymerase (RdRp) inhibitor resistance mutations "
-                    "as per Stanford Coronavirus Antiviral & Resistance database "
-                    "(last updated 21 August 2024)."
-                ),
-                "variants": _build_variants(RDRP_MUTATIONS, "RdRp", 9),
-            },
-            {
-                "name": "Spike mAb resistance mutations",
-                "organism": "covid",
-                "description": (
-                    "SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutations "
-                    "as per Stanford Coronavirus Antiviral & Resistance database "
-                    "(last updated 21 August 2024)."
-                ),
-                "variants": _build_variants(SPIKE_MUTATIONS, "Spike", 0),
-            },
-        ]

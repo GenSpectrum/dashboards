@@ -1,8 +1,3 @@
-"""Source: Pango lineage definitions from corneliusroemer/pango-sequences.
-
-Creates one collection per lineage, with nucleotide substitutions as variants.
-"""
-
 import requests
 
 from models import Collection, Variant
@@ -13,13 +8,14 @@ DATA_URL = (
     "/refs/heads/main/data/pango-consensus-sequences_summary.json"
 )
 
-DEFAULT_LIMIT = 0
-
-
 class PangoLineagesSource(Source):
+    """Source: Pango lineage definitions from corneliusroemer/pango-sequences.
+
+    Creates one collection per lineage, with nucleotide substitutions as variants.
+    """
     name = "covid-pango-lineages"
 
-    def __init__(self, limit: int = DEFAULT_LIMIT):
+    def __init__(self, limit: int | None = None):
         self._limit = limit
 
     def get_collections(self) -> list[Collection]:
@@ -27,7 +23,7 @@ class PangoLineagesSource(Source):
         response = requests.get(DATA_URL, timeout=60)
         response.raise_for_status()
         entries = list(response.json().values())
-        if self._limit:
+        if self._limit is not None:
             entries = entries[:self._limit]
         print(f"  Loaded {len(entries)} lineage(s).")
         collections = [self._build_collection(e) for e in entries]

@@ -78,7 +78,7 @@ def test_build_collection_missing_fields_use_defaults():
 @rsps_lib.activate
 def test_get_collections_fetches_data_url():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    PangoLineagesSource(limit=0).get_collections()
+    PangoLineagesSource().get_collections()
     assert len(rsps_lib.calls) == 1
     assert rsps_lib.calls[0].request.url == DATA_URL
 
@@ -86,7 +86,7 @@ def test_get_collections_fetches_data_url():
 @rsps_lib.activate
 def test_get_collections_excludes_empty_variants():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = PangoLineagesSource(limit=0).get_collections()
+    cols = PangoLineagesSource().get_collections()
     # XBB has only blank subs → should be excluded
     names = [c["name"] for c in cols]
     assert "XBB" not in names
@@ -102,6 +102,6 @@ def test_get_collections_respects_limit():
 @rsps_lib.activate
 def test_get_collections_no_limit_returns_all_valid():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = PangoLineagesSource(limit=0).get_collections()
+    cols = PangoLineagesSource().get_collections()
     # BA.2 and BA.5 have valid subs; XBB does not
     assert len(cols) == 2
