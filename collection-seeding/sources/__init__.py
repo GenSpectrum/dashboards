@@ -4,6 +4,11 @@ from models import Collection
 
 
 class Source(ABC):
+    """A data source that produces collections to be seeded into the backend.
+
+    Implement this to add a new source: set a unique `name` (used as the CLI subcommand)
+    and implement `get_collections` to return the collections to upsert.
+    """
     name: str
 
     @abstractmethod
