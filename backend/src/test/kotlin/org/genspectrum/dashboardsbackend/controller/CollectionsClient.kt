@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
+import org.genspectrum.dashboardsbackend.api.PaginatedResponse
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -27,11 +28,18 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
             .andExpect(status().isCreated),
     )
 
-    fun getCollectionsRaw(userId: Long? = null, organism: String? = null): ResultActions {
+    fun getCollectionsRaw(
+        userId: Long? = null,
+        organism: String? = null,
+        page: Int? = null,
+        pageSize: Int? = null,
+    ): ResultActions {
         val params = buildString {
             val queryParams = mutableListOf<String>()
             if (userId != null) queryParams.add("userId=$userId")
             if (organism != null) queryParams.add("organism=$organism")
+            if (page != null) queryParams.add("page=$page")
+            if (pageSize != null) queryParams.add("pageSize=$pageSize")
             if (queryParams.isNotEmpty()) {
                 append("?")
                 append(queryParams.joinToString("&"))
@@ -40,8 +48,13 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         return mockMvc.perform(get("/collections$params"))
     }
 
-    fun getCollections(userId: Long? = null, organism: String? = null): List<Collection> = deserializeJsonResponse(
-        getCollectionsRaw(userId, organism)
+    fun getCollections(
+        userId: Long? = null,
+        organism: String? = null,
+        page: Int? = null,
+        pageSize: Int? = null,
+    ): PaginatedResponse<Collection> = deserializeJsonResponse(
+        getCollectionsRaw(userId, organism, page, pageSize)
             .andExpect(status().isOk),
     )
 

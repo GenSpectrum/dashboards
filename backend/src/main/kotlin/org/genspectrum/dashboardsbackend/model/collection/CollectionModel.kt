@@ -4,6 +4,7 @@ import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.api.FilterObject
+import org.genspectrum.dashboardsbackend.api.PaginatedResponse
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
@@ -12,8 +13,9 @@ import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.now
-import org.jetbrains.exposed.v1.core.Op
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.notInList
@@ -25,7 +27,12 @@ import kotlin.time.Instant
 @Service
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
-    fun getCollections(userId: Long?, organism: String?): List<Collection> {
+    fun getCollections(
+        userId: Long?,
+        organism: String?,
+        page: Int,
+        pageSize: Int,
+    ): PaginatedResponse<Collection> {
         if (userId != null) {
             UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
         }
@@ -33,32 +40,29 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             dashboardsConfig.validateIsValidOrganism(organism)
             dashboardsConfig.validateCollectionsEnabled(organism)
         }
-        val query = if (userId == null && organism == null) {
-            CollectionEntity.all()
-        } else {
-            CollectionEntity.find {
-                var conditions: Op<Boolean> = Op.TRUE
-                if (userId != null) {
-                    conditions = conditions and (CollectionTable.ownedBy eq userId)
-                }
-                if (organism != null) {
-                    conditions = conditions and (CollectionTable.organism eq organism)
-                }
-                conditions
-            }
+        val baseQuery = CollectionTable.selectAll()
+        if (userId != null) {
+            baseQuery.andWhere { CollectionTable.ownedBy eq userId }
+        }
+        if (organism != null) {
+            baseQuery.andWhere { CollectionTable.organism eq organism }
         }
 
-        // Materialize the collections first to avoid re-running the query
-        val collectionEntities = query.toList()
+        val totalCount = baseQuery.count()
+        val offset = ((page - 1) * pageSize).toLong()
+        val collectionEntities = CollectionEntity.wrapRows(
+            baseQuery.orderBy(CollectionTable.id to SortOrder.ASC).limit(pageSize, offset),
+        ).toList()
+
         if (collectionEntities.isEmpty()) {
-            return emptyList()
+            return PaginatedResponse(data = emptyList(), totalCount = totalCount, page = page, pageSize = pageSize)
         }
-        // Batch-load all variants
+        // Batch-load all variants for this page
         val allCollectionIds = collectionEntities.map { it.id }
         val variantsByCollectionId = VariantEntity
             .find { VariantTable.collectionId inList allCollectionIds }
             .groupBy { it.collectionId }
-        return collectionEntities.map { collectionEntity ->
+        val data = collectionEntities.map { collectionEntity ->
             val variants = variantsByCollectionId[collectionEntity.id].orEmpty().map { it.toVariant() }
             Collection(
                 id = collectionEntity.id.value,
@@ -71,6 +75,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                 updatedAt = collectionEntity.updatedAt,
             )
         }
+        return PaginatedResponse(data = data, totalCount = totalCount, page = page, pageSize = pageSize)
     }
 
     fun getCollection(id: Long): Collection {

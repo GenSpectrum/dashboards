@@ -84,3 +84,10 @@ data class CollectionUpdate(
     val description: String? = null,
     val variants: List<VariantUpdate>? = null,
 )
+
+data class PaginatedResponse<T>(
+    val data: List<T>,
+    val totalCount: Long,
+    val page: Int,
+    val pageSize: Int,
+)

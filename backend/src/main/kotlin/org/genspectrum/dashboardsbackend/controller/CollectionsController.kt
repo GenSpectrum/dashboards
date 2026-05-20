@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
+import org.genspectrum.dashboardsbackend.api.PaginatedResponse
 import org.genspectrum.dashboardsbackend.model.collection.CollectionModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -23,14 +24,20 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     @GetMapping("/collections", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Get collections",
-        description = "Returns collections filtered by optional userId and/or organism parameters.",
+        description = "Returns collections filtered by optional userId and/or organism parameters, with pagination.",
     )
     fun getCollections(
         @RequestParam(required = false) userId: Long?,
         @RequestParam(required = false) organism: String?,
-    ): List<Collection> = collectionModel.getCollections(
+        @Parameter(description = "1-based page number", example = "1")
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @Parameter(description = "Number of collections per page", example = "100")
+        @RequestParam(required = false, defaultValue = "100") pageSize: Int,
+    ): PaginatedResponse<Collection> = collectionModel.getCollections(
         userId = userId,
         organism = organism,
+        page = page,
+        pageSize = pageSize,
     )
 
     @GetMapping("/collections/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])

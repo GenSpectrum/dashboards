@@ -7,6 +7,7 @@ import org.genspectrum.dashboardsbackend.dummyCollectionRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.greaterThanOrEqualTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.not
@@ -44,8 +45,8 @@ class CollectionsGetTest(
             userB,
         )
 
-        val collectionsForUserA = collectionsClient.getCollections(userId = userA)
-        val collectionsForUserB = collectionsClient.getCollections(userId = userB)
+        val collectionsForUserA = collectionsClient.getCollections(userId = userA).data
+        val collectionsForUserB = collectionsClient.getCollections(userId = userB).data
 
         assertThat(collectionsForUserA, hasItem(collectionA))
         assertThat(collectionsForUserA, not(hasItem(collectionB)))
@@ -72,7 +73,7 @@ class CollectionsGetTest(
             userB,
         )
 
-        val allCollections = collectionsClient.getCollections()
+        val allCollections = collectionsClient.getCollections().data
 
         assertThat(allCollections, hasItem(covidCollectionA))
         assertThat(allCollections, hasItem(mpoxCollectionA))
@@ -87,7 +88,7 @@ class CollectionsGetTest(
         val collectionA = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User A"), userA)
         val collectionB = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User B"), userB)
 
-        val collectionsForUserA = collectionsClient.getCollections(userId = userA)
+        val collectionsForUserA = collectionsClient.getCollections(userId = userA).data
 
         assertThat(collectionsForUserA, hasItem(collectionA))
         assertThat(collectionsForUserA, not(hasItem(collectionB)))
@@ -100,18 +101,19 @@ class CollectionsGetTest(
 
         collectionsClient.getCollectionsRaw(userId = userId)
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$[0].id").value(createdCollection.id))
-            .andExpect(jsonPath("$[0].variants[0].type").value("query"))
-            .andExpect(jsonPath("$[0].variants[1].type").value("filterObject"))
+            .andExpect(jsonPath("$.data[0].id").value(createdCollection.id))
+            .andExpect(jsonPath("$.data[0].variants[0].type").value("query"))
+            .andExpect(jsonPath("$.data[0].variants[1].type").value("filterObject"))
     }
 
     @Test
     fun `GIVEN user has no collections WHEN getting collections for user THEN returns empty array`() {
         val nonexistentUserId = usersClient.createUser()
 
-        val collections = collectionsClient.getCollections(userId = nonexistentUserId)
+        val response = collectionsClient.getCollections(userId = nonexistentUserId)
 
-        assertThat(collections, empty())
+        assertThat(response.data, empty())
+        assertThat(response.totalCount, equalTo(0L))
     }
 
     @Test
@@ -127,7 +129,7 @@ class CollectionsGetTest(
             userId,
         )
 
-        val covidCollections = collectionsClient.getCollections(organism = KnownTestOrganisms.Covid.name)
+        val covidCollections = collectionsClient.getCollections(organism = KnownTestOrganisms.Covid.name).data
 
         assertThat(covidCollections, hasItem(covidCollection))
         assertThat(covidCollections, not(hasItem(mpoxCollection)))
@@ -135,9 +137,10 @@ class CollectionsGetTest(
 
     @Test
     fun `GIVEN no collections for organism WHEN getting collections for organism THEN returns empty array`() {
-        val collections = collectionsClient.getCollections(organism = KnownTestOrganisms.WestNile.name)
+        val response = collectionsClient.getCollections(organism = KnownTestOrganisms.WestNile.name)
 
-        assertThat(collections, empty())
+        assertThat(response.data, empty())
+        assertThat(response.totalCount, equalTo(0L))
     }
 
     @Test
@@ -161,7 +164,7 @@ class CollectionsGetTest(
         val filteredCollections = collectionsClient.getCollections(
             userId = userA,
             organism = KnownTestOrganisms.Covid.name,
-        )
+        ).data
 
         assertThat(filteredCollections, hasItem(covidCollectionA))
         assertThat(filteredCollections, not(hasItem(mpoxCollectionA)))
@@ -176,9 +179,10 @@ class CollectionsGetTest(
             userA,
         )
 
-        val collections = collectionsClient.getCollections(userId = userA, organism = KnownTestOrganisms.Mpox.name)
+        val response = collectionsClient.getCollections(userId = userA, organism = KnownTestOrganisms.Mpox.name)
 
-        assertThat(collections, empty())
+        assertThat(response.data, empty())
+        assertThat(response.totalCount, equalTo(0L))
     }
 
     @Test
@@ -186,7 +190,7 @@ class CollectionsGetTest(
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val collections = collectionsClient.getCollections(userId = userId)
+        val collections = collectionsClient.getCollections(userId = userId).data
         val retrievedCollection = collections.first { it.id == createdCollection.id }
 
         assertThat(retrievedCollection.variants, hasSize(2))
@@ -212,7 +216,7 @@ class CollectionsGetTest(
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val collections = collectionsClient.getCollections(userId = userId)
+        val collections = collectionsClient.getCollections(userId = userId).data
         val retrievedCollection = collections.first { it.id == createdCollection.id }
 
         val queryVariants = retrievedCollection.variants.filterIsInstance<Variant.QueryVariant>()
@@ -281,5 +285,78 @@ class CollectionsGetTest(
         collectionsClient.getCollectionsRaw(userId = 999999999L)
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.detail").value("User 999999999 not found"))
+    }
+
+    @Test
+    fun `GIVEN N collections WHEN getting page 1 with small pageSize THEN returns first page and correct totalCount`() {
+        val userId = usersClient.createUser()
+        val created = (1..5).map { i ->
+            collectionsClient.postCollection(dummyCollectionRequest.copy(name = "Collection $i"), userId)
+        }
+
+        val response = collectionsClient.getCollections(userId = userId, page = 1, pageSize = 3)
+
+        assertThat(response.totalCount, equalTo(5L))
+        assertThat(response.page, equalTo(1))
+        assertThat(response.pageSize, equalTo(3))
+        assertThat(response.data, hasSize(3))
+        assertThat(response.data[0].id, equalTo(created[0].id))
+        assertThat(response.data[1].id, equalTo(created[1].id))
+        assertThat(response.data[2].id, equalTo(created[2].id))
+    }
+
+    @Test
+    fun `GIVEN N collections WHEN getting page 2 THEN returns correct offset items`() {
+        val userId = usersClient.createUser()
+        val created = (1..5).map { i ->
+            collectionsClient.postCollection(dummyCollectionRequest.copy(name = "Collection $i"), userId)
+        }
+
+        val response = collectionsClient.getCollections(userId = userId, page = 2, pageSize = 3)
+
+        assertThat(response.totalCount, equalTo(5L))
+        assertThat(response.page, equalTo(2))
+        assertThat(response.data, hasSize(2))
+        assertThat(response.data[0].id, equalTo(created[3].id))
+        assertThat(response.data[1].id, equalTo(created[4].id))
+    }
+
+    @Test
+    fun `GIVEN collections across organisms WHEN paginating with organism filter THEN totalCount reflects filtered count`() {
+        val userId = usersClient.createUser()
+        repeat(3) { i ->
+            collectionsClient.postCollection(
+                dummyCollectionRequest.copy(name = "Covid $i", organism = KnownTestOrganisms.Covid.name),
+                userId,
+            )
+        }
+        repeat(2) { i ->
+            collectionsClient.postCollection(
+                dummyCollectionRequest.copy(name = "Mpox $i", organism = KnownTestOrganisms.Mpox.name),
+                userId,
+            )
+        }
+
+        val response = collectionsClient.getCollections(
+            userId = userId,
+            organism = KnownTestOrganisms.Covid.name,
+            page = 1,
+            pageSize = 100,
+        )
+
+        assertThat(response.totalCount, equalTo(3L))
+        assertThat(response.data, hasSize(3))
+    }
+
+    @Test
+    fun `GIVEN collections WHEN getting all with defaults THEN response has pagination metadata`() {
+        val userId = usersClient.createUser()
+        collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        val response = collectionsClient.getCollections(userId = userId)
+
+        assertThat(response.page, equalTo(1))
+        assertThat(response.pageSize, equalTo(100))
+        assertThat(response.totalCount, greaterThanOrEqualTo(1L))
     }
 }
