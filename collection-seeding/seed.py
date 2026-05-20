@@ -32,6 +32,10 @@ def main():
         print(f"Unknown source '{args.source}'. Use --list to see available sources.", file=sys.stderr)
         sys.exit(1)
 
+    if not args.api_key:
+        print("Error: --api-key is required (or set $API_KEY).", file=sys.stderr)
+        sys.exit(1)
+
     client = ApiClient(args.url, args.api_key)
     print(f"Seeding collections against {args.url} ...")
 
@@ -94,7 +98,6 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-k", "--api-key",
         default=os.environ.get("API_KEY"),
-        required=not os.environ.get("API_KEY"),
         help="API key for authentication (default: $API_KEY)",
     )
     parser.add_argument(
