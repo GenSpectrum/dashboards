@@ -14,6 +14,7 @@ import java.security.SecureRandom
 @Service
 @Transactional
 class ApiKeyModel {
+    private val secureRandom = SecureRandom()
     fun getApiKey(userId: Long): ApiKeyMetadata = ApiKeyEntity.findByUserId(userId)?.toMetadata()
         ?: throw NotFoundException("No API key found for user $userId")
 
@@ -56,7 +57,7 @@ class ApiKeyModel {
 
     private fun generateRawKey(): String {
         val bytes = ByteArray(32)
-        SecureRandom().nextBytes(bytes)
+        secureRandom.nextBytes(bytes)
         return bytes.joinToString("") { "%02x".format(it) }
     }
 
