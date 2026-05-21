@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.sql.SQLException
 
 @Service
 @Transactional
@@ -24,6 +25,7 @@ class ApiKeyModel {
      */
     fun generateApiKey(userId: Long): GeneratedApiKey {
         UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
+        // Fast path for the common case — the unique constraint on user_id is the real guard.
         if (ApiKeyEntity.findByUserId(userId) != null) {
             throw ConflictException("An API key already exists for user $userId")
         }
@@ -31,11 +33,16 @@ class ApiKeyModel {
         val rawKey = generateRawKey()
         val now = now()
 
-        ApiKeyEntity.new {
-            this.userId = userId
-            this.keyHash = sha256(rawKey)
-            this.createdAt = now
-            this.lastUsedAt = null
+        try {
+            ApiKeyEntity.new {
+                this.userId = userId
+                this.keyHash = sha256(rawKey)
+                this.createdAt = now
+                this.lastUsedAt = null
+            }
+        } catch (e: SQLException) {
+            if (e.sqlState == "23505") throw ConflictException("An API key already exists for user $userId")
+            throw e
         }
 
         return GeneratedApiKey(key = rawKey, createdAt = now)
