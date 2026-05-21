@@ -14,10 +14,12 @@ import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.now
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.count
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.select
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.time.Instant
@@ -53,24 +55,47 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         if (collectionEntities.isEmpty()) {
             return emptyList()
         }
-        // Batch-load all variants
         val allCollectionIds = collectionEntities.map { it.id }
-        val variantsByCollectionId = VariantEntity
-            .find { VariantTable.collectionId inList allCollectionIds }
-            .groupBy { it.collectionId }
-        return collectionEntities.map { collectionEntity ->
-            val variants = variantsByCollectionId[collectionEntity.id].orEmpty().map { it.toVariant() }
-            Collection(
-                id = collectionEntity.id.value,
-                name = collectionEntity.name,
-                ownedBy = collectionEntity.ownedBy,
-                organism = collectionEntity.organism,
-                description = collectionEntity.description,
-                variantCount = variants.size,
-                variants = if (includeVariants) variants else null,
-                createdAt = collectionEntity.createdAt,
-                updatedAt = collectionEntity.updatedAt,
-            )
+
+        if (includeVariants) {
+            val variantsByCollectionId = VariantEntity
+                .find { VariantTable.collectionId inList allCollectionIds }
+                .groupBy { it.collectionId }
+            return collectionEntities.map { collectionEntity ->
+                val variants = variantsByCollectionId[collectionEntity.id].orEmpty().map { it.toVariant() }
+                Collection(
+                    id = collectionEntity.id.value,
+                    name = collectionEntity.name,
+                    ownedBy = collectionEntity.ownedBy,
+                    organism = collectionEntity.organism,
+                    description = collectionEntity.description,
+                    variantCount = variants.size,
+                    variants = variants,
+                    createdAt = collectionEntity.createdAt,
+                    updatedAt = collectionEntity.updatedAt,
+                )
+            }
+        } else {
+            val countExpr = VariantTable.id.count()
+            val countByCollectionId = VariantTable
+                .select(VariantTable.collectionId, countExpr)
+                // we're not doing a 'where' to filter only for collections we care about,
+                // because it's faster to just get the whole map and then pick the entries we need.
+                .groupBy(VariantTable.collectionId)
+                .associate { row -> row[VariantTable.collectionId].value to row[countExpr].toInt() }
+            return collectionEntities.map { collectionEntity ->
+                Collection(
+                    id = collectionEntity.id.value,
+                    name = collectionEntity.name,
+                    ownedBy = collectionEntity.ownedBy,
+                    organism = collectionEntity.organism,
+                    description = collectionEntity.description,
+                    variantCount = countByCollectionId[collectionEntity.id.value] ?: 0,
+                    variants = null,
+                    createdAt = collectionEntity.createdAt,
+                    updatedAt = collectionEntity.updatedAt,
+                )
+            }
         }
     }
 
