@@ -72,18 +72,18 @@ function ApiKeyManagerInner() {
                     <p className='mb-2 text-sm font-medium text-amber-600'>
                         Copy this key now — it will not be shown again.
                     </p>
-                    <code className='mb-4 block rounded bg-gray-100 p-3 text-sm break-all'>{generatedKey}</code>
-                    <div className='flex gap-2'>
+                    <div className='mb-4 flex w-fit items-center gap-3 rounded bg-gray-100 p-3 text-sm'>
+                        <code>{generatedKey}</code>
                         <button
-                            className='btn btn-primary btn-sm'
+                            className='btn btn-xs shrink-0'
                             onClick={() => void navigator.clipboard.writeText(generatedKey)}
                         >
-                            Copy to clipboard
-                        </button>
-                        <button className='btn btn-sm' onClick={() => setGeneratedKey(null)}>
-                            Done
+                            Copy
                         </button>
                     </div>
+                    <button className='btn btn-primary btn-sm' onClick={() => setGeneratedKey(null)}>
+                        Done
+                    </button>
                 </div>
             ) : (
                 !isLoading &&
