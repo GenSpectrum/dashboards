@@ -43,7 +43,7 @@ class CollectionsPostTest(
         assertThat(createdCollection.createdAt, notNullValue())
         assertThat(createdCollection.updatedAt, notNullValue())
         assertThat(createdCollection.createdAt, equalTo(createdCollection.updatedAt))
-        createdCollection.variants.forEach { variant ->
+        createdCollection.variants!!.forEach { variant ->
             when (variant) {
                 is Variant.QueryVariant -> {
                     assertThat(variant.createdAt, notNullValue())
@@ -89,9 +89,10 @@ class CollectionsPostTest(
         assertThat(createdCollection.ownedBy, equalTo(userId))
         assertThat(createdCollection.organism, equalTo(dummyCollectionRequest.organism))
         assertThat(createdCollection.description, equalTo(dummyCollectionRequest.description))
-        assertThat(createdCollection.variants, hasSize(2))
-        assertThat(createdCollection.variants[0].id, notNullValue())
-        assertThat(createdCollection.variants[1].id, notNullValue())
+        val variants = createdCollection.variants!!
+        assertThat(variants, hasSize(2))
+        assertThat(variants[0].id, notNullValue())
+        assertThat(variants[1].id, notNullValue())
     }
 
     @Test
@@ -103,8 +104,9 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        assertThat(createdCollection.variants, hasSize(1))
-        assertThat(createdCollection.variants[0], instanceOf(Variant.QueryVariant::class.java))
+        val variants = createdCollection.variants!!
+        assertThat(variants, hasSize(1))
+        assertThat(variants[0], instanceOf(Variant.QueryVariant::class.java))
     }
 
     @Test
@@ -116,8 +118,9 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        assertThat(createdCollection.variants, hasSize(1))
-        assertThat(createdCollection.variants[0], instanceOf(Variant.FilterObjectVariant::class.java))
+        val variants = createdCollection.variants!!
+        assertThat(variants, hasSize(1))
+        assertThat(variants[0], instanceOf(Variant.FilterObjectVariant::class.java))
     }
 
     @Test
@@ -127,7 +130,7 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        assertThat(createdCollection.variants, empty())
+        assertThat(createdCollection.variants!!, empty())
     }
 
     @Test
@@ -164,8 +167,9 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        assertThat(createdCollection.variants, hasSize(1))
-        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        val variants = createdCollection.variants!!
+        assertThat(variants, hasSize(1))
+        val variant = variants[0] as Variant.FilterObjectVariant
         assertThat(variant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y")))
         assertThat(variant.filterObject.getFilters()["pangoLineage"], equalTo("BA.2*"))
     }
@@ -205,7 +209,7 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        val variant = createdCollection.variants!![0] as Variant.FilterObjectVariant
         assertThat(variant.filterObject.getFilters()["pangoLineage"], equalTo("BA.2*"))
         assertThat(variant.filterObject.getFilters()["nextcladePangoLineage"], equalTo("BA.2.75*"))
     }
@@ -224,7 +228,7 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        val variant = createdCollection.variants!![0] as Variant.FilterObjectVariant
         assertThat(variant.filterObject.aminoAcidMutations, equalTo(listOf("S:N501Y", "S:E484K")))
         assertThat(variant.filterObject.nucleotideMutations, nullValue())
     }
@@ -245,7 +249,7 @@ class CollectionsPostTest(
 
         val createdCollection = collectionsClient.postCollection(request, userId)
 
-        val variant = createdCollection.variants[0] as Variant.FilterObjectVariant
+        val variant = createdCollection.variants!![0] as Variant.FilterObjectVariant
         assertThat(variant.filterObject.aminoAcidInsertions, equalTo(listOf("ins_S:214:EPE")))
         assertThat(variant.filterObject.nucleotideInsertions, equalTo(listOf("ins_22204:GAG")))
     }

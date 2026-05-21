@@ -55,8 +55,9 @@ class CollectionsPutTest(
 
         assertThat(updated.name, equalTo("Updated Name"))
         assertThat(updated.description, equalTo("Updated Description"))
-        assertThat(updated.variants.size, equalTo(1))
-        val firstVariant = updated.variants[0] as Variant.QueryVariant
+        val resultVariants = updated.variants!!
+        assertThat(resultVariants.size, equalTo(1))
+        val firstVariant = resultVariants[0] as Variant.QueryVariant
         assertThat(firstVariant.name, equalTo("New Variant"))
     }
 
@@ -64,7 +65,7 @@ class CollectionsPutTest(
     fun `WHEN owner updates only name THEN only name changes`() {
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
-        val originalVariantCount = createdCollection.variants.size
+        val originalVariantCount = createdCollection.variants!!.size
 
         val update = CollectionUpdate(name = "Just Name Change")
 
@@ -72,7 +73,7 @@ class CollectionsPutTest(
 
         assertThat(updated.name, equalTo("Just Name Change"))
         assertThat(updated.description, equalTo(createdCollection.description))
-        assertThat(updated.variants.size, equalTo(originalVariantCount))
+        assertThat(updated.variants!!.size, equalTo(originalVariantCount))
     }
 
     @Test
@@ -84,7 +85,7 @@ class CollectionsPutTest(
 
         assertThat(updated.name, equalTo(createdCollection.name))
         assertThat(updated.description, equalTo(createdCollection.description))
-        assertThat(updated.variants.size, equalTo(createdCollection.variants.size))
+        assertThat(updated.variants!!.size, equalTo(createdCollection.variants!!.size))
         assertThat(updated.createdAt, equalTo(createdCollection.createdAt))
     }
 
@@ -131,7 +132,7 @@ class CollectionsPutTest(
     fun `WHEN owner adds new variant without ID THEN variant is created`() {
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
-        val originalVariantCount = createdCollection.variants.size
+        val originalVariantCount = createdCollection.variants!!.size
 
         val newVariant = VariantUpdate.FilterObjectVariantUpdate(
             id = null,
@@ -141,7 +142,7 @@ class CollectionsPutTest(
             },
         )
 
-        val existingVariants = createdCollection.variants.map { variant ->
+        val existingVariants = createdCollection.variants!!.map { variant ->
             when (variant) {
                 is Variant.QueryVariant -> VariantUpdate.QueryVariantUpdate(
                     id = variant.id,
@@ -163,9 +164,10 @@ class CollectionsPutTest(
 
         val updated = collectionsClient.putCollection(update, createdCollection.id, userId)
 
-        assertThat(updated.variants.size, equalTo(originalVariantCount + 1))
+        val updatedVariants2 = updated.variants!!
+        assertThat(updatedVariants2.size, equalTo(originalVariantCount + 1))
         assertThat(
-            updated.variants.any { variant ->
+            updatedVariants2.any { variant ->
                 when (variant) {
                     is Variant.QueryVariant -> variant.name == "New Variant"
                     is Variant.FilterObjectVariant -> variant.name == "New Variant"
@@ -195,7 +197,7 @@ class CollectionsPutTest(
     fun `WHEN owner updates existing variant with ID THEN variant is updated in place`() {
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
-        val firstVariant = createdCollection.variants[0] as Variant.QueryVariant
+        val firstVariant = createdCollection.variants!![0] as Variant.QueryVariant
 
         val updatedVariant = VariantUpdate.QueryVariantUpdate(
             id = firstVariant.id,
@@ -209,9 +211,10 @@ class CollectionsPutTest(
 
         val updated = collectionsClient.putCollection(update, createdCollection.id, userId)
 
-        assertThat(updated.variants.size, equalTo(1))
-        assertThat(updated.variants[0].id, equalTo(firstVariant.id))
-        val queryVariant = updated.variants[0] as Variant.QueryVariant
+        val updatedVariants3 = updated.variants!!
+        assertThat(updatedVariants3.size, equalTo(1))
+        assertThat(updatedVariants3[0].id, equalTo(firstVariant.id))
+        val queryVariant = updatedVariants3[0] as Variant.QueryVariant
         assertThat(queryVariant.name, equalTo("Updated Name"))
         assertThat(queryVariant.countQuery, equalTo("country='France'"))
     }
@@ -232,7 +235,7 @@ class CollectionsPutTest(
         val collectionRequest = dummyCollectionRequest.copy(variants = originalVariants)
         val createdCollection = collectionsClient.postCollection(collectionRequest, userId)
 
-        val firstVariant = createdCollection.variants[0]
+        val firstVariant = createdCollection.variants!![0]
         val keepVariant = VariantUpdate.QueryVariantUpdate(
             id = firstVariant.id,
             name = (firstVariant as Variant.QueryVariant).name,
@@ -243,8 +246,9 @@ class CollectionsPutTest(
 
         val updated = collectionsClient.putCollection(update, createdCollection.id, userId)
 
-        assertThat(updated.variants.size, equalTo(1))
-        assertThat(updated.variants[0].id, equalTo(firstVariant.id))
+        val updatedVariants4 = updated.variants!!
+        assertThat(updatedVariants4.size, equalTo(1))
+        assertThat(updatedVariants4[0].id, equalTo(firstVariant.id))
     }
 
     @Test
@@ -272,7 +276,7 @@ class CollectionsPutTest(
     fun `WHEN updating variant type THEN returns 400`() {
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
-        val firstVariant = createdCollection.variants[0] as Variant.QueryVariant
+        val firstVariant = createdCollection.variants!![0] as Variant.QueryVariant
 
         val invalidUpdate = VariantUpdate.FilterObjectVariantUpdate(
             id = firstVariant.id,
@@ -310,7 +314,7 @@ class CollectionsPutTest(
             userId,
         )
 
-        val variantFromCollection2 = collection2.variants[0] as Variant.QueryVariant
+        val variantFromCollection2 = collection2.variants!![0] as Variant.QueryVariant
         val invalidUpdate = VariantUpdate.QueryVariantUpdate(
             id = variantFromCollection2.id,
             name = variantFromCollection2.name,

@@ -25,7 +25,7 @@ import kotlin.time.Instant
 @Service
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
-    fun getCollections(userId: Long?, organism: String?): List<Collection> {
+    fun getCollections(userId: Long?, organism: String?, includeVariants: Boolean = false): List<Collection> {
         if (userId != null) {
             UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
         }
@@ -66,7 +66,8 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
                 ownedBy = collectionEntity.ownedBy,
                 organism = collectionEntity.organism,
                 description = collectionEntity.description,
-                variants = variants,
+                variantCount = variants.size,
+                variants = if (includeVariants) variants else null,
                 createdAt = collectionEntity.createdAt,
                 updatedAt = collectionEntity.updatedAt,
             )
@@ -100,13 +101,15 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             variantEntity
         }
 
+        val variants = variantEntities.map { it.toVariant() }
         return Collection(
             id = collectionEntity.id.value,
             name = collectionEntity.name,
             ownedBy = collectionEntity.ownedBy,
             organism = collectionEntity.organism,
             description = collectionEntity.description,
-            variants = variantEntities.map { it.toVariant() },
+            variantCount = variants.size,
+            variants = variants,
             createdAt = collectionEntity.createdAt,
             updatedAt = collectionEntity.updatedAt,
         )

@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.api
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlin.time.Instant
 
@@ -12,6 +13,7 @@ import kotlin.time.Instant
     "ownedBy": "user123",
     "organism": "covid",
     "description": "A collection of interesting variants",
+    "variantCount": 1,
     "variants": [],
     "createdAt": "2026-01-01T00:00:00Z",
     "updatedAt": "2026-01-02T00:00:00Z"
@@ -24,7 +26,9 @@ data class Collection(
     val ownedBy: Long,
     val organism: String,
     val description: String?,
-    val variants: List<Variant>,
+    val variantCount: Int,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    val variants: List<Variant>?,
     val createdAt: Instant,
     val updatedAt: Instant,
 )

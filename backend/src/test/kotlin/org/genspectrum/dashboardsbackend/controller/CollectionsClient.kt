@@ -27,11 +27,16 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
             .andExpect(status().isCreated),
     )
 
-    fun getCollectionsRaw(userId: Long? = null, organism: String? = null): ResultActions {
+    fun getCollectionsRaw(
+        userId: Long? = null,
+        organism: String? = null,
+        includeVariants: Boolean = false,
+    ): ResultActions {
         val params = buildString {
             val queryParams = mutableListOf<String>()
             if (userId != null) queryParams.add("userId=$userId")
             if (organism != null) queryParams.add("organism=$organism")
+            if (includeVariants) queryParams.add("includeVariants=true")
             if (queryParams.isNotEmpty()) {
                 append("?")
                 append(queryParams.joinToString("&"))
@@ -40,8 +45,12 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         return mockMvc.perform(get("/collections$params"))
     }
 
-    fun getCollections(userId: Long? = null, organism: String? = null): List<Collection> = deserializeJsonResponse(
-        getCollectionsRaw(userId, organism)
+    fun getCollections(
+        userId: Long? = null,
+        organism: String? = null,
+        includeVariants: Boolean = false,
+    ): List<Collection> = deserializeJsonResponse(
+        getCollectionsRaw(userId, organism, includeVariants)
             .andExpect(status().isOk),
     )
 
