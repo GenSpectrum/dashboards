@@ -6,11 +6,11 @@ import org.genspectrum.dashboardsbackend.controller.ConflictException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.now
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.security.MessageDigest
 import java.security.SecureRandom
-import java.sql.SQLException
 
 @Service
 @Transactional
@@ -40,9 +40,8 @@ class ApiKeyModel {
                 this.createdAt = now
                 this.lastUsedAt = null
             }
-        } catch (e: SQLException) {
-            if (e.sqlState == "23505") throw ConflictException("An API key already exists for user $userId")
-            throw e
+        } catch (e: DataIntegrityViolationException) {
+            throw ConflictException("An API key already exists for user $userId")
         }
 
         return GeneratedApiKey(key = rawKey, createdAt = now)
