@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 create table api_keys_table (
     id uuid primary key default gen_random_uuid(),
     user_id bigint not null unique references users_table(id),

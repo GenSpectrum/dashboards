@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { getBackendServiceForClientside } from '../../backendApi/backendService.ts';
+import { BackendError, getBackendServiceForClientside } from '../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../clientLogger.ts';
 import { PageHeadline } from '../../styles/containers/PageHeadline.tsx';
@@ -26,7 +26,7 @@ function ApiKeyManagerInner() {
                 return await getBackendServiceForClientside().getApiKey();
             } catch (error) {
                 // 404 means no key exists — treat as null rather than an error
-                if ((error as { status?: number }).status === 404) {
+                if (error instanceof BackendError && error.status === 404) {
                     return null;
                 }
                 throw error;
