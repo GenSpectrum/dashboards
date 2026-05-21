@@ -15,12 +15,12 @@ export class ApiKeyPage {
         return this.page.getByRole('button', { name: 'Revoke key' });
     }
 
-    public modal() {
-        return this.page.getByRole('dialog', { name: 'Your new API key' });
+    public generatedKey() {
+        return this.page.locator('code');
     }
 
     public async getGeneratedKey(): Promise<string> {
-        return this.modal().locator('code').innerText();
+        return this.generatedKey().innerText();
     }
 
     public doneButton() {

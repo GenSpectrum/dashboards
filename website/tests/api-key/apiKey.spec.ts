@@ -36,14 +36,14 @@ test.describe('API key management', () => {
 
         // Generate a key
         await authenticatedApiKeyPage.generateButton().click();
-        await expect(authenticatedApiKeyPage.modal()).toBeVisible();
+        await expect(authenticatedApiKeyPage.generatedKey()).toBeVisible();
         const apiKey = await authenticatedApiKeyPage.getGeneratedKey();
         expect(apiKey).toHaveLength(64);
         expect(apiKey).toMatch(/^[0-9a-f]+$/);
 
-        // Dismiss the modal
+        // Dismiss the inline key display
         await authenticatedApiKeyPage.doneButton().click();
-        await expect(authenticatedApiKeyPage.modal()).not.toBeVisible();
+        await expect(authenticatedApiKeyPage.generatedKey()).not.toBeVisible();
 
         // Revoke button is now visible (key exists)
         await expect(authenticatedApiKeyPage.revokeButton()).toBeVisible();
