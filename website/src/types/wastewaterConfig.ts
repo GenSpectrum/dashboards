@@ -185,7 +185,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
 function withResistanceCollectionOverrides(config: WasapPageConfig): WasapPageConfig {
     if (!config.resistanceAnalysisModeEnabled) return config;
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const stagingIds: Record<string, number> = { '3CLpro': 1, 'RdRp': 2, 'Spike': 3 };
+    const stagingIds: Record<string, number> = { '3CLpro': 4, 'RdRp': 5, 'Spike': 6 };
     return {
         ...config,
         resistanceMutationCollections: config.resistanceMutationCollections.map((set) => ({
