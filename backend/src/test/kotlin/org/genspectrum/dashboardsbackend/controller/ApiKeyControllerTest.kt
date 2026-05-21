@@ -23,7 +23,7 @@ class ApiKeyControllerTest(
     // --- GET /api-keys ---
 
     @Test
-    fun `WHEN no key exists THEN GET returns 404`() {
+    fun `GIVEN no key exists WHEN getting API key THEN returns 404`() {
         val userId = usersClient.createUser()
 
         apiKeyClient.getApiKeyRaw(userId)
@@ -31,7 +31,7 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN key exists THEN GET returns metadata with null lastUsedAt`() {
+    fun `GIVEN key exists WHEN getting API key THEN returns metadata with null lastUsedAt`() {
         val userId = usersClient.createUser()
         apiKeyClient.generateApiKey(userId)
 
@@ -42,7 +42,7 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN key has been used THEN GET returns non-null lastUsedAt`() {
+    fun `GIVEN key has been used WHEN getting API key THEN returns non-null lastUsedAt`() {
         val userId = usersClient.createUser()
         val generated = apiKeyClient.generateApiKey(userId)
         apiKeyClient.validateApiKey(generated.key)
@@ -55,7 +55,7 @@ class ApiKeyControllerTest(
     // --- POST /api-keys ---
 
     @Test
-    fun `WHEN generating a key THEN returns a 64-char hex key`() {
+    fun `GIVEN no key exists WHEN generating a key THEN returns a 64-char hex key`() {
         val userId = usersClient.createUser()
 
         val generated = apiKeyClient.generateApiKey(userId)
@@ -66,7 +66,7 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN generating a second key for the same user THEN returns 409`() {
+    fun `GIVEN a key already exists WHEN generating a second key THEN returns 409`() {
         val userId = usersClient.createUser()
         apiKeyClient.generateApiKey(userId)
 
@@ -76,13 +76,13 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN generating a key for a nonexistent user THEN returns 404`() {
+    fun `GIVEN a nonexistent user WHEN generating a key THEN returns 404`() {
         apiKeyClient.generateApiKeyRaw(999999999L)
             .andExpect(status().isNotFound)
     }
 
     @Test
-    fun `WHEN two different users generate keys THEN both succeed independently`() {
+    fun `GIVEN two different users WHEN each generates a key THEN both succeed independently`() {
         val userId1 = usersClient.createUser()
         val userId2 = usersClient.createUser()
 
@@ -95,7 +95,7 @@ class ApiKeyControllerTest(
     // --- DELETE /api-keys ---
 
     @Test
-    fun `WHEN revoking an existing key THEN returns 204 and GET returns 404 afterwards`() {
+    fun `GIVEN a key exists WHEN revoking it THEN returns 204 and GET returns 404 afterwards`() {
         val userId = usersClient.createUser()
         apiKeyClient.generateApiKey(userId)
 
@@ -105,7 +105,7 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN revoking a nonexistent key THEN returns 404`() {
+    fun `GIVEN no key exists WHEN revoking THEN returns 404`() {
         val userId = usersClient.createUser()
 
         apiKeyClient.revokeApiKeyRaw(userId)
@@ -113,7 +113,7 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN key is revoked THEN a new key can be generated`() {
+    fun `GIVEN a key is revoked WHEN generating a new key THEN returns 201`() {
         val userId = usersClient.createUser()
         apiKeyClient.generateApiKey(userId)
         apiKeyClient.revokeApiKey(userId)
@@ -125,7 +125,7 @@ class ApiKeyControllerTest(
     // --- POST /internal/api-keys/validate ---
 
     @Test
-    fun `WHEN validating a correct key THEN returns the correct userId`() {
+    fun `GIVEN a valid key WHEN validating THEN returns the correct userId`() {
         val userId = usersClient.createUser()
         val generated = apiKeyClient.generateApiKey(userId)
 
@@ -135,13 +135,13 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN validating an unknown key THEN returns 404`() {
+    fun `GIVEN an unknown key WHEN validating THEN returns 404`() {
         apiKeyClient.validateApiKeyRaw("a".repeat(64))
             .andExpect(status().isNotFound)
     }
 
     @Test
-    fun `WHEN validating a revoked key THEN returns 404`() {
+    fun `GIVEN a revoked key WHEN validating THEN returns 404`() {
         val userId = usersClient.createUser()
         val generated = apiKeyClient.generateApiKey(userId)
         apiKeyClient.revokeApiKey(userId)
@@ -151,7 +151,7 @@ class ApiKeyControllerTest(
     }
 
     @Test
-    fun `WHEN validating a key THEN lastUsedAt is updated each time`() {
+    fun `GIVEN a valid key WHEN validating multiple times THEN lastUsedAt is updated each time`() {
         val userId = usersClient.createUser()
         val generated = apiKeyClient.generateApiKey(userId)
 
