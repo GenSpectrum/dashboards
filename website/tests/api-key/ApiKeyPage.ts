@@ -4,7 +4,7 @@ export class ApiKeyPage {
     constructor(public readonly page: Page) {}
 
     public async goto() {
-        await this.page.goto('/api-keys');
+        await this.page.goto('/api-key');
     }
 
     public generateButton() {

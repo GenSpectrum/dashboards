@@ -26,7 +26,7 @@ test.describe('API key management', () => {
     });
 
     test('shows "Please login" when not authenticated', async ({ page }) => {
-        await page.goto('/api-keys');
+        await page.goto('/api-key');
 
         await expect(page.getByRole('heading', { name: 'Please login' })).toBeVisible();
     });

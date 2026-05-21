@@ -6,7 +6,7 @@ import { CompareVariantsPage } from './CompareVariantsPage.ts';
 import { LandingPage } from './LandingPage.ts';
 import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
 import { SingleVariantPage } from './SingleVariantPage.ts';
-import { ApiKeyPage } from './api-keys/ApiKeyPage.ts';
+import { ApiKeyPage } from './api-key/ApiKeyPage.ts';
 import { CollectionDetailPage } from './collections/CollectionDetailPage.ts';
 import { CollectionFormPage } from './collections/CollectionFormPage.ts';
 import { E2E_GITHUB_ID, setupAuthCookie } from './helpers/auth.ts';

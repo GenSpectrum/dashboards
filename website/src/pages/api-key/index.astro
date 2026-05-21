@@ -1,5 +1,5 @@
 ---
-import { ApiKeyManager } from '../../components/api-keys/ApiKeyManager';
+import { ApiKeyManager } from '../../components/api-key/ApiKeyManager';
 import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
 import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
@@ -9,7 +9,7 @@ const breadcrumbs = [
     ...defaultBreadcrumbs,
     {
         name: 'API Key',
-        href: Page.apiKeys,
+        href: Page.apiKey,
     },
 ];
 ---

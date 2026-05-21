@@ -3,7 +3,7 @@ import { paths, type Organism } from './Organism.ts';
 import { advancedQueryUrlParamForVariant } from '../components/genspectrum/advancedQueryUrlParamConstants.ts';
 
 export const Page = {
-    apiKeys: '/api-keys',
+    apiKey: '/api-key',
     createSubscription: '/subscriptions/create',
     subscriptionsOverview: '/subscriptions',
     dataSources: '/data',
