@@ -1,6 +1,6 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { covidResistanceMutations } from '../components/views/wasap/resistanceMutations';
+import type { ResistanceMutationCollectionConfig } from '../components/views/wasap/wasapPageConfig';
 import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
 export const wastewaterOrganisms = {
@@ -29,7 +29,29 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         resistanceAnalysisModeEnabled: true,
         untrackedAnalysisModeEnabled: true,
         collectionAnalysisModeEnabled: true,
-        resistanceMutationSets: covidResistanceMutations,
+        resistanceMutationCollections: [
+            {
+                collectionId: 1,
+                name: '3CLpro',
+                annotationSymbol: 'c',
+                description:
+                    'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+            },
+            {
+                collectionId: 2,
+                name: 'RdRp',
+                annotationSymbol: 'r',
+                description:
+                    'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+            },
+            {
+                collectionId: 3,
+                name: 'Spike',
+                annotationSymbol: 's',
+                description:
+                    'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+            },
+        ] satisfies ResistanceMutationCollectionConfig[],
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
@@ -158,6 +180,26 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
         },
     },
+};
+
+function withResistanceCollectionOverrides(config: WasapPageConfig): WasapPageConfig {
+    if (!config.resistanceAnalysisModeEnabled) return config;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const stagingIds: Record<string, number> = { '3CLpro': 1, 'RdRp': 2, 'Spike': 3 };
+    return {
+        ...config,
+        resistanceMutationCollections: config.resistanceMutationCollections.map((set) => ({
+            ...set,
+            collectionId: stagingIds[set.name] ?? set.collectionId,
+        })),
+    };
+}
+
+export const wastewaterOrganismStagingConfigs: Record<WastewaterOrganismName, WasapPageConfig> = {
+    ...wastewaterOrganismConfigs,
+    [wastewaterOrganisms.covid]: withResistanceCollectionOverrides(
+        wastewaterOrganismConfigs[wastewaterOrganisms.covid],
+    ),
 };
 
 export const wastewaterConfig = {
