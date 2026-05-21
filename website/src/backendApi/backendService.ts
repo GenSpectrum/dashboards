@@ -3,7 +3,12 @@ import { z, type ZodSchema } from 'zod';
 
 import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
 import { apiKeyMetadataSchema, generatedApiKeySchema } from '../types/ApiKey.ts';
-import { collectionSchema, type CollectionRequest, type CollectionUpdate } from '../types/Collection.ts';
+import {
+    collectionSchema,
+    collectionSummarySchema,
+    type CollectionRequest,
+    type CollectionUpdate,
+} from '../types/Collection.ts';
 import { type ProblemDetail, problemDetailSchema } from '../types/ProblemDetail.ts';
 import { publicUserSchema } from '../types/PublicUser.ts';
 import {
@@ -172,8 +177,14 @@ export class BackendService extends ApiService {
         return this.get({ url: `/users/${id}`, schema: publicUserSchema });
     }
 
-    public async getCollections({ organism }: { organism?: string } = {}) {
+    public async getCollectionSummaries({ organism }: { organism?: string } = {}) {
         const requestParams = organism !== undefined ? { organism } : undefined;
+        return this.get({ url: '/collections', requestParams, schema: z.array(collectionSummarySchema) });
+    }
+
+    public async getCollections({ organism }: { organism?: string } = {}) {
+        const requestParams: Record<string, string> = { includeVariants: 'true' };
+        if (organism !== undefined) requestParams.organism = organism;
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSchema) });
     }
 

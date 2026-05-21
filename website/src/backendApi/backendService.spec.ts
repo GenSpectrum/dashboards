@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { BackendError, BackendService, UnknownBackendError } from './backendService.ts';
 import { DUMMY_BACKEND_URL } from '../../routeMocker.ts';
 import { backendRouteMocker } from '../../vitest.setup.ts';
-import type { Collection } from '../types/Collection.ts';
+import type { CollectionSummary } from '../types/Collection.ts';
 import type { SubscriptionRequest, SubscriptionResponse, TriggerEvaluationResponse } from '../types/Subscription.ts';
 
 describe('backendService', () => {
@@ -172,24 +172,26 @@ describe('backendService', () => {
         );
     });
 
-    const aCollection: Collection = {
+    const aCollection: CollectionSummary = {
         id: 1,
         name: 'Test collection',
         ownedBy: 123,
         organism: 'covid',
         description: 'A test collection',
-        variants: [],
+        variantCount: 0,
     };
 
-    test('should GET collections without organism filter', async () => {
-        backendRouteMocker.mockGetCollections([aCollection]);
+    test('should GET collection summaries without organism filter', async () => {
+        backendRouteMocker.mockGetCollectionSummaries([aCollection]);
 
-        await expect(backendService.getCollections()).resolves.to.deep.equal([aCollection]);
+        await expect(backendService.getCollectionSummaries()).resolves.to.deep.equal([aCollection]);
     });
 
-    test('should GET collections filtered by organism', async () => {
-        backendRouteMocker.mockGetCollections([aCollection], 'covid');
+    test('should GET collection summaries filtered by organism', async () => {
+        backendRouteMocker.mockGetCollectionSummaries([aCollection], 'covid');
 
-        await expect(backendService.getCollections({ organism: 'covid' })).resolves.to.deep.equal([aCollection]);
+        await expect(backendService.getCollectionSummaries({ organism: 'covid' })).resolves.to.deep.equal([
+            aCollection,
+        ]);
     });
 });
