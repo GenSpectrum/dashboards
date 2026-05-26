@@ -10,11 +10,10 @@ import kotlin.time.Instant
 {
     "id": 1,
     "name": "My Collection",
-    "ownedBy": "user123",
+    "ownedBy": 123,
     "organism": "covid",
     "description": "A collection of interesting variants",
     "variantCount": 1,
-    "variants": [],
     "createdAt": "2026-01-01T00:00:00Z",
     "updatedAt": "2026-01-02T00:00:00Z"
 }
