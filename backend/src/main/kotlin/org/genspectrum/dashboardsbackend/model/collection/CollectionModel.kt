@@ -12,14 +12,15 @@ import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.now
+import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.count
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.time.Instant
@@ -35,67 +36,73 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
             dashboardsConfig.validateIsValidOrganism(organism)
             dashboardsConfig.validateCollectionsEnabled(organism)
         }
-        val query = if (userId == null && organism == null) {
-            CollectionEntity.all()
-        } else {
-            CollectionEntity.find {
-                var conditions: Op<Boolean> = Op.TRUE
-                if (userId != null) {
-                    conditions = conditions and (CollectionTable.ownedBy eq userId)
-                }
-                if (organism != null) {
-                    conditions = conditions and (CollectionTable.organism eq organism)
-                }
-                conditions
-            }
+
+        var collectionConditions: Op<Boolean> = Op.TRUE
+        if (userId != null) {
+            collectionConditions = collectionConditions and (CollectionTable.ownedBy eq userId)
+        }
+        if (organism != null) {
+            collectionConditions = collectionConditions and (CollectionTable.organism eq organism)
         }
 
-        // Materialize the collections first to avoid re-running the query
-        val collectionEntities = query.toList()
-        if (collectionEntities.isEmpty()) {
-            return emptyList()
-        }
-        val allCollectionIds = collectionEntities.map { it.id }
+        val join = CollectionTable.join(VariantTable, JoinType.LEFT)
 
-        if (includeVariants) {
-            val variantsByCollectionId = VariantEntity
-                .find { VariantTable.collectionId inList allCollectionIds }
-                .groupBy { it.collectionId }
-            return collectionEntities.map { collectionEntity ->
-                val variants = variantsByCollectionId[collectionEntity.id].orEmpty().map { it.toVariant() }
-                Collection(
-                    id = collectionEntity.id.value,
-                    name = collectionEntity.name,
-                    ownedBy = collectionEntity.ownedBy,
-                    organism = collectionEntity.organism,
-                    description = collectionEntity.description,
-                    variantCount = variants.size,
-                    variants = variants,
-                    createdAt = collectionEntity.createdAt,
-                    updatedAt = collectionEntity.updatedAt,
-                )
-            }
+        return if (includeVariants) {
+            join.selectAll()
+                .where { collectionConditions }
+                .groupBy { it[CollectionTable.id] }
+                .map { (_, rows) ->
+                    val first = rows.first()
+                    val variants = rows.mapNotNull { row ->
+                        row.getOrNull(VariantTable.id)?.let { row.toVariant() }
+                    }
+                    Collection(
+                        id = first[CollectionTable.id].value,
+                        name = first[CollectionTable.name],
+                        ownedBy = first[CollectionTable.ownedBy],
+                        organism = first[CollectionTable.organism],
+                        description = first[CollectionTable.description],
+                        variantCount = variants.size,
+                        variants = variants,
+                        createdAt = first[CollectionTable.createdAt],
+                        updatedAt = first[CollectionTable.updatedAt],
+                    )
+                }
         } else {
             val countExpr = VariantTable.id.count()
-            val countByCollectionId = VariantTable
-                .select(VariantTable.collectionId, countExpr)
-                // we're not doing a 'where' to filter only for collections we care about,
-                // because it's faster to just get the whole map and then pick the entries we need.
-                .groupBy(VariantTable.collectionId)
-                .associate { row -> row[VariantTable.collectionId].value to row[countExpr].toInt() }
-            return collectionEntities.map { collectionEntity ->
-                Collection(
-                    id = collectionEntity.id.value,
-                    name = collectionEntity.name,
-                    ownedBy = collectionEntity.ownedBy,
-                    organism = collectionEntity.organism,
-                    description = collectionEntity.description,
-                    variantCount = countByCollectionId[collectionEntity.id.value] ?: 0,
-                    variants = null,
-                    createdAt = collectionEntity.createdAt,
-                    updatedAt = collectionEntity.updatedAt,
+            join.select(
+                CollectionTable.id,
+                CollectionTable.name,
+                CollectionTable.ownedBy,
+                CollectionTable.organism,
+                CollectionTable.description,
+                CollectionTable.createdAt,
+                CollectionTable.updatedAt,
+                countExpr,
+            )
+                .where { collectionConditions }
+                .groupBy(
+                    CollectionTable.id,
+                    CollectionTable.name,
+                    CollectionTable.ownedBy,
+                    CollectionTable.organism,
+                    CollectionTable.description,
+                    CollectionTable.createdAt,
+                    CollectionTable.updatedAt,
                 )
-            }
+                .map { row ->
+                    Collection(
+                        id = row[CollectionTable.id].value,
+                        name = row[CollectionTable.name],
+                        ownedBy = row[CollectionTable.ownedBy],
+                        organism = row[CollectionTable.organism],
+                        description = row[CollectionTable.description],
+                        variantCount = row[countExpr].toInt(),
+                        variants = null,
+                        createdAt = row[CollectionTable.createdAt],
+                        updatedAt = row[CollectionTable.updatedAt],
+                    )
+                }
         }
     }
 
