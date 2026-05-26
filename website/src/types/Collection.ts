@@ -36,7 +36,7 @@ const collectionBaseSchema = z.object({
     ownedBy: z.number(),
     organism: z.string(),
     description: z.string().nullable(),
-    variantCount: z.number(),
+    variantCount: z.number().int().nonnegative(),
 });
 
 export const collectionSummarySchema = collectionBaseSchema;
