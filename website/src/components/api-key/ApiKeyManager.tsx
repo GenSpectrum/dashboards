@@ -73,7 +73,7 @@ function ApiKeyManagerInner() {
                         Copy this key now — it will not be shown again.
                     </p>
                     <div className='mb-4 flex w-fit items-center gap-3 rounded bg-gray-100 p-3 text-sm'>
-                        <code>{generatedKey}</code>
+                        <code data-testid='generated-api-key'>{generatedKey}</code>
                         <button
                             className='btn btn-xs shrink-0'
                             onClick={() => void navigator.clipboard.writeText(generatedKey)}
