@@ -16,7 +16,7 @@ export class ApiKeyPage {
     }
 
     public generatedKey() {
-        return this.page.locator('code');
+        return this.page.locator('div.bg-gray-100 code');
     }
 
     public async getGeneratedKey(): Promise<string> {
