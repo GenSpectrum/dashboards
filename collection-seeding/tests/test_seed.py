@@ -8,7 +8,13 @@ COLLECTIONS = [
         "name": "Mock Collection A",
         "organism": "covid",
         "description": "A mock collection for testing.",
-        "variants": [{"type": "filterObject", "name": "C123T", "filterObject": {"nucleotideMutations": ["C123T"]}}],
+        "variants": [
+            {
+                "type": "filterObject",
+                "name": "C123T",
+                "filterObject": {"nucleotideMutations": ["C123T"]},
+            }
+        ],
     },
     {
         "name": "Mock Collection B",
@@ -27,6 +33,7 @@ def make_client(existing=None):
 
 
 # --- seed_source: create / update / mixed ---
+
 
 def test_all_new_creates_all():
     client = make_client(existing=[])
@@ -76,7 +83,9 @@ def test_fetch_called_once_per_organism():
     client = make_client(existing=[])
     seed_source(client, MockSource(multi))
     assert client.fetch_existing_collections.call_count == 2
-    organisms_fetched = {c.args[0] for c in client.fetch_existing_collections.call_args_list}
+    organisms_fetched = {
+        c.args[0] for c in client.fetch_existing_collections.call_args_list
+    }
     assert organisms_fetched == {"covid", "mpox"}
 
 

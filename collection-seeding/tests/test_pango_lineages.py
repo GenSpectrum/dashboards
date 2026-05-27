@@ -45,6 +45,7 @@ def test_name():
 
 # --- _build_collection ---
 
+
 def test_build_collection_basic():
     col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
     assert col["name"] == "BA.2"
@@ -54,14 +55,14 @@ def test_build_collection_basic():
 def test_build_collection_description_format():
     col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
     assert "BA.2" in col["description"]
-    assert "BA" in col["description"]       # parent
-    assert "22C" in col["description"]      # clade
+    assert "BA" in col["description"]  # parent
+    assert "22C" in col["description"]  # clade
     assert "2022-01-20" in col["description"]
 
 
 def test_build_collection_missing_fields_use_defaults():
     col = PangoLineagesSource._build_collection(SAMPLE_DATA["XBB"])
-    assert "—" in col["description"]       # parent and clade fallback
+    assert "—" in col["description"]  # parent and clade fallback
     assert "unknown" in col["description"]  # date fallback
 
 
@@ -116,6 +117,7 @@ def test_build_collection_empty_lists_when_all_blanks():
 
 
 # --- get_collections ---
+
 
 @rsps_lib.activate
 def test_get_collections_fetches_data_url():

@@ -7,6 +7,7 @@ def test_name():
 
 # --- _mature_name ---
 
+
 def test_mature_name_clpro_offset():
     # ORF1a position 3284, offset -3263 → position 21
     assert _mature_name("ORF1a:T3284I", "3CLpro", -3263) == "3CLpro:T21I"
@@ -27,6 +28,7 @@ def test_mature_name_deletion():
 
 
 # --- get_collections ---
+
 
 def test_get_collections_returns_three():
     cols = ResistanceMutationsSource().get_collections()

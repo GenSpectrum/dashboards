@@ -23,5 +23,6 @@ class Collection(TypedDict):
 
 class ExistingCollection(TypedDict):
     """A collection as returned by the backend (includes the assigned id)."""
+
     id: int
     name: str

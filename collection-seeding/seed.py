@@ -29,7 +29,10 @@ def main():
         return
 
     if args.source and args.source not in source_map:
-        print(f"Unknown source '{args.source}'. Use --list to see available sources.", file=sys.stderr)
+        print(
+            f"Unknown source '{args.source}'. Use --list to see available sources.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     if not args.api_key:
@@ -99,12 +102,14 @@ def make_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "-u", "--url",
+        "-u",
+        "--url",
         default=os.environ.get("API_URL", "http://localhost:4321"),
         help="API base URL (default: $API_URL or http://localhost:4321)",
     )
     parser.add_argument(
-        "-k", "--api-key",
+        "-k",
+        "--api-key",
         default=os.environ.get("API_KEY"),
         help="API key for authentication (default: $API_KEY)",
     )

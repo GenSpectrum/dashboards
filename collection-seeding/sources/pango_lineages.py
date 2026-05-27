@@ -8,11 +8,13 @@ DATA_URL = (
     "/refs/heads/main/data/pango-consensus-sequences_summary.json"
 )
 
+
 class PangoLineagesSource(Source):
     """Source: Pango lineage definitions from corneliusroemer/pango-sequences.
 
     Creates one collection per lineage, with nucleotide substitutions as variants.
     """
+
     name = "covid-pango-lineages"
 
     def __init__(self, limit: int | None = None):
@@ -24,7 +26,7 @@ class PangoLineagesSource(Source):
         response.raise_for_status()
         entries = list(response.json().values())
         if self._limit is not None:
-            entries = entries[:self._limit]
+            entries = entries[: self._limit]
         print(f"  Loaded {len(entries)} lineage(s).")
         return [self._build_collection(e) for e in entries]
 
@@ -70,11 +72,17 @@ class PangoLineagesSource(Source):
             f"Designated: {date}."
         )
 
-        return {"name": lineage, "organism": "covid", "description": description, "variants": variants}
+        return {
+            "name": lineage,
+            "organism": "covid",
+            "description": description,
+            "variants": variants,
+        }
 
 
 class PangoLineagesSampleSource(PangoLineagesSource):
     """Same as PangoLineagesSource but limited to the first 10 lineages, for quick testing."""
+
     name = "covid-pango-lineages-sample"
 
     def __init__(self):
