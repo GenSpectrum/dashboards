@@ -45,4 +45,7 @@ data class SystemUserConfig(
     init {
         require(apiKey == null || apiKey.length >= 32) { "systemUser.apiKey must be at least 32 characters" }
     }
+
+    override fun toString() =
+        "SystemUserConfig(githubId=$githubId, name=$name, email=$email, apiKey=${if (apiKey != null) "***" else "null"})"
 }

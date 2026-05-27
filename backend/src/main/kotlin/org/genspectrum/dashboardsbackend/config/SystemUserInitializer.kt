@@ -21,7 +21,7 @@ class SystemUserInitializer(
         val user = userModel.syncUser(
             UserSyncRequest(githubId = config.githubId, name = config.name, email = config.email),
         )
-        log.info { "System user ready: id=${user.id}, githubId=${config.githubId}, name=${config.name}" }
+        log.info { "System user ready: id=${user.id}, $config" }
         config.apiKey?.let {
             apiKeyModel.upsertApiKey(userId = user.id, rawKey = it)
             log.info { "System user API key upserted for userId=${user.id}" }
