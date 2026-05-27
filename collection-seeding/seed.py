@@ -94,7 +94,6 @@ def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
 
 
 def make_parser() -> argparse.ArgumentParser:
-    _repeat_env = os.environ.get("REPEAT_INTERVAL_HOURS")
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -128,7 +127,7 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--repeat-interval-hours",
         type=float,
-        default=float(_repeat_env) if _repeat_env else None,
+        default=os.environ.get("REPEAT_INTERVAL_HOURS"),
         metavar="HOURS",
         help="Re-seed every N hours instead of exiting (default: $REPEAT_INTERVAL_HOURS or run once)",
     )
