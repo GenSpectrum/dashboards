@@ -43,6 +43,7 @@ const showSubscriptions = isStaging();
                     navigationEntries={[
                         { label: Astro.locals.user?.name ?? 'My Account' },
                         ...(showSubscriptions ? [{ label: 'Subscriptions', href: '/subscriptions' }] : []),
+                        { label: 'API Key', href: Page.apiKey },
                         { label: 'Logout', href: '/logout' },
                     ]}
                 >

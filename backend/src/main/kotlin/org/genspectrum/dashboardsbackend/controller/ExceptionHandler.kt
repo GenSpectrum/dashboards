@@ -58,6 +58,17 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
+    @ExceptionHandler(ConflictException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleConflictException(e: Exception): ResponseEntity<ProblemDetail> {
+        log.info { "Caught ${e.javaClass}: ${e.message}" }
+
+        return responseEntity(
+            HttpStatus.CONFLICT,
+            e.message,
+        )
+    }
+
     private fun responseEntity(httpStatus: HttpStatus, detail: String?): ResponseEntity<ProblemDetail> =
         responseEntity(httpStatus, httpStatus.reasonPhrase, detail)
 
@@ -92,3 +103,4 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
 class BadRequestException(message: String) : RuntimeException(message)
 class NotFoundException(message: String) : RuntimeException(message)
 class ForbiddenException(message: String) : RuntimeException(message)
+class ConflictException(message: String) : RuntimeException(message)

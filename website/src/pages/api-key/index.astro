@@ -1,0 +1,19 @@
+---
+import { ApiKeyManager } from '../../components/api-key/ApiKeyManager';
+import NotLoggedIn from '../../components/auth/NotLoggedIn.astro';
+import { defaultBreadcrumbs } from '../../layouts/Breadcrumbs';
+import ContaineredPageLayout from '../../layouts/ContaineredPage/ContaineredPageLayout.astro';
+import { Page } from '../../types/pages';
+
+const breadcrumbs = [
+    ...defaultBreadcrumbs,
+    {
+        name: 'API Key',
+        href: Page.apiKey,
+    },
+];
+---
+
+<ContaineredPageLayout title='API Key' breadcrumbs={breadcrumbs}>
+    {Astro.locals.user !== undefined ? <ApiKeyManager client:load /> : <NotLoggedIn />}
+</ContaineredPageLayout>
