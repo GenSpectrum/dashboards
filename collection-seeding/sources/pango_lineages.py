@@ -70,12 +70,7 @@ class PangoLineagesSource(Source):
             f"Designated: {date}."
         )
 
-        return Collection(
-            name=lineage,
-            organism="covid",
-            description=description,
-            variants=variants,
-        )
+        return {"name": lineage, "organism": "covid", "description": description, "variants": variants}
 
 
 class PangoLineagesSampleSource(PangoLineagesSource):
