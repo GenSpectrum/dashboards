@@ -26,9 +26,7 @@ class PangoLineagesSource(Source):
         if self._limit is not None:
             entries = entries[:self._limit]
         print(f"  Loaded {len(entries)} lineage(s).")
-        collections = [self._build_collection(e) for e in entries]
-        # Drop lineages that ended up with no variants after filtering blank subs
-        return [c for c in collections if c["variants"]]
+        return [self._build_collection(e) for e in entries]
 
     @staticmethod
     def _build_collection(entry: dict) -> Collection:
@@ -37,14 +35,32 @@ class PangoLineagesSource(Source):
         clade: str = entry.get("nextstrainClade") or "—"
         date: str = entry.get("designationDate") or "unknown"
 
-        subs = [s for s in entry.get("nucSubstitutions", []) if s]
+        nuc_subs = [s for s in entry.get("nucSubstitutions", []) if s]
+        aa_subs = [s for s in entry.get("aaSubstitutions", []) if s]
+        nuc_subs_new = [s for s in entry.get("nucSubstitutionsNew", []) if s]
+        aa_subs_new = [s for s in entry.get("aaSubstitutionsNew", []) if s]
+
         variants: list[Variant] = [
             {
                 "type": "filterObject",
-                "name": sub,
-                "filterObject": {"nucleotideMutations": [sub]},
-            }
-            for sub in subs
+                "name": "Nucleotide substitutions",
+                "filterObject": {"nucleotideMutations": nuc_subs},
+            },
+            {
+                "type": "filterObject",
+                "name": "Amino acid substitutions",
+                "filterObject": {"aminoAcidMutations": aa_subs},
+            },
+            {
+                "type": "filterObject",
+                "name": "New nucleotide substitutions",
+                "filterObject": {"nucleotideMutations": nuc_subs_new},
+            },
+            {
+                "type": "filterObject",
+                "name": "New amino acid substitutions",
+                "filterObject": {"aminoAcidMutations": aa_subs_new},
+            },
         ]
 
         description = (
