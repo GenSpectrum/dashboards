@@ -47,6 +47,28 @@ class ApiKeyModel {
         return GeneratedApiKey(key = rawKey, createdAt = now)
     }
 
+    /**
+     * Upsert a given API key. This is only used by the init function where the user can pass
+     * in an API key for a system user.
+     */
+    fun upsertApiKey(userId: Long, rawKey: String) {
+        val hash = sha256(rawKey)
+        val now = now()
+        val existing = ApiKeyEntity.findByUserId(userId)
+        if (existing == null) {
+            ApiKeyEntity.new {
+                this.userId = userId
+                this.keyHash = hash
+                this.createdAt = now
+                this.lastUsedAt = null
+            }
+        } else if (existing.keyHash != hash) {
+            existing.keyHash = hash
+            existing.createdAt = now
+            existing.lastUsedAt = null
+        }
+    }
+
     fun revokeApiKey(userId: Long) {
         val entity = ApiKeyEntity.findByUserId(userId)
             ?: throw NotFoundException("No API key found for user $userId")
