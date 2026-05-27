@@ -38,7 +38,7 @@ class SystemUserInitializerTest(
     )
 
     @Test
-    fun `WHEN systemUser config with apiKey THEN key validates and user exists`() {
+    fun `GIVEN systemUser config with apiKey WHEN initializer runs THEN key validates and user exists`() {
         val githubId = "system-user-with-key-${System.nanoTime()}"
         val rawKey = uniqueKey()
 
@@ -49,7 +49,7 @@ class SystemUserInitializerTest(
     }
 
     @Test
-    fun `WHEN systemUser config without apiKey THEN user is created but no key exists`() {
+    fun `GIVEN systemUser config without apiKey WHEN initializer runs THEN user is created but no key exists`() {
         val githubId = "system-user-no-key-${System.nanoTime()}"
 
         initializerWith(SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = null)).run(noArgs)
@@ -60,7 +60,7 @@ class SystemUserInitializerTest(
     }
 
     @Test
-    fun `WHEN run twice with same config THEN idempotent - no errors and key still valid`() {
+    fun `GIVEN systemUser config with apiKey WHEN initializer runs twice THEN is idempotent and key still valid`() {
         val githubId = "system-user-idempotent-${System.nanoTime()}"
         val rawKey = uniqueKey()
         val config = SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = rawKey)
@@ -74,7 +74,7 @@ class SystemUserInitializerTest(
     }
 
     @Test
-    fun `WHEN apiKey changes THEN old key is rejected and new key validates`() {
+    fun `GIVEN systemUser config with apiKey WHEN apiKey changes THEN old key is rejected and new key validates`() {
         val githubId = "system-user-rotation-${System.nanoTime()}"
         val oldKey = uniqueKey()
         val newKey = uniqueKey()
@@ -88,7 +88,7 @@ class SystemUserInitializerTest(
     }
 
     @Test
-    fun `WHEN run twice with same key THEN lastUsedAt is not reset`() {
+    fun `GIVEN systemUser config with apiKey WHEN initializer runs twice THEN lastUsedAt is not reset`() {
         val githubId = "system-user-no-reset-${System.nanoTime()}"
         val rawKey = uniqueKey()
         val config = SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = rawKey)
