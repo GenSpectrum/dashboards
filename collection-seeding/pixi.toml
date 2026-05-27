@@ -1,5 +1,5 @@
 [workspace]
-name = "example-data-seeder"
+name = "collection-seeding"
 version = "0.1.0"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "linux-aarch64"]
