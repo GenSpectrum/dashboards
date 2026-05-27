@@ -41,4 +41,8 @@ data class SystemUserConfig(
     val name: String,
     val email: String? = null,
     val apiKey: String? = null,
-)
+) {
+    init {
+        require(apiKey == null || apiKey.length >= 32) { "systemUser.apiKey must be at least 32 characters" }
+    }
+}
