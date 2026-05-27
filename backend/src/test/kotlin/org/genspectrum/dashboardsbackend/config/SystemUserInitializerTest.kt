@@ -1,5 +1,6 @@
 package org.genspectrum.dashboardsbackend.config
 
+import org.genspectrum.dashboardsbackend.api.UserSyncRequest
 import org.genspectrum.dashboardsbackend.controller.ApiKeyClient
 import org.genspectrum.dashboardsbackend.controller.UsersClient
 import org.genspectrum.dashboardsbackend.model.apikey.ApiKeyModel
@@ -45,6 +46,17 @@ class SystemUserInitializerTest(
 
         val userId = apiKeyClient.validateApiKey(rawKey).userId
         usersClient.getUserRaw(userId).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `WHEN systemUser config without apiKey THEN user is created but no key exists`() {
+        val githubId = "system-user-no-key-${System.nanoTime()}"
+
+        initializerWith(SystemUserConfig(githubId = githubId, name = "Bot", email = null, apiKey = null)).run(noArgs)
+
+        val userId = usersClient.syncUser(UserSyncRequest(githubId = githubId, name = "Bot", email = null)).id
+        usersClient.getUserRaw(userId).andExpect(status().isOk)
+        apiKeyClient.getApiKeyRaw(userId).andExpect(status().isNotFound)
     }
 
     @Test
