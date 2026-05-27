@@ -44,8 +44,8 @@ class CollectionsGetTest(
             userB,
         )
 
-        val collectionsForUserA = collectionsClient.getCollections(userId = userA)
-        val collectionsForUserB = collectionsClient.getCollections(userId = userB)
+        val collectionsForUserA = collectionsClient.getCollections(userId = userA, includeVariants = true)
+        val collectionsForUserB = collectionsClient.getCollections(userId = userB, includeVariants = true)
 
         assertThat(collectionsForUserA, hasItem(collectionA))
         assertThat(collectionsForUserA, not(hasItem(collectionB)))
@@ -72,7 +72,7 @@ class CollectionsGetTest(
             userB,
         )
 
-        val allCollections = collectionsClient.getCollections()
+        val allCollections = collectionsClient.getCollections(includeVariants = true)
 
         assertThat(allCollections, hasItem(covidCollectionA))
         assertThat(allCollections, hasItem(mpoxCollectionA))
@@ -87,7 +87,7 @@ class CollectionsGetTest(
         val collectionA = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User A"), userA)
         val collectionB = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "User B"), userB)
 
-        val collectionsForUserA = collectionsClient.getCollections(userId = userA)
+        val collectionsForUserA = collectionsClient.getCollections(userId = userA, includeVariants = true)
 
         assertThat(collectionsForUserA, hasItem(collectionA))
         assertThat(collectionsForUserA, not(hasItem(collectionB)))
@@ -98,7 +98,7 @@ class CollectionsGetTest(
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        collectionsClient.getCollectionsRaw(userId = userId)
+        collectionsClient.getCollectionsRaw(userId = userId, includeVariants = true)
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].id").value(createdCollection.id))
             .andExpect(jsonPath("$[0].variants[0].type").value("query"))
@@ -127,7 +127,10 @@ class CollectionsGetTest(
             userId,
         )
 
-        val covidCollections = collectionsClient.getCollections(organism = KnownTestOrganisms.Covid.name)
+        val covidCollections = collectionsClient.getCollections(
+            organism = KnownTestOrganisms.Covid.name,
+            includeVariants = true,
+        )
 
         assertThat(covidCollections, hasItem(covidCollection))
         assertThat(covidCollections, not(hasItem(mpoxCollection)))
@@ -161,6 +164,7 @@ class CollectionsGetTest(
         val filteredCollections = collectionsClient.getCollections(
             userId = userA,
             organism = KnownTestOrganisms.Covid.name,
+            includeVariants = true,
         )
 
         assertThat(filteredCollections, hasItem(covidCollectionA))
@@ -186,19 +190,20 @@ class CollectionsGetTest(
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val collections = collectionsClient.getCollections(userId = userId)
+        val collections = collectionsClient.getCollections(userId = userId, includeVariants = true)
         val retrievedCollection = collections.first { it.id == createdCollection.id }
 
-        assertThat(retrievedCollection.variants, hasSize(2))
+        val variants = retrievedCollection.variants!!
+        assertThat(variants, hasSize(2))
 
-        val queryVariant = retrievedCollection.variants.first { it is Variant.QueryVariant } as Variant.QueryVariant
+        val queryVariant = variants.first { it is Variant.QueryVariant } as Variant.QueryVariant
         assertThat(queryVariant.name, equalTo("BA.2 in USA"))
         assertThat(queryVariant.description, equalTo("BA.2 lineage cases in USA"))
         assertThat(queryVariant.countQuery, equalTo("country='USA' & lineage='BA.2'"))
         assertThat(queryVariant.coverageQuery, equalTo("country='USA'"))
 
         val filterObjectVariant =
-            retrievedCollection.variants.first { it is Variant.FilterObjectVariant } as Variant.FilterObjectVariant
+            variants.first { it is Variant.FilterObjectVariant } as Variant.FilterObjectVariant
         assertThat(filterObjectVariant.name, equalTo("Omicron mutations"))
         assertThat(filterObjectVariant.description, equalTo("Key mutations"))
         assertThat(
@@ -212,11 +217,12 @@ class CollectionsGetTest(
         val userId = usersClient.createUser()
         val createdCollection = collectionsClient.postCollection(dummyCollectionRequest, userId)
 
-        val collections = collectionsClient.getCollections(userId = userId)
+        val collections = collectionsClient.getCollections(userId = userId, includeVariants = true)
         val retrievedCollection = collections.first { it.id == createdCollection.id }
 
-        val queryVariants = retrievedCollection.variants.filterIsInstance<Variant.QueryVariant>()
-        val filterObjectVariants = retrievedCollection.variants.filterIsInstance<Variant.FilterObjectVariant>()
+        val allVariants = retrievedCollection.variants!!
+        val queryVariants = allVariants.filterIsInstance<Variant.QueryVariant>()
+        val filterObjectVariants = allVariants.filterIsInstance<Variant.FilterObjectVariant>()
 
         assertThat(queryVariants, hasSize(1))
         assertThat(filterObjectVariants, hasSize(1))
@@ -237,7 +243,7 @@ class CollectionsGetTest(
         assertThat(retrievedCollection.ownedBy, equalTo(userId))
         assertThat(retrievedCollection.organism, equalTo(dummyCollectionRequest.organism))
         assertThat(retrievedCollection.description, equalTo(dummyCollectionRequest.description))
-        assertThat(retrievedCollection.variants, hasSize(2))
+        assertThat(retrievedCollection.variants!!, hasSize(2))
     }
 
     @Test
@@ -281,5 +287,28 @@ class CollectionsGetTest(
         collectionsClient.getCollectionsRaw(userId = 999999999L)
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.detail").value("User 999999999 not found"))
+    }
+
+    @Test
+    fun `WHEN getting collections without includeVariants THEN variantCount is set and variants is absent`() {
+        val userId = usersClient.createUser()
+        collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        collectionsClient.getCollectionsRaw(userId = userId)
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].variantCount").value(2))
+            .andExpect(jsonPath("$[0].variants").doesNotExist())
+    }
+
+    @Test
+    fun `WHEN getting collections with includeVariants=true THEN variantCount and variants are both present`() {
+        val userId = usersClient.createUser()
+        collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        collectionsClient.getCollectionsRaw(userId = userId, includeVariants = true)
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].variantCount").value(2))
+            .andExpect(jsonPath("$[0].variants").isArray)
+            .andExpect(jsonPath("$[0].variants", hasSize<Any>(2)))
     }
 }

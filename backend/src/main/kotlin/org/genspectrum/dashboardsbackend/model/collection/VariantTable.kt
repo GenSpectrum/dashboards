@@ -4,6 +4,7 @@ import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.Variant
 import org.genspectrum.dashboardsbackend.model.subscription.jacksonSerializableJsonb
 import org.jetbrains.exposed.v1.core.ReferenceOption
+import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.dao.LongEntity
@@ -109,6 +110,35 @@ class VariantEntity(id: EntityID<Long>) : LongEntity(id) {
             filterObject = filterObject!!,
             createdAt = createdAt,
             updatedAt = updatedAt,
+        )
+    }
+}
+
+/**
+ * Maps a raw ResultRow from a JOIN query to a Variant, as an alternative to [VariantEntity.toVariant]
+ * which requires the DAO layer.
+ **/
+fun ResultRow.toVariant(): Variant {
+    val variantType = VariantType.fromDatabaseValue(this[VariantTable.variantType])
+    return when (variantType) {
+        VariantType.QUERY -> Variant.QueryVariant(
+            id = this[VariantTable.id].value,
+            collectionId = this[VariantTable.collectionId].value,
+            name = this[VariantTable.name],
+            description = this[VariantTable.description],
+            countQuery = this[VariantTable.countQuery]!!,
+            coverageQuery = this[VariantTable.coverageQuery],
+            createdAt = this[VariantTable.createdAt],
+            updatedAt = this[VariantTable.updatedAt],
+        )
+        VariantType.FILTER_OBJECT -> Variant.FilterObjectVariant(
+            id = this[VariantTable.id].value,
+            collectionId = this[VariantTable.collectionId].value,
+            name = this[VariantTable.name],
+            description = this[VariantTable.description],
+            filterObject = this[VariantTable.filterObject]!!,
+            createdAt = this[VariantTable.createdAt],
+            updatedAt = this[VariantTable.updatedAt],
         )
     }
 }

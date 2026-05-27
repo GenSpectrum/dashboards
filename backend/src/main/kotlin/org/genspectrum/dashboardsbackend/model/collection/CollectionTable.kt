@@ -34,14 +34,18 @@ class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
     // Navigation property to access variants
     val variants by VariantEntity referrersOn VariantTable.collectionId
 
-    fun toCollection() = Collection(
-        id = id.value,
-        name = name,
-        ownedBy = ownedBy,
-        organism = organism,
-        description = description,
-        variants = variants.map { it.toVariant() },
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-    )
+    fun toCollection(): Collection {
+        val variantList = variants.map { it.toVariant() }
+        return Collection(
+            id = id.value,
+            name = name,
+            ownedBy = ownedBy,
+            organism = organism,
+            description = description,
+            variantCount = variantList.size,
+            variants = variantList,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
+    }
 }

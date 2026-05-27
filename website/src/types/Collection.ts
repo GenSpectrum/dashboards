@@ -30,12 +30,19 @@ const filterObjectVariantSchema = z.object({
 
 const variantSchema = z.discriminatedUnion('type', [queryVariantSchema, filterObjectVariantSchema]);
 
-export const collectionSchema = z.object({
+const collectionBaseSchema = z.object({
     id: z.number(),
     name: z.string(),
     ownedBy: z.number(),
     organism: z.string(),
     description: z.string().nullable(),
+    variantCount: z.number().int().nonnegative(),
+});
+
+export const collectionSummarySchema = collectionBaseSchema;
+export type CollectionSummary = z.infer<typeof collectionSummarySchema>;
+
+export const collectionSchema = collectionBaseSchema.extend({
     variants: z.array(variantSchema),
 });
 
