@@ -10,7 +10,9 @@ class Source(ABC):
     and implement `get_collections` to return the collections to upsert.
     Then register it in sources/registry.py.
     """
-    name: str
+    @property
+    @abstractmethod
+    def name(self) -> str: ...
 
     @abstractmethod
     def get_collections(self) -> list[Collection]:
