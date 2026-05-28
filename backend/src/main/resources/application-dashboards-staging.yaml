@@ -1,4 +1,8 @@
 dashboards:
+  systemUser:
+    githubId: "218605180"
+    name: "genspectrum-bot"
+    apiKey: "${DASHBOARDS_SYSTEM_USER_API_KEY}"
   organisms:
     covid:
       lapis:
