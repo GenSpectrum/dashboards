@@ -132,7 +132,9 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--repeat-interval-hours",
         type=float,
-        default=os.environ.get("REPEAT_INTERVAL_HOURS"),
+        default=float(os.environ["REPEAT_INTERVAL_HOURS"])
+        if os.environ.get("REPEAT_INTERVAL_HOURS")
+        else None,
         metavar="HOURS",
         help="Re-seed every N hours instead of exiting (default: $REPEAT_INTERVAL_HOURS or run once)",
     )
