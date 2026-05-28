@@ -19,7 +19,8 @@ class ResistanceMutationsSource(Source):
                 "description": (
                     "SARS-CoV-2 3C-like protease (3CLpro/Mpro) inhibitor resistance mutations "
                     "as per Stanford Coronavirus Antiviral & Resistance database "
-                    "(last updated 21 August 2024)."
+                    "(last updated 21 August 2024). "
+                    "#resistance-mutation"
                 ),
                 "variants": _build_variants(CLPRO_MUTATIONS, "3CLpro", -3263),
             },
@@ -29,7 +30,8 @@ class ResistanceMutationsSource(Source):
                 "description": (
                     "SARS-CoV-2 RNA-dependent RNA polymerase (RdRp) inhibitor resistance mutations "
                     "as per Stanford Coronavirus Antiviral & Resistance database "
-                    "(last updated 21 August 2024)."
+                    "(last updated 21 August 2024). "
+                    "#resistance-mutation"
                 ),
                 "variants": _build_variants(RDRP_MUTATIONS, "RdRp", 9),
             },
@@ -39,7 +41,8 @@ class ResistanceMutationsSource(Source):
                 "description": (
                     "SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutations "
                     "as per Stanford Coronavirus Antiviral & Resistance database "
-                    "(last updated 21 August 2024)."
+                    "(last updated 21 August 2024). "
+                    "#resistance-mutation"
                 ),
                 "variants": _build_variants(SPIKE_MUTATIONS, "Spike", 0),
             },

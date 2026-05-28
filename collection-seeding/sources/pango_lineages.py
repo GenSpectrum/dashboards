@@ -69,7 +69,8 @@ class PangoLineagesSource(Source):
             f"Pango lineage {lineage}. "
             f"Parent: {parent}. "
             f"Nextstrain clade: {clade}. "
-            f"Designated: {date}."
+            f"Designated: {date}. "
+            f"#pango-lineage"
         )
 
         return {
