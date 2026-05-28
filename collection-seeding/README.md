@@ -15,7 +15,7 @@ Use `--repeat-interval-hours N` (or `$REPEAT_INTERVAL_HOURS`) to run on a loop â
 The seeder runs automatically as part of Docker Compose:
 
 ```bash
-BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest SEEDER_API_KEY=... docker compose up
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
 ```
 
 ## Running locally
