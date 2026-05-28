@@ -57,6 +57,17 @@ class ApiClient:
             )
         return r.json()["id"]
 
+    def delete_collection(self, collection_id: int) -> None:
+        r = requests.delete(
+            f"{self._collections_url}/{collection_id}",
+            headers=self._auth_headers,
+            timeout=10,
+        )
+        if not r.ok:
+            raise RuntimeError(
+                f"DELETE /api/collections/{collection_id} failed: {r.status_code} {r.text}"
+            )
+
     def update_collection(self, collection_id: int, collection: Collection) -> None:
         # CollectionUpdate has no organism field; sending it causes a 400 (fail-on-unknown-properties=true)
         body = {k: v for k, v in collection.items() if k != "organism"}

@@ -55,12 +55,16 @@ def main():
         while True:
             total_created = 0
             total_updated = 0
+            total_deleted = 0
             for source in active:
-                c, u = seed_source(client, source)
+                c, u, d = seed_source(client, source)
                 total_created += c
                 total_updated += u
+                total_deleted += d
             if len(active) > 1:
-                print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
+                print(
+                    f"\nTotal — created: {total_created}, updated: {total_updated}, deleted: {total_deleted}."
+                )
             if not args.repeat_interval_hours:
                 break
             print(f"\nSleeping for {args.repeat_interval_hours}h ...")
@@ -70,34 +74,53 @@ def main():
         sys.exit(1)
 
 
-def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
-    """Upsert collections for one source, grouped by organism. Returns (created, updated) counts.
+def seed_source(client: ApiClient, source: Source) -> tuple[int, int, int]:
+    """Upsert collections for one source. Returns (created, updated, deleted) counts.
     Matching is by name — if a collection's name changes in the source, the old entry is orphaned and a new one is created."""
     collections = source.get_collections()
     print(f"\n[{source.name}]")
 
-    organisms: dict[str, list[Collection]] = {}
-    for c in collections:
-        organisms.setdefault(c["organism"], []).append(c)
+    existing = client.fetch_existing_collections(source.organism)
+    existing_by_name = {
+        c["name"]: c for c in existing if source.owned_tag in (c["description"] or "")
+    }
 
     created = 0
     updated = 0
-    for organism, org_collections in organisms.items():
-        existing = client.fetch_existing_collections(organism)
-        existing_by_name = {c["name"]: c for c in existing}
-        for collection in org_collections:
-            existing_entry = existing_by_name.get(collection["name"])
-            if existing_entry:
-                client.update_collection(existing_entry["id"], collection)
-                print(f"  UPDATE id={existing_entry['id']}  {collection['name']}")
-                updated += 1
-            else:
-                col_id = client.create_collection(collection)
-                print(f"  CREATE id={col_id}  {collection['name']}")
-                created += 1
+    for collection in collections:
+        c, u = _upsert_collection(client, collection, existing_by_name)
+        existing_by_name.pop(collection["name"], None)
+        created += c
+        updated += u
 
-    print(f"  Created: {created}, updated: {updated}.")
-    return created, updated
+    orphan_ids = [e["id"] for e in existing_by_name.values()]
+    deleted = _delete_collections(client, orphan_ids)
+
+    print(f"  Created: {created}, updated: {updated}, deleted: {deleted}.")
+    return created, updated, deleted
+
+
+def _upsert_collection(
+    client: ApiClient,
+    collection: Collection,
+    existing_by_name: dict,
+) -> tuple[int, int]:
+    existing_entry = existing_by_name.get(collection["name"])
+    if existing_entry:
+        client.update_collection(existing_entry["id"], collection)
+        print(f"  UPDATE id={existing_entry['id']}  {collection['name']}")
+        return 0, 1
+    else:
+        col_id = client.create_collection(collection)
+        print(f"  CREATE id={col_id}  {collection['name']}")
+        return 1, 0
+
+
+def _delete_collections(client: ApiClient, collection_ids: list[int]) -> int:
+    for col_id in collection_ids:
+        client.delete_collection(col_id)
+        print(f"  DELETE id={col_id}")
+    return len(collection_ids)
 
 
 def make_parser() -> argparse.ArgumentParser:

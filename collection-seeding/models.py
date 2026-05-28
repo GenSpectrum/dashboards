@@ -26,3 +26,4 @@ class ExistingCollection(TypedDict):
 
     id: int
     name: str
+    description: str | None

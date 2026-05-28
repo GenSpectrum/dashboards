@@ -47,13 +47,13 @@ def test_name():
 
 
 def test_build_collection_basic():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     assert col["name"] == "BA.2"
     assert col["organism"] == "covid"
 
 
 def test_build_collection_description_format():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     assert "BA.2" in col["description"]
     assert "BA" in col["description"]  # parent
     assert "22C" in col["description"]  # clade
@@ -61,18 +61,18 @@ def test_build_collection_description_format():
 
 
 def test_build_collection_missing_fields_use_defaults():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["XBB"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
     assert "—" in col["description"]  # parent and clade fallback
     assert "unknown" in col["description"]  # date fallback
 
 
 def test_build_collection_always_four_variants():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     assert len(col["variants"]) == 4
 
 
 def test_build_collection_variant_names():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     names = [v["name"] for v in col["variants"]]
     assert names == [
         "Nucleotide substitutions",
@@ -83,7 +83,7 @@ def test_build_collection_variant_names():
 
 
 def test_build_collection_variant_filter_keys():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     variants = col["variants"]
     assert "nucleotideMutations" in variants[0]["filterObject"]
     assert "aminoAcidMutations" in variants[1]["filterObject"]
@@ -92,7 +92,7 @@ def test_build_collection_variant_filter_keys():
 
 
 def test_build_collection_variant_contents():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     variants = col["variants"]
     assert variants[0]["filterObject"]["nucleotideMutations"] == ["C241T", "A23403G"]
     assert variants[1]["filterObject"]["aminoAcidMutations"] == ["S:N501Y"]
@@ -101,7 +101,7 @@ def test_build_collection_variant_contents():
 
 
 def test_build_collection_filters_blank_subs():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["BA.2"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     # nucSubstitutions has ["C241T", "A23403G", ""] — blank should be dropped
     nuc = col["variants"][0]["filterObject"]["nucleotideMutations"]
     assert "" not in nuc
@@ -109,7 +109,7 @@ def test_build_collection_filters_blank_subs():
 
 
 def test_build_collection_empty_lists_when_all_blanks():
-    col = PangoLineagesSource._build_collection(SAMPLE_DATA["XBB"])
+    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
     assert len(col["variants"]) == 4
     for v in col["variants"]:
         lists = list(v["filterObject"].values())

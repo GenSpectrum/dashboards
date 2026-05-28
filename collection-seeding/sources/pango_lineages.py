@@ -16,6 +16,8 @@ class PangoLineagesSource(Source):
     """
 
     name = "covid-pango-lineages"
+    organism = "covid"
+    owned_tag = "#pango-lineage"
 
     def __init__(self, limit: int | None = None):
         self._limit = limit
@@ -30,8 +32,7 @@ class PangoLineagesSource(Source):
         print(f"  Loaded {len(entries)} lineage(s).")
         return [self._build_collection(e) for e in entries]
 
-    @staticmethod
-    def _build_collection(entry: dict) -> Collection:
+    def _build_collection(self, entry: dict) -> Collection:
         lineage: str = entry["lineage"]
         parent: str = entry.get("parent") or "—"
         clade: str = entry.get("nextstrainClade") or "—"
@@ -70,7 +71,7 @@ class PangoLineagesSource(Source):
             f"Parent: {parent}. "
             f"Nextstrain clade: {clade}. "
             f"Designated: {date}. "
-            f"#pango-lineage"
+            f"{self.owned_tag}"
         )
 
         return {
