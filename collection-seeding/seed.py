@@ -42,7 +42,11 @@ def main():
     client = ApiClient(args.url, args.api_key)
     print(f"Seeding collections against {args.url} ...")
 
-    active = [source_map[args.source]] if args.source else list(source_map.values())
+    active = (
+        [source_map[args.source]]
+        if args.source
+        else [s for s in source_map.values() if s.include_in_default_run]
+    )
 
     try:
         if args.wait:
