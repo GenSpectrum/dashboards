@@ -1,6 +1,5 @@
 """Shared backend API client for collection seeders."""
 
-import sys
 import time
 
 import requests
@@ -30,11 +29,9 @@ class ApiClient:
                 pass
             print(f"Waiting for API... (attempt {attempt}/{attempts})")
             time.sleep(delay)
-        print(
-            f"API at {self.base_url} did not become ready after {attempts} attempts.",
-            file=sys.stderr,
+        raise RuntimeError(
+            f"API at {self.base_url} did not become ready after {attempts} attempts."
         )
-        sys.exit(1)
 
     def fetch_existing_collections(self, organism: str) -> list[ExistingCollection]:
         r = requests.get(

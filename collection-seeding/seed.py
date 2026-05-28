@@ -42,13 +42,13 @@ def main():
     client = ApiClient(args.url, args.api_key)
     print(f"Seeding collections against {args.url} ...")
 
-    if args.wait:
-        client.wait_for_api()
-
     active = [source_map[args.source]] if args.source else list(source_map.values())
 
-    while True:
-        try:
+    try:
+        if args.wait:
+            client.wait_for_api()
+
+        while True:
             total_created = 0
             total_updated = 0
             for source in active:
@@ -57,13 +57,13 @@ def main():
                 total_updated += u
             if len(active) > 1:
                 print(f"\nTotal — created: {total_created}, updated: {total_updated}.")
-        except Exception as e:
-            print(f"Error: {e}", file=sys.stderr)
-            sys.exit(1)
-        if not args.repeat_interval_hours:
-            break
-        print(f"\nSleeping for {args.repeat_interval_hours}h ...")
-        time.sleep(args.repeat_interval_hours * 3600)
+            if not args.repeat_interval_hours:
+                break
+            print(f"\nSleeping for {args.repeat_interval_hours}h ...")
+            time.sleep(args.repeat_interval_hours * 3600)
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 def seed_source(client: ApiClient, source: Source) -> tuple[int, int]:
