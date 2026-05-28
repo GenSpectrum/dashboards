@@ -1,4 +1,7 @@
-.pixi/
-__pycache__/
-tests/
-*.md
+*
+!pixi.toml
+!pixi.lock
+!seed.py
+!api.py
+!models.py
+!sources/

@@ -9,6 +9,5 @@ FROM python:3.13-slim AS final
 WORKDIR /app
 COPY --from=builder /app/.pixi/envs/default/lib/python3.13/site-packages \
                     /usr/local/lib/python3.13/site-packages
-COPY seed.py api.py models.py .
-COPY sources/ sources/
+COPY . .
 CMD ["python", "seed.py"]
