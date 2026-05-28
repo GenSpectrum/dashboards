@@ -12,52 +12,24 @@ const mockCollections = [
     {
         id: 1,
         name: 'My first collection',
-        ownedBy: 'user1',
+        ownedBy: 1,
         organism: ORGANISM,
         description: 'A test collection',
-        variants: [
-            {
-                type: 'query' as const,
-                id: 10,
-                collectionId: 1,
-                name: 'Variant A',
-                description: null,
-                countQuery: '{}',
-                coverageQuery: null,
-            },
-            {
-                type: 'query' as const,
-                id: 11,
-                collectionId: 1,
-                name: 'Variant B',
-                description: null,
-                countQuery: '{}',
-                coverageQuery: null,
-            },
-            {
-                type: 'query' as const,
-                id: 12,
-                collectionId: 1,
-                name: 'Variant C',
-                description: null,
-                countQuery: '{}',
-                coverageQuery: null,
-            },
-        ],
+        variantCount: 3,
     },
     {
         id: 2,
         name: 'Another collection',
-        ownedBy: 'user1',
+        ownedBy: 1,
         organism: ORGANISM,
         description: null,
-        variants: [],
+        variantCount: 0,
     },
 ];
 
 describe('CollectionsOverview', () => {
     it('shows the headline and collections table on success', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollections(mockCollections, ORGANISM);
+        astro.mockGetCollectionSummaries(mockCollections, ORGANISM);
 
         const { getByText, getByRole } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
 
@@ -70,7 +42,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and empty message when there are no collections', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollections([], ORGANISM);
+        astro.mockGetCollectionSummaries([], ORGANISM);
 
         const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
 
@@ -79,7 +51,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and error message when the fetch fails', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollections([], ORGANISM, 500);
+        astro.mockGetCollectionSummaries([], ORGANISM, 500);
         astro.mockLog();
 
         const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);

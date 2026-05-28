@@ -14,7 +14,7 @@ const { forceLoggedOutState } = Astro.props;
 
 const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
 
-const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== null;
+const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== undefined;
 const showSubscriptions = isStaging();
 ---
 
@@ -43,6 +43,7 @@ const showSubscriptions = isStaging();
                     navigationEntries={[
                         { label: Astro.locals.user?.name ?? 'My Account' },
                         ...(showSubscriptions ? [{ label: 'Subscriptions', href: '/subscriptions' }] : []),
+                        { label: 'API Key', href: Page.apiKey },
                         { label: 'Logout', href: '/logout' },
                     ]}
                 >

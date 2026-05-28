@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { WasapPageStateHandler } from './WasapPageStateHandler';
-import { covidResistanceMutations } from '../../components/views/wasap/resistanceMutations';
 import {
     VARIANT_TIME_FRAME,
     type WasapCollectionFilter,
@@ -26,7 +25,11 @@ const config: WasapPageConfig = {
     variantAnalysisModeEnabled: true,
     resistanceAnalysisModeEnabled: true,
     untrackedAnalysisModeEnabled: true,
-    resistanceMutationSets: covidResistanceMutations,
+    resistanceMutationCollections: [
+        { name: '3CLpro', annotationSymbol: 'c', description: '', collectionId: 1 },
+        { name: 'RdRp', annotationSymbol: 'r', description: '', collectionId: 2 },
+        { name: 'Spike', annotationSymbol: 's', description: '', collectionId: 3 },
+    ],
     lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
     samplingDateField: 'samplingDate',
     locationNameField: 'locationName',

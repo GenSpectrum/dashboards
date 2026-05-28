@@ -8,7 +8,7 @@ class TriggerEvaluationModel(
     private val subscriptionModel: SubscriptionModel,
     private val triggerEvaluator: TriggerEvaluator,
 ) {
-    fun evaluateSubscriptionTrigger(subscriptionId: String, userId: String) = triggerEvaluator.evaluate(
+    fun evaluateSubscriptionTrigger(subscriptionId: String, userId: Long) = triggerEvaluator.evaluate(
         subscriptionModel.getSubscription(
             subscriptionId = subscriptionId,
             userId = userId,

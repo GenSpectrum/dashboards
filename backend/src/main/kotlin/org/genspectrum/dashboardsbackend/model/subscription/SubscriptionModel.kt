@@ -5,6 +5,7 @@ import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
+import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.util.convertToUuid
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
@@ -13,18 +14,22 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
-    fun getSubscription(subscriptionId: String, userId: String): Subscription =
+    fun getSubscription(subscriptionId: String, userId: Long): Subscription =
         SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?.toSubscription()
             ?: throw NotFoundException("Subscription $subscriptionId not found")
 
-    fun getSubscriptions(userId: String): List<Subscription> = SubscriptionEntity.find {
-        SubscriptionTable.userId eq userId
-    }.map {
-        it.toSubscription()
+    fun getSubscriptions(userId: Long): List<Subscription> {
+        UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
+        return SubscriptionEntity.find {
+            SubscriptionTable.userId eq userId
+        }.map {
+            it.toSubscription()
+        }
     }
 
-    fun postSubscriptions(request: SubscriptionRequest, userId: String): Subscription {
+    fun postSubscriptions(request: SubscriptionRequest, userId: Long): Subscription {
+        UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
         dashboardsConfig.validateIsValidOrganism(request.organism)
 
         return SubscriptionEntity
@@ -40,14 +45,14 @@ class SubscriptionModel(private val dashboardsConfig: DashboardsConfig) {
             .toSubscription()
     }
 
-    fun deleteSubscription(subscriptionId: String, userId: String) {
+    fun deleteSubscription(subscriptionId: String, userId: Long) {
         val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)
             ?: throw NotFoundException("Subscription $subscriptionId not found")
 
         subscription.delete()
     }
 
-    fun putSubscription(subscriptionId: String, subscriptionUpdate: SubscriptionUpdate, userId: String): Subscription {
+    fun putSubscription(subscriptionId: String, subscriptionUpdate: SubscriptionUpdate, userId: Long): Subscription {
         subscriptionUpdate.organism?.also { dashboardsConfig.validateIsValidOrganism(it) }
 
         val subscription = SubscriptionEntity.findForUser(convertToUuid(subscriptionId), userId)

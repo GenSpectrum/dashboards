@@ -18,5 +18,5 @@ const breadcrumbs = [
 ---
 
 <SubscriptionPageLayout title='Subscriptions overview' breadcrumbs={breadcrumbs}>
-    {Astro.locals.user !== null ? <Subscriptions client:load organismsFromUrl={organisms} /> : <NotLoggedIn />}
+    {Astro.locals.user !== undefined ? <Subscriptions client:load organismsFromUrl={organisms} /> : <NotLoggedIn />}
 </SubscriptionPageLayout>

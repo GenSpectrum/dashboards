@@ -6,9 +6,12 @@ import { CompareVariantsPage } from './CompareVariantsPage.ts';
 import { LandingPage } from './LandingPage.ts';
 import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
 import { SingleVariantPage } from './SingleVariantPage.ts';
+import { ApiKeyPage } from './api-key/ApiKeyPage.ts';
 import { CollectionDetailPage } from './collections/CollectionDetailPage.ts';
 import { CollectionFormPage } from './collections/CollectionFormPage.ts';
-import { setupAuthCookie } from './helpers/auth.ts';
+import { E2E_GITHUB_ID, setupAuthCookie } from './helpers/auth.ts';
+
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
 type E2EFixture = {
     compareVariantsPage: CompareVariantsPage;
@@ -21,6 +24,7 @@ type E2EFixture = {
     collectionFormPage: CollectionFormPage;
     authenticatedPage: Page;
     authenticatedCollectionFormPage: CollectionFormPage;
+    authenticatedApiKeyPage: ApiKeyPage;
 };
 
 export const test = base.extend<E2EFixture>({
@@ -48,11 +52,18 @@ export const test = base.extend<E2EFixture>({
     collectionFormPage: async ({ page }, use) => {
         await use(new CollectionFormPage(page));
     },
-    authenticatedPage: async ({ page }, use) => {
-        await setupAuthCookie(page, 'e2e-test');
+    authenticatedPage: async ({ page, request }, use) => {
+        const syncResponse = await request.post(`${BACKEND_URL}/users/sync`, {
+            data: { githubId: E2E_GITHUB_ID, name: 'e2e-test', email: null },
+        });
+        const { id: gsUserId } = (await syncResponse.json()) as { id: number };
+        await setupAuthCookie(page, 'e2e-test', gsUserId);
         await use(page);
     },
     authenticatedCollectionFormPage: async ({ authenticatedPage }, use) => {
         await use(new CollectionFormPage(authenticatedPage));
+    },
+    authenticatedApiKeyPage: async ({ authenticatedPage }, use) => {
+        await use(new ApiKeyPage(authenticatedPage));
     },
 });

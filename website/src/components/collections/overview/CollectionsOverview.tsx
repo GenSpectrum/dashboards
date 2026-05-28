@@ -4,7 +4,7 @@ import { getBackendServiceForClientside } from '../../../backendApi/backendServi
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import { getClientLogger } from '../../../clientLogger.ts';
 import { PageHeadline } from '../../../styles/containers/PageHeadline.tsx';
-import type { Collection } from '../../../types/Collection.ts';
+import type { CollectionSummary } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
@@ -21,7 +21,7 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
         error,
     } = useQuery({
         queryKey: ['collections', organism],
-        queryFn: () => getBackendServiceForClientside().getCollections({ organism }),
+        queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
     });
 
     if (isError) {
@@ -62,7 +62,7 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
     );
 }
 
-function CollectionsTable({ collections, organism }: { collections: Collection[]; organism: Organism }) {
+function CollectionsTable({ collections, organism }: { collections: CollectionSummary[]; organism: Organism }) {
     return (
         <div className='my-6 overflow-x-auto'>
             <table className='table-zebra table w-full'>
@@ -104,7 +104,7 @@ function CollectionsTable({ collections, organism }: { collections: Collection[]
                                 </td>
                                 <td className='p-0'>
                                     <a href={href} className='block px-4 py-3 text-right'>
-                                        {collection.variants.length}
+                                        {collection.variantCount}
                                     </a>
                                 </td>
                             </tr>

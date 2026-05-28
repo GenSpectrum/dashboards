@@ -36,7 +36,7 @@ class SubscriptionsController(
     )
     fun getSubscription(
         @IdParameter @PathVariable id: String,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Subscription = subscriptionModel.getSubscription(
         subscriptionId = id,
         userId = userId,
@@ -47,7 +47,7 @@ class SubscriptionsController(
         summary = "Get all subscriptions of a user",
         description = "Returns a list of all subscriptions of a user.",
     )
-    fun getSubscriptions(@UserIdParameter @RequestParam userId: String): List<Subscription> =
+    fun getSubscriptions(@UserIdParameter @RequestParam userId: Long): List<Subscription> =
         subscriptionModel.getSubscriptions(userId)
 
     @PostMapping("/subscriptions")
@@ -58,7 +58,7 @@ class SubscriptionsController(
     )
     fun postSubscriptions(
         @RequestBody subscription: SubscriptionRequest,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Subscription = subscriptionModel.postSubscriptions(
         request = subscription,
         userId = userId,
@@ -70,7 +70,7 @@ class SubscriptionsController(
         summary = "Delete a subscription",
         description = "Deletes a specific subscription of a user by its uuid.",
     )
-    fun deleteSubscription(@IdParameter @PathVariable id: String, @UserIdParameter @RequestParam userId: String) {
+    fun deleteSubscription(@IdParameter @PathVariable id: String, @UserIdParameter @RequestParam userId: Long) {
         subscriptionModel.deleteSubscription(
             subscriptionId = id,
             userId = userId,
@@ -85,7 +85,7 @@ class SubscriptionsController(
     fun putSubscription(
         @RequestBody subscription: SubscriptionUpdate,
         @IdParameter @PathVariable id: String,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Subscription = subscriptionModel.putSubscription(
         subscriptionId = id,
         subscriptionUpdate = subscription,
@@ -99,7 +99,7 @@ class SubscriptionsController(
     )
     fun evaluateTrigger(
         @IdParameter @RequestParam id: String,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): TriggerEvaluationResponse {
         val triggerEvaluationResult = triggerEvaluationModel.evaluateSubscriptionTrigger(
             subscriptionId = id,

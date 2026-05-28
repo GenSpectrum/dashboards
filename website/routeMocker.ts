@@ -8,7 +8,7 @@ import { type OrganismsConfig } from './src/config';
 import type { CollectionRaw } from './src/covspectrum/types.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
 import type { ParsedQueryResult, ParseQueryRequest } from './src/lapis/parseQuery.ts';
-import type { Collection } from './src/types/Collection.ts';
+import type { CollectionSummary } from './src/types/Collection.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -30,7 +30,7 @@ export class AstroApiRouteMocker {
         this.workerOrServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
     }
 
-    mockGetCollections(response: Collection[], organism?: string, statusCode = 200) {
+    mockGetCollectionSummaries(response: CollectionSummary[], organism?: string, statusCode = 200) {
         this.workerOrServer.use(
             http.get(
                 `${ASTRO_SERVER_URL}/collections`,
@@ -216,7 +216,7 @@ export class BackendRouteMocker {
         );
     }
 
-    mockGetCollections(response: Collection[], organism?: string, statusCode = 200) {
+    mockGetCollectionSummaries(response: CollectionSummary[], organism?: string, statusCode = 200) {
         this.workerOrServer.use(
             http.get(
                 `${DUMMY_BACKEND_URL}/collections`,

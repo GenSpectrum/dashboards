@@ -23,14 +23,17 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     @GetMapping("/collections", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Get collections",
-        description = "Returns collections filtered by optional userId and/or organism parameters.",
+        description = "Returns collections filtered by optional userId and/or organism parameters. " +
+            "Set includeVariants=true to include the full variant list; by default only variantCount is returned.",
     )
     fun getCollections(
-        @RequestParam(required = false) userId: String?,
+        @RequestParam(required = false) userId: Long?,
         @RequestParam(required = false) organism: String?,
+        @RequestParam(required = false, defaultValue = "false") includeVariants: Boolean,
     ): List<Collection> = collectionModel.getCollections(
         userId = userId,
         organism = organism,
+        includeVariants = includeVariants,
     )
 
     @GetMapping("/collections/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -50,7 +53,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     )
     fun postCollection(
         @RequestBody collection: CollectionRequest,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Collection = collectionModel.createCollection(
         request = collection,
         userId = userId,
@@ -65,7 +68,7 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     fun putCollection(
         @RequestBody collection: CollectionUpdate,
         @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ): Collection = collectionModel.putCollection(id, collection, userId)
 
     @DeleteMapping("/collections/{id}")
@@ -76,6 +79,6 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     )
     fun deleteCollection(
         @Parameter(description = "The ID of the collection", example = "1") @PathVariable id: Long,
-        @UserIdParameter @RequestParam userId: String,
+        @UserIdParameter @RequestParam userId: Long,
     ) = collectionModel.deleteCollection(id, userId)
 }

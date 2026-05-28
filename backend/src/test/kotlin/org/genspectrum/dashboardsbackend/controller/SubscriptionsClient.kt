@@ -16,53 +16,53 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class SubscriptionsClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
-    fun getSubscriptionRaw(id: String, userId: String) = mockMvc.perform(get("/subscriptions/$id?userId=$userId"))
+    fun getSubscriptionRaw(id: String, userId: Long) = mockMvc.perform(get("/subscriptions/$id?userId=$userId"))
 
-    fun getSubscription(id: String, userId: String): Subscription = deserializeJsonResponse(
+    fun getSubscription(id: String, userId: Long): Subscription = deserializeJsonResponse(
         getSubscriptionRaw(id, userId)
             .andExpect(status().isOk),
     )
 
-    fun getSubscriptionsRaw(userId: String) = mockMvc.perform(get("/subscriptions?userId=$userId"))
+    fun getSubscriptionsRaw(userId: Long) = mockMvc.perform(get("/subscriptions?userId=$userId"))
 
-    fun getSubscriptions(userId: String): List<Subscription> = deserializeJsonResponse(
+    fun getSubscriptions(userId: Long): List<Subscription> = deserializeJsonResponse(
         getSubscriptionsRaw(userId)
             .andExpect(status().isOk),
     )
 
-    fun postSubscriptionRaw(subscription: SubscriptionRequest, userId: String) = mockMvc.perform(
+    fun postSubscriptionRaw(subscription: SubscriptionRequest, userId: Long) = mockMvc.perform(
         post("/subscriptions?userId=$userId")
             .content(objectMapper.writeValueAsString(subscription))
             .contentType(MediaType.APPLICATION_JSON),
     )
 
-    fun postSubscription(subscription: SubscriptionRequest, userId: String): Subscription = deserializeJsonResponse(
+    fun postSubscription(subscription: SubscriptionRequest, userId: Long): Subscription = deserializeJsonResponse(
         postSubscriptionRaw(subscription, userId)
             .andExpect(status().isCreated),
     )
 
-    fun deleteSubscriptionRaw(id: String, userId: String) = mockMvc.perform(delete("/subscriptions/$id?userId=$userId"))
+    fun deleteSubscriptionRaw(id: String, userId: Long) = mockMvc.perform(delete("/subscriptions/$id?userId=$userId"))
 
-    fun deleteSubscription(id: String, userId: String) = deleteSubscriptionRaw(
+    fun deleteSubscription(id: String, userId: Long) = deleteSubscriptionRaw(
         id,
         userId,
     ).andExpect(status().isNoContent)
 
-    fun putSubscriptionRaw(subscription: SubscriptionUpdate, id: String, userId: String) = mockMvc.perform(
+    fun putSubscriptionRaw(subscription: SubscriptionUpdate, id: String, userId: Long) = mockMvc.perform(
         put("/subscriptions/$id?userId=$userId")
             .content(objectMapper.writeValueAsString(subscription))
             .contentType(MediaType.APPLICATION_JSON),
     )
 
-    fun putSubscription(subscription: SubscriptionUpdate, id: String, userId: String): Subscription =
+    fun putSubscription(subscription: SubscriptionUpdate, id: String, userId: Long): Subscription =
         deserializeJsonResponse(
             putSubscriptionRaw(subscription, id, userId)
                 .andExpect(status().isOk),
         )
 
-    fun evaluateTriggerRaw(userId: String, subscriptionId: String) = mockMvc.perform(
+    fun evaluateTriggerRaw(userId: Long, subscriptionId: String) = mockMvc.perform(
         get("/subscriptions/evaluateTrigger")
-            .queryParam("userId", userId)
+            .queryParam("userId", userId.toString())
             .queryParam("id", subscriptionId),
     )
 
