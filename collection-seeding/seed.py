@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Seeds example collections into the backend from one or more data sources.
 
-Idempotent: skips any collection whose name already exists for the seed user.
+Idempotent: upserts collections by name — creates new ones, updates existing ones.
 
 Run with --help for usage.
 """
