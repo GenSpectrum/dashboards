@@ -132,7 +132,7 @@ def make_parser() -> argparse.ArgumentParser:
         "-u",
         "--url",
         default=os.environ.get("API_URL", "http://localhost:4321"),
-        help="API base URL (default: $API_URL or http://localhost:4321)",
+        help="Website base URL serving /api/* (default: $API_URL or http://localhost:4321)",
     )
     parser.add_argument(
         "-k",
