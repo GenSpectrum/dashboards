@@ -56,6 +56,10 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
+        predefinedVariantsSource: {
+            collectionsUserId: 1,
+            collectionsTag: '#pango-lineage'
+        },
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
             dateField: 'date',

@@ -70,6 +70,10 @@ type VariantAnalysisModeConfig =
       }
     | {
           variantAnalysisModeEnabled: true;
+          predefinedVariantsSource?: {
+              collectionsUserId: number;
+              collectionsTag: string;
+          };
           clinicalLapis: {
               lapisBaseUrl: string;
               dateField: string;

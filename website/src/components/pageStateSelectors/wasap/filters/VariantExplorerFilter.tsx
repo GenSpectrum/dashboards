@@ -1,5 +1,7 @@
+import { type UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { type Collection } from '../../../../types/Collection';
 import { Inset } from '../../../../styles/Inset';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
 import {
@@ -25,6 +27,7 @@ interface VariantExplorerFilterProps {
      */
     clinicalSequenceLapisBaseUrl: string;
     clinicalSequenceLapisLineageField: string;
+    predefinedVariantsQueryResult?: UseQueryResult<Collection[]>;
 }
 
 export function VariantExplorerFilter({
@@ -32,6 +35,7 @@ export function VariantExplorerFilter({
     setPageState,
     clinicalSequenceLapisBaseUrl,
     clinicalSequenceLapisLineageField,
+    predefinedVariantsQueryResult,
 }: VariantExplorerFilterProps) {
     const [signatureType, setSignatureType] = useState<SignatureType>('computed');
 
@@ -41,17 +45,21 @@ export function VariantExplorerFilter({
                 value={pageState.sequenceType}
                 onChange={(sequenceType) => setPageState({ ...pageState, sequenceType })}
             />
-            <LabeledField label='Variant definition source'>
-                <select
-                    className='select select-bordered'
-                    value={signatureType}
-                    onChange={(e) => setSignatureType(e.target.value as SignatureType)}
-                >
-                    <option value='computed'>Computed</option>
-                    <option value='nextclade'>Nextclade</option>
-                </select>
-            </LabeledField>
-            {signatureType === 'nextclade' && <NextcladeSignature />}
+            {predefinedVariantsQueryResult !== undefined && (
+                <LabeledField label='Variant definition source'>
+                    <select
+                        className='select select-bordered'
+                        value={signatureType}
+                        onChange={(e) => setSignatureType(e.target.value as SignatureType)}
+                    >
+                        <option value='computed'>Extracted from clinical sequences</option>
+                        <option value='nextclade'>Nextclade</option>
+                    </select>
+                </LabeledField>
+            )}
+            {signatureType === 'nextclade' && (
+                <NextcladeSignature predefinedVariantsQueryResult={predefinedVariantsQueryResult} />
+            )}
             {signatureType === 'computed' && (
                 <Inset className='mt-4 p-2'>
                     <SelectorHeadline info={<DefineClinicalSignatureInfo />}>
@@ -123,22 +131,15 @@ export function VariantExplorerFilter({
     );
 }
 
-const DUMMY_NEXTCLADE_LINEAGES = [
-    'XEC',
-    'KP.1.1',
-    'KP.2',
-    'KP.3',
-    'JN.1',
-    'XFG',
-    'LP.8.1',
-    'NB.1.8.1',
-    'MC.10.1',
-    'XEC.4',
-];
-
-function NextcladeSignature() {
+function NextcladeSignature({
+    predefinedVariantsQueryResult,
+}: {
+    predefinedVariantsQueryResult: UseQueryResult<Collection[]> | undefined;
+}) {
     const [variant, setVariant] = useState('');
     const [newMutationsOnly, setNewMutationsOnly] = useState(false);
+
+    const collections = predefinedVariantsQueryResult?.data ?? [];
 
     return (
         <Inset className='mt-4 p-2'>
@@ -147,9 +148,9 @@ function NextcladeSignature() {
                     <option value='' disabled>
                         Select variant
                     </option>
-                    {DUMMY_NEXTCLADE_LINEAGES.map((lineage) => (
-                        <option key={lineage} value={lineage}>
-                            {lineage}
+                    {collections.map((collection) => (
+                        <option key={collection.id} value={String(collection.id)}>
+                            {collection.name}
                         </option>
                     ))}
                 </select>
@@ -163,7 +164,7 @@ function NextcladeSignature() {
                     onChange={(e) => setNewMutationsOnly(e.target.checked)}
                 />
                 <label htmlFor='newMutationsOnly' className='pl-2'>
-                    New mutations only
+                    Mutation not in parent
                 </label>
             </div>
         </Inset>

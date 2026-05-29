@@ -181,9 +181,10 @@ export class BackendService extends ApiService {
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSummarySchema) });
     }
 
-    public async getCollections({ organism }: { organism?: string } = {}) {
+    public async getCollections({ organism, userId }: { organism?: string; userId?: number } = {}) {
         const requestParams: Record<string, string> = { includeVariants: 'true' };
         if (organism !== undefined) requestParams.organism = organism;
+        if (userId !== undefined) requestParams.userId = String(userId);
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSchema) });
     }
 

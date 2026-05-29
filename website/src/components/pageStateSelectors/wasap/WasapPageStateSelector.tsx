@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 
+import { getBackendServiceForClientside } from '../../../backendApi/backendService';
+
 import { ApplyFilterButton } from '../ApplyFilterButton';
 import { DynamicDateFilter } from '../DynamicDateFilter';
 import { SelectorHeadline } from '../SelectorHeadline';
@@ -101,6 +103,22 @@ export function WasapPageStateSelector({
         },
     });
 
+    const predefinedVariantsQueryResult = useQuery({
+        enabled: config.variantAnalysisModeEnabled && config.predefinedVariantsSource !== undefined,
+        queryKey: ['predefinedVariants', config.variantAnalysisModeEnabled && config.predefinedVariantsSource],
+        queryFn: () => {
+            if (!config.variantAnalysisModeEnabled || config.predefinedVariantsSource === undefined) {
+                throw Error(
+                    "This predefined variants query was called despite it being disabled. This should not happen.",
+                );
+            }
+            const { collectionsUserId, collectionsTag } = config.predefinedVariantsSource;
+            return getBackendServiceForClientside()
+                .getCollections({ userId: collectionsUserId, organism: config.name })
+                .then((collections) => collections.filter((c) => c.description?.includes(collectionsTag) ?? false));
+        },
+    });
+
     return (
         <div className='flex flex-col gap-4'>
             <SelectorHeadline>Filter dataset</SelectorHeadline>
@@ -181,6 +199,11 @@ export function WasapPageStateSelector({
                                     setPageState={setVariantFilter}
                                     clinicalSequenceLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
                                     clinicalSequenceLapisLineageField={config.clinicalLapis.lineageField}
+                                    predefinedVariantsQueryResult={
+                                        config.predefinedVariantsSource !== undefined
+                                            ? predefinedVariantsQueryResult
+                                            : undefined
+                                    }
                                 />
                             );
                         case 'resistance':
