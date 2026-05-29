@@ -40,8 +40,8 @@ For example, we create collections for mutations that are relevant for vaccine r
 on online lists. Or we create collections based on canonical lineage definitions.
 
 Since we want others to also be able to easily generate collections, the code should also serve
-as a kind of reference implementation on how one would generate collections. Therefore we want the
-code to be completely independent from the rest of the codebase, and also understandable to
+as a kind of reference implementation on how one would generate collections. Therefore, we want the
+code to be completely independent of the rest of the codebase, and also understandable to
 bioinformatics researchers.
 
 ### Decision
