@@ -2,6 +2,7 @@ import { type UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { type CollectionSummary } from '../../../../types/Collection';
+import { CollectionCombobox } from '../utils/CollectionCombobox';
 import { Inset } from '../../../../styles/Inset';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
 import {
@@ -136,7 +137,7 @@ function NextcladeSignature({
 }: {
     predefinedVariantsQueryResult: UseQueryResult<CollectionSummary[]> | undefined;
 }) {
-    const [variant, setVariant] = useState('');
+    const [selectedCollection, setSelectedCollection] = useState<CollectionSummary | null>(null);
     const [newMutationsOnly, setNewMutationsOnly] = useState(false);
 
     const collections = predefinedVariantsQueryResult?.data ?? [];
@@ -144,16 +145,7 @@ function NextcladeSignature({
     return (
         <Inset className='mt-4 p-2'>
             <LabeledField label='Variant'>
-                <select className='select select-bordered' value={variant} onChange={(e) => setVariant(e.target.value)}>
-                    <option value='' disabled>
-                        Select variant
-                    </option>
-                    {collections.map((collection) => (
-                        <option key={collection.id} value={String(collection.id)}>
-                            {collection.name}
-                        </option>
-                    ))}
-                </select>
+                <CollectionCombobox collections={collections} value={selectedCollection} onChange={setSelectedCollection} />
             </LabeledField>
             <div className='pt-2 text-sm'>
                 <input
