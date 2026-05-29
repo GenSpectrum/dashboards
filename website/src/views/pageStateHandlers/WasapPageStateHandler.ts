@@ -7,6 +7,7 @@ import type { BaselineFilterConfig } from '../../components/pageStateSelectors/B
 import {
     enabledAnalysisModes,
     type ExcludeSetName,
+    type SignatureType,
     type VariantTimeFrame,
     type WasapAnalysisFilter,
     type WasapAnalysisMode,
@@ -52,12 +53,13 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     mutations: texts.mutations?.split('|'),
                 };
                 break;
-            case 'variant':
+            case 'variant': {
                 if (!this.config.variantAnalysisModeEnabled) {
                     throw Error("The 'variant' analysis mode is not enabled.");
                 }
                 analysis = {
                     mode,
+                    signatureType: (texts.signatureType as SignatureType | undefined) ?? 'computed',
                     sequenceType: providedSequenceType ?? this.config.filterDefaults.variant.sequenceType,
                     variant: texts.variant ?? this.config.filterDefaults.variant.variant,
                     minProportion: Number(texts.minProportion ?? this.config.filterDefaults.variant.minProportion),
@@ -66,8 +68,11 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     timeFrame:
                         (texts.timeFrame as VariantTimeFrame | undefined) ??
                         this.config.filterDefaults.variant.timeFrame,
+                    collectionId: texts.collectionId ? Number(texts.collectionId) : undefined,
+                    newMutationsOnly: texts.newMutationsOnly === 'true',
                 };
                 break;
+            }
             case 'resistance':
                 if (!this.config.resistanceAnalysisModeEnabled) {
                     throw Error("The 'resistance' analysis mode is not enabled.");
@@ -135,11 +140,23 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 break;
             case 'variant':
                 setSearchFromString(search, 'sequenceType', analysis.sequenceType);
-                setSearchFromString(search, 'variant', analysis.variant);
-                setSearchFromString(search, 'minProportion', String(analysis.minProportion));
-                setSearchFromString(search, 'minCount', String(analysis.minCount));
-                setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
-                setSearchFromString(search, 'timeFrame', analysis.timeFrame);
+                if (analysis.signatureType === 'predefined') {
+                    setSearchFromString(search, 'signatureType', 'predefined');
+                    setSearchFromString(
+                        search,
+                        'collectionId',
+                        analysis.collectionId ? String(analysis.collectionId) : undefined,
+                    );
+                    if (analysis.newMutationsOnly) {
+                        setSearchFromString(search, 'newMutationsOnly', 'true');
+                    }
+                } else {
+                    setSearchFromString(search, 'variant', analysis.variant);
+                    setSearchFromString(search, 'minProportion', String(analysis.minProportion));
+                    setSearchFromString(search, 'minCount', String(analysis.minCount));
+                    setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
+                    setSearchFromString(search, 'timeFrame', analysis.timeFrame);
+                }
                 break;
             case 'resistance':
                 setSearchFromString(search, 'resistanceSet', analysis.resistanceSet);
@@ -235,6 +252,14 @@ function generateWasapFilterConfig(pageConfig: WasapPageConfig): BaselineFilterC
         {
             type: 'text',
             lapisField: 'collectionId',
+        },
+        {
+            type: 'text',
+            lapisField: 'signatureType',
+        },
+        {
+            type: 'text',
+            lapisField: 'newMutationsOnly',
         },
     ];
 }

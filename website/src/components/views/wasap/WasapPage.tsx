@@ -101,15 +101,17 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                             customColumns={data.customColumns}
                                         />
                                     )}
-                                    {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
-                                        <VariantFetchInfo
-                                            analysis={analysis}
-                                            clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
-                                            clinicalLapisLineageField={config.clinicalLapis.lineageField}
-                                            clinicalLapisDateField={config.clinicalLapis.dateField}
-                                            warningThreshold={config.clinicalSequenceCountWarningThreshold}
-                                        />
-                                    )}
+                                    {analysis.mode === 'variant' &&
+                                        analysis.signatureType === 'computed' &&
+                                        config.variantAnalysisModeEnabled && (
+                                            <VariantFetchInfo
+                                                analysis={analysis}
+                                                clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                                clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                                clinicalLapisDateField={config.clinicalLapis.dateField}
+                                                warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                            />
+                                        )}
                                 </>
                             ) : (
                                 <>

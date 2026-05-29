@@ -51,6 +51,7 @@ const config: WasapPageConfig = {
         },
         variant: {
             mode: 'variant',
+            signatureType: 'computed',
             sequenceType: 'nucleotide',
             variant: 'XFG*',
             minProportion: 0.8,

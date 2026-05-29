@@ -72,6 +72,23 @@ async function fetchVariantModeData(
     if (!config.variantAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'variant' mode is not enabled.");
     }
+    switch (analysis.signatureType) {
+        case 'computed':
+            return fetchVariantComputedModeData(config, analysis);
+        case 'predefined':
+            // TODO - Implement the fetching.
+            // we need to fetch the collection by ID
+            throw new Error('Predefined variant mode is not yet implemented.');
+    }
+}
+
+async function fetchVariantComputedModeData(
+    config: WasapPageConfig,
+    analysis: WasapVariantFilter,
+): Promise<WasapMutationsData> {
+    if (!config.variantAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+    }
     const mutationsWithScore = await getMutationsForVariant(
         config.clinicalLapis.lapisBaseUrl,
         analysis.sequenceType,

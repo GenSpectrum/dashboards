@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService';
-
 import { ApplyFilterButton } from '../ApplyFilterButton';
 import { DynamicDateFilter } from '../DynamicDateFilter';
 import { SelectorHeadline } from '../SelectorHeadline';
@@ -109,7 +108,7 @@ export function WasapPageStateSelector({
         queryFn: () => {
             if (!config.variantAnalysisModeEnabled || config.predefinedVariantsSource === undefined) {
                 throw Error(
-                    "This predefined variants query was called despite it being disabled. This should not happen.",
+                    'This predefined variants query was called despite it being disabled. This should not happen.',
                 );
             }
             const { collectionsUserId, collectionsOrganism, collectionsTag } = config.predefinedVariantsSource;
@@ -204,6 +203,7 @@ export function WasapPageStateSelector({
                                             ? predefinedVariantsQueryResult
                                             : undefined
                                     }
+                                    predefinedVariantsLabel={config.predefinedVariantsSource?.variantSourceLabel}
                                 />
                             );
                         case 'resistance':

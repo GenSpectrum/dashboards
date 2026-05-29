@@ -12,6 +12,7 @@ const DUMMY_LAPIS_URL_2 = 'http://lapis2.dummy';
 describe('VariantExplorerFilter', () => {
     const defaultPageState: WasapVariantFilter = {
         mode: 'variant',
+        signatureType: 'computed',
         sequenceType: 'nucleotide',
         variant: undefined,
         minProportion: 0.05,

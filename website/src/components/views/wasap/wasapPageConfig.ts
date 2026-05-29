@@ -75,6 +75,7 @@ type VariantAnalysisModeConfig =
               // TODO: find a better source for this — the organism key should already be known from the page config
               collectionsOrganism: string;
               collectionsTag: string;
+              variantSourceLabel?: string;
           };
           clinicalLapis: {
               lapisBaseUrl: string;
@@ -201,14 +202,21 @@ export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
     }
 }
 
+export type SignatureType = 'computed' | 'predefined';
+
 export type WasapVariantFilter = {
     mode: 'variant';
+    signatureType: SignatureType;
     sequenceType: SequenceType;
+    // computed signature fields
     variant?: string;
     minProportion: number;
     minCount: number;
     minJaccard: number;
     timeFrame: VariantTimeFrame;
+    // predefined signature fields
+    collectionId?: number;
+    newMutationsOnly?: boolean;
 };
 
 export type WasapResistanceFilter = {

@@ -60,6 +60,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             collectionsUserId: 1,
             collectionsOrganism: wastewaterOrganisms.covid,
             collectionsTag: '#pango-lineage',
+            variantSourceLabel: 'Nextclade',
         },
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
@@ -81,6 +82,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
             variant: {
                 mode: 'variant',
+                signatureType: 'computed',
                 sequenceType: 'nucleotide',
                 variant: 'XFG*',
                 minProportion: 0.8,
@@ -136,6 +138,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
             variant: {
                 mode: 'variant',
+                signatureType: 'computed',
                 sequenceType: 'nucleotide',
                 variant: 'A.D.1*',
                 minProportion: 0.8,
@@ -177,6 +180,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
             variant: {
                 mode: 'variant',
+                signatureType: 'computed',
                 sequenceType: 'nucleotide',
                 variant: 'B.D.E.1*',
                 minProportion: 0.8,

@@ -27,19 +27,28 @@ export function CollectionCombobox({
 
     const buttonRef = useRef<HTMLButtonElement>(null);
 
-    const { isOpen, getToggleButtonProps, getMenuProps, getInputProps, highlightedIndex, getItemProps, inputValue, closeMenu, reset } =
-        useCombobox({
-            items: filteredCollections,
-            itemToString: (item) => item?.name ?? '',
-            selectedItem: value,
-            onInputValueChange({ inputValue }) {
-                setInputIsInvalid(false);
-                setInputFilter(inputValue.trim());
-            },
-            onSelectedItemChange({ selectedItem }) {
-                onChange(selectedItem ?? null);
-            },
-        });
+    const {
+        isOpen,
+        getToggleButtonProps,
+        getMenuProps,
+        getInputProps,
+        highlightedIndex,
+        getItemProps,
+        inputValue,
+        closeMenu,
+        reset,
+    } = useCombobox({
+        items: filteredCollections,
+        itemToString: (item) => item?.name ?? '',
+        selectedItem: value,
+        onInputValueChange({ inputValue }) {
+            setInputIsInvalid(false);
+            setInputFilter(inputValue.trim());
+        },
+        onSelectedItemChange({ selectedItem }) {
+            onChange(selectedItem ?? null);
+        },
+    });
 
     const onInputBlur = () => {
         if (inputValue === '') {
@@ -57,45 +66,59 @@ export function CollectionCombobox({
     return (
         <div className='relative w-full'>
             <div
-                className={`flex gap-0.5 input w-full ${inputIsInvalid ? 'input-error' : 'input-bordered'}`}
+                className={`input flex w-full gap-0.5 ${inputIsInvalid ? 'input-error' : 'input-bordered'}`}
                 onBlur={(e) => {
                     if (e.relatedTarget !== buttonRef.current) {
                         closeMenu();
                     }
                 }}
             >
-                <input placeholder={placeholderText} className='w-full p-1.5' {...getInputProps()} onBlur={onInputBlur} />
+                <input
+                    placeholder={placeholderText}
+                    className='w-full p-1.5'
+                    {...getInputProps()}
+                    onBlur={onInputBlur}
+                />
                 {inputValue !== '' && (
                     <button
                         aria-label='clear selection'
                         className='px-2'
                         type='button'
                         tabIndex={-1}
-                        onClick={() => { reset(); onChange(null); }}
+                        onClick={() => {
+                            reset();
+                            onChange(null);
+                        }}
                     >
                         ×
                     </button>
                 )}
-                <button aria-label='toggle menu' className='px-2' type='button' {...getToggleButtonProps()} ref={buttonRef}>
+                <button
+                    aria-label='toggle menu'
+                    className='px-2'
+                    type='button'
+                    {...getToggleButtonProps()}
+                    ref={buttonRef}
+                >
                     {isOpen ? <>↑</> : <>↓</>}
                 </button>
             </div>
             <ul
-                className={`absolute bg-base-100 border border-base-300 mt-1 shadow-md max-h-80 overflow-y-auto z-10 w-full ${isOpen ? '' : 'hidden'}`}
+                className={`bg-base-100 border-base-300 absolute z-10 mt-1 max-h-80 w-full overflow-y-auto border shadow-md ${isOpen ? '' : 'hidden'}`}
                 {...getMenuProps()}
             >
                 {filteredCollections.length > 0 ? (
                     filteredCollections.map((item, index) => (
                         <li
                             key={item.id}
-                            className={`py-2 px-3 cursor-pointer ${highlightedIndex === index ? 'bg-base-200' : ''} ${value?.id === item.id ? 'font-bold' : ''}`}
+                            className={`cursor-pointer px-3 py-2 ${highlightedIndex === index ? 'bg-base-200' : ''} ${value?.id === item.id ? 'font-bold' : ''}`}
                             {...getItemProps({ item, index })}
                         >
                             {item.name}
                         </li>
                     ))
                 ) : (
-                    <li className='py-2 px-3 text-sm text-base-content/60'>No variants found.</li>
+                    <li className='text-base-content/60 px-3 py-2 text-sm'>No variants found.</li>
                 )}
             </ul>
         </div>

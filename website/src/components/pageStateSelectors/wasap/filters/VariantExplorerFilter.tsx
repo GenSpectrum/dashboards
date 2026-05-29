@@ -1,23 +1,21 @@
 import { type UseQueryResult } from '@tanstack/react-query';
-import { useState } from 'react';
 
-import { type CollectionSummary } from '../../../../types/Collection';
-import { CollectionCombobox } from '../utils/CollectionCombobox';
 import { Inset } from '../../../../styles/Inset';
+import { type CollectionSummary } from '../../../../types/Collection';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
 import {
     VARIANT_TIME_FRAME,
     variantTimeFrameLabel,
+    type SignatureType,
     type VariantTimeFrame,
     type WasapVariantFilter,
 } from '../../../views/wasap/wasapPageConfig';
 import { SelectorHeadline } from '../../SelectorHeadline';
 import { DefineClinicalSignatureInfo } from '../InfoBlocks';
+import { CollectionCombobox } from '../utils/CollectionCombobox';
 import { LabeledField } from '../utils/LabeledField';
 import { NumericInput } from '../utils/NumericInput';
 import { SequenceTypeSelector } from '../utils/SequenceTypeSelector';
-
-type SignatureType = 'computed' | 'nextclade';
 
 interface VariantExplorerFilterProps {
     pageState: WasapVariantFilter;
@@ -29,6 +27,7 @@ interface VariantExplorerFilterProps {
     clinicalSequenceLapisBaseUrl: string;
     clinicalSequenceLapisLineageField: string;
     predefinedVariantsQueryResult?: UseQueryResult<CollectionSummary[]>;
+    predefinedVariantsLabel?: string;
 }
 
 export function VariantExplorerFilter({
@@ -37,8 +36,11 @@ export function VariantExplorerFilter({
     clinicalSequenceLapisBaseUrl,
     clinicalSequenceLapisLineageField,
     predefinedVariantsQueryResult,
+    predefinedVariantsLabel = 'Predefined',
 }: VariantExplorerFilterProps) {
-    const [signatureType, setSignatureType] = useState<SignatureType>('computed');
+    const handleSignatureTypeChange = (newType: SignatureType) => {
+        setPageState({ ...pageState, signatureType: newType });
+    };
 
     return (
         <>
@@ -50,18 +52,22 @@ export function VariantExplorerFilter({
                 <LabeledField label='Variant definition source'>
                     <select
                         className='select select-bordered'
-                        value={signatureType}
-                        onChange={(e) => setSignatureType(e.target.value as SignatureType)}
+                        value={pageState.signatureType}
+                        onChange={(e) => handleSignatureTypeChange(e.target.value as SignatureType)}
                     >
                         <option value='computed'>Extracted from clinical sequences</option>
-                        <option value='nextclade'>Nextclade</option>
+                        <option value='predefined'>{predefinedVariantsLabel}</option>
                     </select>
                 </LabeledField>
             )}
-            {signatureType === 'nextclade' && (
-                <NextcladeSignature predefinedVariantsQueryResult={predefinedVariantsQueryResult} />
+            {pageState.signatureType === 'predefined' && (
+                <PredefinedSignature
+                    pageState={pageState}
+                    setPageState={setPageState}
+                    predefinedVariantsQueryResult={predefinedVariantsQueryResult}
+                />
             )}
-            {signatureType === 'computed' && (
+            {pageState.signatureType === 'computed' && (
                 <Inset className='mt-4 p-2'>
                     <SelectorHeadline info={<DefineClinicalSignatureInfo />}>
                         Define Clinical Signature
@@ -132,28 +138,34 @@ export function VariantExplorerFilter({
     );
 }
 
-function NextcladeSignature({
+function PredefinedSignature({
+    pageState,
+    setPageState,
     predefinedVariantsQueryResult,
 }: {
+    pageState: WasapVariantFilter;
+    setPageState: (newState: WasapVariantFilter) => void;
     predefinedVariantsQueryResult: UseQueryResult<CollectionSummary[]> | undefined;
 }) {
-    const [selectedCollection, setSelectedCollection] = useState<CollectionSummary | null>(null);
-    const [newMutationsOnly, setNewMutationsOnly] = useState(false);
-
     const collections = predefinedVariantsQueryResult?.data ?? [];
+    const selectedCollection = collections.find((c) => c.id === pageState.collectionId) ?? null;
 
     return (
         <Inset className='mt-4 p-2'>
             <LabeledField label='Variant'>
-                <CollectionCombobox collections={collections} value={selectedCollection} onChange={setSelectedCollection} />
+                <CollectionCombobox
+                    collections={collections}
+                    value={selectedCollection}
+                    onChange={(c) => setPageState({ ...pageState, collectionId: c?.id })}
+                />
             </LabeledField>
             <div className='pt-2 text-sm'>
                 <input
                     className='accent-primary'
                     type='checkbox'
                     id='newMutationsOnly'
-                    checked={newMutationsOnly}
-                    onChange={(e) => setNewMutationsOnly(e.target.checked)}
+                    checked={pageState.newMutationsOnly ?? false}
+                    onChange={(e) => setPageState({ ...pageState, newMutationsOnly: e.target.checked })}
                 />
                 <label htmlFor='newMutationsOnly' className='pl-2'>
                     Mutation not in parent
