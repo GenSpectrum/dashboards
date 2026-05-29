@@ -177,14 +177,21 @@ export class BackendService extends ApiService {
         return this.get({ url: `/users/${id}`, schema: publicUserSchema });
     }
 
-    public async getCollectionSummaries(requestParams: { organism?: string; excludeSystemCollections?: boolean } = {}) {
-        return this.get({ url: '/collections', requestParams, schema: z.array(collectionSummarySchema) });
-    }
-
-    public async getCollections({ organism, userId }: { organism?: string; userId?: number } = {}) {
-        const requestParams: Record<string, string> = { includeVariants: 'true' };
+    public async getCollectionSummaries({ organism, userId, excludeSystemCollections }: { organism?: string; userId?: number; excludeSystemCollections?: boolean } = {}) {
+        const requestParams: Record<string, string> = {};
         if (organism !== undefined) requestParams.organism = organism;
         if (userId !== undefined) requestParams.userId = String(userId);
+        if (excludeSystemCollections !== undefined) requestParams.excludeSystemCollections = String(excludeSystemCollections);
+        return this.get({
+            url: '/collections',
+            requestParams: Object.keys(requestParams).length > 0 ? requestParams : undefined,
+            schema: z.array(collectionSummarySchema),
+        });
+    }
+
+    public async getCollections({ organism }: { organism?: string } = {}) {
+        const requestParams: Record<string, string> = { includeVariants: 'true' };
+        if (organism !== undefined) requestParams.organism = organism;
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSchema) });
     }
 

@@ -112,9 +112,9 @@ export function WasapPageStateSelector({
                     "This predefined variants query was called despite it being disabled. This should not happen.",
                 );
             }
-            const { collectionsUserId, collectionsTag } = config.predefinedVariantsSource;
+            const { collectionsUserId, collectionsOrganism, collectionsTag } = config.predefinedVariantsSource;
             return getBackendServiceForClientside()
-                .getCollections({ userId: collectionsUserId, organism: config.name })
+                .getCollectionSummaries({ userId: collectionsUserId, organism: collectionsOrganism })
                 .then((collections) => collections.filter((c) => c.description?.includes(collectionsTag) ?? false));
         },
     });

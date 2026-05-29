@@ -1,7 +1,7 @@
 import { type UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { type Collection } from '../../../../types/Collection';
+import { type CollectionSummary } from '../../../../types/Collection';
 import { Inset } from '../../../../styles/Inset';
 import { GsLineageFilter } from '../../../genspectrum/GsLineageFilter';
 import {
@@ -27,7 +27,7 @@ interface VariantExplorerFilterProps {
      */
     clinicalSequenceLapisBaseUrl: string;
     clinicalSequenceLapisLineageField: string;
-    predefinedVariantsQueryResult?: UseQueryResult<Collection[]>;
+    predefinedVariantsQueryResult?: UseQueryResult<CollectionSummary[]>;
 }
 
 export function VariantExplorerFilter({
@@ -134,7 +134,7 @@ export function VariantExplorerFilter({
 function NextcladeSignature({
     predefinedVariantsQueryResult,
 }: {
-    predefinedVariantsQueryResult: UseQueryResult<Collection[]> | undefined;
+    predefinedVariantsQueryResult: UseQueryResult<CollectionSummary[]> | undefined;
 }) {
     const [variant, setVariant] = useState('');
     const [newMutationsOnly, setNewMutationsOnly] = useState(false);

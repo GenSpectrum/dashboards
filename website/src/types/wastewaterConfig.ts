@@ -58,7 +58,8 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         locationNameField: 'locationName',
         predefinedVariantsSource: {
             collectionsUserId: 1,
-            collectionsTag: '#pango-lineage'
+            collectionsOrganism: wastewaterOrganisms.covid,
+            collectionsTag: '#pango-lineage',
         },
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',

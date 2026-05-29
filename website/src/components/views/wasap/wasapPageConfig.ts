@@ -72,6 +72,8 @@ type VariantAnalysisModeConfig =
           variantAnalysisModeEnabled: true;
           predefinedVariantsSource?: {
               collectionsUserId: number;
+              // TODO: find a better source for this — the organism key should already be known from the page config
+              collectionsOrganism: string;
               collectionsTag: string;
           };
           clinicalLapis: {
