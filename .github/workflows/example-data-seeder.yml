@@ -6,8 +6,24 @@ env:
   DOCKER_IMAGE_NAME: ghcr.io/genspectrum/dashboards/example-data-seeder
 
 jobs:
+  test:
+    name: Test Example Data Seeder
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: prefix-dev/setup-pixi@v0.9.6
+        with:
+          manifest-path: collection-seeding/pixi.toml
+          environments: test
+
+      - name: Run tests
+        working-directory: ./collection-seeding
+        run: pixi run -e test test
+
   dockerImage:
     name: Build Example Data Seeder Docker Image
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,7 +53,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v7
         with:
-          context: ./example-data
+          context: ./collection-seeding
           tags: ${{ steps.dockerMetadata.outputs.tags }}
           cache-from: type=gha,scope=example-data-seeder-${{ github.ref }}
           cache-to: type=gha,mode=max,scope=example-data-seeder-${{ github.ref }}

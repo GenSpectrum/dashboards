@@ -1,0 +1,7 @@
+*
+!pixi.toml
+!pixi.lock
+!seed.py
+!api.py
+!models.py
+!sources/
