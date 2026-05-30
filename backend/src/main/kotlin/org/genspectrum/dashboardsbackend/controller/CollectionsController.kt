@@ -30,10 +30,12 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         @RequestParam(required = false) userId: Long?,
         @RequestParam(required = false) organism: String?,
         @RequestParam(required = false, defaultValue = "false") includeVariants: Boolean,
+        @RequestParam(required = false, defaultValue = "false") excludeSystemCollections: Boolean,
     ): List<Collection> = collectionModel.getCollections(
         userId = userId,
         organism = organism,
         includeVariants = includeVariants,
+        excludeSystemCollections = excludeSystemCollections,
     )
 
     @GetMapping("/collections/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])

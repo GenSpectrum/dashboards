@@ -7,6 +7,7 @@ import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
+import org.genspectrum.dashboardsbackend.config.SystemUserInitializer
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
@@ -17,6 +18,7 @@ import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.count
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.select
@@ -27,8 +29,16 @@ import kotlin.time.Instant
 
 @Service
 @Transactional
-class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
-    fun getCollections(userId: Long?, organism: String?, includeVariants: Boolean = false): List<Collection> {
+class CollectionModel(
+    private val dashboardsConfig: DashboardsConfig,
+    private val systemUserInitializer: SystemUserInitializer,
+) {
+    fun getCollections(
+        userId: Long?,
+        organism: String?,
+        includeVariants: Boolean = false,
+        excludeSystemCollections: Boolean = false,
+    ): List<Collection> {
         if (userId != null) {
             UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
         }
@@ -43,6 +53,12 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig) {
         }
         if (organism != null) {
             collectionConditions = collectionConditions and (CollectionTable.organism eq organism)
+        }
+        if (excludeSystemCollections) {
+            val systemUserId = systemUserInitializer.getSystemUserId()
+            if (systemUserId != null) {
+                collectionConditions = collectionConditions and (CollectionTable.ownedBy neq systemUserId)
+            }
         }
 
         val join = CollectionTable.join(VariantTable, JoinType.LEFT)

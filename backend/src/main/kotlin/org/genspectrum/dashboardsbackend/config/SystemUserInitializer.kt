@@ -16,11 +16,17 @@ class SystemUserInitializer(
     private val userModel: UserModel,
     private val apiKeyModel: ApiKeyModel,
 ) : ApplicationRunner {
+    private var systemUserId: Long? = null
+
+    /** If a system user is configured, returns the internal system user ID. */
+    fun getSystemUserId(): Long? = systemUserId
+
     override fun run(args: ApplicationArguments) {
         val config = dashboardsConfig.systemUser ?: return
         val user = userModel.syncUser(
             UserSyncRequest(githubId = config.githubId, name = config.name, email = config.email),
         )
+        systemUserId = user.id
         log.info { "System user ready: id=${user.id}, $config" }
         config.apiKey?.let {
             apiKeyModel.upsertApiKey(userId = user.id, rawKey = it)
