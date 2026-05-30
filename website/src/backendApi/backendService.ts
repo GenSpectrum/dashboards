@@ -177,8 +177,13 @@ export class BackendService extends ApiService {
         return this.get({ url: `/users/${id}`, schema: publicUserSchema });
     }
 
-    public async getCollectionSummaries({ organism }: { organism?: string } = {}) {
-        const requestParams = organism !== undefined ? { organism } : undefined;
+    public async getCollectionSummaries({
+        organism,
+        excludeSystemCollections = false,
+    }: { organism?: string; excludeSystemCollections?: boolean } = {}) {
+        const requestParams: Record<string, string> = {};
+        if (organism !== undefined) requestParams.organism = organism;
+        if (excludeSystemCollections) requestParams.excludeSystemCollections = 'true';
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSummarySchema) });
     }
 
