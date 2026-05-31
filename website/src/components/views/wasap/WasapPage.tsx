@@ -1,4 +1,3 @@
-import type { MeanProportionInterval } from '@genspectrum/dashboard-components/util';
 import { useMemo } from 'react';
 import { type FC } from 'react';
 
@@ -6,6 +5,7 @@ import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
 import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
+import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
 import type { ResistanceData } from './resistanceData';
 import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
@@ -39,10 +39,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
     // fetch which mutations should be analyzed
     const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
 
-    let initialMeanProportionInterval: MeanProportionInterval = { min: 0.0, max: 1.0 };
-    if (analysis.mode === 'manual' && analysis.mutations === undefined) {
-        initialMeanProportionInterval = { min: 0.05, max: 0.95 };
-    }
+    const initialMeanProportionInterval = getInitialMeanProportionInterval(analysis);
 
     const lapisFilter = {
         ...(base.locationName && { locationName: base.locationName }),

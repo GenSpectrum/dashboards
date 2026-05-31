@@ -35,7 +35,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         const providedMode = texts.analysisMode as WasapAnalysisMode | undefined;
 
         // config provided defaults
-        const defaultMode = enabledAnalysisModes(this.config)[0];
+        const defaultMode = this.config.defaultAnalysisMode ?? enabledAnalysisModes(this.config)[0];
 
         const mode = providedMode ?? defaultMode;
 

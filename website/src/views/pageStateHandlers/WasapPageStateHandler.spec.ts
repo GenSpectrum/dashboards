@@ -93,6 +93,19 @@ describe('WasapPageStateHandler', () => {
             const url = handler.getDefaultPageUrl();
             expect(url).toBe('/wastewater/covid');
         });
+
+        it('uses configured default mode when URL has no analysisMode', () => {
+            const handlerWithDefaultMode = new WasapPageStateHandler({
+                ...config,
+                defaultAnalysisMode: 'resistance',
+            });
+
+            // A bare URL should use the configured mode instead of the first enabled mode.
+            const filter = handlerWithDefaultMode.parsePageStateFromUrl(new URL('http://example.com/wastewater/covid'));
+
+            expect(filter.analysis.mode).toBe('resistance');
+            expect((filter.analysis as WasapResistanceFilter).resistanceSet).toBe('3CLpro');
+        });
     });
 
     describe('base filter', () => {
