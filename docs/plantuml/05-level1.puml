@@ -1,8 +1,14 @@
 @startuml
 title "GenSpectrum - Level 1"
 
+skinparam component<<external>> {
+    BorderStyle dashed
+}
+
 actor User as user
-component "NCBI" as ncbi
+component "NCBI" <<external>> as ncbi
+component "GitHub" <<external>> as github
+component "Pathoplexus" <<external>> as pathoplexus
 cloud "Various external mutation information" as vemi
 
 node "GenSpectrum" {
@@ -14,12 +20,14 @@ node "GenSpectrum" {
 }
 
 user -r-> website : "Interact"
-website -d-> backend : "Subscriptions, collections, config"
+website -d-> backend : "Users, subscriptions, collections, config"
 backend -d-> db : "Persist"
 website -r-> loculus : "Query genomic data"
 seeder -u-> backend : "Seed collections"
 loculus -r-> ncbi : "Pull data"
 seeder -r-> vemi : "Pull data"
+website -r-> github : "Authenticate"
+website -r-> pathoplexus : "Query genomic data"
 db -[hidden]-> seeder
 
 @enduml
