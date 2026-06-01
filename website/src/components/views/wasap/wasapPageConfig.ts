@@ -202,6 +202,10 @@ export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
     }
 }
 
+/**
+ * The type of variant mutation signature. `predefined` is a pre-defined list pulled from online,
+ * `computed` computes the list of signature mutations for a variant based on user parameters.
+ */
 export type SignatureType = 'computed' | 'predefined';
 
 export type WasapVariantFilter = {
