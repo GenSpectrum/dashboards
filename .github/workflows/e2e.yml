@@ -84,7 +84,7 @@ jobs:
       with:
         name: container-logs
         path: /tmp/container-logs/
-        retention-days: 30
+        retention-days: 7
 
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
