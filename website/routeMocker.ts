@@ -231,7 +231,6 @@ export class BackendRouteMocker {
             }),
         );
     }
-
 }
 
 function resolver(cases: MockCase[]) {

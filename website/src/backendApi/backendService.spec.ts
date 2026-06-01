@@ -170,5 +170,4 @@ describe('backendService', () => {
             new UnknownBackendError('Bad Request', 400, '/subscriptions'),
         );
     });
-
 });
