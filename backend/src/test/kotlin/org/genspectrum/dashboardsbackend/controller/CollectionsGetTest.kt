@@ -305,7 +305,11 @@ class CollectionsGetTest(
         val userId = usersClient.createUser()
         val collection = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "No System User"), userId)
 
-        val collections = collectionsClient.getCollections(userId = userId, excludeSystemCollections = true)
+        val collections = collectionsClient.getCollections(
+            userId = userId,
+            includeVariants = true,
+            excludeSystemCollections = true,
+        )
 
         assertThat(collections, hasItem(collection))
     }

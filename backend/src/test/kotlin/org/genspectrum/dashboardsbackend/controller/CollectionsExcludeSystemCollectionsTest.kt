@@ -41,7 +41,7 @@ class CollectionsExcludeSystemCollectionsTest(
             regularUserId,
         )
 
-        val collections = collectionsClient.getCollections(excludeSystemCollections = true)
+        val collections = collectionsClient.getCollections(includeVariants = true, excludeSystemCollections = true)
 
         assertThat(collections, hasItem(regularCollection))
         assertThat(collections, not(hasItem(systemCollection)))
@@ -56,7 +56,7 @@ class CollectionsExcludeSystemCollectionsTest(
             systemUserId,
         )
 
-        val collections = collectionsClient.getCollections(excludeSystemCollections = false)
+        val collections = collectionsClient.getCollections(includeVariants = true, excludeSystemCollections = false)
 
         assertThat(collections, hasItem(systemCollection))
     }
