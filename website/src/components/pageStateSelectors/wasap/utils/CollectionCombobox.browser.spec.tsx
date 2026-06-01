@@ -1,9 +1,10 @@
+import { userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { CollectionCombobox } from './CollectionCombobox';
-import type { CollectionSummary } from '../../../../types/Collection';
 import { it } from '../../../../../test-extend';
+import type { CollectionSummary } from '../../../../types/Collection';
 
 const makeCollection = (id: number, name: string): CollectionSummary => ({
     id,
@@ -25,7 +26,7 @@ describe('CollectionCombobox', () => {
             );
 
             await getByRole('combobox').fill('');
-            getByRole('combobox').element().blur();
+            await userEvent.tab();
 
             expect(onChange).toHaveBeenCalledWith(null);
         });
@@ -37,7 +38,7 @@ describe('CollectionCombobox', () => {
             );
 
             await getByRole('combobox').fill('Beta');
-            getByRole('combobox').element().blur();
+            await userEvent.tab();
 
             expect(onChange).toHaveBeenCalledWith(collections[1]);
         });
@@ -49,7 +50,7 @@ describe('CollectionCombobox', () => {
             );
 
             await getByRole('combobox').fill('  Beta  ');
-            getByRole('combobox').element().blur();
+            await userEvent.tab();
 
             expect(onChange).toHaveBeenCalledWith(collections[1]);
         });
@@ -61,7 +62,7 @@ describe('CollectionCombobox', () => {
             );
 
             await getByRole('combobox').fill('Unknown');
-            getByRole('combobox').element().blur();
+            await userEvent.tab();
 
             expect(onChange).not.toHaveBeenCalled();
             const wrapper = getByRole('combobox').element().closest('.input');
@@ -75,7 +76,7 @@ describe('CollectionCombobox', () => {
             );
 
             await getByRole('combobox').fill('Unknown');
-            getByRole('combobox').element().blur();
+            await userEvent.tab();
 
             const wrapper = getByRole('combobox').element().closest('.input');
             await expect.element(wrapper as HTMLElement).toHaveClass('input-error');
@@ -86,7 +87,7 @@ describe('CollectionCombobox', () => {
     });
 
     describe('clear button', () => {
-        it('is not rendered when input is empty', async () => {
+        it('is not rendered when input is empty', () => {
             const { getByLabelText } = render(
                 <CollectionCombobox collections={collections} value={null} onChange={vi.fn()} />,
             );
