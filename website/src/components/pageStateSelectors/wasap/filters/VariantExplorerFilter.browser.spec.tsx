@@ -1,5 +1,5 @@
-import { page, userEvent } from '@vitest/browser/context';
 import { type UseQueryResult } from '@tanstack/react-query';
+import { page, userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
