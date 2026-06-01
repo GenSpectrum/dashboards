@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class UserModel(private val dashboardsConfig: DashboardsConfig) {
+    // Not `lazy {}` — needs @Transactional to run inside a DB transaction.
+    @Volatile
     private var systemUserId: Long? = null
 
     fun getSystemUserId(): Long? {
