@@ -34,7 +34,16 @@ export class AstroApiRouteMocker {
         this.workerOrServer.use(
             http.get(
                 `${ASTRO_SERVER_URL}/collections`,
-                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+                resolver([
+                    {
+                        statusCode,
+                        response,
+                        requestParam: {
+                            ...(organism !== undefined ? { organism } : {}),
+                            excludeSystemCollections: 'true',
+                        },
+                    },
+                ]),
             ),
         );
     }
