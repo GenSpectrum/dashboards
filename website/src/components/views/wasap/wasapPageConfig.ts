@@ -38,6 +38,8 @@ export type WasapPageConfigBase = {
 
     browseDataUrl: string;
     browseDataDescription: string;
+
+    defaultAnalysisMode?: WasapAnalysisMode;
 };
 
 /**

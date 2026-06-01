@@ -29,6 +29,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         resistanceAnalysisModeEnabled: true,
         untrackedAnalysisModeEnabled: true,
         collectionAnalysisModeEnabled: true,
+        defaultAnalysisMode: 'resistance',
         resistanceMutationCollections: [
             {
                 collectionId: 1,
@@ -85,7 +86,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             resistance: {
                 mode: 'resistance',
                 sequenceType: 'amino acid',
-                resistanceSet: '3CLpro',
+                resistanceSet: 'Spike',
             },
             untracked: {
                 mode: 'untracked',
