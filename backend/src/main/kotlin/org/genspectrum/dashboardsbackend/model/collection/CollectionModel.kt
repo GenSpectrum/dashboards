@@ -7,11 +7,11 @@ import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.VariantRequest
 import org.genspectrum.dashboardsbackend.api.VariantUpdate
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
-import org.genspectrum.dashboardsbackend.config.SystemUserInitializer
 import org.genspectrum.dashboardsbackend.controller.BadRequestException
 import org.genspectrum.dashboardsbackend.controller.ForbiddenException
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.model.user.UserEntity
+import org.genspectrum.dashboardsbackend.model.user.UserModel
 import org.genspectrum.dashboardsbackend.util.now
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.Op
@@ -29,10 +29,7 @@ import kotlin.time.Instant
 
 @Service
 @Transactional
-class CollectionModel(
-    private val dashboardsConfig: DashboardsConfig,
-    private val systemUserInitializer: SystemUserInitializer,
-) {
+class CollectionModel(private val dashboardsConfig: DashboardsConfig, private val userModel: UserModel) {
     fun getCollections(
         userId: Long?,
         organism: String?,
@@ -55,7 +52,7 @@ class CollectionModel(
             collectionConditions = collectionConditions and (CollectionTable.organism eq organism)
         }
         if (excludeSystemCollections) {
-            val systemUserId = systemUserInitializer.getSystemUserId()
+            val systemUserId = userModel.getSystemUserId()
             if (systemUserId != null) {
                 collectionConditions = collectionConditions and (CollectionTable.ownedBy neq systemUserId)
             }

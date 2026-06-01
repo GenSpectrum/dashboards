@@ -1,8 +1,8 @@
 package org.genspectrum.dashboardsbackend.controller
 
 import org.genspectrum.dashboardsbackend.KnownTestOrganisms
-import org.genspectrum.dashboardsbackend.config.SystemUserInitializer
 import org.genspectrum.dashboardsbackend.dummyCollectionRequest
+import org.genspectrum.dashboardsbackend.model.user.UserModel
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.not
@@ -25,11 +25,11 @@ import org.springframework.test.context.TestPropertySource
 class CollectionsExcludeSystemCollectionsTest(
     @param:Autowired private val collectionsClient: CollectionsClient,
     @param:Autowired private val usersClient: UsersClient,
-    @param:Autowired private val systemUserInitializer: SystemUserInitializer,
+    @param:Autowired private val userModel: UserModel,
 ) {
     @Test
     fun `GIVEN system and regular user collections WHEN excludeSystemCollections=true THEN only regular returned`() {
-        val systemUserId = requireNotNull(systemUserInitializer.getSystemUserId())
+        val systemUserId = requireNotNull(userModel.getSystemUserId())
         val regularUserId = usersClient.createUser()
 
         val systemCollection = collectionsClient.postCollection(
@@ -49,7 +49,7 @@ class CollectionsExcludeSystemCollectionsTest(
 
     @Test
     fun `GIVEN system user collection WHEN not excluding system collections THEN system collection is included`() {
-        val systemUserId = requireNotNull(systemUserInitializer.getSystemUserId())
+        val systemUserId = requireNotNull(userModel.getSystemUserId())
 
         val systemCollection = collectionsClient.postCollection(
             dummyCollectionRequest.copy(name = "System Collection Visible", organism = KnownTestOrganisms.Covid.name),

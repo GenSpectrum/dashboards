@@ -3,6 +3,7 @@ package org.genspectrum.dashboardsbackend.model.user
 import org.genspectrum.dashboardsbackend.api.PublicUser
 import org.genspectrum.dashboardsbackend.api.User
 import org.genspectrum.dashboardsbackend.api.UserSyncRequest
+import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.util.now
 import org.springframework.stereotype.Service
@@ -10,7 +11,17 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class UserModel {
+class UserModel(private val dashboardsConfig: DashboardsConfig) {
+    private var systemUserId: Long? = null
+
+    fun getSystemUserId(): Long? {
+        systemUserId?.let { return it }
+        val githubId = dashboardsConfig.systemUser?.githubId ?: return null
+        val id = UserEntity.findByGithubId(githubId)?.id?.value ?: return null
+        systemUserId = id
+        return id
+    }
+
     fun syncUser(request: UserSyncRequest): User {
         val now = now()
         val existing = UserEntity.findByGithubId(request.githubId)
