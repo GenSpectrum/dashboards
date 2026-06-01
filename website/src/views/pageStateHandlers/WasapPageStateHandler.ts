@@ -68,7 +68,9 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     timeFrame:
                         (texts.timeFrame as VariantTimeFrame | undefined) ??
                         this.config.filterDefaults.variant.timeFrame,
-                    collectionId: texts.collectionId ? Number(texts.collectionId) : undefined,
+                    collectionId: texts.collectionId
+                        ? Number(texts.collectionId)
+                        : this.config.filterDefaults.variant.collectionId,
                     newMutationsOnly: texts.newMutationsOnly === 'true',
                 };
                 break;

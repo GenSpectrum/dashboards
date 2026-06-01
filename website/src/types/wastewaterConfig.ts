@@ -89,6 +89,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
                 minCount: 15,
                 minJaccard: 0.75,
                 timeFrame: VARIANT_TIME_FRAME.all,
+                collectionId: 4961,
             },
             resistance: {
                 mode: 'resistance',
