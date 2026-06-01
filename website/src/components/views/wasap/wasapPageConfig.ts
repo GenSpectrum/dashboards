@@ -10,6 +10,11 @@ export type WasapPageConfig = WasapPageConfigBase & AnalysisModeConfigs;
  */
 export type WasapPageConfigBase = {
     /**
+     * The internal identifier of the organism, i.e. 'covid'. Used as a key in maps and API parameters.
+     */
+    internalName: string;
+
+    /**
      * The name of the organism, i.e. 'Sars-CoV-2'
      */
     name: string;
@@ -72,8 +77,6 @@ type VariantAnalysisModeConfig =
           variantAnalysisModeEnabled: true;
           predefinedVariantsSource?: {
               collectionsUserId: number;
-              // TODO: find a better source for this — the organism key should already be known from the page config
-              collectionsOrganism: string;
               collectionsTag: string;
               variantSourceLabel?: string;
           };

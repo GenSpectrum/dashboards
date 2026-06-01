@@ -12,6 +12,7 @@ import {
 } from '../../components/views/wasap/wasapPageConfig';
 
 const config: WasapPageConfig = {
+    internalName: 'covid',
     name: 'SARS-CoV-2',
     path: `/wastewater/covid`,
     description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
