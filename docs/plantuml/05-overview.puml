@@ -1,0 +1,16 @@
+@startuml
+title "GenSpectrum Overview"
+
+actor User as user
+
+component "GenSpectrum" as gs
+component "NCBI" as ncbi
+component "Pathoplexus" as pathoplexus
+component "GitHub" as github
+
+user -r-> gs
+gs -d-> ncbi : "Pull data"
+gs -d-> pathoplexus : "Query genomic data"
+gs -r-> github : "Authenticate"
+
+@enduml

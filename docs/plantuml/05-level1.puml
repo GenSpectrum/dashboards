@@ -1,0 +1,25 @@
+@startuml
+title "GenSpectrum - Level 1"
+
+actor User as user
+component "NCBI" as ncbi
+cloud "Various external mutation information" as vemi
+
+node "GenSpectrum" {
+    component Website as website
+    component Backend as backend
+    component "Collection Seeder" as seeder
+    database Database as db
+    component Loculus as loculus
+}
+
+user -r-> website : "Interact"
+website -d-> backend : "Subscriptions, collections, config"
+backend -d-> db : "Persist"
+website -r-> loculus : "Query genomic data"
+seeder -u-> backend : "Seed collections"
+loculus -r-> ncbi : "Pull data"
+seeder -r-> vemi : "Pull data"
+db -[hidden]-> seeder
+
+@enduml
