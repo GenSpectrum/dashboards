@@ -70,12 +70,14 @@ jobs:
       env:
         BACKEND_URL: http://localhost:9021
 
-    - name: Collect website/backend container logs
+    - name: Collect container logs
       if: ${{ failure() && !cancelled() }}
       run: |
         mkdir -p /tmp/container-logs
-        docker compose -f ../docker-compose.yml logs --no-color website > /tmp/container-logs/website.log || true
-        docker compose -f ../docker-compose.yml logs --no-color backend > /tmp/container-logs/backend.log || true
+        services="$(docker compose -f ../docker-compose.yml config --services || true)"
+        for service in $services; do
+          docker compose -f ../docker-compose.yml logs --no-color "$service" > "/tmp/container-logs/${service}.log" || true
+        done
 
     - uses: actions/upload-artifact@v7
       if: ${{ failure() && !cancelled() }}
