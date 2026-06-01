@@ -232,33 +232,6 @@ export class BackendRouteMocker {
         );
     }
 
-    mockGetCollectionSummaries(
-        response: CollectionSummary[],
-        organism?: string,
-        statusCode = 200,
-        excludeSystemCollections?: boolean,
-    ) {
-        this.workerOrServer.use(
-            http.get(
-                `${DUMMY_BACKEND_URL}/collections`,
-                resolver([
-                    {
-                        statusCode,
-                        response,
-                        requestParam:
-                            organism !== undefined || excludeSystemCollections !== undefined
-                                ? {
-                                      ...(organism !== undefined ? { organism } : {}),
-                                      ...(excludeSystemCollections !== undefined
-                                          ? { excludeSystemCollections: String(excludeSystemCollections) }
-                                          : {}),
-                                  }
-                                : undefined,
-                    },
-                ]),
-            ),
-        );
-    }
 }
 
 function resolver(cases: MockCase[]) {
