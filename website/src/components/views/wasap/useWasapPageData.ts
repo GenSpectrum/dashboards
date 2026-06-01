@@ -12,6 +12,7 @@ import type {
     WasapUntrackedFilter,
     WasapVariantFilter,
 } from './wasapPageConfig';
+import { getBackendServiceForClientside } from '../../../backendApi/backendService';
 import { getCollection } from '../../../covspectrum/getCollection';
 import { detailedMutationsToQuery } from '../../../covspectrum/variantConversionUtil';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
@@ -76,9 +77,7 @@ async function fetchVariantModeData(
         case 'computed':
             return fetchVariantComputedModeData(config, analysis);
         case 'predefined':
-            // TODO - Implement the fetching.
-            // we need to fetch the collection by ID
-            throw new Error('Predefined variant mode is not yet implemented.');
+            return fetchVariantPredefinedModeData(analysis);
     }
 }
 
@@ -112,6 +111,35 @@ async function fetchVariantComputedModeData(
             },
         ],
     };
+}
+
+async function fetchVariantPredefinedModeData(analysis: WasapVariantFilter): Promise<WasapMutationsData> {
+    if (!analysis.collectionId) {
+        throw new Error('No collection selected for predefined variant mode.');
+    }
+    const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
+
+    let variantName: string;
+    if (analysis.sequenceType === 'nucleotide') {
+        variantName = analysis.newMutationsOnly ? 'New nucleotide substitutions' : 'Nucleotide substitutions';
+    } else {
+        variantName = analysis.newMutationsOnly ? 'New amino acid substitutions' : 'Amino acid substitutions';
+    }
+
+    const variant = collection.variants.find((v) => v.name === variantName);
+    if (!variant) {
+        throw new Error(`Variant "${variantName}" not found in collection ${collection.id}.`);
+    }
+    if (variant.type !== 'filterObject') {
+        throw new Error(`Variant "${variantName}" in collection ${collection.id} is not a filterObject variant.`);
+    }
+
+    const mutations =
+        analysis.sequenceType === 'nucleotide'
+            ? (variant.filterObject.nucleotideMutations ?? [])
+            : (variant.filterObject.aminoAcidMutations ?? []);
+
+    return { type: 'mutations', displayMutations: mutations };
 }
 
 function fetchResistanceModeData(

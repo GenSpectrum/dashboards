@@ -1,5 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { type FC } from 'react';
+
+import { getClientLogger } from '../../../clientLogger';
+
+const logger = getClientLogger('WasapPage');
 
 import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
@@ -37,7 +41,13 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
 
     const { mutationAnnotations, displayMutationsBySet } = resistanceData;
     // fetch which mutations should be analyzed
-    const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
+    const { data, isPending, isError, error } = useWasapPageData(config, displayMutationsBySet, analysis);
+
+    useEffect(() => {
+        if (error) {
+            logger.error(`Failed to fetch wasap page data: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }, [error]);
 
     const initialMeanProportionInterval = getInitialMeanProportionInterval(analysis);
 
