@@ -301,7 +301,7 @@ class CollectionsGetTest(
     }
 
     @Test
-    fun `WHEN no system user configured THEN excludeSystemCollections=true returns all collections`() {
+    fun `GIVEN no system user configured WHEN getting with excludeSystemCollections THEN returns all collections`() {
         val userId = usersClient.createUser()
         val collection = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "No System User"), userId)
 

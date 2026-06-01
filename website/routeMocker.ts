@@ -30,7 +30,12 @@ export class AstroApiRouteMocker {
         this.workerOrServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
     }
 
-    mockGetCollectionSummaries(response: CollectionSummary[], organism?: string, statusCode = 200) {
+    mockGetCollectionSummaries(
+        response: CollectionSummary[],
+        organism?: string,
+        statusCode = 200,
+        excludeSystemCollections?: boolean,
+    ) {
         this.workerOrServer.use(
             http.get(
                 `${ASTRO_SERVER_URL}/collections`,
@@ -40,7 +45,9 @@ export class AstroApiRouteMocker {
                         response,
                         requestParam: {
                             ...(organism !== undefined ? { organism } : {}),
-                            excludeSystemCollections: 'true',
+                            ...(excludeSystemCollections !== undefined
+                                ? { excludeSystemCollections: String(excludeSystemCollections) }
+                                : {}),
                         },
                     },
                 ]),
@@ -225,11 +232,30 @@ export class BackendRouteMocker {
         );
     }
 
-    mockGetCollectionSummaries(response: CollectionSummary[], organism?: string, statusCode = 200) {
+    mockGetCollectionSummaries(
+        response: CollectionSummary[],
+        organism?: string,
+        statusCode = 200,
+        excludeSystemCollections?: boolean,
+    ) {
         this.workerOrServer.use(
             http.get(
                 `${DUMMY_BACKEND_URL}/collections`,
-                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+                resolver([
+                    {
+                        statusCode,
+                        response,
+                        requestParam:
+                            organism !== undefined || excludeSystemCollections !== undefined
+                                ? {
+                                      ...(organism !== undefined ? { organism } : {}),
+                                      ...(excludeSystemCollections !== undefined
+                                          ? { excludeSystemCollections: String(excludeSystemCollections) }
+                                          : {}),
+                                  }
+                                : undefined,
+                    },
+                ]),
             ),
         );
     }
