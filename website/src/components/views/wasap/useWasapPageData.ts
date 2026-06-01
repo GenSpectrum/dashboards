@@ -119,6 +119,7 @@ async function fetchVariantPredefinedModeData(analysis: WasapVariantFilter): Pro
     }
     const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
 
+    // These names match the variant names hardcoded in the collection seeder.
     let variantName: string;
     if (analysis.sequenceType === 'nucleotide') {
         variantName = analysis.newMutationsOnly ? 'New nucleotide substitutions' : 'Nucleotide substitutions';
