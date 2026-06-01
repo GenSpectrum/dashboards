@@ -1,19 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { type FC } from 'react';
 
-import { getClientLogger } from '../../../clientLogger';
-
-const logger = getClientLogger('WasapPage');
-
-import { CollectionInfo } from './components/CollectionInfo';
-import { NoDataHelperText } from './components/NoDataHelperText';
-import { VariantFetchInfo } from './components/VariantFetchInfo';
-import { WasapStats } from './components/WasapStats';
-import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
-import type { ResistanceData } from './resistanceData';
-import { useWasapPageData } from './useWasapPageData';
-import type { WasapPageConfig } from './wasapPageConfig';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
+import { getClientLogger } from '../../../clientLogger';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
@@ -24,6 +13,16 @@ import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { usePageState } from '../usePageState.ts';
+import { CollectionInfo } from './components/CollectionInfo';
+import { NoDataHelperText } from './components/NoDataHelperText';
+import { VariantFetchInfo } from './components/VariantFetchInfo';
+import { WasapStats } from './components/WasapStats';
+import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
+import type { ResistanceData } from './resistanceData';
+import { useWasapPageData } from './useWasapPageData';
+import type { WasapPageConfig } from './wasapPageConfig';
+
+const logger = getClientLogger('WasapPage');
 
 export type WasapPageProps = {
     config: WasapPageConfig;
