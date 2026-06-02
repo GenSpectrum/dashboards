@@ -1,12 +1,12 @@
 import { type Page } from '@playwright/test';
 
 import { expectToSeeNoComponentErrors } from './ViewPage.ts';
-import type { WastewaterOrganismName } from '../src/types/wastewaterConfig.ts';
+import { type WastewaterOrganismName, wastewaterOrganisms } from '../src/types/wastewaterConfig.ts';
 
 const wastewaterOrganismPaths: Record<WastewaterOrganismName, string> = {
-    covid: '/swiss-wastewater/covid',
-    'rsv-a': '/swiss-wastewater/rsv-a',
-    'rsv-b': '/swiss-wastewater/rsv-b',
+    [wastewaterOrganisms.covid]: '/swiss-wastewater/covid',
+    [wastewaterOrganisms.rsvA]: '/swiss-wastewater/rsv-a',
+    [wastewaterOrganisms.rsvB]: '/swiss-wastewater/rsv-b',
 };
 
 export class WasapPage {
