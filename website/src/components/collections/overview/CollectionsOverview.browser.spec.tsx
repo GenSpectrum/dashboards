@@ -29,7 +29,7 @@ const mockCollections = [
 
 describe('CollectionsOverview', () => {
     it('shows the headline and collections table on success', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries(mockCollections, ORGANISM);
+        astro.mockGetCollectionSummaries(mockCollections, ORGANISM, 200, true);
 
         const { getByText, getByRole } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
 
@@ -42,7 +42,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and empty message when there are no collections', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries([], ORGANISM);
+        astro.mockGetCollectionSummaries([], ORGANISM, 200, true);
 
         const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
 
@@ -51,7 +51,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and error message when the fetch fails', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries([], ORGANISM, 500);
+        astro.mockGetCollectionSummaries([], ORGANISM, 500, true);
         astro.mockLog();
 
         const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);

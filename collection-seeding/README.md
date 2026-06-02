@@ -1,0 +1,59 @@
+# collection-seeding
+
+Seeds the backend with example collections:
+
+- **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
+- **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
+- **covid-pango-lineages-sample** — same as above but limited to 10 lineages, for quick testing
+
+The script is idempotent — re-running it will create new collections or update existing ones (matched by name). If a collection's name changes in the source, the old entry is orphaned and a new one is created.
+
+Use `--repeat-interval-hours N` (or `$REPEAT_INTERVAL_HOURS`) to run on a loop — re-seeds every N hours. Without it, the script runs once and exits.
+
+## Via Docker Compose
+
+The seeder runs automatically as part of Docker Compose:
+
+```bash
+BACKEND_TAG=latest WEBSITE_TAG=latest SEEDER_TAG=latest docker compose up
+```
+
+## Running locally
+
+Requires [pixi](https://pixi.sh). Install dependencies once:
+
+```bash
+pixi install
+```
+
+Then use the provided tasks:
+
+```bash
+pixi run seed                    # all sources
+pixi run seed-resistance         # resistance mutations only
+pixi run seed-lineages           # pango lineages only
+pixi run seed-lineages-sample    # first 10 pango lineages (quick test)
+```
+
+To target a different backend:
+
+```bash
+pixi run seed --url http://localhost:4321
+```
+
+Run `pixi run seed --help` for all options, including `--source`, `--list`, `--repeat-interval-hours`, and `--url`.
+
+## Adding a new source
+
+1. Create `sources/your_source.py` and implement the `Source` ABC:
+   ```python
+   from sources import Source
+   from models import Collection
+
+   class YourSource(Source):
+       name = "your-source-name"  # used with --source flag
+
+       def get_collections(self) -> list[Collection]:
+           ...
+   ```
+2. Register it in `sources/registry.py` by adding it to `ALL_SOURCES`.

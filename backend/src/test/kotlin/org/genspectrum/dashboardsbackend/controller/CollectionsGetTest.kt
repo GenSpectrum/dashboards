@@ -301,6 +301,20 @@ class CollectionsGetTest(
     }
 
     @Test
+    fun `GIVEN no system user configured WHEN getting with excludeSystemCollections THEN returns all collections`() {
+        val userId = usersClient.createUser()
+        val collection = collectionsClient.postCollection(dummyCollectionRequest.copy(name = "No System User"), userId)
+
+        val collections = collectionsClient.getCollections(
+            userId = userId,
+            includeVariants = true,
+            excludeSystemCollections = true,
+        )
+
+        assertThat(collections, hasItem(collection))
+    }
+
+    @Test
     fun `WHEN getting collections with includeVariants=true THEN variantCount and variants are both present`() {
         val userId = usersClient.createUser()
         collectionsClient.postCollection(dummyCollectionRequest, userId)

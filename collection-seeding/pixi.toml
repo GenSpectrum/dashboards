@@ -1,0 +1,30 @@
+[workspace]
+name = "collection-seeding"
+version = "0.1.0"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "linux-aarch64"]
+
+[dependencies]
+python = "3.13.*"
+
+[pypi-dependencies]
+requests = ">=2.33.1"
+
+[tasks]
+seed = "python seed.py"
+seed-lineages = "python seed.py --source covid-pango-lineages"
+seed-lineages-sample = "python seed.py --source covid-pango-lineages-sample"
+seed-resistance = "python seed.py --source covid-resistance-mutations"
+
+[feature.test.pypi-dependencies]
+pytest = ">=9.0.3"
+responses = ">=0.26.0"
+ruff = ">=0.9"
+
+[feature.test.tasks]
+test = "pytest"
+lint = "ruff check ."
+format = "ruff format ."
+
+[environments]
+test = { features = ["test"] }
