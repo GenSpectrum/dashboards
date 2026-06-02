@@ -30,11 +30,27 @@ export class AstroApiRouteMocker {
         this.workerOrServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
     }
 
-    mockGetCollectionSummaries(response: CollectionSummary[], organism?: string, statusCode = 200) {
+    mockGetCollectionSummaries(
+        response: CollectionSummary[],
+        organism?: string,
+        statusCode = 200,
+        excludeSystemCollections?: boolean,
+    ) {
         this.workerOrServer.use(
             http.get(
                 `${ASTRO_SERVER_URL}/collections`,
-                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
+                resolver([
+                    {
+                        statusCode,
+                        response,
+                        requestParam: {
+                            ...(organism !== undefined ? { organism } : {}),
+                            ...(excludeSystemCollections !== undefined
+                                ? { excludeSystemCollections: String(excludeSystemCollections) }
+                                : {}),
+                        },
+                    },
+                ]),
             ),
         );
     }
@@ -213,15 +229,6 @@ export class BackendRouteMocker {
             http.get(`${DUMMY_BACKEND_URL}/subscriptions`, () => {
                 return new Response(JSON.stringify(response), { status: statusCode });
             }),
-        );
-    }
-
-    mockGetCollectionSummaries(response: CollectionSummary[], organism?: string, statusCode = 200) {
-        this.workerOrServer.use(
-            http.get(
-                `${DUMMY_BACKEND_URL}/collections`,
-                resolver([{ statusCode, response, requestParam: organism !== undefined ? { organism } : undefined }]),
-            ),
         );
     }
 }

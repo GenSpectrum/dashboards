@@ -21,7 +21,8 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
         error,
     } = useQuery({
         queryKey: ['collections', organism],
-        queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
+        queryFn: () =>
+            getBackendServiceForClientside().getCollectionSummaries({ organism, excludeSystemCollections: true }),
     });
 
     if (isError) {

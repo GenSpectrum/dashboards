@@ -24,16 +24,19 @@ class CollectionsController(private val collectionModel: CollectionModel) {
     @Operation(
         summary = "Get collections",
         description = "Returns collections filtered by optional userId and/or organism parameters. " +
-            "Set includeVariants=true to include the full variant list; by default only variantCount is returned.",
+            "Set includeVariants=true to include the full variant list; by default only variantCount is returned. " +
+            "Set excludeSystemCollections=true to exclude collections owned by the system user.",
     )
     fun getCollections(
         @RequestParam(required = false) userId: Long?,
         @RequestParam(required = false) organism: String?,
         @RequestParam(required = false, defaultValue = "false") includeVariants: Boolean,
+        @RequestParam(required = false, defaultValue = "false") excludeSystemCollections: Boolean,
     ): List<Collection> = collectionModel.getCollections(
         userId = userId,
         organism = organism,
         includeVariants = includeVariants,
+        excludeSystemCollections = excludeSystemCollections,
     )
 
     @GetMapping("/collections/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])

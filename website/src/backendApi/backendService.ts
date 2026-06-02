@@ -22,7 +22,7 @@ const X_REQUEST_ID_HEADER = 'x-request-id';
 
 type EndpointParameters<Response> = {
     url: string;
-    requestParams?: Record<string, string>;
+    requestParams?: Record<string, string | boolean | undefined>;
     schema: ZodSchema<Response>;
 };
 
@@ -177,8 +177,7 @@ export class BackendService extends ApiService {
         return this.get({ url: `/users/${id}`, schema: publicUserSchema });
     }
 
-    public async getCollectionSummaries({ organism }: { organism?: string } = {}) {
-        const requestParams = organism !== undefined ? { organism } : undefined;
+    public async getCollectionSummaries(requestParams: { organism?: string; excludeSystemCollections?: boolean } = {}) {
         return this.get({ url: '/collections', requestParams, schema: z.array(collectionSummarySchema) });
     }
 
