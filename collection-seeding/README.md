@@ -5,6 +5,8 @@ Seeds the backend with example collections:
 - **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
 - **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
 - **covid-pango-lineages-sample** — same as above but limited to 10 lineages, for quick testing
+- **rsv-a-resistance-mutations** — RSV-A F protein resistance mutations against Nirsevimab and Palivizumab (fetched live from ViralZone)
+- **rsv-b-resistance-mutations** — RSV-B F protein resistance mutations against Nirsevimab and Palivizumab (fetched live from ViralZone)
 
 The script is idempotent — re-running it will create new collections or update existing ones (matched by name). If a collection's name changes in the source, the old entry is orphaned and a new one is created.
 
@@ -30,9 +32,16 @@ Then use the provided tasks:
 
 ```bash
 pixi run seed                    # all sources
-pixi run seed-resistance         # resistance mutations only
+pixi run seed-resistance         # COVID resistance mutations only
 pixi run seed-lineages           # pango lineages only
 pixi run seed-lineages-sample    # first 10 pango lineages (quick test)
+```
+
+RSV sources don't have dedicated tasks — use `--source` directly:
+
+```bash
+pixi run seed --source rsv-a-resistance-mutations
+pixi run seed --source rsv-b-resistance-mutations
 ```
 
 To target a different backend:
