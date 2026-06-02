@@ -32,21 +32,21 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         defaultAnalysisMode: 'resistance',
         resistanceMutationCollections: [
             {
-                collectionId: 1,
+                collectionId: 4,
                 name: '3CLpro',
                 annotationSymbol: 'c',
                 description:
                     'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
             },
             {
-                collectionId: 2,
+                collectionId: 5,
                 name: 'RdRp',
                 annotationSymbol: 'r',
                 description:
                     'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
             },
             {
-                collectionId: 3,
+                collectionId: 6,
                 name: 'Spike',
                 annotationSymbol: 's',
                 description:
