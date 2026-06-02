@@ -2,13 +2,7 @@ import { expect } from '@playwright/test';
 
 import { expectToSeeNoComponentErrors } from './ViewPage.ts';
 import { test } from './e2e.fixture.ts';
-import type { WastewaterOrganismName } from '../src/types/wastewaterConfig.ts';
-
-const wasapOrganisms: { organism: WastewaterOrganismName; name: string }[] = [
-    { organism: 'covid', name: 'SARS-CoV-2' },
-    { organism: 'rsv-a', name: 'RSV-A' },
-    { organism: 'rsv-b', name: 'RSV-B' },
-];
+import { wastewaterOrganismConfigs, wastewaterOrganisms } from '../src/types/wastewaterConfig.ts';
 
 test.describe('The Swiss Wastewater Overview Page', () => {
     test('should show heading and links to all wastewater pages', async ({ page }) => {
@@ -28,7 +22,9 @@ test.describe('The Swiss Wastewater Overview Page', () => {
 test.describe('WASAP Pages', () => {
     test.setTimeout(60_000);
 
-    for (const { organism, name } of wasapOrganisms) {
+    for (const organism of Object.values(wastewaterOrganisms)) {
+        const { name } = wastewaterOrganismConfigs[organism];
+
         test.describe(name, () => {
             test('should load with default filters and show mutation data', async ({ wasapPage }) => {
                 await wasapPage.goto(organism);

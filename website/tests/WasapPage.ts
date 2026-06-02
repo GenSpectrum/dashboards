@@ -1,19 +1,13 @@
 import { type Page } from '@playwright/test';
 
 import { expectToSeeNoComponentErrors } from './ViewPage.ts';
-import { type WastewaterOrganismName, wastewaterOrganisms } from '../src/types/wastewaterConfig.ts';
-
-const wastewaterOrganismPaths: Record<WastewaterOrganismName, string> = {
-    [wastewaterOrganisms.covid]: '/swiss-wastewater/covid',
-    [wastewaterOrganisms.rsvA]: '/swiss-wastewater/rsv-a',
-    [wastewaterOrganisms.rsvB]: '/swiss-wastewater/rsv-b',
-};
+import { type WastewaterOrganismName, wastewaterOrganismConfigs } from '../src/types/wastewaterConfig.ts';
 
 export class WasapPage {
     constructor(public readonly page: Page) {}
 
     public async goto(organism: WastewaterOrganismName) {
-        await this.page.goto(wastewaterOrganismPaths[organism]);
+        await this.page.goto(wastewaterOrganismConfigs[organism].path);
     }
 
     public async submitFilters() {
