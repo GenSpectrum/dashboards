@@ -59,7 +59,9 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 }
                 analysis = {
                     mode,
-                    signatureType: (texts.signatureType as SignatureType | undefined) ?? this.config.filterDefaults.variant.signatureType,
+                    signatureType:
+                        (texts.signatureType as SignatureType | undefined) ??
+                        this.config.filterDefaults.variant.signatureType,
                     sequenceType: providedSequenceType ?? this.config.filterDefaults.variant.sequenceType,
                     variant: texts.variant ?? this.config.filterDefaults.variant.variant,
                     minProportion: Number(texts.minProportion ?? this.config.filterDefaults.variant.minProportion),

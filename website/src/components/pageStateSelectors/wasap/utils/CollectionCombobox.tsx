@@ -84,7 +84,6 @@ export function CollectionCombobox({
                         className='px-2'
                         tabIndex={-1}
                         type='button'
-
                         onClick={() => {
                             reset();
                             onChange(null);
