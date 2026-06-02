@@ -78,7 +78,7 @@ def test_rsv_a_returns_two_collections():
 def test_rsv_a_organism():
     rsps_lib.add(rsps_lib.GET, DATA_URL, body=SAMPLE_TEXT, status=200)
     cols = RsvAResistanceMutationsSource().get_collections()
-    assert all(c["organism"] == "rsv-a" for c in cols)
+    assert all(c["organism"] == "rsvA" for c in cols)
 
 
 @rsps_lib.activate
@@ -92,7 +92,7 @@ def test_rsv_b_returns_two_collections():
 def test_rsv_b_organism():
     rsps_lib.add(rsps_lib.GET, DATA_URL, body=SAMPLE_TEXT, status=200)
     cols = RsvBResistanceMutationsSource().get_collections()
-    assert all(c["organism"] == "rsv-b" for c in cols)
+    assert all(c["organism"] == "rsvB" for c in cols)
 
 
 @rsps_lib.activate

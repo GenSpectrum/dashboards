@@ -1,6 +1,6 @@
 import responses as rsps_lib
 
-from sources.pango_lineages import CovidPangoLineagesSource, DATA_URL
+from sources.covid_pango_lineages import CovidPangoLineagesSource, DATA_URL
 
 SAMPLE_DATA = {
     "BA.2": {

@@ -60,7 +60,7 @@ def _build_collections(rsv_type: str, organism: str, owned_tag: str) -> list[Col
 
 class RsvAResistanceMutationsSource(Source):
     name = "rsv-a-resistance-mutations"
-    organism = "rsv-a"
+    organism = "rsvA"
     owned_tag = "#resistance-mutation"
 
     def get_collections(self) -> list[Collection]:
@@ -69,7 +69,7 @@ class RsvAResistanceMutationsSource(Source):
 
 class RsvBResistanceMutationsSource(Source):
     name = "rsv-b-resistance-mutations"
-    organism = "rsv-b"
+    organism = "rsvB"
     owned_tag = "#resistance-mutation"
 
     def get_collections(self) -> list[Collection]:
