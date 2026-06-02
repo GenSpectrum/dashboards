@@ -4,8 +4,8 @@ To add a new source, import it here and add it to ALL_SOURCES. This is the only
 place that needs to change — seed.py discovers sources exclusively through this list.
 """
 
-from sources.pango_lineages import CovidPangoLineagesSource, CovidPangoLineagesSampleSource
-from sources.resistance_mutations import CovidResistanceMutationsSource
+from sources.covid_pango_lineages import CovidPangoLineagesSource, CovidPangoLineagesSampleSource
+from sources.covid_resistance_mutations import CovidResistanceMutationsSource
 from sources.rsv_resistance_mutations import RsvAResistanceMutationsSource, RsvBResistanceMutationsSource
 from sources import Source
 
