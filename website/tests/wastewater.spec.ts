@@ -26,6 +26,8 @@ test.describe('The Swiss Wastewater Overview Page', () => {
 });
 
 test.describe('WASAP Pages', () => {
+    test.setTimeout(60_000);
+
     for (const { organism, name } of wasapOrganisms) {
         test.describe(name, () => {
             test('should load with default filters and show mutation data', async ({ wasapPage }) => {
@@ -40,9 +42,11 @@ test.describe('WASAP Pages', () => {
                 await expect(wasapPage.mutationsOverTimeHeading).toBeVisible();
             });
 
-            test('should show mutation data after applying filters', async ({ wasapPage }) => {
+            test('should show mutation data after changing and applying filters', async ({ wasapPage }) => {
                 await wasapPage.goto(organism);
 
+                await wasapPage.selectAnalysisMode('Variant Explorer');
+                await wasapPage.selectGranularity('Week');
                 await wasapPage.submitFilters();
 
                 await wasapPage.expectToSeeNoComponentErrors();

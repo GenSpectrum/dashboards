@@ -40,6 +40,10 @@ export class WasapPage {
         await this.analysisModeSelect.selectOption({ label: mode });
     }
 
+    public async selectGranularity(granularity: 'Day' | 'Week') {
+        await this.page.getByText(granularity, { exact: true }).click();
+    }
+
     public async expectToSeeNoComponentErrors() {
         await expectToSeeNoComponentErrors(this.page);
     }
