@@ -76,15 +76,14 @@ export function CollectionCombobox({
                 <input
                     placeholder={placeholderText}
                     className='w-full p-1.5'
-                    {...getInputProps()}
-                    onBlur={onInputBlur}
+                    {...getInputProps({ onBlur: onInputBlur })}
                 />
                 {inputValue !== '' && (
                     <button
                         aria-label='clear selection'
                         className='px-2'
                         type='button'
-                        tabIndex={-1}
+
                         onClick={() => {
                             reset();
                             onChange(null);
