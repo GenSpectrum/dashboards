@@ -1,5 +1,6 @@
-import { expect, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
 
+import { expectToSeeNoComponentErrors } from './ViewPage.ts';
 import type { WastewaterOrganismName } from '../src/types/wastewaterConfig.ts';
 
 const wastewaterOrganismPaths: Record<WastewaterOrganismName, string> = {
@@ -39,8 +40,7 @@ export class WasapPage {
         await this.analysisModeSelect.selectOption({ label: mode });
     }
 
-    public async expectToSeeNoErrors() {
-        await expect(this.page.getByText('Error -', { exact: false })).not.toBeVisible();
-        await expect(this.page.getByText('Something went wrong', { exact: false })).not.toBeVisible();
+    public async expectToSeeNoComponentErrors() {
+        await expectToSeeNoComponentErrors(this.page);
     }
 }
