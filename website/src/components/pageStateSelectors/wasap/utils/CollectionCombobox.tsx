@@ -82,6 +82,7 @@ export function CollectionCombobox({
                     <button
                         aria-label='clear selection'
                         className='px-2'
+                        tabIndex={-1}
                         type='button'
 
                         onClick={() => {
