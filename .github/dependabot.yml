@@ -6,6 +6,8 @@ updates:
       interval: weekly
     commit-message:
       prefix: "chore(github-actions)"
+    cooldown:
+      default-days: 7
   - package-ecosystem: npm
     directory: website/
     schedule:
@@ -16,6 +18,8 @@ updates:
     commit-message:
       prefix: "chore(website)"
     target-branch: "main"
+    cooldown:
+      default-days: 7
   - package-ecosystem: npm
     directory: website/
     schedule:
@@ -27,6 +31,8 @@ updates:
           - "patch"
     commit-message:
       prefix: "chore(website)"
+    cooldown:
+      default-days: 7
   - package-ecosystem: gradle
     directory: backend/
     schedule:
@@ -38,3 +44,5 @@ updates:
           - "patch"
     commit-message:
       prefix: "chore(backend)"
+    cooldown:
+      default-days: 7
