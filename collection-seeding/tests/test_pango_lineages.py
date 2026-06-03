@@ -1,6 +1,6 @@
 import responses as rsps_lib
 
-from sources.pango_lineages import PangoLineagesSource, DATA_URL
+from sources.covid_pango_lineages import CovidPangoLineagesSource, DATA_URL
 
 SAMPLE_DATA = {
     "BA.2": {
@@ -40,20 +40,20 @@ SAMPLE_DATA = {
 
 
 def test_name():
-    assert PangoLineagesSource.name == "covid-pango-lineages"
+    assert CovidPangoLineagesSource.name == "covid-pango-lineages"
 
 
 # --- _build_collection ---
 
 
 def test_build_collection_basic():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     assert col["name"] == "BA.2"
     assert col["organism"] == "covid"
 
 
 def test_build_collection_description_format():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     assert "BA.2" in col["description"]
     assert "BA" in col["description"]  # parent
     assert "22C" in col["description"]  # clade
@@ -61,18 +61,18 @@ def test_build_collection_description_format():
 
 
 def test_build_collection_missing_fields_use_defaults():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
     assert "—" in col["description"]  # parent and clade fallback
     assert "unknown" in col["description"]  # date fallback
 
 
 def test_build_collection_always_four_variants():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     assert len(col["variants"]) == 4
 
 
 def test_build_collection_variant_names():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     names = [v["name"] for v in col["variants"]]
     assert names == [
         "Nucleotide substitutions",
@@ -83,7 +83,7 @@ def test_build_collection_variant_names():
 
 
 def test_build_collection_variant_filter_keys():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     variants = col["variants"]
     assert "nucleotideMutations" in variants[0]["filterObject"]
     assert "aminoAcidMutations" in variants[1]["filterObject"]
@@ -92,7 +92,7 @@ def test_build_collection_variant_filter_keys():
 
 
 def test_build_collection_variant_contents():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     variants = col["variants"]
     assert variants[0]["filterObject"]["nucleotideMutations"] == ["C241T", "A23403G"]
     assert variants[1]["filterObject"]["aminoAcidMutations"] == ["S:N501Y"]
@@ -101,7 +101,7 @@ def test_build_collection_variant_contents():
 
 
 def test_build_collection_filters_blank_subs():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     # nucSubstitutions has ["C241T", "A23403G", ""] — blank should be dropped
     nuc = col["variants"][0]["filterObject"]["nucleotideMutations"]
     assert "" not in nuc
@@ -109,7 +109,7 @@ def test_build_collection_filters_blank_subs():
 
 
 def test_build_collection_empty_lists_when_all_blanks():
-    col = PangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
     assert len(col["variants"]) == 4
     for v in col["variants"]:
         lists = list(v["filterObject"].values())
@@ -122,7 +122,7 @@ def test_build_collection_empty_lists_when_all_blanks():
 @rsps_lib.activate
 def test_get_collections_fetches_data_url():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    PangoLineagesSource().get_collections()
+    CovidPangoLineagesSource().get_collections()
     assert len(rsps_lib.calls) == 1
     assert rsps_lib.calls[0].request.url == DATA_URL
 
@@ -130,7 +130,7 @@ def test_get_collections_fetches_data_url():
 @rsps_lib.activate
 def test_get_collections_includes_all_lineages():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = PangoLineagesSource().get_collections()
+    cols = CovidPangoLineagesSource().get_collections()
     # All lineages included regardless of empty subs
     names = [c["name"] for c in cols]
     assert "BA.2" in names
@@ -141,12 +141,12 @@ def test_get_collections_includes_all_lineages():
 @rsps_lib.activate
 def test_get_collections_respects_limit():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = PangoLineagesSource(limit=1).get_collections()
+    cols = CovidPangoLineagesSource(limit=1).get_collections()
     assert len(cols) <= 1
 
 
 @rsps_lib.activate
 def test_get_collections_no_limit_returns_all():
     rsps_lib.add(rsps_lib.GET, DATA_URL, json=SAMPLE_DATA, status=200)
-    cols = PangoLineagesSource().get_collections()
+    cols = CovidPangoLineagesSource().get_collections()
     assert len(cols) == 3
