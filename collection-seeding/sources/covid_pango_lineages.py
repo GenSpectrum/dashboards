@@ -83,7 +83,7 @@ class CovidPangoLineagesSource(Source):
 
 
 class CovidPangoLineagesSampleSource(CovidPangoLineagesSource):
-    """Same as PangoLineagesSource but limited to the first 10 lineages, for quick testing."""
+    """Same as CovidPangoLineagesSource but limited to the first 10 lineages, for quick testing."""
 
     name = "covid-pango-lineages-sample"
     include_in_default_run = False

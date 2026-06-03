@@ -8,7 +8,7 @@ DATA_URL = "https://viralzone.expasy.org/resources/RSV/F_RSV_human.txt"
 
 # Regex for row parsing. The file is a TSV file, but sometimes also uses spaces.
 # Columns 1 (A/B) and 2 (mutation) never contain spaces; column 3 (comment) may.
-_ROW_RE = re.compile(r"^\s*(\S)\s+(\S+)\s+(.+)")
+_ROW_RE = re.compile(r"^\s*([AB])\s+(\S+)\s+(.+)")
 
 
 def _fetch_rows() -> list[tuple[str, list[str], str, str]]:
