@@ -1,9 +1,14 @@
+import re
 import requests
 
 from models import Collection, Variant
 from sources import Source
 
 DATA_URL = "https://viralzone.expasy.org/resources/RSV/F_RSV_human.txt"
+
+# Regex for row parsing. The file is a TSV file, but sometimes also uses spaces.
+# Columns 1 (A/B) and 2 (mutation) never contain spaces; column 3 (comment) may.
+_ROW_RE = re.compile(r"^\s*(\S)\s+(\S+)\s+(.+)")
 
 
 def _fetch_rows() -> list[tuple[str, list[str], str, str]]:
@@ -16,10 +21,10 @@ def _parse_rows(text: str) -> list[tuple[str, list[str], str, str]]:
     """Parse ViralZone RSV resistance text into (rsv_type, aa_mutations, antibody, resistance_type) tuples."""
     rows = []
     for line in text.splitlines():
-        tokens = [t.strip() for t in line.split("\t") if t.strip()]
-        if len(tokens) < 3 or tokens[0] not in ("A", "B"):
+        m = _ROW_RE.match(line)
+        if not m:
             continue
-        rsv_type, aa_str, comment = tokens[0], tokens[1], tokens[2]
+        rsv_type, aa_str, comment = m.group(1), m.group(2), m.group(3).strip()
         aa_mutations = [f"F:{part}" for part in aa_str.split("+")]
         if "Nirsevimab" in comment:
             antibody = "Nirsevimab"

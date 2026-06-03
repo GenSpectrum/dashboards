@@ -12,7 +12,7 @@ SAMPLE_TEXT = (
     "Type\tAA\t\tComment\n"
     "\n"
     "A\tN67I+N208Y\tNirsevimab Resistance\n"
-    "A\tK68E\t\tNirsevimab Partial resistance\t\t\n"
+    "A    K68E    Nirsevimab Partial resistance\t\t\n"
     "A\tK272M\t\tPalivizumab Resistance\n"
     "B\tI64T\t\tNirsevimab Resistance\t\t\n"
     "B\tK65Q\t\tNirsevimab Partial resistance\n"
@@ -40,6 +40,11 @@ def test_parse_rows_partial_resistance():
 
 def test_parse_rows_palivizumab():
     rows = _parse_rows("A\tK272M\t\tPalivizumab Resistance")
+    assert rows[0][2] == "Palivizumab"
+
+
+def test_parse_rows_with_spaces():
+    rows = _parse_rows("A   K272M    Palivizumab Resistance")
     assert rows[0][2] == "Palivizumab"
 
 
