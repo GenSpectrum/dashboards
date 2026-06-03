@@ -17,12 +17,14 @@ export function CollectionCombobox({
     const [inputFilter, setInputFilter] = useState(() => value?.name ?? '');
     const [inputIsInvalid, setInputIsInvalid] = useState(false);
 
+    const sortedCollections = useMemo(
+        () => [...collections].sort((a, b) => a.name.localeCompare(b.name)),
+        [collections],
+    );
+
     const filteredCollections = useMemo(
-        () =>
-            collections
-                .filter((c) => c.name.toLowerCase().includes(inputFilter.toLowerCase()))
-                .sort((a, b) => a.name.localeCompare(b.name)),
-        [collections, inputFilter],
+        () => sortedCollections.filter((c) => c.name.toLowerCase().includes(inputFilter.toLowerCase())),
+        [sortedCollections, inputFilter],
     );
 
     const buttonRef = useRef<HTMLButtonElement>(null);
