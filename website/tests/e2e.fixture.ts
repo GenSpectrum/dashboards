@@ -6,6 +6,7 @@ import { CompareVariantsPage } from './CompareVariantsPage.ts';
 import { LandingPage } from './LandingPage.ts';
 import { SequencingEffortsPage } from './SequencingEffortsPage.ts';
 import { SingleVariantPage } from './SingleVariantPage.ts';
+import { WasapPage } from './WasapPage.ts';
 import { ApiKeyPage } from './api-key/ApiKeyPage.ts';
 import { CollectionDetailPage } from './collections/CollectionDetailPage.ts';
 import { CollectionFormPage } from './collections/CollectionFormPage.ts';
@@ -20,6 +21,7 @@ type E2EFixture = {
     compareSideBySidePage: CompareSideBySidePage;
     singleVariantPage: SingleVariantPage;
     landingPage: LandingPage;
+    wasapPage: WasapPage;
     collectionDetailPage: CollectionDetailPage;
     collectionFormPage: CollectionFormPage;
     authenticatedPage: Page;
@@ -45,6 +47,9 @@ export const test = base.extend<E2EFixture>({
     },
     landingPage: async ({ page }, use) => {
         await use(new LandingPage(page));
+    },
+    wasapPage: async ({ page }, use) => {
+        await use(new WasapPage(page));
     },
     collectionDetailPage: async ({ page }, use) => {
         await use(new CollectionDetailPage(page));
