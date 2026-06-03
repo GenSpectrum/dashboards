@@ -144,8 +144,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 break;
             case 'variant':
                 setSearchFromString(search, 'sequenceType', analysis.sequenceType);
+                setSearchFromString(search, 'signatureType', analysis.signatureType);
                 if (analysis.signatureType === 'predefined') {
-                    setSearchFromString(search, 'signatureType', 'predefined');
                     setSearchFromString(
                         search,
                         'collectionId',
