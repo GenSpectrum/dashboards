@@ -114,7 +114,7 @@ async function fetchVariantComputedModeData(
 }
 
 async function fetchVariantPredefinedModeData(analysis: WasapVariantFilter): Promise<WasapMutationsData> {
-    if (!analysis.collectionId) {
+    if (!analysis.collectionId === undefined) {
         throw new Error('No collection selected for predefined variant mode.');
     }
     const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
