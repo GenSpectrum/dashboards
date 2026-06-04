@@ -220,6 +220,7 @@ describe('WasapPageStateHandler', () => {
                 'granularity=week&' +
                 'analysisMode=variant&' +
                 'sequenceType=nucleotide&' +
+                'signatureType=computed&' +
                 'variant=BA.2*&' +
                 'minProportion=0.5&' +
                 'minCount=10&' +
