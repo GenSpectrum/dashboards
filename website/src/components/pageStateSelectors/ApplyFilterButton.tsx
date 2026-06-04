@@ -12,10 +12,12 @@ export function ApplyFilterButton<PageState extends object>({
     newPageState,
     setPageState,
     className = '',
+    disabled = false,
 }: WithClassName<{
     pageStateHandler: PageStateHandler<PageState>;
     newPageState: PageState;
     setPageState: Dispatch<SetStateAction<PageState>>;
+    disabled?: boolean;
 }>) {
     const url = pageStateHandler.toUrl(newPageState);
     const fullUrl = `${window.location.origin}${url}`;
@@ -25,18 +27,26 @@ export function ApplyFilterButton<PageState extends object>({
         setPageState(newPageState);
     };
 
-    return urlTooLong ? (
-        <>
-            <span role='button' className={`btn btn-primary btn-disabled ${className}`}>
-                Apply filters
-            </span>
-            <div className='alert alert-error mt-2'>
-                <span>
-                    The URL is too long ({fullUrl.length} characters, maximum {MAX_URL_LENGTH}). Please reduce the
-                    amount of data in the filters.
+    if (urlTooLong) {
+        return (
+            <>
+                <span role='button' className={`btn btn-primary btn-disabled ${className}`}>
+                    Apply filters
                 </span>
-            </div>
-        </>
+                <div className='alert alert-error mt-2'>
+                    <span>
+                        The URL is too long ({fullUrl.length} characters, maximum {MAX_URL_LENGTH}). Please reduce the
+                        amount of data in the filters.
+                    </span>
+                </div>
+            </>
+        );
+    }
+
+    return disabled ? (
+        <span role='button' className={`btn btn-primary btn-disabled ${className}`}>
+            Apply filters
+        </span>
     ) : (
         <button type='button' onClick={applyFilters} className={`btn btn-primary ${className}`}>
             Apply filters
