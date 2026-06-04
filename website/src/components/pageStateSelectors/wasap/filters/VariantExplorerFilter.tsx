@@ -167,7 +167,10 @@ function PredefinedSignature({
                     checked={pageState.newMutationsOnly ?? false}
                     onChange={(e) => setPageState({ ...pageState, newMutationsOnly: e.target.checked })}
                 />
-                <div className='tooltip tooltip-right inline' data-tip='Only show mutations that were not observed in the parent variant'>
+                <div
+                    className='tooltip tooltip-right inline'
+                    data-tip='Only show mutations that were not observed in the parent variant'
+                >
                     <label htmlFor='newMutationsOnly' className='cursor-pointer pl-2'>
                         Mutation not in parent
                     </label>
