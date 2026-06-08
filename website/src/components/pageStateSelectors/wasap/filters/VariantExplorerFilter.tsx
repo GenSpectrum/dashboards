@@ -1,4 +1,5 @@
 import { type UseQueryResult } from '@tanstack/react-query';
+import { useId } from 'react';
 
 import { Inset } from '../../../../styles/Inset';
 import { type CollectionSummary } from '../../../../types/Collection';
@@ -149,6 +150,7 @@ function PredefinedSignature({
 }) {
     const collections = predefinedVariantsQueryResult?.data ?? [];
     const selectedCollection = collections.find((c) => c.id === pageState.collectionId) ?? null;
+    const newMutationsCheckBoxId = useId();
 
     return (
         <Inset className='mt-4 p-2'>
@@ -163,7 +165,7 @@ function PredefinedSignature({
                 <input
                     className='accent-primary'
                     type='checkbox'
-                    id='newMutationsOnly'
+                    id={newMutationsCheckBoxId}
                     checked={pageState.newMutationsOnly ?? false}
                     onChange={(e) => setPageState({ ...pageState, newMutationsOnly: e.target.checked })}
                 />
@@ -171,7 +173,7 @@ function PredefinedSignature({
                     className='tooltip tooltip-right inline'
                     data-tip='Only show mutations that were not observed in the parent variant'
                 >
-                    <label htmlFor='newMutationsOnly' className='cursor-pointer pl-2'>
+                    <label htmlFor={newMutationsCheckBoxId} className='cursor-pointer pl-2'>
                         Mutation not in parent
                     </label>
                 </div>
