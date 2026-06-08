@@ -1,15 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { type FC } from 'react';
 
-import { CollectionInfo } from './components/CollectionInfo';
-import { NoDataHelperText } from './components/NoDataHelperText';
-import { VariantFetchInfo } from './components/VariantFetchInfo';
-import { WasapStats } from './components/WasapStats';
-import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
-import type { ResistanceData } from './resistanceData';
-import { useWasapPageData } from './useWasapPageData';
-import type { WasapPageConfig } from './wasapPageConfig';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
+import { getClientLogger } from '../../../clientLogger';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
@@ -20,6 +13,16 @@ import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { usePageState } from '../usePageState.ts';
+import { CollectionInfo } from './components/CollectionInfo';
+import { NoDataHelperText } from './components/NoDataHelperText';
+import { VariantFetchInfo } from './components/VariantFetchInfo';
+import { WasapStats } from './components/WasapStats';
+import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
+import type { ResistanceData } from './resistanceData';
+import { useWasapPageData } from './useWasapPageData';
+import type { WasapPageConfig } from './wasapPageConfig';
+
+const logger = getClientLogger('WasapPage');
 
 export type WasapPageProps = {
     config: WasapPageConfig;
@@ -37,7 +40,13 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
 
     const { mutationAnnotations, displayMutationsBySet } = resistanceData;
     // fetch which mutations should be analyzed
-    const { data, isPending, isError } = useWasapPageData(config, displayMutationsBySet, analysis);
+    const { data, isPending, isError, error } = useWasapPageData(config, displayMutationsBySet, analysis);
+
+    useEffect(() => {
+        if (error) {
+            logger.error(`Failed to fetch wasap page data: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }, [error]);
 
     const initialMeanProportionInterval = getInitialMeanProportionInterval(analysis);
 
@@ -77,7 +86,16 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                         />
                     </div>
                     {isError ? (
-                        <span>There was an error fetching the data to display.</span>
+                        analysis.mode === 'variant' &&
+                        analysis.signatureType === 'predefined' &&
+                        analysis.collectionId === undefined ? (
+                            <div className='rounded-md border-2 border-gray-100 p-4'>
+                                <h1 className='text-lg font-semibold'>No variant selected</h1>
+                                <p className='text-sm'>Please select a variant from the filter panel.</p>
+                            </div>
+                        ) : (
+                            <span>There was an error fetching the data to display.</span>
+                        )
                     ) : isPending ? (
                         <Loading />
                     ) : (
@@ -101,15 +119,17 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                             customColumns={data.customColumns}
                                         />
                                     )}
-                                    {analysis.mode === 'variant' && config.variantAnalysisModeEnabled && (
-                                        <VariantFetchInfo
-                                            analysis={analysis}
-                                            clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
-                                            clinicalLapisLineageField={config.clinicalLapis.lineageField}
-                                            clinicalLapisDateField={config.clinicalLapis.dateField}
-                                            warningThreshold={config.clinicalSequenceCountWarningThreshold}
-                                        />
-                                    )}
+                                    {analysis.mode === 'variant' &&
+                                        analysis.signatureType === 'computed' &&
+                                        config.variantAnalysisModeEnabled && (
+                                            <VariantFetchInfo
+                                                analysis={analysis}
+                                                clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                                clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                                clinicalLapisDateField={config.clinicalLapis.dateField}
+                                                warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                            />
+                                        )}
                                 </>
                             ) : (
                                 <>

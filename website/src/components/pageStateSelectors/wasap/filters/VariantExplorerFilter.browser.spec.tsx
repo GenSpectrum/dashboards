@@ -1,23 +1,37 @@
-import { userEvent } from '@vitest/browser/context';
+import { type UseQueryResult } from '@tanstack/react-query';
+import { page, userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { VariantExplorerFilter } from './VariantExplorerFilter';
 import { DUMMY_LAPIS_URL, type LapisRouteMocker } from '../../../../../routeMocker';
 import { it } from '../../../../../test-extend';
+import type { CollectionSummary } from '../../../../types/Collection';
 import type { WasapVariantFilter } from '../../../views/wasap/wasapPageConfig';
 
 const DUMMY_LAPIS_URL_2 = 'http://lapis2.dummy';
 
+const DUMMY_COLLECTIONS: CollectionSummary[] = [
+    { id: 1, name: 'XBB.1.5', ownedBy: 1, organism: 'SARS-CoV-2', description: null, variantCount: 5 },
+    { id: 2, name: 'JN.1', ownedBy: 1, organism: 'SARS-CoV-2', description: null, variantCount: 3 },
+];
+const mockPredefinedQueryResult = { data: DUMMY_COLLECTIONS } as unknown as UseQueryResult<CollectionSummary[]>;
+
 describe('VariantExplorerFilter', () => {
     const defaultPageState: WasapVariantFilter = {
         mode: 'variant',
+        signatureType: 'computed',
         sequenceType: 'nucleotide',
         variant: undefined,
         minProportion: 0.05,
         minCount: 10,
         minJaccard: 0.5,
         timeFrame: 'all',
+    };
+
+    const predefinedPageState: WasapVariantFilter = {
+        ...defaultPageState,
+        signatureType: 'predefined',
     };
 
     it('calls setPageState when changing sequence type', async ({ routeMockers: { lapis } }) => {
@@ -96,6 +110,87 @@ describe('VariantExplorerFilter', () => {
         expect(mockSetPageState).toHaveBeenCalledWith({
             ...defaultPageState,
             minProportion: 0.1,
+        });
+    });
+
+    it('calls setPageState when switching to predefined signature type', async ({ routeMockers: { lapis } }) => {
+        setupLapisMocks(lapis);
+        const mockSetPageState = vi.fn();
+
+        render(
+            <gs-app lapis={DUMMY_LAPIS_URL}>
+                <VariantExplorerFilter
+                    pageState={defaultPageState}
+                    setPageState={mockSetPageState}
+                    clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
+                    clinicalSequenceLapisLineageField='pangoLineage'
+                    predefinedVariantsQueryResult={mockPredefinedQueryResult}
+                />
+            </gs-app>,
+        );
+
+        const variantSourceSelect = page.getByRole('combobox').first();
+        await variantSourceSelect.selectOptions('predefined');
+
+        expect(mockSetPageState).toHaveBeenCalledWith({
+            ...defaultPageState,
+            signatureType: 'predefined',
+        });
+    });
+
+    it('calls setPageState when selecting a predefined collection', async ({ routeMockers: { lapis } }) => {
+        setupLapisMocks(lapis);
+        const mockSetPageState = vi.fn();
+
+        const { getByRole } = render(
+            <gs-app lapis={DUMMY_LAPIS_URL}>
+                <VariantExplorerFilter
+                    pageState={predefinedPageState}
+                    setPageState={mockSetPageState}
+                    clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
+                    clinicalSequenceLapisLineageField='pangoLineage'
+                    predefinedVariantsQueryResult={mockPredefinedQueryResult}
+                />
+            </gs-app>,
+        );
+
+        const collectionInput = page.getByPlaceholder('Select variant');
+        await collectionInput.click();
+        await userEvent.type(collectionInput, 'XBB');
+
+        const option = await vi.waitFor(() => getByRole('option', { name: 'XBB.1.5', exact: true }));
+        await option.click();
+
+        await vi.waitFor(() => {
+            expect(mockSetPageState).toHaveBeenCalledWith({
+                ...predefinedPageState,
+                collectionId: 1,
+            });
+        });
+    });
+
+    it('calls setPageState when toggling "Mutation not in parent"', async ({ routeMockers: { lapis } }) => {
+        setupLapisMocks(lapis);
+        const mockSetPageState = vi.fn();
+
+        const { getByLabelText } = render(
+            <gs-app lapis={DUMMY_LAPIS_URL}>
+                <VariantExplorerFilter
+                    pageState={predefinedPageState}
+                    setPageState={mockSetPageState}
+                    clinicalSequenceLapisBaseUrl={DUMMY_LAPIS_URL_2}
+                    clinicalSequenceLapisLineageField='pangoLineage'
+                    predefinedVariantsQueryResult={mockPredefinedQueryResult}
+                />
+            </gs-app>,
+        );
+
+        const checkbox = getByLabelText('Mutation not in parent');
+        await checkbox.click();
+
+        expect(mockSetPageState).toHaveBeenCalledWith({
+            ...predefinedPageState,
+            newMutationsOnly: true,
         });
     });
 });

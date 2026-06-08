@@ -15,6 +15,7 @@ export const wastewaterPathFragment = 'swiss-wastewater';
 
 export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPageConfig> = {
     [wastewaterOrganisms.covid]: {
+        internalName: wastewaterOrganisms.covid,
         name: 'SARS-CoV-2',
         path: `/${wastewaterPathFragment}/covid`,
         description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
@@ -56,6 +57,11 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
+        predefinedVariantsSource: {
+            collectionsUserId: 1,
+            collectionsTag: '#pango-lineage',
+            variantSourceLabel: 'Nextclade',
+        },
         clinicalLapis: {
             lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
             dateField: 'date',
@@ -76,12 +82,14 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
             variant: {
                 mode: 'variant',
+                signatureType: 'computed',
                 sequenceType: 'nucleotide',
                 variant: 'XFG*',
                 minProportion: 0.8,
                 minCount: 15,
                 minJaccard: 0.75,
                 timeFrame: VARIANT_TIME_FRAME.all,
+                collectionId: 4961,
             },
             resistance: {
                 mode: 'resistance',
@@ -100,6 +108,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         },
     },
     [wastewaterOrganisms.rsvA]: {
+        internalName: wastewaterOrganisms.rsvA,
         name: 'RSV-A',
         path: `/${wastewaterPathFragment}/rsv-a`,
         description: 'Analyze RSV-A data that was collected by the WISE project.',
@@ -131,6 +140,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
             variant: {
                 mode: 'variant',
+                signatureType: 'computed',
                 sequenceType: 'nucleotide',
                 variant: 'A.D.1*',
                 minProportion: 0.8,
@@ -141,6 +151,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         },
     },
     [wastewaterOrganisms.rsvB]: {
+        internalName: wastewaterOrganisms.rsvB,
         name: 'RSV-B',
         path: `/${wastewaterPathFragment}/rsv-b`,
         description: 'Analyze RSV-B data that was collected by the WISE project.',
@@ -172,6 +183,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
             },
             variant: {
                 mode: 'variant',
+                signatureType: 'computed',
                 sequenceType: 'nucleotide',
                 variant: 'B.D.E.1*',
                 minProportion: 0.8,

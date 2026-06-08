@@ -33,6 +33,7 @@
         "cookie": "^1.1.1",
         "dayjs": "^1.11.21",
         "katex": "^0.17.0",
+        "downshift": "^9.3.3",
         "patch-package": "^8.0.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.7",
