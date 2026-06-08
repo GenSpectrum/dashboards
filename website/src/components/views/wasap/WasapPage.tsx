@@ -86,7 +86,16 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                         />
                     </div>
                     {isError ? (
-                        <span>There was an error fetching the data to display.</span>
+                        analysis.mode === 'variant' &&
+                        analysis.signatureType === 'predefined' &&
+                        analysis.collectionId === undefined ? (
+                            <div className='rounded-md border-2 border-gray-100 p-4'>
+                                <h1 className='text-lg font-semibold'>No variant selected</h1>
+                                <p className='text-sm'>Please select a variant from the filter panel.</p>
+                            </div>
+                        ) : (
+                            <span>There was an error fetching the data to display.</span>
+                        )
                     ) : isPending ? (
                         <Loading />
                     ) : (
