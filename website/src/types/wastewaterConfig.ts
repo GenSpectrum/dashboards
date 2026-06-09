@@ -58,7 +58,7 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
         samplingDateField: 'samplingDate',
         locationNameField: 'locationName',
         predefinedVariantsSource: {
-            collectionsUserId: 1,
+            collectionsUserId: 3,
             collectionsTag: '#pango-lineage',
             variantSourceLabel: 'Nextclade',
         },
@@ -196,15 +196,23 @@ export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPage
 };
 
 function withResistanceCollectionOverrides(config: WasapPageConfig): WasapPageConfig {
-    if (!config.resistanceAnalysisModeEnabled) return config;
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const stagingIds: Record<string, number> = { '3CLpro': 4, 'RdRp': 5, 'Spike': 6 };
     return {
         ...config,
-        resistanceMutationCollections: config.resistanceMutationCollections.map((set) => ({
-            ...set,
-            collectionId: stagingIds[set.name] ?? set.collectionId,
-        })),
+        ...(config.resistanceAnalysisModeEnabled && {
+            resistanceMutationCollections: config.resistanceMutationCollections.map((set) => ({
+                ...set,
+                collectionId: stagingIds[set.name] ?? set.collectionId,
+            })),
+        }),
+        ...(config.variantAnalysisModeEnabled &&
+            config.predefinedVariantsSource !== undefined && {
+                predefinedVariantsSource: {
+                    ...config.predefinedVariantsSource,
+                    collectionsUserId: 1,
+                },
+            }),
     };
 }
 
