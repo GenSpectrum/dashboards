@@ -52,6 +52,7 @@ describe('buildResistanceData', () => {
                 fooBar: ['S:E484K', 'S:N501Y'],
             });
 
+            // uses the collection variant name as the mutation name
             expect(result.mutationAnnotations).toEqual([
                 {
                     name: 'fooBar:1',
@@ -113,6 +114,7 @@ describe('buildResistanceData', () => {
         it('creates one annotation for the whole collection with all mutations flattened', () => {
             const result = buildResistanceData([setConfig], [collection]);
 
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             expect(result.displayMutationsBySet).toEqual({
                 Nirsevimab: ['F:N67I', 'F:N208Y', 'F:K68N'],
             });
