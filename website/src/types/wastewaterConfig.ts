@@ -206,12 +206,13 @@ function withResistanceCollectionOverrides(config: WasapPageConfig): WasapPageCo
                 collectionId: stagingIds[set.name] ?? set.collectionId,
             })),
         }),
-        ...(config.variantAnalysisModeEnabled && config.predefinedVariantsSource !== undefined && {
-            predefinedVariantsSource: {
-                ...config.predefinedVariantsSource,
-                collectionsUserId: 1,
-            },
-        }),
+        ...(config.variantAnalysisModeEnabled &&
+            config.predefinedVariantsSource !== undefined && {
+                predefinedVariantsSource: {
+                    ...config.predefinedVariantsSource,
+                    collectionsUserId: 1,
+                },
+            }),
     };
 }
 
