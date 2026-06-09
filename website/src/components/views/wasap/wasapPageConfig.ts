@@ -10,6 +10,11 @@ export type WasapPageConfig = WasapPageConfigBase & AnalysisModeConfigs;
  */
 export type WasapPageConfigBase = {
     /**
+     * The internal identifier of the organism, i.e. 'covid'. Used as a key in maps and API parameters.
+     */
+    internalName: string;
+
+    /**
      * The name of the organism, i.e. 'Sars-CoV-2'
      */
     name: string;
@@ -70,6 +75,11 @@ type VariantAnalysisModeConfig =
       }
     | {
           variantAnalysisModeEnabled: true;
+          predefinedVariantsSource?: {
+              collectionsUserId: number;
+              collectionsTag: string;
+              variantSourceLabel?: string;
+          };
           clinicalLapis: {
               lapisBaseUrl: string;
               dateField: string;
@@ -195,14 +205,25 @@ export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
     }
 }
 
+/**
+ * The type of variant mutation signature. `predefined` is a pre-defined list pulled from online,
+ * `computed` computes the list of signature mutations for a variant based on user parameters.
+ */
+export type SignatureType = 'computed' | 'predefined';
+
 export type WasapVariantFilter = {
     mode: 'variant';
+    signatureType: SignatureType;
     sequenceType: SequenceType;
+    // computed signature fields
     variant?: string;
     minProportion: number;
     minCount: number;
     minJaccard: number;
     timeFrame: VariantTimeFrame;
+    // predefined signature fields
+    collectionId?: number;
+    newMutationsOnly?: boolean;
 };
 
 export type WasapResistanceFilter = {

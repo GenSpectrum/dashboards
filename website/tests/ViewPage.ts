@@ -2,6 +2,11 @@ import { expect, type Locator, type Page } from '@playwright/test';
 
 import { type Organism } from '../src/types/Organism.ts';
 
+export async function expectToSeeNoComponentErrors(page: Page) {
+    await expect(page.getByText('Error -', { exact: false })).not.toBeVisible();
+    await expect(page.getByText('Something went wrong', { exact: false })).not.toBeVisible();
+}
+
 export abstract class ViewPage {
     constructor(public readonly page: Page) {}
 
@@ -16,8 +21,7 @@ export abstract class ViewPage {
     }
 
     public async expectToSeeNoComponentErrors() {
-        await expect(this.page.getByText('Error -', { exact: false })).not.toBeVisible();
-        await expect(this.page.getByText('Something went wrong', { exact: false })).not.toBeVisible();
+        await expectToSeeNoComponentErrors(this.page);
     }
 
     public async selectDateRange(dateRangeOption: string) {

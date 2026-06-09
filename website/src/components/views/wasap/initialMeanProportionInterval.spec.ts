@@ -27,6 +27,7 @@ describe('getInitialMeanProportionInterval', () => {
     test('other analysis states initially show the full mean proportion range', () => {
         const analysis: WasapAnalysisFilter = {
             mode: 'variant',
+            signatureType: 'computed',
             sequenceType: 'nucleotide',
             variant: 'XFG*',
             minProportion: 0.8,

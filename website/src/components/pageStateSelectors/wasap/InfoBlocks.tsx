@@ -144,12 +144,12 @@ export function ExplorationModeInfo() {
                 </li>
                 <li>
                     <span className='font-semibold text-gray-900'>Variant Explorer:</span> track variant-specific
-                    mutations over time. Variant-specific mutations are computed based on user parameters and filtering
-                    clinical sequences from{' '}
+                    mutations over time. Variants can be defined in two ways: by selecting a predefined variant from a
+                    curated list, or by filtering clinical sequences from{' '}
                     <a className='link' href='https://cov-spectrum.org'>
                         CovSpectrum
-                    </a>
-                    .
+                    </a>{' '}
+                    based on user parameters.
                 </li>
                 <li>
                     <span className='font-semibold text-gray-900'>Untracked Mutations:</span> novel mutations not yet

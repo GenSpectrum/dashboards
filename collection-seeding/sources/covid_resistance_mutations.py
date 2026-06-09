@@ -2,7 +2,7 @@ from models import Collection, Variant
 from sources import Source
 
 
-class ResistanceMutationsSource(Source):
+class CovidResistanceMutationsSource(Source):
     """Source: SARS-CoV-2 antiviral resistance mutations (ported from seed.mjs).
 
     Three collections covering 3CLpro, RdRp, and Spike mAb resistance mutations

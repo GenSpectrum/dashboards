@@ -9,7 +9,7 @@ DATA_URL = (
 )
 
 
-class PangoLineagesSource(Source):
+class CovidPangoLineagesSource(Source):
     """Source: Pango lineage definitions from corneliusroemer/pango-sequences.
 
     Creates one collection per lineage, with nucleotide substitutions as variants.
@@ -82,8 +82,8 @@ class PangoLineagesSource(Source):
         }
 
 
-class PangoLineagesSampleSource(PangoLineagesSource):
-    """Same as PangoLineagesSource but limited to the first 10 lineages, for quick testing."""
+class CovidPangoLineagesSampleSource(CovidPangoLineagesSource):
+    """Same as CovidPangoLineagesSource but limited to the first 10 lineages, for quick testing."""
 
     name = "covid-pango-lineages-sample"
     include_in_default_run = False

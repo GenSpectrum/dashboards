@@ -12,6 +12,7 @@ import {
 } from '../../components/views/wasap/wasapPageConfig';
 
 const config: WasapPageConfig = {
+    internalName: 'covid',
     name: 'SARS-CoV-2',
     path: `/wastewater/covid`,
     description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
@@ -51,6 +52,7 @@ const config: WasapPageConfig = {
         },
         variant: {
             mode: 'variant',
+            signatureType: 'computed',
             sequenceType: 'nucleotide',
             variant: 'XFG*',
             minProportion: 0.8,
@@ -218,6 +220,7 @@ describe('WasapPageStateHandler', () => {
                 'granularity=week&' +
                 'analysisMode=variant&' +
                 'sequenceType=nucleotide&' +
+                'signatureType=computed&' +
                 'variant=BA.2*&' +
                 'minProportion=0.5&' +
                 'minCount=10&' +
@@ -266,6 +269,56 @@ describe('WasapPageStateHandler', () => {
             const analysis2 = filter2.analysis as WasapVariantFilter;
             expect(analysis2.minProportion).toBe(analysis1.minProportion);
             expect(analysis2.minJaccard).toBe(analysis1.minJaccard);
+        });
+
+        it('defaults signatureType to computed when absent from URL', () => {
+            const url = '/wastewater/covid?analysisMode=variant&';
+            const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            const analysis = filter.analysis as WasapVariantFilter;
+            expect(analysis.signatureType).toBe('computed');
+        });
+
+        it('parses and encodes predefined variant filter with collectionId (round-trip)', () => {
+            const url =
+                '/wastewater/covid?' +
+                'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'granularity=day&' +
+                'analysisMode=variant&' +
+                'sequenceType=nucleotide&' +
+                'signatureType=predefined&' +
+                'collectionId=42&';
+            const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            expect(filter.analysis.mode).toBe('variant');
+            const analysis = filter.analysis as WasapVariantFilter;
+            expect(analysis.signatureType).toBe('predefined');
+            expect(analysis.collectionId).toBe(42);
+            expect(analysis.newMutationsOnly).toBe(false);
+
+            const newUrl = handler.toUrl(filter);
+            expect(newUrl).toBe(url);
+        });
+
+        it('parses and encodes newMutationsOnly=true in predefined variant mode (round-trip)', () => {
+            const url =
+                '/wastewater/covid?' +
+                'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'granularity=day&' +
+                'analysisMode=variant&' +
+                'sequenceType=nucleotide&' +
+                'signatureType=predefined&' +
+                'collectionId=42&' +
+                'newMutationsOnly=true&';
+            const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            expect(filter.analysis.mode).toBe('variant');
+            const analysis = filter.analysis as WasapVariantFilter;
+            expect(analysis.signatureType).toBe('predefined');
+            expect(analysis.newMutationsOnly).toBe(true);
+
+            const newUrl = handler.toUrl(filter);
+            expect(newUrl).toBe(url);
         });
     });
 
