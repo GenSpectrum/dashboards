@@ -4,6 +4,11 @@ import type { ResistanceMutationCollectionConfig, WasapPageConfig } from './wasa
 import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
 
+/**
+ * Data about resistance mutations, used by the watewater dashboards.
+ * It contains mutation annotations which annotate relevant mutations as affecting vaccine resistance,
+ * as well as simply containing the mutations in a map to display them in the resistance mutation explorer.
+ */
 export type ResistanceData = {
     /** Flat list of mutation annotations for the genome viewer. */
     mutationAnnotations: MutationAnnotations;
@@ -11,6 +16,10 @@ export type ResistanceData = {
     displayMutationsBySet: Record<string, string[]>;
 };
 
+/**
+ * Given a wastewater dashboard config and backend service, fetch resistance mutation data.
+ * This is done by fetching relevant collections, and transforming the data into the shape we want here.
+ */
 export async function fetchResistanceData(
     config: WasapPageConfig,
     backendService: BackendService,
