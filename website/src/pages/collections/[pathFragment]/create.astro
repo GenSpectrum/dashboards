@@ -4,12 +4,12 @@ import { CollectionCreate } from '../../../components/collections/create/Collect
 import { getDashboardsConfig } from '../../../config';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
-import { allOrganisms, organismConfig } from '../../../types/Organism';
+import { organismConfig, organismFromPathFragment } from '../../../types/Organism';
 import { Page } from '../../../types/pages';
 
 const { pathFragment } = Astro.params;
 
-const organism = allOrganisms.find((o) => organismConfig[o].pathFragment === pathFragment);
+const organism = organismFromPathFragment(pathFragment);
 if (organism === undefined) {
     return Astro.redirect('/404');
 }

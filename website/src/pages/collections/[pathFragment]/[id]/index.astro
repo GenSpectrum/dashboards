@@ -6,7 +6,7 @@ import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { getInstanceLogger } from '../../../../logger.ts';
 import type { Collection } from '../../../../types/Collection.ts';
-import { allOrganisms, organismConfig } from '../../../../types/Organism';
+import { organismConfig, organismFromPathFragment } from '../../../../types/Organism';
 import { Page } from '../../../../types/pages';
 import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
 
@@ -14,7 +14,7 @@ const logger = getInstanceLogger('CollectionDetailPage');
 
 const { pathFragment, id } = Astro.params;
 
-const organism = allOrganisms.find((o) => organismConfig[o].pathFragment === pathFragment);
+const organism = organismFromPathFragment(pathFragment);
 if (organism === undefined) {
     return Astro.redirect('/404');
 }
