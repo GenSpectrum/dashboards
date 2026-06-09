@@ -4,17 +4,17 @@ import { CollectionCreate } from '../../../components/collections/create/Collect
 import { getDashboardsConfig } from '../../../config';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
-import { organismConfig, organismSchema } from '../../../types/Organism';
+import { allOrganisms, organismConfig } from '../../../types/Organism';
 import { Page } from '../../../types/pages';
 
-const { organism } = Astro.params;
+const { pathFragment } = Astro.params;
 
-const parsedOrganism = organismSchema.safeParse(organism);
-if (!parsedOrganism.success) {
+const organism = allOrganisms.find((o) => organismConfig[o].pathFragment === pathFragment);
+if (organism === undefined) {
     return Astro.redirect('/404');
 }
 
-const orgConfig = organismConfig[parsedOrganism.data];
+const orgConfig = organismConfig[organism];
 const config = getDashboardsConfig();
 ---
 
@@ -23,13 +23,13 @@ const config = getDashboardsConfig();
     breadcrumbs={[
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
-        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: 'New collection', href: Page.createCollection(parsedOrganism.data) },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(organism) },
+        { name: 'New collection', href: Page.createCollection(organism) },
     ]}
 >
     {
         Astro.locals.user !== undefined ? (
-            <CollectionCreate client:only='react' organism={parsedOrganism.data} config={config} />
+            <CollectionCreate client:only='react' organism={organism} config={config} />
         ) : (
             <NotLoggedIn />
         )

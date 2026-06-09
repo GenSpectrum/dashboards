@@ -6,16 +6,16 @@ import { getDashboardsConfig, getBackendHost } from '../../../../config';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { getInstanceLogger } from '../../../../logger.ts';
-import { organismConfig, organismSchema } from '../../../../types/Organism';
+import { allOrganisms, organismConfig } from '../../../../types/Organism';
 import { Page } from '../../../../types/pages';
 import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
 
 const logger = getInstanceLogger('CollectionEditPage');
 
-const { organism, id } = Astro.params;
+const { pathFragment, id } = Astro.params;
 
-const parsedOrganism = organismSchema.safeParse(organism);
-if (!parsedOrganism.success) {
+const organism = allOrganisms.find((o) => organismConfig[o].pathFragment === pathFragment);
+if (organism === undefined) {
     return Astro.redirect('/404');
 }
 
@@ -23,7 +23,7 @@ if (id === undefined) {
     return Astro.redirect('/404');
 }
 
-const orgConfig = organismConfig[parsedOrganism.data];
+const orgConfig = organismConfig[organism];
 const currentUserId = Astro.locals.gsUserId;
 const config = getDashboardsConfig();
 
@@ -51,16 +51,16 @@ const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` :
     breadcrumbs={[
         ...defaultBreadcrumbs,
         { name: 'Collections', href: Page.collectionsOverview },
-        { name: orgConfig.label, href: Page.collectionsForOrganism(parsedOrganism.data) },
-        { name: collectionTitle, href: Page.viewCollection(parsedOrganism.data, id) },
-        { name: 'Edit', href: Page.editCollection(parsedOrganism.data, id) },
+        { name: orgConfig.label, href: Page.collectionsForOrganism(organism) },
+        { name: collectionTitle, href: Page.viewCollection(organism, id) },
+        { name: 'Edit', href: Page.editCollection(organism, id) },
     ]}
 >
     {
         currentUserId !== undefined ? (
             <CollectionEdit
                 client:only='react'
-                organism={parsedOrganism.data}
+                organism={organism}
                 id={id}
                 config={config}
                 collection={
