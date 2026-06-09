@@ -34,24 +34,30 @@ export function buildResistanceData(
     const displayMutationsBySet: Record<string, string[]> = {};
 
     setConfigs.forEach((setConfig, i) => {
-        const entries = collections[i].variants.flatMap((variant) => {
-            if (variant.type !== 'filterObject') return [];
-            return (variant.filterObject.aminoAcidMutations ?? []).map((aminoAcidMutation) => ({
-                displayName: variant.name,
-                aminoAcidMutation,
-            }));
-        });
+        const filterVariants = collections[i].variants.filter((v) => v.type === 'filterObject');
+        const allMutations = filterVariants.flatMap((v) => v.filterObject.aminoAcidMutations ?? []);
 
-        displayMutationsBySet[setConfig.name] = entries.map((e) => e.aminoAcidMutation);
+        displayMutationsBySet[setConfig.name] = allMutations;
 
-        mutationAnnotations.push(
-            ...entries.map(({ displayName, aminoAcidMutation }) => ({
-                name: displayName,
+        if (setConfig.annotationMode === 'per-variant') {
+            filterVariants.forEach((variant) => {
+                (variant.filterObject.aminoAcidMutations ?? []).forEach((aminoAcidMutation) => {
+                    mutationAnnotations.push({
+                        name: variant.name,
+                        symbol: setConfig.annotationSymbol,
+                        description: setConfig.description,
+                        aminoAcidMutations: [aminoAcidMutation],
+                    });
+                });
+            });
+        } else {
+            mutationAnnotations.push({
+                name: setConfig.name,
                 symbol: setConfig.annotationSymbol,
                 description: setConfig.description,
-                aminoAcidMutations: [aminoAcidMutation],
-            })),
-        );
+                aminoAcidMutations: allMutations,
+            });
+        }
     });
 
     return { mutationAnnotations, displayMutationsBySet };

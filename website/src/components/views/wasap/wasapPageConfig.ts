@@ -266,4 +266,10 @@ export type ResistanceMutationCollectionConfig = {
     name: string;
     description: string;
     annotationSymbol: string;
+    /**
+     * Controls how mutation annotations are built from this collection's variants.
+     * - 'per-variant': one annotation entry per mutation (COVID style, name = variant name)
+     * - 'per-collection': one annotation entry for the whole collection, all mutations flattened
+     */
+    annotationMode: 'per-variant' | 'per-collection';
 };

@@ -37,6 +37,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: 4,
                     name: '3CLpro',
                     annotationSymbol: 'c',
+                    annotationMode: 'per-variant',
                     description:
                         'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
@@ -44,6 +45,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: 5,
                     name: 'RdRp',
                     annotationSymbol: 'r',
+                    annotationMode: 'per-variant',
                     description:
                         'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
@@ -51,6 +53,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: 6,
                     name: 'Spike',
                     annotationSymbol: 's',
+                    annotationMode: 'per-variant',
                     description:
                         'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
@@ -121,6 +124,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             },
             manualAnalysisModeEnabled: true,
             variantAnalysisModeEnabled: true,
+            resistanceAnalysisModeEnabled: true,
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsva',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
@@ -133,6 +137,24 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
             defaultLocationName: 'Geneva',
             clinicalSequenceCountWarningThreshold: 50,
+            resistanceMutationCollections: [
+                {
+                    collectionId: isStaging ? 5001 : 4983,
+                    name: 'Nirsevimab',
+                    annotationSymbol: 'n',
+                    annotationMode: 'per-collection',
+                    description:
+                        'RSV-A F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
+                },
+                {
+                    collectionId: isStaging ? 5002 : 4984,
+                    name: 'Palivizumab',
+                    annotationSymbol: 'p',
+                    annotationMode: 'per-collection',
+                    description:
+                        'RSV-A F protein resistance mutations against Palivizumab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
+                },
+            ] satisfies ResistanceMutationCollectionConfig[],
             filterDefaults: {
                 manual: {
                     mode: 'manual',
@@ -149,6 +171,11 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
                 },
+                resistance: {
+                    mode: 'resistance',
+                    sequenceType: 'amino acid',
+                    resistanceSet: 'Nirsevimab',
+                },
             },
         },
         [wastewaterOrganisms.rsvB]: {
@@ -164,6 +191,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             },
             manualAnalysisModeEnabled: true,
             variantAnalysisModeEnabled: true,
+            resistanceAnalysisModeEnabled: true,
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsvb',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
@@ -176,6 +204,24 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
             defaultLocationName: 'Zurich',
             clinicalSequenceCountWarningThreshold: 50,
+            resistanceMutationCollections: [
+                {
+                    collectionId: isStaging ? 5003 : 4985,
+                    name: 'Nirsevimab',
+                    annotationSymbol: 'n',
+                    annotationMode: 'per-collection',
+                    description:
+                        'RSV-B F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
+                },
+                {
+                    collectionId: isStaging ? 5004 : 4986,
+                    name: 'Palivizumab',
+                    annotationSymbol: 'p',
+                    annotationMode: 'per-collection',
+                    description:
+                        'RSV-B F protein resistance mutations against Palivizumab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
+                },
+            ] satisfies ResistanceMutationCollectionConfig[],
             filterDefaults: {
                 manual: {
                     mode: 'manual',
@@ -191,6 +237,11 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
+                },
+                resistance: {
+                    mode: 'resistance',
+                    sequenceType: 'amino acid',
+                    resistanceSet: 'Nirsevimab',
                 },
             },
         },

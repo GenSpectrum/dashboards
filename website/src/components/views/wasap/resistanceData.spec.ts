@@ -8,6 +8,7 @@ const setConfig = {
     name: 'fooBar',
     description: 'Main protease inhibitors',
     annotationSymbol: 'R',
+    annotationMode: 'per-variant' as const,
 };
 
 const collection = {
@@ -71,5 +72,64 @@ describe('buildResistanceData', () => {
 
         expect(result.mutationAnnotations).toEqual([]);
         expect(result.displayMutationsBySet).toEqual({});
+    });
+});
+
+describe('buildResistanceData per-collection mode', () => {
+    const perCollectionSetConfig = {
+        collectionId: 2,
+        name: 'Nirsevimab',
+        description: 'RSV resistance mutations against Nirsevimab',
+        annotationSymbol: 'n',
+        annotationMode: 'per-collection' as const,
+    };
+
+    const perCollectionCollection = {
+        id: 2,
+        name: 'Nirsevimab resistance mutations',
+        ownedBy: 'test',
+        organism: 'rsvA',
+        description: null,
+        variants: [
+            {
+                type: 'filterObject' as const,
+                name: 'Resistance',
+                filterObject: { aminoAcidMutations: ['F:N67I', 'F:N208Y'] },
+            },
+            {
+                type: 'filterObject' as const,
+                name: 'Partial resistance',
+                filterObject: { aminoAcidMutations: ['F:K68N'] },
+            },
+            {
+                type: 'query' as const,
+                name: 'ignored query variant',
+                countQuery: 'some query',
+            },
+        ],
+    } as unknown as Collection;
+
+    it('produces one annotation entry for the whole collection with all mutations flattened', () => {
+        const result = buildResistanceData([perCollectionSetConfig], [perCollectionCollection]);
+
+        expect(result.displayMutationsBySet).toEqual({
+            Nirsevimab: ['F:N67I', 'F:N208Y', 'F:K68N'],
+        });
+
+        expect(result.mutationAnnotations).toEqual([
+            {
+                name: 'Nirsevimab',
+                symbol: 'n',
+                description: 'RSV resistance mutations against Nirsevimab',
+                aminoAcidMutations: ['F:N67I', 'F:N208Y', 'F:K68N'],
+            },
+        ]);
+    });
+
+    it('skips query variants', () => {
+        const result = buildResistanceData([perCollectionSetConfig], [perCollectionCollection]);
+
+        expect(result.mutationAnnotations).toHaveLength(1);
+        expect(result.mutationAnnotations[0].aminoAcidMutations).not.toContain('ignored query variant');
     });
 });
