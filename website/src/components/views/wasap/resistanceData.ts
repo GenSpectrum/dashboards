@@ -35,6 +35,10 @@ export async function fetchResistanceData(
     return buildResistanceData(config.resistanceMutationCollections, collections);
 }
 
+/**
+ * Takes a config and already fetched collection.
+ * They need to be in the correct order; collection i belongs to config i.
+ */
 export function buildResistanceData(
     setConfigs: ResistanceMutationCollectionConfig[],
     collections: Collection[],

@@ -114,8 +114,8 @@ describe('buildResistanceData', () => {
         it('creates one annotation for the whole collection with all mutations flattened', () => {
             const result = buildResistanceData([setConfig], [collection]);
 
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             expect(result.displayMutationsBySet).toEqual({
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Nirsevimab: ['F:N67I', 'F:N208Y', 'F:K68N'],
             });
 
