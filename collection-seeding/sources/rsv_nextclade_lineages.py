@@ -16,6 +16,158 @@ RSV_B_TREE_URL = (
 )
 
 
+class _RsvNextcladeLineagesBase(Source):
+    owned_tag = "#nextclade-lineage"
+    _tree_url: str
+    _organism_label: str
+
+    def get_collections(self) -> list[Collection]:
+        print(f"Fetching Nextclade tree from {self._tree_url} ...")
+        response = requests.get(self._tree_url, timeout=60)
+        response.raise_for_status()
+        tree_json = response.json()
+        collections = _build_collections(tree_json, self.organism, self._organism_label, self.owned_tag)
+        print(f"  Loaded {len(collections)} clade(s).")
+        return collections
+
+
+class RsvANextcladeLineagesSource(_RsvNextcladeLineagesBase):
+    name = "rsv-a-nextclade-lineages"
+    organism = "rsvA"
+    _tree_url = RSV_A_TREE_URL
+    _organism_label = "RSV-A"
+
+
+class RsvBNextcladeLineagesSource(_RsvNextcladeLineagesBase):
+    name = "rsv-b-nextclade-lineages"
+    organism = "rsvB"
+    _tree_url = RSV_B_TREE_URL
+    _organism_label = "RSV-B"
+
+
+def _build_collections(tree_json: dict, organism: str, organism_label: str, owned_tag: str) -> list[Collection]:
+    """Build one Collection per clade in the Nextclade reference tree.
+
+    Each collection gets four variants, mirroring the shape used for COVID Pango lineages:
+
+      - "Nucleotide substitutions"      — full set from reference root (for searching
+                                          sequences that carry all defining substitutions
+                                          of this clade)
+      - "Amino acid substitutions"      — full AA set from reference root
+      - "New nucleotide substitutions"  — branch-only mutations (what is newly introduced
+                                          in this clade step relative to its parent clade)
+      - "New amino acid substitutions"  — branch-only AA mutations
+    """
+    collections = []
+    for clade_name, parent_clade, branch_nuc, branch_aa, full_nuc, full_aa in _extract_clades(tree_json["tree"]):
+        parent_str = parent_clade or "—"
+        variants: list[Variant] = [
+            {
+                "type": "filterObject",
+                "name": "Nucleotide substitutions",
+                "filterObject": {"nucleotideMutations": full_nuc},
+            },
+            {
+                "type": "filterObject",
+                "name": "Amino acid substitutions",
+                "filterObject": {"aminoAcidMutations": full_aa},
+            },
+            {
+                "type": "filterObject",
+                "name": "New nucleotide substitutions",
+                "filterObject": {"nucleotideMutations": branch_nuc},
+            },
+            {
+                "type": "filterObject",
+                "name": "New amino acid substitutions",
+                "filterObject": {"aminoAcidMutations": branch_aa},
+            },
+        ]
+        description = (
+            f"{organism_label} Nextclade clade {clade_name}. "
+            f"Parent clade: {parent_str}. "
+            f"{owned_tag}"
+        )
+        collections.append({
+            "name": clade_name,
+            "organism": organism,
+            "description": description,
+            "variants": variants,
+        })
+    return collections
+
+
+def _extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
+    """Walk the Nextclade reference tree recursively, yielding one tuple per introduced clade.
+
+    Each yield is a 6-tuple:
+        (clade_name, parent_clade, branch_nuc, branch_aa, full_nuc, full_aa)
+
+      - clade_name:   the clade label from branch_attrs.labels.clade, e.g. "A.D.3.5"
+      - parent_clade: node_attrs.clade_membership of the parent node (None for the root clade)
+      - branch_nuc:   nucleotide mutations on this branch only (relative to parent node),
+                      e.g. ["C982T", "G108A"]
+      - branch_aa:    AA mutations on this branch only, formatted as GENE:MUT,
+                      e.g. ["F:T8A", "G:T4N"]
+      - full_nuc:     all nucleotide mutations from the reference root down to and including
+                      this clade's branch, expressed relative to the root reference sequence,
+                      e.g. ["A982T", "G108A", "C241T"]
+      - full_aa:      all AA mutations from root to this clade, expressed relative to root,
+                      e.g. ["F:T8G", "G:T4N"]
+
+    A clade is introduced at any node where branch_attrs.labels.clade is set.
+
+    The root reference sequence (e.g. EPI_ISL_412866 for RSV-A) defines position zero
+    for all accumulated mutations — i.e. full_nuc and full_aa give the complete set of
+    substitutions needed to go from the reference to this clade.
+
+    accum_nuc / accum_aa carry the accumulated state downward. Because _apply_*_mutations
+    always returns a new dict rather than mutating in place, each recursive call receives
+    its own independent copy of the state — sibling subtrees cannot interfere with each other.
+    """
+    if accum_nuc is None:
+        accum_nuc = {}
+    if accum_aa is None:
+        accum_aa = {}
+
+    labels = node.get("branch_attrs", {}).get("labels", {})
+    muts = node.get("branch_attrs", {}).get("mutations", {})
+    node_clade = node.get("node_attrs", {}).get("clade_membership", {}).get("value")
+
+    # Separate nucleotide mutations (key "nuc") from amino acid mutations (all other keys
+    # are gene names such as "F", "G", "L", etc.).
+    branch_nuc = muts.get("nuc", [])
+    branch_aa_by_gene = {k: v for k, v in muts.items() if k != "nuc"}
+
+    # Fold this branch's mutations into the running accumulated state.
+    # The returned dicts are new objects — the parent's dicts are untouched.
+    accum_nuc = _apply_nuc_mutations(branch_nuc, accum_nuc)
+    accum_aa = _apply_aa_mutations(branch_aa_by_gene, accum_aa)
+
+    if "clade" in labels:
+        # Flatten branch-level AA mutations into GENE:MUT strings for the "new" variant.
+        branch_aa_flat = [
+            f"{gene}:{m}"
+            for gene, gene_muts in branch_aa_by_gene.items()
+            for m in gene_muts
+        ]
+        yield (
+            labels["clade"],
+            parent_clade,
+            branch_nuc,
+            branch_aa_flat,
+            _format_accum_nuc(accum_nuc),
+            _format_accum_aa(accum_aa),
+        )
+
+    # Pass the current node's clade_membership as the parent context for children.
+    # If a node has no clade_membership (e.g. the synthetic root), fall back to whatever
+    # was passed in from above.
+    next_parent = node_clade or parent_clade
+    for child in node.get("children", []):
+        yield from _extract_clades(child, next_parent, accum_nuc, accum_aa)
+
+
 def _apply_nuc_mutations(
     branch_muts: list[str],
     accum: dict[str, tuple[str, str]],
@@ -116,155 +268,3 @@ def _format_accum_aa(accum: dict[tuple[str, str], tuple[str, str]]) -> list[str]
     has T and this clade (from root) has G.
     """
     return [f"{gene}:{ref}{pos}{cur}" for (gene, pos), (ref, cur) in accum.items()]
-
-
-def _extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
-    """Walk the Nextclade reference tree recursively, yielding one tuple per introduced clade.
-
-    Each yield is a 6-tuple:
-        (clade_name, parent_clade, branch_nuc, branch_aa, full_nuc, full_aa)
-
-      - clade_name:   the clade label from branch_attrs.labels.clade, e.g. "A.D.3.5"
-      - parent_clade: node_attrs.clade_membership of the parent node (None for the root clade)
-      - branch_nuc:   nucleotide mutations on this branch only (relative to parent node),
-                      e.g. ["C982T", "G108A"]
-      - branch_aa:    AA mutations on this branch only, formatted as GENE:MUT,
-                      e.g. ["F:T8A", "G:T4N"]
-      - full_nuc:     all nucleotide mutations from the reference root down to and including
-                      this clade's branch, expressed relative to the root reference sequence,
-                      e.g. ["A982T", "G108A", "C241T"]
-      - full_aa:      all AA mutations from root to this clade, expressed relative to root,
-                      e.g. ["F:T8G", "G:T4N"]
-
-    A clade is introduced at any node where branch_attrs.labels.clade is set.
-
-    The root reference sequence (e.g. EPI_ISL_412866 for RSV-A) defines position zero
-    for all accumulated mutations — i.e. full_nuc and full_aa give the complete set of
-    substitutions needed to go from the reference to this clade.
-
-    accum_nuc / accum_aa carry the accumulated state downward. Because _apply_*_mutations
-    always returns a new dict rather than mutating in place, each recursive call receives
-    its own independent copy of the state — sibling subtrees cannot interfere with each other.
-    """
-    if accum_nuc is None:
-        accum_nuc = {}
-    if accum_aa is None:
-        accum_aa = {}
-
-    labels = node.get("branch_attrs", {}).get("labels", {})
-    muts = node.get("branch_attrs", {}).get("mutations", {})
-    node_clade = node.get("node_attrs", {}).get("clade_membership", {}).get("value")
-
-    # Separate nucleotide mutations (key "nuc") from amino acid mutations (all other keys
-    # are gene names such as "F", "G", "L", etc.).
-    branch_nuc = muts.get("nuc", [])
-    branch_aa_by_gene = {k: v for k, v in muts.items() if k != "nuc"}
-
-    # Fold this branch's mutations into the running accumulated state.
-    # The returned dicts are new objects — the parent's dicts are untouched.
-    accum_nuc = _apply_nuc_mutations(branch_nuc, accum_nuc)
-    accum_aa = _apply_aa_mutations(branch_aa_by_gene, accum_aa)
-
-    if "clade" in labels:
-        # Flatten branch-level AA mutations into GENE:MUT strings for the "new" variant.
-        branch_aa_flat = [
-            f"{gene}:{m}"
-            for gene, gene_muts in branch_aa_by_gene.items()
-            for m in gene_muts
-        ]
-        yield (
-            labels["clade"],
-            parent_clade,
-            branch_nuc,
-            branch_aa_flat,
-            _format_accum_nuc(accum_nuc),
-            _format_accum_aa(accum_aa),
-        )
-
-    # Pass the current node's clade_membership as the parent context for children.
-    # If a node has no clade_membership (e.g. the synthetic root), fall back to whatever
-    # was passed in from above.
-    next_parent = node_clade or parent_clade
-    for child in node.get("children", []):
-        yield from _extract_clades(child, next_parent, accum_nuc, accum_aa)
-
-
-def _build_collections(tree_json: dict, organism: str, organism_label: str, owned_tag: str) -> list[Collection]:
-    """Build one Collection per clade in the Nextclade reference tree.
-
-    Each collection gets four variants, mirroring the shape used for COVID Pango lineages:
-
-      - "Nucleotide substitutions"      — full set from reference root (for searching
-                                          sequences that carry all defining substitutions
-                                          of this clade)
-      - "Amino acid substitutions"      — full AA set from reference root
-      - "New nucleotide substitutions"  — branch-only mutations (what is newly introduced
-                                          in this clade step relative to its parent clade)
-      - "New amino acid substitutions"  — branch-only AA mutations
-    """
-    collections = []
-    for clade_name, parent_clade, branch_nuc, branch_aa, full_nuc, full_aa in _extract_clades(tree_json["tree"]):
-        parent_str = parent_clade or "—"
-        variants: list[Variant] = [
-            {
-                "type": "filterObject",
-                "name": "Nucleotide substitutions",
-                "filterObject": {"nucleotideMutations": full_nuc},
-            },
-            {
-                "type": "filterObject",
-                "name": "Amino acid substitutions",
-                "filterObject": {"aminoAcidMutations": full_aa},
-            },
-            {
-                "type": "filterObject",
-                "name": "New nucleotide substitutions",
-                "filterObject": {"nucleotideMutations": branch_nuc},
-            },
-            {
-                "type": "filterObject",
-                "name": "New amino acid substitutions",
-                "filterObject": {"aminoAcidMutations": branch_aa},
-            },
-        ]
-        description = (
-            f"{organism_label} Nextclade clade {clade_name}. "
-            f"Parent clade: {parent_str}. "
-            f"{owned_tag}"
-        )
-        collections.append({
-            "name": clade_name,
-            "organism": organism,
-            "description": description,
-            "variants": variants,
-        })
-    return collections
-
-
-class _RsvNextcladeLineagesBase(Source):
-    owned_tag = "#nextclade-lineage"
-    _tree_url: str
-    _organism_label: str
-
-    def get_collections(self) -> list[Collection]:
-        print(f"Fetching Nextclade tree from {self._tree_url} ...")
-        response = requests.get(self._tree_url, timeout=60)
-        response.raise_for_status()
-        tree_json = response.json()
-        collections = _build_collections(tree_json, self.organism, self._organism_label, self.owned_tag)
-        print(f"  Loaded {len(collections)} clade(s).")
-        return collections
-
-
-class RsvANextcladeLineagesSource(_RsvNextcladeLineagesBase):
-    name = "rsv-a-nextclade-lineages"
-    organism = "rsvA"
-    _tree_url = RSV_A_TREE_URL
-    _organism_label = "RSV-A"
-
-
-class RsvBNextcladeLineagesSource(_RsvNextcladeLineagesBase):
-    name = "rsv-b-nextclade-lineages"
-    organism = "rsvB"
-    _tree_url = RSV_B_TREE_URL
-    _organism_label = "RSV-B"
