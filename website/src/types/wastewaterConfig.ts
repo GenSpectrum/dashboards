@@ -13,215 +13,192 @@ export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof w
 
 export const wastewaterPathFragment = 'swiss-wastewater';
 
-export const wastewaterOrganismConfigs: Record<WastewaterOrganismName, WasapPageConfig> = {
-    [wastewaterOrganisms.covid]: {
-        internalName: wastewaterOrganisms.covid,
-        name: 'SARS-CoV-2',
-        path: `/${wastewaterPathFragment}/covid`,
-        description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
-        linkTemplate: {
-            nucleotideMutation:
-                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
-            aminoAcidMutation:
-                'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
-        },
-        manualAnalysisModeEnabled: true,
-        variantAnalysisModeEnabled: true,
-        resistanceAnalysisModeEnabled: true,
-        untrackedAnalysisModeEnabled: true,
-        collectionAnalysisModeEnabled: true,
-        defaultAnalysisMode: 'resistance',
-        resistanceMutationCollections: [
-            {
-                collectionId: 4,
-                name: '3CLpro',
-                annotationSymbol: 'c',
-                description:
-                    'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-            },
-            {
-                collectionId: 5,
-                name: 'RdRp',
-                annotationSymbol: 'r',
-                description:
-                    'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-            },
-            {
-                collectionId: 6,
-                name: 'Spike',
-                annotationSymbol: 's',
-                description:
-                    'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-            },
-        ] satisfies ResistanceMutationCollectionConfig[],
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
-        samplingDateField: 'samplingDate',
-        locationNameField: 'locationName',
-        predefinedVariantsSource: {
-            collectionsUserId: 3,
-            collectionsTag: '#pango-lineage',
-            variantSourceLabel: 'Nextclade',
-        },
-        clinicalLapis: {
-            lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
-            dateField: 'date',
-            cladeField: 'nextstrainClade',
-            lineageField: 'nextcladePangoLineage',
-        },
-        browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
-        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-        collectionsApiBaseUrl: 'https://cov-spectrum.org/api/v2',
-        collectionTitleFilter: 'wastewater',
-        defaultLocationName: 'Zürich (ZH)',
-        clinicalSequenceCountWarningThreshold: 50,
-        filterDefaults: {
-            manual: {
-                mode: 'manual',
-                sequenceType: 'nucleotide',
-                mutations: undefined,
-            },
-            variant: {
-                mode: 'variant',
-                signatureType: 'computed',
-                sequenceType: 'nucleotide',
-                variant: 'XFG*',
-                minProportion: 0.8,
-                minCount: 15,
-                minJaccard: 0.75,
-                timeFrame: VARIANT_TIME_FRAME.all,
-                collectionId: 4961,
-            },
-            resistance: {
-                mode: 'resistance',
-                sequenceType: 'amino acid',
-                resistanceSet: 'Spike',
-            },
-            untracked: {
-                mode: 'untracked',
-                sequenceType: 'nucleotide',
-                excludeSet: 'predefined',
-            },
-            collection: {
-                mode: 'collection',
-                collectionId: 1,
-            },
-        },
-    },
-    [wastewaterOrganisms.rsvA]: {
-        internalName: wastewaterOrganisms.rsvA,
-        name: 'RSV-A',
-        path: `/${wastewaterPathFragment}/rsv-a`,
-        description: 'Analyze RSV-A data that was collected by the WISE project.',
-        linkTemplate: {
-            nucleotideMutation:
-                'https://genspectrum.org/rsv-a/single-variant?sampleCollectionDateRangeLower=Last+year&nucleotideMutations={{mutation}}',
-            aminoAcidMutation:
-                'https://genspectrum.org/rsv-a/single-variant?sampleCollectionDateRangeLower=Last+year&aminoAcidMutations={{mutation}}',
-        },
-        manualAnalysisModeEnabled: true,
-        variantAnalysisModeEnabled: true,
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsva',
-        samplingDateField: 'samplingDate',
-        locationNameField: 'locationName',
-        clinicalLapis: {
-            lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-a',
-            dateField: 'sampleCollectionDateRangeLower',
-            lineageField: 'lineage',
-        },
-        browseDataUrl: 'https://db.wasap.genspectrum.org/rsva/search',
-        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-        defaultLocationName: 'Geneva',
-        clinicalSequenceCountWarningThreshold: 50,
-        filterDefaults: {
-            manual: {
-                mode: 'manual',
-                sequenceType: 'nucleotide',
-                mutations: undefined,
-            },
-            variant: {
-                mode: 'variant',
-                signatureType: 'computed',
-                sequenceType: 'nucleotide',
-                variant: 'A.D.1*',
-                minProportion: 0.8,
-                minCount: 15,
-                minJaccard: 0.75,
-                timeFrame: VARIANT_TIME_FRAME.all,
-            },
-        },
-    },
-    [wastewaterOrganisms.rsvB]: {
-        internalName: wastewaterOrganisms.rsvB,
-        name: 'RSV-B',
-        path: `/${wastewaterPathFragment}/rsv-b`,
-        description: 'Analyze RSV-B data that was collected by the WISE project.',
-        linkTemplate: {
-            nucleotideMutation:
-                'https://genspectrum.org/rsv-b/single-variant?sampleCollectionDateRangeLower=Last+year&nucleotideMutations={{mutation}}',
-            aminoAcidMutation:
-                'https://genspectrum.org/rsv-b/single-variant?sampleCollectionDateRangeLower=Last+year&aminoAcidMutations={{mutation}}',
-        },
-        manualAnalysisModeEnabled: true,
-        variantAnalysisModeEnabled: true,
-        lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsvb',
-        samplingDateField: 'samplingDate',
-        locationNameField: 'locationName',
-        clinicalLapis: {
-            lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-b',
-            dateField: 'sampleCollectionDateRangeLower',
-            lineageField: 'lineage',
-        },
-        browseDataUrl: 'https://db.wasap.genspectrum.org/rsvb/search',
-        browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
-        defaultLocationName: 'Zurich',
-        clinicalSequenceCountWarningThreshold: 50,
-        filterDefaults: {
-            manual: {
-                mode: 'manual',
-                sequenceType: 'nucleotide',
-                mutations: undefined,
-            },
-            variant: {
-                mode: 'variant',
-                signatureType: 'computed',
-                sequenceType: 'nucleotide',
-                variant: 'B.D.E.1*',
-                minProportion: 0.8,
-                minCount: 15,
-                minJaccard: 0.75,
-                timeFrame: VARIANT_TIME_FRAME.all,
-            },
-        },
-    },
-};
-
-function withResistanceCollectionOverrides(config: WasapPageConfig): WasapPageConfig {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const stagingIds: Record<string, number> = { '3CLpro': 4, 'RdRp': 5, 'Spike': 6 };
+function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOrganismName, WasapPageConfig> {
     return {
-        ...config,
-        ...(config.resistanceAnalysisModeEnabled && {
-            resistanceMutationCollections: config.resistanceMutationCollections.map((set) => ({
-                ...set,
-                collectionId: stagingIds[set.name] ?? set.collectionId,
-            })),
-        }),
-        ...(config.variantAnalysisModeEnabled &&
-            config.predefinedVariantsSource !== undefined && {
-                predefinedVariantsSource: {
-                    ...config.predefinedVariantsSource,
-                    collectionsUserId: 1,
+        [wastewaterOrganisms.covid]: {
+            internalName: wastewaterOrganisms.covid,
+            name: 'SARS-CoV-2',
+            path: `/${wastewaterPathFragment}/covid`,
+            description: 'Analyze SARS-CoV-2 data that was collected by the WISE project.',
+            linkTemplate: {
+                nucleotideMutation:
+                    'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?nucMutations={{mutation}}',
+                aminoAcidMutation:
+                    'https://open.cov-spectrum.org/explore/World/AllSamples/AllTimes/variants?aaMutations={{mutation}}',
+            },
+            manualAnalysisModeEnabled: true,
+            variantAnalysisModeEnabled: true,
+            resistanceAnalysisModeEnabled: true,
+            untrackedAnalysisModeEnabled: true,
+            collectionAnalysisModeEnabled: true,
+            defaultAnalysisMode: 'resistance',
+            resistanceMutationCollections: [
+                {
+                    collectionId: 4,
+                    name: '3CLpro',
+                    annotationSymbol: 'c',
+                    description:
+                        'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
-            }),
+                {
+                    collectionId: 5,
+                    name: 'RdRp',
+                    annotationSymbol: 'r',
+                    description:
+                        'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+                },
+                {
+                    collectionId: 6,
+                    name: 'Spike',
+                    annotationSymbol: 's',
+                    description:
+                        'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
+                },
+            ] satisfies ResistanceMutationCollectionConfig[],
+            lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
+            samplingDateField: 'samplingDate',
+            locationNameField: 'locationName',
+            predefinedVariantsSource: {
+                collectionsUserId: isStaging ? 1 : 3,
+                collectionsTag: '#pango-lineage',
+                variantSourceLabel: 'Nextclade',
+            },
+            clinicalLapis: {
+                lapisBaseUrl: 'https://lapis.cov-spectrum.org/open/v2',
+                dateField: 'date',
+                cladeField: 'nextstrainClade',
+                lineageField: 'nextcladePangoLineage',
+            },
+            browseDataUrl: 'https://db.wasap.genspectrum.org/covid/search',
+            browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+            collectionsApiBaseUrl: 'https://cov-spectrum.org/api/v2',
+            collectionTitleFilter: 'wastewater',
+            defaultLocationName: 'Zürich (ZH)',
+            clinicalSequenceCountWarningThreshold: 50,
+            filterDefaults: {
+                manual: {
+                    mode: 'manual',
+                    sequenceType: 'nucleotide',
+                    mutations: undefined,
+                },
+                variant: {
+                    mode: 'variant',
+                    signatureType: 'computed',
+                    sequenceType: 'nucleotide',
+                    variant: 'XFG*',
+                    minProportion: 0.8,
+                    minCount: 15,
+                    minJaccard: 0.75,
+                    timeFrame: VARIANT_TIME_FRAME.all,
+                    collectionId: isStaging ? 4961 : 4943, // XFG lineage
+                },
+                resistance: {
+                    mode: 'resistance',
+                    sequenceType: 'amino acid',
+                    resistanceSet: 'Spike',
+                },
+                untracked: {
+                    mode: 'untracked',
+                    sequenceType: 'nucleotide',
+                    excludeSet: 'predefined',
+                },
+                collection: {
+                    mode: 'collection',
+                    collectionId: 1,
+                },
+            },
+        },
+        [wastewaterOrganisms.rsvA]: {
+            internalName: wastewaterOrganisms.rsvA,
+            name: 'RSV-A',
+            path: `/${wastewaterPathFragment}/rsv-a`,
+            description: 'Analyze RSV-A data that was collected by the WISE project.',
+            linkTemplate: {
+                nucleotideMutation:
+                    'https://genspectrum.org/rsv-a/single-variant?sampleCollectionDateRangeLower=Last+year&nucleotideMutations={{mutation}}',
+                aminoAcidMutation:
+                    'https://genspectrum.org/rsv-a/single-variant?sampleCollectionDateRangeLower=Last+year&aminoAcidMutations={{mutation}}',
+            },
+            manualAnalysisModeEnabled: true,
+            variantAnalysisModeEnabled: true,
+            lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsva',
+            samplingDateField: 'samplingDate',
+            locationNameField: 'locationName',
+            clinicalLapis: {
+                lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-a',
+                dateField: 'sampleCollectionDateRangeLower',
+                lineageField: 'lineage',
+            },
+            browseDataUrl: 'https://db.wasap.genspectrum.org/rsva/search',
+            browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+            defaultLocationName: 'Geneva',
+            clinicalSequenceCountWarningThreshold: 50,
+            filterDefaults: {
+                manual: {
+                    mode: 'manual',
+                    sequenceType: 'nucleotide',
+                    mutations: undefined,
+                },
+                variant: {
+                    mode: 'variant',
+                    signatureType: 'computed',
+                    sequenceType: 'nucleotide',
+                    variant: 'A.D.1*',
+                    minProportion: 0.8,
+                    minCount: 15,
+                    minJaccard: 0.75,
+                    timeFrame: VARIANT_TIME_FRAME.all,
+                },
+            },
+        },
+        [wastewaterOrganisms.rsvB]: {
+            internalName: wastewaterOrganisms.rsvB,
+            name: 'RSV-B',
+            path: `/${wastewaterPathFragment}/rsv-b`,
+            description: 'Analyze RSV-B data that was collected by the WISE project.',
+            linkTemplate: {
+                nucleotideMutation:
+                    'https://genspectrum.org/rsv-b/single-variant?sampleCollectionDateRangeLower=Last+year&nucleotideMutations={{mutation}}',
+                aminoAcidMutation:
+                    'https://genspectrum.org/rsv-b/single-variant?sampleCollectionDateRangeLower=Last+year&aminoAcidMutations={{mutation}}',
+            },
+            manualAnalysisModeEnabled: true,
+            variantAnalysisModeEnabled: true,
+            lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsvb',
+            samplingDateField: 'samplingDate',
+            locationNameField: 'locationName',
+            clinicalLapis: {
+                lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-b',
+                dateField: 'sampleCollectionDateRangeLower',
+                lineageField: 'lineage',
+            },
+            browseDataUrl: 'https://db.wasap.genspectrum.org/rsvb/search',
+            browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
+            defaultLocationName: 'Zurich',
+            clinicalSequenceCountWarningThreshold: 50,
+            filterDefaults: {
+                manual: {
+                    mode: 'manual',
+                    sequenceType: 'nucleotide',
+                    mutations: undefined,
+                },
+                variant: {
+                    mode: 'variant',
+                    signatureType: 'computed',
+                    sequenceType: 'nucleotide',
+                    variant: 'B.D.E.1*',
+                    minProportion: 0.8,
+                    minCount: 15,
+                    minJaccard: 0.75,
+                    timeFrame: VARIANT_TIME_FRAME.all,
+                },
+            },
+        },
     };
 }
 
-export const wastewaterOrganismStagingConfigs: Record<WastewaterOrganismName, WasapPageConfig> = {
-    ...wastewaterOrganismConfigs,
-    [wastewaterOrganisms.covid]: withResistanceCollectionOverrides(
-        wastewaterOrganismConfigs[wastewaterOrganisms.covid],
-    ),
-};
+export const wastewaterOrganismConfigs = buildWastewaterOrganismConfigs(false);
+export const wastewaterOrganismStagingConfigs = buildWastewaterOrganismConfigs(true);
 
 export const wastewaterConfig = {
     menuListEntryDecoration: 'decoration-teal',
