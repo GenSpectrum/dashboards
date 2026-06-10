@@ -5,7 +5,7 @@ import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
 
 /**
- * Data about resistance mutations, used by the watewater dashboards.
+ * Data about resistance mutations, used by the wastewater dashboards.
  * It contains mutation annotations which annotate relevant mutations as affecting vaccine resistance,
  * as well as simply containing the mutations in a map to display them in the resistance mutation explorer.
  */
