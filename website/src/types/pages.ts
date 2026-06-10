@@ -1,5 +1,5 @@
 import type { Variant } from './Collection.ts';
-import { paths, type Organism } from './Organism.ts';
+import { organismConfig, paths, type Organism } from './Organism.ts';
 import { advancedQueryUrlParamForVariant } from '../components/genspectrum/advancedQueryUrlParamConstants.ts';
 
 export const Page = {
@@ -8,10 +8,11 @@ export const Page = {
     subscriptionsOverview: '/subscriptions',
     dataSources: '/data',
     collectionsOverview: '/collections',
-    collectionsForOrganism: (organism: Organism) => `/collections/${organism}`,
-    viewCollection: (organism: Organism, id: string) => `/collections/${organism}/${id}`,
-    editCollection: (organism: Organism, id: string) => `/collections/${organism}/${id}/edit`,
-    createCollection: (organism: Organism) => `/collections/${organism}/create`,
+    collectionsForOrganism: (organism: Organism) => `/collections/${organismConfig[organism].pathFragment}`,
+    viewCollection: (organism: Organism, id: string) => `/collections/${organismConfig[organism].pathFragment}/${id}`,
+    editCollection: (organism: Organism, id: string) =>
+        `/collections/${organismConfig[organism].pathFragment}/${id}/edit`,
+    createCollection: (organism: Organism) => `/collections/${organismConfig[organism].pathFragment}/create`,
     singleVariantView: (organism: Organism, variant: Variant) => {
         const basePath = paths[organism].basePath;
         const search = new URLSearchParams();
