@@ -1,6 +1,6 @@
 import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 
-import type { ResistanceMutationCollectionConfig, WasapPageConfig } from './wasapPageConfig';
+import { annotationMode, type ResistanceMutationCollectionConfig, type WasapPageConfig } from './wasapPageConfig';
 import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
 
@@ -52,7 +52,7 @@ export function buildResistanceData(
 
         displayMutationsBySet[setConfig.name] = allMutations;
 
-        if (setConfig.annotationMode === 'per-variant') {
+        if (setConfig.annotationMode === annotationMode.perVariant) {
             filterVariants.forEach((variant) => {
                 (variant.filterObject.aminoAcidMutations ?? []).forEach((aminoAcidMutation) => {
                     mutationAnnotations.push({

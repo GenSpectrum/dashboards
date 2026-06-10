@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildResistanceData } from './resistanceData.ts';
+import { annotationMode } from './wasapPageConfig.ts';
 import type { Collection } from '../../../types/Collection.ts';
 
 describe('buildResistanceData', () => {
@@ -17,7 +18,7 @@ describe('buildResistanceData', () => {
             name: 'fooBar',
             description: 'Main protease inhibitors',
             annotationSymbol: 'R',
-            annotationMode: 'per-variant' as const,
+            annotationMode: annotationMode.perVariant,
         };
 
         const collection = {
@@ -83,7 +84,7 @@ describe('buildResistanceData', () => {
             name: 'Nirsevimab',
             description: 'RSV resistance mutations against Nirsevimab',
             annotationSymbol: 'n',
-            annotationMode: 'per-collection' as const,
+            annotationMode: annotationMode.perCollection,
         };
 
         const collection = {

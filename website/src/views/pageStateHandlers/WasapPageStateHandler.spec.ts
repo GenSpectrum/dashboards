@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { WasapPageStateHandler } from './WasapPageStateHandler';
 import {
+    annotationMode,
     VARIANT_TIME_FRAME,
     type WasapCollectionFilter,
     type WasapManualFilter,
@@ -32,21 +33,21 @@ const config: WasapPageConfig = {
             annotationSymbol: 'c',
             description: '',
             collectionId: 1,
-            annotationMode: 'per-variant' as const,
+            annotationMode: annotationMode.perVariant,
         },
         {
             name: 'RdRp',
             annotationSymbol: 'r',
             description: '',
             collectionId: 2,
-            annotationMode: 'per-variant' as const,
+            annotationMode: annotationMode.perVariant,
         },
         {
             name: 'Spike',
             annotationSymbol: 's',
             description: '',
             collectionId: 3,
-            annotationMode: 'per-variant' as const,
+            annotationMode: annotationMode.perVariant,
         },
     ],
     lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
