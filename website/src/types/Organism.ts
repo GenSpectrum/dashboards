@@ -525,7 +525,7 @@ export const paths = {
 
 export const allOrganisms = Object.keys(organismConfig) as Organism[];
 
-export function organismFromPathFragment(pathFragment: string): Organism | undefined {
+export function organismFromPathFragment(pathFragment: string | undefined): Organism | undefined {
     return allOrganisms.find((o) => organismConfig[o].pathFragment === pathFragment);
 }
 
