@@ -82,6 +82,14 @@ def test_apply_nuc_second_mutation_keeps_original_ref_base():
     assert result == {"982": ("A", "T")}
 
 
+def test_apply_nuc_two_hops_ref_base_is_always_original():
+    # Position 100: first branch A→C, second branch C→T.
+    # The accumulated entry should be A100T — reference base A, not the intermediate C.
+    after_first = _apply_nuc_mutations(["A100C"], {})
+    after_second = _apply_nuc_mutations(["C100T"], after_first)
+    assert after_second == {"100": ("A", "T")}
+
+
 def test_apply_nuc_reversion_removes_position():
     # Position 982 was mutated A→C; now reverted C→A.
     # Net effect from reference is zero — position should be removed.
