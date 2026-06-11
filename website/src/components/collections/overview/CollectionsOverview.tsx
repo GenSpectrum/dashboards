@@ -144,6 +144,31 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
 
     return (
         <div className='my-6'>
+            <style>{`
+                /* Remove the mermaid theme's rounded corners and drop shadow; add outer left/right border to frame the table */
+                .gridjs-wrapper, .gridjs-footer { border-radius: 0; box-shadow: none; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; }
+
+                /* Remove horizontal row lines, keeping only the vertical column separators */
+                th.gridjs-th, td.gridjs-td { border-top: none; border-bottom: none; }
+
+                /* Zebra striping using the active DaisyUI theme's base-200 colour */
+                .gridjs-tbody tr:nth-child(even) td.gridjs-td { background-color: var(--color-base-200); }
+
+                /* Tighten up header padding and reduce font slightly from the mermaid default */
+                th.gridjs-th { padding: 10px 16px; font-size: 0.8125rem; }
+
+                /* Tighten up cell padding and reduce font to match the rest of the UI */
+                td.gridjs-td { padding: 6px 16px; font-size: 0.875rem; }
+
+                /* Scale the sort arrow button down to match the smaller header size */
+                button.gridjs-sort { height: 18px; width: 11px; }
+
+                /* Tighten up the pagination footer */
+                .gridjs-footer { padding: 8px 16px; font-size: 0.8125rem; }
+
+                /* Reduce pagination button padding to match the smaller footer */
+                .gridjs-pagination .gridjs-pages button { padding: 3px 10px; }
+            `}</style>
             <Grid
                 columns={[
                     {
