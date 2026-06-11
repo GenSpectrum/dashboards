@@ -77,6 +77,9 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                 /* Remove the mermaid theme's rounded corners and drop shadow; add outer left/right border to frame the table */
                 .gridjs-wrapper, .gridjs-footer { border-radius: 0; box-shadow: none; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; }
 
+                /* Mermaid sets inline-block here, which lets the table overflow the viewport instead of squishing */
+                .gridjs-container { display: block; }
+
                 /* Remove horizontal row lines, keeping only the vertical column separators */
                 th.gridjs-th, td.gridjs-td { border-top: none; border-bottom: none; }
 
@@ -97,12 +100,16 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
 
                 /* Reduce pagination button padding to match the smaller footer */
                 .gridjs-pagination .gridjs-pages button { padding: 3px 10px; }
+
+                /* Truncate long descriptions with an ellipsis — relies on table-layout: fixed from the mermaid theme */
+                td.gridjs-td:nth-child(3) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
             `}</style>
             <Grid
                 columns={[
                     {
                         id: 'id',
                         name: 'ID',
+                        width: '7%',
                         formatter: (cell) =>
                             h('a', { href: makeHref(cell as number) },
                                 h('span', { className: 'font-mono text-xs text-gray-500' }, String(cell)),
@@ -111,6 +118,7 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                     {
                         id: 'name',
                         name: 'Name',
+                        width: '25%',
                         formatter: (cell, row) =>
                             h('a', { href: makeHref(row.cell(0).data as number) },
                                 h('span', { className: 'font-medium' }, String(cell)),
@@ -129,6 +137,7 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                     {
                         id: 'variantCount',
                         name: 'Variants',
+                        width: '10%',
                         formatter: (cell, row) =>
                             h('a', { href: makeHref(row.cell(0).data as number) }, String(cell)),
                     },
@@ -136,11 +145,7 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                 data={collections.map((c) => [
                     c.id,
                     c.name,
-                    c.description != null
-                        ? c.description.length > 80
-                            ? c.description.slice(0, 80) + '…'
-                            : c.description
-                        : null,
+                    c.description,
                     c.variantCount,
                 ])}
                 pagination={{ limit: 20 }}
