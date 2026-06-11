@@ -1,6 +1,6 @@
-import { Grid } from 'gridjs-react';
-import { h } from 'gridjs';
 import { useQuery } from '@tanstack/react-query';
+import { h } from 'gridjs';
+import { Grid } from 'gridjs-react';
 
 import 'gridjs/dist/theme/mermaid.css';
 
@@ -111,8 +111,10 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                         name: 'ID',
                         width: '7%',
                         formatter: (cell) =>
-                            h('a', { href: makeHref(cell as number) },
-                                h('span', { className: 'font-mono text-xs text-gray-500' }, String(cell)),
+                            h(
+                                'a',
+                                { href: makeHref(cell as number) },
+                                h('span', { className: 'font-mono text-xs text-gray-500' }, String(cell as number)),
                             ),
                     },
                     {
@@ -120,17 +122,21 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                         name: 'Name',
                         width: '25%',
                         formatter: (cell, row) =>
-                            h('a', { href: makeHref(row.cell(0).data as number) },
-                                h('span', { className: 'font-medium' }, String(cell)),
+                            h(
+                                'a',
+                                { href: makeHref(row.cell(0).data as number) },
+                                h('span', { className: 'font-medium' }, cell as string),
                             ),
                     },
                     {
                         id: 'description',
                         name: 'Description',
                         formatter: (cell, row) =>
-                            h('a', { href: makeHref(row.cell(0).data as number) },
+                            h(
+                                'a',
+                                { href: makeHref(row.cell(0).data as number) },
                                 cell != null
-                                    ? h('span', { className: 'text-gray-500' }, String(cell))
+                                    ? h('span', { className: 'text-gray-500' }, cell as string)
                                     : h('span', { className: 'text-gray-300' }, '—'),
                             ),
                     },
@@ -139,15 +145,10 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                         name: 'Variants',
                         width: '10%',
                         formatter: (cell, row) =>
-                            h('a', { href: makeHref(row.cell(0).data as number) }, String(cell)),
+                            h('a', { href: makeHref(row.cell(0).data as number) }, String(cell as number)),
                     },
                 ]}
-                data={collections.map((c) => [
-                    c.id,
-                    c.name,
-                    c.description,
-                    c.variantCount,
-                ])}
+                data={collections.map((c) => [c.id, c.name, c.description, c.variantCount])}
                 pagination={{ limit: 20 }}
                 sort={true}
             />
