@@ -79,14 +79,16 @@ jobs:
           docker compose -f ../docker-compose.yml logs --no-color "$service" > "/tmp/container-logs/${service}.log" || true
         done
 
-    - uses: actions/upload-artifact@v7
+    - name: Upload container logs
+      uses: actions/upload-artifact@v7
       if: ${{ always() && !cancelled() }}
       with:
         name: container-logs
         path: /tmp/container-logs/
         retention-days: 7
 
-    - uses: actions/upload-artifact@v7
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
