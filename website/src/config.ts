@@ -108,6 +108,12 @@ export function isStaging() {
     return getEnvironment() === 'dashboards-staging';
 }
 
+/* The system user gets created first by the backend, so if we ever re-create the staging DB, it will be 1
+ * (and is 1 at the moment as well). On prod, the system user is ID 3. */
+export function getSystemUserId(): number {
+    return isStaging() ? 1 : 3;
+}
+
 function getEnvironment() {
     return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
 }

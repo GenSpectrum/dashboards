@@ -1,5 +1,6 @@
 ---
 import { CollectionsOverview } from '../../../components/collections/overview/CollectionsOverview';
+import { getSystemUserId } from '../../../config';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { organismConfig, organismFromPathFragment } from '../../../types/Organism';
@@ -24,5 +25,5 @@ const isLoggedIn = Astro.locals.user !== undefined;
         { name: orgConfig.label, href: Page.collectionsForOrganism(organism) },
     ]}
 >
-    <CollectionsOverview client:load organism={organism} isLoggedIn={isLoggedIn} />
+    <CollectionsOverview client:load organism={organism} isLoggedIn={isLoggedIn} systemUserId={getSystemUserId()} />
 </ContaineredPageLayout>

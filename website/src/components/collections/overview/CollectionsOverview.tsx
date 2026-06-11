@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Fragment, useId, useState } from 'react';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
@@ -13,7 +14,19 @@ export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
 const logger = getClientLogger('CollectionsOverview');
 
-function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism; isLoggedIn: boolean }) {
+type CollectionFilter = 'community' | 'official' | 'all';
+
+function CollectionsOverviewInner({
+    organism,
+    isLoggedIn,
+    systemUserId,
+}: {
+    organism: Organism;
+    isLoggedIn: boolean;
+    systemUserId: number;
+}) {
+    const [filter, setFilter] = useState<CollectionFilter>('community');
+
     const {
         isLoading,
         isError,
@@ -21,13 +34,14 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
         error,
     } = useQuery({
         queryKey: ['collections', organism],
-        queryFn: () =>
-            getBackendServiceForClientside().getCollectionSummaries({ organism, excludeSystemCollections: true }),
+        queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
     });
 
     if (isError) {
         logger.error(`Failed to fetch collections: ${getErrorLogMessage(error)}`);
     }
+
+    const filteredCollections = filterCollections(collections, filter, systemUserId);
 
     return (
         <div>
@@ -39,11 +53,12 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
                     </a>
                 )}
             </div>
+            <CollectionFilterSelect filter={filter} onChange={setFilter} />
             {isLoading ? (
                 <span className='loading loading-spinner loading-sm' />
             ) : isError ? (
                 <div className='text-error'>Failed to load collections. Please try reloading the page.</div>
-            ) : collections === undefined || collections.length === 0 ? (
+            ) : filteredCollections.length === 0 ? (
                 <div className='mt-6 text-gray-500'>
                     No collections yet.
                     {isLoggedIn && (
@@ -57,8 +72,63 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
                     )}
                 </div>
             ) : (
-                <CollectionsTable collections={collections} organism={organism} />
+                <CollectionsTable collections={filteredCollections} organism={organism} />
             )}
+        </div>
+    );
+}
+
+function filterCollections(
+    collections: CollectionSummary[] | undefined,
+    filter: CollectionFilter,
+    systemUserId: number,
+): CollectionSummary[] {
+    if (!collections) return [];
+    switch (filter) {
+        case 'community':
+            return collections.filter((c) => c.ownedBy !== systemUserId);
+        case 'official':
+            return collections.filter((c) => c.ownedBy === systemUserId);
+        case 'all':
+            return collections;
+    }
+}
+
+const FILTER_OPTIONS: { value: CollectionFilter; label: string; tooltip: string }[] = [
+    { value: 'community', label: 'Community', tooltip: 'User submissions' },
+    { value: 'official', label: 'Official', tooltip: 'GenSpectrum curated' },
+    { value: 'all', label: 'All', tooltip: 'Show everything' },
+];
+
+function CollectionFilterSelect({
+    filter,
+    onChange,
+}: {
+    filter: CollectionFilter;
+    onChange: (f: CollectionFilter) => void;
+}) {
+    const id = useId();
+    return (
+        <div className='flex text-sm'>
+            {FILTER_OPTIONS.map((opt, i) => (
+                <Fragment key={opt.value}>
+                    <input
+                        type='radio'
+                        id={`${id}-${opt.value}`}
+                        name={id}
+                        className='hidden'
+                        checked={filter === opt.value}
+                        onChange={() => onChange(opt.value)}
+                    />
+                    <label
+                        htmlFor={`${id}-${opt.value}`}
+                        className={`tooltip w-24 cursor-pointer border p-2 text-center ${i === 0 ? 'rounded-l-md' : '-ml-px rounded-none'} ${i === FILTER_OPTIONS.length - 1 ? 'rounded-r-md' : ''} ${filter === opt.value ? 'border-primary relative z-10' : 'border-gray-300'}`}
+                        data-tip={opt.tooltip}
+                    >
+                        {opt.label}
+                    </label>
+                </Fragment>
+            ))}
         </div>
     );
 }
