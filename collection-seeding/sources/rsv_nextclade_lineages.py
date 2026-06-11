@@ -1,3 +1,5 @@
+from typing import NamedTuple
+
 import requests
 
 from models import Collection, Variant
@@ -45,6 +47,15 @@ class RsvBNextcladeLineagesSource(_RsvNextcladeLineagesBase):
     _organism_label = "RSV-B"
 
 
+class _CladeInfo(NamedTuple):
+    clade_name: str
+    parent_clade: str | None
+    branch_nuc: list[str]
+    branch_aa: list[str]
+    full_nuc: list[str]
+    full_aa: list[str]
+
+
 def _build_collections(tree_json: dict, organism: str, organism_label: str, owned_tag: str) -> list[Collection]:
     """Build one Collection per clade in the Nextclade reference tree.
 
@@ -59,37 +70,37 @@ def _build_collections(tree_json: dict, organism: str, organism_label: str, owne
       - "New amino acid substitutions"  — branch-only AA mutations
     """
     collections = []
-    for clade_name, parent_clade, branch_nuc, branch_aa, full_nuc, full_aa in _extract_clades(tree_json["tree"]):
-        parent_str = parent_clade or "—"
+    for clade in _extract_clades(tree_json["tree"]):
+        parent_str = clade.parent_clade or "—"
         variants: list[Variant] = [
             {
                 "type": "filterObject",
                 "name": "Nucleotide substitutions",
-                "filterObject": {"nucleotideMutations": full_nuc},
+                "filterObject": {"nucleotideMutations": clade.full_nuc},
             },
             {
                 "type": "filterObject",
                 "name": "Amino acid substitutions",
-                "filterObject": {"aminoAcidMutations": full_aa},
+                "filterObject": {"aminoAcidMutations": clade.full_aa},
             },
             {
                 "type": "filterObject",
                 "name": "New nucleotide substitutions",
-                "filterObject": {"nucleotideMutations": branch_nuc},
+                "filterObject": {"nucleotideMutations": clade.branch_nuc},
             },
             {
                 "type": "filterObject",
                 "name": "New amino acid substitutions",
-                "filterObject": {"aminoAcidMutations": branch_aa},
+                "filterObject": {"aminoAcidMutations": clade.branch_aa},
             },
         ]
         description = (
-            f"{organism_label} Nextclade clade {clade_name}. "
+            f"{organism_label} Nextclade clade {clade.clade_name}. "
             f"Parent clade: {parent_str}. "
             f"{owned_tag}"
         )
         collections.append({
-            "name": clade_name,
+            "name": clade.clade_name,
             "organism": organism,
             "description": description,
             "variants": variants,
@@ -98,11 +109,9 @@ def _build_collections(tree_json: dict, organism: str, organism_label: str, owne
 
 
 def _extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
-    """Walk the Nextclade reference tree recursively, yielding one tuple per introduced clade.
+    """Walk the Nextclade reference tree recursively, yielding one _CladeInfo per introduced clade.
 
-    Each yield is a 6-tuple:
-        (clade_name, parent_clade, branch_nuc, branch_aa, full_nuc, full_aa)
-
+    Fields:
       - clade_name:   the clade label from branch_attrs.labels.clade, e.g. "A.D.3.5"
       - parent_clade: node_attrs.clade_membership of the parent node (None for the root clade)
       - branch_nuc:   nucleotide mutations on this branch only (relative to parent node),
@@ -151,13 +160,13 @@ def _extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
             for gene, gene_muts in branch_aa_by_gene.items()
             for m in gene_muts
         ]
-        yield (
-            labels["clade"],
-            parent_clade,
-            branch_nuc,
-            branch_aa_flat,
-            _format_accum_nuc(accum_nuc),
-            _format_accum_aa(accum_aa),
+        yield _CladeInfo(
+            clade_name=labels["clade"],
+            parent_clade=parent_clade,
+            branch_nuc=branch_nuc,
+            branch_aa=branch_aa_flat,
+            full_nuc=_format_accum_nuc(accum_nuc),
+            full_aa=_format_accum_aa(accum_aa),
         )
 
     # Pass the current node's clade_membership as the parent context for children.
