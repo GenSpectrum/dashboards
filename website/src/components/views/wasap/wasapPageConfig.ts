@@ -258,11 +258,6 @@ export type WasapFilter = {
     analysis: WasapAnalysisFilter;
 };
 
-export const annotationMode = {
-    perVariant: 'per-variant',
-    perCollection: 'per-collection',
-} as const;
-
 /**
  * Resistance mutations defined in a collection, which is specified via the collection ID.
  */
@@ -271,10 +266,4 @@ export type ResistanceMutationCollectionConfig = {
     name: string;
     description: string;
     annotationSymbol: string;
-    /**
-     * Controls how mutation annotations are built from this collection's variants.
-     * - perVariant: one annotation entry per mutation (COVID style, name = variant name)
-     * - perCollection: one annotation entry for the whole collection, all mutations flattened
-     */
-    annotationMode: (typeof annotationMode)[keyof typeof annotationMode];
 };
