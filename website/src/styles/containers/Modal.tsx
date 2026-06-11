@@ -1,4 +1,4 @@
-import { type FC, type PropsWithChildren, type RefObject, useRef } from 'react';
+import React, { type FC, type PropsWithChildren, type RefObject, useRef } from 'react';
 
 import { ModalBox } from './ModalBox.tsx';
 
