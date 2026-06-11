@@ -1,4 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import { h } from 'gridjs';
+import { Grid } from 'gridjs-react';
+
+import 'gridjs/dist/theme/mermaid.css';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
@@ -64,55 +68,89 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
 }
 
 function CollectionsTable({ collections, organism }: { collections: CollectionSummary[]; organism: Organism }) {
+    const makeHref = (id: number) => Page.viewCollection(organism, String(id));
+
     return (
-        <div className='my-6 overflow-x-auto'>
-            <table className='table-zebra table w-full'>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th className='text-right'>Variants</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {collections.map((collection) => {
-                        const href = Page.viewCollection(organism, String(collection.id));
-                        return (
-                            <tr key={collection.id} className='hover:bg-base-300'>
-                                <td className='p-0'>
-                                    <a href={href} className='block px-4 py-3 font-mono text-xs text-gray-500'>
-                                        {collection.id}
-                                    </a>
-                                </td>
-                                <td className='p-0'>
-                                    <a href={href} className='block px-4 py-3 font-medium'>
-                                        {collection.name}
-                                    </a>
-                                </td>
-                                <td className='max-w-sm p-0'>
-                                    <a href={href} className='block px-4 py-3 text-gray-500'>
-                                        {collection.description ? (
-                                            collection.description.length > 80 ? (
-                                                collection.description.slice(0, 80) + '…'
-                                            ) : (
-                                                collection.description
-                                            )
-                                        ) : (
-                                            <span className='text-gray-300'>—</span>
-                                        )}
-                                    </a>
-                                </td>
-                                <td className='p-0'>
-                                    <a href={href} className='block px-4 py-3 text-right'>
-                                        {collection.variantCount}
-                                    </a>
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+        <div className='my-6'>
+            <style>{`
+                /* Remove the mermaid theme's rounded corners and drop shadow; add outer left/right border to frame the table */
+                .gridjs-wrapper, .gridjs-footer { border-radius: 0; box-shadow: none; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; }
+
+                /* Mermaid sets inline-block here, which lets the table overflow the viewport instead of squishing */
+                .gridjs-container { display: block; }
+
+                /* Remove horizontal row lines, keeping only the vertical column separators */
+                th.gridjs-th, td.gridjs-td { border-top: none; border-bottom: none; }
+
+                /* Zebra striping using the active DaisyUI theme's base-200 colour */
+                .gridjs-tbody tr:nth-child(even) td.gridjs-td { background-color: var(--color-base-200); }
+
+                /* Tighten up header padding and reduce font slightly from the mermaid default */
+                th.gridjs-th { padding: 10px 16px; font-size: 0.8125rem; }
+
+                /* Tighten up cell padding and reduce font to match the rest of the UI */
+                td.gridjs-td { padding: 6px 16px; font-size: 0.875rem; }
+
+                /* Scale the sort arrow button down to match the smaller header size */
+                button.gridjs-sort { height: 18px; width: 11px; }
+
+                /* Tighten up the pagination footer */
+                .gridjs-footer { padding: 8px 16px; font-size: 0.8125rem; }
+
+                /* Reduce pagination button padding to match the smaller footer */
+                .gridjs-pagination .gridjs-pages button { padding: 3px 10px; }
+
+                /* Truncate long descriptions with an ellipsis — relies on table-layout: fixed from the mermaid theme */
+                td.gridjs-td:nth-child(3) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
+            `}</style>
+            <Grid
+                columns={[
+                    {
+                        id: 'id',
+                        name: 'ID',
+                        width: '7%',
+                        formatter: (cell) =>
+                            h(
+                                'a',
+                                { href: makeHref(cell as number) },
+                                h('span', { className: 'font-mono text-xs text-gray-500' }, String(cell as number)),
+                            ),
+                    },
+                    {
+                        id: 'name',
+                        name: 'Name',
+                        width: '25%',
+                        formatter: (cell, row) =>
+                            h(
+                                'a',
+                                { href: makeHref(row.cell(0).data as number) },
+                                h('span', { className: 'font-medium' }, cell as string),
+                            ),
+                    },
+                    {
+                        id: 'description',
+                        name: 'Description',
+                        formatter: (cell, row) =>
+                            h(
+                                'a',
+                                { href: makeHref(row.cell(0).data as number) },
+                                cell != null
+                                    ? h('span', { className: 'text-gray-500' }, cell as string)
+                                    : h('span', { className: 'text-gray-300' }, '—'),
+                            ),
+                    },
+                    {
+                        id: 'variantCount',
+                        name: 'Variants',
+                        width: '10%',
+                        formatter: (cell, row) =>
+                            h('a', { href: makeHref(row.cell(0).data as number) }, String(cell as number)),
+                    },
+                ]}
+                data={collections.map((c) => [c.id, c.name, c.description, c.variantCount])}
+                pagination={{ limit: 20 }}
+                sort={true}
+            />
         </div>
     );
 }

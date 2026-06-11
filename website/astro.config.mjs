@@ -28,5 +28,15 @@ export default defineConfig({
             },
         ],
     },
-    vite: { plugins: [tailwindcss()] },
+    vite: {
+        plugins: [tailwindcss()],
+        resolve: {
+            alias: {
+                // gridjs-react ships both CJS and ESM builds; Vite's package scanner picks up
+                // the CJS entry and then fails to find named exports. Pointing directly at the
+                // ESM dist file bypasses that detection entirely.
+                'gridjs-react': 'gridjs-react/dist/gridjs.production.es.min.js',
+            },
+        },
+    },
 });
