@@ -1,9 +1,14 @@
 import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 
-import type { ResistanceMutationCollectionConfig, WasapPageConfig } from './wasapPageConfig';
+import { annotationMode, type ResistanceMutationCollectionConfig, type WasapPageConfig } from './wasapPageConfig';
 import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
 
+/**
+ * Data about resistance mutations, used by the wastewater dashboards.
+ * It contains mutation annotations which annotate relevant mutations as affecting vaccine resistance,
+ * as well as simply containing the mutations in a map to display them in the resistance mutation explorer.
+ */
 export type ResistanceData = {
     /** Flat list of mutation annotations for the genome viewer. */
     mutationAnnotations: MutationAnnotations;
@@ -11,6 +16,10 @@ export type ResistanceData = {
     displayMutationsBySet: Record<string, string[]>;
 };
 
+/**
+ * Given a wastewater dashboard config and backend service, fetch resistance mutation data.
+ * This is done by fetching relevant collections, and transforming the data into the shape we want here.
+ */
 export async function fetchResistanceData(
     config: WasapPageConfig,
     backendService: BackendService,
@@ -26,6 +35,10 @@ export async function fetchResistanceData(
     return buildResistanceData(config.resistanceMutationCollections, collections);
 }
 
+/**
+ * Takes a config and already fetched collection.
+ * They need to be in the correct order; collection i belongs to config i.
+ */
 export function buildResistanceData(
     setConfigs: ResistanceMutationCollectionConfig[],
     collections: Collection[],
@@ -34,24 +47,30 @@ export function buildResistanceData(
     const displayMutationsBySet: Record<string, string[]> = {};
 
     setConfigs.forEach((setConfig, i) => {
-        const entries = collections[i].variants.flatMap((variant) => {
-            if (variant.type !== 'filterObject') return [];
-            return (variant.filterObject.aminoAcidMutations ?? []).map((aminoAcidMutation) => ({
-                displayName: variant.name,
-                aminoAcidMutation,
-            }));
-        });
+        const filterVariants = collections[i].variants.filter((v) => v.type === 'filterObject');
+        const allMutations = filterVariants.flatMap((v) => v.filterObject.aminoAcidMutations ?? []);
 
-        displayMutationsBySet[setConfig.name] = entries.map((e) => e.aminoAcidMutation);
+        displayMutationsBySet[setConfig.name] = allMutations;
 
-        mutationAnnotations.push(
-            ...entries.map(({ displayName, aminoAcidMutation }) => ({
-                name: displayName,
+        if (setConfig.annotationMode === annotationMode.perVariant) {
+            filterVariants.forEach((variant) => {
+                (variant.filterObject.aminoAcidMutations ?? []).forEach((aminoAcidMutation) => {
+                    mutationAnnotations.push({
+                        name: variant.name,
+                        symbol: setConfig.annotationSymbol,
+                        description: setConfig.description,
+                        aminoAcidMutations: [aminoAcidMutation],
+                    });
+                });
+            });
+        } else {
+            mutationAnnotations.push({
+                name: setConfig.name,
                 symbol: setConfig.annotationSymbol,
                 description: setConfig.description,
-                aminoAcidMutations: [aminoAcidMutation],
-            })),
-        );
+                aminoAcidMutations: allMutations,
+            });
+        }
     });
 
     return { mutationAnnotations, displayMutationsBySet };
