@@ -36,7 +36,7 @@ describe('CollectionsOverview', () => {
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('My first collection')).toBeVisible();
         await expect.element(getByText('Another collection')).toBeVisible();
-        await expect.element(getByRole('table')).toBeVisible();
+        await expect.element(getByRole('grid')).toBeVisible();
         await expect.element(getByText('3')).toBeVisible(); // variant count for first collection
         await expect.element(getByText('0')).toBeVisible(); // variant count for second collection
     });
