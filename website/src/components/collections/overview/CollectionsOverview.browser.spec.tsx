@@ -29,9 +29,9 @@ const mockCollections = [
 
 describe('CollectionsOverview', () => {
     it('shows the headline and collections table on success', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries(mockCollections, ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries(mockCollections, ORGANISM);
 
-        const { getByText, getByRole } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
+        const { getByText, getByRole } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={1} />);
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('My first collection')).toBeVisible();
@@ -42,19 +42,19 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and empty message when there are no collections', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries([], ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries([], ORGANISM);
 
-        const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
+        const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={1} />);
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('No collections yet.')).toBeVisible();
     });
 
     it('shows the headline and error message when the fetch fails', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries([], ORGANISM, 500, true);
+        astro.mockGetCollectionSummaries([], ORGANISM, 500);
         astro.mockLog();
 
-        const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} />);
+        const { getByText } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={1} />);
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('Failed to load collections. Please try reloading the page.')).toBeVisible();

@@ -108,6 +108,10 @@ export function isStaging() {
     return getEnvironment() === 'dashboards-staging';
 }
 
+export function getSystemUserId(): number {
+    return isStaging() ? 1 : 3;
+}
+
 function getEnvironment() {
     return processEnvOrMetaEnv('DASHBOARDS_ENVIRONMENT', environmentSchema);
 }

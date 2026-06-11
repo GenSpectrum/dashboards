@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
@@ -13,7 +14,19 @@ export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
 const logger = getClientLogger('CollectionsOverview');
 
-function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism; isLoggedIn: boolean }) {
+type CollectionFilter = 'community' | 'official' | 'all';
+
+function CollectionsOverviewInner({
+    organism,
+    isLoggedIn,
+    systemUserId,
+}: {
+    organism: Organism;
+    isLoggedIn: boolean;
+    systemUserId: number;
+}) {
+    const [filter, setFilter] = useState<CollectionFilter>('community');
+
     const {
         isLoading,
         isError,
@@ -21,13 +34,14 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
         error,
     } = useQuery({
         queryKey: ['collections', organism],
-        queryFn: () =>
-            getBackendServiceForClientside().getCollectionSummaries({ organism, excludeSystemCollections: true }),
+        queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
     });
 
     if (isError) {
         logger.error(`Failed to fetch collections: ${getErrorLogMessage(error)}`);
     }
+
+    const filteredCollections = filterCollections(collections, filter, systemUserId);
 
     return (
         <div>
@@ -39,11 +53,24 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
                     </a>
                 )}
             </div>
+            <div className='join'>
+                {(['community', 'official', 'all'] as CollectionFilter[]).map((option) => (
+                    <input
+                        key={option}
+                        className='join-item btn btn-sm'
+                        type='radio'
+                        name='collection-filter'
+                        aria-label={option.charAt(0).toUpperCase() + option.slice(1)}
+                        checked={filter === option}
+                        onChange={() => setFilter(option)}
+                    />
+                ))}
+            </div>
             {isLoading ? (
                 <span className='loading loading-spinner loading-sm' />
             ) : isError ? (
                 <div className='text-error'>Failed to load collections. Please try reloading the page.</div>
-            ) : collections === undefined || collections.length === 0 ? (
+            ) : filteredCollections.length === 0 ? (
                 <div className='mt-6 text-gray-500'>
                     No collections yet.
                     {isLoggedIn && (
@@ -57,10 +84,26 @@ function CollectionsOverviewInner({ organism, isLoggedIn }: { organism: Organism
                     )}
                 </div>
             ) : (
-                <CollectionsTable collections={collections} organism={organism} />
+                        <CollectionsTable collections={filteredCollections} organism={organism} />
             )}
         </div>
     );
+}
+
+function filterCollections(
+    collections: CollectionSummary[] | undefined,
+    filter: CollectionFilter,
+    systemUserId: number,
+): CollectionSummary[] {
+    if (!collections) return [];
+    switch (filter) {
+        case 'community':
+            return collections.filter((c) => c.ownedBy !== systemUserId);
+        case 'official':
+            return collections.filter((c) => c.ownedBy === systemUserId);
+        case 'all':
+            return collections;
+    }
 }
 
 function CollectionsTable({ collections, organism }: { collections: CollectionSummary[]; organism: Organism }) {
