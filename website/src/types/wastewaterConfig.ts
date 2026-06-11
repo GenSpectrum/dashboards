@@ -139,7 +139,6 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: isStaging ? 5001 : 4983,
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
-
                     description:
                         'RSV-A F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
@@ -147,7 +146,6 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: isStaging ? 5002 : 4984,
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
-
                     description:
                         'RSV-A F protein resistance mutations against Palivizumab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
@@ -206,7 +204,6 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: isStaging ? 5003 : 4985,
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
-
                     description:
                         'RSV-B F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
@@ -214,7 +211,6 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     collectionId: isStaging ? 5004 : 4986,
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
-
                     description:
                         'RSV-B F protein resistance mutations against Palivizumab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
