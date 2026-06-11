@@ -29,17 +29,15 @@ const officialCollection = {
 
 const allCollections = [communityCollection, officialCollection];
 
-function renderOverview(collections: typeof allCollections) {
-    return render(
-        <CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={SYSTEM_USER_ID} />,
-    );
+function renderOverview() {
+    return render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={SYSTEM_USER_ID} />);
 }
 
 describe('CollectionsOverview', () => {
     it('shows the headline and community collections by default', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM);
 
-        const { getByText, getByRole } = renderOverview(allCollections);
+        const { getByText, getByRole } = renderOverview();
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('Community collection')).toBeVisible();
@@ -49,7 +47,7 @@ describe('CollectionsOverview', () => {
     it('hides official collections by default', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM);
 
-        const { getByText } = renderOverview(allCollections);
+        const { getByText } = renderOverview();
 
         await expect.element(getByText('Community collection')).toBeVisible();
         await expect.element(getByText('Official collection')).not.toBeInTheDocument();
@@ -58,7 +56,7 @@ describe('CollectionsOverview', () => {
     it('shows only official collections when Official is selected', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM);
 
-        const { getByText } = renderOverview(allCollections);
+        const { getByText } = renderOverview();
 
         await getByText('Official').click();
 
@@ -69,7 +67,7 @@ describe('CollectionsOverview', () => {
     it('shows all collections when All is selected', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM);
 
-        const { getByText } = renderOverview(allCollections);
+        const { getByText } = renderOverview();
 
         await getByText('All').click();
 
@@ -80,7 +78,7 @@ describe('CollectionsOverview', () => {
     it('shows the headline and empty message when there are no collections', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries([], ORGANISM);
 
-        const { getByText } = renderOverview([]);
+        const { getByText } = renderOverview();
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('No collections yet.')).toBeVisible();
@@ -90,7 +88,7 @@ describe('CollectionsOverview', () => {
         astro.mockGetCollectionSummaries([], ORGANISM, 500);
         astro.mockLog();
 
-        const { getByText } = renderOverview([]);
+        const { getByText } = renderOverview();
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('Failed to load collections. Please try reloading the page.')).toBeVisible();
