@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useId, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
@@ -53,19 +53,7 @@ function CollectionsOverviewInner({
                     </a>
                 )}
             </div>
-            <div className='join'>
-                {(['community', 'official', 'all'] as CollectionFilter[]).map((option) => (
-                    <input
-                        key={option}
-                        className='join-item btn btn-sm'
-                        type='radio'
-                        name='collection-filter'
-                        aria-label={option.charAt(0).toUpperCase() + option.slice(1)}
-                        checked={filter === option}
-                        onChange={() => setFilter(option)}
-                    />
-                ))}
-            </div>
+            <CollectionFilterSelect filter={filter} onChange={setFilter} />
             {isLoading ? (
                 <span className='loading loading-spinner loading-sm' />
             ) : isError ? (
@@ -84,7 +72,7 @@ function CollectionsOverviewInner({
                     )}
                 </div>
             ) : (
-                        <CollectionsTable collections={filteredCollections} organism={organism} />
+                <CollectionsTable collections={filteredCollections} organism={organism} />
             )}
         </div>
     );
@@ -104,6 +92,45 @@ function filterCollections(
         case 'all':
             return collections;
     }
+}
+
+const FILTER_OPTIONS: { value: CollectionFilter; label: string; tooltip: string }[] = [
+    { value: 'community', label: 'Community', tooltip: 'User submissions' },
+    { value: 'official', label: 'Official', tooltip: 'GenSpectrum curated' },
+    { value: 'all', label: 'All', tooltip: 'Show everything' },
+];
+
+function CollectionFilterSelect({
+    filter,
+    onChange,
+}: {
+    filter: CollectionFilter;
+    onChange: (f: CollectionFilter) => void;
+}) {
+    const id = useId();
+    return (
+        <div className='flex text-sm'>
+            {FILTER_OPTIONS.map((opt, i) => (
+                <Fragment key={opt.value}>
+                    <input
+                        type='radio'
+                        id={`${id}-${opt.value}`}
+                        name={id}
+                        className='hidden'
+                        checked={filter === opt.value}
+                        onChange={() => onChange(opt.value)}
+                    />
+                    <label
+                        htmlFor={`${id}-${opt.value}`}
+                        className={`tooltip w-24 cursor-pointer border p-2 text-center ${i === 0 ? 'rounded-l-md' : '-ml-px rounded-none'} ${i === FILTER_OPTIONS.length - 1 ? 'rounded-r-md' : ''} ${filter === opt.value ? 'border-primary relative z-10' : 'border-gray-300'}`}
+                        data-tip={opt.tooltip}
+                    >
+                        {opt.label}
+                    </label>
+                </Fragment>
+            ))}
+        </div>
+    );
 }
 
 function CollectionsTable({ collections, organism }: { collections: CollectionSummary[]; organism: Organism }) {
