@@ -41,7 +41,7 @@ describe('CollectionsOverview', () => {
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('Community collection')).toBeVisible();
-        await expect.element(getByRole('table')).toBeVisible();
+        await expect.element(getByRole('grid')).toBeVisible();
     });
 
     it('hides official collections by default', async ({ routeMockers: { astro } }) => {

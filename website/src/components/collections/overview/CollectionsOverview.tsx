@@ -38,9 +38,8 @@ function CollectionsOverviewInner({
         error,
     } = useQuery({
         queryKey: ['collections', organism],
-        // TODO: restore excludeSystemCollections: true once done testing with GridJS
         queryFn: () =>
-            getBackendServiceForClientside().getCollectionSummaries({ organism /*, excludeSystemCollections: true*/ }),
+            getBackendServiceForClientside().getCollectionSummaries({ organism, excludeSystemCollections: true }),
     });
 
     if (isError) {
