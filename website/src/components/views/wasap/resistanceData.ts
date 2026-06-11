@@ -1,6 +1,6 @@
 import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 
-import { annotationMode, type ResistanceMutationCollectionConfig, type WasapPageConfig } from './wasapPageConfig';
+import type { ResistanceMutationCollectionConfig, WasapPageConfig } from './wasapPageConfig';
 import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
 
@@ -52,25 +52,17 @@ export function buildResistanceData(
 
         displayMutationsBySet[setConfig.name] = allMutations;
 
-        if (setConfig.annotationMode === annotationMode.perVariant) {
-            filterVariants.forEach((variant) => {
-                (variant.filterObject.aminoAcidMutations ?? []).forEach((aminoAcidMutation) => {
-                    mutationAnnotations.push({
-                        name: variant.name,
-                        symbol: setConfig.annotationSymbol,
-                        description: setConfig.description,
-                        aminoAcidMutations: [aminoAcidMutation],
-                    });
-                });
-            });
-        } else {
-            mutationAnnotations.push({
-                name: setConfig.name,
-                symbol: setConfig.annotationSymbol,
-                description: setConfig.description,
-                aminoAcidMutations: allMutations,
-            });
-        }
+        mutationAnnotations.push({
+            name: setConfig.name,
+            symbol: setConfig.annotationSymbol,
+            description: setConfig.description,
+            aminoAcidMutations: filterVariants.flatMap((variant) =>
+                (variant.filterObject.aminoAcidMutations ?? []).map((mutation) => ({
+                    mutation,
+                    name: variant.name,
+                })),
+            ),
+        });
     });
 
     return { mutationAnnotations, displayMutationsBySet };
