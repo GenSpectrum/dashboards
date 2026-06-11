@@ -31,7 +31,9 @@ describe('CollectionsOverview', () => {
     it('shows the headline and collections table on success', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(mockCollections, ORGANISM);
 
-        const { getByText, getByRole } = render(<CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={1} />);
+        const { getByText, getByRole } = render(
+            <CollectionsOverview organism={ORGANISM} isLoggedIn={false} systemUserId={1} />,
+        );
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('My first collection')).toBeVisible();
