@@ -7,7 +7,7 @@ export class WasapPage {
     constructor(public readonly page: Page) {}
 
     public async goto(organism: WastewaterOrganismName) {
-        await this.page.goto(wastewaterOrganismConfigs[organism].path);
+        await this.page.goto(wastewaterOrganismConfigs()[organism].path);
     }
 
     public async submitFilters() {
