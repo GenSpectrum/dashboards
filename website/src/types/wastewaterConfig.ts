@@ -1,7 +1,20 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
+import { dbIdSpaces, type DbIdSpace } from './dbIdSpace';
 import type { ResistanceMutationCollectionConfig } from '../components/views/wasap/wasapPageConfig';
 import { annotationMode, VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
+import { getDbIdSpace } from '../config';
+
+function byEnv<T>(env: DbIdSpace, prod: T, staging: T, local: T): T {
+    switch (env) {
+        case dbIdSpaces.prod:
+            return prod;
+        case dbIdSpaces.staging:
+            return staging;
+        case dbIdSpaces.local:
+            return local;
+    }
+}
 
 export const wastewaterOrganisms = {
     covid: 'covid',
@@ -13,7 +26,7 @@ export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof w
 
 export const wastewaterPathFragment = 'swiss-wastewater';
 
-function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOrganismName, WasapPageConfig> {
+function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrganismName, WasapPageConfig> {
     return {
         [wastewaterOrganisms.covid]: {
             internalName: wastewaterOrganisms.covid,
@@ -34,7 +47,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             defaultAnalysisMode: 'resistance',
             resistanceMutationCollections: [
                 {
-                    collectionId: 4,
+                    collectionId: byEnv(env, 4, 1, 1),
                     name: '3CLpro',
                     annotationSymbol: 'c',
                     annotationMode: annotationMode.perVariant,
@@ -42,7 +55,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
                 {
-                    collectionId: 5,
+                    collectionId: byEnv(env, 5, 2, 2),
                     name: 'RdRp',
                     annotationSymbol: 'r',
                     annotationMode: annotationMode.perVariant,
@@ -50,7 +63,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
                 {
-                    collectionId: 6,
+                    collectionId: byEnv(env, 6, 3, 3),
                     name: 'Spike',
                     annotationSymbol: 's',
                     annotationMode: annotationMode.perVariant,
@@ -62,7 +75,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
             predefinedVariantsSource: {
-                collectionsUserId: isStaging ? 1 : 3,
+                collectionsUserId: byEnv(env, 3, 1, 1),
                 collectionsTag: '#pango-lineage',
                 variantSourceLabel: 'Nextclade',
             },
@@ -93,7 +106,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: isStaging ? 4961 : 4943, // XFG lineage
+                    collectionId: byEnv(env, 4943, 4944, 4944),
                 },
                 resistance: {
                     mode: 'resistance',
@@ -107,7 +120,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                 },
                 collection: {
                     mode: 'collection',
-                    collectionId: 1,
+                    collectionId: byEnv(env, 4, 1, 1),
                 },
             },
         },
@@ -139,7 +152,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             clinicalSequenceCountWarningThreshold: 50,
             resistanceMutationCollections: [
                 {
-                    collectionId: isStaging ? 5001 : 4983,
+                    collectionId: byEnv(env, 4983, 4, 4),
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
                     annotationMode: annotationMode.perCollection,
@@ -147,7 +160,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'RSV-A F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
                 {
-                    collectionId: isStaging ? 5002 : 4984,
+                    collectionId: byEnv(env, 4984, 5, 5),
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
                     annotationMode: annotationMode.perCollection,
@@ -206,7 +219,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             clinicalSequenceCountWarningThreshold: 50,
             resistanceMutationCollections: [
                 {
-                    collectionId: isStaging ? 5003 : 4985,
+                    collectionId: byEnv(env, 4985, 6, 6),
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
                     annotationMode: annotationMode.perCollection,
@@ -214,7 +227,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'RSV-B F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
                 {
-                    collectionId: isStaging ? 5004 : 4986,
+                    collectionId: byEnv(env, 4986, 7, 7),
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
                     annotationMode: annotationMode.perCollection,
@@ -248,8 +261,16 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
     };
 }
 
-export const wastewaterOrganismConfigs = buildWastewaterOrganismConfigs(false);
-export const wastewaterOrganismStagingConfigs = buildWastewaterOrganismConfigs(true);
+export function wastewaterOrganismConfigs() {
+    switch (getDbIdSpace()) {
+        case dbIdSpaces.prod:
+            return buildWastewaterOrganismConfigs(dbIdSpaces.prod);
+        case dbIdSpaces.staging:
+            return buildWastewaterOrganismConfigs(dbIdSpaces.staging);
+        case dbIdSpaces.local:
+            return buildWastewaterOrganismConfigs(dbIdSpaces.local);
+    }
+}
 
 export const wastewaterConfig = {
     menuListEntryDecoration: 'decoration-teal',

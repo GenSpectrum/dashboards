@@ -6,6 +6,7 @@ import { z, type ZodError } from 'zod';
 
 import { menuIconTypeSchema } from './components/iconCss.ts';
 import { allOrganisms, type Organism } from './types/Organism.ts';
+import { dbIdSpaces, type DbIdSpace } from './types/dbIdSpace';
 
 const lapisConfigSchema = z.object({
     url: z.string(),
@@ -42,6 +43,20 @@ const organismsConfigSchema = z.object(
 export type OrganismsConfig = z.infer<typeof organismsConfigSchema>;
 
 const environmentSchema = z.union([z.literal('dashboards-staging'), z.literal('dashboards-prod')]);
+
+const dbIdSpaceSchema = z.union([
+    z.literal(dbIdSpaces.prod),
+    z.literal(dbIdSpaces.staging),
+    z.literal(dbIdSpaces.local),
+]);
+
+export function getDbIdSpace(): DbIdSpace {
+    const envValue = process.env.DB_ID_SPACE ?? import.meta.env.DB_ID_SPACE;
+    if (!envValue) {
+        return dbIdSpaces.prod;
+    }
+    return processEnvOrMetaEnv('DB_ID_SPACE', dbIdSpaceSchema);
+}
 
 const dashboardsConfigSchema = z.object({
     dashboards: z.object({
