@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { wastewaterOrganismConfigs, wastewaterOrganisms } from './wastewaterConfig';
 import { enabledAnalysisModes } from '../components/views/wasap/wasapPageConfig';
 
-describe.each(Object.entries(wastewaterOrganismConfigs))('wastewaterConfig %s', (_configName, config) => {
+describe.each(Object.entries(wastewaterOrganismConfigs()))('wastewaterConfig %s', (_configName, config) => {
     test('default resistance set name is valid', () => {
         if (config.resistanceAnalysisModeEnabled) {
             const resistanceSetNames = config.resistanceMutationCollections.map((s) => s.name);
@@ -24,7 +24,7 @@ describe.each(Object.entries(wastewaterOrganismConfigs))('wastewaterConfig %s', 
 });
 
 test('COVID wastewater opens on Spike resistance mutations by default', () => {
-    const covidConfig = wastewaterOrganismConfigs[wastewaterOrganisms.covid];
+    const covidConfig = wastewaterOrganismConfigs()[wastewaterOrganisms.covid];
 
     // This pins the default requested for the COVID wastewater dashboard landing state.
     expect(covidConfig.defaultAnalysisMode).toBe('resistance');
