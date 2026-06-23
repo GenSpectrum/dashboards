@@ -7,12 +7,15 @@ place that needs to change — seed.py discovers sources exclusively through thi
 from sources.covid_pango_lineages import CovidPangoLineagesSource, CovidPangoLineagesSampleSource
 from sources.covid_resistance_mutations import CovidResistanceMutationsSource
 from sources.rsv_resistance_mutations import RsvAResistanceMutationsSource, RsvBResistanceMutationsSource
+from sources.rsv_nextclade_lineages import RsvANextcladeLineagesSource, RsvBNextcladeLineagesSource
 from sources import Source
 
 ALL_SOURCES: list[type[Source]] = [
     CovidResistanceMutationsSource,
     RsvAResistanceMutationsSource,
     RsvBResistanceMutationsSource,
+    RsvANextcladeLineagesSource,
+    RsvBNextcladeLineagesSource,
     CovidPangoLineagesSource,
     CovidPangoLineagesSampleSource,
 ]
