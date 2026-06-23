@@ -171,6 +171,12 @@ function CollectionsGridStyles() {
 
             /* Truncate long descriptions with an ellipsis — relies on table-layout: fixed from the mermaid theme */
             .collections-grid td.gridjs-td:nth-child(3) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
+
+            /* Make links fill the entire cell so the whole row area is clickable */
+            .collections-grid td.gridjs-td a { display: block; margin: -6px -16px; padding: 6px 16px; }
+
+            /* Right-align the Variants (last) column to match the old table */
+            .collections-grid td.gridjs-td:last-child, .collections-grid th.gridjs-th:last-child { text-align: right; }
         `}</style>
     );
 }
@@ -213,7 +219,7 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                                 h(
                                     'a',
                                     { href: makeHref(row.cell(0).data as number) },
-                                    cell != null
+                                    cell
                                         ? h('span', { className: 'text-gray-500' }, cell as string)
                                         : h('span', { className: 'text-gray-300' }, '—'),
                                 ),
