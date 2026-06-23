@@ -116,7 +116,7 @@ function CollectionFilterSelect({
                         type='radio'
                         id={`${id}-${opt.value}`}
                         name={id}
-                        className='hidden'
+                        className='sr-only'
                         checked={filter === opt.value}
                         onChange={() => onChange(opt.value)}
                     />
