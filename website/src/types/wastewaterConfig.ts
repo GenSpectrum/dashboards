@@ -5,8 +5,8 @@ import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wa
 
 export const wastewaterOrganisms = {
     covid: 'covid',
-    rsvA: 'rsv-a',
-    rsvB: 'rsv-b',
+    rsvA: 'rsvA',
+    rsvB: 'rsvB',
 } as const;
 
 export type WastewaterOrganismName = (typeof wastewaterOrganisms)[keyof typeof wastewaterOrganisms];
@@ -125,6 +125,11 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsva',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
+            predefinedVariantsSource: {
+                collectionsUserId: 1,
+                collectionsTag: '#nextclade-lineage',
+                variantSourceLabel: 'Nextclade',
+            },
             clinicalLapis: {
                 lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-a',
                 dateField: 'sampleCollectionDateRangeLower',
@@ -165,6 +170,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
+                    collectionId: isStaging ? 4997 : undefined,
                 },
                 resistance: {
                     mode: 'resistance',
@@ -190,6 +196,11 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsvb',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
+            predefinedVariantsSource: {
+                collectionsUserId: 1,
+                collectionsTag: '#nextclade-lineage',
+                variantSourceLabel: 'Nextclade',
+            },
             clinicalLapis: {
                 lapisBaseUrl: 'https://lapis.pathoplexus.org/rsv-b',
                 dateField: 'sampleCollectionDateRangeLower',
@@ -230,6 +241,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
+                    collectionId: isStaging ? 5050 : undefined,
                 },
                 resistance: {
                     mode: 'resistance',
