@@ -126,7 +126,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
             predefinedVariantsSource: {
-                collectionsUserId: 1,
+                collectionsUserId: isStaging ? 1 : 3,
                 collectionsTag: '#nextclade-lineage',
                 variantSourceLabel: 'Nextclade',
             },
@@ -197,7 +197,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
             predefinedVariantsSource: {
-                collectionsUserId: 1,
+                collectionsUserId: isStaging ? 1 : 3,
                 collectionsTag: '#nextclade-lineage',
                 variantSourceLabel: 'Nextclade',
             },
