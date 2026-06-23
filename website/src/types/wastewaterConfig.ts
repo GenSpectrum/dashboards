@@ -34,7 +34,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             defaultAnalysisMode: 'resistance',
             resistanceMutationCollections: [
                 {
-                    collectionId: 4,
+                    collectionId: isStaging ? 1 : 4,
                     name: '3CLpro',
                     annotationSymbol: 'c',
                     annotationMode: annotationMode.perVariant,
@@ -42,7 +42,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
                 {
-                    collectionId: 5,
+                    collectionId: isStaging ? 2 : 5,
                     name: 'RdRp',
                     annotationSymbol: 'r',
                     annotationMode: annotationMode.perVariant,
@@ -50,7 +50,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
                 {
-                    collectionId: 6,
+                    collectionId: isStaging ? 3 : 6,
                     name: 'Spike',
                     annotationSymbol: 's',
                     annotationMode: annotationMode.perVariant,
@@ -93,7 +93,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: isStaging ? 4961 : 4943, // XFG lineage
+                    collectionId: isStaging ? 4944 : 4943, // XFG lineage
                 },
                 resistance: {
                     mode: 'resistance',
@@ -139,7 +139,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             clinicalSequenceCountWarningThreshold: 50,
             resistanceMutationCollections: [
                 {
-                    collectionId: isStaging ? 5001 : 4983,
+                    collectionId: isStaging ? 4 : 4983,
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
                     annotationMode: annotationMode.perCollection,
@@ -147,7 +147,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'RSV-A F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
                 {
-                    collectionId: isStaging ? 5002 : 4984,
+                    collectionId: isStaging ? 5 : 4984,
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
                     annotationMode: annotationMode.perCollection,
@@ -206,7 +206,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
             clinicalSequenceCountWarningThreshold: 50,
             resistanceMutationCollections: [
                 {
-                    collectionId: isStaging ? 5003 : 4985,
+                    collectionId: isStaging ? 6 : 4985,
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
                     annotationMode: annotationMode.perCollection,
@@ -214,7 +214,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                         'RSV-B F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
                 {
-                    collectionId: isStaging ? 5004 : 4986,
+                    collectionId: isStaging ? 7 : 4986,
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
                     annotationMode: annotationMode.perCollection,
