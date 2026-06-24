@@ -17,9 +17,8 @@ declare namespace App {
 interface ImportMetaEnv {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     readonly DASHBOARDS_ENVIRONMENT: 'dashboards-staging' | 'dashboards-prod';
-    // TODO - should we use our defined consts below?
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    readonly DB_ID_SPACE: 'prod' | 'staging' | 'local';
+    readonly DB_ID_SPACE: import('./types/dbIdSpace').DbIdSpace;
 }
 
 interface ImportMeta {
