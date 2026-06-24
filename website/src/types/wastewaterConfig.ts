@@ -170,7 +170,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: isStaging ? 4997 : undefined,
+                    collectionId: isStaging ? 4997 : 5000,
                 },
                 resistance: {
                     mode: 'resistance',
@@ -241,7 +241,7 @@ function buildWastewaterOrganismConfigs(isStaging: boolean): Record<WastewaterOr
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: isStaging ? 5050 : undefined,
+                    collectionId: isStaging ? 5050 : 5053,
                 },
                 resistance: {
                     mode: 'resistance',
