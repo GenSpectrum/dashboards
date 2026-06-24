@@ -219,7 +219,7 @@ function CollectionsTable({ collections, organism }: { collections: CollectionSu
                                 h(
                                     'a',
                                     { href: makeHref(row.cell(0).data as number) },
-                                    cell
+                                    cell !== null
                                         ? h('span', { className: 'text-gray-500' }, cell as string)
                                         : h('span', { className: 'text-gray-300' }, '—'),
                                 ),
