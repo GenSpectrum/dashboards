@@ -14,10 +14,10 @@ import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.model.user.UserModel
 import org.genspectrum.dashboardsbackend.util.now
+import org.jetbrains.exposed.v1.core.Count
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
-import org.jetbrains.exposed.v1.core.count
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.neq
@@ -75,11 +75,18 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                 (CollectionTable.id inList (matchingIds?.toList() ?: emptyList()))
         }
 
-        val join = CollectionTable.join(VariantTable, JoinType.LEFT)
+        val join = CollectionTable
+            .join(VariantTable, JoinType.LEFT)
+            .join(CollectionTagsTable, JoinType.LEFT, CollectionTable.id, CollectionTagsTable.collectionId)
 
-        val initialCollections = if (includeVariants) {
-            join.selectAll()
+        return if (includeVariants) {
+            val tagsExpr = StringAgg(CollectionTagsTable.tag, orderBy = true)
+            val columns = CollectionTable.columns + VariantTable.columns + listOf(tagsExpr)
+
+            join.select(columns)
                 .where { collectionConditions }
+                .groupBy(CollectionTable.id, VariantTable.id)
+                .toList()
                 .groupBy { it[CollectionTable.id] }
                 .map { (_, rows) ->
                     val first = rows.first()
@@ -94,13 +101,15 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = first[CollectionTable.description],
                         variantCount = variants.size,
                         variants = variants,
-                        tags = emptyList(),
+                        tags = first[tagsExpr]?.split(",") ?: emptyList(),
                         createdAt = first[CollectionTable.createdAt],
                         updatedAt = first[CollectionTable.updatedAt],
                     )
                 }
         } else {
-            val countExpr = VariantTable.id.count()
+            val countExpr = Count(VariantTable.id, distinct = true)
+            val tagsExpr = StringAgg(CollectionTagsTable.tag, distinct = true)
+
             join.select(
                 CollectionTable.id,
                 CollectionTable.name,
@@ -110,17 +119,10 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                 CollectionTable.createdAt,
                 CollectionTable.updatedAt,
                 countExpr,
+                tagsExpr,
             )
                 .where { collectionConditions }
-                .groupBy(
-                    CollectionTable.id,
-                    CollectionTable.name,
-                    CollectionTable.ownedBy,
-                    CollectionTable.organism,
-                    CollectionTable.description,
-                    CollectionTable.createdAt,
-                    CollectionTable.updatedAt,
-                )
+                .groupBy(CollectionTable.id)
                 .map { row ->
                     Collection(
                         id = row[CollectionTable.id].value,
@@ -130,26 +132,11 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = row[CollectionTable.description],
                         variantCount = row[countExpr].toInt(),
                         variants = null,
-                        tags = emptyList(),
+                        tags = row[tagsExpr]?.split(",")?.sorted() ?: emptyList(),
                         createdAt = row[CollectionTable.createdAt],
                         updatedAt = row[CollectionTable.updatedAt],
                     )
                 }
-        }
-
-        return withTagsAttached(initialCollections)
-    }
-
-    private fun withTagsAttached(collections: List<Collection>): List<Collection> {
-        if (collections.isEmpty()) return collections
-        val collectionIds = collections.map { it.id }
-        val tagsByCollectionId = CollectionTagsTable
-            .selectAll()
-            .where { CollectionTagsTable.collectionId inList collectionIds }
-            .groupBy { it[CollectionTagsTable.collectionId].value }
-            .mapValues { (_, rows) -> rows.map { it[CollectionTagsTable.tag] }.sorted() }
-        return collections.map { collection ->
-            collection.copy(tags = tagsByCollectionId[collection.id] ?: emptyList())
         }
     }
 
