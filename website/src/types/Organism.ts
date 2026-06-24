@@ -525,6 +525,10 @@ export const paths = {
 
 export const allOrganisms = Object.keys(organismConfig) as Organism[];
 
+export function organismFromPathFragment(pathFragment: string | undefined): Organism | undefined {
+    return allOrganisms.find((o) => organismConfig[o].pathFragment === pathFragment);
+}
+
 export type Organism = keyof typeof organismConfig;
 export const organismSchema = z.enum(Object.keys(organismConfig) as [keyof typeof organismConfig]);
 

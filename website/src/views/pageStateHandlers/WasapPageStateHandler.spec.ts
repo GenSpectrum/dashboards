@@ -27,9 +27,24 @@ const config: WasapPageConfig = {
     resistanceAnalysisModeEnabled: true,
     untrackedAnalysisModeEnabled: true,
     resistanceMutationCollections: [
-        { name: '3CLpro', annotationSymbol: 'c', description: '', collectionId: 1 },
-        { name: 'RdRp', annotationSymbol: 'r', description: '', collectionId: 2 },
-        { name: 'Spike', annotationSymbol: 's', description: '', collectionId: 3 },
+        {
+            name: '3CLpro',
+            annotationSymbol: 'c',
+            description: '',
+            collectionId: 1,
+        },
+        {
+            name: 'RdRp',
+            annotationSymbol: 'r',
+            description: '',
+            collectionId: 2,
+        },
+        {
+            name: 'Spike',
+            annotationSymbol: 's',
+            description: '',
+            collectionId: 3,
+        },
     ],
     lapisBaseUrl: 'https://lapis.wasap.genspectrum.org',
     samplingDateField: 'samplingDate',
