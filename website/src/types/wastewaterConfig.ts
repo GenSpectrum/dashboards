@@ -103,7 +103,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: byEnv(env, { prod: 4943, staging: 4944, local: 4944 }),
+                    collectionId: byEnv(env, { prod: 4943, staging: 4944, local: 5019 }),
                 },
                 resistance: {
                     mode: 'resistance',
