@@ -5,14 +5,14 @@ import { getDbIdSpace } from './dbIdSpace';
 import type { ResistanceMutationCollectionConfig } from '../components/views/wasap/wasapPageConfig';
 import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
-function byEnv<T>(env: DbIdSpace, prod: T, staging: T, local: T): T {
+function byEnv<T>(env: DbIdSpace, vars: { prod: T; staging: T; local: T }): T {
     switch (env) {
         case dbIdSpaces.prod:
-            return prod;
+            return vars.prod;
         case dbIdSpaces.staging:
-            return staging;
+            return vars.staging;
         case dbIdSpaces.local:
-            return local;
+            return vars.local;
     }
 }
 
@@ -47,21 +47,21 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             defaultAnalysisMode: 'resistance',
             resistanceMutationCollections: [
                 {
-                    collectionId: byEnv(env, 4, 1, 1),
+                    collectionId: byEnv(env, { prod: 4, staging: 1, local: 1 }),
                     name: '3CLpro',
                     annotationSymbol: 'c',
                     description:
                         'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
                 {
-                    collectionId: byEnv(env, 5, 2, 2),
+                    collectionId: byEnv(env, { prod: 5, staging: 2, local: 2 }),
                     name: 'RdRp',
                     annotationSymbol: 'r',
                     description:
                         'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
                 },
                 {
-                    collectionId: byEnv(env, 6, 3, 3),
+                    collectionId: byEnv(env, { prod: 6, staging: 3, local: 3 }),
                     name: 'Spike',
                     annotationSymbol: 's',
                     description:
@@ -72,7 +72,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
             predefinedVariantsSource: {
-                collectionsUserId: byEnv(env, 3, 1, 1),
+                collectionsUserId: byEnv(env, { prod: 3, staging: 1, local: 1 }),
                 collectionsTag: '#pango-lineage',
                 variantSourceLabel: 'Nextclade',
             },
@@ -103,7 +103,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: byEnv(env, 4943, 4944, 4944),
+                    collectionId: byEnv(env, { prod: 4943, staging: 4944, local: 4944 }),
                 },
                 resistance: {
                     mode: 'resistance',
@@ -117,7 +117,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                 },
                 collection: {
                     mode: 'collection',
-                    collectionId: byEnv(env, 4, 1, 1),
+                    collectionId: byEnv(env, { prod: 4, staging: 1, local: 1 }),
                 },
             },
         },
@@ -149,14 +149,14 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             clinicalSequenceCountWarningThreshold: 50,
             resistanceMutationCollections: [
                 {
-                    collectionId: byEnv(env, 4983, 4, 4),
+                    collectionId: byEnv(env, { prod: 4983, staging: 4, local: 4 }),
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
                     description:
                         'RSV-A F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
                 {
-                    collectionId: byEnv(env, 4984, 5, 5),
+                    collectionId: byEnv(env, { prod: 4984, staging: 5, local: 5 }),
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
                     description:
@@ -214,14 +214,14 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             clinicalSequenceCountWarningThreshold: 50,
             resistanceMutationCollections: [
                 {
-                    collectionId: byEnv(env, 4985, 6, 6),
+                    collectionId: byEnv(env, { prod: 4985, staging: 6, local: 6 }),
                     name: 'Nirsevimab',
                     annotationSymbol: 'n',
                     description:
                         'RSV-B F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
                 },
                 {
-                    collectionId: byEnv(env, 4986, 7, 7),
+                    collectionId: byEnv(env, { prod: 4986, staging: 7, local: 7 }),
                     name: 'Palivizumab',
                     annotationSymbol: 'p',
                     description:
