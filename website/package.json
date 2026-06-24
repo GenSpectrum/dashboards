@@ -67,7 +67,7 @@
         "@types/topojson-specification": "^1.0.5",
         "@typescript-eslint/eslint-plugin": "^8.60.1",
         "@typescript-eslint/parser": "^8.60.1",
-        "@vitest/browser": "^3.2.4",
+        "@vitest/browser": "^4.1.7",
         "astro-eslint-parser": "^1.4.0",
         "daisyui": "^5.5.20",
         "dotenv": "^16.5.0",
