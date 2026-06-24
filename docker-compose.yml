@@ -8,6 +8,7 @@ services:
     environment:
       BACKEND_URL: http://backend:8080
       DASHBOARDS_ENVIRONMENT: dashboards-prod
+      DB_ID_SPACE: local
       GITHUB_CLIENT_ID: "dummy"
       GITHUB_CLIENT_SECRET: "dummy"
       AUTH_SECRET: "e2e-test-auth-secret-do-not-use-in-production"
