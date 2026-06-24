@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { getMutations, getMutationsForVariant } from './getMutations.ts';
+import { getJaccardForMutations, getMutations, getMutationsForVariant } from './getMutations.ts';
 import { DUMMY_LAPIS_URL } from '../../routeMocker.ts';
 import { astroApiRouteMocker, lapisRouteMocker } from '../../vitest.setup.ts';
 
@@ -82,6 +82,113 @@ describe('getMutations', () => {
         await expect(getMutations(DUMMY_LAPIS_URL, 'nucleotide', undefined, 0.1, 1)).rejects.toThrow(
             /Failed to parse mutations response/,
         );
+    });
+});
+
+describe('getJaccardForMutations', () => {
+    beforeEach(() => {
+        astroApiRouteMocker.mockLog();
+    });
+
+    test('should return Jaccard indices for mutations observed in lineage', async () => {
+        // Variant A.1 has 20 sequences in clinical data.
+        // A1C: in 10 A.1 sequences, 40 total -> Jaccard = 10/(20+40-10) = 10/50 = 0.2
+        // A2C: in 20 A.1 sequences, 20 total -> Jaccard = 20/(20+20-20) = 20/20 = 1.0
+        lapisRouteMocker.mockPostAggregated({ lineage: 'A.1' }, { data: [{ count: 20 }] });
+        lapisRouteMocker.mockPostNucleotideMutationsMulti([
+            {
+                body: { minProportion: 0, lineage: 'A.1' },
+                response: {
+                    data: [
+                        { mutation: 'A1C', count: 10 },
+                        { mutation: 'A2C', count: 20 },
+                    ],
+                },
+            },
+            {
+                body: { minProportion: 0 },
+                response: {
+                    data: [
+                        { mutation: 'A1C', count: 40 },
+                        { mutation: 'A2C', count: 20 },
+                    ],
+                },
+            },
+        ]);
+
+        const result = await getJaccardForMutations(DUMMY_LAPIS_URL, 'nucleotide', { lineage: 'A.1' }, undefined);
+
+        expect(result.get('A1C')).toBeCloseTo(0.2);
+        expect(result.get('A2C')).toBe(1);
+    });
+
+    test('should return empty map when no clinical sequences match the lineage', async () => {
+        lapisRouteMocker.mockPostAggregated({ lineage: 'A.99' }, { data: [{ count: 0 }] });
+        lapisRouteMocker.mockPostNucleotideMutationsMulti([
+            {
+                body: { minProportion: 0, lineage: 'A.99' },
+                response: { data: [] },
+            },
+            {
+                body: { minProportion: 0 },
+                response: { data: [{ mutation: 'A1C', count: 40 }] },
+            },
+        ]);
+
+        const result = await getJaccardForMutations(DUMMY_LAPIS_URL, 'nucleotide', { lineage: 'A.99' }, undefined);
+
+        expect(result.size).toBe(0);
+    });
+
+    test('should not include mutations absent from the lineage', async () => {
+        // A1C is in the clinical database but not in lineage A.1 sequences.
+        lapisRouteMocker.mockPostAggregated({ lineage: 'A.1' }, { data: [{ count: 30 }] });
+        lapisRouteMocker.mockPostNucleotideMutationsMulti([
+            {
+                body: { minProportion: 0, lineage: 'A.1' },
+                response: { data: [{ mutation: 'A2C', count: 30 }] },
+            },
+            {
+                body: { minProportion: 0 },
+                response: {
+                    data: [
+                        { mutation: 'A1C', count: 50 },
+                        { mutation: 'A2C', count: 30 },
+                    ],
+                },
+            },
+        ]);
+
+        const result = await getJaccardForMutations(DUMMY_LAPIS_URL, 'nucleotide', { lineage: 'A.1' }, undefined);
+
+        expect(result.has('A1C')).toBe(false);
+        expect(result.get('A2C')).toBe(1);
+    });
+
+    test('should apply date filter correctly', async () => {
+        lapisRouteMocker.mockPostAggregated(
+            { lineage: 'A.1', dateFrom: '2025-01-01' },
+            { data: [{ count: 10 }] },
+        );
+        lapisRouteMocker.mockPostNucleotideMutationsMulti([
+            {
+                body: { minProportion: 0, lineage: 'A.1', dateFrom: '2025-01-01' },
+                response: { data: [{ mutation: 'A1C', count: 10 }] },
+            },
+            {
+                body: { minProportion: 0, dateFrom: '2025-01-01' },
+                response: { data: [{ mutation: 'A1C', count: 10 }] },
+            },
+        ]);
+
+        const result = await getJaccardForMutations(
+            DUMMY_LAPIS_URL,
+            'nucleotide',
+            { lineage: 'A.1' },
+            { dateFrom: '2025-01-01' },
+        );
+
+        expect(result.get('A1C')).toBe(1);
     });
 });
 
