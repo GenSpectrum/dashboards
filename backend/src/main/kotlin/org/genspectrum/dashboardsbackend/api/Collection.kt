@@ -14,6 +14,7 @@ import kotlin.time.Instant
     "organism": "covid",
     "description": "A collection of interesting variants",
     "variantCount": 1,
+    "tags": ["europe", "flu"],
     "createdAt": "2026-01-01T00:00:00Z",
     "updatedAt": "2026-01-02T00:00:00Z"
 }
@@ -28,6 +29,7 @@ data class Collection(
     val variantCount: Int,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val variants: List<Variant>?,
+    val tags: List<String>,
     val createdAt: Instant,
     val updatedAt: Instant,
 )
@@ -39,6 +41,7 @@ data class Collection(
     "name": "My Collection",
     "organism": "covid",
     "description": "A collection of interesting variants",
+    "tags": ["europe", "flu"],
     "variants": [
         {
             "type": "query",
@@ -55,6 +58,7 @@ data class CollectionRequest(
     val name: String,
     val organism: String,
     val description: String? = null,
+    val tags: List<String> = emptyList(),
     val variants: List<VariantRequest>,
 )
 
@@ -85,5 +89,9 @@ data class CollectionRequest(
 data class CollectionUpdate(
     val name: String? = null,
     val description: String? = null,
+    val tags: List<String>? = null,
     val variants: List<VariantUpdate>? = null,
 )
+
+@Schema(description = "Response containing all distinct tags in use")
+data class CollectionTagsResponse(val tags: List<String>)

@@ -2,6 +2,7 @@ package org.genspectrum.dashboardsbackend.model.collection
 
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.VariantRequest
@@ -18,9 +19,11 @@ import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.count
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.springframework.stereotype.Service
@@ -35,6 +38,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
         organism: String?,
         includeVariants: Boolean = false,
         excludeSystemCollections: Boolean = false,
+        tags: List<String>? = null,
     ): List<Collection> {
         if (userId != null) {
             UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
@@ -57,10 +61,23 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                 collectionConditions = collectionConditions and (CollectionTable.ownedBy neq systemUserId)
             }
         }
+        if (!tags.isNullOrEmpty()) {
+            val distinctTags = tags.map { it.lowercase() }.distinct()
+            var matchingIds: Set<Long>? = null
+            for (tag in distinctTags) {
+                val idsWithTag = CollectionTagsTable
+                    .selectAll()
+                    .where { CollectionTagsTable.tag eq tag }
+                    .mapTo(mutableSetOf()) { it[CollectionTagsTable.collectionId].value }
+                matchingIds = if (matchingIds == null) idsWithTag else (matchingIds intersect idsWithTag)
+            }
+            collectionConditions = collectionConditions and
+                (CollectionTable.id inList (matchingIds?.toList() ?: emptyList()))
+        }
 
         val join = CollectionTable.join(VariantTable, JoinType.LEFT)
 
-        return if (includeVariants) {
+        val initialCollections = if (includeVariants) {
             join.selectAll()
                 .where { collectionConditions }
                 .groupBy { it[CollectionTable.id] }
@@ -77,6 +94,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = first[CollectionTable.description],
                         variantCount = variants.size,
                         variants = variants,
+                        tags = emptyList(),
                         createdAt = first[CollectionTable.createdAt],
                         updatedAt = first[CollectionTable.updatedAt],
                     )
@@ -112,11 +130,36 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = row[CollectionTable.description],
                         variantCount = row[countExpr].toInt(),
                         variants = null,
+                        tags = emptyList(),
                         createdAt = row[CollectionTable.createdAt],
                         updatedAt = row[CollectionTable.updatedAt],
                     )
                 }
         }
+
+        return withTagsAttached(initialCollections)
+    }
+
+    private fun withTagsAttached(collections: List<Collection>): List<Collection> {
+        if (collections.isEmpty()) return collections
+        val collectionIds = collections.map { it.id }
+        val tagsByCollectionId = CollectionTagsTable
+            .selectAll()
+            .where { CollectionTagsTable.collectionId inList collectionIds }
+            .groupBy { it[CollectionTagsTable.collectionId].value }
+            .mapValues { (_, rows) -> rows.map { it[CollectionTagsTable.tag] }.sorted() }
+        return collections.map { collection ->
+            collection.copy(tags = tagsByCollectionId[collection.id] ?: emptyList())
+        }
+    }
+
+    fun getAllTags(): CollectionTagsResponse {
+        val tags = CollectionTagsTable
+            .selectAll()
+            .map { it[CollectionTagsTable.tag] }
+            .distinct()
+            .sorted()
+        return CollectionTagsResponse(tags = tags)
     }
 
     fun getCollection(id: Long): Collection {
@@ -146,6 +189,14 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             variantEntity
         }
 
+        val insertedTags = request.tags.map { it.lowercase() }.distinct().sorted()
+        insertedTags.forEach { tag ->
+            CollectionTagsTable.insert {
+                it[collectionId] = collectionEntity.id
+                it[CollectionTagsTable.tag] = tag
+            }
+        }
+
         val variants = variantEntities.map { it.toVariant() }
         return Collection(
             id = collectionEntity.id.value,
@@ -155,6 +206,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             description = collectionEntity.description,
             variantCount = variants.size,
             variants = variants,
+            tags = insertedTags,
             createdAt = collectionEntity.createdAt,
             updatedAt = collectionEntity.updatedAt,
         )
@@ -183,6 +235,17 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
 
         if (update.description != null) {
             collectionEntity.description = update.description
+        }
+
+        if (update.tags != null) {
+            CollectionTagsTable.deleteWhere { CollectionTagsTable.collectionId eq id }
+            val newTags = update.tags.map { it.lowercase() }.distinct()
+            newTags.forEach { tag ->
+                CollectionTagsTable.insert {
+                    it[collectionId] = collectionEntity.id
+                    it[CollectionTagsTable.tag] = tag
+                }
+            }
         }
 
         if (update.variants != null) {

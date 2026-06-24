@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -32,6 +33,7 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         organism: String? = null,
         includeVariants: Boolean = false,
         excludeSystemCollections: Boolean = false,
+        tags: List<String>? = null,
     ): ResultActions {
         val params = buildString {
             val queryParams = mutableListOf<String>()
@@ -39,6 +41,7 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
             if (organism != null) queryParams.add("organism=$organism")
             if (includeVariants) queryParams.add("includeVariants=true")
             if (excludeSystemCollections) queryParams.add("excludeSystemCollections=true")
+            tags?.forEach { queryParams.add("tags=$it") }
             if (queryParams.isNotEmpty()) {
                 append("?")
                 append(queryParams.joinToString("&"))
@@ -52,9 +55,16 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         organism: String? = null,
         includeVariants: Boolean = false,
         excludeSystemCollections: Boolean = false,
+        tags: List<String>? = null,
     ): List<Collection> = deserializeJsonResponse(
-        getCollectionsRaw(userId, organism, includeVariants, excludeSystemCollections)
+        getCollectionsRaw(userId, organism, includeVariants, excludeSystemCollections, tags)
             .andExpect(status().isOk),
+    )
+
+    fun getCollectionTagsRaw(): ResultActions = mockMvc.perform(get("/collections/tags"))
+
+    fun getCollectionTags(): CollectionTagsResponse = deserializeJsonResponse(
+        getCollectionTagsRaw().andExpect(status().isOk),
     )
 
     fun getCollectionRaw(id: Long): ResultActions = mockMvc.perform(get("/collections/$id"))
