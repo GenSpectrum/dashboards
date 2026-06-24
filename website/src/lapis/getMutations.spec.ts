@@ -166,10 +166,7 @@ describe('getJaccardForMutations', () => {
     });
 
     test('should apply date filter correctly', async () => {
-        lapisRouteMocker.mockPostAggregated(
-            { lineage: 'A.1', dateFrom: '2025-01-01' },
-            { data: [{ count: 10 }] },
-        );
+        lapisRouteMocker.mockPostAggregated({ lineage: 'A.1', dateFrom: '2025-01-01' }, { data: [{ count: 10 }] });
         lapisRouteMocker.mockPostNucleotideMutationsMulti([
             {
                 body: { minProportion: 0, lineage: 'A.1', dateFrom: '2025-01-01' },

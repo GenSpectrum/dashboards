@@ -166,6 +166,7 @@ async function fetchVariantPredefinedModeData(
                 values: Object.fromEntries(
                     mutations
                         .filter((m) => jaccardByMutation.has(m))
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         .map((m) => [m, jaccardByMutation.get(m)!.toPrecision(2)]),
                 ),
             },
