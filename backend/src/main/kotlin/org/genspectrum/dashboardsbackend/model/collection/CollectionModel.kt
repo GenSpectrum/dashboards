@@ -20,6 +20,7 @@ import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
+import org.jetbrains.exposed.v1.core.inSubQuery
 import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
@@ -293,22 +294,14 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
         }
         if (!tags.isNullOrEmpty()) {
             val distinctTags = tags.map { it.lowercase() }.distinct()
-            val matchingIds = getIdsMatchingAllTags(distinctTags)
-            conditions = conditions and (CollectionTable.id inList matchingIds.toList())
+            val tagSubquery = CollectionTagsTable
+                .select(CollectionTagsTable.collectionId)
+                .where { CollectionTagsTable.tag inList distinctTags }
+                .groupBy(CollectionTagsTable.collectionId)
+                .having { Count(CollectionTagsTable.tag, distinct = true) eq distinctTags.size.toLong() }
+            conditions = conditions and (CollectionTable.id inSubQuery tagSubquery)
         }
         return conditions
-    }
-
-    private fun getIdsMatchingAllTags(tags: List<String>): Set<Long> {
-        var matchingIds: Set<Long>? = null
-        for (tag in tags) {
-            val idsWithTag = CollectionTagsTable
-                .selectAll()
-                .where { CollectionTagsTable.tag eq tag }
-                .mapTo(mutableSetOf()) { it[CollectionTagsTable.collectionId].value }
-            matchingIds = if (matchingIds == null) idsWithTag else (matchingIds intersect idsWithTag)
-        }
-        return matchingIds ?: emptySet()
     }
 
     private fun createVariantEntity(
