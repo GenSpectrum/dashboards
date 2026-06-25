@@ -26,7 +26,6 @@ import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
-import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.time.Instant
@@ -126,10 +125,10 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
 
     fun getAllTags(): CollectionTagsResponse {
         val tags = CollectionTagsTable
-            .selectAll()
+            .select(CollectionTagsTable.tag)
+            .withDistinct(true)
+            .orderBy(CollectionTagsTable.tag)
             .map { it[CollectionTagsTable.tag] }
-            .distinct()
-            .sorted()
         return CollectionTagsResponse(tags = tags)
     }
 
