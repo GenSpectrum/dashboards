@@ -159,13 +159,13 @@ async function fetchVariantPredefinedModeData(
 
     return {
         type: 'mutations',
-        displayMutations: mutations,
+        displayMutations: mutations.filter((m) => (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard),
         customColumns: [
             {
                 header: 'Jaccard index',
                 values: Object.fromEntries(
                     mutations
-                        .filter((m) => jaccardByMutation.has(m))
+                        .filter((m) => jaccardByMutation.has(m) && (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard)
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         .map((m) => [m, jaccardByMutation.get(m)!.toPrecision(2)]),
                 ),

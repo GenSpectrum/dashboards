@@ -178,6 +178,14 @@ function PredefinedSignature({
                     </label>
                 </div>
             </div>
+            <NumericInput
+                label='Min. Jaccard index'
+                value={pageState.minJaccard}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
+            />
         </Inset>
     );
 }
