@@ -17,6 +17,8 @@ declare namespace App {
 interface ImportMetaEnv {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     readonly DASHBOARDS_ENVIRONMENT: 'dashboards-staging' | 'dashboards-prod';
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    readonly DB_ID_SPACE?: import('./types/dbIdSpace').DbIdSpace;
 }
 
 interface ImportMeta {
