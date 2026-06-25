@@ -1,7 +1,6 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { dbIdSpaces, type DbIdSpace } from './dbIdSpace';
-import { getDbIdSpace } from './dbIdSpace';
+import { getDbIdSpace, dbIdSpaces, type DbIdSpace } from './dbIdSpace';
 import type { ResistanceMutationCollectionConfig } from '../components/views/wasap/wasapPageConfig';
 import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
 
@@ -117,7 +116,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                 },
                 collection: {
                     mode: 'collection',
-                    collectionId: byEnv(env, { prod: 4, staging: 1, local: 1 }),
+                    collectionId: 1,
                 },
             },
         },
