@@ -33,6 +33,14 @@ import kotlin.time.Instant
 @Service
 @Transactional
 class CollectionModel(private val dashboardsConfig: DashboardsConfig, private val userModel: UserModel) {
+    /**
+     * The core function to fetch collections. Also fetches associated variants and tags (if desired).
+     *
+     * @param includeVariants whether to fetch variants as well. Quicker to omit if not needed.
+     * @param excludeSystemCollections whether to exclude collections belonging to the system user.
+     *   Useful when only community collections are desired, and filtering makes responses smaller.
+     * @param tags if provided, only collections containing all specified tags are returned.
+     */
     fun getCollections(
         userId: Long?,
         organism: String?,
@@ -48,32 +56,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             dashboardsConfig.validateCollectionsEnabled(organism)
         }
 
-        var collectionConditions: Op<Boolean> = Op.TRUE
-        if (userId != null) {
-            collectionConditions = collectionConditions and (CollectionTable.ownedBy eq userId)
-        }
-        if (organism != null) {
-            collectionConditions = collectionConditions and (CollectionTable.organism eq organism)
-        }
-        if (excludeSystemCollections) {
-            val systemUserId = userModel.getSystemUserId()
-            if (systemUserId != null) {
-                collectionConditions = collectionConditions and (CollectionTable.ownedBy neq systemUserId)
-            }
-        }
-        if (!tags.isNullOrEmpty()) {
-            val distinctTags = tags.map { it.lowercase() }.distinct()
-            var matchingIds: Set<Long>? = null
-            for (tag in distinctTags) {
-                val idsWithTag = CollectionTagsTable
-                    .selectAll()
-                    .where { CollectionTagsTable.tag eq tag }
-                    .mapTo(mutableSetOf()) { it[CollectionTagsTable.collectionId].value }
-                matchingIds = if (matchingIds == null) idsWithTag else (matchingIds intersect idsWithTag)
-            }
-            collectionConditions = collectionConditions and
-                (CollectionTable.id inList (matchingIds?.toList() ?: emptyList()))
-        }
+        val collectionConditions = buildCollectionConditions(userId, organism, excludeSystemCollections, tags)
 
         val join = CollectionTable
             .join(VariantTable, JoinType.LEFT)
@@ -287,6 +270,45 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
         }
 
         return collectionEntity.toCollection()
+    }
+
+    private fun buildCollectionConditions(
+        userId: Long?,
+        organism: String?,
+        excludeSystemCollections: Boolean,
+        tags: List<String>?,
+    ): Op<Boolean> {
+        var conditions: Op<Boolean> = Op.TRUE
+        if (userId != null) {
+            conditions = conditions and (CollectionTable.ownedBy eq userId)
+        }
+        if (organism != null) {
+            conditions = conditions and (CollectionTable.organism eq organism)
+        }
+        if (excludeSystemCollections) {
+            val systemUserId = userModel.getSystemUserId()
+            if (systemUserId != null) {
+                conditions = conditions and (CollectionTable.ownedBy neq systemUserId)
+            }
+        }
+        if (!tags.isNullOrEmpty()) {
+            val distinctTags = tags.map { it.lowercase() }.distinct()
+            val matchingIds = getIdsMatchingAllTags(distinctTags)
+            conditions = conditions and (CollectionTable.id inList matchingIds.toList())
+        }
+        return conditions
+    }
+
+    private fun getIdsMatchingAllTags(tags: List<String>): Set<Long> {
+        var matchingIds: Set<Long>? = null
+        for (tag in tags) {
+            val idsWithTag = CollectionTagsTable
+                .selectAll()
+                .where { CollectionTagsTable.tag eq tag }
+                .mapTo(mutableSetOf()) { it[CollectionTagsTable.collectionId].value }
+            matchingIds = if (matchingIds == null) idsWithTag else (matchingIds intersect idsWithTag)
+        }
+        return matchingIds ?: emptySet()
     }
 
     private fun createVariantEntity(
