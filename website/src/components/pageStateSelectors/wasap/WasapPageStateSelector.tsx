@@ -124,7 +124,10 @@ export function WasapPageStateSelector({
         <div className='flex flex-col gap-4'>
             <SelectorHeadline>Filter dataset</SelectorHeadline>
             <Inset className='p-2'>
-                <LabeledField label='Sampling location'>
+                <LabeledField
+                    label='Sampling location'
+                    error={!baseFilterState.locationName ? 'Location is required' : undefined}
+                >
                     <GsTextFilter
                         placeholderText='Sampling location'
                         lapisField={config.locationNameField}
@@ -251,6 +254,7 @@ export function WasapPageStateSelector({
                 pageStateHandler={pageStateHandler}
                 newPageState={getMergedPageState()}
                 setPageState={setPageState}
+                disabled={!baseFilterState.locationName}
             />
         </div>
     );
