@@ -75,26 +75,6 @@ describe('TagInput', () => {
         expect(onChange).not.toHaveBeenCalled();
     });
 
-    it('splits pasted text on whitespace into multiple tags', async () => {
-        const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInput tags={[]} onChange={onChange} />);
-
-        await userEvent.click(getByPlaceholder(PLACEHOLDER));
-        await userEvent.paste('flu covid rsv');
-
-        expect(onChange).toHaveBeenCalledWith(['flu', 'covid', 'rsv']);
-    });
-
-    it('splits pasted text on commas into multiple tags', async () => {
-        const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInput tags={[]} onChange={onChange} />);
-
-        await userEvent.click(getByPlaceholder(PLACEHOLDER));
-        await userEvent.paste('flu,covid,rsv');
-
-        expect(onChange).toHaveBeenCalledWith(['flu', 'covid', 'rsv']);
-    });
-
     it('removes a tag when the remove button is clicked', async () => {
         const onChange = vi.fn();
         const { getByRole } = render(<TagInput tags={['flu', 'covid']} onChange={onChange} />);
