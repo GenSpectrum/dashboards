@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
 import org.genspectrum.dashboardsbackend.api.Collection
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.core.eq
@@ -41,8 +42,8 @@ class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
         val tagList = CollectionTagsTable
             .selectAll()
             .where { CollectionTagsTable.collectionId eq id.value }
+            .orderBy(CollectionTagsTable.tag to SortOrder.ASC)
             .map { it[CollectionTagsTable.tag] }
-            .sorted()
         return Collection(
             id = id.value,
             name = name,
