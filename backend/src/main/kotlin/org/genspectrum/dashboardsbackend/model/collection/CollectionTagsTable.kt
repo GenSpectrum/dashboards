@@ -13,20 +13,12 @@ object CollectionTagsTable : Table("collection_tags") {
     override val primaryKey = PrimaryKey(collectionId, tag)
 }
 
-class StringAgg(
-    private val column: Column<String>,
-    private val distinct: Boolean = false,
-    private val orderBy: Boolean = false,
-) : Function<String?>(TextColumnType()) {
+class JsonAgg(private val column: Column<String>) : Function<String?>(TextColumnType()) {
     override fun toQueryBuilder(queryBuilder: QueryBuilder) = queryBuilder {
-        append("string_agg(")
-        if (distinct) append("DISTINCT ")
+        append("array_to_json(array_agg(DISTINCT ")
         append(column)
-        append(", ','")
-        if (orderBy && !distinct) {
-            append(" ORDER BY ")
-            append(column)
-        }
-        append(")")
+        append(" ORDER BY ")
+        append(column)
+        append("))")
     }
 }

@@ -34,21 +34,15 @@ class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: 
         includeVariants: Boolean = false,
         excludeSystemCollections: Boolean = false,
         tags: List<String>? = null,
-    ): ResultActions {
-        val params = buildString {
-            val queryParams = mutableListOf<String>()
-            if (userId != null) queryParams.add("userId=$userId")
-            if (organism != null) queryParams.add("organism=$organism")
-            if (includeVariants) queryParams.add("includeVariants=true")
-            if (excludeSystemCollections) queryParams.add("excludeSystemCollections=true")
-            tags?.forEach { queryParams.add("tags=$it") }
-            if (queryParams.isNotEmpty()) {
-                append("?")
-                append(queryParams.joinToString("&"))
-            }
-        }
-        return mockMvc.perform(get("/collections$params"))
-    }
+    ): ResultActions = mockMvc.perform(
+        get("/collections").apply {
+            if (userId != null) param("userId", userId.toString())
+            if (organism != null) param("organism", organism)
+            if (includeVariants) param("includeVariants", "true")
+            if (excludeSystemCollections) param("excludeSystemCollections", "true")
+            tags?.forEach { param("tags", it) }
+        },
+    )
 
     fun getCollections(
         userId: Long? = null,

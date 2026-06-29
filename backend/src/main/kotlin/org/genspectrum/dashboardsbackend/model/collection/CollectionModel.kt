@@ -1,5 +1,7 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
@@ -28,11 +30,16 @@ import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Locale
 import kotlin.time.Instant
 
 @Service
 @Transactional
-class CollectionModel(private val dashboardsConfig: DashboardsConfig, private val userModel: UserModel) {
+class CollectionModel(
+    private val dashboardsConfig: DashboardsConfig,
+    private val userModel: UserModel,
+    private val objectMapper: ObjectMapper,
+) {
     /**
      * The core function to fetch collections. Also fetches associated variants and tags (if desired).
      *
@@ -63,7 +70,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             .join(CollectionTagsTable, JoinType.LEFT, CollectionTable.id, CollectionTagsTable.collectionId)
 
         return if (includeVariants) {
-            val tagsExpr = StringAgg(CollectionTagsTable.tag, orderBy = true)
+            val tagsExpr = JsonAgg(CollectionTagsTable.tag)
             val columns = CollectionTable.columns + VariantTable.columns + listOf(tagsExpr)
 
             join.select(columns)
@@ -84,14 +91,14 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = first[CollectionTable.description],
                         variantCount = variants.size,
                         variants = variants,
-                        tags = first[tagsExpr]?.split(",") ?: emptyList(),
+                        tags = first[tagsExpr]?.let { objectMapper.readValue<List<String>>(it) } ?: emptyList(),
                         createdAt = first[CollectionTable.createdAt],
                         updatedAt = first[CollectionTable.updatedAt],
                     )
                 }
         } else {
             val countExpr = Count(VariantTable.id, distinct = true)
-            val tagsExpr = StringAgg(CollectionTagsTable.tag, distinct = true)
+            val tagsExpr = JsonAgg(CollectionTagsTable.tag)
 
             join.select(
                 CollectionTable.id,
@@ -115,7 +122,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = row[CollectionTable.description],
                         variantCount = row[countExpr].toInt(),
                         variants = null,
-                        tags = row[tagsExpr]?.split(",")?.sorted() ?: emptyList(),
+                        tags = row[tagsExpr]?.let { objectMapper.readValue<List<String>>(it) } ?: emptyList(),
                         createdAt = row[CollectionTable.createdAt],
                         updatedAt = row[CollectionTable.updatedAt],
                     )
@@ -159,7 +166,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             variantEntity
         }
 
-        val insertedTags = request.tags.map { it.lowercase() }.distinct().sorted()
+        val insertedTags = request.tags.map { it.lowercase(Locale.ENGLISH) }.distinct().sorted()
         insertedTags.forEach { tag ->
             CollectionTagsTable.insert {
                 it[collectionId] = collectionEntity.id
@@ -209,7 +216,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
 
         if (update.tags != null) {
             CollectionTagsTable.deleteWhere { CollectionTagsTable.collectionId eq id }
-            val newTags = update.tags.map { it.lowercase() }.distinct()
+            val newTags = update.tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
             newTags.forEach { tag ->
                 CollectionTagsTable.insert {
                     it[collectionId] = collectionEntity.id
@@ -292,7 +299,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             }
         }
         if (!tags.isNullOrEmpty()) {
-            val distinctTags = tags.map { it.lowercase() }.distinct()
+            val distinctTags = tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
             val tagSubquery = CollectionTagsTable
                 .select(CollectionTagsTable.collectionId)
                 .where { CollectionTagsTable.tag inList distinctTags }
