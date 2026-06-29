@@ -45,6 +45,17 @@ class CollectionsTagsTest(
     }
 
     @Test
+    fun `WHEN getting collections and a collection has no tags THEN tags is empty list not null`() {
+        val userId = usersClient.createUser()
+        val created = collectionsClient.postCollection(dummyCollectionRequest, userId)
+
+        val collections = collectionsClient.getCollections(userId = userId)
+        val retrieved = collections.first { it.id == created.id }
+
+        assertThat(retrieved.tags, empty())
+    }
+
+    @Test
     fun `WHEN creating collection with tags THEN tags are lowercased`() {
         val userId = usersClient.createUser()
         val collection = collectionsClient.postCollection(

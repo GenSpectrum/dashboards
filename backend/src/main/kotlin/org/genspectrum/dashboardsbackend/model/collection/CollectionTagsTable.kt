@@ -19,6 +19,8 @@ class JsonAgg(private val column: Column<String>) : Function<String?>(TextColumn
         append(column)
         append(" ORDER BY ")
         append(column)
-        append("))")
+        append(") FILTER (WHERE ")
+        append(column)
+        append(" IS NOT NULL))")
     }
 }
