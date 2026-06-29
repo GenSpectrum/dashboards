@@ -5,9 +5,12 @@ import { render } from 'vitest-browser-react';
 import { CollectionForm } from './CollectionForm.tsx';
 import { testOrganismsConfig } from '../../../../routeMocker.ts';
 import { it } from '../../../../test-extend.ts';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import type { DashboardsConfig } from '../../../config.ts';
 import type { VariantUpdate } from '../../../types/Collection.ts';
 import { Organisms } from '../../../types/Organism.ts';
+
+const CollectionFormWithProvider = withQueryProvider(CollectionForm);
 
 const ORGANISM = Organisms.covid;
 
@@ -39,7 +42,7 @@ describe('CollectionForm', () => {
     it('shows "New collection" heading when no initialValues are provided', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionForm {...DEFAULT_PROPS} />);
+        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
 
         await expect.element(getByRole('heading', { level: 1 })).toHaveTextContent('New collection');
     });
@@ -47,7 +50,7 @@ describe('CollectionForm', () => {
     it('shows "Edit collection" heading when initialValues are provided', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionForm {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
+        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
 
         await expect.element(getByRole('heading', { level: 1 })).toHaveTextContent('Edit collection');
     });
@@ -55,7 +58,7 @@ describe('CollectionForm', () => {
     it('"Add variant" button adds a new variant row', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionForm {...DEFAULT_PROPS} />);
+        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
 
         await getByRole('button', { name: 'Add variant' }).click();
 
@@ -66,7 +69,7 @@ describe('CollectionForm', () => {
     it('default variant has "Use advanced query" unchecked', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionForm {...DEFAULT_PROPS} />);
+        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
 
         await expect.element(getByRole('checkbox', { name: 'Use advanced query instead' })).not.toBeChecked();
     });
@@ -74,7 +77,7 @@ describe('CollectionForm', () => {
     it('shows existing tags as chips when initialValues has tags', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByText } = render(<CollectionForm {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
+        const { getByText } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
 
         await expect.element(getByText('flu')).toBeVisible();
         await expect.element(getByText('europe')).toBeVisible();
@@ -86,7 +89,7 @@ describe('CollectionForm', () => {
         const onSubmit = vi.fn();
 
         const { getByRole, getByPlaceholder } = render(
-            <CollectionForm {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
+            <CollectionFormWithProvider {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
         );
 
         await getByPlaceholder('A name to identify this collection.').fill('Test name');
@@ -107,7 +110,7 @@ describe('CollectionForm', () => {
         const onSubmit = vi.fn();
 
         const { getByRole, getByPlaceholder } = render(
-            <CollectionForm {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
+            <CollectionFormWithProvider {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
         );
 
         await getByPlaceholder('A name to identify this collection.').fill('Test name');
