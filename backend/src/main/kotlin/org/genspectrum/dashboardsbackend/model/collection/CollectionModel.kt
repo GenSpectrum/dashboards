@@ -25,8 +25,8 @@ import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.inSubQuery
 import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.core.notInList
+import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
-import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -167,11 +167,9 @@ class CollectionModel(
         }
 
         val insertedTags = request.tags.map { it.lowercase(Locale.ENGLISH) }.distinct().sorted()
-        insertedTags.forEach { tag ->
-            CollectionTagsTable.insert {
-                it[collectionId] = collectionEntity.id
-                it[CollectionTagsTable.tag] = tag
-            }
+        CollectionTagsTable.batchInsert(insertedTags) { tag ->
+            this[CollectionTagsTable.collectionId] = collectionEntity.id
+            this[CollectionTagsTable.tag] = tag
         }
 
         val variants = variantEntities.map { it.toVariant() }
@@ -217,11 +215,9 @@ class CollectionModel(
         if (update.tags != null) {
             CollectionTagsTable.deleteWhere { CollectionTagsTable.collectionId eq id }
             val newTags = update.tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
-            newTags.forEach { tag ->
-                CollectionTagsTable.insert {
-                    it[collectionId] = collectionEntity.id
-                    it[CollectionTagsTable.tag] = tag
-                }
+            CollectionTagsTable.batchInsert(newTags) { tag ->
+                this[CollectionTagsTable.collectionId] = collectionEntity.id
+                this[CollectionTagsTable.tag] = tag
             }
         }
 
