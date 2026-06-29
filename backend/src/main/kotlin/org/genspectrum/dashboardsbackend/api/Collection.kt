@@ -68,6 +68,7 @@ data class CollectionRequest(
 {
     "name": "Updated Collection Name",
     "description": "Updated description",
+    "tags": ["europe", "flu"],
     "variants": [
         {
             "type": "query",
