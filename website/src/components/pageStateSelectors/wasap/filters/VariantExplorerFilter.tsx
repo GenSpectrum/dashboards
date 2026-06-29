@@ -151,6 +151,7 @@ function PredefinedSignature({
     const collections = predefinedVariantsQueryResult?.data ?? [];
     const selectedCollection = collections.find((c) => c.id === pageState.collectionId) ?? null;
     const newMutationsCheckBoxId = useId();
+    const includeSublineagesCheckBoxId = useId();
 
     return (
         <Inset className='mt-4 p-2'>
@@ -178,14 +179,33 @@ function PredefinedSignature({
                     </label>
                 </div>
             </div>
-            <NumericInput
-                label='Min. Jaccard index'
-                value={pageState.minJaccard}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
-            />
+            <div className='mt-4'>
+                <NumericInput
+                    label='Min. Jaccard index'
+                    value={pageState.minJaccard}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
+                />
+            </div>
+            <div className='text-sm'>
+                <input
+                    className='accent-primary'
+                    type='checkbox'
+                    id={includeSublineagesCheckBoxId}
+                    checked={pageState.includeSublineagesForJaccard !== false}
+                    onChange={(e) => setPageState({ ...pageState, includeSublineagesForJaccard: e.target.checked })}
+                />
+                <div
+                    className='tooltip tooltip-right inline'
+                    data-tip='Include sublineages when computing Jaccard index (appends * to the lineage)'
+                >
+                    <label htmlFor={includeSublineagesCheckBoxId} className='cursor-pointer pl-2'>
+                        Include sublineages for Jaccard computation
+                    </label>
+                </div>
+            </div>
         </Inset>
     );
 }

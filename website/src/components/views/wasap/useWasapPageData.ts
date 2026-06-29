@@ -146,10 +146,11 @@ async function fetchVariantPredefinedModeData(
             ? (variant.filterObject.nucleotideMutations ?? [])
             : (variant.filterObject.aminoAcidMutations ?? []);
 
+    const lineageForJaccard = analysis.includeSublineagesForJaccard !== false ? `${collection.name}*` : collection.name;
     const jaccardByMutation = await getJaccardForMutations(
         config.clinicalLapis.lapisBaseUrl,
         analysis.sequenceType,
-        { [config.clinicalLapis.lineageField]: collection.name },
+        { [config.clinicalLapis.lineageField]: lineageForJaccard },
         getLapisFilterForTimeFrame(analysis.timeFrame, config.clinicalLapis.dateField),
     );
 
@@ -165,7 +166,9 @@ async function fetchVariantPredefinedModeData(
                 header: 'Jaccard index',
                 values: Object.fromEntries(
                     mutations
-                        .filter((m) => jaccardByMutation.has(m) && (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard)
+                        .filter(
+                            (m) => jaccardByMutation.has(m) && (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard,
+                        )
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         .map((m) => [m, jaccardByMutation.get(m)!.toPrecision(2)]),
                 ),

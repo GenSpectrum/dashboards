@@ -224,6 +224,7 @@ export type WasapVariantFilter = {
     // predefined signature fields
     collectionId?: number;
     newMutationsOnly?: boolean;
+    includeSublineagesForJaccard?: boolean;
 };
 
 export type WasapResistanceFilter = {
