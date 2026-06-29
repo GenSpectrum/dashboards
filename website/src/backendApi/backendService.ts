@@ -244,6 +244,13 @@ export class BackendService extends ApiService {
             schema: z.literal('').refine((_input): _input is never => true),
         });
     }
+
+    public async getCollectionTags() {
+        return this.get({
+            url: '/collections/tags',
+            schema: z.object({ tags: z.array(z.string()) }),
+        });
+    }
 }
 
 let backendServiceForClientside: BackendService | null = null;
