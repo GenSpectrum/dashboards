@@ -33,6 +33,8 @@
         "cookie": "^1.1.1",
         "dayjs": "^1.11.21",
         "downshift": "^9.3.3",
+        "gridjs": "^6.2.0",
+        "gridjs-react": "^6.1.1",
         "katex": "^0.17.0",
         "patch-package": "^8.0.1",
         "react": "^19.2.7",

@@ -23,7 +23,7 @@ test.describe('WASAP Pages', () => {
     test.setTimeout(60_000);
 
     for (const organism of Object.values(wastewaterOrganisms)) {
-        const { name } = wastewaterOrganismConfigs[organism];
+        const { name } = wastewaterOrganismConfigs()[organism];
 
         test.describe(name, () => {
             test('should load with default filters and show mutation data', async ({ wasapPage }) => {
