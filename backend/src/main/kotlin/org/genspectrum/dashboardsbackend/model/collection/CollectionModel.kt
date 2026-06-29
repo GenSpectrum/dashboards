@@ -65,6 +65,8 @@ class CollectionModel(
 
         val collectionConditions = buildCollectionConditions(userId, organism, excludeSystemCollections, tags)
 
+        // Joining both tables creates a variants×tags intermediate result per collection.
+        // DISTINCT aggregates keep results correct; see #1295 for a potential future optimisation.
         val join = CollectionTable
             .join(VariantTable, JoinType.LEFT)
             .join(CollectionTagsTable, JoinType.LEFT, CollectionTable.id, CollectionTagsTable.collectionId)
