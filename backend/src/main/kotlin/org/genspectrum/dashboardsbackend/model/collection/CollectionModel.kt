@@ -285,29 +285,25 @@ class CollectionModel(
         excludeSystemCollections: Boolean,
         tags: List<String>?,
     ): Op<Boolean> {
-        var conditions: Op<Boolean> = Op.TRUE
-        if (userId != null) {
-            conditions = conditions and (CollectionTable.ownedBy eq userId)
+        val systemUserId = if (excludeSystemCollections) userModel.getSystemUserId() else null
+
+        val conditions = buildList {
+            if (userId != null) add(CollectionTable.ownedBy eq userId)
+            if (organism != null) add(CollectionTable.organism eq organism)
+            if (systemUserId != null) add(CollectionTable.ownedBy neq systemUserId)
+            if (!tags.isNullOrEmpty()) add(tagSubquery(tags))
         }
-        if (organism != null) {
-            conditions = conditions and (CollectionTable.organism eq organism)
-        }
-        if (excludeSystemCollections) {
-            val systemUserId = userModel.getSystemUserId()
-            if (systemUserId != null) {
-                conditions = conditions and (CollectionTable.ownedBy neq systemUserId)
-            }
-        }
-        if (!tags.isNullOrEmpty()) {
-            val distinctTags = tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
-            val tagSubquery = CollectionTagsTable
-                .select(CollectionTagsTable.collectionId)
-                .where { CollectionTagsTable.tag inList distinctTags }
-                .groupBy(CollectionTagsTable.collectionId)
-                .having { Count(CollectionTagsTable.tag, distinct = true) eq distinctTags.size.toLong() }
-            conditions = conditions and (CollectionTable.id inSubQuery tagSubquery)
-        }
-        return conditions
+
+        return conditions.fold(Op.TRUE as Op<Boolean>) { acc, condition -> acc and condition }
+    }
+
+    private fun tagSubquery(tags: List<String>): Op<Boolean> {
+        val distinctTags = tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
+        return CollectionTable.id inSubQuery CollectionTagsTable
+            .select(CollectionTagsTable.collectionId)
+            .where { CollectionTagsTable.tag inList distinctTags }
+            .groupBy(CollectionTagsTable.collectionId)
+            .having { Count(CollectionTagsTable.tag, distinct = true) eq distinctTags.size.toLong() }
     }
 
     private fun createVariantEntity(
