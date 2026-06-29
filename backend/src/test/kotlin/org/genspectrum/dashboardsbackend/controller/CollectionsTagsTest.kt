@@ -216,6 +216,52 @@ class CollectionsTagsTest(
     }
 
     @Test
+    fun `WHEN creating collection with duplicate tags THEN duplicates are deduplicated`() {
+        val userId = usersClient.createUser()
+        val collection = collectionsClient.postCollection(
+            dummyCollectionRequest.copy(tags = listOf("flu", "flu", "FLU")),
+            userId,
+        )
+
+        val retrieved = collectionsClient.getCollections(userId = userId)
+            .first { it.id == collection.id }
+
+        assertThat(retrieved.tags, equalTo(listOf("flu")))
+    }
+
+    @Test
+    fun `GIVEN collection with multiple variants and tags WHEN getting with includeVariants THEN no duplicate tags`() {
+        val userId = usersClient.createUser()
+        collectionsClient.postCollection(
+            dummyCollectionRequest.copy(tags = listOf("flu", "europe")),
+            userId,
+        )
+
+        val collections = collectionsClient.getCollections(userId = userId, includeVariants = true)
+
+        assertThat(collections.first().tags, containsInAnyOrder("flu", "europe"))
+    }
+
+    @Test
+    fun `GIVEN collections with different tags WHEN filtering without includeVariants THEN returns matching only`() {
+        val userId = usersClient.createUser()
+        val fluCollection = collectionsClient.postCollection(
+            dummyCollectionRequest.copy(name = "Flu", tags = listOf("flu")),
+            userId,
+        )
+        val covidCollection = collectionsClient.postCollection(
+            dummyCollectionRequest.copy(name = "Covid", tags = listOf("covid")),
+            userId,
+        )
+
+        val results = collectionsClient.getCollections(userId = userId, tags = listOf("flu"))
+        val resultIds = results.map { it.id }
+
+        assertThat(resultIds, hasItem(fluCollection.id))
+        assertThat(resultIds, not(hasItem(covidCollection.id)))
+    }
+
+    @Test
     fun `WHEN filtering by tag with uppercase THEN matches lowercased stored tags`() {
         val userId = usersClient.createUser()
         val collection = collectionsClient.postCollection(
