@@ -37,6 +37,7 @@ const collectionBaseSchema = z.object({
     organism: z.string(),
     description: z.string().nullable(),
     variantCount: z.number().int().nonnegative(),
+    tags: z.array(z.string()),
 });
 
 export const collectionSummarySchema = collectionBaseSchema;
@@ -95,6 +96,7 @@ export const collectionRequestSchema = z.object({
     name: z.string(),
     organism: z.string(),
     description: z.string().optional(),
+    tags: z.array(z.string()),
     variants: z.array(variantRequestSchema),
 });
 
@@ -111,6 +113,7 @@ export const collectionUpdateSchema = collectionRequestSchema
     .omit({ organism: true })
     .partial()
     .extend({
+        tags: z.array(z.string()).optional(),
         variants: z.array(variantUpdateSchema).optional(),
     });
 

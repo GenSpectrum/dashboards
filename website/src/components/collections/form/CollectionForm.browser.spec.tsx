@@ -1,3 +1,4 @@
+import { userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
@@ -30,6 +31,7 @@ const DEFAULT_PROPS = {
 const INITIAL_VALUES = {
     name: 'My collection',
     description: 'A description',
+    tags: ['flu', 'europe'],
     variants: [{ type: 'filterObject' as const, name: 'Variant 1', filterObject: {} } satisfies VariantUpdate],
 };
 
@@ -69,6 +71,36 @@ describe('CollectionForm', () => {
         await expect.element(getByRole('checkbox', { name: 'Use advanced query instead' })).not.toBeChecked();
     });
 
+    it('shows existing tags as chips when initialValues has tags', async ({ routeMockers: { lapis } }) => {
+        lapis.mockLapisDown();
+
+        const { getByText } = render(<CollectionForm {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
+
+        await expect.element(getByText('flu')).toBeVisible();
+        await expect.element(getByText('europe')).toBeVisible();
+    });
+
+    it('adds a tag on Enter and includes it in onSubmit', async ({ routeMockers: { lapis } }) => {
+        lapis.mockLapisDown();
+
+        const onSubmit = vi.fn();
+
+        const { getByRole, getByPlaceholder } = render(
+            <CollectionForm {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
+        );
+
+        await getByPlaceholder('A name to identify this collection.').fill('Test name');
+        await getByPlaceholder('Add tags (Enter, comma, or space to confirm)').fill('influenza');
+        await userEvent.keyboard('{Enter}');
+        await getByRole('button', { name: 'Create collection' }).click();
+
+        expect(onSubmit).toHaveBeenCalledWith(
+            expect.objectContaining({
+                tags: ['influenza'],
+            }),
+        );
+    });
+
     it('calls onSubmit with the correct values when the form is submitted', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
@@ -85,6 +117,7 @@ describe('CollectionForm', () => {
             expect.objectContaining({
                 name: 'Test name',
                 description: '',
+                tags: [],
             }),
         );
     });

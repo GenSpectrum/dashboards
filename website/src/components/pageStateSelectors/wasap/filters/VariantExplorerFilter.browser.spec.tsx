@@ -12,8 +12,8 @@ import type { WasapVariantFilter } from '../../../views/wasap/wasapPageConfig';
 const DUMMY_LAPIS_URL_2 = 'http://lapis2.dummy';
 
 const DUMMY_COLLECTIONS: CollectionSummary[] = [
-    { id: 1, name: 'XBB.1.5', ownedBy: 1, organism: 'SARS-CoV-2', description: null, variantCount: 5 },
-    { id: 2, name: 'JN.1', ownedBy: 1, organism: 'SARS-CoV-2', description: null, variantCount: 3 },
+    { id: 1, name: 'XBB.1.5', ownedBy: 1, organism: 'SARS-CoV-2', description: null, variantCount: 5, tags: [] },
+    { id: 2, name: 'JN.1', ownedBy: 1, organism: 'SARS-CoV-2', description: null, variantCount: 3, tags: [] },
 ];
 const mockPredefinedQueryResult = { data: DUMMY_COLLECTIONS } as unknown as UseQueryResult<CollectionSummary[]>;
 

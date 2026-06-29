@@ -33,6 +33,7 @@ function CollectionEditInner({
                 collection: {
                     name: values.name,
                     description: values.description,
+                    tags: values.tags,
                     variants: values.variants,
                 },
             }),
@@ -47,6 +48,7 @@ function CollectionEditInner({
     const initialValues: CollectionFormValues = {
         name: collection.name,
         description: collection.description ?? '',
+        tags: collection.tags,
         variants: collection.variants.map((v): VariantUpdate => {
             if (v.type === 'query') {
                 return {

@@ -16,6 +16,7 @@ const communityCollection = {
     organism: ORGANISM,
     description: 'A user-submitted collection',
     variantCount: 3,
+    tags: ['europe', 'flu'],
 };
 
 const officialCollection = {
@@ -25,6 +26,7 @@ const officialCollection = {
     organism: ORGANISM,
     description: null,
     variantCount: 0,
+    tags: [],
 };
 
 const allCollections = [communityCollection, officialCollection];
