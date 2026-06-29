@@ -138,7 +138,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
             predefinedVariantsSource: {
-                collectionsUserId: isStaging ? 1 : 3,
+                collectionsUserId: byEnv(env, { prod: 3, staging: 1, local: 1 }),
                 collectionsTag: '#nextclade-lineage',
                 variantSourceLabel: 'Nextclade',
             },
@@ -182,7 +182,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: isStaging ? 4997 : 5000,
+                    collectionId: byEnv(env, { prod: 5000, staging: 4997, local: 21 }),
                 },
                 resistance: {
                     mode: 'resistance',
@@ -209,7 +209,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
             predefinedVariantsSource: {
-                collectionsUserId: isStaging ? 1 : 3,
+                collectionsUserId: byEnv(env, { prod: 3, staging: 1, local: 1 }),
                 collectionsTag: '#nextclade-lineage',
                 variantSourceLabel: 'Nextclade',
             },
@@ -253,7 +253,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     minCount: 15,
                     minJaccard: 0.75,
                     timeFrame: VARIANT_TIME_FRAME.all,
-                    collectionId: isStaging ? 5050 : 5053,
+                    collectionId: byEnv(env, { prod: 5053, staging: 5050, local: 74 }),
                 },
                 resistance: {
                     mode: 'resistance',
