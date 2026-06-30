@@ -155,11 +155,12 @@ async function fetchVariantPredefinedModeData(
     );
 
     if (jaccardByMutation.size === 0) {
-        return { type: 'mutations', displayMutations: mutations };
+        return { type: 'mutations', displayMutations: mutations, lineageForJaccard };
     }
 
     return {
         type: 'mutations',
+        lineageForJaccard,
         displayMutations: mutations.filter((m) => (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard),
         customColumns: [
             {
@@ -368,6 +369,7 @@ export type WasapMutationsData = {
     type: 'mutations';
     displayMutations?: string[];
     customColumns?: CustomColumn[];
+    lineageForJaccard?: string;
 };
 
 /**

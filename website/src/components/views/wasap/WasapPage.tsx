@@ -14,6 +14,7 @@ import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { usePageState } from '../usePageState.ts';
 import { CollectionInfo } from './components/CollectionInfo';
+import { JaccardFetchInfo } from './components/JaccardFetchInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
 import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
@@ -123,6 +124,19 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                         analysis.signatureType === 'computed' &&
                                         config.variantAnalysisModeEnabled && (
                                             <VariantFetchInfo
+                                                analysis={analysis}
+                                                clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                                clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                                clinicalLapisDateField={config.clinicalLapis.dateField}
+                                                warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                            />
+                                        )}
+                                    {analysis.mode === 'variant' &&
+                                        analysis.signatureType === 'predefined' &&
+                                        config.variantAnalysisModeEnabled &&
+                                        data.lineageForJaccard !== undefined && (
+                                            <JaccardFetchInfo
+                                                lineage={data.lineageForJaccard}
                                                 analysis={analysis}
                                                 clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
                                                 clinicalLapisLineageField={config.clinicalLapis.lineageField}
