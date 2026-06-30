@@ -108,6 +108,25 @@ describe('CollectionForm', () => {
         );
     });
 
+    it('removes a tag and excludes it from onSubmit', async ({ routeMockers: { lapis } }) => {
+        lapis.mockLapisDown();
+
+        const onSubmit = vi.fn();
+
+        const { getByRole } = render(
+            <CollectionFormWithProvider {...DEFAULT_PROPS} onSubmit={onSubmit} initialValues={INITIAL_VALUES} />,
+        );
+
+        await getByRole('button', { name: 'Remove tag flu' }).click();
+        await getByRole('button', { name: 'Create collection' }).click();
+
+        expect(onSubmit).toHaveBeenCalledWith(
+            expect.objectContaining({
+                tags: ['europe'],
+            }),
+        );
+    });
+
     it('calls onSubmit with the correct values when the form is submitted', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
