@@ -90,30 +90,36 @@ export function VariantExplorerFilter({
                             />
                         </gs-app>
                     </LabeledField>
-                    <NumericInput
-                        label='Min. proportion'
-                        value={pageState.minProportion}
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        onChange={(v) => setPageState({ ...pageState, minProportion: v })}
-                    />
-                    <NumericInput
-                        label='Min. count'
-                        value={pageState.minCount}
-                        min={1}
-                        max={250}
-                        step={1}
-                        onChange={(v) => setPageState({ ...pageState, minCount: Math.round(v) })}
-                    />
-                    <NumericInput
-                        label='Min. Jaccard index'
-                        value={pageState.minJaccard}
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
-                    />
+                    <div className='mb-2'>
+                        <NumericInput
+                            label='Min. proportion'
+                            value={pageState.minProportion}
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            onChange={(v) => setPageState({ ...pageState, minProportion: v })}
+                        />
+                    </div>
+                    <div className='mb-2'>
+                        <NumericInput
+                            label='Min. count'
+                            value={pageState.minCount}
+                            min={1}
+                            max={250}
+                            step={1}
+                            onChange={(v) => setPageState({ ...pageState, minCount: Math.round(v) })}
+                        />
+                    </div>
+                    <div className='mb-2'>
+                        <NumericInput
+                            label='Min. Jaccard index'
+                            value={pageState.minJaccard}
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
+                        />
+                    </div>
                     <LabeledField label='Time frame'>
                         <select
                             className='select select-bordered'
