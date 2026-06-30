@@ -1,7 +1,10 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.api.FilterObject
 import org.genspectrum.dashboardsbackend.api.VariantRequest
@@ -13,28 +16,44 @@ import org.genspectrum.dashboardsbackend.controller.NotFoundException
 import org.genspectrum.dashboardsbackend.model.user.UserEntity
 import org.genspectrum.dashboardsbackend.model.user.UserModel
 import org.genspectrum.dashboardsbackend.util.now
+import org.jetbrains.exposed.v1.core.Count
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.and
-import org.jetbrains.exposed.v1.core.count
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
+import org.jetbrains.exposed.v1.core.inSubQuery
 import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.core.notInList
+import org.jetbrains.exposed.v1.jdbc.batchInsert
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.select
-import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Locale
 import kotlin.time.Instant
 
 @Service
 @Transactional
-class CollectionModel(private val dashboardsConfig: DashboardsConfig, private val userModel: UserModel) {
+class CollectionModel(
+    private val dashboardsConfig: DashboardsConfig,
+    private val userModel: UserModel,
+    private val objectMapper: ObjectMapper,
+) {
+    /**
+     * The core function to fetch collections. Also fetches associated variants and tags (if desired).
+     *
+     * @param includeVariants whether to fetch variants as well. Quicker to omit if not needed.
+     * @param excludeSystemCollections whether to exclude collections belonging to the system user.
+     *   Useful when only community collections are desired, and filtering makes responses smaller.
+     * @param tags if provided, only collections containing all specified tags are returned.
+     */
     fun getCollections(
         userId: Long?,
         organism: String?,
         includeVariants: Boolean = false,
         excludeSystemCollections: Boolean = false,
+        tags: List<String>? = null,
     ): List<Collection> {
         if (userId != null) {
             UserEntity.findById(userId) ?: throw NotFoundException("User $userId not found")
@@ -44,25 +63,22 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             dashboardsConfig.validateCollectionsEnabled(organism)
         }
 
-        var collectionConditions: Op<Boolean> = Op.TRUE
-        if (userId != null) {
-            collectionConditions = collectionConditions and (CollectionTable.ownedBy eq userId)
-        }
-        if (organism != null) {
-            collectionConditions = collectionConditions and (CollectionTable.organism eq organism)
-        }
-        if (excludeSystemCollections) {
-            val systemUserId = userModel.getSystemUserId()
-            if (systemUserId != null) {
-                collectionConditions = collectionConditions and (CollectionTable.ownedBy neq systemUserId)
-            }
-        }
+        val collectionConditions = buildCollectionConditions(userId, organism, excludeSystemCollections, tags)
 
-        val join = CollectionTable.join(VariantTable, JoinType.LEFT)
+        // Joining both tables creates a variants×tags intermediate result per collection.
+        // DISTINCT aggregates keep results correct; see #1295 for a potential future optimisation.
+        val join = CollectionTable
+            .join(VariantTable, JoinType.LEFT)
+            .join(CollectionTagsTable, JoinType.LEFT, CollectionTable.id, CollectionTagsTable.collectionId)
 
         return if (includeVariants) {
-            join.selectAll()
+            val tagsExpr = JsonAgg(CollectionTagsTable.tag)
+            val columns = CollectionTable.columns + VariantTable.columns + listOf(tagsExpr)
+
+            join.select(columns)
                 .where { collectionConditions }
+                .groupBy(CollectionTable.id, VariantTable.id)
+                .toList()
                 .groupBy { it[CollectionTable.id] }
                 .map { (_, rows) ->
                     val first = rows.first()
@@ -77,12 +93,15 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = first[CollectionTable.description],
                         variantCount = variants.size,
                         variants = variants,
+                        tags = first[tagsExpr]?.let { objectMapper.readValue<List<String>>(it) } ?: emptyList(),
                         createdAt = first[CollectionTable.createdAt],
                         updatedAt = first[CollectionTable.updatedAt],
                     )
                 }
         } else {
-            val countExpr = VariantTable.id.count()
+            val countExpr = Count(VariantTable.id, distinct = true)
+            val tagsExpr = JsonAgg(CollectionTagsTable.tag)
+
             join.select(
                 CollectionTable.id,
                 CollectionTable.name,
@@ -92,17 +111,10 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                 CollectionTable.createdAt,
                 CollectionTable.updatedAt,
                 countExpr,
+                tagsExpr,
             )
                 .where { collectionConditions }
-                .groupBy(
-                    CollectionTable.id,
-                    CollectionTable.name,
-                    CollectionTable.ownedBy,
-                    CollectionTable.organism,
-                    CollectionTable.description,
-                    CollectionTable.createdAt,
-                    CollectionTable.updatedAt,
-                )
+                .groupBy(CollectionTable.id)
                 .map { row ->
                     Collection(
                         id = row[CollectionTable.id].value,
@@ -112,11 +124,21 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
                         description = row[CollectionTable.description],
                         variantCount = row[countExpr].toInt(),
                         variants = null,
+                        tags = row[tagsExpr]?.let { objectMapper.readValue<List<String>>(it) } ?: emptyList(),
                         createdAt = row[CollectionTable.createdAt],
                         updatedAt = row[CollectionTable.updatedAt],
                     )
                 }
         }
+    }
+
+    fun getAllTags(): CollectionTagsResponse {
+        val tags = CollectionTagsTable
+            .select(CollectionTagsTable.tag)
+            .withDistinct(true)
+            .orderBy(CollectionTagsTable.tag)
+            .map { it[CollectionTagsTable.tag] }
+        return CollectionTagsResponse(tags = tags)
     }
 
     fun getCollection(id: Long): Collection {
@@ -146,6 +168,12 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             variantEntity
         }
 
+        val insertedTags = request.tags.map { it.lowercase(Locale.ENGLISH) }.distinct().sorted()
+        CollectionTagsTable.batchInsert(insertedTags) { tag ->
+            this[CollectionTagsTable.collectionId] = collectionEntity.id
+            this[CollectionTagsTable.tag] = tag
+        }
+
         val variants = variantEntities.map { it.toVariant() }
         return Collection(
             id = collectionEntity.id.value,
@@ -155,6 +183,7 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
             description = collectionEntity.description,
             variantCount = variants.size,
             variants = variants,
+            tags = insertedTags,
             createdAt = collectionEntity.createdAt,
             updatedAt = collectionEntity.updatedAt,
         )
@@ -183,6 +212,15 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
 
         if (update.description != null) {
             collectionEntity.description = update.description
+        }
+
+        if (update.tags != null) {
+            CollectionTagsTable.deleteWhere { CollectionTagsTable.collectionId eq id }
+            val newTags = update.tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
+            CollectionTagsTable.batchInsert(newTags) { tag ->
+                this[CollectionTagsTable.collectionId] = collectionEntity.id
+                this[CollectionTagsTable.tag] = tag
+            }
         }
 
         if (update.variants != null) {
@@ -237,6 +275,33 @@ class CollectionModel(private val dashboardsConfig: DashboardsConfig, private va
         }
 
         return collectionEntity.toCollection()
+    }
+
+    private fun buildCollectionConditions(
+        userId: Long?,
+        organism: String?,
+        excludeSystemCollections: Boolean,
+        tags: List<String>?,
+    ): Op<Boolean> {
+        val systemUserId = if (excludeSystemCollections) userModel.getSystemUserId() else null
+
+        val conditions = buildList {
+            if (userId != null) add(CollectionTable.ownedBy eq userId)
+            if (organism != null) add(CollectionTable.organism eq organism)
+            if (systemUserId != null) add(CollectionTable.ownedBy neq systemUserId)
+            if (!tags.isNullOrEmpty()) add(tagSubquery(tags))
+        }
+
+        return conditions.fold(Op.TRUE as Op<Boolean>) { acc, condition -> acc and condition }
+    }
+
+    private fun tagSubquery(tags: List<String>): Op<Boolean> {
+        val distinctTags = tags.map { it.lowercase(Locale.ENGLISH) }.distinct()
+        return CollectionTable.id inSubQuery CollectionTagsTable
+            .select(CollectionTagsTable.collectionId)
+            .where { CollectionTagsTable.tag inList distinctTags }
+            .groupBy(CollectionTagsTable.collectionId)
+            .having { Count(CollectionTagsTable.tag, distinct = true) eq distinctTags.size.toLong() }
     }
 
     private fun createVariantEntity(

@@ -1,11 +1,14 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
 import org.genspectrum.dashboardsbackend.api.Collection
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.dao.LongEntity
 import org.jetbrains.exposed.v1.dao.LongEntityClass
 import org.jetbrains.exposed.v1.datetime.timestamp
+import org.jetbrains.exposed.v1.jdbc.selectAll
 
 const val COLLECTION_TABLE = "collections_table"
 
@@ -36,6 +39,11 @@ class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
 
     fun toCollection(): Collection {
         val variantList = variants.map { it.toVariant() }
+        val tagList = CollectionTagsTable
+            .selectAll()
+            .where { CollectionTagsTable.collectionId eq id.value }
+            .orderBy(CollectionTagsTable.tag to SortOrder.ASC)
+            .map { it[CollectionTagsTable.tag] }
         return Collection(
             id = id.value,
             name = name,
@@ -44,6 +52,7 @@ class CollectionEntity(id: EntityID<Long>) : LongEntity(id) {
             description = description,
             variantCount = variantList.size,
             variants = variantList,
+            tags = tagList,
             createdAt = createdAt,
             updatedAt = updatedAt,
         )

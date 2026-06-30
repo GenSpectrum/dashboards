@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
+import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
 import org.genspectrum.dashboardsbackend.api.CollectionUpdate
 import org.genspectrum.dashboardsbackend.model.collection.CollectionModel
 import org.springframework.http.HttpStatus
@@ -25,19 +26,29 @@ class CollectionsController(private val collectionModel: CollectionModel) {
         summary = "Get collections",
         description = "Returns collections filtered by optional userId and/or organism parameters. " +
             "Set includeVariants=true to include the full variant list; by default only variantCount is returned. " +
-            "Set excludeSystemCollections=true to exclude collections owned by the system user.",
+            "Set excludeSystemCollections=true to exclude collections owned by the system user. " +
+            "Repeatable tags parameter filters to collections that have ALL specified tags (AND semantics).",
     )
     fun getCollections(
         @RequestParam(required = false) userId: Long?,
         @RequestParam(required = false) organism: String?,
         @RequestParam(required = false, defaultValue = "false") includeVariants: Boolean,
         @RequestParam(required = false, defaultValue = "false") excludeSystemCollections: Boolean,
+        @RequestParam(required = false) tags: List<String>?,
     ): List<Collection> = collectionModel.getCollections(
         userId = userId,
         organism = organism,
         includeVariants = includeVariants,
         excludeSystemCollections = excludeSystemCollections,
+        tags = tags,
     )
+
+    @GetMapping("/collections/tags", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(
+        summary = "Get all distinct collection tags",
+        description = "Returns all distinct tags in use across all collections, alphabetically sorted.",
+    )
+    fun getCollectionTags(): CollectionTagsResponse = collectionModel.getAllTags()
 
     @GetMapping("/collections/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
