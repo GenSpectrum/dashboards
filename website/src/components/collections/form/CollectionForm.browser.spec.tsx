@@ -1,10 +1,10 @@
 import { userEvent } from '@vitest/browser/context';
-import { describe, expect, vi } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { CollectionForm } from './CollectionForm.tsx';
 import { testOrganismsConfig } from '../../../../routeMocker.ts';
-import { it } from '../../../../test-extend.ts';
+import { backendRouteMocker, it } from '../../../../test-extend.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import type { DashboardsConfig } from '../../../config.ts';
 import type { VariantUpdate } from '../../../types/Collection.ts';
@@ -37,6 +37,10 @@ const INITIAL_VALUES = {
     tags: ['flu', 'europe'],
     variants: [{ type: 'filterObject' as const, name: 'Variant 1', filterObject: {} } satisfies VariantUpdate],
 };
+
+beforeEach(() => {
+    backendRouteMocker.mockGetCollectionTags();
+});
 
 describe('CollectionForm', () => {
     it('shows "New collection" heading when no initialValues are provided', async ({ routeMockers: { lapis } }) => {

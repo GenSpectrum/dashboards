@@ -17,10 +17,14 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
     const [inputValue, setInputValue] = useState('');
 
     const addTags = (raw: string) => {
-        const newTags = raw
-            .split(/[\s,]+/)
-            .map((t) => t.toLowerCase().trim())
-            .filter((t) => t && !tags.includes(t));
+        const newTags = [
+            ...new Set(
+                raw
+                    .split(/[\s,]+/)
+                    .map((t) => t.toLowerCase().trim())
+                    .filter((t) => t && !tags.includes(t)),
+            ),
+        ];
         if (newTags.length > 0) {
             onChange([...tags, ...newTags]);
         }

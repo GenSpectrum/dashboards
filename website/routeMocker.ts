@@ -231,6 +231,12 @@ export class BackendRouteMocker {
             }),
         );
     }
+
+    mockGetCollectionTags(tags: string[] = [], statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(`${DUMMY_BACKEND_URL}/collections/tags`, resolver([{ statusCode, response: { tags } }])),
+        );
+    }
 }
 
 function resolver(cases: MockCase[]) {
