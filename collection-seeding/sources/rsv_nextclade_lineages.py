@@ -28,7 +28,9 @@ class _RsvNextcladeLineagesBase(Source):
         response = requests.get(self._tree_url, timeout=60)
         response.raise_for_status()
         tree_json = response.json()
-        collections = _build_collections(tree_json, self.organism, self._organism_label, self.owned_tag)
+        collections = _build_collections(
+            tree_json, self.organism, self._organism_label, self.owned_tag
+        )
         print(f"  Loaded {len(collections)} clade(s).")
         return collections
 
@@ -56,7 +58,9 @@ class _CladeInfo(NamedTuple):
     full_aa: list[str]
 
 
-def _build_collections(tree_json: dict, organism: str, organism_label: str, owned_tag: str) -> list[Collection]:
+def _build_collections(
+    tree_json: dict, organism: str, organism_label: str, owned_tag: str
+) -> list[Collection]:
     """Build one Collection per clade in the Nextclade reference tree.
 
     Each collection gets four variants, mirroring the shape used for COVID Pango lineages:
@@ -96,15 +100,17 @@ def _build_collections(tree_json: dict, organism: str, organism_label: str, owne
         ]
         description = (
             f"{organism_label} Nextclade clade {clade.clade_name}. "
-            f"Parent clade: {parent_str}. "
-            f"{owned_tag}"
+            f"Parent clade: {parent_str}."
         )
-        collections.append({
-            "name": clade.clade_name,
-            "organism": organism,
-            "description": description,
-            "variants": variants,
-        })
+        collections.append(
+            {
+                "name": clade.clade_name,
+                "organism": organism,
+                "description": description,
+                "variants": variants,
+                "tags": [owned_tag],
+            }
+        )
     return collections
 
 
@@ -208,9 +214,9 @@ def _apply_nuc_mutations(
     """
     result = dict(accum)
     for mut in branch_muts:
-        ref_base = mut[0]        # base in the parent (= reference if first mutation here)
-        pos = mut[1:-1]          # genome position as string, e.g. "982"
-        new_base = mut[-1]       # base introduced by this branch
+        ref_base = mut[0]  # base in the parent (= reference if first mutation here)
+        pos = mut[1:-1]  # genome position as string, e.g. "982"
+        new_base = mut[-1]  # base introduced by this branch
         existing = result.get(pos)
         # If this position was already mutated earlier on the path, keep the original
         # reference base; otherwise the parent base is the reference base.
@@ -248,9 +254,9 @@ def _apply_aa_mutations(
     result = dict(accum)
     for gene, muts in branch_muts_by_gene.items():
         for mut in muts:
-            ref_aa = mut[0]      # amino acid in the parent
-            pos = mut[1:-1]      # codon position within the gene
-            new_aa = mut[-1]     # amino acid introduced by this branch
+            ref_aa = mut[0]  # amino acid in the parent
+            pos = mut[1:-1]  # codon position within the gene
+            new_aa = mut[-1]  # amino acid introduced by this branch
             key = (gene, pos)
             existing = result.get(key)
             orig_ref = existing[0] if existing else ref_aa

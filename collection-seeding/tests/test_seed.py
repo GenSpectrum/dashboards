@@ -25,9 +25,10 @@ COLLECTIONS = [
 ]
 
 
-def make_client(existing=None):
+def make_client(existing=None, existing_by_tag=None):
     client = MagicMock()
     client.fetch_existing_collections.return_value = existing or []
+    client.fetch_existing_collections_by_tag.return_value = existing_by_tag or []
     client.create_collection.return_value = 99
     return client
 
@@ -147,3 +148,21 @@ def test_current_collections_are_not_deleted():
     created, updated, deleted = seed_source(client, TaggedMockSource([col]))
     assert deleted == 0
     client.delete_collection.assert_not_called()
+
+
+def test_orphan_with_real_tag_is_deleted():
+    existing_by_tag = [
+        {"id": 7, "name": "OldLineage", "description": "No pseudo-tag here."}
+    ]
+    client = make_client(existing=[], existing_by_tag=existing_by_tag)
+    created, updated, deleted = seed_source(client, TaggedMockSource([]))
+    assert deleted == 1
+    client.delete_collection.assert_called_once_with(7)
+
+
+def test_orphan_found_by_both_tag_and_description_deleted_once():
+    entry = {"id": 8, "name": "OldLineage", "description": f"Old. {TAG}"}
+    client = make_client(existing=[entry], existing_by_tag=[entry])
+    created, updated, deleted = seed_source(client, TaggedMockSource([]))
+    assert deleted == 1
+    client.delete_collection.assert_called_once_with(8)

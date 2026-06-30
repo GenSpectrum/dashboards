@@ -32,12 +32,16 @@ def _parse_rows(text: str) -> list[tuple[str, list[str], str, str]]:
             antibody = "Palivizumab"
         else:
             continue
-        resistance_type = "Partial resistance" if "Partial resistance" in comment else "Resistance"
+        resistance_type = (
+            "Partial resistance" if "Partial resistance" in comment else "Resistance"
+        )
         rows.append((rsv_type, aa_mutations, antibody, resistance_type))
     return rows
 
 
-def _build_collections(rsv_type: str, organism: str, owned_tag: str) -> list[Collection]:
+def _build_collections(
+    rsv_type: str, organism: str, owned_tag: str
+) -> list[Collection]:
     all_rows = _fetch_rows()
     type_rows = [(aa, ab, res) for (t, aa, ab, res) in all_rows if t == rsv_type]
     collections = []
@@ -51,15 +55,18 @@ def _build_collections(rsv_type: str, organism: str, owned_tag: str) -> list[Col
             for (aa, ab, res_type) in type_rows
             if ab == antibody
         ]
-        collections.append({
-            "name": f"{antibody} resistance mutations",
-            "organism": organism,
-            "description": (
-                f"RSV F protein resistance mutations against {antibody} "
-                f"as per ViralZone (https://viralzone.expasy.org/11605). {owned_tag}"
-            ),
-            "variants": variants,
-        })
+        collections.append(
+            {
+                "name": f"{antibody} resistance mutations",
+                "organism": organism,
+                "description": (
+                    f"RSV F protein resistance mutations against {antibody} "
+                    "as per ViralZone (https://viralzone.expasy.org/11605)."
+                ),
+                "variants": variants,
+                "tags": [owned_tag],
+            }
+        )
     return collections
 
 

@@ -1,6 +1,6 @@
 """Shared type definitions for collection seeding."""
 
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 
 class FilterObject(TypedDict, total=False):
@@ -19,6 +19,7 @@ class Collection(TypedDict):
     organism: str
     description: str
     variants: list[Variant]
+    tags: NotRequired[list[str]]
 
 
 class ExistingCollection(TypedDict):
@@ -27,3 +28,4 @@ class ExistingCollection(TypedDict):
     id: int
     name: str
     description: str | None
+    tags: NotRequired[list[str]]

@@ -280,7 +280,7 @@ def test_extract_clades_multi_hop_accumulation():
     }
     clades = {c.clade_name: c for c in _extract_clades(tree["tree"])}
     assert "A100C" in clades["A"].full_nuc
-    assert "A100G" in clades["A.1"].full_nuc   # reference A, final G
+    assert "A100G" in clades["A.1"].full_nuc  # reference A, final G
     assert "A100C" not in clades["A.1"].full_nuc  # A's intermediate step not present
 
 
@@ -355,9 +355,10 @@ def test_build_collections_description_contains_organism_label():
     assert all("RSV-A" in c["description"] for c in cols)
 
 
-def test_build_collections_description_contains_owned_tag():
+def test_build_collections_tag_in_tags_not_description():
     cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
-    assert all("#nextclade-lineage" in c["description"] for c in cols)
+    assert all(c["tags"] == ["#nextclade-lineage"] for c in cols)
+    assert all("#nextclade-lineage" not in c["description"] for c in cols)
 
 
 def test_build_collections_four_variants_per_collection():
@@ -382,15 +383,23 @@ def test_build_collections_full_nuc_variant_contents():
     # For A.1 this includes A's mutations plus A.1's own.
     cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
-    full_nuc = next(v for v in a1["variants"] if v["name"] == "Nucleotide substitutions")
-    assert set(full_nuc["filterObject"]["nucleotideMutations"]) == {"T59C", "G108A", "C241T"}
+    full_nuc = next(
+        v for v in a1["variants"] if v["name"] == "Nucleotide substitutions"
+    )
+    assert set(full_nuc["filterObject"]["nucleotideMutations"]) == {
+        "T59C",
+        "G108A",
+        "C241T",
+    }
 
 
 def test_build_collections_new_nuc_variant_contents():
     # "New nucleotide substitutions" = branch-only, just what A.1 introduces.
     cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
-    new_nuc = next(v for v in a1["variants"] if v["name"] == "New nucleotide substitutions")
+    new_nuc = next(
+        v for v in a1["variants"] if v["name"] == "New nucleotide substitutions"
+    )
     assert new_nuc["filterObject"]["nucleotideMutations"] == ["C241T"]
 
 
@@ -398,13 +407,20 @@ def test_build_collections_full_aa_variant_contents():
     cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     full_aa = next(v for v in a1["variants"] if v["name"] == "Amino acid substitutions")
-    assert set(full_aa["filterObject"]["aminoAcidMutations"]) == {"F:T8A", "F:L20F", "G:T4N", "F:K124N"}
+    assert set(full_aa["filterObject"]["aminoAcidMutations"]) == {
+        "F:T8A",
+        "F:L20F",
+        "G:T4N",
+        "F:K124N",
+    }
 
 
 def test_build_collections_new_aa_variant_contents():
     cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
-    new_aa = next(v for v in a1["variants"] if v["name"] == "New amino acid substitutions")
+    new_aa = next(
+        v for v in a1["variants"] if v["name"] == "New amino acid substitutions"
+    )
     assert new_aa["filterObject"]["aminoAcidMutations"] == ["F:K124N"]
 
 

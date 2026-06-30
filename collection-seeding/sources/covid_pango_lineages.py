@@ -70,8 +70,7 @@ class CovidPangoLineagesSource(Source):
             f"Pango lineage {lineage}. "
             f"Parent: {parent}. "
             f"Nextstrain clade: {clade}. "
-            f"Designated: {date}. "
-            f"{self.owned_tag}"
+            f"Designated: {date}."
         )
 
         return {
@@ -79,6 +78,7 @@ class CovidPangoLineagesSource(Source):
             "organism": "covid",
             "description": description,
             "variants": variants,
+            "tags": [self.owned_tag],
         }
 
 

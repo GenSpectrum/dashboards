@@ -181,12 +181,14 @@ export class BackendService extends ApiService {
         organism,
         userId,
         excludeSystemCollections,
-    }: { organism?: string; userId?: number; excludeSystemCollections?: boolean } = {}) {
+        tags,
+    }: { organism?: string; userId?: number; excludeSystemCollections?: boolean; tags?: string } = {}) {
         const requestParams: Record<string, string> = {};
         if (organism !== undefined) requestParams.organism = organism;
         if (userId !== undefined) requestParams.userId = String(userId);
         if (excludeSystemCollections !== undefined)
             requestParams.excludeSystemCollections = String(excludeSystemCollections);
+        if (tags !== undefined) requestParams.tags = tags;
         return this.get({
             url: '/collections',
             requestParams: Object.keys(requestParams).length > 0 ? requestParams : undefined,
