@@ -35,7 +35,7 @@ function renderOverview() {
 
 describe('CollectionsOverview', () => {
     it('shows the headline and community collections by default', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
         const { getByText, getByRole } = renderOverview();
 
@@ -45,7 +45,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('hides official collections by default', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
         const { getByText } = renderOverview();
 
@@ -54,7 +54,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows only official collections when Official is selected', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
         const { getByText } = renderOverview();
 
@@ -65,7 +65,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows all collections when All is selected', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
         const { getByText } = renderOverview();
 
@@ -76,7 +76,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and empty message when there are no collections', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries([], ORGANISM, 200, true);
+        astro.mockGetCollectionSummaries([], ORGANISM, 200);
 
         const { getByText } = renderOverview();
 
@@ -85,7 +85,7 @@ describe('CollectionsOverview', () => {
     });
 
     it('shows the headline and error message when the fetch fails', async ({ routeMockers: { astro } }) => {
-        astro.mockGetCollectionSummaries([], ORGANISM, 500, true);
+        astro.mockGetCollectionSummaries([], ORGANISM, 500);
         astro.mockLog();
 
         const { getByText } = renderOverview();
