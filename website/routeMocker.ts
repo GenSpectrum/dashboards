@@ -30,6 +30,12 @@ export class AstroApiRouteMocker {
         this.workerOrServer.use(http.post(`${ASTRO_SERVER_URL}/log`, () => Response.json({})));
     }
 
+    mockGetCollectionTags(tags: string[] = [], statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(`${ASTRO_SERVER_URL}/collections/tags`, resolver([{ statusCode, response: { tags } }])),
+        );
+    }
+
     mockGetCollectionSummaries(
         response: CollectionSummary[],
         organism?: string,

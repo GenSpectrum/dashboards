@@ -33,10 +33,6 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
 
     const addTag = (raw: string) => addTags(raw);
 
-    const removeTag = (tag: string) => {
-        onChange(tags.filter((t) => t !== tag));
-    };
-
     const filteredSuggestions = useMemo(
         () =>
             allTags.filter(
@@ -45,7 +41,7 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
         [allTags, tags, inputValue],
     );
 
-    const { isOpen, getMenuProps, getInputProps, getItemProps, highlightedIndex, closeMenu } = useCombobox({
+    const { isOpen, getMenuProps, getInputProps, getItemProps, highlightedIndex, closeMenu, selectItem } = useCombobox({
         items: filteredSuggestions,
         itemToString: (item) => item ?? '',
         inputValue,
@@ -72,6 +68,11 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
             }
         },
     });
+
+    const removeTag = (tag: string) => {
+        onChange(tags.filter((t) => t !== tag));
+        selectItem(null);
+    };
 
     const inputRef = useRef<HTMLInputElement>(null);
     const {

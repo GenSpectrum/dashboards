@@ -1,9 +1,10 @@
 import { userEvent } from '@vitest/browser/context';
+import { useState } from 'react';
 import { beforeEach, describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { TagInput } from './TagInput.tsx';
-import { backendRouteMocker, it } from '../../../../test-extend.ts';
+import { astroApiRouteMocker, backendRouteMocker, it } from '../../../../test-extend.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 
 const TagInputWithProvider = withQueryProvider(TagInput);
@@ -99,5 +100,45 @@ describe('TagInput', () => {
         await userEvent.keyboard('{Backspace}');
 
         expect(onChange).toHaveBeenCalledWith(['flu']);
+    });
+
+    it('can re-add a tag after removing it', async () => {
+        function StatefulTagInput() {
+            const [tags, setTags] = useState<string[]>([]);
+            return <TagInputWithProvider tags={tags} onChange={setTags} />;
+        }
+
+        const { getByPlaceholder, getByRole } = render(<StatefulTagInput />);
+
+        await getByPlaceholder(PLACEHOLDER).fill('foo');
+        await userEvent.keyboard('{Enter}');
+
+        await getByRole('button', { name: 'Remove tag foo' }).click();
+
+        await getByPlaceholder(PLACEHOLDER).fill('foo');
+        await userEvent.keyboard('{Enter}');
+
+        await expect.element(getByRole('button', { name: 'Remove tag foo' })).toBeVisible();
+    });
+
+    it('can re-add a tag that was selected via autocomplete after removing it', async () => {
+        astroApiRouteMocker.mockGetCollectionTags(['flu']);
+
+        function StatefulTagInput() {
+            const [tags, setTags] = useState<string[]>([]);
+            return <TagInputWithProvider tags={tags} onChange={setTags} />;
+        }
+
+        const { getByPlaceholder, getByRole } = render(<StatefulTagInput />);
+
+        await getByPlaceholder(PLACEHOLDER).fill('flu');
+        await getByRole('option', { name: 'flu' }).click();
+
+        await getByRole('button', { name: 'Remove tag flu' }).click();
+
+        await getByPlaceholder(PLACEHOLDER).fill('flu');
+        await getByRole('option', { name: 'flu' }).click();
+
+        await expect.element(getByRole('button', { name: 'Remove tag flu' })).toBeVisible();
     });
 });
