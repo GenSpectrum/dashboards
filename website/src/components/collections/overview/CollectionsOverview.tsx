@@ -38,8 +38,7 @@ function CollectionsOverviewInner({
         error,
     } = useQuery({
         queryKey: ['collections', organism],
-        queryFn: () =>
-            getBackendServiceForClientside().getCollectionSummaries({ organism, excludeSystemCollections: true }),
+        queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
     });
 
     if (isError) {
