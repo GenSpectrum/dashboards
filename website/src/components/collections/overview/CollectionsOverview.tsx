@@ -13,6 +13,7 @@ import type { CollectionSummary } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
+import { TagInput } from '../form/TagInput.tsx';
 
 export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
@@ -30,6 +31,7 @@ function CollectionsOverviewInner({
     systemUserId: number;
 }) {
     const [filter, setFilter] = useState<CollectionFilter>('community');
+    const [tagFilter, setTagFilter] = useState<string[]>([]);
 
     const {
         isLoading,
@@ -46,7 +48,7 @@ function CollectionsOverviewInner({
         logger.error(`Failed to fetch collections: ${getErrorLogMessage(error)}`);
     }
 
-    const filteredCollections = filterCollections(collections, filter, systemUserId);
+    const filteredCollections = filterCollections(collections, filter, systemUserId, tagFilter);
 
     return (
         <div>
@@ -58,7 +60,12 @@ function CollectionsOverviewInner({
                     </a>
                 )}
             </div>
-            <CollectionFilterSelect filter={filter} onChange={setFilter} />
+            <div className='mt-4 flex flex-wrap items-start gap-4'>
+                <CollectionFilterSelect filter={filter} onChange={setFilter} />
+                <div className='flex-1'>
+                    <TagInput tags={tagFilter} onChange={setTagFilter} />
+                </div>
+            </div>
             {isLoading ? (
                 <span className='loading loading-spinner loading-sm' />
             ) : isError ? (
@@ -87,16 +94,25 @@ function filterCollections(
     collections: CollectionSummary[] | undefined,
     filter: CollectionFilter,
     systemUserId: number,
+    tagFilter: string[],
 ): CollectionSummary[] {
     if (!collections) return [];
+    let result: CollectionSummary[];
     switch (filter) {
         case 'community':
-            return collections.filter((c) => c.ownedBy !== systemUserId);
+            result = collections.filter((c) => c.ownedBy !== systemUserId);
+            break;
         case 'official':
-            return collections.filter((c) => c.ownedBy === systemUserId);
+            result = collections.filter((c) => c.ownedBy === systemUserId);
+            break;
         case 'all':
-            return collections;
+            result = collections;
+            break;
     }
+    if (tagFilter.length > 0) {
+        result = result.filter((c) => tagFilter.every((tag) => c.tags.includes(tag)));
+    }
+    return result;
 }
 
 const FILTER_OPTIONS: { value: CollectionFilter; label: string; tooltip: string }[] = [
@@ -127,7 +143,7 @@ function CollectionFilterSelect({
                     />
                     <label
                         htmlFor={`${id}-${opt.value}`}
-                        className={`tooltip w-24 cursor-pointer border p-2 text-center ${i === 0 ? 'rounded-l-md' : '-ml-px rounded-none'} ${i === FILTER_OPTIONS.length - 1 ? 'rounded-r-md' : ''} ${filter === opt.value ? 'border-primary relative z-10' : 'border-gray-300'}`}
+                        className={`tooltip flex h-10 w-24 cursor-pointer items-center justify-center border px-2 ${i === 0 ? 'rounded-l-sm' : '-ml-px rounded-none'} ${i === FILTER_OPTIONS.length - 1 ? 'rounded-r-sm' : ''} ${filter === opt.value ? 'border-primary relative z-10' : 'border-base-content/20'}`}
                         data-tip={opt.tooltip}
                     >
                         {opt.label}
@@ -141,8 +157,10 @@ function CollectionFilterSelect({
 function CollectionsGridStyles() {
     return (
         <style>{`
-            /* Remove the mermaid theme's rounded corners and drop shadow; add outer left/right border to frame the table */
-            .collections-grid .gridjs-wrapper, .collections-grid .gridjs-footer { border-radius: 0; box-shadow: none; border-left: 1px solid var(--color-base-300); border-right: 1px solid var(--color-base-300); }
+            /* Remove the mermaid theme's drop shadow; add outer left/right border to frame the table; round outer corners to match the filter controls */
+            .collections-grid .gridjs-wrapper, .collections-grid .gridjs-footer { box-shadow: none; border-left: 1px solid var(--color-base-300); border-right: 1px solid var(--color-base-300); }
+            .collections-grid .gridjs-wrapper { border-radius: var(--radius-sm) var(--radius-sm) 0 0; overflow: hidden; }
+            .collections-grid .gridjs-footer { border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
 
             /* Mermaid sets inline-block here, which lets the table overflow the viewport instead of squishing */
             .collections-grid .gridjs-container { display: block; }
