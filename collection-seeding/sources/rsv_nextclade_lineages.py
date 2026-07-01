@@ -19,7 +19,7 @@ RSV_B_TREE_URL = (
 
 
 class _RsvNextcladeLineagesBase(Source):
-    owned_tag = "#nextclade-lineage"
+    owned_tag = "nextclade-lineage"
     _tree_url: str
     _organism_label: str
 

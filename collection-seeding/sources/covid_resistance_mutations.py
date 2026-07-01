@@ -11,7 +11,7 @@ class CovidResistanceMutationsSource(Source):
 
     name = "covid-resistance-mutations"
     organism = "covid"
-    owned_tag = "#resistance-mutation"
+    owned_tag = "resistance-mutation"
 
     def get_collections(self) -> list[Collection]:
         return [

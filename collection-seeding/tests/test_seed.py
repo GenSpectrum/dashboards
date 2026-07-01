@@ -96,7 +96,7 @@ def test_returns_zero_counts_for_empty_collections():
 
 # --- seed_source: orphan deletion ---
 
-TAG = "#test-tag"
+TAG = "test-tag"
 
 
 class TaggedMockSource(MockSource):

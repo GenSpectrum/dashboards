@@ -5,7 +5,7 @@ from sources import Source
 class MockSource(Source):
     name = "mock-source"
     organism = "covid"
-    owned_tag = "#mock-tag"
+    owned_tag = "mock-tag"
 
     def __init__(self, collections: list[Collection]):
         self._collections = collections

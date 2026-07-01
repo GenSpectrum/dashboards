@@ -323,51 +323,51 @@ def test_extract_clades_reversion_removed_from_full():
 
 
 def test_build_collections_count():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     assert len(cols) == 2
 
 
 def test_build_collections_organism():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     assert all(c["organism"] == "rsvA" for c in cols)
 
 
 def test_build_collections_name_is_clade():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     assert {c["name"] for c in cols} == {"A", "A.1"}
 
 
 def test_build_collections_description_contains_clade_and_parent():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     assert "A.1" in a1["description"]
     assert "A" in a1["description"]
 
 
 def test_build_collections_description_root_clade_parent_dash():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a = next(c for c in cols if c["name"] == "A")
     assert "—" in a["description"]
 
 
 def test_build_collections_description_contains_organism_label():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     assert all("RSV-A" in c["description"] for c in cols)
 
 
 def test_build_collections_tag_in_tags_not_description():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
-    assert all(c["tags"] == ["#nextclade-lineage"] for c in cols)
-    assert all("#nextclade-lineage" not in c["description"] for c in cols)
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
+    assert all(c["tags"] == ["nextclade-lineage"] for c in cols)
+    assert all("nextclade-lineage" not in c["description"] for c in cols)
 
 
 def test_build_collections_four_variants_per_collection():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     assert all(len(c["variants"]) == 4 for c in cols)
 
 
 def test_build_collections_variant_names():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     for col in cols:
         names = [v["name"] for v in col["variants"]]
         assert names == [
@@ -381,7 +381,7 @@ def test_build_collections_variant_names():
 def test_build_collections_full_nuc_variant_contents():
     # "Nucleotide substitutions" = full set from reference root.
     # For A.1 this includes A's mutations plus A.1's own.
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     full_nuc = next(
         v for v in a1["variants"] if v["name"] == "Nucleotide substitutions"
@@ -395,7 +395,7 @@ def test_build_collections_full_nuc_variant_contents():
 
 def test_build_collections_new_nuc_variant_contents():
     # "New nucleotide substitutions" = branch-only, just what A.1 introduces.
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     new_nuc = next(
         v for v in a1["variants"] if v["name"] == "New nucleotide substitutions"
@@ -404,7 +404,7 @@ def test_build_collections_new_nuc_variant_contents():
 
 
 def test_build_collections_full_aa_variant_contents():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     full_aa = next(v for v in a1["variants"] if v["name"] == "Amino acid substitutions")
     assert set(full_aa["filterObject"]["aminoAcidMutations"]) == {
@@ -416,7 +416,7 @@ def test_build_collections_full_aa_variant_contents():
 
 
 def test_build_collections_new_aa_variant_contents():
-    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     new_aa = next(
         v for v in a1["variants"] if v["name"] == "New amino acid substitutions"
@@ -444,11 +444,11 @@ def test_rsv_b_organism():
 
 
 def test_rsv_a_owned_tag():
-    assert RsvANextcladeLineagesSource.owned_tag == "#nextclade-lineage"
+    assert RsvANextcladeLineagesSource.owned_tag == "nextclade-lineage"
 
 
 def test_rsv_b_owned_tag():
-    assert RsvBNextcladeLineagesSource.owned_tag == "#nextclade-lineage"
+    assert RsvBNextcladeLineagesSource.owned_tag == "nextclade-lineage"
 
 
 # --- get_collections (HTTP) ---

@@ -17,7 +17,7 @@ class CovidPangoLineagesSource(Source):
 
     name = "covid-pango-lineages"
     organism = "covid"
-    owned_tag = "#pango-lineage"
+    owned_tag = "pango-lineage"
 
     def __init__(self, limit: int | None = None):
         self._limit = limit
