@@ -66,10 +66,14 @@ export async function getJaccardForMutations(
             return new Map();
         }
         return new Map(
-            intersectionCounts.map(({ mutation, count }) => [
-                mutation,
-                count / (variantCount + (totalCounts[mutation] ?? count) - count),
-            ]),
+            intersectionCounts.map(({ mutation, count }) => {
+                if (!Object.hasOwn(totalCounts, mutation)) {
+                    throw new Error(
+                        `Data inconsistency: mutation ${mutation} observed in lineage but absent from global population query.`,
+                    );
+                }
+                return [mutation, count / (variantCount + totalCounts[mutation] - count)];
+            }),
         );
     });
 }
