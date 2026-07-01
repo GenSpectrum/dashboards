@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { TagInput } from './TagInput.tsx';
 import { VariantEditor } from './VariantEditor.tsx';
 import type { DashboardsConfig } from '../../../config.ts';
 import type { VariantUpdate } from '../../../types/Collection.ts';
@@ -9,6 +10,7 @@ import { GsApp } from '../../genspectrum/GsApp.tsx';
 export type CollectionFormValues = {
     name: string;
     description: string;
+    tags: string[];
     variants: VariantUpdate[];
 };
 
@@ -44,6 +46,7 @@ export function CollectionForm({
     const lineageFields = config.dashboards.organisms[organism].lapis.lineageFields ?? [];
     const [name, setName] = useState(initialValues?.name ?? '');
     const [description, setDescription] = useState(initialValues?.description ?? '');
+    const [tags, setTags] = useState<string[]>(initialValues?.tags ?? []);
     const [variants, setVariants] = useState<VariantWithKey[]>(() =>
         (initialValues?.variants ?? [{ type: 'filterObject' as const, name: 'Variant 1', filterObject: {} }]).map(
             withKey,
@@ -94,6 +97,10 @@ export function CollectionForm({
                                 onChange={(e) => setDescription(e.currentTarget.value)}
                             />
                         </div>
+                        <div>
+                            <label className='label'>Tags</label>
+                            <TagInput tags={tags} onChange={setTags} />
+                        </div>
                     </div>
                 </div>
 
@@ -134,6 +141,7 @@ export function CollectionForm({
                         onSubmit({
                             name,
                             description,
+                            tags,
                             variants: variants.map(({ clientKey: _key, ...v }) => v),
                         })
                     }

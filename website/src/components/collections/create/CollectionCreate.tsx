@@ -21,6 +21,7 @@ function CollectionCreateInner({ organism, config }: { organism: Organism; confi
                     name: values.name,
                     organism,
                     description: values.description || undefined,
+                    tags: values.tags,
                     variants: values.variants,
                 },
             }),
