@@ -196,5 +196,31 @@ describe('CollectionsOverview', () => {
             await expect.element(getByText('Asia Community')).not.toBeInTheDocument();
             await expect.element(getByText('NoTags Official')).not.toBeInTheDocument();
         });
+
+        it('shows filter-empty message when tag filter excludes all collections', async ({
+            routeMockers: { astro },
+        }) => {
+            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200, true);
+            const { getByText, getByPlaceholder } = renderOverview();
+
+            await getByText('All').click();
+            await getByPlaceholder(TAG_INPUT_PLACEHOLDER).fill('nonexistent');
+            await userEvent.keyboard('{Enter}');
+
+            await expect.element(getByText('No collections match the selected filters.')).toBeVisible();
+            await expect.element(getByText('No collections yet.')).not.toBeInTheDocument();
+        });
+
+        it('shows filter-empty message when community/official filter excludes all collections', async ({
+            routeMockers: { astro },
+        }) => {
+            astro.mockGetCollectionSummaries([communityCollection], ORGANISM, 200, true);
+            const { getByText } = renderOverview();
+
+            await getByText('Official').click();
+
+            await expect.element(getByText('No collections match the selected filters.')).toBeVisible();
+            await expect.element(getByText('No collections yet.')).not.toBeInTheDocument();
+        });
     });
 });

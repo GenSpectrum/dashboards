@@ -70,7 +70,7 @@ function CollectionsOverviewInner({
                 <span className='loading loading-spinner loading-sm' />
             ) : isError ? (
                 <div className='text-error'>Failed to load collections. Please try reloading the page.</div>
-            ) : filteredCollections.length === 0 ? (
+            ) : collections?.length === 0 ? (
                 <div className='mt-6 text-gray-500'>
                     No collections yet.
                     {isLoggedIn && (
@@ -83,6 +83,8 @@ function CollectionsOverviewInner({
                         </>
                     )}
                 </div>
+            ) : filteredCollections.length === 0 ? (
+                <div className='mt-6 text-gray-500'>No collections match the selected filters.</div>
             ) : (
                 <CollectionsTable collections={filteredCollections} organism={organism} />
             )}
