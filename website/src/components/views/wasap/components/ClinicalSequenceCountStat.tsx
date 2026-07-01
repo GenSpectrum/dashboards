@@ -5,20 +5,30 @@ import { getTotalCount } from '../../../../lapis/getTotalCount';
 import { getLapisFilterForTimeFrame } from '../useWasapPageData';
 import { variantTimeFrameLabel, type WasapVariantFilter } from '../wasapPageConfig';
 
-export const JaccardFetchInfo: FC<{
+type ClinicalSequenceCountStatProps = {
     lineage: string;
     analysis: WasapVariantFilter;
     clinicalLapisBaseUrl: string;
     clinicalLapisLineageField: string;
     clinicalLapisDateField: string;
     warningThreshold: number;
-}> = ({
+    queryKeyPrefix: string;
+    title: string;
+    descriptionStart: string;
+    warningMessage: string;
+};
+
+export const ClinicalSequenceCountStat: FC<ClinicalSequenceCountStatProps> = ({
     lineage,
     analysis,
     clinicalLapisBaseUrl,
     clinicalLapisLineageField,
     clinicalLapisDateField,
     warningThreshold,
+    queryKeyPrefix,
+    title,
+    descriptionStart,
+    warningMessage,
 }) => {
     const lapisFilter = {
         ...getLapisFilterForTimeFrame(analysis.timeFrame, clinicalLapisDateField),
@@ -26,24 +36,24 @@ export const JaccardFetchInfo: FC<{
     };
 
     const { data, isPending, isError, error } = useQuery({
-        queryKey: ['jaccardFetchInfo', lineage, analysis.timeFrame],
+        queryKey: [queryKeyPrefix, lineage, analysis.timeFrame],
         queryFn: () => getTotalCount(clinicalLapisBaseUrl, lapisFilter),
     });
 
     const isHighlighted = data !== undefined && data < warningThreshold;
 
-    let description = `Clinical sequences for ${lineage}`;
+    let description = descriptionStart;
     if (analysis.timeFrame !== 'all') {
         description += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
     }
     if (isHighlighted) {
-        description += '. Low sequence count may lead to unreliable Jaccard scores.';
+        description += warningMessage;
     }
 
     return (
         <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
             <div className='stat'>
-                <div className='stat-title'>Jaccard index</div>
+                <div className='stat-title'>{title}</div>
                 <div className='stat-value text-base'>
                     {isPending ? (
                         '…'
