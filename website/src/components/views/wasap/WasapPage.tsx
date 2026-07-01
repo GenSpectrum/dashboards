@@ -121,9 +121,10 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                     )}
                                     {analysis.mode === 'variant' &&
                                         analysis.signatureType === 'computed' &&
-                                        config.variantAnalysisModeEnabled && (
+                                        config.variantAnalysisModeEnabled &&
+                                        analysis.variant !== undefined && (
                                             <ClinicalSequenceCountStat
-                                                lineage={analysis.variant ?? ''}
+                                                lineage={analysis.variant}
                                                 analysis={analysis}
                                                 clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
                                                 clinicalLapisLineageField={config.clinicalLapis.lineageField}
