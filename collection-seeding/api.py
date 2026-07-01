@@ -55,7 +55,7 @@ class ApiClient:
         )
         if not r.ok:
             raise RuntimeError(
-                f"GET /api/collections?tags= failed: {r.status_code} {r.text}"
+                f"GET /api/collections?tags={tag} failed: {r.status_code} {r.text}"
             )
         return r.json()
 
