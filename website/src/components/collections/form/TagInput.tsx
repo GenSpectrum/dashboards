@@ -1,11 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCombobox } from 'downshift';
-import { useMemo, useRef, useState } from 'react';
+import { type FC, useMemo, useRef, useState } from 'react';
 
 import { getBackendServiceForClientside } from '../../../backendApi/backendService.ts';
 import { TagChip } from '../TagChip.tsx';
 
-export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: string[]) => void }) {
+type TagInputProps = {
+    tags: string[];
+    onChange: (tags: string[]) => void;
+};
+
+export const TagInput: FC<TagInputProps> = ({ tags, onChange }) => {
     const { data: allTags = [] } = useQuery({
         queryKey: ['collection-tags'],
         queryFn: async () => {
@@ -31,8 +36,6 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
         setInputValue('');
     };
 
-    const addTag = (raw: string) => addTags(raw);
-
     const filteredSuggestions = useMemo(
         () =>
             allTags.filter(
@@ -50,7 +53,7 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
                 case useCombobox.stateChangeTypes.InputKeyDownEnter:
                 case useCombobox.stateChangeTypes.ItemClick:
                     if (newSelectedItem) {
-                        addTag(newSelectedItem);
+                        addTags(newSelectedItem);
                     }
                     setInputValue('');
                     break;
@@ -87,12 +90,12 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
         if (e.key === ',' || e.key === ' ') {
             e.preventDefault();
             if (inputValue.trim()) {
-                addTag(inputValue);
+                addTags(inputValue);
             }
         } else if (e.key === 'Enter' && highlightedIndex < 0) {
             e.preventDefault();
             if (inputValue.trim()) {
-                addTag(inputValue);
+                addTags(inputValue);
             }
         } else if (e.key === 'Backspace' && inputValue === '' && tags.length > 0) {
             removeTag(tags[tags.length - 1]);
@@ -114,7 +117,7 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
 
     const handleBlur = () => {
         if (inputValue.trim()) {
-            addTag(inputValue);
+            addTags(inputValue);
         }
     };
 
@@ -153,4 +156,4 @@ export function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: 
             </ul>
         </div>
     );
-}
+};
