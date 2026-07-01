@@ -156,8 +156,6 @@ function PredefinedSignature({
 }) {
     const collections = predefinedVariantsQueryResult?.data ?? [];
     const selectedCollection = collections.find((c) => c.id === pageState.collectionId) ?? null;
-    const newMutationsCheckBoxId = useId();
-    const includeSublineagesCheckBoxId = useId();
 
     return (
         <Inset className='mt-4 p-2'>
@@ -168,23 +166,13 @@ function PredefinedSignature({
                     onChange={(c) => setPageState({ ...pageState, collectionId: c?.id })}
                 />
             </LabeledField>
-            <div className='pt-2 text-sm'>
-                <input
-                    className='accent-primary'
-                    type='checkbox'
-                    id={newMutationsCheckBoxId}
-                    checked={pageState.newMutationsOnly ?? false}
-                    onChange={(e) => setPageState({ ...pageState, newMutationsOnly: e.target.checked })}
-                />
-                <div
-                    className='tooltip tooltip-right inline'
-                    data-tip='Only show mutations that were not observed in the parent variant'
-                >
-                    <label htmlFor={newMutationsCheckBoxId} className='cursor-pointer pl-2'>
-                        Mutation not in parent
-                    </label>
-                </div>
-            </div>
+            <CheckboxWithTooltip
+                className='pt-2'
+                checked={pageState.newMutationsOnly ?? false}
+                onChange={(checked) => setPageState({ ...pageState, newMutationsOnly: checked })}
+                tooltip='Only show mutations that were not observed in the parent variant'
+                label='Mutation not in parent'
+            />
             <div className='mt-4'>
                 <NumericInput
                     label='Min. Jaccard index'
@@ -195,23 +183,39 @@ function PredefinedSignature({
                     onChange={(v) => setPageState({ ...pageState, minJaccard: v })}
                 />
             </div>
-            <div className='text-sm'>
-                <input
-                    className='accent-primary'
-                    type='checkbox'
-                    id={includeSublineagesCheckBoxId}
-                    checked={pageState.includeSublineagesForJaccard !== false}
-                    onChange={(e) => setPageState({ ...pageState, includeSublineagesForJaccard: e.target.checked })}
-                />
-                <div
-                    className='tooltip tooltip-right inline'
-                    data-tip='Include sublineages when computing Jaccard index (appends * to the lineage)'
-                >
-                    <label htmlFor={includeSublineagesCheckBoxId} className='cursor-pointer pl-2'>
-                        Include sublineages for Jaccard computation
-                    </label>
-                </div>
-            </div>
+            <CheckboxWithTooltip
+                checked={pageState.includeSublineagesForJaccard !== false}
+                onChange={(checked) => setPageState({ ...pageState, includeSublineagesForJaccard: checked })}
+                tooltip='Include sublineages when computing Jaccard index (appends * to the lineage)'
+                label='Include sublineages for Jaccard computation'
+            />
         </Inset>
+    );
+}
+type CheckboxWithTooltipProps = {
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    tooltip: string;
+    label: string;
+    className?: string;
+};
+
+function CheckboxWithTooltip({ checked, onChange, tooltip, label, className }: CheckboxWithTooltipProps) {
+    const id = useId();
+    return (
+        <div className={`text-sm ${className ?? ''}`}>
+            <input
+                className='accent-primary'
+                type='checkbox'
+                id={id}
+                checked={checked}
+                onChange={(e) => onChange(e.target.checked)}
+            />
+            <div className='tooltip tooltip-right inline' data-tip={tooltip}>
+                <label htmlFor={id} className='cursor-pointer pl-2'>
+                    {label}
+                </label>
+            </div>
+        </div>
     );
 }
