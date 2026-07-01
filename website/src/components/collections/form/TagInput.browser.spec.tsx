@@ -102,6 +102,24 @@ describe('TagInput', () => {
         expect(onChange).toHaveBeenCalledWith(['flu']);
     });
 
+    it('adds multiple tags from a comma-separated fill', async () => {
+        const onChange = vi.fn();
+        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+
+        await getByPlaceholder(PLACEHOLDER).fill('a,b,c');
+
+        expect(onChange).toHaveBeenCalledWith(['a', 'b', 'c']);
+    });
+
+    it('deduplicates tags within a single fill', async () => {
+        const onChange = vi.fn();
+        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+
+        await getByPlaceholder(PLACEHOLDER).fill('flu flu');
+
+        expect(onChange).toHaveBeenCalledWith(['flu']);
+    });
+
     it('can re-add a tag after removing it', async () => {
         function StatefulTagInput() {
             const [tags, setTags] = useState<string[]>([]);
