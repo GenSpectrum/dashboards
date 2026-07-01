@@ -16,6 +16,7 @@ type ClinicalSequenceCountStatProps = {
     title: string;
     descriptionStart: string;
     warningMessage: string;
+    zeroMessage?: string;
 };
 
 export const ClinicalSequenceCountStat: FC<ClinicalSequenceCountStatProps> = ({
@@ -29,6 +30,7 @@ export const ClinicalSequenceCountStat: FC<ClinicalSequenceCountStatProps> = ({
     title,
     descriptionStart,
     warningMessage,
+    zeroMessage,
 }) => {
     const lapisFilter = {
         ...getLapisFilterForTimeFrame(analysis.timeFrame, clinicalLapisDateField),
@@ -47,7 +49,7 @@ export const ClinicalSequenceCountStat: FC<ClinicalSequenceCountStatProps> = ({
         description += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
     }
     if (isHighlighted) {
-        description += warningMessage;
+        description += data === 0 && zeroMessage !== undefined ? zeroMessage : warningMessage;
     }
 
     return (

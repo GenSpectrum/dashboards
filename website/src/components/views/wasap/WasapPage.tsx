@@ -150,6 +150,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                                 title='Jaccard index'
                                                 descriptionStart={`Clinical sequences for ${data.lineageForJaccard}`}
                                                 warningMessage='. Low sequence count may lead to unreliable Jaccard scores.'
+                                                zeroMessage='. No sequences found — min. Jaccard filter was not applied.'
                                             />
                                         )}
                                 </>
