@@ -57,6 +57,21 @@ HTTP header names (e.g. `Content-Type`, `Authorization`) must keep their origina
 { 'Content-Type': 'application/json' }
 ```
 
+### React Component Definition
+
+Define React components with a named `type` for props and `FC<Props>`:
+
+```typescript
+type MyComponentProps = {
+    value: string;
+    onChange: (value: string) => void;
+};
+
+export const MyComponent: FC<MyComponentProps> = ({ value, onChange }) => {
+    // ...
+};
+```
+
 ### React & Astro
 
 - Use **Astro** for static/server-rendered pages; use **React** for interactive components.
