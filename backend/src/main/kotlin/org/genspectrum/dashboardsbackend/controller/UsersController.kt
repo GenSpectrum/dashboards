@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -20,6 +21,13 @@ class UsersController(private val userModel: UserModel) {
         description = "Upserts a user record by github_id. Returns the user with their internal ID.",
     )
     fun syncUser(@RequestBody request: UserSyncRequest): User = userModel.syncUser(request)
+
+    @GetMapping("/users/me", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(
+        summary = "Get the authenticated user",
+        description = "Returns public info for the currently authenticated user, resolved from the session or API key.",
+    )
+    fun getMe(@RequestParam userId: Long): PublicUser = userModel.getUser(userId)
 
     @GetMapping("/users/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(

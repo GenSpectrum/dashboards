@@ -81,6 +81,25 @@ class UsersControllerTest(@param:Autowired private val usersClient: UsersClient)
     }
 
     @Test
+    fun `WHEN getting me THEN returns own public user info`() {
+        val created = usersClient.syncUser(
+            UserSyncRequest(githubId = UUID.randomUUID().toString(), name = "Eve", email = null),
+        )
+
+        val me = usersClient.getMe(created.id)
+
+        assertThat(me.id, equalTo(created.id))
+        assertThat(me.name, equalTo("Eve"))
+    }
+
+    @Test
+    fun `WHEN getting me with nonexistent user ID THEN returns 404`() {
+        usersClient.getMeRaw(999999999L)
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.detail").value("User 999999999 not found"))
+    }
+
+    @Test
     fun `WHEN syncing two different github IDs THEN they get different internal IDs`() {
         val first = usersClient.syncUser(
             UserSyncRequest(githubId = UUID.randomUUID().toString(), name = "User1", email = null),

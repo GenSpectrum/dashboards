@@ -31,6 +31,12 @@ class UsersClient(private val mockMvc: MockMvc, private val objectMapper: Object
         getUserRaw(id).andExpect(status().isOk),
     )
 
+    fun getMeRaw(userId: Long): ResultActions = mockMvc.perform(get("/users/me").param("userId", userId.toString()))
+
+    fun getMe(userId: Long): PublicUser = deserializeJsonResponse(
+        getMeRaw(userId).andExpect(status().isOk),
+    )
+
     /** Creates a user with a random GitHub ID and returns the internal Long user ID. */
     fun createUser(): Long = syncUser(
         UserSyncRequest(
