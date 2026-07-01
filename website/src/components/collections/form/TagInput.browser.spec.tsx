@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { TagInput } from './TagInput.tsx';
-import { astroApiRouteMocker, backendRouteMocker, it } from '../../../../test-extend.ts';
+import { astroApiRouteMocker, it } from '../../../../test-extend.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 
 const TagInputWithProvider = withQueryProvider(TagInput);
@@ -12,7 +12,7 @@ const TagInputWithProvider = withQueryProvider(TagInput);
 const PLACEHOLDER = 'Add tags (Enter, comma, or space to confirm)';
 
 beforeEach(() => {
-    backendRouteMocker.mockGetCollectionTags();
+    astroApiRouteMocker.mockGetCollectionTags();
 });
 
 describe('TagInput', () => {

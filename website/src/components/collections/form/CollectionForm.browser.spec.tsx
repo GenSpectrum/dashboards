@@ -4,7 +4,7 @@ import { render } from 'vitest-browser-react';
 
 import { CollectionForm } from './CollectionForm.tsx';
 import { testOrganismsConfig } from '../../../../routeMocker.ts';
-import { backendRouteMocker, it } from '../../../../test-extend.ts';
+import { astroApiRouteMocker, it } from '../../../../test-extend.ts';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider.tsx';
 import type { DashboardsConfig } from '../../../config.ts';
 import type { VariantUpdate } from '../../../types/Collection.ts';
@@ -39,7 +39,7 @@ const INITIAL_VALUES = {
 };
 
 beforeEach(() => {
-    backendRouteMocker.mockGetCollectionTags();
+    astroApiRouteMocker.mockGetCollectionTags();
 });
 
 describe('CollectionForm', () => {

@@ -133,6 +133,7 @@ export const TagInput: FC<TagInputProps> = ({ tags, onChange }) => {
                 <input
                     className='min-w-20 flex-1 bg-transparent text-sm outline-none'
                     placeholder={tags.length === 0 ? 'Add tags (Enter, comma, or space to confirm)' : ''}
+                    aria-label='Add tags'
                     {...restInputProps}
                     onKeyDown={handleKeyDown}
                     onChange={handleChange}
