@@ -80,10 +80,17 @@ def seed_source(client: ApiClient, source: Source) -> tuple[int, int, int]:
     collections = source.get_collections()
     print(f"\n[{source.name}]")
 
-    existing = client.fetch_existing_collections(source.organism)
-    existing_by_name = {
-        c["name"]: c for c in existing if source.owned_tag in (c["description"] or "")
-    }
+    # Lenient orphan detection: find owned collections via real tags (new-style) OR
+    # description pseudo-tags (old-style), so old collections are found and replaced
+    # with properly tagged ones on the first seeder run after migration.
+    by_tag = client.fetch_existing_collections_by_tag(source.owned_tag, source.organism)
+    all_existing = client.fetch_existing_collections(source.organism)
+    by_description = [
+        c for c in all_existing if f"#{source.owned_tag}" in (c["description"] or "")
+    ]
+
+    all_owned = {c["id"]: c for c in by_tag + by_description}
+    existing_by_name = {c["name"]: c for c in all_owned.values()}
 
     created = 0
     updated = 0

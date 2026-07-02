@@ -13,6 +13,7 @@ const makeCollection = (id: number, name: string): CollectionSummary => ({
     organism: 'test',
     description: null,
     variantCount: 0,
+    tags: [],
 });
 
 const collections = [makeCollection(1, 'Alpha'), makeCollection(2, 'Beta'), makeCollection(3, 'Gamma')];
