@@ -152,7 +152,7 @@ describe('CollectionsOverview', () => {
 
     describe('tag filter', () => {
         it('filters by a single tag in All mode', async ({ routeMockers: { astro } }) => {
-            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200, true);
+            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
             const { getByText, getByPlaceholder } = renderOverview();
 
             await getByText('All').click();
@@ -167,7 +167,7 @@ describe('CollectionsOverview', () => {
         });
 
         it('filters by multiple tags in All mode', async ({ routeMockers: { astro } }) => {
-            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200, true);
+            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
             const { getByText, getByPlaceholder } = renderOverview();
 
             await getByText('All').click();
@@ -184,7 +184,7 @@ describe('CollectionsOverview', () => {
         });
 
         it('applies tag filter within Community mode', async ({ routeMockers: { astro } }) => {
-            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200, true);
+            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
             const { getByText, getByPlaceholder } = renderOverview();
 
             await getByPlaceholder(TAG_INPUT_PLACEHOLDER).fill('europe');
@@ -200,7 +200,7 @@ describe('CollectionsOverview', () => {
         it('shows filter-empty message when tag filter excludes all collections', async ({
             routeMockers: { astro },
         }) => {
-            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200, true);
+            astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
             const { getByText, getByPlaceholder } = renderOverview();
 
             await getByText('All').click();
@@ -214,7 +214,7 @@ describe('CollectionsOverview', () => {
         it('shows filter-empty message when community/official filter excludes all collections', async ({
             routeMockers: { astro },
         }) => {
-            astro.mockGetCollectionSummaries([communityCollection], ORGANISM, 200, true);
+            astro.mockGetCollectionSummaries([communityCollection], ORGANISM, 200);
             const { getByText } = renderOverview();
 
             await getByText('Official').click();
