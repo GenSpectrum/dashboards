@@ -50,7 +50,7 @@ def existing_entry(id: int, name: str) -> dict:
     return {
         "id": id,
         "name": name,
-        "description": f"A collection. {MockSource.owned_tag}",
+        "description": f"A collection. #{MockSource.owned_tag}",
     }
 
 
@@ -107,15 +107,15 @@ def tagged(name: str, description: str = "") -> dict:
     return {
         "name": name,
         "organism": "covid",
-        "description": description or f"A collection. {TAG}",
+        "description": description or f"A collection. #{TAG}",
         "variants": [],
     }
 
 
 def test_orphan_with_tag_is_deleted():
     existing = [
-        {"id": 5, "name": "OldLineage", "description": f"Old. {TAG}"},
-        {"id": 6, "name": "CurrentLineage", "description": f"Current. {TAG}"},
+        {"id": 5, "name": "OldLineage", "description": f"Old. #{TAG}"},
+        {"id": 6, "name": "CurrentLineage", "description": f"Current. #{TAG}"},
     ]
     client = make_client(existing=existing)
     created, updated, deleted = seed_source(
@@ -161,7 +161,7 @@ def test_orphan_with_real_tag_is_deleted():
 
 
 def test_orphan_found_by_both_tag_and_description_deleted_once():
-    entry = {"id": 8, "name": "OldLineage", "description": f"Old. {TAG}"}
+    entry = {"id": 8, "name": "OldLineage", "description": f"Old. #{TAG}"}
     client = make_client(existing=[entry], existing_by_tag=[entry])
     created, updated, deleted = seed_source(client, TaggedMockSource([]))
     assert deleted == 1
