@@ -22,7 +22,7 @@ const X_REQUEST_ID_HEADER = 'x-request-id';
 
 type EndpointParameters<Response> = {
     url: string;
-    requestParams?: Record<string, string | boolean | undefined>;
+    requestParams?: Record<string, string | string[] | boolean | undefined>;
     schema: ZodSchema<Response>;
 };
 
@@ -32,7 +32,7 @@ class ApiService {
     private readonly axiosInstance: AxiosInstance;
 
     constructor(baseURL: string) {
-        this.axiosInstance = axios.create({ baseURL });
+        this.axiosInstance = axios.create({ baseURL, paramsSerializer: { indexes: null } });
     }
 
     public async get<Response>({ url, requestParams, schema }: EndpointParameters<Response>): Promise<Response> {
@@ -181,12 +181,14 @@ export class BackendService extends ApiService {
         organism,
         userId,
         excludeSystemCollections,
-    }: { organism?: string; userId?: number; excludeSystemCollections?: boolean } = {}) {
-        const requestParams: Record<string, string> = {};
+        tags,
+    }: { organism?: string; userId?: number; excludeSystemCollections?: boolean; tags?: string | string[] } = {}) {
+        const requestParams: Record<string, string | string[]> = {};
         if (organism !== undefined) requestParams.organism = organism;
         if (userId !== undefined) requestParams.userId = String(userId);
         if (excludeSystemCollections !== undefined)
             requestParams.excludeSystemCollections = String(excludeSystemCollections);
+        if (tags !== undefined) requestParams.tags = tags;
         return this.get({
             url: '/collections',
             requestParams: Object.keys(requestParams).length > 0 ? requestParams : undefined,

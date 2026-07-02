@@ -72,7 +72,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             locationNameField: 'locationName',
             predefinedVariantsSource: {
                 collectionsUserId: byEnv(env, { prod: 3, staging: 1, local: 1 }),
-                collectionsTag: '#pango-lineage',
+                collectionsTag: 'pango-lineage',
                 variantSourceLabel: 'Nextclade',
             },
             clinicalLapis: {
@@ -139,7 +139,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             locationNameField: 'locationName',
             predefinedVariantsSource: {
                 collectionsUserId: byEnv(env, { prod: 3, staging: 1, local: 1 }),
-                collectionsTag: '#nextclade-lineage',
+                collectionsTag: 'nextclade-lineage',
                 variantSourceLabel: 'Nextclade',
             },
             clinicalLapis: {
@@ -210,7 +210,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             locationNameField: 'locationName',
             predefinedVariantsSource: {
                 collectionsUserId: byEnv(env, { prod: 3, staging: 1, local: 1 }),
-                collectionsTag: '#nextclade-lineage',
+                collectionsTag: 'nextclade-lineage',
                 variantSourceLabel: 'Nextclade',
             },
             clinicalLapis: {

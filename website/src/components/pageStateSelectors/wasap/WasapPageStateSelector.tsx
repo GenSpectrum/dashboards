@@ -112,11 +112,11 @@ export function WasapPageStateSelector({
                 );
             }
             const { collectionsUserId, collectionsTag } = config.predefinedVariantsSource;
-            const collections = await getBackendServiceForClientside().getCollectionSummaries({
+            return getBackendServiceForClientside().getCollectionSummaries({
                 userId: collectionsUserId,
                 organism: config.internalName,
+                tags: collectionsTag,
             });
-            return collections.filter((c) => c.description?.includes(collectionsTag) ?? false);
         },
     });
 

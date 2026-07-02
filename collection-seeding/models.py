@@ -19,6 +19,7 @@ class Collection(TypedDict):
     organism: str
     description: str
     variants: list[Variant]
+    tags: list[str]
 
 
 class ExistingCollection(TypedDict):
@@ -27,3 +28,4 @@ class ExistingCollection(TypedDict):
     id: int
     name: str
     description: str | None
+    tags: list[str]

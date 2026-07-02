@@ -11,7 +11,7 @@ class CovidResistanceMutationsSource(Source):
 
     name = "covid-resistance-mutations"
     organism = "covid"
-    owned_tag = "#resistance-mutation"
+    owned_tag = "resistance-mutation"
 
     def get_collections(self) -> list[Collection]:
         return [
@@ -21,9 +21,10 @@ class CovidResistanceMutationsSource(Source):
                 "description": (
                     "SARS-CoV-2 3C-like protease (3CLpro/Mpro) inhibitor resistance mutations "
                     "as per Stanford Coronavirus Antiviral & Resistance database "
-                    f"(last updated 21 August 2024). {self.owned_tag}"
+                    "(last updated 21 August 2024)."
                 ),
                 "variants": _build_variants(CLPRO_MUTATIONS, "3CLpro", -3263),
+                "tags": [self.owned_tag],
             },
             {
                 "name": "RdRp resistance mutations",
@@ -31,9 +32,10 @@ class CovidResistanceMutationsSource(Source):
                 "description": (
                     "SARS-CoV-2 RNA-dependent RNA polymerase (RdRp) inhibitor resistance mutations "
                     "as per Stanford Coronavirus Antiviral & Resistance database "
-                    f"(last updated 21 August 2024). {self.owned_tag}"
+                    "(last updated 21 August 2024)."
                 ),
                 "variants": _build_variants(RDRP_MUTATIONS, "RdRp", 9),
+                "tags": [self.owned_tag],
             },
             {
                 "name": "Spike mAb resistance mutations",
@@ -41,9 +43,10 @@ class CovidResistanceMutationsSource(Source):
                 "description": (
                     "SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutations "
                     "as per Stanford Coronavirus Antiviral & Resistance database "
-                    f"(last updated 21 August 2024). {self.owned_tag}"
+                    "(last updated 21 August 2024)."
                 ),
                 "variants": _build_variants(SPIKE_MUTATIONS, "Spike", 0),
+                "tags": [self.owned_tag],
             },
         ]
 

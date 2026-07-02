@@ -1,4 +1,7 @@
-from sources.covid_resistance_mutations import CovidResistanceMutationsSource, _mature_name
+from sources.covid_resistance_mutations import (
+    CovidResistanceMutationsSource,
+    _mature_name,
+)
 
 
 def test_name():
