@@ -87,27 +87,17 @@ export async function getMutationsForVariant(
         // sequence count WITH lineage (only)
         getTotalCount(lapisUrl, { ...lineageFilter, ...dateFilter }),
     ]).then(([intersectionCounts, totalCounts, variantCount]) =>
-        [...computeJaccardIndices(intersectionCounts, totalCounts, variantCount).entries()]
-            .map(([mutation, jaccardIndex]) => ({ mutation, jaccardIndex }))
+        intersectionCounts
+            .map(({ mutation, count }) => {
+                if (!Object.hasOwn(totalCounts, mutation)) {
+                    throw new Error(
+                        `Data inconsistency: mutation ${mutation} observed in lineage but absent from global population query.`,
+                    );
+                }
+                // https://en.wikipedia.org/wiki/Jaccard_index#Overview
+                return { mutation, jaccardIndex: count / (variantCount + totalCounts[mutation] - count) };
+            })
             .filter(({ jaccardIndex }) => jaccardIndex >= minJaccardIndex),
-    );
-}
-
-// Formula: https://en.wikipedia.org/wiki/Jaccard_index#Overview
-function computeJaccardIndices(
-    intersectionCounts: { mutation: string; count: number }[],
-    totalCounts: Record<string, number>,
-    variantCount: number,
-): Map<string, number> {
-    return new Map(
-        intersectionCounts.map(({ mutation, count }) => {
-            if (!Object.hasOwn(totalCounts, mutation)) {
-                throw new Error(
-                    `Data inconsistency: mutation ${mutation} observed in lineage but absent from global population query.`,
-                );
-            }
-            return [mutation, count / (variantCount + totalCounts[mutation] - count)];
-        }),
     );
 }
 
