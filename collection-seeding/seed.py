@@ -86,8 +86,9 @@ def seed_source(client: ApiClient, source: Source) -> tuple[int, int, int]:
     by_tag = client.fetch_existing_collections_by_tag(source.owned_tag, source.organism)
     all_existing = client.fetch_existing_collections(source.organism)
     by_description = [
-        c for c in all_existing if source.owned_tag in (c["description"] or "")
+        c for c in all_existing if f"#{source.owned_tag}" in (c["description"] or "")
     ]
+
     all_owned = {c["id"]: c for c in by_tag + by_description}
     existing_by_name = {c["name"]: c for c in all_owned.values()}
 
