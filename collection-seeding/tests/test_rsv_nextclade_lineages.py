@@ -408,6 +408,64 @@ def test_build_collections_new_aa_variant_contents():
     assert new_aa["filterObject"]["aminoAcidMutations"] == ["F:K124N"]
 
 
+# --- mutation sort order ---
+
+# Tree where mutations are given in reverse-position order to expose any ordering bug.
+#
+#   root
+#   └─ NODE_A  clade "A"  — nuc: G300T, C241T, T59C (descending)
+#                         — aa F: K124N, T8A (descending)  G: T4N
+SORT_TREE = {
+    "tree": {
+        "name": "root",
+        "node_attrs": {},
+        "branch_attrs": {},
+        "children": [
+            {
+                "name": "NODE_A",
+                "node_attrs": {"clade_membership": {"value": "A"}},
+                "branch_attrs": {
+                    "labels": {"clade": "A"},
+                    "mutations": {
+                        "nuc": ["G300T", "C241T", "T59C"],
+                        "F": ["K124N", "T8A"],
+                        "G": ["T4N"],
+                    },
+                },
+                "children": [],
+            }
+        ],
+    }
+}
+
+
+def test_branch_nuc_sorted_by_position():
+    clades = list(_extract_clades(SORT_TREE["tree"]))
+    a = next(c for c in clades if c.clade_name == "A")
+    assert a.branch_nuc == ["T59C", "C241T", "G300T"]
+
+
+def test_branch_aa_sorted_by_gene_then_position():
+    clades = list(_extract_clades(SORT_TREE["tree"]))
+    a = next(c for c in clades if c.clade_name == "A")
+    # F gene comes before G; within F, position 8 before 124
+    assert a.branch_aa == ["F:T8A", "F:K124N", "G:T4N"]
+
+
+def test_full_nuc_sorted_by_position():
+    cols = _build_collections(SORT_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    a = next(c for c in cols if c["name"] == "A")
+    full_nuc = next(v for v in a["variants"] if v["name"] == "Nucleotide substitutions")
+    assert full_nuc["filterObject"]["nucleotideMutations"] == ["T59C", "C241T", "G300T"]
+
+
+def test_full_aa_sorted_by_gene_then_position():
+    cols = _build_collections(SORT_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
+    a = next(c for c in cols if c["name"] == "A")
+    full_aa = next(v for v in a["variants"] if v["name"] == "Amino acid substitutions")
+    assert full_aa["filterObject"]["aminoAcidMutations"] == ["F:T8A", "F:K124N", "G:T4N"]
+
+
 # --- source class attributes ---
 
 
