@@ -42,6 +42,25 @@ export async function getMutations(
 }
 
 /**
+ * Returns a map from mutation code to Jaccard index for all mutations observed in clinical
+ * sequences belonging to the given lineage. Mutations not observed in the lineage are absent
+ * from the map. Returns an empty map when no clinical sequences match the lineage filter.
+ *
+ * Use this to annotate a pre-defined list of mutations with clinical Jaccard scores without
+ * applying any proportion/count/threshold filtering.
+ */
+export async function getJaccardForMutations(
+    lapisUrl: string,
+    mutationType: SequenceType,
+    lineageFilter: LapisFilter,
+    dateFilter: LapisFilter | undefined,
+): Promise<Map<string, number>> {
+    return getMutationsForVariant(lapisUrl, mutationType, lineageFilter, 0, 0, 0, dateFilter).then(
+        (entries) => new Map(entries.map(({ mutation, jaccardIndex }) => [mutation, jaccardIndex])),
+    );
+}
+
+/**
  * Returns the list of mutations that are defining this variant, based on the given parameters.
  * The result also includes the Jaccard index for every mutation.
  *
@@ -69,11 +88,15 @@ export async function getMutationsForVariant(
         getTotalCount(lapisUrl, { ...lineageFilter, ...dateFilter }),
     ]).then(([intersectionCounts, totalCounts, variantCount]) =>
         intersectionCounts
-            .map(({ mutation, count }) => ({
-                mutation,
-                // Formula: https://en.wikipedia.org/wiki/Jaccard_index#Overview
-                jaccardIndex: count / (variantCount + totalCounts[mutation] - count),
-            }))
+            .map(({ mutation, count }) => {
+                if (!Object.hasOwn(totalCounts, mutation)) {
+                    throw new Error(
+                        `Data inconsistency: mutation ${mutation} observed in lineage but absent from global population query.`,
+                    );
+                }
+                // https://en.wikipedia.org/wiki/Jaccard_index#Overview
+                return { mutation, jaccardIndex: count / (variantCount + totalCounts[mutation] - count) };
+            })
             .filter(({ jaccardIndex }) => jaccardIndex >= minJaccardIndex),
     );
 }

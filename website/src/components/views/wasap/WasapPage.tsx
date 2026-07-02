@@ -13,9 +13,9 @@ import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
 import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
 import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
 import { usePageState } from '../usePageState.ts';
+import { ClinicalSequenceCountStat } from './components/ClinicalSequenceCountStat';
 import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
-import { VariantFetchInfo } from './components/VariantFetchInfo';
 import { WasapStats } from './components/WasapStats';
 import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
 import type { ResistanceData } from './resistanceData';
@@ -121,13 +121,37 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                     )}
                                     {analysis.mode === 'variant' &&
                                         analysis.signatureType === 'computed' &&
-                                        config.variantAnalysisModeEnabled && (
-                                            <VariantFetchInfo
+                                        config.variantAnalysisModeEnabled &&
+                                        analysis.variant !== undefined && (
+                                            <ClinicalSequenceCountStat
+                                                lineage={analysis.variant}
                                                 analysis={analysis}
                                                 clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
                                                 clinicalLapisLineageField={config.clinicalLapis.lineageField}
                                                 clinicalLapisDateField={config.clinicalLapis.dateField}
                                                 warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                                queryKeyPrefix='variantFetchInfo'
+                                                title={`Clinical sequences for ${analysis.variant}`}
+                                                descriptionStart={`The number of clinical sequences for ${analysis.variant}`}
+                                                warningMessage='. Clinical signature calculation with this few sequences is not recommended.'
+                                            />
+                                        )}
+                                    {analysis.mode === 'variant' &&
+                                        analysis.signatureType === 'predefined' &&
+                                        config.variantAnalysisModeEnabled &&
+                                        data.lineageForJaccard !== undefined && (
+                                            <ClinicalSequenceCountStat
+                                                lineage={data.lineageForJaccard}
+                                                analysis={analysis}
+                                                clinicalLapisBaseUrl={config.clinicalLapis.lapisBaseUrl}
+                                                clinicalLapisLineageField={config.clinicalLapis.lineageField}
+                                                clinicalLapisDateField={config.clinicalLapis.dateField}
+                                                warningThreshold={config.clinicalSequenceCountWarningThreshold}
+                                                queryKeyPrefix='jaccardFetchInfo'
+                                                title='Jaccard index'
+                                                descriptionStart={`Clinical sequences for ${data.lineageForJaccard}`}
+                                                warningMessage='. Low sequence count may lead to unreliable Jaccard scores.'
+                                                zeroMessage='. No sequences found — min. Jaccard filter was not applied.'
                                             />
                                         )}
                                 </>

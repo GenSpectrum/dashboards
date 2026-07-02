@@ -5,41 +5,57 @@ import { getTotalCount } from '../../../../lapis/getTotalCount';
 import { getLapisFilterForTimeFrame } from '../useWasapPageData';
 import { variantTimeFrameLabel, type WasapVariantFilter } from '../wasapPageConfig';
 
-/**
- * Info stat about the amount of sequences used during the computation of the clinical variant signature.
- * Will also show a warning if the count is small.
- */
-export const VariantFetchInfo: FC<{
+type ClinicalSequenceCountStatProps = {
+    lineage: string;
     analysis: WasapVariantFilter;
     clinicalLapisBaseUrl: string;
     clinicalLapisLineageField: string;
     clinicalLapisDateField: string;
     warningThreshold: number;
-}> = ({ analysis, clinicalLapisBaseUrl, clinicalLapisLineageField, clinicalLapisDateField, warningThreshold }) => {
+    queryKeyPrefix: string;
+    title: string;
+    descriptionStart: string;
+    warningMessage: string;
+    zeroMessage?: string;
+};
+
+export const ClinicalSequenceCountStat: FC<ClinicalSequenceCountStatProps> = ({
+    lineage,
+    analysis,
+    clinicalLapisBaseUrl,
+    clinicalLapisLineageField,
+    clinicalLapisDateField,
+    warningThreshold,
+    queryKeyPrefix,
+    title,
+    descriptionStart,
+    warningMessage,
+    zeroMessage,
+}) => {
     const lapisFilter = {
         ...getLapisFilterForTimeFrame(analysis.timeFrame, clinicalLapisDateField),
-        [clinicalLapisLineageField]: analysis.variant,
+        [clinicalLapisLineageField]: lineage,
     };
 
     const { data, isPending, isError, error } = useQuery({
-        queryKey: ['variantFetchInfo', analysis.variant, analysis.timeFrame],
+        queryKey: [queryKeyPrefix, lineage, analysis.timeFrame],
         queryFn: () => getTotalCount(clinicalLapisBaseUrl, lapisFilter),
     });
 
     const isHighlighted = data !== undefined && data < warningThreshold;
 
-    let message = `The number of clinical sequences for ${analysis.variant}`;
+    let description = descriptionStart;
     if (analysis.timeFrame !== 'all') {
-        message += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
+        description += ` during the past ${variantTimeFrameLabel(analysis.timeFrame)}`;
     }
     if (isHighlighted) {
-        message += '. Clinical signature calculation with this few sequences is not recommended.';
+        description += data === 0 && zeroMessage !== undefined ? zeroMessage : warningMessage;
     }
 
     return (
         <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
             <div className='stat'>
-                <div className='stat-title'>Clinical sequences for {analysis.variant}</div>
+                <div className='stat-title'>{title}</div>
                 <div className='stat-value text-base'>
                     {isPending ? (
                         '…'
@@ -51,7 +67,9 @@ export const VariantFetchInfo: FC<{
                         data.toLocaleString('en-us')
                     )}
                 </div>
-                <div className='stat-desc text-wrap'>{isPending ? 'Loading …' : isError ? error.message : message}</div>
+                <div className='stat-desc text-wrap'>
+                    {isPending ? 'Loading …' : isError ? error.message : description}
+                </div>
             </div>
         </div>
     );

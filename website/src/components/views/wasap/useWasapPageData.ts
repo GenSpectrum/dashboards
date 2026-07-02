@@ -16,7 +16,7 @@ import { getBackendServiceForClientside } from '../../../backendApi/backendServi
 import { getCollection } from '../../../covspectrum/getCollection';
 import { detailedMutationsToQuery } from '../../../covspectrum/variantConversionUtil';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
-import { getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
+import { getJaccardForMutations, getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { parseQuery } from '../../../lapis/parseQuery';
 import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 
@@ -77,7 +77,7 @@ async function fetchVariantModeData(
         case 'computed':
             return fetchVariantComputedModeData(config, analysis);
         case 'predefined':
-            return fetchVariantPredefinedModeData(analysis);
+            return fetchVariantPredefinedModeData(config, analysis);
     }
 }
 
@@ -113,7 +113,13 @@ async function fetchVariantComputedModeData(
     };
 }
 
-async function fetchVariantPredefinedModeData(analysis: WasapVariantFilter): Promise<WasapMutationsData> {
+async function fetchVariantPredefinedModeData(
+    config: WasapPageConfig,
+    analysis: WasapVariantFilter,
+): Promise<WasapMutationsData> {
+    if (!config.variantAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+    }
     if (analysis.collectionId === undefined) {
         throw new Error('No collection selected for predefined variant mode.');
     }
@@ -140,7 +146,36 @@ async function fetchVariantPredefinedModeData(analysis: WasapVariantFilter): Pro
             ? (variant.filterObject.nucleotideMutations ?? [])
             : (variant.filterObject.aminoAcidMutations ?? []);
 
-    return { type: 'mutations', displayMutations: mutations };
+    const lineageForJaccard = analysis.includeSublineagesForJaccard !== false ? `${collection.name}*` : collection.name;
+    const jaccardByMutation = await getJaccardForMutations(
+        config.clinicalLapis.lapisBaseUrl,
+        analysis.sequenceType,
+        { [config.clinicalLapis.lineageField]: lineageForJaccard },
+        getLapisFilterForTimeFrame(analysis.timeFrame, config.clinicalLapis.dateField),
+    );
+
+    if (jaccardByMutation.size === 0) {
+        return { type: 'mutations', displayMutations: mutations, lineageForJaccard };
+    }
+
+    return {
+        type: 'mutations',
+        lineageForJaccard,
+        displayMutations: mutations.filter((m) => (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard),
+        customColumns: [
+            {
+                header: 'Jaccard index',
+                values: Object.fromEntries(
+                    mutations
+                        .filter(
+                            (m) => jaccardByMutation.has(m) && (jaccardByMutation.get(m) ?? 0) >= analysis.minJaccard,
+                        )
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        .map((m) => [m, jaccardByMutation.get(m)!.toPrecision(2)]),
+                ),
+            },
+        ],
+    };
 }
 
 function fetchResistanceModeData(
@@ -334,6 +369,7 @@ export type WasapMutationsData = {
     type: 'mutations';
     displayMutations?: string[];
     customColumns?: CustomColumn[];
+    lineageForJaccard?: string;
 };
 
 /**
