@@ -158,6 +158,8 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     if (analysis.includeSublineagesForJaccard === false) {
                         setSearchFromString(search, 'includeSublineagesForJaccard', 'false');
                     }
+                    setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
+                    setSearchFromString(search, 'timeFrame', analysis.timeFrame);
                 } else {
                     setSearchFromString(search, 'variant', analysis.variant);
                     setSearchFromString(search, 'minProportion', String(analysis.minProportion));
