@@ -55,18 +55,9 @@ export async function getJaccardForMutations(
     lineageFilter: LapisFilter,
     dateFilter: LapisFilter | undefined,
 ): Promise<Map<string, number>> {
-    return Promise.all([
-        getMutationsInternal(lapisUrl, mutationType, { ...lineageFilter, ...dateFilter }, 0),
-        getMutationsInternal(lapisUrl, mutationType, dateFilter, 0).then((r) =>
-            Object.fromEntries(r.map((item) => [item.mutation, item.count])),
-        ),
-        getTotalCount(lapisUrl, { ...lineageFilter, ...dateFilter }),
-    ]).then(([intersectionCounts, totalCounts, variantCount]) => {
-        if (variantCount === 0) {
-            return new Map();
-        }
-        return computeJaccardIndices(intersectionCounts, totalCounts, variantCount);
-    });
+    return getMutationsForVariant(lapisUrl, mutationType, lineageFilter, 0, 0, 0, dateFilter).then(
+        (entries) => new Map(entries.map(({ mutation, jaccardIndex }) => [mutation, jaccardIndex])),
+    );
 }
 
 /**
