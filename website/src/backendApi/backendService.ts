@@ -173,10 +173,6 @@ export class BackendService extends ApiService {
         });
     }
 
-    public async getMe() {
-        return this.get({ url: '/users/me', schema: publicUserSchema });
-    }
-
     public async getUser({ id }: { id: number }) {
         return this.get({ url: `/users/${id}`, schema: publicUserSchema });
     }
