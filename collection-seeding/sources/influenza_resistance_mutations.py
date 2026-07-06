@@ -136,7 +136,7 @@ def _build_pa_inhibitor_collections(
     ]
 
 
-class _FluResistanceMutationsSource(Source):
+class _InfluenzaResistanceMutationsSource(Source):
     """Base class for influenza resistance mutation sources.
 
     Subclasses set `organism` and `_strain_names` to select matching rows from the
@@ -154,29 +154,29 @@ class _FluResistanceMutationsSource(Source):
         )
 
 
-class FluH1N1ResistanceMutationsSource(_FluResistanceMutationsSource):
-    name = "flu-h1n1-resistance-mutations"
+class InfluenzaH1N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-h1n1-resistance-mutations"
     organism = "h1n1pdm"
     # TODO: "A(H1N1)" without "pdm09" suffix refers to pre-2009 seasonal H1N1 —
     # included here for completeness but may warrant a separate organism or exclusion.
     _strain_names = {"A(H1N1)pdm09", "A(H1N1)"}
 
 
-class FluH3N2ResistanceMutationsSource(_FluResistanceMutationsSource):
-    name = "flu-h3n2-resistance-mutations"
+class InfluenzaH3N2ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-h3n2-resistance-mutations"
     organism = "h3n2"
     # TODO: "A(H3N2)v" denotes zoonotic variant strains — excluded for now.
     _strain_names = {"A(H3N2)"}
 
 
-class FluH5N1ResistanceMutationsSource(_FluResistanceMutationsSource):
-    name = "flu-h5n1-resistance-mutations"
+class InfluenzaH5N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-h5n1-resistance-mutations"
     organism = "h5n1"
     _strain_names = {"A(H5N1)"}
 
 
-class FluVictoriaResistanceMutationsSource(_FluResistanceMutationsSource):
-    name = "flu-victoria-resistance-mutations"
+class InfluenzaVictoriaResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-victoria-resistance-mutations"
     organism = "victoria"
     # TODO: Both "Type B" and "B" are used in the source files with no lineage
     # distinction (B/Victoria vs B/Yamagata). Since B/Yamagata is no longer circulating

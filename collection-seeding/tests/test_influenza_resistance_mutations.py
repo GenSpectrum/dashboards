@@ -1,13 +1,13 @@
 import json
 import responses as rsps_lib
 
-from sources.flu_resistance_mutations import (
+from sources.influenza_resistance_mutations import (
     NA_INHIBITORS_URL,
     PA_INHIBITORS_URL,
-    FluH1N1ResistanceMutationsSource,
-    FluH3N2ResistanceMutationsSource,
-    FluH5N1ResistanceMutationsSource,
-    FluVictoriaResistanceMutationsSource,
+    InfluenzaH1N1ResistanceMutationsSource,
+    InfluenzaH3N2ResistanceMutationsSource,
+    InfluenzaH5N1ResistanceMutationsSource,
+    InfluenzaVictoriaResistanceMutationsSource,
     _parse_resist_level,
 )
 
@@ -154,20 +154,30 @@ def test_parse_empty_returns_none():
 
 
 def test_h1n1_source_name():
-    assert FluH1N1ResistanceMutationsSource.name == "flu-h1n1-resistance-mutations"
+    assert (
+        InfluenzaH1N1ResistanceMutationsSource.name
+        == "influenza-h1n1-resistance-mutations"
+    )
 
 
 def test_h3n2_source_name():
-    assert FluH3N2ResistanceMutationsSource.name == "flu-h3n2-resistance-mutations"
+    assert (
+        InfluenzaH3N2ResistanceMutationsSource.name
+        == "influenza-h3n2-resistance-mutations"
+    )
 
 
 def test_h5n1_source_name():
-    assert FluH5N1ResistanceMutationsSource.name == "flu-h5n1-resistance-mutations"
+    assert (
+        InfluenzaH5N1ResistanceMutationsSource.name
+        == "influenza-h5n1-resistance-mutations"
+    )
 
 
 def test_victoria_source_name():
     assert (
-        FluVictoriaResistanceMutationsSource.name == "flu-victoria-resistance-mutations"
+        InfluenzaVictoriaResistanceMutationsSource.name
+        == "influenza-victoria-resistance-mutations"
     )
 
 
@@ -177,28 +187,28 @@ def test_victoria_source_name():
 @rsps_lib.activate
 def test_h1n1_organism():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     assert all(c["organism"] == "h1n1pdm" for c in cols)
 
 
 @rsps_lib.activate
 def test_h3n2_organism():
     _mock_both(rsps_lib)
-    cols = FluH3N2ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH3N2ResistanceMutationsSource().get_collections()
     assert all(c["organism"] == "h3n2" for c in cols)
 
 
 @rsps_lib.activate
 def test_h5n1_organism():
     _mock_both(rsps_lib)
-    cols = FluH5N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH5N1ResistanceMutationsSource().get_collections()
     assert all(c["organism"] == "h5n1" for c in cols)
 
 
 @rsps_lib.activate
 def test_victoria_organism():
     _mock_both(rsps_lib)
-    cols = FluVictoriaResistanceMutationsSource().get_collections()
+    cols = InfluenzaVictoriaResistanceMutationsSource().get_collections()
     assert all(c["organism"] == "victoria" for c in cols)
 
 
@@ -208,7 +218,7 @@ def test_victoria_organism():
 @rsps_lib.activate
 def test_h1n1_has_oseltamivir_collection():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     names = [c["name"] for c in cols]
     assert "Oseltamivir resistance mutations" in names
 
@@ -217,7 +227,7 @@ def test_h1n1_has_oseltamivir_collection():
 def test_ni_only_mutations_are_excluded():
     """Zanamivir for H1N1 H275Y is NI — should not appear as a variant."""
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     zana_col = next((c for c in cols if "Zanamivir" in c["name"]), None)
     if zana_col is not None:
         all_muts = [
@@ -231,7 +241,7 @@ def test_ni_only_mutations_are_excluded():
 @rsps_lib.activate
 def test_hri_mutation_included():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     ose_col = next(c for c in cols if "Oseltamivir" in c["name"])
     all_muts = [
         aa
@@ -244,7 +254,7 @@ def test_hri_mutation_included():
 @rsps_lib.activate
 def test_ri_mutation_included():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     ose_col = next(c for c in cols if "Oseltamivir" in c["name"])
     all_muts = [
         aa
@@ -257,7 +267,7 @@ def test_ri_mutation_included():
 @rsps_lib.activate
 def test_variant_name_is_resistance_level():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     ose_col = next(c for c in cols if "Oseltamivir" in c["name"])
     names = {v["name"] for v in ose_col["variants"]}
     assert names <= {"NI", "RI", "HRI", "NI/RI", "RI/HRI", "NI/RI/HRI"}
@@ -266,7 +276,7 @@ def test_variant_name_is_resistance_level():
 @rsps_lib.activate
 def test_mutations_prefixed_with_na():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     for col in cols:
         if "Baloxavir" in col["name"]:
             continue  # PA mutations checked separately
@@ -280,10 +290,10 @@ def test_unknown_strain_excluded():
     """A(H7N9) is not a dashboard organism and should not appear in any collection."""
     _mock_both(rsps_lib)
     for Source in (
-        FluH1N1ResistanceMutationsSource,
-        FluH3N2ResistanceMutationsSource,
-        FluH5N1ResistanceMutationsSource,
-        FluVictoriaResistanceMutationsSource,
+        InfluenzaH1N1ResistanceMutationsSource,
+        InfluenzaH3N2ResistanceMutationsSource,
+        InfluenzaH5N1ResistanceMutationsSource,
+        InfluenzaVictoriaResistanceMutationsSource,
     ):
         cols = Source().get_collections()
         all_muts = [
@@ -303,7 +313,7 @@ def test_unknown_strain_excluded():
 @rsps_lib.activate
 def test_h1n1_has_baloxavir_collection():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     names = [c["name"] for c in cols]
     assert "Baloxavir resistance mutations" in names
 
@@ -311,7 +321,7 @@ def test_h1n1_has_baloxavir_collection():
 @rsps_lib.activate
 def test_baloxavir_mutations_prefixed_with_pa():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     bal_col = next(c for c in cols if "Baloxavir" in c["name"])
     for v in bal_col["variants"]:
         for aa in v["filterObject"]["aminoAcidMutations"]:
@@ -321,7 +331,7 @@ def test_baloxavir_mutations_prefixed_with_pa():
 @rsps_lib.activate
 def test_baloxavir_variant_name_is_mutation():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     bal_col = next(c for c in cols if "Baloxavir" in c["name"])
     for v in bal_col["variants"]:
         assert v["name"].startswith("PA:"), (
@@ -332,7 +342,7 @@ def test_baloxavir_variant_name_is_mutation():
 @rsps_lib.activate
 def test_baloxavir_variant_description_contains_fold_change():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     bal_col = next(c for c in cols if "Baloxavir" in c["name"])
     for v in bal_col["variants"]:
         assert "fold-change" in v.get("description", "").lower(), (
@@ -344,7 +354,7 @@ def test_baloxavir_variant_description_contains_fold_change():
 def test_pa_header_row_excluded():
     """The first PA-inhibitors entry is a header row and must not produce a variant."""
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     bal_col = next(c for c in cols if "Baloxavir" in c["name"])
     all_muts = [
         aa
@@ -357,7 +367,7 @@ def test_pa_header_row_excluded():
 @rsps_lib.activate
 def test_variant_structure():
     _mock_both(rsps_lib)
-    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     for col in cols:
         for v in col["variants"]:
             assert v["type"] == "filterObject"

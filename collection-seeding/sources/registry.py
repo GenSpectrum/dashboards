@@ -9,11 +9,11 @@ from sources.covid_pango_lineages import (
     CovidPangoLineagesSampleSource,
 )
 from sources.covid_resistance_mutations import CovidResistanceMutationsSource
-from sources.flu_resistance_mutations import (
-    FluH1N1ResistanceMutationsSource,
-    FluH3N2ResistanceMutationsSource,
-    FluH5N1ResistanceMutationsSource,
-    FluVictoriaResistanceMutationsSource,
+from sources.influenza_resistance_mutations import (
+    InfluenzaH1N1ResistanceMutationsSource,
+    InfluenzaH3N2ResistanceMutationsSource,
+    InfluenzaH5N1ResistanceMutationsSource,
+    InfluenzaVictoriaResistanceMutationsSource,
 )
 from sources.rsv_resistance_mutations import (
     RsvAResistanceMutationsSource,
@@ -29,10 +29,10 @@ ALL_SOURCES: list[type[Source]] = [
     CovidResistanceMutationsSource,
     RsvAResistanceMutationsSource,
     RsvBResistanceMutationsSource,
-    FluH1N1ResistanceMutationsSource,
-    FluH3N2ResistanceMutationsSource,
-    FluH5N1ResistanceMutationsSource,
-    FluVictoriaResistanceMutationsSource,
+    InfluenzaH1N1ResistanceMutationsSource,
+    InfluenzaH3N2ResistanceMutationsSource,
+    InfluenzaH5N1ResistanceMutationsSource,
+    InfluenzaVictoriaResistanceMutationsSource,
     RsvANextcladeLineagesSource,
     RsvBNextcladeLineagesSource,
     CovidPangoLineagesSource,
