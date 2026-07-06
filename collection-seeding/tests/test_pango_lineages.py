@@ -58,6 +58,12 @@ def test_build_collection_description_format():
     assert "BA" in col["description"]  # parent
     assert "22C" in col["description"]  # clade
     assert "2022-01-20" in col["description"]
+    assert CovidPangoLineagesSource.owned_tag not in col["description"]
+
+
+def test_build_collection_has_tags():
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    assert col["tags"] == [CovidPangoLineagesSource.owned_tag]
 
 
 def test_build_collection_missing_fields_use_defaults():

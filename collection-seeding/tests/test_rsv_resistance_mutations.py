@@ -105,7 +105,10 @@ def test_collection_names_are_nirsevimab_and_palivizumab():
     rsps_lib.add(rsps_lib.GET, DATA_URL, body=SAMPLE_TEXT, status=200)
     cols = RsvAResistanceMutationsSource().get_collections()
     names = {c["name"] for c in cols}
-    assert names == {"Nirsevimab resistance mutations", "Palivizumab resistance mutations"}
+    assert names == {
+        "Nirsevimab resistance mutations",
+        "Palivizumab resistance mutations",
+    }
 
 
 @rsps_lib.activate
@@ -133,7 +136,8 @@ def test_combo_mutation_produces_multiple_aa_entries():
     cols = RsvAResistanceMutationsSource().get_collections()
     nirsevimab_col = next(c for c in cols if "Nirsevimab" in c["name"])
     combo_variant = next(
-        v for v in nirsevimab_col["variants"]
+        v
+        for v in nirsevimab_col["variants"]
         if len(v["filterObject"]["aminoAcidMutations"]) > 1
     )
     assert combo_variant["filterObject"]["aminoAcidMutations"] == ["F:N67I", "F:N208Y"]

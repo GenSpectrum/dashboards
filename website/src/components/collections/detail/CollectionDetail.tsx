@@ -15,6 +15,7 @@ import {
 } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
+import { TagChip } from '../TagChip.tsx';
 
 type LapisConfig = {
     url: string;
@@ -57,7 +58,14 @@ function CollectionDetailInner({
                     )}
                 </div>
                 {collection.description !== null && <p className='mt-1 text-gray-500'>{collection.description}</p>}
-                <p className='mt-1 text-sm text-gray-500'>
+                {collection.tags.length > 0 && (
+                    <div className='mt-2 flex flex-wrap gap-1'>
+                        {collection.tags.map((tag) => (
+                            <TagChip key={tag} tag={tag} />
+                        ))}
+                    </div>
+                )}
+                <p className='mt-2 text-sm text-gray-500'>
                     {organismName} collection owned by {ownerName}
                 </p>
             </div>

@@ -44,6 +44,21 @@ class ApiClient:
             raise RuntimeError(f"GET /api/collections failed: {r.status_code} {r.text}")
         return r.json()
 
+    def fetch_existing_collections_by_tag(
+        self, tag: str, organism: str
+    ) -> list[ExistingCollection]:
+        r = requests.get(
+            self._collections_url,
+            params={"tags": tag, "organism": organism},
+            headers=self._auth_headers,
+            timeout=10,
+        )
+        if not r.ok:
+            raise RuntimeError(
+                f"GET /api/collections?tags={tag} failed: {r.status_code} {r.text}"
+            )
+        return r.json()
+
     def create_collection(self, collection: Collection) -> int:
         r = requests.post(
             self._collections_url,
