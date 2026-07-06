@@ -69,7 +69,7 @@ def _build_na_inhibitor_collections(
                     "type": "filterObject",
                     "name": level,
                     "filterObject": {
-                        "aminoAcidMutations": [f"NA:{mut}" for mut in mutations]
+                        "aminoAcidMutations": [f"NA:{mut.strip()}" for mut in mutations]
                     },
                 }
             )
@@ -110,7 +110,7 @@ def _build_pa_inhibitor_collections(
         mutations = row.get("mutation_PA") or []
         if not mutations:
             continue
-        aa_muts = [f"PA:{mut}" for mut in mutations]
+        aa_muts = [f"PA:{mut.strip()}" for mut in mutations]
         variant: Variant = {
             "type": "filterObject",
             "name": "+".join(aa_muts),

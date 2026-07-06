@@ -35,6 +35,16 @@ NA_SAMPLE: list[dict] = [
         "references": ["(2)"],
     },
     {
+        "strain": "A(H5N1)",
+        "mutation_NA": [" S227N"],  # leading space as seen in real data
+        "N2": ["227"],
+        "oseltamivir_resistance_level": "RI (10)",
+        "zanamivir_resistance_level": "NI (1)",
+        "peramivir_resistance_level": "NI (1)",
+        "laninavir_resistance_level": "?",
+        "references": ["(7)"],
+    },
+    {
         "strain": "A(H3N2)",
         "mutation_NA": ["E119V"],
         "N2": ["119"],
@@ -271,6 +281,17 @@ def test_variant_name_is_resistance_level():
     ose_col = next(c for c in cols if "Oseltamivir" in c["name"])
     names = {v["name"] for v in ose_col["variants"]}
     assert names <= {"NI", "RI", "HRI", "NI/RI", "RI/HRI", "NI/RI/HRI"}
+
+
+@rsps_lib.activate
+def test_mutation_strings_have_no_spaces():
+    """Source data sometimes contains leading/trailing spaces in mutation strings."""
+    _mock_both(rsps_lib)
+    cols = InfluenzaH5N1ResistanceMutationsSource().get_collections()
+    for col in cols:
+        for v in col["variants"]:
+            for aa in v["filterObject"]["aminoAcidMutations"]:
+                assert " " not in aa, f"Unexpected space in mutation string: {aa!r}"
 
 
 @rsps_lib.activate
