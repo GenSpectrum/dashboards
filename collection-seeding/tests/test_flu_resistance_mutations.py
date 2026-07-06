@@ -319,6 +319,28 @@ def test_baloxavir_mutations_prefixed_with_pa():
 
 
 @rsps_lib.activate
+def test_baloxavir_variant_name_is_mutation():
+    _mock_both(rsps_lib)
+    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    bal_col = next(c for c in cols if "Baloxavir" in c["name"])
+    for v in bal_col["variants"]:
+        assert v["name"].startswith("PA:"), (
+            f"Expected variant named by mutation, got {v['name']!r}"
+        )
+
+
+@rsps_lib.activate
+def test_baloxavir_variant_description_contains_fold_change():
+    _mock_both(rsps_lib)
+    cols = FluH1N1ResistanceMutationsSource().get_collections()
+    bal_col = next(c for c in cols if "Baloxavir" in c["name"])
+    for v in bal_col["variants"]:
+        assert "fold-change" in v.get("description", "").lower(), (
+            f"Expected description with fold-change info, got {v.get('description')!r}"
+        )
+
+
+@rsps_lib.activate
 def test_pa_header_row_excluded():
     """The first PA-inhibitors entry is a header row and must not produce a variant."""
     _mock_both(rsps_lib)

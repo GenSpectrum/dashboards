@@ -104,25 +104,21 @@ def _build_pa_inhibitor_collections(
         and row.get("mutation_PA") not in (None, ["Amino acid\nsubstitution"])
     ]
 
-    # TODO: PA-inhibitors.json uses numeric fold-change values only (e.g. "5", "22–54")
-    # instead of NI/RI/HRI labels. All non-header rows are included here; a fold-change
-    # cutoff for what constitutes clinically relevant resistance has not yet been applied.
-    # See QUESTIONS.md for details.
     variants: list[Variant] = []
     for row in rows:
         fc = (row.get("baloxavir_resistance_level") or "").strip()
         mutations = row.get("mutation_PA") or []
-        if not fc or not mutations:
+        if not mutations:
             continue
-        variants.append(
-            {
-                "type": "filterObject",
-                "name": f"FC {fc}x",
-                "filterObject": {
-                    "aminoAcidMutations": [f"PA:{mut}" for mut in mutations]
-                },
-            }
-        )
+        aa_muts = [f"PA:{mut}" for mut in mutations]
+        variant: Variant = {
+            "type": "filterObject",
+            "name": "+".join(aa_muts),
+            "filterObject": {"aminoAcidMutations": aa_muts},
+        }
+        if fc:
+            variant["description"] = f"Baloxavir EC50 fold-change: {fc}x"
+        variants.append(variant)
 
     if not variants:
         return []
