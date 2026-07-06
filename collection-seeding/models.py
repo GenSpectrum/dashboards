@@ -1,6 +1,6 @@
 """Shared type definitions for collection seeding."""
 
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 
 class FilterObject(TypedDict, total=False):
@@ -11,6 +11,7 @@ class FilterObject(TypedDict, total=False):
 class Variant(TypedDict):
     type: str
     name: str
+    description: NotRequired[str]
     filterObject: FilterObject
 
 
