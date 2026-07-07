@@ -74,7 +74,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                         ? Number(texts.collectionId)
                         : this.config.filterDefaults.variant.collectionId,
                     newMutationsOnly: texts.newMutationsOnly === 'true',
-                    includeSublineagesForJaccard: texts.includeSublineagesForJaccard !== 'false',
+                    includeSublineagesForJaccard:
+                        texts.includeSublineagesForJaccard !== undefined
+                            ? texts.includeSublineagesForJaccard !== 'false'
+                            : this.config.filterDefaults.variant.includeSublineagesForJaccard,
                 };
                 break;
             }

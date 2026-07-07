@@ -44,7 +44,7 @@ export async function getMutations(
 /**
  * Returns a map from mutation code to Jaccard index for all mutations observed in clinical
  * sequences belonging to the given lineage. Mutations not observed in the lineage are absent
- * from the map. Returns an empty map when no clinical sequences match the lineage filter.
+ * from the map.
  *
  * Use this to annotate a pre-defined list of mutations with clinical Jaccard scores without
  * applying any proportion/count/threshold filtering.

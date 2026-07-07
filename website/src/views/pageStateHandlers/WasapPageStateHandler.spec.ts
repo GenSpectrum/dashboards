@@ -339,6 +339,29 @@ describe('WasapPageStateHandler', () => {
             const newUrl = handler.toUrl(filter);
             expect(newUrl).toBe(url);
         });
+
+        it('parses and encodes includeSublineagesForJaccard=false in predefined variant mode (round-trip)', () => {
+            const url =
+                '/wastewater/covid?' +
+                'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'granularity=day&' +
+                'analysisMode=variant&' +
+                'sequenceType=nucleotide&' +
+                'signatureType=predefined&' +
+                'collectionId=42&' +
+                'includeSublineagesForJaccard=false&' +
+                'minJaccard=0.75&' +
+                'timeFrame=all&';
+            const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+            expect(filter.analysis.mode).toBe('variant');
+            const analysis = filter.analysis as WasapVariantFilter;
+            expect(analysis.signatureType).toBe('predefined');
+            expect(analysis.includeSublineagesForJaccard).toBe(false);
+
+            const newUrl = handler.toUrl(filter);
+            expect(newUrl).toBe(url);
+        });
     });
 
     describe('resistance mode', () => {
