@@ -24,7 +24,7 @@ export function NumericInput({
 }) {
     return (
         <LabeledField label={label} info={info}>
-            <div className='mb-2 w-full'>
+            <div className='w-full'>
                 <input
                     className='input input-bordered mb-2 w-full'
                     type='number'
