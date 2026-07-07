@@ -151,7 +151,7 @@ def _extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
 
     # Separate nucleotide mutations (key "nuc") from amino acid mutations (all other keys
     # are gene names such as "F", "G", "L", etc.).
-    branch_nuc = muts.get("nuc", [])
+    branch_nuc = sorted(muts.get("nuc", []), key=lambda m: int(m[1:-1]))
     branch_aa_by_gene = {k: v for k, v in muts.items() if k != "nuc"}
 
     # Fold this branch's mutations into the running accumulated state.
@@ -161,11 +161,10 @@ def _extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
 
     if "clade" in labels:
         # Flatten branch-level AA mutations into GENE:MUT strings for the "new" variant.
-        branch_aa_flat = [
-            f"{gene}:{m}"
-            for gene, gene_muts in branch_aa_by_gene.items()
-            for m in gene_muts
-        ]
+        branch_aa_flat = sorted(
+            [f"{gene}:{m}" for gene, gene_muts in branch_aa_by_gene.items() for m in gene_muts],
+            key=lambda s: (s.split(":")[0], int(s.split(":")[1][1:-1])),
+        )
         yield _CladeInfo(
             clade_name=labels["clade"],
             parent_clade=parent_clade,
@@ -273,7 +272,7 @@ def _format_accum_nuc(accum: dict[str, tuple[str, str]]) -> list[str]:
     E.g. {"982": ("A", "T")} → ["A982T"], meaning: at genome position 982 the reference
     has A and this clade (from root) has T.
     """
-    return [f"{ref}{pos}{cur}" for pos, (ref, cur) in accum.items()]
+    return [f"{ref}{pos}{cur}" for pos, (ref, cur) in sorted(accum.items(), key=lambda item: int(item[0]))]
 
 
 def _format_accum_aa(accum: dict[tuple[str, str], tuple[str, str]]) -> list[str]:
@@ -282,4 +281,4 @@ def _format_accum_aa(accum: dict[tuple[str, str], tuple[str, str]]) -> list[str]
     E.g. {("F", "8"): ("T", "G")} → ["F:T8G"], meaning: in gene F at codon 8 the reference
     has T and this clade (from root) has G.
     """
-    return [f"{gene}:{ref}{pos}{cur}" for (gene, pos), (ref, cur) in accum.items()]
+    return [f"{gene}:{ref}{pos}{cur}" for (gene, pos), (ref, cur) in sorted(accum.items(), key=lambda item: (item[0][0], int(item[0][1])))]

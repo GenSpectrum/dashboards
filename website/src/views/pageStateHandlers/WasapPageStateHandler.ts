@@ -74,6 +74,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                         ? Number(texts.collectionId)
                         : this.config.filterDefaults.variant.collectionId,
                     newMutationsOnly: texts.newMutationsOnly === 'true',
+                    includeSublineagesForJaccard:
+                        texts.includeSublineagesForJaccard !== undefined
+                            ? texts.includeSublineagesForJaccard !== 'false'
+                            : this.config.filterDefaults.variant.includeSublineagesForJaccard,
                 };
                 break;
             }
@@ -154,6 +158,11 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     if (analysis.newMutationsOnly) {
                         setSearchFromString(search, 'newMutationsOnly', 'true');
                     }
+                    if (analysis.includeSublineagesForJaccard === false) {
+                        setSearchFromString(search, 'includeSublineagesForJaccard', 'false');
+                    }
+                    setSearchFromString(search, 'minJaccard', String(analysis.minJaccard));
+                    setSearchFromString(search, 'timeFrame', analysis.timeFrame);
                 } else {
                     setSearchFromString(search, 'variant', analysis.variant);
                     setSearchFromString(search, 'minProportion', String(analysis.minProportion));
@@ -264,6 +273,10 @@ function generateWasapFilterConfig(pageConfig: WasapPageConfig): BaselineFilterC
         {
             type: 'text',
             lapisField: 'newMutationsOnly',
+        },
+        {
+            type: 'text',
+            lapisField: 'includeSublineagesForJaccard',
         },
     ];
 }
