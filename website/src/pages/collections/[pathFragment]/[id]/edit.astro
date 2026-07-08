@@ -1,8 +1,9 @@
 ---
 import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
-import NotAuthorized from '../../../../components/auth/NotAuthorized.astro';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
+import { PageContainer } from '../../../../styles/containers/PageContainer';
+import { PageHeadline } from '../../../../styles/containers/PageHeadline';
 import { getDashboardsConfig, getBackendHost } from '../../../../config';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
@@ -63,7 +64,10 @@ const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` :
         currentUserId === undefined ? (
             <NotLoggedIn />
         ) : isNotOwner ? (
-            <NotAuthorized />
+            <PageContainer>
+                <PageHeadline>Not authorized</PageHeadline>
+                <div>You do not have permission to edit this collection.</div>
+            </PageContainer>
         ) : (
             <CollectionEdit
                 client:only='react'
