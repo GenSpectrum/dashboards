@@ -95,6 +95,12 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                 <h1 className='text-lg font-semibold'>No variant selected</h1>
                                 <p className='text-sm'>Please select a variant from the filter panel.</p>
                             </div>
+                        ) : (analysis.mode === 'collection' || analysis.mode === 'covSpectrumCollection') &&
+                          analysis.collectionId === undefined ? (
+                            <div className='rounded-md border-2 border-gray-100 p-4'>
+                                <h1 className='text-lg font-semibold'>No collection selected</h1>
+                                <p className='text-sm'>Please select a collection from the filter panel.</p>
+                            </div>
                         ) : (
                             <span>There was an error fetching the data to display.</span>
                         )
