@@ -1,18 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { type FC } from 'react';
 
-import { withQueryProvider } from '../../../backendApi/withQueryProvider';
-import { getClientLogger } from '../../../clientLogger';
-import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
-import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
-import { dataOrigins } from '../../../types/dataOrigins.ts';
-import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
-import { Loading } from '../../../util/Loading';
-import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
-import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
-import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
-import { usePageState } from '../usePageState.ts';
 import { ClinicalSequenceCountStat } from './components/ClinicalSequenceCountStat';
 import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
@@ -21,6 +9,20 @@ import { getInitialMeanProportionInterval } from './initialMeanProportionInterva
 import type { ResistanceData } from './resistanceData';
 import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider';
+import { getClientLogger } from '../../../clientLogger';
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
+import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
+import { type Organism } from '../../../types/Organism.ts';
+import { dataOrigins } from '../../../types/dataOrigins.ts';
+import { Page } from '../../../types/pages.ts';
+import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
+import { Loading } from '../../../util/Loading';
+import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
+import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
+import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
+import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
+import { usePageState } from '../usePageState.ts';
 
 const logger = getClientLogger('WasapPage');
 
@@ -180,7 +182,10 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                         collectionUrl={
                                             analysis.mode === 'covSpectrumCollection'
                                                 ? `https://cov-spectrum.org/collections/${data.collection.id}`
-                                                : undefined
+                                                : Page.viewCollection(
+                                                      config.internalName as Organism,
+                                                      String(data.collection.id),
+                                                  )
                                         }
                                         invalidVariants={data.invalidVariants}
                                     />

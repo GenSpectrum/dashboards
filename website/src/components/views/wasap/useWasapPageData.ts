@@ -407,9 +407,17 @@ async function fetchCollectionModeData(
 
     return {
         type: 'collection',
-        collection: { id: collection.id, title: collection.name, queries },
+        collection: { id: collection.id, title: collection.name, queries: deduplicateLabels(queries) },
         ...(invalidVariants.length > 0 && { invalidVariants }),
     };
+}
+
+function deduplicateLabels<T extends { displayLabel: string }>(queries: T[]): T[] {
+    const seen: Record<string, number> = {};
+    return queries.map((q) => {
+        const count = (seen[q.displayLabel] = (seen[q.displayLabel] ?? 0) + 1);
+        return count === 1 ? q : { ...q, displayLabel: `${q.displayLabel} (${count})` };
+    });
 }
 
 function filterObjectToQueryString(filterObject: FilterObject): string {
