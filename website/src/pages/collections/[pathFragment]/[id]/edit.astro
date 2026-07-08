@@ -1,5 +1,6 @@
 ---
 import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
+import NotAuthorized from '../../../../components/auth/NotAuthorized.astro';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
 import { getDashboardsConfig, getBackendHost } from '../../../../config';
@@ -28,11 +29,13 @@ const currentUserId = Astro.locals.gsUserId;
 const config = getDashboardsConfig();
 
 let collection;
+let isNotOwner = false;
 if (currentUserId !== undefined) {
     try {
         collection = await new BackendService(getBackendHost()).getCollection({ id });
         if (currentUserId !== collection.ownedBy) {
-            return Astro.redirect('/404');
+            isNotOwner = true;
+            Astro.response.status = 403;
         }
     } catch (error) {
         if (error instanceof BackendError && error.status === 404) {
@@ -57,7 +60,11 @@ const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` :
     ]}
 >
     {
-        currentUserId !== undefined ? (
+        currentUserId === undefined ? (
+            <NotLoggedIn />
+        ) : isNotOwner ? (
+            <NotAuthorized />
+        ) : (
             <CollectionEdit
                 client:only='react'
                 organism={organism}
@@ -68,8 +75,6 @@ const collectionTitle = collection !== undefined ? `#${id} ${collection.name}` :
                     collection!
                 }
             />
-        ) : (
-            <NotLoggedIn />
         )
     }
 </ContaineredPageLayout>
