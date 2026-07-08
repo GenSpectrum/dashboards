@@ -172,6 +172,16 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                     <CollectionInfo
                                         collectionId={data.collection.id}
                                         collectionTitle={data.collection.title}
+                                        sourceLabel={
+                                            analysis.mode === 'covSpectrumCollection'
+                                                ? 'CoV-Spectrum collection'
+                                                : 'GenSpectrum collection'
+                                        }
+                                        collectionUrl={
+                                            analysis.mode === 'covSpectrumCollection'
+                                                ? `https://cov-spectrum.org/collections/${data.collection.id}`
+                                                : undefined
+                                        }
                                         invalidVariants={data.invalidVariants}
                                     />
                                 </>

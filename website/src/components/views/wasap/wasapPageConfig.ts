@@ -61,7 +61,8 @@ type AnalysisModeConfigs = ManualAnalysisModeConfig &
     VariantAnalysisModeConfig &
     ResistanceAnalysisModeConfig &
     UntrackedAnalyisModeConfig &
-    CovSpectrumCollectionAnalysisModeConfig;
+    CovSpectrumCollectionAnalysisModeConfig &
+    CollectionAnalysisModeConfig;
 
 type ManualAnalysisModeConfig =
     | {
@@ -137,6 +138,17 @@ type CovSpectrumCollectionAnalysisModeConfig =
           };
       };
 
+type CollectionAnalysisModeConfig =
+    | {
+          collectionAnalysisModeEnabled?: never;
+      }
+    | {
+          collectionAnalysisModeEnabled: true;
+          filterDefaults: {
+              collection: WasapCollectionFilter;
+          };
+      };
+
 /**
  * Convenience function to get the list of enabled modes.
  */
@@ -157,6 +169,9 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     if (config.covSpectrumCollectionAnalysisModeEnabled) {
         result.push('covSpectrumCollection');
     }
+    if (config.collectionAnalysisModeEnabled) {
+        result.push('collection');
+    }
     return result;
 }
 
@@ -175,6 +190,7 @@ export const WASAP_ANALYSIS_MODE = {
     resistance: 'resistance',
     untracked: 'untracked',
     covSpectrumCollection: 'covSpectrumCollection',
+    collection: 'collection',
 } as const;
 
 export type WasapAnalysisMode = (typeof WASAP_ANALYSIS_MODE)[keyof typeof WASAP_ANALYSIS_MODE];
@@ -270,12 +286,18 @@ export type WasapCovSpectrumCollectionFilter = {
     collectionId?: number;
 };
 
+export type WasapCollectionFilter = {
+    mode: 'collection';
+    collectionId?: number;
+};
+
 export type WasapAnalysisFilter =
     | WasapManualFilter
     | WasapVariantFilter
     | WasapResistanceFilter
     | WasapUntrackedFilter
-    | WasapCovSpectrumCollectionFilter;
+    | WasapCovSpectrumCollectionFilter
+    | WasapCollectionFilter;
 
 export type WasapFilter = {
     base: WasapBaseFilter;

@@ -113,6 +113,15 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     collectionId: texts.collectionId ? Number(texts.collectionId) : undefined,
                 };
                 break;
+            case 'collection':
+                if (!this.config.collectionAnalysisModeEnabled) {
+                    throw Error("The 'collection' analysis mode is not enabled.");
+                }
+                analysis = {
+                    mode,
+                    collectionId: texts.collectionId ? Number(texts.collectionId) : undefined,
+                };
+                break;
         }
 
         const base: WasapBaseFilter = {
@@ -182,6 +191,13 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 }
                 break;
             case 'covSpectrumCollection':
+                setSearchFromString(
+                    search,
+                    'collectionId',
+                    analysis.collectionId ? String(analysis.collectionId) : undefined,
+                );
+                break;
+            case 'collection':
                 setSearchFromString(
                     search,
                     'collectionId',

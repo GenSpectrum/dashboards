@@ -7,6 +7,7 @@ import { DynamicDateFilter } from '../DynamicDateFilter';
 import { SelectorHeadline } from '../SelectorHeadline';
 import { ExplorationModeInfo } from './InfoBlocks';
 import { CovSpectrumCollectionAnalysisFilter } from './filters/CovSpectrumCollectionAnalysisFilter';
+import { GsCollectionAnalysisFilter } from './filters/GsCollectionAnalysisFilter';
 import { ManualAnalysisFilter } from './filters/ManualAnalysisFilter';
 import { ResistanceMutationsFilter } from './filters/ResistanceMutationsFilter';
 import { UntrackedFilter } from './filters/UntrackedFilter';
@@ -60,6 +61,8 @@ export function WasapPageStateSelector({
         setUntrackedFilter,
         covSpectrumCollectionFilter,
         setCovSpectrumCollectionFilter,
+        collectionFilter,
+        setCollectionFilter,
     } = useAnalysisFilterStates(initialAnalysisFilterState, config);
 
     const [selectedAnalysisMode, setSelectedAnalysisMode] = useState(initialAnalysisFilterState.mode);
@@ -79,6 +82,8 @@ export function WasapPageStateSelector({
                 return { base: baseFilterState, analysis: untrackedFilter! };
             case 'covSpectrumCollection':
                 return { base: baseFilterState, analysis: covSpectrumCollectionFilter! };
+            case 'collection':
+                return { base: baseFilterState, analysis: collectionFilter! };
         }
         /* eslint-enable  @typescript-eslint/no-non-null-assertion */
     }
@@ -247,6 +252,17 @@ export function WasapPageStateSelector({
                                     collectionTitleFilter={config.collectionTitleFilter}
                                 />
                             );
+                        case 'collection':
+                            if (!config.collectionAnalysisModeEnabled || collectionFilter === undefined) {
+                                throw Error("'collection' mode selected, but it isn't enabled.");
+                            }
+                            return (
+                                <GsCollectionAnalysisFilter
+                                    pageState={collectionFilter}
+                                    setPageState={setCollectionFilter}
+                                    organism={config.internalName}
+                                />
+                            );
                     }
                 })()}
             </Inset>
@@ -271,6 +287,8 @@ function modeLabel(mode: WasapAnalysisMode): string {
             return 'Untracked Mutations';
         case 'covSpectrumCollection':
             return 'CovSpectrum Collection';
+        case 'collection':
+            return 'Collection';
     }
 }
 
@@ -315,6 +333,13 @@ function useAnalysisFilterStates(initialFilter: WasapAnalysisFilter, config: Was
               ? config.filterDefaults.covSpectrumCollection
               : undefined,
     );
+    const [collectionFilter, setCollectionFilter] = useState(
+        initialFilter.mode === 'collection'
+            ? initialFilter
+            : config.collectionAnalysisModeEnabled
+              ? config.filterDefaults.collection
+              : undefined,
+    );
 
     return {
         manualFilter,
@@ -327,5 +352,7 @@ function useAnalysisFilterStates(initialFilter: WasapAnalysisFilter, config: Was
         setUntrackedFilter,
         covSpectrumCollectionFilter,
         setCovSpectrumCollectionFilter,
+        collectionFilter,
+        setCollectionFilter,
     };
 }

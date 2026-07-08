@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import type {
     VariantTimeFrame,
     WasapAnalysisFilter,
+    WasapCollectionFilter,
     WasapCovSpectrumCollectionFilter,
     WasapManualFilter,
     WasapPageConfig,
@@ -18,6 +19,7 @@ import { detailedMutationsToQuery } from '../../../covspectrum/variantConversion
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getJaccardForMutations, getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { parseQuery } from '../../../lapis/parseQuery';
+import type { FilterObject } from '../../../types/Collection';
 import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 
 /**
@@ -53,6 +55,8 @@ export async function fetchWasapPageData(
             return fetchUntrackedModeData(config, analysis);
         case 'covSpectrumCollection':
             return fetchCovSpectrumCollectionModeData(config, analysis);
+        case 'collection':
+            return fetchCollectionModeData(config, analysis);
     }
 }
 
@@ -331,6 +335,91 @@ async function fetchCovSpectrumCollectionModeData(
         },
         ...(invalidVariants.length > 0 && { invalidVariants }),
     };
+}
+
+async function fetchCollectionModeData(
+    config: WasapPageConfig,
+    analysis: WasapCollectionFilter,
+): Promise<WasapCollectionData> {
+    if (!config.collectionAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'collection' mode is not enabled.");
+    }
+    if (!analysis.collectionId) {
+        throw Error('No collection selected');
+    }
+    const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
+
+    const variantData: {
+        name: string;
+        queryString: string;
+        description?: string;
+    }[] = [];
+
+    const invalidVariants: {
+        name: string;
+        error: string;
+    }[] = [];
+
+    for (const variant of collection.variants) {
+        let queryString: string;
+        switch (variant.type) {
+            case 'query':
+                queryString = variant.countQuery;
+                break;
+            case 'filterObject':
+                queryString = filterObjectToQueryString(variant.filterObject);
+                break;
+        }
+        if (queryString === '') {
+            invalidVariants.push({ name: variant.name, error: 'Variant is empty.' });
+            continue;
+        }
+        variantData.push({
+            name: variant.name,
+            queryString,
+            description: variant.description ?? undefined,
+        });
+    }
+
+    const parseResults = await parseQuery(config.lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
+
+    const queries: {
+        displayLabel: string;
+        description?: string;
+        countQuery: string;
+        coverageQuery: string;
+    }[] = [];
+
+    variantData.forEach(({ name, queryString, description }, index) => {
+        const parseResult = parseResults[index];
+        if (parseResult.type === 'failure') {
+            invalidVariants.push({ name, error: `Parse error: ${parseResult.error}` });
+            return;
+        }
+        const validationResult = validateGenomeOnly(parseResult.filter);
+        if (!validationResult.isGenomeOnly) {
+            invalidVariants.push({ name, error: validationResult.error });
+            return;
+        }
+        const coverageQuery = `(${queryString}) or (not maybe(${queryString}))`;
+        queries.push({ displayLabel: name, description, countQuery: queryString, coverageQuery });
+    });
+
+    return {
+        type: 'collection',
+        collection: { id: collection.id, title: collection.name, queries },
+        ...(invalidVariants.length > 0 && { invalidVariants }),
+    };
+}
+
+function filterObjectToQueryString(filterObject: FilterObject): string {
+    const parts = [
+        ...(filterObject.nucleotideMutations ?? []),
+        ...(filterObject.aminoAcidMutations ?? []),
+        ...(filterObject.nucleotideInsertions ?? []),
+        ...(filterObject.aminoAcidInsertions ?? []),
+    ];
+    return parts.join(' & ');
 }
 
 export function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
