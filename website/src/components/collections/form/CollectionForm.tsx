@@ -52,6 +52,7 @@ export function CollectionForm({
             withKey,
         ),
     );
+    const [invalidVariantKeys, setInvalidVariantKeys] = useState<Set<string>>(new Set());
 
     const addVariant = useCallback(() => {
         setVariants((prev) => [
@@ -65,7 +66,31 @@ export function CollectionForm({
     }, []);
 
     const removeVariant = useCallback((index: number) => {
-        setVariants((prev) => prev.filter((_, i) => i !== index));
+        setVariants((prev) => {
+            const removedKey = prev[index].clientKey;
+            setInvalidVariantKeys((keys) => {
+                const next = new Set(keys);
+                next.delete(removedKey);
+                return next;
+            });
+            return prev.filter((_, i) => i !== index);
+        });
+    }, []);
+
+    const setVariantValidity = useCallback((index: number, isValid: boolean) => {
+        setVariants((prev) => {
+            const clientKey = prev[index].clientKey;
+            setInvalidVariantKeys((keys) => {
+                const next = new Set(keys);
+                if (isValid) {
+                    next.delete(clientKey);
+                } else {
+                    next.add(clientKey);
+                }
+                return next;
+            });
+            return prev;
+        });
     }, []);
 
     const title = initialValues ? 'Edit collection' : 'New collection';
@@ -120,6 +145,7 @@ export function CollectionForm({
                                 variant={variant}
                                 onChange={updateVariant}
                                 onRemove={removeVariant}
+                                onValidityChange={setVariantValidity}
                                 canRemove={variants.length > 1}
                                 lineageFields={lineageFields}
                                 lapisUrl={lapisUrl}
@@ -134,7 +160,7 @@ export function CollectionForm({
                 <SubmitButton
                     isSuccess={isSuccess}
                     isPending={isSubmitting}
-                    isDisabled={name.trim() === ''}
+                    isDisabled={name.trim() === '' || invalidVariantKeys.size > 0}
                     successMessage={successMessage}
                     submitLabel={submitLabel}
                     onClick={() =>

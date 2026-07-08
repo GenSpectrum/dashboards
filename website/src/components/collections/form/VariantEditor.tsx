@@ -10,6 +10,7 @@ type Props = {
     variant: VariantUpdate;
     onChange: (index: number, variant: VariantUpdate) => void;
     onRemove: (index: number) => void;
+    onValidityChange: (index: number, isValid: boolean) => void;
     canRemove?: boolean;
     lineageFields: string[];
     lapisUrl: string;
@@ -21,6 +22,7 @@ export const VariantEditor = memo(function VariantEditor({
     variant,
     onChange,
     onRemove,
+    onValidityChange,
     canRemove = true,
     lineageFields,
     lapisUrl,
@@ -36,6 +38,8 @@ export const VariantEditor = memo(function VariantEditor({
         if (type === 'query') {
             onChange(index, { type: 'query', name: variant.name, description: variant.description, countQuery: '' });
         } else {
+            // Mutation lists are always valid; clear any pending advanced-query error.
+            onValidityChange(index, true);
             onChange(index, {
                 type: 'filterObject',
                 name: variant.name,
@@ -83,7 +87,10 @@ export const VariantEditor = memo(function VariantEditor({
                         lapisUrl={lapisUrl}
                         value={variant.countQuery}
                         allowedFields={lineageFields.length > 0 ? lineageFields : undefined}
-                        onInput={(newValue) => onChange(index, { ...variant, countQuery: newValue ?? '' })}
+                        onInput={(newValue, isValid) => {
+                            onValidityChange(index, isValid);
+                            onChange(index, { ...variant, countQuery: newValue ?? '' });
+                        }}
                         errorTooltipClass='tooltip-top'
                     />
                 ) : (
