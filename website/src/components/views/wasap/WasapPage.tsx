@@ -163,6 +163,14 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                             />
                                         )}
                                 </>
+                            ) : data.collection.queries.length === 0 ? (
+                                <div className='rounded-md border-2 border-gray-100 p-4'>
+                                    <h1 className='text-lg font-semibold'>No valid variants</h1>
+                                    <p className='text-sm'>
+                                        This collection has no valid variants to display. Check the collection
+                                        configuration for errors.
+                                    </p>
+                                </div>
                             ) : (
                                 <>
                                     <div className='rounded-md border-2 border-gray-100 p-4'>
