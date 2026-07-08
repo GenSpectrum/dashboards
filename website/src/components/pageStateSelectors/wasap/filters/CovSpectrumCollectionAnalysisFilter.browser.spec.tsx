@@ -2,10 +2,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
-import { CollectionAnalysisFilter } from './CollectionAnalysisFilter';
+import { CovSpectrumCollectionAnalysisFilter } from './CovSpectrumCollectionAnalysisFilter';
 import { it } from '../../../../../test-extend';
 import type { CollectionRaw } from '../../../../covspectrum/types';
-import type { WasapCollectionFilter } from '../../../views/wasap/wasapPageConfig';
+import type { WasapCovSpectrumCollectionFilter } from '../../../views/wasap/wasapPageConfig';
 
 const DUMMY_COV_SPECTRUM_URL = 'https://cov-spectrum-dummy.com/api';
 
@@ -30,9 +30,9 @@ const mockCollections: CollectionRaw[] = [
 
 const queryClient = new QueryClient();
 
-describe('CollectionAnalysisFilter', () => {
-    const defaultPageState: WasapCollectionFilter = {
-        mode: 'collection',
+describe('CovSpectrumCollectionAnalysisFilter', () => {
+    const defaultPageState: WasapCovSpectrumCollectionFilter = {
+        mode: 'covSpectrumCollection',
         collectionId: 42,
     };
 
@@ -43,7 +43,7 @@ describe('CollectionAnalysisFilter', () => {
 
         const { getByRole } = render(
             <QueryClientProvider client={queryClient}>
-                <CollectionAnalysisFilter
+                <CovSpectrumCollectionAnalysisFilter
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}
@@ -63,7 +63,7 @@ describe('CollectionAnalysisFilter', () => {
 
         const { getByRole } = render(
             <QueryClientProvider client={queryClient}>
-                <CollectionAnalysisFilter
+                <CovSpectrumCollectionAnalysisFilter
                     pageState={defaultPageState}
                     setPageState={mockSetPageState}
                     collectionsApiBaseUrl={DUMMY_COV_SPECTRUM_URL}

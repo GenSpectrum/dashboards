@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import type {
     VariantTimeFrame,
     WasapAnalysisFilter,
-    WasapCollectionFilter,
+    WasapCovSpectrumCollectionFilter,
     WasapManualFilter,
     WasapPageConfig,
     WasapResistanceFilter,
@@ -51,8 +51,8 @@ async function fetchWasapPageData(
             return fetchResistanceModeData(resistanceMutationsBySet, analysis);
         case 'untracked':
             return fetchUntrackedModeData(config, analysis);
-        case 'collection':
-            return fetchCollectionModeData(config, analysis);
+        case 'covSpectrumCollection':
+            return fetchCovSpectrumCollectionModeData(config, analysis);
     }
 }
 
@@ -229,12 +229,12 @@ async function fetchUntrackedModeData(
     };
 }
 
-async function fetchCollectionModeData(
+async function fetchCovSpectrumCollectionModeData(
     config: WasapPageConfig,
-    analysis: WasapCollectionFilter,
+    analysis: WasapCovSpectrumCollectionFilter,
 ): Promise<WasapCollectionData> {
-    if (!config.collectionAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'collection' mode is not enabled.");
+    if (!config.covSpectrumCollectionAnalysisModeEnabled) {
+        throw Error("Cannot fetch data, 'covSpectrumCollection' mode is not enabled.");
     }
     if (!analysis.collectionId) {
         throw Error('No collection selected');

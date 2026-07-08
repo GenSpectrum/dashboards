@@ -104,9 +104,9 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     excludeVariants: texts.excludeVariants?.split('|'),
                 };
                 break;
-            case 'collection':
-                if (!this.config.collectionAnalysisModeEnabled) {
-                    throw Error("The 'collection' analysis mode is not enabled.");
+            case 'covSpectrumCollection':
+                if (!this.config.covSpectrumCollectionAnalysisModeEnabled) {
+                    throw Error("The 'covSpectrumCollection' analysis mode is not enabled.");
                 }
                 analysis = {
                     mode,
@@ -181,7 +181,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     setSearchFromString(search, 'excludeVariants', analysis.excludeVariants?.join('|'));
                 }
                 break;
-            case 'collection':
+            case 'covSpectrumCollection':
                 setSearchFromString(
                     search,
                     'collectionId',

@@ -1,18 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getCollections } from '../../../../covspectrum/getCollections';
-import type { WasapCollectionFilter } from '../../../views/wasap/wasapPageConfig';
+import type { WasapCovSpectrumCollectionFilter } from '../../../views/wasap/wasapPageConfig';
 import { CollectionInfo } from '../InfoBlocks';
 import { LabeledField } from '../utils/LabeledField';
 
-export function CollectionAnalysisFilter({
+export function CovSpectrumCollectionAnalysisFilter({
     pageState,
     setPageState,
     collectionsApiBaseUrl,
     collectionTitleFilter,
 }: {
-    pageState: WasapCollectionFilter;
-    setPageState: (newState: WasapCollectionFilter) => void;
+    pageState: WasapCovSpectrumCollectionFilter;
+    setPageState: (newState: WasapCovSpectrumCollectionFilter) => void;
     collectionsApiBaseUrl: string;
     collectionTitleFilter: string;
 }) {
