@@ -2,12 +2,12 @@
 import { BackendError, BackendService } from '../../../../backendApi/backendService.ts';
 import NotLoggedIn from '../../../../components/auth/NotLoggedIn.astro';
 import { CollectionEdit } from '../../../../components/collections/edit/CollectionEdit';
-import { PageContainer } from '../../../../styles/containers/PageContainer';
-import { PageHeadline } from '../../../../styles/containers/PageHeadline';
 import { getDashboardsConfig, getBackendHost } from '../../../../config';
 import { defaultBreadcrumbs } from '../../../../layouts/Breadcrumbs';
 import ContaineredPageLayout from '../../../../layouts/ContaineredPage/ContaineredPageLayout.astro';
 import { getInstanceLogger } from '../../../../logger.ts';
+import { PageContainer } from '../../../../styles/containers/PageContainer';
+import { PageHeadline } from '../../../../styles/containers/PageHeadline';
 import { organismConfig, organismFromPathFragment } from '../../../../types/Organism';
 import { Page } from '../../../../types/pages';
 import { getErrorLogMessage } from '../../../../util/getErrorLogMessage.ts';
