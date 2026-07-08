@@ -14,6 +14,7 @@ import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
 import {
+    CollectionFilters,
     CollectionsOverviewPageStateHandler,
     type CollectionFilter,
 } from '../../../views/pageStateHandlers/CollectionsOverviewPageStateHandler.ts';
@@ -113,13 +114,13 @@ function filterCollections(
     if (!collections) return [];
     let result: CollectionSummary[];
     switch (filter) {
-        case 'community':
+        case CollectionFilters.community:
             result = collections.filter((c) => c.ownedBy !== systemUserId);
             break;
-        case 'official':
+        case CollectionFilters.official:
             result = collections.filter((c) => c.ownedBy === systemUserId);
             break;
-        case 'all':
+        case CollectionFilters.all:
             result = collections;
             break;
     }
@@ -130,9 +131,9 @@ function filterCollections(
 }
 
 const FILTER_OPTIONS: { value: CollectionFilter; label: string; tooltip: string }[] = [
-    { value: 'community', label: 'Community', tooltip: 'User submissions' },
-    { value: 'official', label: 'Official', tooltip: 'GenSpectrum curated' },
-    { value: 'all', label: 'All', tooltip: 'Show everything' },
+    { value: CollectionFilters.community, label: 'Community', tooltip: 'User submissions' },
+    { value: CollectionFilters.official, label: 'Official', tooltip: 'GenSpectrum curated' },
+    { value: CollectionFilters.all, label: 'All', tooltip: 'Show everything' },
 ];
 
 function CollectionFilterSelect({

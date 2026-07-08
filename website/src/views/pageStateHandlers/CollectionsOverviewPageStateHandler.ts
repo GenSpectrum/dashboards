@@ -1,15 +1,20 @@
 import type { PageStateHandler } from './PageStateHandler';
 import { formatUrl } from '../../util/formatUrl';
 
-export type CollectionFilter = 'community' | 'official' | 'all';
+export const CollectionFilters = {
+    community: 'community' as const,
+    official: 'official' as const,
+    all: 'all' as const,
+};
+
+export type CollectionFilter = keyof typeof CollectionFilters;
 
 export type CollectionsOverviewPageState = {
     filter: CollectionFilter;
     tagFilter: string[];
 };
 
-const COLLECTION_FILTER_VALUES: CollectionFilter[] = ['community', 'official', 'all'];
-const DEFAULT_FILTER: CollectionFilter = 'community';
+const DEFAULT_FILTER: CollectionFilter = CollectionFilters.community;
 
 export class CollectionsOverviewPageStateHandler implements PageStateHandler<CollectionsOverviewPageState> {
     constructor(private readonly path: string) {}
@@ -17,7 +22,7 @@ export class CollectionsOverviewPageStateHandler implements PageStateHandler<Col
     parsePageStateFromUrl(url: URL): CollectionsOverviewPageState {
         const filterParam = url.searchParams.get('filter');
         const filter: CollectionFilter =
-            filterParam !== null && (COLLECTION_FILTER_VALUES as string[]).includes(filterParam)
+            filterParam !== null && filterParam in CollectionFilters
                 ? (filterParam as CollectionFilter)
                 : DEFAULT_FILTER;
         const tagFilter = url.searchParams.getAll('tag');
