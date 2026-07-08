@@ -6,8 +6,8 @@ import { ApplyFilterButton } from '../ApplyFilterButton';
 import { DynamicDateFilter } from '../DynamicDateFilter';
 import { SelectorHeadline } from '../SelectorHeadline';
 import { ExplorationModeInfo } from './InfoBlocks';
+import { CollectionAnalysisFilter } from './filters/CollectionAnalysisFilter';
 import { CovSpectrumCollectionAnalysisFilter } from './filters/CovSpectrumCollectionAnalysisFilter';
-import { GsCollectionAnalysisFilter } from './filters/GsCollectionAnalysisFilter';
 import { ManualAnalysisFilter } from './filters/ManualAnalysisFilter';
 import { ResistanceMutationsFilter } from './filters/ResistanceMutationsFilter';
 import { UntrackedFilter } from './filters/UntrackedFilter';
@@ -257,7 +257,7 @@ export function WasapPageStateSelector({
                                 throw Error("'collection' mode selected, but it isn't enabled.");
                             }
                             return (
-                                <GsCollectionAnalysisFilter
+                                <CollectionAnalysisFilter
                                     pageState={collectionFilter}
                                     setPageState={setCollectionFilter}
                                     organism={config.internalName}

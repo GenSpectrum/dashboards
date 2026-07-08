@@ -1,10 +1,11 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getBackendServiceForClientside } from '../../../../backendApi/backendService';
 import type { WasapCollectionFilter } from '../../../views/wasap/wasapPageConfig';
 import { LabeledField } from '../utils/LabeledField';
 
-export function GsCollectionAnalysisFilter({
+export function CollectionAnalysisFilter({
     pageState,
     setPageState,
     organism,
@@ -21,6 +22,13 @@ export function GsCollectionAnalysisFilter({
         queryKey: ['gsCollections', organism],
         queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
     });
+
+    const firstCollectionId = collections?.[0]?.id;
+    useEffect(() => {
+        if (firstCollectionId !== undefined && pageState.collectionId === undefined) {
+            setPageState({ ...pageState, collectionId: firstCollectionId });
+        }
+    }, [firstCollectionId]);
 
     return (
         <LabeledField label='Collection'>
@@ -39,7 +47,6 @@ export function GsCollectionAnalysisFilter({
                         })
                     }
                 >
-                    <option value=''>Select a collection...</option>
                     {collections.map((collection) => (
                         <option key={collection.id} value={collection.id}>
                             #{collection.id} {collection.name}
