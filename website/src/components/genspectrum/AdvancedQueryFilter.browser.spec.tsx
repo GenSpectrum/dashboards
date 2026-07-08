@@ -33,7 +33,7 @@ describe('AdvancedQueryFilter', () => {
         const input = getByRole('textbox');
         await userEvent.clear(input);
 
-        expect(onInput).toHaveBeenCalledWith(undefined);
+        expect(onInput).toHaveBeenCalledWith(undefined, true);
     });
 
     it('validates query and calls onInput with value on success', async ({ routeMockers }) => {
@@ -51,8 +51,8 @@ describe('AdvancedQueryFilter', () => {
         const input = getByRole('textbox');
         await userEvent.type(input, 'A123T');
 
-        await expect.poll(() => onInput).toHaveBeenCalledWith('A123T');
-        expect(onInput).not.toHaveBeenCalledWith(undefined);
+        await expect.poll(() => onInput).toHaveBeenCalledWith('A123T', true);
+        expect(onInput).not.toHaveBeenCalledWith(undefined, true);
     });
 
     it('shows checkmark after successful validation', async ({ routeMockers }) => {
@@ -86,7 +86,7 @@ describe('AdvancedQueryFilter', () => {
 
         await expect.element(getByLabelText('Error')).toBeVisible();
         await expect.element(getByText('Unexpected token at position 7')).toBeVisible();
-        expect(onInput).not.toHaveBeenCalled();
+        await expect.poll(() => onInput).toHaveBeenCalledWith('invalid!!', false);
     });
 
     it('shows validating indicator while waiting for validation result', async () => {
@@ -127,7 +127,7 @@ describe('AdvancedQueryFilter', () => {
         await expect.element(getByLabelText('Error')).toBeVisible();
         await expect.element(getByText(/"host"/)).toBeVisible();
         await expect.element(getByText(/nextcladePangoLineage/)).toBeVisible();
-        expect(onInput).not.toHaveBeenCalled();
+        await expect.poll(() => onInput).toHaveBeenCalledWith('host:Human', false);
     });
 
     it('allowedFields - does not show error when all referenced fields are in the allowed list', async ({
@@ -164,7 +164,7 @@ describe('AdvancedQueryFilter', () => {
         await userEvent.type(getByRole('textbox'), 'BA.1*');
 
         await expect.element(getByTitle('Advanced query is valid')).toBeVisible();
-        await expect.poll(() => onInput).toHaveBeenCalledWith('BA.1*');
+        await expect.poll(() => onInput).toHaveBeenCalledWith('BA.1*', true);
     });
 
     it('allowedFields - mutation-only query passes even with a restrictive allowedFields list', async ({
@@ -201,6 +201,6 @@ describe('AdvancedQueryFilter', () => {
 
         await expect.element(getByLabelText('Error')).toBeVisible();
         await expect.element(getByText('Validation is not possible right now.')).toBeVisible();
-        expect(onInput).not.toHaveBeenCalled();
+        await expect.poll(() => onInput).toHaveBeenCalledWith('A123T', false);
     });
 });

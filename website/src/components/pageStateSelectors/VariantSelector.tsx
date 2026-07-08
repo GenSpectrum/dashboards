@@ -107,11 +107,13 @@ export function VariantSelector({
                         }}
                     />
                     <AdvancedQueryFilter
-                        onInput={(newValue) => {
-                            onVariantFilterChange({
-                                ...variantFilter,
-                                advancedQuery: newValue,
-                            });
+                        onInput={(newValue, isValid) => {
+                            if (isValid) {
+                                onVariantFilterChange({
+                                    ...variantFilter,
+                                    advancedQuery: newValue,
+                                });
+                            }
                         }}
                         value={variantFilter.advancedQuery ?? ''}
                         enabled={enableAdvancedQueryFilter}

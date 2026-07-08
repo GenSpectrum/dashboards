@@ -17,7 +17,7 @@ type ValidationState =
 
 type AdvancedQueryFilterProps = {
     value?: string;
-    onInput?: (newValue: string | undefined) => void;
+    onInput?: (newValue: string | undefined, isValid: boolean) => void;
     enabled: boolean;
     lapisUrl: string;
     /**
@@ -57,18 +57,21 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
                             type: 'error',
                             message: `Field ${listed} is not allowed. Allowed fields: ${allowedFields.join(', ')}.`,
                         });
+                        onInput?.(query, false);
                         return;
                     }
                 }
                 setValidationState({ type: 'valid' });
-                onInput?.(query);
+                onInput?.(query, true);
             } else {
                 setValidationState({ type: 'error', message: result.error });
+                onInput?.(query, false);
             }
         },
-        onError: (error) => {
+        onError: (error, query) => {
             logger.error(`Failed to validate advanced query: ${error.message}`);
             setValidationState({ type: 'error', message: 'Validation is not possible right now.' });
+            onInput?.(query, false);
         },
     });
 
@@ -84,7 +87,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
 
         if (inputValue === undefined || inputValue === '') {
             setValidationState({ type: 'idle' });
-            onInput?.(undefined);
+            onInput?.(undefined, true);
             return;
         }
 

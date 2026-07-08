@@ -172,11 +172,13 @@ export function BaselineSelector({
                         return (
                             <AdvancedQueryFilter
                                 key={'advancedQuery'}
-                                onInput={(newValue) => {
-                                    setDatasetFilter({
-                                        ...datasetFilter,
-                                        advancedQuery: newValue,
-                                    });
+                                onInput={(newValue, isValid) => {
+                                    if (isValid) {
+                                        setDatasetFilter({
+                                            ...datasetFilter,
+                                            advancedQuery: newValue,
+                                        });
+                                    }
                                 }}
                                 value={datasetFilter.advancedQuery ?? ''}
                                 enabled={enableAdvancedQueryFilter}
