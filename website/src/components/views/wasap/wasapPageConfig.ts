@@ -166,11 +166,11 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     if (config.untrackedAnalysisModeEnabled) {
         result.push('untracked');
     }
-    if (config.covSpectrumCollectionAnalysisModeEnabled) {
-        result.push('covSpectrumCollection');
-    }
     if (config.collectionAnalysisModeEnabled) {
         result.push('collection');
+    }
+    if (config.covSpectrumCollectionAnalysisModeEnabled) {
+        result.push('covSpectrumCollection');
     }
     return result;
 }
