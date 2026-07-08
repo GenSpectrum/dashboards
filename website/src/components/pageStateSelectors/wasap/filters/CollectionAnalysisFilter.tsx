@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import { getBackendServiceForClientside } from '../../../../backendApi/backendService';
 import type { WasapCollectionFilter } from '../../../views/wasap/wasapPageConfig';
@@ -19,7 +19,7 @@ export function CollectionAnalysisFilter({
         isPending,
         isError,
     } = useQuery({
-        queryKey: ['gsCollections', organism],
+        queryKey: ['collections', organism],
         queryFn: () => getBackendServiceForClientside().getCollectionSummaries({ organism }),
     });
 
