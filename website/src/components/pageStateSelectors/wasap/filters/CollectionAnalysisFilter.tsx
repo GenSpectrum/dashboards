@@ -28,7 +28,7 @@ export function CollectionAnalysisFilter({
         if (firstCollectionId !== undefined && pageState.collectionId === undefined) {
             setPageState({ ...pageState, collectionId: firstCollectionId });
         }
-    }, [firstCollectionId]);
+    }, [firstCollectionId, pageState, setPageState]);
 
     return (
         <LabeledField label='Collection'>
