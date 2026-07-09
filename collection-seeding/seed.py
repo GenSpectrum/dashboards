@@ -52,12 +52,15 @@ def main():
         if args.wait:
             client.wait_for_api()
 
+        user_id = client.get_my_user_id()
+        print(f"Authenticated as user ID {user_id}.")
+
         while True:
             total_created = 0
             total_updated = 0
             total_deleted = 0
             for source in active:
-                c, u, d = seed_source(client, source)
+                c, u, d = seed_source(client, source, user_id)
                 total_created += c
                 total_updated += u
                 total_deleted += d
@@ -74,7 +77,9 @@ def main():
         sys.exit(1)
 
 
-def seed_source(client: ApiClient, source: Source) -> tuple[int, int, int]:
+def seed_source(
+    client: ApiClient, source: Source, user_id: int
+) -> tuple[int, int, int]:
     """Upsert collections for one source. Returns (created, updated, deleted) counts.
     Matching is by name — if a collection's name changes in the source, the old entry is orphaned and a new one is created."""
     collections = source.get_collections()
@@ -83,8 +88,10 @@ def seed_source(client: ApiClient, source: Source) -> tuple[int, int, int]:
     # Lenient orphan detection: find owned collections via real tags (new-style) OR
     # description pseudo-tags (old-style), so old collections are found and replaced
     # with properly tagged ones on the first seeder run after migration.
-    by_tag = client.fetch_existing_collections_by_tag(source.owned_tag, source.organism)
-    all_existing = client.fetch_existing_collections(source.organism)
+    by_tag = client.fetch_existing_collections_by_tag(
+        source.owned_tag, source.organism, user_id
+    )
+    all_existing = client.fetch_existing_collections(source.organism, user_id)
     by_description = [
         c for c in all_existing if f"#{source.owned_tag}" in (c["description"] or "")
     ]
