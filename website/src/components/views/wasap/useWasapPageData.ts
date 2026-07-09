@@ -327,10 +327,18 @@ async function fetchCollectionModeData(
         collection: {
             id: collection.id,
             title: collection.title,
-            queries,
+            queries: deduplicateDisplayLabels(queries),
         },
         ...(invalidVariants.length > 0 && { invalidVariants }),
     };
+}
+
+export function deduplicateDisplayLabels<T extends { displayLabel: string }>(items: T[]): T[] {
+    const seen: Record<string, number> = {};
+    return items.map((item) => {
+        const count = (seen[item.displayLabel] = (seen[item.displayLabel] ?? 0) + 1);
+        return count === 1 ? item : { ...item, displayLabel: `${item.displayLabel} (${count})` };
+    });
 }
 
 export function getLapisFilterForTimeFrame(timeFrame: VariantTimeFrame, dateFieldName: string): LapisFilter {
