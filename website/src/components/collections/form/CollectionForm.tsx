@@ -65,22 +65,26 @@ export function CollectionForm({
         setVariants((prev) => prev.map((v, i) => (i === index ? { ...variant, clientKey: v.clientKey } : v)));
     }, []);
 
-    const removeVariant = useCallback((index: number) => {
-        setVariants((prev) => {
-            const removedKey = prev[index].clientKey;
+    const removeVariant = useCallback(
+        (index: number) => {
+            const removedKey = variants[index].clientKey;
             setInvalidVariantKeys((keys) => {
                 const next = new Set(keys);
                 next.delete(removedKey);
                 return next;
             });
-            return prev.filter((_, i) => i !== index);
-        });
-    }, []);
+            setVariants((prev) => prev.filter((_, i) => i !== index));
+        },
+        [variants],
+    );
 
-    const setVariantValidity = useCallback((index: number, isValid: boolean) => {
-        setVariants((prev) => {
-            const clientKey = prev[index].clientKey;
+    const setVariantValidity = useCallback(
+        (index: number, isValid: boolean) => {
+            const clientKey = variants[index].clientKey;
             setInvalidVariantKeys((keys) => {
+                if (isValid === !keys.has(clientKey)) {
+                    return keys;
+                }
                 const next = new Set(keys);
                 if (isValid) {
                     next.delete(clientKey);
@@ -89,9 +93,9 @@ export function CollectionForm({
                 }
                 return next;
             });
-            return prev;
-        });
-    }, []);
+        },
+        [variants],
+    );
 
     const title = initialValues ? 'Edit collection' : 'New collection';
 
