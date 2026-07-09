@@ -1,4 +1,4 @@
-import type { CustomColumn, LapisFilter } from '@genspectrum/dashboard-components/util';
+import type { CountCoverageQuery, CustomColumn, LapisFilter } from '@genspectrum/dashboard-components/util';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
@@ -15,11 +15,12 @@ import type {
 } from './wasapPageConfig';
 import { getBackendServiceForClientside } from '../../../backendApi/backendService';
 import { getCollection } from '../../../covspectrum/getCollection';
+import type { CollectionVariant } from '../../../covspectrum/types';
 import { detailedMutationsToQuery } from '../../../covspectrum/variantConversionUtil';
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getJaccardForMutations, getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { parseQuery } from '../../../lapis/parseQuery';
-import type { FilterObject } from '../../../types/Collection';
+import type { FilterObject, Variant } from '../../../types/Collection';
 import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 
 /**
@@ -245,95 +246,21 @@ async function fetchCovSpectrumCollectionModeData(
     }
     const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
 
-    const variantData: {
-        name: string;
-        queryString: string;
-        description?: string;
-    }[] = [];
-
-    const invalidVariants: {
-        name: string;
-        error: string;
-    }[] = [];
-
-    for (const variant of collection.variants) {
-        let queryString: string;
-        switch (variant.query.type) {
-            case 'variantQuery': {
-                queryString = variant.query.variantQuery;
-                break;
-            }
-            case 'detailedMutations': {
-                queryString = detailedMutationsToQuery(variant.query);
-                break;
-            }
-        }
-        if (queryString === '') {
-            invalidVariants.push({
-                name: variant.name,
-                error: 'Variant is empty.',
-            });
-            continue;
-        }
-        variantData.push({
-            name: variant.name,
-            queryString: queryString,
-            description: variant.description !== '' ? variant.description : undefined,
-        });
-    }
-
-    // Parse all variant queries through LAPIS
-    const parseResults = await parseQuery(config.lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
-
-    // Process results and validate
-    const queries: {
-        displayLabel: string;
-        description?: string;
-        countQuery: string;
-        coverageQuery: string;
-    }[] = [];
-
-    variantData.forEach(({ name, queryString, description }, index) => {
-        const parseResult = parseResults[index];
-
-        // Check if parsing failed
-        if (parseResult.type === 'failure') {
-            invalidVariants.push({
-                name: name,
-                error: `Parse error: ${parseResult.error}`,
-            });
-            return;
-        }
-
-        // Validate that the parsed query only contains genome checks
-        const validationResult = validateGenomeOnly(parseResult.filter);
-        if (!validationResult.isGenomeOnly) {
-            invalidVariants.push({
-                name: name,
-                error: validationResult.error,
-            });
-            return;
-        }
-
-        // Query is valid - add to queries array
-        // coverage query can be calculated as below, see https://github.com/GenSpectrum/LAPIS/pull/1558
-        const coverageQuery = `(${queryString}) or (not maybe(${queryString}))`;
-        queries.push({
-            displayLabel: name,
-            description,
-            countQuery: queryString,
-            coverageQuery,
-        });
-    });
+    const { variantData, invalidVariants } = extractCovSpectrumVariantData(collection.variants);
+    const { queries, invalidVariants: parseInvalidVariants } = await parseAndBuildQueries(
+        config.lapisBaseUrl,
+        variantData,
+    );
+    const allInvalidVariants = [...invalidVariants, ...parseInvalidVariants];
 
     return {
         type: 'collection',
         collection: {
             id: collection.id,
             title: collection.title,
-            queries,
+            queries: deduplicateLabels(queries),
         },
-        ...(invalidVariants.length > 0 && { invalidVariants }),
+        ...(allInvalidVariants.length > 0 && { invalidVariants: allInvalidVariants }),
     };
 }
 
@@ -349,18 +276,56 @@ async function fetchCollectionModeData(
     }
     const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
 
-    const variantData: {
-        name: string;
-        queryString: string;
-        description?: string;
-    }[] = [];
+    const { variantData, invalidVariants } = extractBackendVariantData(collection.variants);
+    const { queries, invalidVariants: parseInvalidVariants } = await parseAndBuildQueries(
+        config.lapisBaseUrl,
+        variantData,
+    );
+    const allInvalidVariants = [...invalidVariants, ...parseInvalidVariants];
 
-    const invalidVariants: {
-        name: string;
-        error: string;
-    }[] = [];
+    return {
+        type: 'collection',
+        collection: { id: collection.id, title: collection.name, queries: deduplicateLabels(queries) },
+        ...(allInvalidVariants.length > 0 && { invalidVariants: allInvalidVariants }),
+    };
+}
 
-    for (const variant of collection.variants) {
+type VariantQueryInput = { name: string; queryString: string; description?: string };
+type VariantExtractionResult = { variantData: VariantQueryInput[]; invalidVariants: InvalidVariantInfo[] };
+
+function extractCovSpectrumVariantData(variants: CollectionVariant[]): VariantExtractionResult {
+    const variantData: VariantQueryInput[] = [];
+    const invalidVariants: InvalidVariantInfo[] = [];
+
+    for (const variant of variants) {
+        let queryString: string;
+        switch (variant.query.type) {
+            case 'variantQuery':
+                queryString = variant.query.variantQuery;
+                break;
+            case 'detailedMutations':
+                queryString = detailedMutationsToQuery(variant.query);
+                break;
+        }
+        if (queryString === '') {
+            invalidVariants.push({ name: variant.name, error: 'Variant is empty.' });
+            continue;
+        }
+        variantData.push({
+            name: variant.name,
+            queryString,
+            description: variant.description !== '' ? variant.description : undefined,
+        });
+    }
+
+    return { variantData, invalidVariants };
+}
+
+function extractBackendVariantData(variants: Variant[]): VariantExtractionResult {
+    const variantData: VariantQueryInput[] = [];
+    const invalidVariants: InvalidVariantInfo[] = [];
+
+    for (const variant of variants) {
         let queryString: string;
         switch (variant.type) {
             case 'query':
@@ -381,14 +346,22 @@ async function fetchCollectionModeData(
         });
     }
 
-    const parseResults = await parseQuery(config.lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
+    return { variantData, invalidVariants };
+}
 
-    const queries: {
-        displayLabel: string;
-        description?: string;
-        countQuery: string;
-        coverageQuery: string;
-    }[] = [];
+/**
+ * Takes a list of variant queries (from a collection) and validates them all against a LAPIS.
+ * For valid variant queries, it constructs a `CountCoverageQuery` to use with the `GsQueriesOverTime`
+ * component. For invalid queries, an `InvalidVariantInfo` is returned.
+ */
+async function parseAndBuildQueries(
+    lapisBaseUrl: string,
+    variantData: VariantQueryInput[],
+): Promise<{ queries: CountCoverageQuery[]; invalidVariants: InvalidVariantInfo[] }> {
+    const parseResults = await parseQuery(lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
+
+    const queries: CountCoverageQuery[] = [];
+    const invalidVariants: InvalidVariantInfo[] = [];
 
     variantData.forEach(({ name, queryString, description }, index) => {
         const parseResult = parseResults[index];
@@ -401,15 +374,12 @@ async function fetchCollectionModeData(
             invalidVariants.push({ name, error: validationResult.error });
             return;
         }
+        // coverage query formula: https://github.com/GenSpectrum/LAPIS/pull/1558
         const coverageQuery = `(${queryString}) or (not maybe(${queryString}))`;
         queries.push({ displayLabel: name, description, countQuery: queryString, coverageQuery });
     });
 
-    return {
-        type: 'collection',
-        collection: { id: collection.id, title: collection.name, queries: deduplicateLabels(queries) },
-        ...(invalidVariants.length > 0 && { invalidVariants }),
-    };
+    return { queries, invalidVariants };
 }
 
 function deduplicateLabels<T extends { displayLabel: string }>(queries: T[]): T[] {
@@ -470,6 +440,14 @@ export type WasapMutationsData = {
 };
 
 /**
+ * Name of the invalid variant, and the error (why it's not valid).
+ */
+type InvalidVariantInfo = {
+    name: string;
+    error: string;
+};
+
+/**
  * Collection data consists of a collection with its variants.
  */
 export type WasapCollectionData = {
@@ -477,15 +455,7 @@ export type WasapCollectionData = {
     collection: {
         id: number;
         title: string;
-        queries: {
-            displayLabel: string;
-            countQuery: string;
-            coverageQuery: string;
-            description?: string;
-        }[];
+        queries: CountCoverageQuery[];
     };
-    invalidVariants?: {
-        name: string;
-        error: string;
-    }[];
+    invalidVariants?: InvalidVariantInfo[];
 };
