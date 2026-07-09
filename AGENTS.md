@@ -31,6 +31,13 @@ chore: update dependencies
 
 ---
 
+## Pull Requests
+
+- PR titles must follow the conventional commits pattern (e.g. `feat(website): add user dashboard`, `fix(backend): correct auth token expiry`).
+- Use the PR template at `.github/pull_request_template.md` when creating PRs.
+
+---
+
 ## Architecture Notes
 
 - **State in URL**: View state (filters, selected variants) is stored as query parameters so pages are bookmarkable and shareable.
