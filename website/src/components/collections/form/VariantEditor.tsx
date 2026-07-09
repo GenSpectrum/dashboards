@@ -36,6 +36,8 @@ export const VariantEditor = memo(function VariantEditor({
 
     function switchType(type: 'query' | 'filterObject') {
         if (type === 'query') {
+            // A freshly enabled advanced query starts empty, which is not a valid variant definition.
+            onValidityChange(index, false);
             onChange(index, { type: 'query', name: variant.name, description: variant.description, countQuery: '' });
         } else {
             // Mutation lists are always valid; clear any pending advanced-query error.
@@ -88,7 +90,9 @@ export const VariantEditor = memo(function VariantEditor({
                         value={variant.countQuery}
                         allowedFields={lineageFields.length > 0 ? lineageFields : undefined}
                         onInput={(newValue, isValid) => {
-                            onValidityChange(index, isValid);
+                            // An empty advanced query is not a usable variant definition, so treat it as invalid.
+                            const isNonEmptyAndValid = isValid && newValue !== undefined && newValue !== '';
+                            onValidityChange(index, isNonEmptyAndValid);
                             onChange(index, { ...variant, countQuery: newValue ?? '' });
                         }}
                         errorTooltipClass='tooltip-top'

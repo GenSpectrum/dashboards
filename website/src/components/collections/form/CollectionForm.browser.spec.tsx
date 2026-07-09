@@ -148,6 +148,25 @@ describe('CollectionForm', () => {
         await expect.element(submit).toBeDisabled();
     });
 
+    it('disables submit when an advanced query variant is switched on but left empty', async ({
+        routeMockers: { lapis },
+    }) => {
+        lapis.mockLapisDown();
+
+        const { getByRole, getByPlaceholder } = render(
+            <CollectionFormWithProvider {...DEFAULT_PROPS} submitLabel='Create collection' />,
+        );
+
+        await getByPlaceholder('A name to identify this collection.').fill('Test name');
+
+        const submit = getByRole('button', { name: 'Create collection' });
+        await expect.element(submit).toBeEnabled();
+
+        await getByRole('checkbox', { name: 'Use advanced query instead' }).click();
+
+        await expect.element(submit).toBeDisabled();
+    });
+
     it('re-enables submit when switching an invalid advanced query back to mutation list', async ({
         routeMockers: { lapis },
     }) => {

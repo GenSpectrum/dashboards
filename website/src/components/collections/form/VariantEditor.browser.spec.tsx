@@ -186,6 +186,56 @@ describe('VariantEditor', () => {
         await expect.poll(() => onValidityChange).toHaveBeenCalledWith(3, false);
     });
 
+    it('reports an initially empty advanced query variant as invalid on mount', async ({ routeMockers: { lapis } }) => {
+        lapis.mockLapisDown();
+
+        const onValidityChange = vi.fn();
+
+        render(
+            <VariantEditorWithProvider
+                index={2}
+                variant={{ type: 'query', name: 'x', countQuery: '' }}
+                onChange={vi.fn()}
+                onRemove={vi.fn()}
+                onValidityChange={onValidityChange}
+                canRemove={false}
+                lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
+            />,
+        );
+
+        await expect.poll(() => onValidityChange).toHaveBeenCalledWith(2, false);
+    });
+
+    it('reports invalid when a valid advanced query is cleared to empty', async ({ routeMockers }) => {
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['A123T'], doFullValidation: true },
+            { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
+        );
+
+        const onValidityChange = vi.fn();
+
+        const { getByPlaceholder } = render(
+            <VariantEditorWithProvider
+                index={0}
+                variant={{ type: 'query', name: 'x', countQuery: '' }}
+                onChange={vi.fn()}
+                onRemove={vi.fn()}
+                onValidityChange={onValidityChange}
+                canRemove={false}
+                lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
+            />,
+        );
+
+        const input = getByPlaceholder(/Advanced query/);
+        await userEvent.type(input, 'A123T');
+        await expect.poll(() => onValidityChange).toHaveBeenCalledWith(0, true);
+
+        await userEvent.clear(input);
+        await expect.poll(() => onValidityChange).toHaveBeenCalledWith(0, false);
+    });
+
     it('marks variant valid when switching away from advanced query', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
