@@ -46,16 +46,3 @@ updates:
       prefix: "chore(backend)"
     cooldown:
       default-days: 7
-  - package-ecosystem: pip
-    directory: collection-seeding/
-    schedule:
-      interval: weekly
-    groups:
-      minorAndPatch:
-        update-types:
-          - "minor"
-          - "patch"
-    commit-message:
-      prefix: "chore(collection-seeding)"
-    cooldown:
-      default-days: 7
