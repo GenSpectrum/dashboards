@@ -37,7 +37,7 @@ export function useWasapPageData(
     });
 }
 
-async function fetchWasapPageData(
+export async function fetchWasapPageData(
     config: WasapPageConfig,
     resistanceMutationsBySet: Record<string, string[]>,
     analysis: WasapAnalysisFilter,
