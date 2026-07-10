@@ -59,7 +59,7 @@ jobs:
 
       - name: Docker metadata
         id: dockerMetadata
-        uses: docker/metadata-action@v6.1.0
+        uses: docker/metadata-action@v6.2.0
         with:
           images: ${{ env.DOCKER_IMAGE_NAME }}
           tags: |
