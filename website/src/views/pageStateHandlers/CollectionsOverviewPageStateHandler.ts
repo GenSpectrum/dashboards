@@ -21,8 +21,9 @@ export class CollectionsOverviewPageStateHandler implements PageStateHandler<Col
 
     parsePageStateFromUrl(url: URL): CollectionsOverviewPageState {
         const filterParam = url.searchParams.get('filter');
+        const filterValues = Object.values(CollectionFilters) as string[];
         const filter: CollectionFilter =
-            filterParam !== null && filterParam in CollectionFilters
+            filterParam !== null && filterValues.includes(filterParam)
                 ? (filterParam as CollectionFilter)
                 : DEFAULT_FILTER;
         const tagFilter = url.searchParams.getAll('tag');
