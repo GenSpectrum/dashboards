@@ -575,17 +575,17 @@ describe('fetchWasapPageData', () => {
 
 describe('getLapisFilterForTimeFrame', () => {
     test('"all" returns an empty filter', () => {
-        expect(getLapisFilterForTimeFrame('all', 'date')).toEqual({});
+        expect(getLapisFilterForTimeFrame(VARIANT_TIME_FRAME.all, 'date')).toEqual({});
     });
 
     test('"6months" returns a dateFrom filter using the given field name', () => {
-        const result = getLapisFilterForTimeFrame('6months', 'collectionDate');
+        const result = getLapisFilterForTimeFrame(VARIANT_TIME_FRAME.sixMonths, 'collectionDate');
 
         expect(result).toEqual({ collectionDateFrom: dayjs().subtract(6, 'month').format('YYYY-MM-DD') });
     });
 
     test('"3months" returns a dateFrom filter using the given field name', () => {
-        const result = getLapisFilterForTimeFrame('3months', 'date');
+        const result = getLapisFilterForTimeFrame(VARIANT_TIME_FRAME.threeMonths, 'date');
 
         expect(result).toEqual({ dateFrom: dayjs().subtract(3, 'month').format('YYYY-MM-DD') });
     });
