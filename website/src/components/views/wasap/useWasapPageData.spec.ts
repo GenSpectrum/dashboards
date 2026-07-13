@@ -220,8 +220,75 @@ describe('fetchWasapPageData', () => {
                 type: 'mutations',
                 displayMutations: ['A123T', 'G456C'],
                 lineageForJaccard: 'XEC*',
-                // TODO - are we sure this makes sense? we don't have the custom column here
-                // ... it would be good to have a test that has the custom column here, probably.
+            });
+        });
+
+        test('predefined signature: filters mutations by jaccard and returns customColumns', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'XEC',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 1,
+                tags: [],
+                variants: [
+                    {
+                        type: 'filterObject',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'Nucleotide substitutions',
+                        description: null,
+                        filterObject: { nucleotideMutations: ['A123T', 'G456C'] },
+                    },
+                ],
+            } as unknown as Collection);
+            lapisRouteMocker.mockPostNucleotideMutationsMulti([
+                {
+                    body: { pangoLineage: 'XEC*', minProportion: 0 },
+                    response: {
+                        data: [
+                            { mutation: 'A123T', count: 100 },
+                            { mutation: 'G456C', count: 10 },
+                        ],
+                    },
+                },
+                {
+                    body: { minProportion: 0 },
+                    response: {
+                        data: [
+                            { mutation: 'A123T', count: 200 },
+                            { mutation: 'G456C', count: 200 },
+                        ],
+                    },
+                },
+            ]);
+            lapisRouteMocker.mockPostAggregated({ pangoLineage: 'XEC*' }, { data: [{ count: 150 }] });
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                {
+                    mode: WASAP_ANALYSIS_MODE.variant,
+                    signatureType: SIGNATURE_TYPE.predefined,
+                    sequenceType: SEQUENCE_TYPE.nucleotide,
+                    minProportion: -1,
+                    minCount: -1,
+                    minJaccard: 0.3,
+                    timeFrame: VARIANT_TIME_FRAME.all,
+                    collectionId: 1,
+                    includeSublineagesForJaccard: true,
+                },
+            );
+
+            // Jaccard for A123T: 100 / (150 + 200 - 100) = 0.4, passes minJaccard=0.3
+            // Jaccard for G456C: 10 / (150 + 200 - 10) ≈ 0.029, fails minJaccard=0.3
+            expect(result).toEqual({
+                type: 'mutations',
+                displayMutations: ['A123T'],
+                lineageForJaccard: 'XEC*',
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                customColumns: [{ header: 'Jaccard index', values: { A123T: (0.4).toPrecision(2) } }],
             });
         });
 
