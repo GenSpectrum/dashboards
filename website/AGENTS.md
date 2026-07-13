@@ -92,6 +92,22 @@ export const myConstants = {
 // Usage: myConstants.value1  (not the string 'value1' directly)
 ```
 
+**String union types must always use this pattern** — never write a bare string union:
+
+```typescript
+// ❌ Don't do this
+export type MyMode = 'foo' | 'bar';
+
+// ✅ Do this instead
+export const MY_MODE = {
+    foo: 'foo',
+    bar: 'bar',
+} as const;
+export type MyMode = (typeof MY_MODE)[keyof typeof MY_MODE];
+```
+
+This keeps literal types at definition sites so callers get `MY_MODE.foo` (typed as `'foo'`) without needing `as const` at every use site.
+
 ### Logging
 
 Server-side only — use `getInstanceLogger`:
