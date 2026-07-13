@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { h } from 'gridjs';
 import { Grid } from 'gridjs-react';
-import { Fragment, useId, useState } from 'react';
+import { Fragment, useId, useMemo } from 'react';
 
 import 'gridjs/dist/theme/mermaid.css';
 
@@ -13,13 +13,17 @@ import type { CollectionSummary } from '../../../types/Collection.ts';
 import { organismConfig, type Organism } from '../../../types/Organism.ts';
 import { Page } from '../../../types/pages.ts';
 import { getErrorLogMessage } from '../../../util/getErrorLogMessage.ts';
+import {
+    CollectionFilters,
+    CollectionsOverviewPageStateHandler,
+    type CollectionFilter,
+} from '../../../views/pageStateHandlers/CollectionsOverviewPageStateHandler.ts';
+import { usePageState } from '../../views/usePageState.ts';
 import { TagInput } from '../form/TagInput.tsx';
 
 export const CollectionsOverview = withQueryProvider(CollectionsOverviewInner);
 
 const logger = getClientLogger('CollectionsOverview');
-
-type CollectionFilter = 'community' | 'official' | 'all';
 
 function CollectionsOverviewInner({
     organism,
@@ -30,8 +34,12 @@ function CollectionsOverviewInner({
     isLoggedIn: boolean;
     systemUserId: number;
 }) {
-    const [filter, setFilter] = useState<CollectionFilter>('community');
-    const [tagFilter, setTagFilter] = useState<string[]>([]);
+    const pageStateHandler = useMemo(
+        () => new CollectionsOverviewPageStateHandler(Page.collectionsForOrganism(organism)),
+        [organism],
+    );
+    const { pageState, setPageState } = usePageState(pageStateHandler);
+    const { filter, tagFilter } = pageState;
 
     const {
         isLoading,
@@ -60,9 +68,15 @@ function CollectionsOverviewInner({
                 )}
             </div>
             <div className='mt-4 flex flex-wrap items-start gap-4'>
-                <CollectionFilterSelect filter={filter} onChange={setFilter} />
+                <CollectionFilterSelect
+                    filter={filter}
+                    onChange={(f) => setPageState((prev) => ({ ...prev, filter: f }))}
+                />
                 <div className='flex-1'>
-                    <TagInput tags={tagFilter} onChange={setTagFilter} />
+                    <TagInput
+                        tags={tagFilter}
+                        onChange={(tags) => setPageState((prev) => ({ ...prev, tagFilter: tags }))}
+                    />
                 </div>
             </div>
             {isLoading ? (
@@ -100,13 +114,13 @@ function filterCollections(
     if (!collections) return [];
     let result: CollectionSummary[];
     switch (filter) {
-        case 'community':
+        case CollectionFilters.community:
             result = collections.filter((c) => c.ownedBy !== systemUserId);
             break;
-        case 'official':
+        case CollectionFilters.official:
             result = collections.filter((c) => c.ownedBy === systemUserId);
             break;
-        case 'all':
+        case CollectionFilters.all:
             result = collections;
             break;
     }
@@ -117,9 +131,9 @@ function filterCollections(
 }
 
 const FILTER_OPTIONS: { value: CollectionFilter; label: string; tooltip: string }[] = [
-    { value: 'community', label: 'Community', tooltip: 'User submissions' },
-    { value: 'official', label: 'Official', tooltip: 'GenSpectrum curated' },
-    { value: 'all', label: 'All', tooltip: 'Show everything' },
+    { value: CollectionFilters.community, label: 'Community', tooltip: 'User submissions' },
+    { value: CollectionFilters.official, label: 'Official', tooltip: 'GenSpectrum curated' },
+    { value: CollectionFilters.all, label: 'All', tooltip: 'Show everything' },
 ];
 
 function CollectionFilterSelect({

@@ -25,5 +25,10 @@ const isLoggedIn = Astro.locals.user !== undefined;
         { name: orgConfig.label, href: Page.collectionsForOrganism(organism) },
     ]}
 >
-    <CollectionsOverview client:load organism={organism} isLoggedIn={isLoggedIn} systemUserId={getSystemUserId()} />
+    <CollectionsOverview
+        client:only='react'
+        organism={organism}
+        isLoggedIn={isLoggedIn}
+        systemUserId={getSystemUserId()}
+    />
 </ContaineredPageLayout>
