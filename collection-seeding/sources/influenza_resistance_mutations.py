@@ -24,26 +24,52 @@ _NA_ANTIVIRALS: list[tuple[str, str]] = [
 ]
 
 
-def _parse_resist_level(level_str: str) -> str | None:
-    """Return the resistance category prefix from strings like 'RI (10)' or 'HRI (>1000)'.
+class _InfluenzaResistanceMutationsSource(Source):
+    """Base class for influenza resistance mutation sources.
 
-    Returns None for susceptible (NI-only) or unknown (?, ?e) values.
+    Subclasses set `organism` and `_strain_names` to select matching rows from the
+    BU-ISCIII flu_resistance JSON files.
     """
-    if not level_str or level_str in {"?", "?e"}:
-        return None
-    m = _RESIST_LEVEL_RE.match(level_str.strip())
-    if not m:
-        return None
-    lvl = m.group(1)
-    if lvl == "NI":
-        return None  # susceptible — not a resistance mutation
-    return lvl
+
+    owned_tag = "resistance-mutation"
+    _strain_names: set[str]
+
+    def get_collections(self) -> list[Collection]:
+        return _build_na_inhibitor_collections(
+            self.organism, self._strain_names, self.owned_tag
+        ) + _build_pa_inhibitor_collections(
+            self.organism, self._strain_names, self.owned_tag
+        )
 
 
-def _fetch_json(url: str) -> list[dict]:
-    response = requests.get(url, timeout=60)
-    response.raise_for_status()
-    return response.json()
+class InfluenzaH1N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-h1n1-resistance-mutations"
+    organism = "h1n1pdm"
+    # "A(H1N1)" (without "pdm09") refers to pre-2009 seasonal H1N1, which is a distinct
+    # lineage from the pandemic strain — excluded here.
+    _strain_names = {"A(H1N1)pdm09"}
+
+
+class InfluenzaH3N2ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-h3n2-resistance-mutations"
+    organism = "h3n2"
+    # "A(H3N2)v" denotes swine-origin zoonotic variant strains (not human seasonal H3N2)
+    # — excluded.
+    _strain_names = {"A(H3N2)"}
+
+
+class InfluenzaH5N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-h5n1-resistance-mutations"
+    organism = "h5n1"
+    _strain_names = {"A(H5N1)"}
+
+
+class InfluenzaVictoriaResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
+    name = "influenza-victoria-resistance-mutations"
+    organism = "victoria"
+    # Both "Type B" and "B" appear in the source data without lineage distinction.
+    # B/Yamagata is considered extinct as of 2024, so all B-lineage rows map to victoria.
+    _strain_names = {"Type B", "B"}
 
 
 def _build_na_inhibitor_collections(
@@ -136,49 +162,23 @@ def _build_pa_inhibitor_collections(
     ]
 
 
-class _InfluenzaResistanceMutationsSource(Source):
-    """Base class for influenza resistance mutation sources.
+def _fetch_json(url: str) -> list[dict]:
+    response = requests.get(url, timeout=60)
+    response.raise_for_status()
+    return response.json()
 
-    Subclasses set `organism` and `_strain_names` to select matching rows from the
-    BU-ISCIII flu_resistance JSON files.
+
+def _parse_resist_level(level_str: str) -> str | None:
+    """Return the resistance category prefix from strings like 'RI (10)' or 'HRI (>1000)'.
+
+    Returns None for susceptible (NI-only) or unknown (?, ?e) values.
     """
-
-    owned_tag = "resistance-mutation"
-    _strain_names: set[str]
-
-    def get_collections(self) -> list[Collection]:
-        return _build_na_inhibitor_collections(
-            self.organism, self._strain_names, self.owned_tag
-        ) + _build_pa_inhibitor_collections(
-            self.organism, self._strain_names, self.owned_tag
-        )
-
-
-class InfluenzaH1N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
-    name = "influenza-h1n1-resistance-mutations"
-    organism = "h1n1pdm"
-    # "A(H1N1)" (without "pdm09") refers to pre-2009 seasonal H1N1, which is a distinct
-    # lineage from the pandemic strain — excluded here.
-    _strain_names = {"A(H1N1)pdm09"}
-
-
-class InfluenzaH3N2ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
-    name = "influenza-h3n2-resistance-mutations"
-    organism = "h3n2"
-    # "A(H3N2)v" denotes swine-origin zoonotic variant strains (not human seasonal H3N2)
-    # — excluded.
-    _strain_names = {"A(H3N2)"}
-
-
-class InfluenzaH5N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
-    name = "influenza-h5n1-resistance-mutations"
-    organism = "h5n1"
-    _strain_names = {"A(H5N1)"}
-
-
-class InfluenzaVictoriaResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
-    name = "influenza-victoria-resistance-mutations"
-    organism = "victoria"
-    # Both "Type B" and "B" appear in the source data without lineage distinction.
-    # B/Yamagata is considered extinct as of 2024, so all B-lineage rows map to victoria.
-    _strain_names = {"Type B", "B"}
+    if not level_str or level_str in {"?", "?e"}:
+        return None
+    m = _RESIST_LEVEL_RE.match(level_str.strip())
+    if not m:
+        return None
+    lvl = m.group(1)
+    if lvl == "NI":
+        return None  # susceptible — not a resistance mutation
+    return lvl
