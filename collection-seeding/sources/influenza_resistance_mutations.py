@@ -157,15 +157,16 @@ class _InfluenzaResistanceMutationsSource(Source):
 class InfluenzaH1N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
     name = "influenza-h1n1-resistance-mutations"
     organism = "h1n1pdm"
-    # TODO: "A(H1N1)" without "pdm09" suffix refers to pre-2009 seasonal H1N1 —
-    # included here for completeness but may warrant a separate organism or exclusion.
-    _strain_names = {"A(H1N1)pdm09", "A(H1N1)"}
+    # "A(H1N1)" (without "pdm09") refers to pre-2009 seasonal H1N1, which is a distinct
+    # lineage from the pandemic strain — excluded here.
+    _strain_names = {"A(H1N1)pdm09"}
 
 
 class InfluenzaH3N2ResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
     name = "influenza-h3n2-resistance-mutations"
     organism = "h3n2"
-    # TODO: "A(H3N2)v" denotes zoonotic variant strains — excluded for now.
+    # "A(H3N2)v" denotes swine-origin zoonotic variant strains (not human seasonal H3N2)
+    # — excluded.
     _strain_names = {"A(H3N2)"}
 
 
@@ -178,7 +179,6 @@ class InfluenzaH5N1ResistanceMutationsSource(_InfluenzaResistanceMutationsSource
 class InfluenzaVictoriaResistanceMutationsSource(_InfluenzaResistanceMutationsSource):
     name = "influenza-victoria-resistance-mutations"
     organism = "victoria"
-    # TODO: Both "Type B" and "B" are used in the source files with no lineage
-    # distinction (B/Victoria vs B/Yamagata). Since B/Yamagata is no longer circulating
-    # these are mapped to victoria, but this should be confirmed.
+    # Both "Type B" and "B" appear in the source data without lineage distinction.
+    # B/Yamagata is considered extinct as of 2024, so all B-lineage rows map to victoria.
     _strain_names = {"Type B", "B"}
