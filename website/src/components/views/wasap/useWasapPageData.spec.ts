@@ -571,6 +571,326 @@ describe('fetchWasapPageData', () => {
             ).rejects.toThrow('No collection selected');
         });
     });
+
+    describe('collection mode', () => {
+        const config = {
+            ...baseConfigFields,
+            lapisBaseUrl: DUMMY_LAPIS_URL,
+            collectionAnalysisModeEnabled: true as const,
+            filterDefaults: {
+                collection: { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            },
+        };
+
+        test('fetches collection from backend and builds queries for query-type variants', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'Test Collection',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 2,
+                tags: [],
+                variants: [
+                    {
+                        type: 'query',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'JN.1',
+                        description: null,
+                        countQuery: 'JN.1*',
+                        coverageQuery: null,
+                    },
+                    {
+                        type: 'query',
+                        id: 2,
+                        collectionId: 1,
+                        name: 'XEC',
+                        description: 'XEC lineage',
+                        countQuery: 'XEC*',
+                        coverageQuery: null,
+                    },
+                ],
+            } as Collection);
+            lapisRouteMocker.mockPostQueryParse(
+                { queries: ['JN.1*', 'XEC*'] },
+                {
+                    data: [
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 1 },
+                        },
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 2 },
+                        },
+                    ],
+                },
+            );
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            );
+
+            expect(result).toEqual({
+                type: 'collection',
+                collection: {
+                    id: 1,
+                    title: 'Test Collection',
+                    queries: [
+                        {
+                            displayLabel: 'JN.1',
+                            description: undefined,
+                            countQuery: 'JN.1*',
+                            coverageQuery: '(JN.1*) or (not maybe(JN.1*))',
+                        },
+                        {
+                            displayLabel: 'XEC',
+                            description: 'XEC lineage',
+                            countQuery: 'XEC*',
+                            coverageQuery: '(XEC*) or (not maybe(XEC*))',
+                        },
+                    ],
+                },
+            });
+        });
+
+        test('builds query string from filterObject variant', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'Filter Collection',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 1,
+                tags: [],
+                variants: [
+                    {
+                        type: 'filterObject',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'Variant',
+                        description: null,
+                        filterObject: { nucleotideMutations: ['A123T'], aminoAcidMutations: ['S:E484K'] },
+                    },
+                ],
+                // filter object causes type issues unfortunately
+            } as unknown as Collection);
+            lapisRouteMocker.mockPostQueryParse(
+                { queries: ['A123T & S:E484K'] },
+                {
+                    data: [
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 123 },
+                        },
+                    ],
+                },
+            );
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            );
+
+            expect(result).toEqual({
+                type: 'collection',
+                collection: {
+                    id: 1,
+                    title: 'Filter Collection',
+                    queries: [
+                        {
+                            displayLabel: 'Variant',
+                            description: undefined,
+                            countQuery: 'A123T & S:E484K',
+                            coverageQuery: '(A123T & S:E484K) or (not maybe(A123T & S:E484K))',
+                        },
+                    ],
+                },
+            });
+        });
+
+        test('reports variants that fail query parsing as invalid', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'Test Collection',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 2,
+                tags: [],
+                variants: [
+                    {
+                        type: 'query',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'Valid',
+                        description: null,
+                        countQuery: 'JN.1*',
+                        coverageQuery: null,
+                    },
+                    {
+                        type: 'query',
+                        id: 2,
+                        collectionId: 1,
+                        name: 'Bad',
+                        description: null,
+                        countQuery: 'bad query!',
+                        coverageQuery: null,
+                    },
+                ],
+            } as unknown as Collection);
+            lapisRouteMocker.mockPostQueryParse(
+                { queries: ['JN.1*', 'bad query!'] },
+                {
+                    data: [
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 123 },
+                        },
+                        { type: 'failure', error: 'Unexpected token' },
+                    ],
+                },
+            );
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            );
+
+            expect(result).toMatchObject({
+                type: 'collection',
+                invalidVariants: [{ name: 'Bad', error: expect.stringContaining('Parse error') }],
+            });
+        });
+
+        test('reports empty filterObject variants as invalid', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'Test Collection',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 1,
+                tags: [],
+                variants: [
+                    {
+                        type: 'filterObject',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'Empty',
+                        description: null,
+                        filterObject: {},
+                    },
+                ],
+            } as unknown as Collection);
+            lapisRouteMocker.mockPostQueryParse({ queries: [] }, { data: [] });
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            );
+
+            expect(result).toMatchObject({
+                type: 'collection',
+                invalidVariants: [{ name: 'Empty', error: 'Variant is empty.' }],
+            });
+        });
+
+        test('deduplicates variant display labels', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'Test Collection',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 2,
+                tags: [],
+                variants: [
+                    {
+                        type: 'query',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'Variant',
+                        description: null,
+                        countQuery: 'JN.1*',
+                        coverageQuery: null,
+                    },
+                    {
+                        type: 'query',
+                        id: 2,
+                        collectionId: 1,
+                        name: 'Variant',
+                        description: null,
+                        countQuery: 'XEC*',
+                        coverageQuery: null,
+                    },
+                ],
+            } as unknown as Collection);
+            lapisRouteMocker.mockPostQueryParse(
+                { queries: ['JN.1*', 'XEC*'] },
+                {
+                    data: [
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 1 },
+                        },
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 2 },
+                        },
+                    ],
+                },
+            );
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            );
+
+            expect(result).toEqual({
+                type: 'collection',
+                collection: {
+                    id: 1,
+                    title: 'Test Collection',
+                    queries: [
+                        {
+                            displayLabel: 'Variant',
+                            description: undefined,
+                            countQuery: 'JN.1*',
+                            coverageQuery: '(JN.1*) or (not maybe(JN.1*))',
+                        },
+                        {
+                            displayLabel: 'Variant (2)',
+                            description: undefined,
+                            countQuery: 'XEC*',
+                            coverageQuery: '(XEC*) or (not maybe(XEC*))',
+                        },
+                    ],
+                },
+            });
+        });
+
+        test('throws when mode is not enabled', async () => {
+            const disabledConfig = { ...baseConfigFields };
+
+            await expect(
+                fetchWasapPageData(disabledConfig, {}, { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 }),
+            ).rejects.toThrow("Cannot fetch data, 'collection' mode is not enabled.");
+        });
+
+        test('throws when no collection is selected', async () => {
+            await expect(
+                fetchWasapPageData(config, {}, { mode: WASAP_ANALYSIS_MODE.collection, collectionId: undefined }),
+            ).rejects.toThrow('No collection selected');
+        });
+    });
 });
 
 describe('getLapisFilterForTimeFrame', () => {
