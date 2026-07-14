@@ -108,7 +108,11 @@ def _build_na_inhibitor_collections(
                 "organism": organism,
                 "description": (
                     f"Influenza NA resistance mutations against {antiviral_name} "
-                    f"as per {_SOURCE_DESC}."
+                    f"as per {_SOURCE_DESC}. "
+                    "Variant labels show the resistance level followed by the EC50 fold-change "
+                    "relative to a susceptible reference strain in parentheses: "
+                    "RI = reduced inhibition, HRI = highly reduced inhibition. "
+                    "NI/RI or RI/HRI indicates conflicting results across studies."
                 ),
                 "variants": variants,
                 "tags": [owned_tag],
