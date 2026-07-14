@@ -275,12 +275,12 @@ def test_ri_mutation_included():
 
 
 @rsps_lib.activate
-def test_variant_name_is_resistance_level():
+def test_variant_name_includes_fold_change():
     _mock_both(rsps_lib)
     cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     ose_col = next(c for c in cols if "Oseltamivir" in c["name"])
     names = {v["name"] for v in ose_col["variants"]}
-    assert names <= {"NI", "RI", "HRI", "NI/RI", "RI/HRI", "NI/RI/HRI"}
+    assert names == {"HRI (>1000)", "RI (40)"}
 
 
 @rsps_lib.activate

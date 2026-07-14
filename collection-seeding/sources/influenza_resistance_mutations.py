@@ -58,8 +58,8 @@ def _build_na_inhibitor_collections(
         variants: list[Variant] = []
 
         for row in rows:
-            level = _parse_resist_level(row.get(level_field, ""))
-            if level is None:
+            level_str = row.get(level_field, "")
+            if _parse_resist_level(level_str) is None:
                 continue
             mutations = row.get("mutation_NA") or []
             if not mutations:
@@ -67,7 +67,7 @@ def _build_na_inhibitor_collections(
             variants.append(
                 {
                     "type": "filterObject",
-                    "name": level,
+                    "name": level_str.strip(),
                     "filterObject": {
                         "aminoAcidMutations": [f"NA:{mut.strip()}" for mut in mutations]
                     },
