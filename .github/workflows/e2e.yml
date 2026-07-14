@@ -8,12 +8,12 @@ jobs:
       run:
         working-directory: ./website
     steps:
-    - uses: actions/checkout@v6.0.3
+    - uses: actions/checkout@v7.0.0
     - uses: actions/setup-node@v6
       with:
         node-version: lts/*
     - name: Cache .npm
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('lapis-e2e/**/package-lock.json') }}
@@ -24,7 +24,7 @@ jobs:
 
     - name: Docker metadata
       id: dockerMetadata
-      uses: docker/metadata-action@v6
+      uses: docker/metadata-action@v6.2.0
       with:
         images: "dummyImageName"
         tags: |
@@ -37,14 +37,14 @@ jobs:
       run: echo "branchTag=${TAG##*:}" >> $GITHUB_OUTPUT
 
     - name: Wait for website Docker image
-      uses: lewagon/wait-on-check-action@v1.8.0
+      uses: lewagon/wait-on-check-action@v1.8.1
       with:
         ref: ${{ github.sha }}
         check-name: Build Website Docker Image
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 10
     - name: Wait for backend Docker image
-      uses: lewagon/wait-on-check-action@v1.8.0
+      uses: lewagon/wait-on-check-action@v1.8.1
       with:
         ref: ${{ github.sha }}
         check-name: Build Backend Docker Image

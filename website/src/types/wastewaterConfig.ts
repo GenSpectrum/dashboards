@@ -42,7 +42,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             variantAnalysisModeEnabled: true,
             resistanceAnalysisModeEnabled: true,
             untrackedAnalysisModeEnabled: true,
-            collectionAnalysisModeEnabled: true,
+            covSpectrumCollectionAnalysisModeEnabled: true,
             defaultAnalysisMode: 'resistance',
             resistanceMutationCollections: [
                 {
@@ -114,8 +114,8 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     sequenceType: 'nucleotide',
                     excludeSet: 'predefined',
                 },
-                collection: {
-                    mode: 'collection',
+                covSpectrumCollection: {
+                    mode: 'covSpectrumCollection',
                     collectionId: 1,
                 },
             },

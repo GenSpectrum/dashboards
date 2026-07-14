@@ -27,3 +27,14 @@ export async function deleteCollection(
     const response = await request.delete(`${BACKEND_URL}/collections/${collectionId}?userId=${userId}`);
     expect(response.status()).toBe(204);
 }
+
+export async function generateApiKey(request: APIRequestContext, userId: number): Promise<string> {
+    const response = await request.post(`${BACKEND_URL}/api-keys?userId=${userId}`);
+    expect(response.status()).toBe(201);
+    const body = (await response.json()) as { key: string };
+    return body.key;
+}
+
+export async function revokeApiKey(request: APIRequestContext, userId: number): Promise<void> {
+    await request.delete(`${BACKEND_URL}/api-keys?userId=${userId}`);
+}

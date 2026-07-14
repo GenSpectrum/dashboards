@@ -1,5 +1,5 @@
 import { userEvent } from '@vitest/browser/context';
-import { describe, expect } from 'vitest';
+import { beforeEach, describe, expect } from 'vitest';
 import { render } from 'vitest-browser-react';
 
 import { CollectionsOverview } from './CollectionsOverview';
@@ -90,6 +90,10 @@ function renderOverview() {
 }
 
 describe('CollectionsOverview', () => {
+    beforeEach(() => {
+        window.history.replaceState(null, '', '/');
+    });
+
     it('shows the headline and community collections by default', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 

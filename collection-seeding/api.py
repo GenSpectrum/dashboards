@@ -33,10 +33,22 @@ class ApiClient:
             f"API at {self.base_url} did not become ready after {attempts} attempts."
         )
 
-    def fetch_existing_collections(self, organism: str) -> list[ExistingCollection]:
+    def get_my_user_id(self) -> int:
+        r = requests.get(
+            f"{self.base_url}/api/users/me",
+            headers=self._auth_headers,
+            timeout=10,
+        )
+        if not r.ok:
+            raise RuntimeError(f"GET /api/users/me failed: {r.status_code} {r.text}")
+        return r.json()["id"]
+
+    def fetch_existing_collections(
+        self, organism: str, user_id: int
+    ) -> list[ExistingCollection]:
         r = requests.get(
             self._collections_url,
-            params={"organism": organism},
+            params={"organism": organism, "userId": user_id},
             headers=self._auth_headers,
             timeout=10,
         )
@@ -45,11 +57,11 @@ class ApiClient:
         return r.json()
 
     def fetch_existing_collections_by_tag(
-        self, tag: str, organism: str
+        self, tag: str, organism: str, user_id: int
     ) -> list[ExistingCollection]:
         r = requests.get(
             self._collections_url,
-            params={"tags": tag, "organism": organism},
+            params={"tags": tag, "organism": organism, "userId": user_id},
             headers=self._auth_headers,
             timeout=10,
         )

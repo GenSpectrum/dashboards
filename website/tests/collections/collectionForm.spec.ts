@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from '../e2e.fixture.ts';
-import { E2E_GITHUB_ID } from '../helpers/auth.ts';
+import { E2E_GITHUB_ID, setupAuthCookie } from '../helpers/auth.ts';
 import { createCollection, deleteCollection, syncUser } from '../helpers/backendClient.ts';
 
 const ORGANISM = 'covid';
@@ -157,6 +157,19 @@ test.describe('Edit collection page', () => {
         await authenticatedCollectionFormPage.gotoEdit(ORGANISM, getCollectionId());
 
         await expect(authenticatedCollectionFormPage.collectionDescriptionTextarea()).toHaveValue('');
+    });
+
+    test('shows "Not authorized" with 403 when editing a collection owned by another user', async ({
+        page,
+        request,
+    }) => {
+        const otherUserId = await syncUser(request, 'e2e-other-99999');
+        await setupAuthCookie(page, 'e2e-other', otherUserId);
+
+        const response = await page.goto(`/collections/${ORGANISM}/${getCollectionId()}/edit`);
+
+        expect(response?.status()).toBe(403);
+        await expect(page.getByRole('heading', { name: 'Not authorized' })).toBeVisible();
     });
 
     test('"Delete collection" shows confirmation dialog; Cancel dismisses it', async ({

@@ -1,8 +1,9 @@
 # AGENTS.md — Coding Agent Guidelines
 
-This monorepo contains two packages:
+This monorepo contains three packages:
 - **`website/`** — Astro + React frontend (TypeScript), see `website/AGENTS.md`
 - **`backend/`** — Kotlin + Spring Boot backend, see `backend/AGENTS.md`
+- **`collection-seeding/`** — Python seeder that populates example collections, see `collection-seeding/AGENTS.md`
 
 ---
 
@@ -10,9 +11,10 @@ This monorepo contains two packages:
 
 ```
 /
-├── website/        # Astro/React frontend
-├── backend/        # Kotlin/Spring Boot backend
-├── docs/           # Architecture documentation (arc42)
+├── website/            # Astro/React frontend
+├── backend/            # Kotlin/Spring Boot backend
+├── collection-seeding/ # Python collection seeder
+├── docs/               # Architecture documentation (arc42)
 └── docker-compose.yml
 ```
 
@@ -28,6 +30,13 @@ chore: update dependencies
 ```
 - PR titles become the squash-merge commit message — they must also follow conventional commits.
 - Messages should explain **why** a change was made, not just what.
+
+---
+
+## Pull Requests
+
+- PR titles must follow the conventional commits pattern (e.g. `feat(website): add user dashboard`, `fix(backend): correct auth token expiry`).
+- Use the PR template at `.github/pull_request_template.md` when creating PRs.
 
 ---
 

@@ -56,7 +56,7 @@ type AnalysisModeConfigs = ManualAnalysisModeConfig &
     VariantAnalysisModeConfig &
     ResistanceAnalysisModeConfig &
     UntrackedAnalyisModeConfig &
-    CollectionAnalysisModeConfig;
+    CovSpectrumCollectionAnalysisModeConfig;
 
 type ManualAnalysisModeConfig =
     | {
@@ -119,16 +119,16 @@ type UntrackedAnalyisModeConfig =
           };
       };
 
-type CollectionAnalysisModeConfig =
+type CovSpectrumCollectionAnalysisModeConfig =
     | {
-          collectionAnalysisModeEnabled?: never;
+          covSpectrumCollectionAnalysisModeEnabled?: never;
       }
     | {
-          collectionAnalysisModeEnabled: true;
+          covSpectrumCollectionAnalysisModeEnabled: true;
           collectionsApiBaseUrl: string;
           collectionTitleFilter: string;
           filterDefaults: {
-              collection: WasapCollectionFilter;
+              covSpectrumCollection: WasapCovSpectrumCollectionFilter;
           };
       };
 
@@ -149,8 +149,8 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     if (config.untrackedAnalysisModeEnabled) {
         result.push('untracked');
     }
-    if (config.collectionAnalysisModeEnabled) {
-        result.push('collection');
+    if (config.covSpectrumCollectionAnalysisModeEnabled) {
+        result.push('covSpectrumCollection');
     }
     return result;
 }
@@ -164,7 +164,7 @@ export type LinkTemplate = {
     aminoAcidMutation: string;
 };
 
-export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked' | 'collection';
+export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked' | 'covSpectrumCollection';
 
 /**
  * Contains mode-independent settings, like the filter for location and date range.
@@ -242,8 +242,8 @@ export type WasapUntrackedFilter = {
     excludeVariants?: string[];
 };
 
-export type WasapCollectionFilter = {
-    mode: 'collection';
+export type WasapCovSpectrumCollectionFilter = {
+    mode: 'covSpectrumCollection';
     collectionId?: number;
 };
 
@@ -252,7 +252,7 @@ export type WasapAnalysisFilter =
     | WasapVariantFilter
     | WasapResistanceFilter
     | WasapUntrackedFilter
-    | WasapCollectionFilter;
+    | WasapCovSpectrumCollectionFilter;
 
 export type WasapFilter = {
     base: WasapBaseFilter;

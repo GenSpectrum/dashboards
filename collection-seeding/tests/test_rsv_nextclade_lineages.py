@@ -479,7 +479,11 @@ def test_full_aa_sorted_by_gene_then_position():
     cols = _build_collections(SORT_TREE, "rsvA", "RSV-A", "#nextclade-lineage")
     a = next(c for c in cols if c["name"] == "A")
     full_aa = next(v for v in a["variants"] if v["name"] == "Amino acid substitutions")
-    assert full_aa["filterObject"]["aminoAcidMutations"] == ["F:T8A", "F:K124N", "G:T4N"]
+    assert full_aa["filterObject"]["aminoAcidMutations"] == [
+        "F:T8A",
+        "F:K124N",
+        "G:T4N",
+    ]
 
 
 # --- source class attributes ---
