@@ -166,6 +166,7 @@ def _build_pa_inhibitor_collections(
     ]
 
 
+@functools.lru_cache
 def _fetch_json(url: str) -> list[dict]:
     response = requests.get(url, timeout=60)
     response.raise_for_status()
