@@ -239,13 +239,13 @@ def test_ni_only_mutations_are_excluded():
     _mock_both(rsps_lib)
     cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     zana_col = next((c for c in cols if "Zanamivir" in c["name"]), None)
-     assert zana_col is not None, "Expected a Zanamivir collection for this fixture"
-     all_muts = [
-         aa
-         for v in zana_col["variants"]
-         for aa in v["filterObject"]["aminoAcidMutations"]
-     ]
-     assert "NA:H275Y" not in all_muts
+    assert zana_col is not None, "Expected a Zanamivir collection for this fixture"
+    all_muts = [
+        aa
+        for v in zana_col["variants"]
+        for aa in v["filterObject"]["aminoAcidMutations"]
+    ]
+    assert "NA:H275Y" not in all_muts
 
 
 @rsps_lib.activate
