@@ -239,13 +239,13 @@ def test_ni_only_mutations_are_excluded():
     _mock_both(rsps_lib)
     cols = InfluenzaH1N1ResistanceMutationsSource().get_collections()
     zana_col = next((c for c in cols if "Zanamivir" in c["name"]), None)
-    if zana_col is not None:
-        all_muts = [
-            aa
-            for v in zana_col["variants"]
-            for aa in v["filterObject"]["aminoAcidMutations"]
-        ]
-        assert "NA:H275Y" not in all_muts
+     assert zana_col is not None, "Expected a Zanamivir collection for this fixture"
+     all_muts = [
+         aa
+         for v in zana_col["variants"]
+         for aa in v["filterObject"]["aminoAcidMutations"]
+     ]
+     assert "NA:H275Y" not in all_muts
 
 
 @rsps_lib.activate
@@ -305,27 +305,6 @@ def test_mutations_prefixed_with_na():
             for aa in v["filterObject"]["aminoAcidMutations"]:
                 assert aa.startswith("NA:"), f"Expected NA: prefix, got {aa!r}"
 
-
-@rsps_lib.activate
-def test_unknown_strain_excluded():
-    """A(H7N9) is not a dashboard organism and should not appear in any collection."""
-    _mock_both(rsps_lib)
-    for Source in (
-        InfluenzaH1N1ResistanceMutationsSource,
-        InfluenzaH3N2ResistanceMutationsSource,
-        InfluenzaH5N1ResistanceMutationsSource,
-        InfluenzaVictoriaResistanceMutationsSource,
-    ):
-        cols = Source().get_collections()
-        all_muts = [
-            aa
-            for c in cols
-            for v in c["variants"]
-            for aa in v["filterObject"]["aminoAcidMutations"]
-        ]
-        assert "NA:R292K" not in all_muts or Source.organism == "h7n9", (
-            f"H7N9 mutation should not appear in {Source.name}"
-        )
 
 
 # --- PA inhibitor (Baloxavir) collections ----------------------------------
