@@ -20,6 +20,7 @@ import { detailedMutationsToQuery } from '../../../covspectrum/variantConversion
 import { getCladeLineages } from '../../../lapis/getCladeLineages';
 import { getJaccardForMutations, getMutations, getMutationsForVariant } from '../../../lapis/getMutations';
 import { parseQuery } from '../../../lapis/parseQuery';
+import { getLineageFields } from '../../../types/Collection';
 import type { FilterObject, Variant } from '../../../types/Collection';
 import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 
@@ -241,7 +242,7 @@ async function fetchCovSpectrumCollectionModeData(
     if (!config.covSpectrumCollectionAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'covSpectrumCollection' mode is not enabled.");
     }
-    if (!analysis.collectionId) {
+    if (analysis.collectionId === undefined) {
         throw Error('No collection selected');
     }
     const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
@@ -271,7 +272,7 @@ async function fetchCollectionModeData(
     if (!config.collectionAnalysisModeEnabled) {
         throw Error("Cannot fetch data, 'collection' mode is not enabled.");
     }
-    if (!analysis.collectionId) {
+    if (analysis.collectionId === undefined) {
         throw Error('No collection selected');
     }
     const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
@@ -392,6 +393,7 @@ function deduplicateLabels<T extends { displayLabel: string }>(queries: T[]): T[
 
 function filterObjectToQueryString(filterObject: FilterObject): string {
     const parts = [
+        ...getLineageFields(filterObject).map(([field, value]) => `${field}=${value}`),
         ...(filterObject.nucleotideMutations ?? []),
         ...(filterObject.aminoAcidMutations ?? []),
         ...(filterObject.nucleotideInsertions ?? []),

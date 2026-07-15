@@ -611,7 +611,7 @@ describe('fetchWasapPageData', () => {
                         coverageQuery: null,
                     },
                 ],
-            } as Collection);
+            });
             lapisRouteMocker.mockPostQueryParse(
                 { queries: ['JN.1*', 'XEC*'] },
                 {
@@ -707,6 +707,62 @@ describe('fetchWasapPageData', () => {
                             description: undefined,
                             countQuery: 'A123T & S:E484K',
                             coverageQuery: '(A123T & S:E484K) or (not maybe(A123T & S:E484K))',
+                        },
+                    ],
+                },
+            });
+        });
+
+        test('builds query string from filterObject variant with a lineage field', async () => {
+            backendRouteMocker.mockGetCollection('1', {
+                id: 1,
+                name: 'Filter Collection',
+                ownedBy: 1,
+                organism: 'sc2',
+                description: null,
+                variantCount: 1,
+                tags: [],
+                variants: [
+                    {
+                        type: 'filterObject',
+                        id: 1,
+                        collectionId: 1,
+                        name: 'Variant',
+                        description: null,
+                        filterObject: { pangoLineage: 'JN.1', nucleotideMutations: ['A123T'] },
+                    },
+                ],
+                // filter object causes type issues unfortunately
+            } as unknown as Collection);
+            lapisRouteMocker.mockPostQueryParse(
+                { queries: ['pangoLineage=JN.1 & A123T'] },
+                {
+                    data: [
+                        {
+                            type: 'success',
+                            filter: { type: 'HasNucleotideMutation', sequenceName: 'main', position: 123 },
+                        },
+                    ],
+                },
+            );
+
+            const result = await fetchWasapPageData(
+                config,
+                {},
+                { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 },
+            );
+
+            expect(result).toEqual({
+                type: 'collection',
+                collection: {
+                    id: 1,
+                    title: 'Filter Collection',
+                    queries: [
+                        {
+                            displayLabel: 'Variant',
+                            description: undefined,
+                            countQuery: 'pangoLineage=JN.1 & A123T',
+                            coverageQuery: '(pangoLineage=JN.1 & A123T) or (not maybe(pangoLineage=JN.1 & A123T))',
                         },
                     ],
                 },
