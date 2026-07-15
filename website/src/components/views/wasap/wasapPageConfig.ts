@@ -1,5 +1,10 @@
 import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
+export const SEQUENCE_TYPE = {
+    nucleotide: 'nucleotide',
+    aminoAcid: 'amino acid',
+} as const satisfies Record<string, SequenceType>;
+
 /**
  * All config settings for a W-ASAP dashboard page.
  */
@@ -164,7 +169,15 @@ export type LinkTemplate = {
     aminoAcidMutation: string;
 };
 
-export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked' | 'covSpectrumCollection';
+export const WASAP_ANALYSIS_MODE = {
+    manual: 'manual',
+    variant: 'variant',
+    resistance: 'resistance',
+    untracked: 'untracked',
+    covSpectrumCollection: 'covSpectrumCollection',
+} as const;
+
+export type WasapAnalysisMode = (typeof WASAP_ANALYSIS_MODE)[keyof typeof WASAP_ANALYSIS_MODE];
 
 /**
  * Contains mode-independent settings, like the filter for location and date range.
@@ -205,11 +218,16 @@ export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
     }
 }
 
+export const SIGNATURE_TYPE = {
+    computed: 'computed',
+    predefined: 'predefined',
+} as const;
+
 /**
  * The type of variant mutation signature. `predefined` is a pre-defined list pulled from online,
  * `computed` computes the list of signature mutations for a variant based on user parameters.
  */
-export type SignatureType = 'computed' | 'predefined';
+export type SignatureType = (typeof SIGNATURE_TYPE)[keyof typeof SIGNATURE_TYPE];
 
 export type WasapVariantFilter = {
     mode: 'variant';
@@ -233,7 +251,12 @@ export type WasapResistanceFilter = {
     resistanceSet: string;
 };
 
-export type ExcludeSetName = 'predefined' | 'custom';
+export const EXCLUDE_SET_NAME = {
+    predefined: 'predefined',
+    custom: 'custom',
+} as const;
+
+export type ExcludeSetName = (typeof EXCLUDE_SET_NAME)[keyof typeof EXCLUDE_SET_NAME];
 
 export type WasapUntrackedFilter = {
     mode: 'untracked';

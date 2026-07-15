@@ -8,7 +8,7 @@ import { type OrganismsConfig } from './src/config';
 import type { CollectionRaw } from './src/covspectrum/types.ts';
 import type { LapisInfo } from './src/lapis/getLastUpdatedDate.ts';
 import type { ParsedQueryResult, ParseQueryRequest } from './src/lapis/parseQuery.ts';
-import type { CollectionSummary } from './src/types/Collection.ts';
+import type { Collection, CollectionSummary } from './src/types/Collection.ts';
 import type { ProblemDetail } from './src/types/ProblemDetail.ts';
 import type {
     SubscriptionPutRequest,
@@ -233,6 +233,14 @@ export class BackendRouteMocker {
     mockGetSubscriptionsBackendError(response: ProblemDetail | { notProblemDetail: string }, statusCode = 400) {
         this.workerOrServer.use(
             http.get(`${DUMMY_BACKEND_URL}/subscriptions`, () => {
+                return new Response(JSON.stringify(response), { status: statusCode });
+            }),
+        );
+    }
+
+    mockGetCollection(id: string, response: Collection, statusCode = 200) {
+        this.workerOrServer.use(
+            http.get(`${DUMMY_BACKEND_URL}/collections/${id}`, () => {
                 return new Response(JSON.stringify(response), { status: statusCode });
             }),
         );
