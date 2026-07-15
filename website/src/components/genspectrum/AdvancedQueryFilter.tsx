@@ -17,6 +17,10 @@ type ValidationState =
 
 type AdvancedQueryFilterProps = {
     value?: string;
+    /**
+     * Also reports validity of the new input.
+     * Known limitation: Doesn't report anything on the initial mount.
+     */
     onInput?: (newValue: string | undefined, isValid: boolean) => void;
     enabled: boolean;
     lapisUrl: string;
