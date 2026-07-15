@@ -1,3 +1,4 @@
+import { userEvent } from '@vitest/browser/context';
 import { describe, expect, it as itVitest, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 
@@ -26,6 +27,7 @@ describe('VariantEditor', () => {
                 variant={FILTER_VARIANT}
                 onChange={vi.fn()}
                 onRemove={vi.fn()}
+                onValidityChange={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -45,6 +47,7 @@ describe('VariantEditor', () => {
                 variant={FILTER_VARIANT}
                 onChange={vi.fn()}
                 onRemove={vi.fn()}
+                onValidityChange={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -61,6 +64,7 @@ describe('VariantEditor', () => {
                 variant={QUERY_VARIANT}
                 onChange={vi.fn()}
                 onRemove={vi.fn()}
+                onValidityChange={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -81,6 +85,7 @@ describe('VariantEditor', () => {
                 variant={FILTER_VARIANT}
                 onChange={onChange}
                 onRemove={vi.fn()}
+                onValidityChange={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -101,6 +106,7 @@ describe('VariantEditor', () => {
                 variant={FILTER_VARIANT}
                 onChange={vi.fn()}
                 onRemove={vi.fn()}
+                onValidityChange={vi.fn()}
                 canRemove={true}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -121,6 +127,7 @@ describe('VariantEditor', () => {
                 variant={FILTER_VARIANT}
                 onChange={vi.fn()}
                 onRemove={onRemove}
+                onValidityChange={vi.fn()}
                 canRemove={true}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -141,6 +148,7 @@ describe('VariantEditor', () => {
                 variant={QUERY_VARIANT}
                 onChange={onChange}
                 onRemove={vi.fn()}
+                onValidityChange={vi.fn()}
                 canRemove={false}
                 lineageFields={[]}
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -150,5 +158,83 @@ describe('VariantEditor', () => {
         await getByPlaceholder('Variant name').fill('New name');
 
         expect(onChange).toHaveBeenCalledWith(0, expect.objectContaining({ name: 'New name' }));
+    });
+
+    it('reports invalid advanced query via onValidityChange', async ({ routeMockers }) => {
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['invalid!!'], doFullValidation: true },
+            { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
+        );
+
+        const onValidityChange = vi.fn();
+
+        const { getByPlaceholder } = render(
+            <VariantEditorWithProvider
+                index={3}
+                variant={{ type: 'query', name: 'x', countQuery: '' }}
+                onChange={vi.fn()}
+                onRemove={vi.fn()}
+                onValidityChange={onValidityChange}
+                canRemove={false}
+                lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
+            />,
+        );
+
+        await userEvent.type(getByPlaceholder(/Advanced query/), 'invalid!!');
+
+        await expect.poll(() => onValidityChange).toHaveBeenCalledWith(3, false);
+    });
+
+    it('reports invalid when a valid advanced query is cleared to empty', async ({ routeMockers }) => {
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['A123T'], doFullValidation: true },
+            { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
+        );
+
+        const onValidityChange = vi.fn();
+
+        const { getByPlaceholder } = render(
+            <VariantEditorWithProvider
+                index={0}
+                variant={{ type: 'query', name: 'x', countQuery: '' }}
+                onChange={vi.fn()}
+                onRemove={vi.fn()}
+                onValidityChange={onValidityChange}
+                canRemove={false}
+                lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
+            />,
+        );
+
+        const input = getByPlaceholder(/Advanced query/);
+        await userEvent.type(input, 'A123T');
+        await expect.poll(() => onValidityChange).toHaveBeenCalledWith(0, true);
+
+        await userEvent.clear(input);
+        await expect.poll(() => onValidityChange).toHaveBeenCalledWith(0, false);
+    });
+
+    it('marks variant valid when switching away from advanced query', async ({ routeMockers: { lapis } }) => {
+        lapis.mockLapisDown();
+
+        const onValidityChange = vi.fn();
+
+        const { getByRole } = render(
+            <VariantEditorWithProvider
+                index={1}
+                variant={QUERY_VARIANT}
+                onChange={vi.fn()}
+                onRemove={vi.fn()}
+                onValidityChange={onValidityChange}
+                canRemove={false}
+                lineageFields={[]}
+                lapisUrl={DUMMY_LAPIS_URL}
+            />,
+        );
+
+        await getByRole('checkbox', { name: 'Use advanced query instead' }).click();
+
+        expect(onValidityChange).toHaveBeenCalledWith(1, true);
     });
 });

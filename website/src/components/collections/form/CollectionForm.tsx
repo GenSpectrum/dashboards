@@ -52,6 +52,7 @@ export function CollectionForm({
             withKey,
         ),
     );
+    const [invalidVariantKeys, setInvalidVariantKeys] = useState<Set<string>>(new Set());
 
     const addVariant = useCallback(() => {
         setVariants((prev) => [
@@ -64,9 +65,37 @@ export function CollectionForm({
         setVariants((prev) => prev.map((v, i) => (i === index ? { ...variant, clientKey: v.clientKey } : v)));
     }, []);
 
-    const removeVariant = useCallback((index: number) => {
-        setVariants((prev) => prev.filter((_, i) => i !== index));
-    }, []);
+    const removeVariant = useCallback(
+        (index: number) => {
+            const removedKey = variants[index].clientKey;
+            setInvalidVariantKeys((keys) => {
+                const next = new Set(keys);
+                next.delete(removedKey);
+                return next;
+            });
+            setVariants((prev) => prev.filter((_, i) => i !== index));
+        },
+        [variants],
+    );
+
+    const setVariantValidity = useCallback(
+        (index: number, isValid: boolean) => {
+            const clientKey = variants[index].clientKey;
+            setInvalidVariantKeys((keys) => {
+                if (isValid === !keys.has(clientKey)) {
+                    return keys;
+                }
+                const next = new Set(keys);
+                if (isValid) {
+                    next.delete(clientKey);
+                } else {
+                    next.add(clientKey);
+                }
+                return next;
+            });
+        },
+        [variants],
+    );
 
     const title = initialValues ? 'Edit collection' : 'New collection';
 
@@ -120,6 +149,7 @@ export function CollectionForm({
                                 variant={variant}
                                 onChange={updateVariant}
                                 onRemove={removeVariant}
+                                onValidityChange={setVariantValidity}
                                 canRemove={variants.length > 1}
                                 lineageFields={lineageFields}
                                 lapisUrl={lapisUrl}
@@ -134,7 +164,7 @@ export function CollectionForm({
                 <SubmitButton
                     isSuccess={isSuccess}
                     isPending={isSubmitting}
-                    isDisabled={name.trim() === ''}
+                    isDisabled={name.trim() === '' || invalidVariantKeys.size > 0}
                     successMessage={successMessage}
                     submitLabel={submitLabel}
                     onClick={() =>

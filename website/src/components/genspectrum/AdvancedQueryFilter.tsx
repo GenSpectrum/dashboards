@@ -17,7 +17,11 @@ type ValidationState =
 
 type AdvancedQueryFilterProps = {
     value?: string;
-    onInput?: (newValue: string | undefined) => void;
+    /**
+     * Also reports validity of the new input.
+     * Known limitation: Doesn't report anything on the initial mount.
+     */
+    onInput?: (newValue: string | undefined, isValid: boolean) => void;
     enabled: boolean;
     lapisUrl: string;
     /**
@@ -29,7 +33,14 @@ type AdvancedQueryFilterProps = {
      */
     errorTooltipClass?: string;
     allowedFields?: string[];
+    /**
+     * When `true`, an empty query is treated as invalid (reported as invalid and shown as an error).
+     * Defaults to `false`.
+     */
+    isRequired?: boolean;
 };
+
+const EMPTY_REQUIRED_MESSAGE = 'A query is required.';
 
 export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
     value,
@@ -38,6 +49,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
     lapisUrl,
     errorTooltipClass,
     allowedFields,
+    isRequired = false,
 }) => {
     const [inputValue, setInputValue] = useState(value);
     const [validationState, setValidationState] = useState<ValidationState>({ type: 'idle' });
@@ -57,18 +69,21 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
                             type: 'error',
                             message: `Field ${listed} is not allowed. Allowed fields: ${allowedFields.join(', ')}.`,
                         });
+                        onInput?.(query, false);
                         return;
                     }
                 }
                 setValidationState({ type: 'valid' });
-                onInput?.(query);
+                onInput?.(query, true);
             } else {
                 setValidationState({ type: 'error', message: result.error });
+                onInput?.(query, false);
             }
         },
-        onError: (error) => {
+        onError: (error, query) => {
             logger.error(`Failed to validate advanced query: ${error.message}`);
             setValidationState({ type: 'error', message: 'Validation is not possible right now.' });
+            onInput?.(query, false);
         },
     });
 
@@ -83,8 +98,13 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
         }
 
         if (inputValue === undefined || inputValue === '') {
-            setValidationState({ type: 'idle' });
-            onInput?.(undefined);
+            if (isRequired) {
+                setValidationState({ type: 'error', message: EMPTY_REQUIRED_MESSAGE });
+                onInput?.(undefined, false);
+            } else {
+                setValidationState({ type: 'idle' });
+                onInput?.(undefined, true);
+            }
             return;
         }
 
@@ -93,15 +113,21 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
         const timeout = setTimeout(() => validateQuery(inputValue), DEBOUNCE_MS);
 
         return () => clearTimeout(timeout);
-    }, [inputValue, lapisUrl, onInput, validateQuery]);
+    }, [inputValue, lapisUrl, onInput, validateQuery, isRequired]);
 
     if (!enabled) {
         return null;
     }
 
-    const isError = validationState.type === 'error';
-    const isValid = validationState.type === 'valid';
-    const isValidating = validationState.type === 'validating';
+    // A required-but-empty query is invalid even before the user edits it (e.g. right after switching
+    // to advanced-query mode), so surface the error immediately instead of waiting for an edit.
+    const isEmpty = inputValue === undefined || inputValue === '';
+    const displayState: ValidationState =
+        isRequired && isEmpty ? { type: 'error', message: EMPTY_REQUIRED_MESSAGE } : validationState;
+
+    const isError = displayState.type === 'error';
+    const isValid = displayState.type === 'valid';
+    const isValidating = displayState.type === 'validating';
 
     return (
         <div className='form-control'>
@@ -123,7 +149,7 @@ export const AdvancedQueryFilter: FC<AdvancedQueryFilterProps> = ({
                 />
                 {isValidating && <span className='loading loading-spinner loading-xs' title='Validating' />}
                 {isValid && <div className='iconify mdi--check text-success size-4' title='Advanced query is valid' />}
-                {isError && <ErrorIconWithTooltip message={validationState.message} tooltipClass={errorTooltipClass} />}
+                {isError && <ErrorIconWithTooltip message={displayState.message} tooltipClass={errorTooltipClass} />}
             </label>
         </div>
     );
