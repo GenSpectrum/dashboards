@@ -36,6 +36,35 @@ describe('AdvancedQueryFilter', () => {
         expect(onInput).toHaveBeenCalledWith(undefined, true);
     });
 
+    it('isRequired - shows an error and reports invalid for an empty query', async () => {
+        const { getByLabelText, getByText } = render(
+            <AdvancedQueryFilterWithProvider enabled isRequired lapisUrl={DUMMY_LAPIS_URL} />,
+        );
+
+        await expect.element(getByLabelText('Error')).toBeVisible();
+        await expect.element(getByText('A query is required.')).toBeVisible();
+    });
+
+    it('isRequired - reports invalid when a valid query is cleared to empty', async ({ routeMockers }) => {
+        routeMockers.lapis.mockPostQueryParse(
+            { queries: ['A123T'], doFullValidation: true },
+            { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
+        );
+
+        const onInput = vi.fn();
+
+        const { getByRole } = render(
+            <AdvancedQueryFilterWithProvider onInput={onInput} enabled isRequired lapisUrl={DUMMY_LAPIS_URL} />,
+        );
+
+        const input = getByRole('textbox');
+        await userEvent.type(input, 'A123T');
+        await expect.poll(() => onInput).toHaveBeenCalledWith('A123T', true);
+
+        await userEvent.clear(input);
+        await expect.poll(() => onInput).toHaveBeenCalledWith(undefined, false);
+    });
+
     it('validates query and calls onInput with value on success', async ({ routeMockers }) => {
         const onInput = vi.fn();
 

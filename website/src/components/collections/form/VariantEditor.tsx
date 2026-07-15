@@ -86,13 +86,12 @@ export const VariantEditor = memo(function VariantEditor({
                 {variant.type === 'query' ? (
                     <AdvancedQueryFilter
                         enabled
+                        isRequired
                         lapisUrl={lapisUrl}
                         value={variant.countQuery}
                         allowedFields={lineageFields.length > 0 ? lineageFields : undefined}
                         onInput={(newValue, isValid) => {
-                            // An empty advanced query is not a usable variant definition, so treat it as invalid.
-                            const isNonEmptyAndValid = isValid && newValue !== undefined && newValue !== '';
-                            onValidityChange(index, isNonEmptyAndValid);
+                            onValidityChange(index, isValid);
                             onChange(index, { ...variant, countQuery: newValue ?? '' });
                         }}
                         errorTooltipClass='tooltip-top'
