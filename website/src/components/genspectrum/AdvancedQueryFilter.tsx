@@ -10,10 +10,7 @@ const logger = getClientLogger('AdvancedQueryFilter');
 const DEBOUNCE_MS = 500;
 
 type ValidationState =
-    | { type: 'idle' }
-    | { type: 'validating' }
-    | { type: 'valid' }
-    | { type: 'error'; message: string };
+    { type: 'idle' } | { type: 'validating' } | { type: 'valid' } | { type: 'error'; message: string };
 
 type AdvancedQueryFilterProps = {
     value?: string;
