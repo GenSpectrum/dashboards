@@ -195,14 +195,14 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 setSearchFromString(
                     search,
                     'collectionId',
-                    analysis.collectionId ? String(analysis.collectionId) : undefined,
+                    analysis.collectionId !== undefined ? String(analysis.collectionId) : undefined,
                 );
                 break;
             case 'collection':
                 setSearchFromString(
                     search,
                     'collectionId',
-                    analysis.collectionId ? String(analysis.collectionId) : undefined,
+                    analysis.collectionId !== undefined ? String(analysis.collectionId) : undefined,
                 );
                 break;
         }
