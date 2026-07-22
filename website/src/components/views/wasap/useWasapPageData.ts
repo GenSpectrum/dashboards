@@ -359,10 +359,14 @@ async function parseAndBuildQueries(
     lapisBaseUrl: string,
     variantData: VariantQueryInput[],
 ): Promise<{ queries: CountCoverageQuery[]; invalidVariants: InvalidVariantInfo[] }> {
-    const parseResults = await parseQuery(lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
-
     const queries: CountCoverageQuery[] = [];
     const invalidVariants: InvalidVariantInfo[] = [];
+
+    if (variantData.length === 0) {
+        return { queries, invalidVariants };
+    }
+
+    const parseResults = await parseQuery(lapisBaseUrl, { queries: variantData.map((vd) => vd.queryString) });
 
     variantData.forEach(({ name, queryString, description }, index) => {
         const parseResult = parseResults[index];
