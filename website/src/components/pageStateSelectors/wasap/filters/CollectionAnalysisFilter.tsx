@@ -36,6 +36,8 @@ export function CollectionAnalysisFilter({
                 <div className='text-sm text-gray-500'>Loading collections...</div>
             ) : isError ? (
                 <div className='text-error text-sm'>Error loading collections</div>
+            ) : collections.length === 0 ? (
+                <div className='text-sm text-gray-500'>No collections available</div>
             ) : (
                 <select
                     className='select select-bordered'
