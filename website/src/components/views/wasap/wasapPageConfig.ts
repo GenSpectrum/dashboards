@@ -1,5 +1,7 @@
 import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
+import type { Organism } from '../../../types/Organism.ts';
+
 export const SEQUENCE_TYPE = {
     nucleotide: 'nucleotide',
     aminoAcid: 'amino acid',
@@ -17,7 +19,7 @@ export type WasapPageConfigBase = {
     /**
      * The internal identifier of the organism, i.e. 'covid'. Used as a key in maps and API parameters.
      */
-    internalName: string;
+    internalName: Organism;
 
     /**
      * The name of the organism, i.e. 'Sars-CoV-2'

@@ -27,7 +27,7 @@ const DUMMY_COV_SPECTRUM_URL = 'http://cov-spectrum.dummy/api/v2';
 
 // these fields have no effect on data fetching, but need to be present to have a correct type.
 const unusedBaseConfigFields = {
-    internalName: '',
+    internalName: 'covid' as const,
     name: '',
     path: '',
     description: '',

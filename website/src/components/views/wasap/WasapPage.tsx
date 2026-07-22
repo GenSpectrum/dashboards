@@ -13,7 +13,6 @@ import { withQueryProvider } from '../../../backendApi/withQueryProvider';
 import { getClientLogger } from '../../../clientLogger';
 import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
 import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
-import { type Organism } from '../../../types/Organism.ts';
 import { dataOrigins } from '../../../types/dataOrigins.ts';
 import { Page } from '../../../types/pages.ts';
 import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
@@ -196,10 +195,7 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                         collectionUrl={
                                             analysis.mode === 'covSpectrumCollection'
                                                 ? `https://cov-spectrum.org/collections/${data.collection.id}`
-                                                : Page.viewCollection(
-                                                      config.internalName as Organism,
-                                                      String(data.collection.id),
-                                                  )
+                                                : Page.viewCollection(config.internalName, String(data.collection.id))
                                         }
                                         invalidVariants={data.invalidVariants}
                                     />
