@@ -5,15 +5,13 @@ import { getBackendServiceForClientside } from '../../../../backendApi/backendSe
 import type { WasapCollectionFilter } from '../../../views/wasap/wasapPageConfig';
 import { LabeledField } from '../utils/LabeledField';
 
-export function CollectionAnalysisFilter({
-    pageState,
-    setPageState,
-    organism,
-}: {
+type CollectionAnalysisFilterProps = {
     pageState: WasapCollectionFilter;
     setPageState: (newState: WasapCollectionFilter) => void;
     organism: string;
-}) {
+};
+
+export function CollectionAnalysisFilter({ pageState, setPageState, organism }: CollectionAnalysisFilterProps) {
     const {
         data: collections,
         isPending,
