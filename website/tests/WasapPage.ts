@@ -34,6 +34,18 @@ export class WasapPage {
         await this.analysisModeSelect.selectOption({ label: mode });
     }
 
+    public collectionSelect(collectionName: string) {
+        return this.page.locator('select').filter({ has: this.page.locator('option', { hasText: collectionName }) });
+    }
+
+    public async selectCollection(collectionName: string, collectionId: number) {
+        await this.collectionSelect(collectionName).selectOption(String(collectionId));
+    }
+
+    public get collectionOverTimeHeading() {
+        return this.page.getByRole('heading', { name: /Collection over time/ });
+    }
+
     public async selectGranularity(granularity: 'Day' | 'Week') {
         await this.page.getByText(granularity, { exact: true }).click();
     }

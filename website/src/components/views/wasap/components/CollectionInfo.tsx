@@ -3,6 +3,8 @@ import type { FC } from 'react';
 export type CollectionInfoProps = {
     collectionId: number;
     collectionTitle: string;
+    sourceLabel: string;
+    collectionUrl?: string;
     invalidVariants?: {
         name: string;
         error: string;
@@ -12,21 +14,26 @@ export type CollectionInfoProps = {
 /**
  * Info component that displays collection metadata and any invalid variants.
  */
-export const CollectionInfo: FC<CollectionInfoProps> = ({ collectionId, collectionTitle, invalidVariants }) => {
+export const CollectionInfo: FC<CollectionInfoProps> = ({
+    collectionId,
+    collectionTitle,
+    sourceLabel,
+    collectionUrl,
+    invalidVariants,
+}) => {
     return (
         <div className='flex min-w-[180px] flex-col gap-4 rounded-md border-2 border-gray-100 sm:flex-row'>
             {/* Collection Link Stat */}
             <div className='stat content-start'>
-                <div className='stat-title'>CoV-Spectrum collection</div>
+                <div className='stat-title'>{sourceLabel}</div>
                 <div className='stat-value text-base'>
-                    <a
-                        href={`https://cov-spectrum.org/collections/${collectionId}`}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='link'
-                    >
-                        {collectionTitle}
-                    </a>
+                    {collectionUrl ? (
+                        <a href={collectionUrl} target='_blank' rel='noopener noreferrer' className='link'>
+                            {collectionTitle}
+                        </a>
+                    ) : (
+                        <span>{collectionTitle}</span>
+                    )}
                 </div>
                 <div className='stat-desc text-wrap'>Collection #{collectionId}</div>
             </div>

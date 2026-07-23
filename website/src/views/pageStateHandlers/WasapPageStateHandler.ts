@@ -70,9 +70,10 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     timeFrame:
                         (texts.timeFrame as VariantTimeFrame | undefined) ??
                         this.config.filterDefaults.variant.timeFrame,
-                    collectionId: texts.collectionId
-                        ? Number(texts.collectionId)
-                        : this.config.filterDefaults.variant.collectionId,
+                    collectionId:
+                        texts.collectionId !== undefined
+                            ? Number(texts.collectionId)
+                            : this.config.filterDefaults.variant.collectionId,
                     newMutationsOnly: texts.newMutationsOnly === 'true',
                     includeSublineagesForJaccard:
                         texts.includeSublineagesForJaccard !== undefined
@@ -110,7 +111,16 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 }
                 analysis = {
                     mode,
-                    collectionId: texts.collectionId ? Number(texts.collectionId) : undefined,
+                    collectionId: texts.collectionId !== undefined ? Number(texts.collectionId) : undefined,
+                };
+                break;
+            case 'collection':
+                if (!this.config.collectionAnalysisModeEnabled) {
+                    throw Error("The 'collection' analysis mode is not enabled.");
+                }
+                analysis = {
+                    mode,
+                    collectionId: texts.collectionId !== undefined ? Number(texts.collectionId) : undefined,
                 };
                 break;
         }
@@ -153,7 +163,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                     setSearchFromString(
                         search,
                         'collectionId',
-                        analysis.collectionId ? String(analysis.collectionId) : undefined,
+                        analysis.collectionId !== undefined ? String(analysis.collectionId) : undefined,
                     );
                     if (analysis.newMutationsOnly) {
                         setSearchFromString(search, 'newMutationsOnly', 'true');
@@ -185,7 +195,14 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 setSearchFromString(
                     search,
                     'collectionId',
-                    analysis.collectionId ? String(analysis.collectionId) : undefined,
+                    analysis.collectionId !== undefined ? String(analysis.collectionId) : undefined,
+                );
+                break;
+            case 'collection':
+                setSearchFromString(
+                    search,
+                    'collectionId',
+                    analysis.collectionId !== undefined ? String(analysis.collectionId) : undefined,
                 );
                 break;
         }

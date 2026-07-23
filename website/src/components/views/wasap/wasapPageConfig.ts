@@ -1,5 +1,7 @@
 import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
+import type { Organism } from '../../../types/Organism.ts';
+
 export const SEQUENCE_TYPE = {
     nucleotide: 'nucleotide',
     aminoAcid: 'amino acid',
@@ -17,7 +19,7 @@ export type WasapPageConfigBase = {
     /**
      * The internal identifier of the organism, i.e. 'covid'. Used as a key in maps and API parameters.
      */
-    internalName: string;
+    internalName: Organism;
 
     /**
      * The name of the organism, i.e. 'Sars-CoV-2'
@@ -61,7 +63,8 @@ type AnalysisModeConfigs = ManualAnalysisModeConfig &
     VariantAnalysisModeConfig &
     ResistanceAnalysisModeConfig &
     UntrackedAnalyisModeConfig &
-    CovSpectrumCollectionAnalysisModeConfig;
+    CovSpectrumCollectionAnalysisModeConfig &
+    CollectionAnalysisModeConfig;
 
 type ManualAnalysisModeConfig =
     | {
@@ -137,6 +140,17 @@ type CovSpectrumCollectionAnalysisModeConfig =
           };
       };
 
+type CollectionAnalysisModeConfig =
+    | {
+          collectionAnalysisModeEnabled?: never;
+      }
+    | {
+          collectionAnalysisModeEnabled: true;
+          filterDefaults: {
+              collection: WasapCollectionFilter;
+          };
+      };
+
 /**
  * Convenience function to get the list of enabled modes.
  */
@@ -153,6 +167,9 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     }
     if (config.untrackedAnalysisModeEnabled) {
         result.push('untracked');
+    }
+    if (config.collectionAnalysisModeEnabled) {
+        result.push('collection');
     }
     if (config.covSpectrumCollectionAnalysisModeEnabled) {
         result.push('covSpectrumCollection');
@@ -175,6 +192,7 @@ export const WASAP_ANALYSIS_MODE = {
     resistance: 'resistance',
     untracked: 'untracked',
     covSpectrumCollection: 'covSpectrumCollection',
+    collection: 'collection',
 } as const;
 
 export type WasapAnalysisMode = (typeof WASAP_ANALYSIS_MODE)[keyof typeof WASAP_ANALYSIS_MODE];
@@ -270,12 +288,18 @@ export type WasapCovSpectrumCollectionFilter = {
     collectionId?: number;
 };
 
+export type WasapCollectionFilter = {
+    mode: 'collection';
+    collectionId?: number;
+};
+
 export type WasapAnalysisFilter =
     | WasapManualFilter
     | WasapVariantFilter
     | WasapResistanceFilter
     | WasapUntrackedFilter
-    | WasapCovSpectrumCollectionFilter;
+    | WasapCovSpectrumCollectionFilter
+    | WasapCollectionFilter;
 
 export type WasapFilter = {
     base: WasapBaseFilter;
