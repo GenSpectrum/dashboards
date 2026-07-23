@@ -1,5 +1,12 @@
 import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
+import type { Organism } from '../../../types/Organism.ts';
+
+export const SEQUENCE_TYPE = {
+    nucleotide: 'nucleotide',
+    aminoAcid: 'amino acid',
+} as const satisfies Record<string, SequenceType>;
+
 /**
  * All config settings for a W-ASAP dashboard page.
  */
@@ -12,7 +19,7 @@ export type WasapPageConfigBase = {
     /**
      * The internal identifier of the organism, i.e. 'covid'. Used as a key in maps and API parameters.
      */
-    internalName: string;
+    internalName: Organism;
 
     /**
      * The name of the organism, i.e. 'Sars-CoV-2'
@@ -56,7 +63,8 @@ type AnalysisModeConfigs = ManualAnalysisModeConfig &
     VariantAnalysisModeConfig &
     ResistanceAnalysisModeConfig &
     UntrackedAnalyisModeConfig &
-    CovSpectrumCollectionAnalysisModeConfig;
+    CovSpectrumCollectionAnalysisModeConfig &
+    CollectionAnalysisModeConfig;
 
 type ManualAnalysisModeConfig =
     | {
@@ -132,6 +140,17 @@ type CovSpectrumCollectionAnalysisModeConfig =
           };
       };
 
+type CollectionAnalysisModeConfig =
+    | {
+          collectionAnalysisModeEnabled?: never;
+      }
+    | {
+          collectionAnalysisModeEnabled: true;
+          filterDefaults: {
+              collection: WasapCollectionFilter;
+          };
+      };
+
 /**
  * Convenience function to get the list of enabled modes.
  */
@@ -149,6 +168,9 @@ export function enabledAnalysisModes(config: WasapPageConfig): WasapAnalysisMode
     if (config.untrackedAnalysisModeEnabled) {
         result.push('untracked');
     }
+    if (config.collectionAnalysisModeEnabled) {
+        result.push('collection');
+    }
     if (config.covSpectrumCollectionAnalysisModeEnabled) {
         result.push('covSpectrumCollection');
     }
@@ -164,7 +186,16 @@ export type LinkTemplate = {
     aminoAcidMutation: string;
 };
 
-export type WasapAnalysisMode = 'manual' | 'variant' | 'resistance' | 'untracked' | 'covSpectrumCollection';
+export const WASAP_ANALYSIS_MODE = {
+    manual: 'manual',
+    variant: 'variant',
+    resistance: 'resistance',
+    untracked: 'untracked',
+    covSpectrumCollection: 'covSpectrumCollection',
+    collection: 'collection',
+} as const;
+
+export type WasapAnalysisMode = (typeof WASAP_ANALYSIS_MODE)[keyof typeof WASAP_ANALYSIS_MODE];
 
 /**
  * Contains mode-independent settings, like the filter for location and date range.
@@ -205,11 +236,16 @@ export function variantTimeFrameLabel(timeFrame: VariantTimeFrame): string {
     }
 }
 
+export const SIGNATURE_TYPE = {
+    computed: 'computed',
+    predefined: 'predefined',
+} as const;
+
 /**
  * The type of variant mutation signature. `predefined` is a pre-defined list pulled from online,
  * `computed` computes the list of signature mutations for a variant based on user parameters.
  */
-export type SignatureType = 'computed' | 'predefined';
+export type SignatureType = (typeof SIGNATURE_TYPE)[keyof typeof SIGNATURE_TYPE];
 
 export type WasapVariantFilter = {
     mode: 'variant';
@@ -233,7 +269,12 @@ export type WasapResistanceFilter = {
     resistanceSet: string;
 };
 
-export type ExcludeSetName = 'predefined' | 'custom';
+export const EXCLUDE_SET_NAME = {
+    predefined: 'predefined',
+    custom: 'custom',
+} as const;
+
+export type ExcludeSetName = (typeof EXCLUDE_SET_NAME)[keyof typeof EXCLUDE_SET_NAME];
 
 export type WasapUntrackedFilter = {
     mode: 'untracked';
@@ -247,12 +288,18 @@ export type WasapCovSpectrumCollectionFilter = {
     collectionId?: number;
 };
 
+export type WasapCollectionFilter = {
+    mode: 'collection';
+    collectionId?: number;
+};
+
 export type WasapAnalysisFilter =
     | WasapManualFilter
     | WasapVariantFilter
     | WasapResistanceFilter
     | WasapUntrackedFilter
-    | WasapCovSpectrumCollectionFilter;
+    | WasapCovSpectrumCollectionFilter
+    | WasapCollectionFilter;
 
 export type WasapFilter = {
     base: WasapBaseFilter;

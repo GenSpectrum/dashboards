@@ -43,6 +43,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             resistanceAnalysisModeEnabled: true,
             untrackedAnalysisModeEnabled: true,
             covSpectrumCollectionAnalysisModeEnabled: true,
+            collectionAnalysisModeEnabled: true,
             defaultAnalysisMode: 'resistance',
             resistanceMutationCollections: [
                 {
@@ -118,6 +119,10 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     mode: 'covSpectrumCollection',
                     collectionId: 1,
                 },
+                collection: {
+                    mode: 'collection',
+                    collectionId: undefined,
+                },
             },
         },
         [wastewaterOrganisms.rsvA]: {
@@ -134,6 +139,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             manualAnalysisModeEnabled: true,
             variantAnalysisModeEnabled: true,
             resistanceAnalysisModeEnabled: true,
+            collectionAnalysisModeEnabled: true,
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsva',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
@@ -189,6 +195,10 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     sequenceType: 'amino acid',
                     resistanceSet: 'Nirsevimab',
                 },
+                collection: {
+                    mode: 'collection',
+                    collectionId: undefined,
+                },
             },
         },
         [wastewaterOrganisms.rsvB]: {
@@ -205,6 +215,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             manualAnalysisModeEnabled: true,
             variantAnalysisModeEnabled: true,
             resistanceAnalysisModeEnabled: true,
+            collectionAnalysisModeEnabled: true,
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/rsvb',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
@@ -259,6 +270,10 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
                     mode: 'resistance',
                     sequenceType: 'amino acid',
                     resistanceSet: 'Nirsevimab',
+                },
+                collection: {
+                    mode: 'collection',
+                    collectionId: undefined,
                 },
             },
         },

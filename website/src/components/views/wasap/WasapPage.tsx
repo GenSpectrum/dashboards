@@ -1,18 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { type FC } from 'react';
 
-import { withQueryProvider } from '../../../backendApi/withQueryProvider';
-import { getClientLogger } from '../../../clientLogger';
-import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
-import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
-import { dataOrigins } from '../../../types/dataOrigins.ts';
-import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
-import { Loading } from '../../../util/Loading';
-import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
-import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
-import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
-import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
-import { usePageState } from '../usePageState.ts';
 import { ClinicalSequenceCountStat } from './components/ClinicalSequenceCountStat';
 import { CollectionInfo } from './components/CollectionInfo';
 import { NoDataHelperText } from './components/NoDataHelperText';
@@ -21,6 +9,19 @@ import { getInitialMeanProportionInterval } from './initialMeanProportionInterva
 import type { ResistanceData } from './resistanceData';
 import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
+import { withQueryProvider } from '../../../backendApi/withQueryProvider';
+import { getClientLogger } from '../../../clientLogger';
+import { defaultBreadcrumbs } from '../../../layouts/Breadcrumbs.tsx';
+import { DataPageLayout } from '../../../layouts/OrganismPage/DataPageLayout.tsx';
+import { dataOrigins } from '../../../types/dataOrigins.ts';
+import { Page } from '../../../types/pages.ts';
+import { wastewaterBreadcrumb } from '../../../types/wastewaterConfig';
+import { Loading } from '../../../util/Loading';
+import { WasapPageStateHandler } from '../../../views/pageStateHandlers/WasapPageStateHandler';
+import { GsMutationsOverTime } from '../../genspectrum/GsMutationsOverTime';
+import { GsQueriesOverTime } from '../../genspectrum/GsQueriesOverTime.tsx';
+import { WasapPageStateSelector } from '../../pageStateSelectors/wasap/WasapPageStateSelector';
+import { usePageState } from '../usePageState.ts';
 
 const logger = getClientLogger('WasapPage');
 
@@ -93,6 +94,12 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                 <h1 className='text-lg font-semibold'>No variant selected</h1>
                                 <p className='text-sm'>Please select a variant from the filter panel.</p>
                             </div>
+                        ) : (analysis.mode === 'collection' || analysis.mode === 'covSpectrumCollection') &&
+                          analysis.collectionId === undefined ? (
+                            <div className='rounded-md border-2 border-gray-100 p-4'>
+                                <h1 className='text-lg font-semibold'>No collection selected</h1>
+                                <p className='text-sm'>Please select a collection from the filter panel.</p>
+                            </div>
                         ) : (
                             <span>There was an error fetching the data to display.</span>
                         )
@@ -155,6 +162,14 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                             />
                                         )}
                                 </>
+                            ) : data.collection.queries.length === 0 ? (
+                                <div className='rounded-md border-2 border-gray-100 p-4'>
+                                    <h1 className='text-lg font-semibold'>No valid variants</h1>
+                                    <p className='text-sm'>
+                                        This collection has no valid variants to display. Check the collection
+                                        configuration for errors.
+                                    </p>
+                                </div>
                             ) : (
                                 <>
                                     <div className='rounded-md border-2 border-gray-100 p-4'>
@@ -172,6 +187,16 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
                                     <CollectionInfo
                                         collectionId={data.collection.id}
                                         collectionTitle={data.collection.title}
+                                        sourceLabel={
+                                            analysis.mode === 'covSpectrumCollection'
+                                                ? 'CoV-Spectrum collection'
+                                                : 'GenSpectrum collection'
+                                        }
+                                        collectionUrl={
+                                            analysis.mode === 'covSpectrumCollection'
+                                                ? `https://cov-spectrum.org/collections/${data.collection.id}`
+                                                : Page.viewCollection(config.internalName, String(data.collection.id))
+                                        }
                                         invalidVariants={data.invalidVariants}
                                     />
                                 </>
