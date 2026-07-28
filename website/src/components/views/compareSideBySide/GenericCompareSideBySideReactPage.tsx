@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import { type FC, useMemo, useState, useEffect } from 'react';
 
 import { GenericCompareSideBySideDataDisplay } from './GenericCompareSideBySideDataDisplay.tsx';
@@ -15,6 +16,7 @@ export type GenericCompareSideBySideReactPageProps = {
     hideMutationComponents?: boolean;
     organismsConfig: OrganismsConfig;
     isStaging: boolean;
+    mutationAnnotations?: MutationAnnotations;
 };
 
 export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReactPageProps> = ({
@@ -22,6 +24,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
     hideMutationComponents,
     organismsConfig,
     isStaging,
+    mutationAnnotations,
 }) => {
     const organismViewKey = `${organism}.${compareSideBySideViewKey}` satisfies OrganismViewKey;
 
@@ -45,6 +48,7 @@ export const GenericCompareSideBySideReactPage: FC<GenericCompareSideBySideReact
             lapisUrl={organismsConfig[organism].lapis.url}
             view={view}
             downloadLinks={downloadLinks}
+            mutationAnnotations={mutationAnnotations}
         >
             <div className='flex'>
                 <div className='flex flex-1 flex-col'>

@@ -1,7 +1,15 @@
 ---
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
+
 import { GenericCompareVariantsReactPage } from './GenericCompareVariantsReactPage';
-import { isStaging, getDashboardsConfig } from '../../../config';
+import { BackendService } from '../../../backendApi/backendService.ts';
+import { isStaging, getDashboardsConfig, getBackendHost } from '../../../config';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { getInstanceLogger } from '../../../logger.ts';
+import { getDbIdSpace } from '../../../types/dbIdSpace';
+import { getErrorLogMessage } from '../../../util/getErrorLogMessage';
+import { fetchMutationAnnotationsFromCollections } from '../../../util/resistanceMutations';
+import type { OrganismConstants } from '../../../views/OrganismConstants';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareVariantsViewKey } from '../../../views/viewKeys';
@@ -13,6 +21,23 @@ interface Props {
 const { organism } = Astro.props;
 
 const view = ServerSide.routing.getOrganismView(`${organism}.${compareVariantsViewKey}`);
+
+let mutationAnnotations: MutationAnnotations | undefined;
+const constants: OrganismConstants = view.organismConstants;
+const buildCollections = constants.buildResistanceMutationCollections;
+if (buildCollections) {
+    try {
+        const backendService = new BackendService(getBackendHost());
+        mutationAnnotations = await fetchMutationAnnotationsFromCollections(
+            buildCollections(getDbIdSpace()),
+            backendService,
+        );
+    } catch (error) {
+        getInstanceLogger('GenericCompareVariantsPage').error(
+            `Failed to fetch resistance mutation annotations for ${organism}: ${getErrorLogMessage(error)}`,
+        );
+    }
+}
 ---
 
 <BaseLayout title={view.viewTitle}>
@@ -20,6 +45,7 @@ const view = ServerSide.routing.getOrganismView(`${organism}.${compareVariantsVi
         organism={organism}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         isStaging={isStaging()}
+        mutationAnnotations={mutationAnnotations}
         client:only='react'
     />
 </BaseLayout>
