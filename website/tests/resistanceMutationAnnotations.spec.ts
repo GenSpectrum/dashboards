@@ -16,14 +16,12 @@ test.describe('Resistance mutation annotations on regular dashboards', () => {
         await singleVariantPage.selectVariant(options);
         await singleVariantPage.submitFilters();
 
-        await singleVariantPage.page
-            .getByRole('button', { name: /filter mutations/i })
-            .first()
-            .click();
+        const panel = singleVariantPage.page.locator('gs-mutations-over-time').first();
+        await panel.getByRole('button', { name: /filter mutations/i }).click();
 
-        await expect(singleVariantPage.page.getByText('3CLpro')).toBeVisible();
-        await expect(singleVariantPage.page.getByText('RdRp')).toBeVisible();
-        await expect(singleVariantPage.page.getByText('Spike')).toBeVisible();
+        await expect(panel.getByText('3CLpro')).toBeVisible();
+        await expect(panel.getByText('RdRp')).toBeVisible();
+        await expect(panel.getByText('Spike')).toBeVisible();
     });
 
     test('RSV-A single-variant page shows resistance mutation sets in the filter mutations panel', async ({
@@ -35,13 +33,11 @@ test.describe('Resistance mutation annotations on regular dashboards', () => {
         await singleVariantPage.selectVariant(options);
         await singleVariantPage.submitFilters();
 
-        await singleVariantPage.page
-            .getByRole('button', { name: /filter mutations/i })
-            .first()
-            .click();
+        const panel = singleVariantPage.page.locator('gs-mutations-over-time').first();
+        await panel.getByRole('button', { name: /filter mutations/i }).click();
 
-        await expect(singleVariantPage.page.getByText('Nirsevimab')).toBeVisible();
-        await expect(singleVariantPage.page.getByText('Palivizumab')).toBeVisible();
+        await expect(panel.getByText('Nirsevimab')).toBeVisible();
+        await expect(panel.getByText('Palivizumab')).toBeVisible();
     });
 
     test('RSV-B single-variant page shows resistance mutation sets in the filter mutations panel', async ({
@@ -53,12 +49,10 @@ test.describe('Resistance mutation annotations on regular dashboards', () => {
         await singleVariantPage.selectVariant(options);
         await singleVariantPage.submitFilters();
 
-        await singleVariantPage.page
-            .getByRole('button', { name: /filter mutations/i })
-            .first()
-            .click();
+        const panel = singleVariantPage.page.locator('gs-mutations-over-time').first();
+        await panel.getByRole('button', { name: /filter mutations/i }).click();
 
-        await expect(singleVariantPage.page.getByText('Nirsevimab')).toBeVisible();
-        await expect(singleVariantPage.page.getByText('Palivizumab')).toBeVisible();
+        await expect(panel.getByText('Nirsevimab')).toBeVisible();
+        await expect(panel.getByText('Palivizumab')).toBeVisible();
     });
 });
