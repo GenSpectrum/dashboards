@@ -306,5 +306,3 @@ export type WasapFilter = {
     base: WasapBaseFilter;
     analysis: WasapAnalysisFilter;
 };
-
-export type { ResistanceMutationCollectionConfig } from '../../../util/resistanceMutations';
