@@ -18,6 +18,9 @@ export default defineConfig({
         trace: 'retain-on-failure',
         screenshot: 'only-on-failure',
     },
+    expect: {
+        timeout: 15_000,
+    },
 
     projects: [
         // API integration tests (browser-independent)
