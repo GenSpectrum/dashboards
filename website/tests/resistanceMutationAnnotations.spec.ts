@@ -16,7 +16,10 @@ test.describe('Resistance mutation annotations on regular dashboards', () => {
         await singleVariantPage.selectVariant(options);
         await singleVariantPage.submitFilters();
 
-        await singleVariantPage.page.getByRole('button', { name: /filter mutations/i }).click();
+        await singleVariantPage.page
+            .getByRole('button', { name: /filter mutations/i })
+            .first()
+            .click();
 
         await expect(singleVariantPage.page.getByText('3CLpro')).toBeVisible();
         await expect(singleVariantPage.page.getByText('RdRp')).toBeVisible();
@@ -32,7 +35,10 @@ test.describe('Resistance mutation annotations on regular dashboards', () => {
         await singleVariantPage.selectVariant(options);
         await singleVariantPage.submitFilters();
 
-        await singleVariantPage.page.getByRole('button', { name: /filter mutations/i }).click();
+        await singleVariantPage.page
+            .getByRole('button', { name: /filter mutations/i })
+            .first()
+            .click();
 
         await expect(singleVariantPage.page.getByText('Nirsevimab')).toBeVisible();
         await expect(singleVariantPage.page.getByText('Palivizumab')).toBeVisible();
@@ -47,7 +53,10 @@ test.describe('Resistance mutation annotations on regular dashboards', () => {
         await singleVariantPage.selectVariant(options);
         await singleVariantPage.submitFilters();
 
-        await singleVariantPage.page.getByRole('button', { name: /filter mutations/i }).click();
+        await singleVariantPage.page
+            .getByRole('button', { name: /filter mutations/i })
+            .first()
+            .click();
 
         await expect(singleVariantPage.page.getByText('Nirsevimab')).toBeVisible();
         await expect(singleVariantPage.page.getByText('Palivizumab')).toBeVisible();
