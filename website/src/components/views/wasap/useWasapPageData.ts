@@ -24,6 +24,13 @@ import { getLineageFields } from '../../../types/Collection';
 import type { FilterObject, Variant } from '../../../types/Collection';
 import { validateGenomeOnly } from '../../../util/siloExpressionUtils';
 
+export class WasapValidationError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'WasapValidationError';
+    }
+}
+
 /**
  * Hook that fetches and returns `WasapPageData` for the W-ASAP page,
  * depending on the analysis mode and analysis mode settings.
@@ -38,6 +45,7 @@ export function useWasapPageData(
     return useQuery({
         queryKey: ['wasap', analysis, resistanceMutationsBySet],
         queryFn: () => fetchWasapPageData(config, resistanceMutationsBySet, analysis),
+        retry: (_, error) => !(error instanceof WasapValidationError),
     });
 }
 
@@ -64,7 +72,7 @@ export async function fetchWasapPageData(
 
 function fetchManualModeData(config: WasapPageConfig, analysis: WasapManualFilter): WasapMutationsData {
     if (!config.manualAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'manual' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'manual' mode is not enabled.");
     }
     return {
         type: 'mutations',
@@ -77,7 +85,7 @@ async function fetchVariantModeData(
     analysis: WasapVariantFilter,
 ): Promise<WasapMutationsData> {
     if (!config.variantAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'variant' mode is not enabled.");
     }
     switch (analysis.signatureType) {
         case 'computed':
@@ -92,7 +100,7 @@ async function fetchVariantComputedModeData(
     analysis: WasapVariantFilter,
 ): Promise<WasapMutationsData> {
     if (!config.variantAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'variant' mode is not enabled.");
     }
     const mutationsWithScore = await getMutationsForVariant(
         config.clinicalLapis.lapisBaseUrl,
@@ -124,10 +132,10 @@ async function fetchVariantPredefinedModeData(
     analysis: WasapVariantFilter,
 ): Promise<WasapMutationsData> {
     if (!config.variantAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'variant' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'variant' mode is not enabled.");
     }
     if (analysis.collectionId === undefined) {
-        throw new Error('No collection selected for predefined variant mode.');
+        throw new WasapValidationError('No collection selected for predefined variant mode.');
     }
     const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
 
@@ -141,10 +149,12 @@ async function fetchVariantPredefinedModeData(
 
     const variant = collection.variants.find((v) => v.name === variantName);
     if (!variant) {
-        throw new Error(`Variant "${variantName}" not found in collection ${collection.id}.`);
+        throw new WasapValidationError(`Variant "${variantName}" not found in collection ${collection.id}.`);
     }
     if (variant.type !== 'filterObject') {
-        throw new Error(`Variant "${variantName}" in collection ${collection.id} is not a filterObject variant.`);
+        throw new WasapValidationError(
+            `Variant "${variantName}" in collection ${collection.id} is not a filterObject variant.`,
+        );
     }
 
     const mutations =
@@ -199,7 +209,7 @@ async function fetchUntrackedModeData(
     analysis: WasapUntrackedFilter,
 ): Promise<WasapMutationsData> {
     if (!config.untrackedAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'untracked' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'untracked' mode is not enabled.");
     }
     const variantsToExclude =
         analysis.excludeSet === 'custom'
@@ -240,10 +250,10 @@ async function fetchCovSpectrumCollectionModeData(
     analysis: WasapCovSpectrumCollectionFilter,
 ): Promise<WasapCollectionData> {
     if (!config.covSpectrumCollectionAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'covSpectrumCollection' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'covSpectrumCollection' mode is not enabled.");
     }
     if (analysis.collectionId === undefined) {
-        throw Error('No collection selected');
+        throw new WasapValidationError('No collection selected');
     }
     const collection = await getCollection(config.collectionsApiBaseUrl, analysis.collectionId);
 
@@ -270,10 +280,10 @@ async function fetchCollectionModeData(
     analysis: WasapCollectionFilter,
 ): Promise<WasapCollectionData> {
     if (!config.collectionAnalysisModeEnabled) {
-        throw Error("Cannot fetch data, 'collection' mode is not enabled.");
+        throw new WasapValidationError("Cannot fetch data, 'collection' mode is not enabled.");
     }
     if (analysis.collectionId === undefined) {
-        throw Error('No collection selected');
+        throw new WasapValidationError('No collection selected');
     }
     const collection = await getBackendServiceForClientside().getCollection({ id: String(analysis.collectionId) });
 
