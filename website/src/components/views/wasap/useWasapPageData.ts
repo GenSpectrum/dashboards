@@ -45,7 +45,7 @@ export function useWasapPageData(
     return useQuery({
         queryKey: ['wasap', analysis, resistanceMutationsBySet],
         queryFn: () => fetchWasapPageData(config, resistanceMutationsBySet, analysis),
-        retry: (_, error) => !(error instanceof WasapValidationError),
+        retry: (failureCount, error) => !(error instanceof WasapValidationError) && failureCount < 3,
     });
 }
 
