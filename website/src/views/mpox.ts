@@ -37,7 +37,7 @@ import { ALL_TIMES_LABEL, defaultDateRangeOption } from '../util/defaultDateRang
 
 const earliestDate = '1960-01-01';
 
-const LINEAGE_FIELD_NAME = 'lineage';
+const LINEAGE_FIELD_NAME = 'outbreakLineage';
 const CLADE_FIELD_NAME = 'clade';
 
 class MpoxConstants implements OrganismConstants {
@@ -48,7 +48,7 @@ class MpoxConstants implements OrganismConstants {
     public readonly lineageFilters: LineageFilterConfig[] = [
         {
             lapisField: LINEAGE_FIELD_NAME,
-            placeholderText: 'Lineage',
+            placeholderText: 'Outbreak & Lineage',
             filterType: 'lineage' as const,
         },
         {
@@ -88,10 +88,10 @@ class MpoxConstants implements OrganismConstants {
     public readonly accessionDownloadFields = PATHOPLEXUS_ACCESSION_DOWNLOAD_FIELDS;
     public readonly predefinedVariants = [
         {
-            lineages: { [LINEAGE_FIELD_NAME]: 'F.1' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'sh2017/F.1' },
         },
         {
-            lineages: { [LINEAGE_FIELD_NAME]: 'F.2' },
+            lineages: { [LINEAGE_FIELD_NAME]: 'sh2017/F.2' },
         },
         {
             lineages: { [CLADE_FIELD_NAME]: 'Ia' },
@@ -102,7 +102,7 @@ class MpoxConstants implements OrganismConstants {
     public get aggregatedVisualizations() {
         return getPathoplexusSequencingEffortsAggregatedVisualizations(this, {
             sublineages: {
-                label: 'Sub-Lineages',
+                label: 'Outbreak & Lineage',
                 fields: [LINEAGE_FIELD_NAME, CLADE_FIELD_NAME],
             },
         });
@@ -142,12 +142,12 @@ export class MpoxCompareSideBySideView extends BaseView<
         const defaultPageState = makeCompareSideBySideData(defaultDatasetFilter, [
             {
                 lineages: {
-                    [LINEAGE_FIELD_NAME]: 'F.1',
+                    [LINEAGE_FIELD_NAME]: 'sh2017/F.1',
                 },
             },
             {
                 lineages: {
-                    [LINEAGE_FIELD_NAME]: 'F.2',
+                    [LINEAGE_FIELD_NAME]: 'sh2017/F.2',
                 },
             },
         ]);

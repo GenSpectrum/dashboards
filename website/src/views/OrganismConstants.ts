@@ -15,6 +15,8 @@ import type { BaselineFilterConfig } from '../components/pageStateSelectors/Base
 import type { LineageFilterConfig } from '../components/pageStateSelectors/LineageFilterInput.tsx';
 import type { Organism } from '../types/Organism.ts';
 import type { DataOrigin } from '../types/dataOrigins.ts';
+import type { DbIdSpace } from '../types/dbIdSpace.ts';
+import type { ResistanceMutationCollectionConfig } from '../util/resistanceMutations.ts';
 
 type AggregatedVisualizations = {
     sequencingEfforts: GsAggregatedConfig[];
@@ -36,6 +38,7 @@ export interface OrganismConstants {
     readonly lineageFilters: LineageFilterConfig[];
     readonly predefinedVariants?: VariantFilter[];
     readonly mutationAnnotations?: MutationAnnotation[];
+    readonly buildResistanceMutationCollections?: (env: DbIdSpace) => ResistanceMutationCollectionConfig[];
 }
 
 export const ComponentHeight = {

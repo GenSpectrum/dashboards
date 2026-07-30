@@ -3,6 +3,7 @@ import { GenericAnalyseSingleVariantReactPage } from './GenericAnalyseSingleVari
 import { isStaging, getDashboardsConfig } from '../../../config';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
 import { Organisms } from '../../../types/Organism';
+import { fetchOrganismMutationAnnotations } from '../../../util/fetchOrganismMutationAnnotations';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { singleVariantViewKey } from '../../../views/viewKeys';
@@ -14,6 +15,8 @@ interface Props {
 const { organism } = Astro.props;
 
 const view = ServerSide.routing.getOrganismView(`${organism}.${singleVariantViewKey}`);
+
+const mutationAnnotations = await fetchOrganismMutationAnnotations(view.organismConstants, organism);
 ---
 
 <BaseLayout title={view.viewTitle}>
@@ -21,6 +24,7 @@ const view = ServerSide.routing.getOrganismView(`${organism}.${singleVariantView
         organism={organism}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         isStaging={isStaging()}
+        mutationAnnotations={mutationAnnotations}
         client:only='react'
     />
 </BaseLayout>

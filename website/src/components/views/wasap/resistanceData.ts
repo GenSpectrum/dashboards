@@ -1,8 +1,9 @@
 import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 
-import type { ResistanceMutationCollectionConfig, WasapPageConfig } from './wasapPageConfig';
+import type { WasapPageConfig } from './wasapPageConfig';
 import type { BackendService } from '../../../backendApi/backendService';
 import type { Collection } from '../../../types/Collection';
+import { buildMutationAnnotations, type ResistanceMutationCollectionConfig } from '../../../util/resistanceMutations';
 
 /**
  * Data about resistance mutations, used by the wastewater dashboards.
@@ -36,33 +37,19 @@ export async function fetchResistanceData(
 }
 
 /**
- * Takes a config and already fetched collection.
+ * Takes a config and already fetched collections.
  * They need to be in the correct order; collection i belongs to config i.
  */
 export function buildResistanceData(
     setConfigs: ResistanceMutationCollectionConfig[],
     collections: Collection[],
 ): ResistanceData {
-    const mutationAnnotations: MutationAnnotations = [];
+    const mutationAnnotations = buildMutationAnnotations(setConfigs, collections);
     const displayMutationsBySet: Record<string, string[]> = {};
 
     setConfigs.forEach((setConfig, i) => {
         const filterVariants = collections[i].variants.filter((v) => v.type === 'filterObject');
-        const allMutations = filterVariants.flatMap((v) => v.filterObject.aminoAcidMutations ?? []);
-
-        displayMutationsBySet[setConfig.name] = allMutations;
-
-        mutationAnnotations.push({
-            name: setConfig.name,
-            symbol: setConfig.annotationSymbol,
-            description: setConfig.description,
-            aminoAcidMutations: filterVariants.flatMap((variant) =>
-                (variant.filterObject.aminoAcidMutations ?? []).map((mutation) => ({
-                    mutation,
-                    name: variant.name,
-                })),
-            ),
-        });
+        displayMutationsBySet[setConfig.name] = filterVariants.flatMap((v) => v.filterObject.aminoAcidMutations ?? []);
     });
 
     return { mutationAnnotations, displayMutationsBySet };

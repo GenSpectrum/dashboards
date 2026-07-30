@@ -1,4 +1,4 @@
-import { dateRangeOptionPresets, type MutationAnnotation } from '@genspectrum/dashboard-components/util';
+import { dateRangeOptionPresets } from '@genspectrum/dashboard-components/util';
 
 import {
     type CompareSideBySideData,
@@ -34,6 +34,7 @@ import { dataOrigins } from '../types/dataOrigins.ts';
 import { CompareSideBySideStateHandler } from './pageStateHandlers/CompareSideBySidePageStateHandler.ts';
 import type { BaselineFilterConfig } from '../components/pageStateSelectors/BaselineSelector.tsx';
 import { fineGrainedDefaultDateRangeOptions } from '../util/defaultDateRangeOption.ts';
+import { buildRsvBResistanceMutationCollections } from '../util/resistanceMutations';
 
 const earliestDate = '1956-01-01';
 
@@ -74,7 +75,7 @@ class RsvBConstants implements OrganismConstants {
             lineages: { [LINEAGE_FIELD_NAME]: 'B.D.4.1.1' },
         },
     ];
-    public readonly mutationAnnotations: MutationAnnotation[] = [];
+    public readonly buildResistanceMutationCollections = buildRsvBResistanceMutationCollections;
 
     public get aggregatedVisualizations() {
         return getPathoplexusSequencingEffortsAggregatedVisualizations(this, {

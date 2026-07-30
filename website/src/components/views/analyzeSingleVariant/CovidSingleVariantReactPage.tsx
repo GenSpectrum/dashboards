@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import { type FC, useMemo } from 'react';
 
 import { CollectionsList } from './CollectionsList.tsx';
@@ -15,9 +16,14 @@ import { usePageState } from '../usePageState.ts';
 export type CovidSingleVariantReactPageProps = {
     organismsConfig: OrganismsConfig;
     isStaging: boolean;
+    mutationAnnotations?: MutationAnnotations;
 };
 
-export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> = ({ organismsConfig, isStaging }) => {
+export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> = ({
+    organismsConfig,
+    isStaging,
+    mutationAnnotations,
+}) => {
     const organismViewKey: OrganismViewKey = 'covid.singleVariantView';
     const view = useMemo(() => new Routing(organismsConfig).getOrganismView(organismViewKey), [organismsConfig]);
 
@@ -49,6 +55,7 @@ export const CovidSingleVariantReactPage: FC<CovidSingleVariantReactPageProps> =
             view={view}
             downloadLinks={downloadLinks}
             organismsConfig={organismsConfig}
+            mutationAnnotations={mutationAnnotations}
             filters={
                 <>
                     <SingleVariantPageStateSelector

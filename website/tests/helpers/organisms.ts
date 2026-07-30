@@ -17,7 +17,7 @@ export const organismOptions = {
     [Organisms.westNile]: { lineage: '1A', lineageFieldPlaceholder: 'Lineage', gene: 'NS1' },
     [Organisms.rsvA]: { lineage: 'A.D.5.2', lineageFieldPlaceholder: 'Lineage', gene: 'NS1' },
     [Organisms.rsvB]: { lineage: 'B.D.E.1', lineageFieldPlaceholder: 'Lineage', gene: 'NS1' },
-    [Organisms.mpox]: { lineage: 'F.1', lineageFieldPlaceholder: 'Lineage', gene: 'OPG001' },
+    [Organisms.mpox]: { lineage: 'sh2017/F.1', lineageFieldPlaceholder: 'Outbreak & Lineage', gene: 'OPG001' },
     [Organisms.ebolaSudan]: { mutation: 'G5902T', gene: 'NP' },
     [Organisms.ebolaZaire]: { mutation: 'T18365C', gene: 'NP' },
     [Organisms.cchf]: { mutation: 'M:G3565A', gene: 'RdRp' },

@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import { type FC, useMemo } from 'react';
 
 import { GenericAnalyseSingleVariantDataDisplay } from './GenericAnalyseSingleVariantDataDisplay';
@@ -16,12 +17,14 @@ export type GenericAnalyseSingleVariantReactPageProps = {
     organism: Exclude<OrganismWithViewKey<typeof singleVariantViewKey>, typeof Organisms.covid>;
     organismsConfig: OrganismsConfig;
     isStaging: boolean;
+    mutationAnnotations?: MutationAnnotations;
 };
 
 export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVariantReactPageProps> = ({
     organism,
     organismsConfig,
     isStaging,
+    mutationAnnotations,
 }) => {
     const organismViewKey = `${organism}.${singleVariantViewKey}` satisfies OrganismViewKey;
     const view = useMemo(
@@ -57,6 +60,7 @@ export const GenericAnalyseSingleVariantReactPage: FC<GenericAnalyseSingleVarian
             view={view}
             downloadLinks={downloadLinks}
             organismsConfig={organismsConfig}
+            mutationAnnotations={mutationAnnotations}
             filters={
                 <SingleVariantPageStateSelector
                     view={view}
