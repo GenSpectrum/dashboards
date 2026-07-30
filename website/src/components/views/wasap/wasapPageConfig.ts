@@ -1,6 +1,7 @@
 import type { DateRangeOption, SequenceType, TemporalGranularity } from '@genspectrum/dashboard-components/util';
 
 import type { Organism } from '../../../types/Organism.ts';
+import type { ResistanceMutationCollectionConfig } from '../../../util/resistanceMutations';
 
 export const SEQUENCE_TYPE = {
     nucleotide: 'nucleotide',
@@ -304,14 +305,4 @@ export type WasapAnalysisFilter =
 export type WasapFilter = {
     base: WasapBaseFilter;
     analysis: WasapAnalysisFilter;
-};
-
-/**
- * Resistance mutations defined in a collection, which is specified via the collection ID.
- */
-export type ResistanceMutationCollectionConfig = {
-    collectionId: number;
-    name: string;
-    description: string;
-    annotationSymbol: string;
 };

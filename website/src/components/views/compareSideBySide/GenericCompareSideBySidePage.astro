@@ -2,6 +2,7 @@
 import { GenericCompareSideBySideReactPage } from './GenericCompareSideBySideReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { fetchOrganismMutationAnnotations } from '../../../util/fetchOrganismMutationAnnotations';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareSideBySideViewKey } from '../../../views/viewKeys';
@@ -15,6 +16,8 @@ const { organism, hideMutationComponents } = Astro.props;
 
 const view = ServerSide.routing.getOrganismView(`${organism}.${compareSideBySideViewKey}`);
 const organismsConfig = getDashboardsConfig().dashboards.organisms;
+
+const mutationAnnotations = await fetchOrganismMutationAnnotations(view.organismConstants, organism);
 ---
 
 <BaseLayout title={view.viewTitle}>
@@ -23,6 +26,7 @@ const organismsConfig = getDashboardsConfig().dashboards.organisms;
         hideMutationComponents={hideMutationComponents}
         organismsConfig={organismsConfig}
         isStaging={isStaging()}
+        mutationAnnotations={mutationAnnotations}
         client:only='react'
     />
 </BaseLayout>

@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import { type FC, useMemo } from 'react';
 
 import { GenericCompareToBaselineDataDisplay } from './GenericCompareToBaselineDataDisplay';
@@ -13,12 +14,14 @@ export type GenericCompareToBaselineReactPageProps = {
     organism: OrganismWithViewKey<typeof compareToBaselineViewKey>;
     organismsConfig: OrganismsConfig;
     isStaging: boolean;
+    mutationAnnotations?: MutationAnnotations;
 };
 
 export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReactPageProps> = ({
     organism,
     organismsConfig,
     isStaging,
+    mutationAnnotations,
 }) => {
     const organismViewKey = `${organism}.${compareToBaselineViewKey}` satisfies OrganismViewKey;
     const view = useMemo(
@@ -44,6 +47,7 @@ export const GenericCompareToBaselineReactPage: FC<GenericCompareToBaselineReact
             view={view}
             downloadLinks={downloadLinks}
             organismsConfig={organismsConfig}
+            mutationAnnotations={mutationAnnotations}
             filters={
                 <CompareVariantsToBaselineStateSelector
                     view={view}

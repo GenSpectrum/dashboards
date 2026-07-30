@@ -6,6 +6,17 @@ export const dbIdSpaces = {
 
 export type DbIdSpace = (typeof dbIdSpaces)[keyof typeof dbIdSpaces];
 
+export function byEnv<T>(env: DbIdSpace, vars: { prod: T; staging: T; local: T }): T {
+    switch (env) {
+        case dbIdSpaces.prod:
+            return vars.prod;
+        case dbIdSpaces.staging:
+            return vars.staging;
+        case dbIdSpaces.local:
+            return vars.local;
+    }
+}
+
 export function getDbIdSpace(): DbIdSpace {
     const envValue = process.env.DB_ID_SPACE ?? import.meta.env.DB_ID_SPACE;
     if (envValue) {

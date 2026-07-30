@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import { type FC, useMemo } from 'react';
 
 import { GenericSequencingEffortsDataDisplay } from './GenericSequencingEffortsDataDisplay';
@@ -12,12 +13,14 @@ export type GenericSequencingEffortsReactPageProps = {
     organism: OrganismWithViewKey<typeof sequencingEffortsViewKey>;
     organismsConfig: OrganismsConfig;
     isStaging: boolean;
+    mutationAnnotations?: MutationAnnotations;
 };
 
 export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReactPageProps> = ({
     organism,
     organismsConfig,
     isStaging,
+    mutationAnnotations,
 }) => {
     const organismViewKey = `${organism}.${sequencingEffortsViewKey}` satisfies OrganismViewKey;
     const view = useMemo(
@@ -42,6 +45,7 @@ export const GenericSequencingEffortsReactPage: FC<GenericSequencingEffortsReact
             view={view}
             downloadLinks={downloadLinks}
             organismsConfig={organismsConfig}
+            mutationAnnotations={mutationAnnotations}
             filters={
                 <SequencingEffortsPageStateSelector
                     view={view}
