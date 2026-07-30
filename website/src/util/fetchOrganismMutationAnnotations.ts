@@ -8,8 +8,6 @@ import { fetchMutationAnnotationsFromCollections } from './resistanceMutations';
 import { getDbIdSpace } from '../types/dbIdSpace';
 import type { OrganismConstants } from '../views/OrganismConstants';
 
-// Used by the five generic Astro page components to fetch resistance mutation
-// annotations server-side before rendering, tolerating fetch failures gracefully.
 const logger = getInstanceLogger('fetchOrganismMutationAnnotations');
 
 export async function fetchOrganismMutationAnnotations(
@@ -17,7 +15,9 @@ export async function fetchOrganismMutationAnnotations(
     organism: string,
 ): Promise<MutationAnnotations | undefined> {
     const buildCollections = constants.buildResistanceMutationCollections;
-    if (!buildCollections) return undefined;
+    if (!buildCollections) {
+        return undefined;
+    }
     try {
         return await fetchMutationAnnotationsFromCollections(
             buildCollections(getDbIdSpace()),
