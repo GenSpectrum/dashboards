@@ -306,7 +306,6 @@ def test_mutations_prefixed_with_na():
                 assert aa.startswith("NA:"), f"Expected NA: prefix, got {aa!r}"
 
 
-
 # --- PA inhibitor (Baloxavir) collections ----------------------------------
 
 
