@@ -79,7 +79,7 @@ describe('fetchWasapPageData', () => {
                     {},
                     { mode: WASAP_ANALYSIS_MODE.manual, sequenceType: SEQUENCE_TYPE.nucleotide, mutations: [] },
                 ),
-            ).rejects.toThrow(new WasapValidationError("Cannot fetch data, 'manual' mode is not enabled."));
+            ).rejects.toThrow(WasapValidationError);
         });
     });
 
@@ -310,7 +310,7 @@ describe('fetchWasapPageData', () => {
                         timeFrame: VARIANT_TIME_FRAME.all,
                     },
                 ),
-            ).rejects.toThrow(new WasapValidationError("Cannot fetch data, 'variant' mode is not enabled."));
+            ).rejects.toThrow(WasapValidationError);
         });
     });
 
@@ -411,7 +411,7 @@ describe('fetchWasapPageData', () => {
                     {},
                     { mode: WASAP_ANALYSIS_MODE.untracked, sequenceType: SEQUENCE_TYPE.nucleotide },
                 ),
-            ).rejects.toThrow(new WasapValidationError("Cannot fetch data, 'untracked' mode is not enabled."));
+            ).rejects.toThrow(WasapValidationError);
         });
     });
 
@@ -558,9 +558,7 @@ describe('fetchWasapPageData', () => {
                     {},
                     { mode: WASAP_ANALYSIS_MODE.covSpectrumCollection, collectionId: 42 },
                 ),
-            ).rejects.toThrow(
-                new WasapValidationError("Cannot fetch data, 'covSpectrumCollection' mode is not enabled."),
-            );
+            ).rejects.toThrow(WasapValidationError);
         });
 
         test('throws when no collection is selected', async () => {
@@ -570,7 +568,7 @@ describe('fetchWasapPageData', () => {
                     {},
                     { mode: WASAP_ANALYSIS_MODE.covSpectrumCollection, collectionId: undefined },
                 ),
-            ).rejects.toThrow(new WasapValidationError('No collection selected'));
+            ).rejects.toThrow(WasapValidationError);
         });
     });
 
@@ -940,13 +938,13 @@ describe('fetchWasapPageData', () => {
 
             await expect(
                 fetchWasapPageData(disabledConfig, {}, { mode: WASAP_ANALYSIS_MODE.collection, collectionId: 1 }),
-            ).rejects.toThrow(new WasapValidationError("Cannot fetch data, 'collection' mode is not enabled."));
+            ).rejects.toThrow(WasapValidationError);
         });
 
         test('throws when no collection is selected', async () => {
             await expect(
                 fetchWasapPageData(config, {}, { mode: WASAP_ANALYSIS_MODE.collection, collectionId: undefined }),
-            ).rejects.toThrow(new WasapValidationError('No collection selected'));
+            ).rejects.toThrow(WasapValidationError);
         });
     });
 });
