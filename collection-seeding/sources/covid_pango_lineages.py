@@ -47,21 +47,25 @@ class CovidPangoLineagesSource(Source):
             {
                 "type": "filterObject",
                 "name": "Nucleotide substitutions",
+                "description": "All nucleotide substitutions that define this lineage.",
                 "filterObject": {"nucleotideMutations": nuc_subs},
             },
             {
                 "type": "filterObject",
                 "name": "Amino acid substitutions",
+                "description": "All amino acid substitutions that define this lineage.",
                 "filterObject": {"aminoAcidMutations": aa_subs},
             },
             {
                 "type": "filterObject",
                 "name": "New nucleotide substitutions",
+                "description": f"Nucleotide substitutions not present in the parent lineage ({parent}).",
                 "filterObject": {"nucleotideMutations": nuc_subs_new},
             },
             {
                 "type": "filterObject",
                 "name": "New amino acid substitutions",
+                "description": f"Amino acid substitutions not present in the parent lineage ({parent}).",
                 "filterObject": {"aminoAcidMutations": aa_subs_new},
             },
         ]
