@@ -77,6 +77,43 @@ def test_build_collection_always_four_variants():
     assert len(col["variants"]) == 4
 
 
+def test_build_collection_variant_descriptions_with_parent():
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
+    variants = col["variants"]
+    assert (
+        variants[0]["description"]
+        == "All nucleotide substitutions that define this lineage."
+    )
+    assert (
+        variants[1]["description"]
+        == "All amino acid substitutions that define this lineage."
+    )
+    assert (
+        variants[2]["description"]
+        == "Nucleotide substitutions not present in the parent lineage (BA)."
+    )
+    assert (
+        variants[3]["description"]
+        == "Amino acid substitutions not present in the parent lineage (BA)."
+    )
+
+
+def test_build_collection_variant_descriptions_unknown_parent():
+    col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["XBB"])
+    variants = col["variants"]
+    # No parent clause (and no dangling "(—)") when the parent is unknown
+    assert (
+        variants[2]["description"]
+        == "Nucleotide substitutions not present in the parent lineage."
+    )
+    assert (
+        variants[3]["description"]
+        == "Amino acid substitutions not present in the parent lineage."
+    )
+    assert "—" not in variants[2]["description"]
+    assert "—" not in variants[3]["description"]
+
+
 def test_build_collection_variant_names():
     col = CovidPangoLineagesSource()._build_collection(SAMPLE_DATA["BA.2"])
     names = [v["name"] for v in col["variants"]]

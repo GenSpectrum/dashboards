@@ -34,9 +34,12 @@ class CovidPangoLineagesSource(Source):
 
     def _build_collection(self, entry: dict) -> Collection:
         lineage: str = entry["lineage"]
-        parent: str = entry.get("parent") or "—"
+        raw_parent: str = entry.get("parent") or ""
+        parent: str = raw_parent or "—"
         clade: str = entry.get("nextstrainClade") or "—"
         date: str = entry.get("designationDate") or "unknown"
+
+        parent_clause = f" ({raw_parent})" if raw_parent else ""
 
         nuc_subs = [s for s in entry.get("nucSubstitutions", []) if s]
         aa_subs = [s for s in entry.get("aaSubstitutions", []) if s]
@@ -59,13 +62,13 @@ class CovidPangoLineagesSource(Source):
             {
                 "type": "filterObject",
                 "name": "New nucleotide substitutions",
-                "description": f"Nucleotide substitutions not present in the parent lineage ({parent}).",
+                "description": f"Nucleotide substitutions not present in the parent lineage{parent_clause}.",
                 "filterObject": {"nucleotideMutations": nuc_subs_new},
             },
             {
                 "type": "filterObject",
                 "name": "New amino acid substitutions",
-                "description": f"Amino acid substitutions not present in the parent lineage ({parent}).",
+                "description": f"Amino acid substitutions not present in the parent lineage{parent_clause}.",
                 "filterObject": {"aminoAcidMutations": aa_subs_new},
             },
         ]
