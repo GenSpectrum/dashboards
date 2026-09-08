@@ -225,7 +225,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
 // An unrestricted date range at 'day' granularity can span more days than the mutations-over-time
 // component supports (it throws "Too many dates" past 200 columns), so a bare URL defaults to a
 // recent window instead. Users can still pick "All times" from the date filter's dropdown.
-const DEFAULT_SAMPLING_DATE_WINDOW_DAYS = 14;
+const DEFAULT_SAMPLING_DATE_WINDOW_DAYS = 30;
 
 /**
  * Wall-clock fallback sampling date range, anchored to today rather than the dataset's actual

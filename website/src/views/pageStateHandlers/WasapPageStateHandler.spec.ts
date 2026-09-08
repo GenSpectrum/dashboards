@@ -157,14 +157,14 @@ describe('WasapPageStateHandler', () => {
         });
 
         describe('default sampling date', () => {
-            it('defaults to the "most recent 14 days" preset instead of leaving the date range unrestricted', () => {
+            it('defaults to the "most recent 30 days" preset instead of leaving the date range unrestricted', () => {
                 const url = '/wastewater/covid?analysisMode=manual&sequenceType=nucleotide&';
                 const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
 
                 // Unresolved: no concrete dates yet. useResolvedSamplingDate resolves this against
                 // the dataset's actual date range, so the default is accurate even when data lags,
                 // instead of being pinned to today's wall-clock date.
-                expect(filter.base.samplingDate).toEqual({ label: 'Most recent 14 days' });
+                expect(filter.base.samplingDate).toEqual({ label: 'Most recent 30 days' });
             });
 
             it('does not override an explicit samplingDate from the URL', () => {
