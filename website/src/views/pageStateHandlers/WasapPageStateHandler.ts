@@ -3,7 +3,6 @@ import {
     type SequenceType,
     type TemporalGranularity,
 } from '@genspectrum/dashboard-components/util';
-import dayjs from 'dayjs';
 
 import { type PageStateHandler } from './PageStateHandler';
 import { setSearchFromDateRange } from './dateFilterFromToUrl';
@@ -226,22 +225,6 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
 // component supports (it throws "Too many dates" past 200 columns), so a bare URL defaults to a
 // recent window instead. Users can still pick "All times" from the date filter's dropdown.
 const DEFAULT_SAMPLING_DATE_WINDOW_DAYS = 30;
-
-/**
- * Wall-clock fallback sampling date range, anchored to today rather than the dataset's actual
- * latest sample date. Only used as a safety net in `useResolvedSamplingDate`, if the dataset's
- * date range can't be fetched or a preset label from the URL doesn't match any known option.
- * The bare-URL default itself is `{ label: recentDaysLabel(DEFAULT_SAMPLING_DATE_WINDOW_DAYS) }`,
- * resolved against the dataset like any other preset, so it's accurate even when data lags.
- */
-export function defaultSamplingDateRange(): DateRangeOption {
-    const today = dayjs();
-    return {
-        label: CustomDateRangeLabel,
-        dateFrom: today.subtract(DEFAULT_SAMPLING_DATE_WINDOW_DAYS - 1, 'day').format('YYYY-MM-DD'),
-        dateTo: today.format('YYYY-MM-DD'),
-    };
-}
 
 /**
  * Parses the `samplingDate` URL param, which is either literal `dateFrom--dateTo` dates or a

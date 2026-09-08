@@ -7,8 +7,8 @@ import { useResolvedSamplingDate } from './useResolvedSamplingDate';
 import type { WasapPageConfig } from './wasapPageConfig';
 import { DUMMY_LAPIS_URL, type LapisRouteMocker } from '../../../../routeMocker.ts';
 import { it } from '../../../../test-extend.ts';
+import { ALL_TIMES_LABEL } from '../../../util/defaultDateRangeOption';
 import { recentDaysDateRangeOptions } from '../../../util/recentDaysDateRangeOptions';
-import { defaultSamplingDateRange } from '../../../views/pageStateHandlers/WasapPageStateHandler';
 
 const config = { lapisBaseUrl: DUMMY_LAPIS_URL, samplingDateField: 'sampling_date' } as WasapPageConfig;
 
@@ -57,7 +57,7 @@ describe('useResolvedSamplingDate', () => {
         expect(result.current.samplingDate).toEqual(expected);
     });
 
-    it('falls back to the default window when the label does not match any known option', async ({
+    it('falls back to "All times" bounded by the dataset when the label does not match any known option', async ({
         routeMockers: { lapis },
     }) => {
         mockDateRange(lapis);
@@ -67,6 +67,19 @@ describe('useResolvedSamplingDate', () => {
 
         await expect.poll(() => result.current.isPending).toBe(false);
 
-        expect(result.current.samplingDate).toEqual(defaultSamplingDateRange());
+        expect(result.current.samplingDate).toEqual({ label: ALL_TIMES_LABEL, dateFrom: '2025-06-12' });
+    });
+
+    it('falls back to an unbounded "All times" when the dataset date range can\'t be fetched', async ({
+        routeMockers: { lapis },
+    }) => {
+        lapis.mockPostAggregated({ fields: ['sampling_date'], orderBy: ['sampling_date'] }, { data: [] }, 500);
+        const samplingDate = { label: 'Most recent 30 days' };
+
+        const { result } = renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
+
+        await expect.poll(() => result.current.isPending).toBe(false);
+
+        expect(result.current.samplingDate).toEqual({ label: ALL_TIMES_LABEL });
     });
 });
