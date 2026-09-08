@@ -30,7 +30,7 @@ describe('DynamicDateFilter', () => {
 
         const select = getByRole('combobox');
         const options = select.getByRole('option', { includeHidden: true }).elements();
-        expect(options).toHaveLength(6); // 5 recent days options + 1 custom option
+        expect(options).toHaveLength(7); // 5 recent days options + 1 all times option + 1 custom option
     });
 
     it('has recent days options with correct labels', async ({ routeMockers: { lapis } }) => {
@@ -64,6 +64,30 @@ describe('DynamicDateFilter', () => {
         expect(labels).toContain('Most recent 30 days');
         expect(labels).toContain('Most recent 60 days');
         expect(labels).toContain('Most recent 90 days');
+    });
+
+    it('has an "All times" option bounded by the earliest available date', async ({ routeMockers: { lapis } }) => {
+        setupLapisMocks(lapis);
+
+        const { getByRole, getByText } = render(
+            <gs-app lapis={DUMMY_LAPIS_URL}>
+                <WrappedDynamicDateFilter
+                    label='Sampling date'
+                    lapis={DUMMY_LAPIS_URL}
+                    dateFieldName='sampling_date'
+                    generateOptions={recentDaysDateRangeOptions}
+                    value={undefined}
+                    onChange={() => {}}
+                />
+            </gs-app>,
+        );
+
+        await expect.element(getByText('Select an option')).toBeInTheDocument();
+
+        const select = getByRole('combobox');
+        const options = select.getByRole('option', { includeHidden: true }).elements();
+        const labels = options.map((e) => e.getAttribute('value'));
+        expect(labels).toContain('All times');
     });
 });
 

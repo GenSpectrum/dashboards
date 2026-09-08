@@ -7,6 +7,7 @@ import { NoDataHelperText } from './components/NoDataHelperText';
 import { WasapStats } from './components/WasapStats';
 import { getInitialMeanProportionInterval } from './initialMeanProportionInterval';
 import type { ResistanceData } from './resistanceData';
+import { useResolvedSamplingDate } from './useResolvedSamplingDate';
 import { useWasapPageData } from './useWasapPageData';
 import type { WasapPageConfig } from './wasapPageConfig';
 import { withQueryProvider } from '../../../backendApi/withQueryProvider';
@@ -41,7 +42,15 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
 
     const { mutationAnnotations, displayMutationsBySet } = resistanceData;
     // fetch which mutations should be analyzed
-    const { data, isPending, isError, error } = useWasapPageData(config, displayMutationsBySet, analysis);
+    const {
+        data,
+        isPending: isDataPending,
+        isError,
+        error,
+    } = useWasapPageData(config, displayMutationsBySet, analysis);
+    // resolve a preset-label-only samplingDate (e.g. from a freshly loaded URL) into concrete dates
+    const { samplingDate, isPending: isSamplingDatePending } = useResolvedSamplingDate(config, base.samplingDate);
+    const isPending = isDataPending || isSamplingDatePending;
 
     useEffect(() => {
         if (error) {
@@ -53,8 +62,8 @@ export const WasapPageInner: FC<WasapPageProps> = ({ config, resistanceData }) =
 
     const lapisFilter = {
         ...(base.locationName && { locationName: base.locationName }),
-        ...(base.samplingDate?.dateFrom && { samplingDateFrom: base.samplingDate.dateFrom }),
-        ...(base.samplingDate?.dateTo && { samplingDateTo: base.samplingDate.dateTo }),
+        ...(samplingDate.dateFrom && { samplingDateFrom: samplingDate.dateFrom }),
+        ...(samplingDate.dateTo && { samplingDateTo: samplingDate.dateTo }),
     };
 
     return (

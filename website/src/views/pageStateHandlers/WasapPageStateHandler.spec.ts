@@ -152,9 +152,64 @@ describe('WasapPageStateHandler', () => {
             const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
 
             expect(filter.base.locationName).toBe('Zürich (ZH)');
-            expect(filter.base.samplingDate).toBeUndefined();
             expect(filter.base.granularity).toBe('day');
             expect(filter.base.excludeEmpty).toBe(true);
+        });
+
+        describe('default sampling date', () => {
+            it('defaults to the "most recent 14 days" preset instead of leaving the date range unrestricted', () => {
+                const url = '/wastewater/covid?analysisMode=manual&sequenceType=nucleotide&';
+                const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+                // Unresolved: no concrete dates yet. useResolvedSamplingDate resolves this against
+                // the dataset's actual date range, so the default is accurate even when data lags,
+                // instead of being pinned to today's wall-clock date.
+                expect(filter.base.samplingDate).toEqual({ label: 'Most recent 14 days' });
+            });
+
+            it('does not override an explicit samplingDate from the URL', () => {
+                const url = '/wastewater/covid?analysisMode=manual&sequenceType=nucleotide&samplingDate=--&';
+                const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+                expect(filter.base.samplingDate).toEqual({
+                    label: 'Custom',
+                    dateFrom: undefined,
+                    dateTo: undefined,
+                });
+            });
+        });
+
+        describe('preset samplingDate labels', () => {
+            it('parses a preset label without concrete dates, to be resolved later against the dataset', () => {
+                const url =
+                    '/wastewater/covid?analysisMode=manual&sequenceType=nucleotide&' +
+                    'samplingDate=Most+recent+14+days&';
+                const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+                expect(filter.base.samplingDate).toEqual({ label: 'Most recent 14 days' });
+            });
+
+            it('round-trips a preset label back into the URL instead of pinning dates', () => {
+                const url =
+                    '/wastewater/covid?analysisMode=manual&sequenceType=nucleotide&' +
+                    'samplingDate=Most+recent+14+days&';
+                const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+                const newUrl = handler.toUrl(filter);
+
+                expect(newUrl).toContain('samplingDate=Most+recent+14+days');
+            });
+
+            it('serializes an explicit custom range as literal dates, not a label', () => {
+                const url =
+                    '/wastewater/covid?analysisMode=manual&sequenceType=nucleotide&' +
+                    'samplingDate=2024-01-01--2024-12-31&';
+                const filter = handler.parsePageStateFromUrl(new URL(`http://example.com${url}`));
+
+                const newUrl = handler.toUrl(filter);
+
+                expect(newUrl).toContain('samplingDate=2024-01-01--2024-12-31');
+            });
         });
 
         it('encodes excludeEmpty=false in URL but omits when true', () => {
@@ -188,6 +243,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=manual&' +
                 'sequenceType=nucleotide&';
@@ -232,6 +288,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Berlin&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=week&' +
                 'analysisMode=variant&' +
                 'sequenceType=nucleotide&' +
@@ -298,6 +355,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=variant&' +
                 'sequenceType=nucleotide&' +
@@ -321,6 +379,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=variant&' +
                 'sequenceType=nucleotide&' +
@@ -344,6 +403,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=variant&' +
                 'sequenceType=nucleotide&' +
@@ -369,6 +429,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=resistance&' +
                 'resistanceSet=3CLpro&';
@@ -397,6 +458,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=untracked&' +
                 'sequenceType=nucleotide&' +
@@ -416,6 +478,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=untracked&' +
                 'sequenceType=nucleotide&' +
@@ -463,6 +526,7 @@ describe('WasapPageStateHandler', () => {
             const url =
                 '/wastewater/covid?' +
                 'locationName=Z%C3%BCrich+%28ZH%29&' +
+                'samplingDate=2024-01-01--2024-12-31&' +
                 'granularity=day&' +
                 'analysisMode=covSpectrumCollection&' +
                 'collectionId=123&';
