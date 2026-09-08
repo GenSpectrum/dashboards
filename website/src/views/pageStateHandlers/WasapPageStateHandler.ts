@@ -21,7 +21,7 @@ import {
 } from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { formatUrl } from '../../util/formatUrl';
-import { recentDaysLabel } from '../../util/recentDaysDateRangeOptions';
+import { DEFAULT_RECENT_DAYS_INDEX, RECENT_DAYS_OPTIONS, recentDaysLabel } from '../../util/recentDaysDateRangeOptions';
 import { setSearchFromString } from '../helpers';
 
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
@@ -130,9 +130,14 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
                 break;
         }
 
+        // An unrestricted date range at 'day' granularity can span more days than the mutations-over-time
+        // component supports (it throws "Too many dates" past 200 columns), so a bare URL defaults to a
+        // recent window instead. Users can still pick "All times" from the date filter's dropdown.
+        const defaultSamplingDate = { label: recentDaysLabel(RECENT_DAYS_OPTIONS[DEFAULT_RECENT_DAYS_INDEX]) };
+
         const base: WasapBaseFilter = {
             locationName: texts.locationName ?? this.config.defaultLocationName,
-            samplingDate: samplingDate ?? { label: recentDaysLabel(DEFAULT_SAMPLING_DATE_WINDOW_DAYS) },
+            samplingDate: samplingDate ?? defaultSamplingDate,
             granularity: (texts.granularity as TemporalGranularity | undefined) ?? 'day',
             excludeEmpty: texts.excludeEmpty !== 'false',
         };
@@ -221,11 +226,6 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
     }
 }
 
-// An unrestricted date range at 'day' granularity can span more days than the mutations-over-time
-// component supports (it throws "Too many dates" past 200 columns), so a bare URL defaults to a
-// recent window instead. Users can still pick "All times" from the date filter's dropdown.
-const DEFAULT_SAMPLING_DATE_WINDOW_DAYS = 30;
-
 /**
  * Parses the `samplingDate` URL param, which is either literal `dateFrom--dateTo` dates or a
  * preset's label (e.g. "Most recent 14 days") written by `toUrl`. A label-only value has no
@@ -239,7 +239,7 @@ function parseSamplingDateFromUrl(search: URLSearchParams, name: string): DateRa
         return undefined;
     }
     if (value.includes('--')) {
-        const [from, to] = value.split('--');
+        const [from, to] = value.split('--').map((part) => part.trim());
         return {
             label: CustomDateRangeLabel,
             dateFrom: from === '' ? undefined : from,
