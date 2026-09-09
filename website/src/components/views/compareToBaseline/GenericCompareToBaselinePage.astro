@@ -2,6 +2,7 @@
 import { GenericCompareToBaselineReactPage } from './GenericCompareToBaselineReactPage';
 import { isStaging, getDashboardsConfig } from '../../../config';
 import BaseLayout from '../../../layouts/base/BaseLayout.astro';
+import { fetchOrganismMutationAnnotations } from '../../../util/fetchOrganismMutationAnnotations';
 import { type OrganismWithViewKey } from '../../../views/routing';
 import { ServerSide } from '../../../views/serverSideRouting';
 import { compareToBaselineViewKey } from '../../../views/viewKeys';
@@ -13,6 +14,8 @@ interface Props {
 const { organism } = Astro.props;
 
 const view = ServerSide.routing.getOrganismView(`${organism}.${compareToBaselineViewKey}`);
+
+const mutationAnnotations = await fetchOrganismMutationAnnotations(view.organismConstants, organism);
 ---
 
 <BaseLayout title={view.viewTitle}>
@@ -20,6 +23,7 @@ const view = ServerSide.routing.getOrganismView(`${organism}.${compareToBaseline
         organism={organism}
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         isStaging={isStaging()}
+        mutationAnnotations={mutationAnnotations}
         client:only='react'
     />
 </BaseLayout>

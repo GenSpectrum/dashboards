@@ -22,7 +22,7 @@ export function DynamicDateFilter({
     label: string;
     lapis: string;
     dateFieldName: string;
-    generateOptions: ({ endDate }: { endDate: string }) => DateRangeOption[];
+    generateOptions: ({ startDate, endDate }: { startDate: string; endDate: string }) => DateRangeOption[];
     value: DateRangeOption | undefined;
     onChange: (newValue: DateRangeOption | undefined) => void;
 }) {
@@ -40,7 +40,7 @@ export function DynamicDateFilter({
         if (!dateRange) {
             return [];
         }
-        return generateOptions({ endDate: dateRange.end });
+        return generateOptions({ startDate: dateRange.start, endDate: dateRange.end });
     }, [dateRange, generateOptions]);
 
     // When the value has a "Custom" label, try to match it back to one of the generated options

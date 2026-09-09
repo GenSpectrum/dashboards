@@ -1,19 +1,12 @@
 import type { MutationAnnotation } from '@genspectrum/dashboard-components/util';
 
-import { getDbIdSpace, dbIdSpaces, type DbIdSpace } from './dbIdSpace';
-import type { ResistanceMutationCollectionConfig } from '../components/views/wasap/wasapPageConfig';
+import { byEnv, dbIdSpaces, getDbIdSpace, type DbIdSpace } from './dbIdSpace';
 import { VARIANT_TIME_FRAME, type WasapPageConfig } from '../components/views/wasap/wasapPageConfig';
-
-function byEnv<T>(env: DbIdSpace, vars: { prod: T; staging: T; local: T }): T {
-    switch (env) {
-        case dbIdSpaces.prod:
-            return vars.prod;
-        case dbIdSpaces.staging:
-            return vars.staging;
-        case dbIdSpaces.local:
-            return vars.local;
-    }
-}
+import {
+    buildCovidResistanceMutationCollections,
+    buildRsvAResistanceMutationCollections,
+    buildRsvBResistanceMutationCollections,
+} from '../util/resistanceMutations';
 
 export const wastewaterOrganisms = {
     covid: 'covid',
@@ -45,29 +38,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             covSpectrumCollectionAnalysisModeEnabled: true,
             collectionAnalysisModeEnabled: true,
             defaultAnalysisMode: 'resistance',
-            resistanceMutationCollections: [
-                {
-                    collectionId: byEnv(env, { prod: 4, staging: 1, local: 1 }),
-                    name: '3CLpro',
-                    annotationSymbol: 'c',
-                    description:
-                        'SARS-CoV-2 3C-like protease (3CLpro, or Mpro for Main protease) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-                },
-                {
-                    collectionId: byEnv(env, { prod: 5, staging: 2, local: 2 }),
-                    name: 'RdRp',
-                    annotationSymbol: 'r',
-                    description:
-                        'SARS-CoV-2 RNA-dependent RNA polymerase (RdRP) inhibitor resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-                },
-                {
-                    collectionId: byEnv(env, { prod: 6, staging: 3, local: 3 }),
-                    name: 'Spike',
-                    annotationSymbol: 's',
-                    description:
-                        'SARS-CoV-2 Spike monoclonal antibody (mAb) resistance mutation as per <a class="link" href="https://covdb.stanford.edu/drms">Stanford Coronavirus Antiviral & Resistance database</a> (last updated on 21 August 2024).',
-                },
-            ] satisfies ResistanceMutationCollectionConfig[],
+            resistanceMutationCollections: buildCovidResistanceMutationCollections(env),
             lapisBaseUrl: 'https://lapis.wasap.genspectrum.org/covid',
             samplingDateField: 'samplingDate',
             locationNameField: 'locationName',
@@ -157,22 +128,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
             defaultLocationName: 'Geneva',
             clinicalSequenceCountWarningThreshold: 50,
-            resistanceMutationCollections: [
-                {
-                    collectionId: byEnv(env, { prod: 4983, staging: 4, local: 4 }),
-                    name: 'Nirsevimab',
-                    annotationSymbol: 'n',
-                    description:
-                        'RSV-A F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
-                },
-                {
-                    collectionId: byEnv(env, { prod: 4984, staging: 5, local: 5 }),
-                    name: 'Palivizumab',
-                    annotationSymbol: 'p',
-                    description:
-                        'RSV-A F protein resistance mutations against Palivizumab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
-                },
-            ] satisfies ResistanceMutationCollectionConfig[],
+            resistanceMutationCollections: buildRsvAResistanceMutationCollections(env),
             filterDefaults: {
                 manual: {
                     mode: 'manual',
@@ -233,22 +189,7 @@ function buildWastewaterOrganismConfigs(env: DbIdSpace): Record<WastewaterOrgani
             browseDataDescription: 'Browse the data in the W-ASAP Loculus instance.',
             defaultLocationName: 'Zurich',
             clinicalSequenceCountWarningThreshold: 50,
-            resistanceMutationCollections: [
-                {
-                    collectionId: byEnv(env, { prod: 4985, staging: 6, local: 6 }),
-                    name: 'Nirsevimab',
-                    annotationSymbol: 'n',
-                    description:
-                        'RSV-B F protein resistance mutations against Nirsevimab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
-                },
-                {
-                    collectionId: byEnv(env, { prod: 4986, staging: 7, local: 7 }),
-                    name: 'Palivizumab',
-                    annotationSymbol: 'p',
-                    description:
-                        'RSV-B F protein resistance mutations against Palivizumab as per <a class="link" href="https://viralzone.expasy.org/11605">ViralZone</a>.',
-                },
-            ] satisfies ResistanceMutationCollectionConfig[],
+            resistanceMutationCollections: buildRsvBResistanceMutationCollections(env),
             filterDefaults: {
                 manual: {
                     mode: 'manual',

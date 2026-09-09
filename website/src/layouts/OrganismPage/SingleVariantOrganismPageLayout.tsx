@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import type { FC, ReactNode } from 'react';
 
 import { type DownloadLink } from './AccessionsDownloadButton.tsx';
@@ -13,6 +14,7 @@ export type SingleVariantOrganismPageLayoutProps = {
     organismsConfig: OrganismsConfig;
     filters: ReactNode;
     dataDisplay: ReactNode;
+    mutationAnnotations?: MutationAnnotations;
 };
 
 export const SingleVariantOrganismPageLayout: FC<SingleVariantOrganismPageLayoutProps> = ({
@@ -21,12 +23,14 @@ export const SingleVariantOrganismPageLayout: FC<SingleVariantOrganismPageLayout
     organismsConfig,
     filters,
     dataDisplay,
+    mutationAnnotations,
 }) => {
     return (
         <OrganismViewPageLayout
             view={view}
             downloadLinks={downloadLinks}
             lapisUrl={organismsConfig[view.organismConstants.organism].lapis.url}
+            mutationAnnotations={mutationAnnotations}
         >
             <div className='grid-cols-[300px_1fr] gap-x-4 lg:grid'>
                 <div className='h-fit p-2 shadow-lg'>{filters}</div>

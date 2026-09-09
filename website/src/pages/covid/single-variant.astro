@@ -2,15 +2,19 @@
 import { CovidSingleVariantReactPage } from '../../components/views/analyzeSingleVariant/CovidSingleVariantReactPage';
 import { isStaging, getDashboardsConfig } from '../../config';
 import BaseLayout from '../../layouts/base/BaseLayout.astro';
+import { fetchOrganismMutationAnnotations } from '../../util/fetchOrganismMutationAnnotations';
 import { ServerSide } from '../../views/serverSideRouting';
 
 const view = ServerSide.routing.getOrganismView('covid.singleVariantView');
+
+const mutationAnnotations = await fetchOrganismMutationAnnotations(view.organismConstants, 'covid');
 ---
 
 <BaseLayout title={view.viewTitle}>
     <CovidSingleVariantReactPage
         organismsConfig={getDashboardsConfig().dashboards.organisms}
         isStaging={isStaging()}
+        mutationAnnotations={mutationAnnotations}
         client:only='react'
     />
 </BaseLayout>

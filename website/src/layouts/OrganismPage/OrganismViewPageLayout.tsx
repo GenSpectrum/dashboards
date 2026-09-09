@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import type { FC, PropsWithChildren } from 'react';
 
 import { type DownloadLink } from './AccessionsDownloadButton.tsx';
@@ -10,12 +11,14 @@ export type OrganismViewPageLayoutProps = PropsWithChildren<{
     view: View<object, OrganismConstants, PageStateHandler<object>>;
     downloadLinks: DownloadLink[];
     lapisUrl: string;
+    mutationAnnotations?: MutationAnnotations;
 }>;
 
 export const OrganismViewPageLayout: FC<OrganismViewPageLayoutProps> = ({
     view,
     downloadLinks,
     lapisUrl,
+    mutationAnnotations,
     children,
 }) => {
     return (
@@ -26,7 +29,10 @@ export const OrganismViewPageLayout: FC<OrganismViewPageLayoutProps> = ({
             lapisUrl={lapisUrl}
             accessionDownloadFields={view.organismConstants.accessionDownloadFields}
         >
-            <gs-app lapis={lapisUrl} mutationAnnotations={view.organismConstants.mutationAnnotations}>
+            <gs-app
+                lapis={lapisUrl}
+                mutationAnnotations={mutationAnnotations ?? view.organismConstants.mutationAnnotations}
+            >
                 {children}
             </gs-app>
         </DataPageLayout>

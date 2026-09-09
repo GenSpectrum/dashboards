@@ -30,8 +30,20 @@ export abstract class ViewPage {
 
     public async fillLineageField(locator: Locator, lineage: string) {
         await locator.fill(lineage);
-        const selectedLineage = this.page.getByRole('listbox').getByRole('option', { name: lineage, exact: false });
-        await selectedLineage.first().click();
+
+        const option = this.page.getByRole('listbox').getByRole('option', { name: lineage, exact: false }).first();
+
+        // Filling the field opens the autocomplete menu, but each filter field fetches its options
+        // from LAPIS independently and a re-render triggered by another field settling can close the
+        // menu again. When that happens the option never appears and a plain click would wait out the
+        // whole test timeout. Retry "ensure the menu is open, then click the option" together so a
+        // transient close cannot wedge the test.
+        await expect(async () => {
+            if (!(await option.isVisible())) {
+                await locator.click(); // re-open the menu
+            }
+            await option.click({ timeout: 2_000 });
+        }).toPass();
     }
 
     public async fillMutationField(locator: Locator, mutation: string) {

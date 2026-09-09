@@ -1,3 +1,4 @@
+import type { MutationAnnotations } from '@genspectrum/dashboard-components/util';
 import { type FC, useMemo } from 'react';
 
 import { GenericCompareVariantsDataDisplay } from './GenericCompareVariantsDataDisplay';
@@ -13,12 +14,14 @@ export type GenericCompareVariantsReactPageProps = {
     organism: OrganismWithViewKey<typeof compareVariantsViewKey>;
     organismsConfig: OrganismsConfig;
     isStaging: boolean;
+    mutationAnnotations?: MutationAnnotations;
 };
 
 export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPageProps> = ({
     organism,
     organismsConfig,
     isStaging,
+    mutationAnnotations,
 }) => {
     const organismViewKey = `${organism}.${compareVariantsViewKey}` satisfies OrganismViewKey;
     const view = useMemo(
@@ -44,6 +47,7 @@ export const GenericCompareVariantsReactPage: FC<GenericCompareVariantsReactPage
             view={view}
             downloadLinks={downloadLinks}
             organismsConfig={organismsConfig}
+            mutationAnnotations={mutationAnnotations}
             filters={
                 <CompareVariantsPageStateSelector
                     view={view}
