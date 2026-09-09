@@ -3,16 +3,15 @@ import dayjs from 'dayjs';
 
 import { ALL_TIMES_LABEL } from './defaultDateRangeOption';
 
-export function recentDaysLabel(days: number): string {
+function recentDaysLabel(days: number): string {
     return `Most recent ${days} days`;
 }
 
-export const RECENT_DAYS_OPTIONS = [7, 14, 30, 60, 90] as const;
+const RECENT_DAYS_OPTIONS = [7, 14, 30, 60, 90] as const;
 
-// Index into RECENT_DAYS_OPTIONS above to use as the default sampling date window when no
-// explicit samplingDate is given (see WasapPageStateHandler) - keeping it as an index instead
-// of a separate day count keeps it from silently drifting out of sync with the options above.
-export const DEFAULT_RECENT_DAYS_INDEX = 2;
+// The bare-URL default sampling date window (see WasapPageStateHandler), taken from the list
+// above so it always matches one of the dropdown options.
+export const DEFAULT_RECENT_DAYS_LABEL = recentDaysLabel(RECENT_DAYS_OPTIONS[2]);
 
 /**
  * Generates date range options for "most recent X days" where X is 7, 14, 30, 60, or 90,

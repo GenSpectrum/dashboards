@@ -21,7 +21,7 @@ import {
 } from '../../components/views/wasap/wasapPageConfig';
 import { CustomDateRangeLabel } from '../../types/DateWindow';
 import { formatUrl } from '../../util/formatUrl';
-import { DEFAULT_RECENT_DAYS_INDEX, RECENT_DAYS_OPTIONS, recentDaysLabel } from '../../util/recentDaysDateRangeOptions';
+import { DEFAULT_RECENT_DAYS_LABEL } from '../../util/recentDaysDateRangeOptions';
 import { setSearchFromString } from '../helpers';
 
 export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
@@ -133,7 +133,7 @@ export class WasapPageStateHandler implements PageStateHandler<WasapFilter> {
         // An unrestricted date range at 'day' granularity can span more days than the mutations-over-time
         // component supports (it throws "Too many dates" past 200 columns), so a bare URL defaults to a
         // recent window instead. Users can still pick "All times" from the date filter's dropdown.
-        const defaultSamplingDate = { label: recentDaysLabel(RECENT_DAYS_OPTIONS[DEFAULT_RECENT_DAYS_INDEX]) };
+        const defaultSamplingDate = { label: DEFAULT_RECENT_DAYS_LABEL };
 
         const base: WasapBaseFilter = {
             locationName: texts.locationName ?? this.config.defaultLocationName,
