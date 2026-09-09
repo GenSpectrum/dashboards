@@ -9,8 +9,6 @@ function recentDaysLabel(days: number): string {
 
 const RECENT_DAYS_OPTIONS = [7, 14, 30, 60, 90] as const;
 
-// The bare-URL default sampling date window (see WasapPageStateHandler), taken from the list
-// above so it always matches one of the dropdown options.
 export const DEFAULT_RECENT_DAYS_LABEL = recentDaysLabel(RECENT_DAYS_OPTIONS[2]);
 
 /**
