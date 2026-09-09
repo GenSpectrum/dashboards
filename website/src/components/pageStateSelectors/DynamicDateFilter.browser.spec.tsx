@@ -66,7 +66,7 @@ describe('DynamicDateFilter', () => {
         expect(labels).toContain('Most recent 90 days');
     });
 
-    it('has an "All times" option bounded by the earliest available date', async ({ routeMockers: { lapis } }) => {
+    it('has an "All times" option', async ({ routeMockers: { lapis } }) => {
         setupLapisMocks(lapis);
 
         const { getByRole, getByText } = render(
