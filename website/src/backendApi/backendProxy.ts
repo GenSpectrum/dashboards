@@ -34,12 +34,23 @@ export async function proxyToBackendNoAuth(context: APIContext): Promise<Respons
 }
 
 /**
+ * Headers a client may need to send on these public, no-auth GET routes.
+ * None of the underlying endpoints read any request headers (they only take
+ * path/query params), so `content-type` is the only one worth allowing: some
+ * HTTP clients set it by default even on a bodyless GET, which would otherwise
+ * turn a same-origin-safe simple request into a failing preflighted one.
+ */
+const ALLOWED_REQUEST_HEADERS = 'content-type';
+
+/**
  * Answers a CORS preflight request for a public, no-auth GET route.
  */
 export function corsPreflightResponse(): Response {
     const headers = new Headers();
     headers.set('Access-Control-Allow-Origin', '*');
     headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', ALLOWED_REQUEST_HEADERS);
+
     return new Response(null, { status: 204, headers });
 }
 
