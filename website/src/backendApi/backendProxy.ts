@@ -26,24 +26,60 @@ export async function proxyToBackend(context: APIContext): Promise<Response> {
 
 /**
  * Proxies the request to the backend without any user ID, regardless of login state.
+ * This is used for public, read-only data, so the response is also made available
+ * cross-origin to any website (no credentials are involved on these routes).
  */
 export async function proxyToBackendNoAuth(context: APIContext): Promise<Response> {
-    return proxyRequest(context.request, undefined);
+    return proxyRequest(context.request, undefined, { cors: true });
 }
 
-async function proxyRequest(request: Request, userId: number | undefined): Promise<Response> {
+/**
+ * Headers a client may need to send on these public, no-auth GET routes.
+ * None of the underlying endpoints read any request headers (they only take
+ * path/query params), so `content-type` is the only one worth allowing: some
+ * HTTP clients set it by default even on a bodyless GET, which would otherwise
+ * turn a same-origin-safe simple request into a failing preflighted one.
+ */
+const ALLOWED_REQUEST_HEADERS = 'content-type';
+
+/**
+ * Answers a CORS preflight request for a public, no-auth GET route.
+ */
+export function corsPreflightResponse(): Response {
+    const headers = new Headers();
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', ALLOWED_REQUEST_HEADERS);
+
+    return new Response(null, { status: 204, headers });
+}
+
+async function proxyRequest(
+    request: Request,
+    userId: number | undefined,
+    options: { cors?: boolean } = {},
+): Promise<Response> {
     const backendUrl = getBackendUrl(request, userId);
 
     try {
         const response = await fetch(backendUrl, request);
 
+        const headers = new Headers(response.headers);
+        if (options.cors === true) {
+            headers.set('Access-Control-Allow-Origin', '*');
+        }
+
         return new Response(response.body, {
             status: response.status,
-            headers: response.headers,
+            headers,
         });
     } catch (error) {
         logger.error(getErrorLogMessage(error));
-        return getInternalErrorResponse(request.url);
+        const errorResponse = getInternalErrorResponse(request.url);
+        if (options.cors === true) {
+            errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+        }
+        return errorResponse;
     }
 }
 
