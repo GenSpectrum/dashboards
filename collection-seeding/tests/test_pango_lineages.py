@@ -12,6 +12,7 @@ from sources.covid_pango_lineages import CovidPangoLineagesSource, TREE_URL
 #   ├─ NODE_XBB    XBB  (no clade) — nuc: T300C
 #   └─ NODE_X      B             — nuc: G500T
 #      └─ NODE_BA_again BA       — nuc: C241T        (second introduction, deeper)
+#         └─ NODE_BA4   BA.4     — nuc: T700C
 SAMPLE_TREE = {
     "tree": {
         "name": "root",
@@ -84,6 +85,13 @@ SAMPLE_TREE = {
                         "name": "NODE_BA_again",
                         "node_attrs": {"Nextclade_pango": {"value": "BA"}},
                         "branch_attrs": {"mutations": {"nuc": ["C241T"]}},
+                        "children": [
+                            {
+                                "name": "NODE_BA4",
+                                "node_attrs": {"Nextclade_pango": {"value": "BA.4"}},
+                                "branch_attrs": {"mutations": {"nuc": ["T700C"]}},
+                            }
+                        ],
                     }
                 ],
             },
@@ -111,7 +119,7 @@ def test_get_collections_fetches_tree_url():
 @rsps_lib.activate
 def test_one_collection_per_lineage():
     cols = _collections()
-    assert set(cols) == {"B", "BA", "BA.2", "XBB"}
+    assert set(cols) == {"B", "BA", "BA.2", "BA.4", "XBB"}
 
 
 @rsps_lib.activate
@@ -211,3 +219,16 @@ def test_new_substitutions_are_relative_to_parent_lineage():
 def test_lineage_introduced_twice_uses_shallowest_node():
     variants = _collections()["BA"]["variants"]
     assert variants[0]["filterObject"] == {"nucleotideMutations": ["C241T", "A21766-"]}
+
+
+@rsps_lib.activate
+def test_new_substitutions_use_actual_ancestor_introduction():
+    # BA.4 sits below the second (not selected) introduction of BA, which carries G500T
+    # from the B node above it. Its "new" substitutions must be relative to that
+    # introduction, not to the selected BA node elsewhere in the tree (which would
+    # wrongly make G500T "new").
+    variants = _collections()["BA.4"]["variants"]
+    assert variants[0]["filterObject"] == {
+        "nucleotideMutations": ["C241T", "G500T", "T700C"]
+    }
+    assert variants[2]["filterObject"] == {"nucleotideMutations": ["T700C"]}

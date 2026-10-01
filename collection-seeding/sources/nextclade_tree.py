@@ -10,6 +10,8 @@ class CladeInfo(NamedTuple):
     branch_aa: list[str]
     full_nuc: list[str]
     full_aa: list[str]
+    new_nuc: list[str]
+    new_aa: list[str]
     node_attrs: dict
     depth: int
 
@@ -21,6 +23,8 @@ def extract_clades(
     accum_nuc=None,
     accum_aa=None,
     depth=0,
+    parent_full_nuc=frozenset(),
+    parent_full_aa=frozenset(),
 ):
     """Walk the Nextclade reference tree recursively, yielding one CladeInfo per introduced clade.
 
@@ -36,6 +40,11 @@ def extract_clades(
                       e.g. ["A982T", "G108A", "C241T"]
       - full_aa:      all AA mutations from root to this clade, expressed relative to root,
                       e.g. ["F:T8G", "G:T4N"]
+      - new_nuc:      the entries of full_nuc that are not in the parent clade's full_nuc,
+                      i.e. what distinguishes this clade from its parent. Unlike branch_nuc
+                      this includes mutations on intermediate nodes between the parent
+                      clade's introducing node and this clade's introducing node.
+      - new_aa:       the same for full_aa
       - node_attrs:   the raw node_attrs of the introducing node (for extra metadata)
       - depth:        number of edges between the tree root and the introducing node
 
@@ -51,6 +60,10 @@ def extract_clades(
     accum_nuc / accum_aa carry the accumulated state downward. Because _apply_*_mutations
     always returns a new dict rather than mutating in place, each recursive call receives
     its own independent copy of the state — sibling subtrees cannot interfere with each other.
+
+    parent_full_nuc / parent_full_aa carry the full sets of the clade introduction that is
+    the actual ancestor of the current node. Since a clade can be introduced at several
+    nodes, this must be tracked along the path rather than looked up by clade name.
     """
     if accum_nuc is None:
         accum_nuc = {}
@@ -81,16 +94,22 @@ def extract_clades(
             ],
             key=lambda s: (s.split(":")[0], int(s.split(":")[1][1:-1])),
         )
+        full_nuc = _format_accum_nuc(accum_nuc)
+        full_aa = _format_accum_aa(accum_aa)
         yield CladeInfo(
             clade_name=node_clade,
             parent_clade=parent_clade,
             branch_nuc=branch_nuc,
             branch_aa=branch_aa_flat,
-            full_nuc=_format_accum_nuc(accum_nuc),
-            full_aa=_format_accum_aa(accum_aa),
+            full_nuc=full_nuc,
+            full_aa=full_aa,
+            new_nuc=[m for m in full_nuc if m not in parent_full_nuc],
+            new_aa=[m for m in full_aa if m not in parent_full_aa],
             node_attrs=node_attrs,
             depth=depth,
         )
+        parent_full_nuc = frozenset(full_nuc)
+        parent_full_aa = frozenset(full_aa)
 
     # Pass the current node's clade as the parent context for children.
     # If a node has no clade (e.g. the synthetic root), fall back to whatever
@@ -98,24 +117,15 @@ def extract_clades(
     next_parent = node_clade or parent_clade
     for child in node.get("children", []):
         yield from extract_clades(
-            child, lineage_attr, next_parent, accum_nuc, accum_aa, depth + 1
+            child,
+            lineage_attr,
+            next_parent,
+            accum_nuc,
+            accum_aa,
+            depth + 1,
+            parent_full_nuc,
+            parent_full_aa,
         )
-
-
-def new_since_parent(
-    clade: CladeInfo, parent: CladeInfo | None
-) -> tuple[list[str], list[str]]:
-    """Return the (nucleotide, AA) mutations of clade that are not in parent's full set.
-
-    Unlike branch_nuc / branch_aa, this also includes mutations that occurred on nodes
-    between the parent clade's introducing node and this clade's introducing node.
-    """
-    parent_nuc = set(parent.full_nuc) if parent else set()
-    parent_aa = set(parent.full_aa) if parent else set()
-    return (
-        [m for m in clade.full_nuc if m not in parent_nuc],
-        [m for m in clade.full_aa if m not in parent_aa],
-    )
 
 
 def _apply_nuc_mutations(

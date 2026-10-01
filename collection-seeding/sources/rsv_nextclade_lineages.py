@@ -2,7 +2,7 @@ import requests
 
 from models import Collection, Variant
 from sources import Source
-from sources.nextclade_tree import extract_clades, new_since_parent
+from sources.nextclade_tree import extract_clades
 
 RSV_A_TREE_URL = (
     "https://raw.githubusercontent.com/nextstrain/nextclade_data"
@@ -64,11 +64,9 @@ def _build_collections(
                                           clade, including mutations on intermediate nodes)
       - "New amino acid substitutions"  — AA mutations not in the parent clade's full set
     """
-    clades = {c.clade_name: c for c in extract_clades(tree_json["tree"])}
     collections = []
-    for clade in clades.values():
+    for clade in extract_clades(tree_json["tree"]):
         parent_str = clade.parent_clade or "—"
-        new_nuc, new_aa = new_since_parent(clade, clades.get(clade.parent_clade))
         variants: list[Variant] = [
             {
                 "type": "filterObject",
@@ -83,12 +81,12 @@ def _build_collections(
             {
                 "type": "filterObject",
                 "name": "New nucleotide substitutions",
-                "filterObject": {"nucleotideMutations": new_nuc},
+                "filterObject": {"nucleotideMutations": clade.new_nuc},
             },
             {
                 "type": "filterObject",
                 "name": "New amino acid substitutions",
-                "filterObject": {"aminoAcidMutations": new_aa},
+                "filterObject": {"aminoAcidMutations": clade.new_aa},
             },
         ]
         description = (

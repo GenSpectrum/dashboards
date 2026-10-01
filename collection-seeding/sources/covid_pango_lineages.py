@@ -2,7 +2,7 @@ import requests
 
 from models import Collection, Variant
 from sources import Source
-from sources.nextclade_tree import CladeInfo, extract_clades, new_since_parent
+from sources.nextclade_tree import CladeInfo, extract_clades
 
 TREE_URL = (
     "https://raw.githubusercontent.com/nextstrain/nextclade_data"
@@ -40,18 +40,13 @@ class CovidPangoLineagesSource(Source):
             entries = entries[: self._limit]
         print(f"  Loaded {len(entries)} lineage(s).")
         return [
-            self._build_collection(
-                lineage,
-                lineages.get(lineage.parent_clade),
-                designation_dates.get(lineage.clade_name),
-            )
+            self._build_collection(lineage, designation_dates.get(lineage.clade_name))
             for lineage in entries
         ]
 
     def _build_collection(
         self,
         lineage: CladeInfo,
-        parent: CladeInfo | None,
         designation_date: str | None,
     ) -> Collection:
         name = lineage.clade_name
@@ -63,7 +58,8 @@ class CovidPangoLineagesSource(Source):
 
         nuc_subs = lineage.full_nuc
         aa_subs = lineage.full_aa
-        nuc_subs_new, aa_subs_new = new_since_parent(lineage, parent)
+        nuc_subs_new = lineage.new_nuc
+        aa_subs_new = lineage.new_aa
 
         variants: list[Variant] = [
             {
