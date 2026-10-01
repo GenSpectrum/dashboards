@@ -118,6 +118,10 @@ def _first_introductions(lineages) -> dict[str, CladeInfo]:
     the root (the first one in tree order on ties).
     """
     result: dict[str, CladeInfo] = {}
+    # TODO: ~10 lineages (e.g. FY.3, BF.38, PQ.2) are introduced at multiple nodes
+    # in the Nextclade tree, sometimes with different mutations. This looks like an
+    # upstream data issue (to be reported to nextclade_data); until then, picking the
+    # shallowest node is good enough.
     for lineage in lineages:
         existing = result.get(lineage.clade_name)
         if existing is None or lineage.depth < existing.depth:
