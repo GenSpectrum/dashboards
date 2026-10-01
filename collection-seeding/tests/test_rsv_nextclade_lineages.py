@@ -1,14 +1,16 @@
 import responses as rsps_lib
 
+from sources.nextclade_tree import (
+    _apply_aa_mutations,
+    _apply_nuc_mutations,
+    extract_clades,
+)
 from sources.rsv_nextclade_lineages import (
     RSV_A_TREE_URL,
     RSV_B_TREE_URL,
     RsvANextcladeLineagesSource,
     RsvBNextcladeLineagesSource,
-    _apply_aa_mutations,
-    _apply_nuc_mutations,
     _build_collections,
-    _extract_clades,
 )
 
 # Minimal tree used by most tests:
@@ -142,58 +144,58 @@ def test_apply_aa_multiple_genes():
 
 
 def test_extract_clades_finds_both_clades():
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     names = [c.clade_name for c in clades]
     assert "A" in names
     assert "A.1" in names
 
 
 def test_extract_clades_skips_non_clade_nodes():
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     assert len(clades) == 2
 
 
 def test_extract_clades_root_clade_has_no_parent():
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     root_clade = next(c for c in clades if c.clade_name == "A")
     assert root_clade.parent_clade is None
 
 
 def test_extract_clades_child_clade_parent():
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     child = next(c for c in clades if c.clade_name == "A.1")
     assert child.parent_clade == "A"
 
 
 def test_extract_clades_branch_nuc_is_this_branch_only():
     # branch_nuc should contain only the mutations on that specific branch.
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     a1 = next(c for c in clades if c.clade_name == "A.1")
     assert a1.branch_nuc == ["C241T"]  # only what's new in A.1, not A's mutations
 
 
 def test_extract_clades_branch_aa_is_this_branch_only():
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     a1 = next(c for c in clades if c.clade_name == "A.1")
     assert a1.branch_aa == ["F:K124N"]
 
 
 def test_extract_clades_full_nuc_accumulates_from_root():
     # full_nuc for A.1 must include A's mutations as well as A.1's own.
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     a1 = next(c for c in clades if c.clade_name == "A.1")
     assert set(a1.full_nuc) == {"T59C", "G108A", "C241T"}
 
 
 def test_extract_clades_full_nuc_root_clade_equals_branch():
     # For the root clade (A) there is no ancestor, so full == branch.
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     a = next(c for c in clades if c.clade_name == "A")
     assert set(a.full_nuc) == {"T59C", "G108A"}
 
 
 def test_extract_clades_full_aa_accumulates_from_root():
-    clades = list(_extract_clades(SAMPLE_TREE["tree"]))
+    clades = list(extract_clades(SAMPLE_TREE["tree"]))
     a1 = next(c for c in clades if c.clade_name == "A.1")
     assert set(a1.full_aa) == {"F:T8A", "F:L20F", "G:T4N", "F:K124N"}
 
@@ -238,7 +240,7 @@ def test_extract_clades_sibling_subtrees_do_not_share_state():
             ],
         }
     }
-    clades = {c.clade_name: c for c in _extract_clades(tree["tree"])}
+    clades = {c.clade_name: c for c in extract_clades(tree["tree"])}
     # A.1 and A.2 should each independently see T59C from A
     assert "T59C" in clades["A.1"].full_nuc
     assert "T59C" in clades["A.2"].full_nuc
@@ -278,7 +280,7 @@ def test_extract_clades_multi_hop_accumulation():
             ],
         }
     }
-    clades = {c.clade_name: c for c in _extract_clades(tree["tree"])}
+    clades = {c.clade_name: c for c in extract_clades(tree["tree"])}
     assert "A100C" in clades["A"].full_nuc
     assert "A100G" in clades["A.1"].full_nuc  # reference A, final G
     assert "A100C" not in clades["A.1"].full_nuc  # A's intermediate step not present
@@ -315,7 +317,7 @@ def test_extract_clades_reversion_removed_from_full():
             ],
         }
     }
-    clades = {c.clade_name: c for c in _extract_clades(tree["tree"])}
+    clades = {c.clade_name: c for c in extract_clades(tree["tree"])}
     assert not any("100" in m for m in clades["A.1"].full_nuc)
 
 
@@ -456,13 +458,13 @@ SORT_TREE = {
 
 
 def test_branch_nuc_sorted_by_position():
-    clades = list(_extract_clades(SORT_TREE["tree"]))
+    clades = list(extract_clades(SORT_TREE["tree"]))
     a = next(c for c in clades if c.clade_name == "A")
     assert a.branch_nuc == ["T59C", "C241T", "G300T"]
 
 
 def test_branch_aa_sorted_by_gene_then_position():
-    clades = list(_extract_clades(SORT_TREE["tree"]))
+    clades = list(extract_clades(SORT_TREE["tree"]))
     a = next(c for c in clades if c.clade_name == "A")
     # F gene comes before G; within F, position 8 before 124
     assert a.branch_aa == ["F:T8A", "F:K124N", "G:T4N"]
