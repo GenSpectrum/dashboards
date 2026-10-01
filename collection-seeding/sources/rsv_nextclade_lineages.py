@@ -2,7 +2,7 @@ import requests
 
 from models import Collection, Variant
 from sources import Source
-from sources.nextclade_tree import extract_clades
+from sources.nextclade_tree import extract_clades, new_since_parent
 
 RSV_A_TREE_URL = (
     "https://raw.githubusercontent.com/nextstrain/nextclade_data"
@@ -59,13 +59,16 @@ def _build_collections(
                                           sequences that carry all defining substitutions
                                           of this clade)
       - "Amino acid substitutions"      — full AA set from reference root
-      - "New nucleotide substitutions"  — branch-only mutations (what is newly introduced
-                                          in this clade step relative to its parent clade)
-      - "New amino acid substitutions"  — branch-only AA mutations
+      - "New nucleotide substitutions"  — mutations not in the parent clade's full set
+                                          (what is newly introduced relative to the parent
+                                          clade, including mutations on intermediate nodes)
+      - "New amino acid substitutions"  — AA mutations not in the parent clade's full set
     """
+    clades = {c.clade_name: c for c in extract_clades(tree_json["tree"])}
     collections = []
-    for clade in extract_clades(tree_json["tree"]):
+    for clade in clades.values():
         parent_str = clade.parent_clade or "—"
+        new_nuc, new_aa = new_since_parent(clade, clades.get(clade.parent_clade))
         variants: list[Variant] = [
             {
                 "type": "filterObject",
@@ -80,12 +83,12 @@ def _build_collections(
             {
                 "type": "filterObject",
                 "name": "New nucleotide substitutions",
-                "filterObject": {"nucleotideMutations": clade.branch_nuc},
+                "filterObject": {"nucleotideMutations": new_nuc},
             },
             {
                 "type": "filterObject",
                 "name": "New amino acid substitutions",
-                "filterObject": {"aminoAcidMutations": clade.branch_aa},
+                "filterObject": {"aminoAcidMutations": new_aa},
             },
         ]
         description = (

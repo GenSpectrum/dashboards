@@ -396,7 +396,7 @@ def test_build_collections_full_nuc_variant_contents():
 
 
 def test_build_collections_new_nuc_variant_contents():
-    # "New nucleotide substitutions" = branch-only, just what A.1 introduces.
+    # "New nucleotide substitutions" = not in parent A's full set, just what A.1 introduces.
     cols = _build_collections(SAMPLE_TREE, "rsvA", "RSV-A", "nextclade-lineage")
     a1 = next(c for c in cols if c["name"] == "A.1")
     new_nuc = next(
@@ -424,6 +424,63 @@ def test_build_collections_new_aa_variant_contents():
         v for v in a1["variants"] if v["name"] == "New amino acid substitutions"
     )
     assert new_aa["filterObject"]["aminoAcidMutations"] == ["F:K124N"]
+
+
+def test_build_collections_new_includes_mutations_between_parent_and_clade():
+    # A.1 is not a direct child of A's introducing node: an intermediate node (still
+    # clade A) adds A100G. That mutation is not part of A's definition, so it is new
+    # for A.1, even though it is not on A.1's own branch.
+    tree = {
+        "tree": {
+            "name": "root",
+            "node_attrs": {},
+            "branch_attrs": {},
+            "children": [
+                {
+                    "name": "NODE_A",
+                    "node_attrs": {"clade_membership": {"value": "A"}},
+                    "branch_attrs": {
+                        "labels": {"clade": "A"},
+                        "mutations": {"nuc": ["T59C"], "F": ["T8A"]},
+                    },
+                    "children": [
+                        {
+                            "name": "NODE_A_inner",
+                            "node_attrs": {"clade_membership": {"value": "A"}},
+                            "branch_attrs": {
+                                "mutations": {"nuc": ["A100G"], "G": ["T4N"]}
+                            },
+                            "children": [
+                                {
+                                    "name": "NODE_A1",
+                                    "node_attrs": {
+                                        "clade_membership": {"value": "A.1"}
+                                    },
+                                    "branch_attrs": {
+                                        "labels": {"clade": "A.1"},
+                                        "mutations": {
+                                            "nuc": ["C241T"],
+                                            "F": ["K124N"],
+                                        },
+                                    },
+                                    "children": [],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            ],
+        }
+    }
+    cols = _build_collections(tree, "rsvA", "RSV-A", "nextclade-lineage")
+    a1 = next(c for c in cols if c["name"] == "A.1")
+    variants = {v["name"]: v["filterObject"] for v in a1["variants"]}
+    assert variants["New nucleotide substitutions"] == {
+        "nucleotideMutations": ["A100G", "C241T"]
+    }
+    assert variants["New amino acid substitutions"] == {
+        "aminoAcidMutations": ["F:K124N", "G:T4N"]
+    }
 
 
 # --- mutation sort order ---
