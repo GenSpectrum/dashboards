@@ -102,6 +102,22 @@ def extract_clades(
         )
 
 
+def new_since_parent(
+    clade: CladeInfo, parent: CladeInfo | None
+) -> tuple[list[str], list[str]]:
+    """Return the (nucleotide, AA) mutations of clade that are not in parent's full set.
+
+    Unlike branch_nuc / branch_aa, this also includes mutations that occurred on nodes
+    between the parent clade's introducing node and this clade's introducing node.
+    """
+    parent_nuc = set(parent.full_nuc) if parent else set()
+    parent_aa = set(parent.full_aa) if parent else set()
+    return (
+        [m for m in clade.full_nuc if m not in parent_nuc],
+        [m for m in clade.full_aa if m not in parent_aa],
+    )
+
+
 def _apply_nuc_mutations(
     branch_muts: list[str],
     accum: dict[str, tuple[str, str]],

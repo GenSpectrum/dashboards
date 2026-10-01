@@ -2,7 +2,7 @@ import requests
 
 from models import Collection, Variant
 from sources import Source
-from sources.nextclade_tree import CladeInfo, extract_clades
+from sources.nextclade_tree import CladeInfo, extract_clades, new_since_parent
 
 TREE_URL = (
     "https://raw.githubusercontent.com/nextstrain/nextclade_data"
@@ -63,10 +63,7 @@ class CovidPangoLineagesSource(Source):
 
         nuc_subs = lineage.full_nuc
         aa_subs = lineage.full_aa
-        parent_nuc = set(parent.full_nuc) if parent else set()
-        parent_aa = set(parent.full_aa) if parent else set()
-        nuc_subs_new = [s for s in nuc_subs if s not in parent_nuc]
-        aa_subs_new = [s for s in aa_subs if s not in parent_aa]
+        nuc_subs_new, aa_subs_new = new_since_parent(lineage, parent)
 
         variants: list[Variant] = [
             {
