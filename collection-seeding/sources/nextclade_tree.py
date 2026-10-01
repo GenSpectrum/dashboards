@@ -10,14 +10,23 @@ class CladeInfo(NamedTuple):
     branch_aa: list[str]
     full_nuc: list[str]
     full_aa: list[str]
+    node_attrs: dict
+    depth: int
 
 
-def extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
+def extract_clades(
+    node,
+    lineage_attr="clade_membership",
+    parent_clade=None,
+    accum_nuc=None,
+    accum_aa=None,
+    depth=0,
+):
     """Walk the Nextclade reference tree recursively, yielding one CladeInfo per introduced clade.
 
     Fields:
-      - clade_name:   the clade label from branch_attrs.labels.clade, e.g. "A.D.3.5"
-      - parent_clade: node_attrs.clade_membership of the parent node (None for the root clade)
+      - clade_name:   node_attrs.<lineage_attr> of the introducing node, e.g. "A.D.3.5"
+      - parent_clade: node_attrs.<lineage_attr> of the parent node (None for the root clade)
       - branch_nuc:   nucleotide mutations on this branch only (relative to parent node),
                       e.g. ["C982T", "G108A"]
       - branch_aa:    AA mutations on this branch only, formatted as GENE:MUT,
@@ -27,8 +36,13 @@ def extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
                       e.g. ["A982T", "G108A", "C241T"]
       - full_aa:      all AA mutations from root to this clade, expressed relative to root,
                       e.g. ["F:T8G", "G:T4N"]
+      - node_attrs:   the raw node_attrs of the introducing node (for extra metadata)
+      - depth:        number of edges between the tree root and the introducing node
 
-    A clade is introduced at any node where branch_attrs.labels.clade is set.
+    A clade is introduced at any node whose node_attrs.<lineage_attr> is set and differs
+    from its parent's. lineage_attr is e.g. "clade_membership" (Nextstrain clades, matches
+    the nodes carrying branch_attrs.labels.clade) or "Nextclade_pango" (Pango lineages in
+    the SARS-CoV-2 tree). The same clade can be introduced at more than one node.
 
     The root reference sequence (e.g. EPI_ISL_412866 for RSV-A) defines position zero
     for all accumulated mutations — i.e. full_nuc and full_aa give the complete set of
@@ -43,9 +57,9 @@ def extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
     if accum_aa is None:
         accum_aa = {}
 
-    labels = node.get("branch_attrs", {}).get("labels", {})
+    node_attrs = node.get("node_attrs", {})
     muts = node.get("branch_attrs", {}).get("mutations", {})
-    node_clade = node.get("node_attrs", {}).get("clade_membership", {}).get("value")
+    node_clade = node_attrs.get(lineage_attr, {}).get("value")
 
     # Separate nucleotide mutations (key "nuc") from amino acid mutations (all other keys
     # are gene names such as "F", "G", "L", etc.).
@@ -57,7 +71,7 @@ def extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
     accum_nuc = _apply_nuc_mutations(branch_nuc, accum_nuc)
     accum_aa = _apply_aa_mutations(branch_aa_by_gene, accum_aa)
 
-    if "clade" in labels:
+    if node_clade and node_clade != parent_clade:
         # Flatten branch-level AA mutations into GENE:MUT strings for the "new" variant.
         branch_aa_flat = sorted(
             [
@@ -68,20 +82,24 @@ def extract_clades(node, parent_clade=None, accum_nuc=None, accum_aa=None):
             key=lambda s: (s.split(":")[0], int(s.split(":")[1][1:-1])),
         )
         yield CladeInfo(
-            clade_name=labels["clade"],
+            clade_name=node_clade,
             parent_clade=parent_clade,
             branch_nuc=branch_nuc,
             branch_aa=branch_aa_flat,
             full_nuc=_format_accum_nuc(accum_nuc),
             full_aa=_format_accum_aa(accum_aa),
+            node_attrs=node_attrs,
+            depth=depth,
         )
 
-    # Pass the current node's clade_membership as the parent context for children.
-    # If a node has no clade_membership (e.g. the synthetic root), fall back to whatever
+    # Pass the current node's clade as the parent context for children.
+    # If a node has no clade (e.g. the synthetic root), fall back to whatever
     # was passed in from above.
     next_parent = node_clade or parent_clade
     for child in node.get("children", []):
-        yield from extract_clades(child, next_parent, accum_nuc, accum_aa)
+        yield from extract_clades(
+            child, lineage_attr, next_parent, accum_nuc, accum_aa, depth + 1
+        )
 
 
 def _apply_nuc_mutations(
