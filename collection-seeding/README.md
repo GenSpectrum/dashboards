@@ -3,7 +3,7 @@
 Seeds the backend with example collections:
 
 - **covid-resistance-mutations** — resistance mutation data for 3CLpro, RdRp, and Spike mAb
-- **covid-pango-lineages** — one collection per pango lineage, with nucleotide substitutions as variants
+- **covid-pango-lineages** — one collection per pango lineage, with nucleotide and amino acid mutations as variants (derived from the Nextclade SARS-CoV-2 reference tree)
 - **covid-pango-lineages-sample** — same as above but limited to 10 lineages, for quick testing
 - **rsv-a-resistance-mutations** — RSV-A F protein resistance mutations against Nirsevimab and Palivizumab (fetched live from ViralZone)
 - **rsv-b-resistance-mutations** — RSV-B F protein resistance mutations against Nirsevimab and Palivizumab (fetched live from ViralZone)
