@@ -16,9 +16,13 @@ interface LabeledFieldProps {
      * If provided, a help button will be shown next to the label.
      */
     info?: ReactNode;
+    /**
+     * Optional error message displayed below the field.
+     */
+    error?: string;
 }
 
-export function LabeledField({ label, children, info }: LabeledFieldProps) {
+export function LabeledField({ label, children, info, error }: LabeledFieldProps) {
     const modalRef = useModalRef();
 
     return (
@@ -44,6 +48,11 @@ export function LabeledField({ label, children, info }: LabeledFieldProps) {
                 )}
             </div>
             {children}
+            {error !== undefined && (
+                <label className='label'>
+                    <span className='label-text-alt text-error'>{error}</span>
+                </label>
+            )}
         </div>
     );
 }
