@@ -85,7 +85,7 @@
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.60.1",
         "vitest": "^3.2.4",
-        "vitest-browser-react": "^1.0.1",
+        "vitest-browser-react": "^2.2.0",
         "zod": "^3.25.74"
     }
 }
