@@ -1,6 +1,5 @@
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll } from 'vitest';
-import '@testing-library/jest-dom/vitest';
 
 import { AstroApiRouteMocker, BackendRouteMocker, CovSpectrumRouteMocker, LapisRouteMocker } from './routeMocker.ts';
 import setupDayjs from './src/util/setupDayjs.ts';

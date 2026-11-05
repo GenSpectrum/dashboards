@@ -17,7 +17,7 @@ describe('ManualAnalysisFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={defaultPageState} setPageState={mockSetPageState} />
             </gs-app>,
@@ -35,7 +35,7 @@ describe('ManualAnalysisFilter', () => {
             sequenceType: 'amino acid',
         };
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={pageState} setPageState={mockSetPageState} />
             </gs-app>,
@@ -54,7 +54,7 @@ describe('ManualAnalysisFilter', () => {
             mutations: ['A23T'],
         };
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={pageState} setPageState={mockSetPageState} />
             </gs-app>,
@@ -76,7 +76,7 @@ describe('ManualAnalysisFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={defaultPageState} setPageState={mockSetPageState} />
             </gs-app>,
@@ -94,7 +94,7 @@ describe('ManualAnalysisFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={defaultPageState} setPageState={mockSetPageState} />
             </gs-app>,
@@ -121,7 +121,7 @@ describe('ManualAnalysisFilter', () => {
             sequenceType: 'amino acid',
         };
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={pageState} setPageState={mockSetPageState} />
             </gs-app>,
@@ -144,7 +144,7 @@ describe('ManualAnalysisFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <ManualAnalysisFilter pageState={defaultPageState} setPageState={mockSetPageState} />
             </gs-app>,

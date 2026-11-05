@@ -1,5 +1,5 @@
-import { userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { CollectionCombobox } from './CollectionCombobox';
@@ -22,7 +22,7 @@ describe('CollectionCombobox', () => {
     describe('onInputBlur', () => {
         it('calls onChange(null) when blurred with empty input', async () => {
             const onChange = vi.fn();
-            const { getByRole } = render(
+            const { getByRole } = await render(
                 <CollectionCombobox collections={collections} value={collections[0]} onChange={onChange} />,
             );
 
@@ -34,7 +34,7 @@ describe('CollectionCombobox', () => {
 
         it('calls onChange with matched collection when blurred with an exact name', async () => {
             const onChange = vi.fn();
-            const { getByRole } = render(
+            const { getByRole } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={onChange} />,
             );
 
@@ -46,7 +46,7 @@ describe('CollectionCombobox', () => {
 
         it('calls onChange with matched collection when input has surrounding whitespace', async () => {
             const onChange = vi.fn();
-            const { getByRole } = render(
+            const { getByRole } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={onChange} />,
             );
 
@@ -58,7 +58,7 @@ describe('CollectionCombobox', () => {
 
         it('shows error state and does not call onChange when blurred with an unrecognised name', async () => {
             const onChange = vi.fn();
-            const { getByRole } = render(
+            const { getByRole } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={onChange} />,
             );
 
@@ -72,7 +72,7 @@ describe('CollectionCombobox', () => {
 
         it('clears error state when user starts typing after an invalid blur', async () => {
             const onChange = vi.fn();
-            const { getByRole } = render(
+            const { getByRole } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={onChange} />,
             );
 
@@ -88,8 +88,8 @@ describe('CollectionCombobox', () => {
     });
 
     describe('clear button', () => {
-        it('is not rendered when input is empty', () => {
-            const { getByLabelText } = render(
+        it('is not rendered when input is empty', async () => {
+            const { getByLabelText } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={vi.fn()} />,
             );
 
@@ -97,7 +97,7 @@ describe('CollectionCombobox', () => {
         });
 
         it('is visible when a value is selected', async () => {
-            const { getByLabelText } = render(
+            const { getByLabelText } = await render(
                 <CollectionCombobox collections={collections} value={collections[0]} onChange={vi.fn()} />,
             );
 
@@ -106,7 +106,7 @@ describe('CollectionCombobox', () => {
 
         it('clears the input and calls onChange(null) when clicked', async () => {
             const onChange = vi.fn();
-            const { getByLabelText, getByRole } = render(
+            const { getByLabelText, getByRole } = await render(
                 <CollectionCombobox collections={collections} value={collections[0]} onChange={onChange} />,
             );
 
@@ -118,7 +118,7 @@ describe('CollectionCombobox', () => {
 
         it('disappears after being clicked', async () => {
             const onChange = vi.fn();
-            const { getByLabelText } = render(
+            const { getByLabelText } = await render(
                 <CollectionCombobox collections={collections} value={collections[0]} onChange={onChange} />,
             );
 
@@ -130,7 +130,7 @@ describe('CollectionCombobox', () => {
 
     describe('filtering', () => {
         it('shows only matching items when typing', async () => {
-            const { getByRole, getByText } = render(
+            const { getByRole, getByText } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={vi.fn()} />,
             );
 
@@ -143,7 +143,7 @@ describe('CollectionCombobox', () => {
         });
 
         it('shows "No variants found" when no collections match the input', async () => {
-            const { getByRole, getByText } = render(
+            const { getByRole, getByText } = await render(
                 <CollectionCombobox collections={collections} value={null} onChange={vi.fn()} />,
             );
 

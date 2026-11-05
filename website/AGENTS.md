@@ -25,16 +25,19 @@ npm run format        # Auto-fix: ESLint + Prettier
 npm test                          # Run all vitest tests (node + browser)
 
 # Run a single test file:
-npx vitest run src/path/to/file.spec.ts
+npm test -- --run src/path/to/file.spec.ts
 
 # Run a single test by name pattern:
-npx vitest run --reporter=verbose -t "test name pattern"
+npm test -- --run --reporter=verbose -t "test name pattern"
 
 # End-to-end tests (requires running dev server):
 npm run e2e                       # All Playwright e2e tests
 ```
 
 Check `package.json` for more details on available commands.
+
+The npm test scripts generate the ignored MSW worker through the `pretest` hook.
+Before invoking Vitest directly, run `npm run pretest`.
 
 **Test file conventions:**
 

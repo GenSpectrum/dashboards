@@ -1,11 +1,12 @@
+import * as matchers from '@testing-library/jest-dom/matchers';
 import { setupWorker } from 'msw/browser';
-import '@testing-library/jest-dom/vitest';
-import { it as itBase } from 'vitest';
+import { expect, it as itBase } from 'vitest';
 
 import { AstroApiRouteMocker, BackendRouteMocker, CovSpectrumRouteMocker, LapisRouteMocker } from './routeMocker.ts';
 import setupDayjs from './src/util/setupDayjs.ts';
 
 setupDayjs();
+expect.extend(matchers);
 
 export const worker = setupWorker();
 

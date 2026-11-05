@@ -8,7 +8,7 @@ describe('NumericInput', () => {
     it('renders with initial value', async () => {
         const mockOnChange = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <NumericInput label='Test Input' value={5} min={0} max={10} step={1} onChange={mockOnChange} />,
         );
 
@@ -19,7 +19,7 @@ describe('NumericInput', () => {
     it('calls onChange when number input changes', async () => {
         const mockOnChange = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <NumericInput label='Test Input' value={5} min={0} max={10} step={1} onChange={mockOnChange} />,
         );
 
@@ -32,7 +32,7 @@ describe('NumericInput', () => {
     it('calls onChange when range slider changes', async () => {
         const mockOnChange = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <NumericInput label='Test Input' value={5} min={0} max={10} step={1} onChange={mockOnChange} />,
         );
 
