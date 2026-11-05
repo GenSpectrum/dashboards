@@ -1,5 +1,5 @@
-import { userEvent } from '@vitest/browser/context';
 import { describe, expect, it as itVitest, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { VariantEditor } from './VariantEditor.tsx';
@@ -21,7 +21,7 @@ describe('VariantEditor', () => {
     it('renders Name and Description labels', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByText } = render(
+        const { getByText } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={FILTER_VARIANT}
@@ -41,7 +41,7 @@ describe('VariantEditor', () => {
     it('"Use advanced query" checkbox is unchecked for filterObject variant', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={FILTER_VARIANT}
@@ -58,7 +58,7 @@ describe('VariantEditor', () => {
     });
 
     itVitest('"Use advanced query" checkbox is checked for query variant', async () => {
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={QUERY_VARIANT}
@@ -79,7 +79,7 @@ describe('VariantEditor', () => {
 
         const onChange = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={FILTER_VARIANT}
@@ -100,7 +100,7 @@ describe('VariantEditor', () => {
     it('Remove button is visible when canRemove is true', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={FILTER_VARIANT}
@@ -121,7 +121,7 @@ describe('VariantEditor', () => {
 
         const onRemove = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <VariantEditorWithProvider
                 index={2}
                 variant={FILTER_VARIANT}
@@ -142,7 +142,7 @@ describe('VariantEditor', () => {
     itVitest('changing the name input calls onChange with the updated name', async () => {
         const onChange = vi.fn();
 
-        const { getByPlaceholder } = render(
+        const { getByPlaceholder } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={QUERY_VARIANT}
@@ -168,7 +168,7 @@ describe('VariantEditor', () => {
 
         const onValidityChange = vi.fn();
 
-        const { getByPlaceholder } = render(
+        const { getByPlaceholder } = await render(
             <VariantEditorWithProvider
                 index={3}
                 variant={{ type: 'query', name: 'x', countQuery: '' }}
@@ -194,7 +194,7 @@ describe('VariantEditor', () => {
 
         const onValidityChange = vi.fn();
 
-        const { getByPlaceholder } = render(
+        const { getByPlaceholder } = await render(
             <VariantEditorWithProvider
                 index={0}
                 variant={{ type: 'query', name: 'x', countQuery: '' }}
@@ -220,7 +220,7 @@ describe('VariantEditor', () => {
 
         const onValidityChange = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <VariantEditorWithProvider
                 index={1}
                 variant={QUERY_VARIANT}

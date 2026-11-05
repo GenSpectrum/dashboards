@@ -41,7 +41,7 @@ describe('CovSpectrumCollectionAnalysisFilter', () => {
 
         covSpectrum.mockGetCollections(DUMMY_COV_SPECTRUM_URL, mockCollections);
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <QueryClientProvider client={queryClient}>
                 <CovSpectrumCollectionAnalysisFilter
                     pageState={defaultPageState}
@@ -61,7 +61,7 @@ describe('CovSpectrumCollectionAnalysisFilter', () => {
 
         covSpectrum.mockGetCollections(DUMMY_COV_SPECTRUM_URL, mockCollections);
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <QueryClientProvider client={queryClient}>
                 <CovSpectrumCollectionAnalysisFilter
                     pageState={defaultPageState}

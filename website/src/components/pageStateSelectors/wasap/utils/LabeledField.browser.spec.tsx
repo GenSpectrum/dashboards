@@ -6,7 +6,7 @@ import { it } from '../../../../../test-extend';
 
 describe('LabeledField', () => {
     it('opens modal when info button is clicked', async () => {
-        const { getByLabelText, getByText } = render(
+        const { getByLabelText, getByText } = await render(
             <LabeledField label='Test Field' info={<div>This is helpful information</div>}>
                 <input type='text' />
             </LabeledField>,

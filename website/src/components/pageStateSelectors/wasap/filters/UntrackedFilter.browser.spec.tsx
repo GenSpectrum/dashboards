@@ -1,6 +1,6 @@
 import { type UseQueryResult } from '@tanstack/react-query';
-import { userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { UntrackedFilter } from './UntrackedFilter';
@@ -28,7 +28,7 @@ describe('UntrackedFilter - custom variants textarea', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <UntrackedFilter
                 pageState={defaultPageState}
                 setPageState={mockSetPageState}

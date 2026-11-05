@@ -1,6 +1,6 @@
-import { userEvent } from '@vitest/browser/context';
 import { useState } from 'react';
 import { beforeEach, describe, expect, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { TagInput } from './TagInput.tsx';
@@ -17,15 +17,15 @@ beforeEach(() => {
 
 describe('TagInput', () => {
     it('renders existing tags', async () => {
-        const { getByText } = render(<TagInputWithProvider tags={['flu', 'europe']} onChange={vi.fn()} />);
+        const { getByText } = await render(<TagInputWithProvider tags={['flu', 'europe']} onChange={vi.fn()} />);
 
-        await expect.element(getByText('flu')).toBeVisible();
-        await expect.element(getByText('europe')).toBeVisible();
+        await expect.element(getByText('flu', { exact: false })).toBeVisible();
+        await expect.element(getByText('europe', { exact: false })).toBeVisible();
     });
 
     it('adds a tag on Enter', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('influenza');
         await userEvent.keyboard('{Enter}');
@@ -35,7 +35,7 @@ describe('TagInput', () => {
 
     it('adds a tag on comma', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('influenza');
         await userEvent.keyboard(',');
@@ -45,7 +45,7 @@ describe('TagInput', () => {
 
     it('adds a tag on space', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('influenza');
         await userEvent.keyboard(' ');
@@ -55,7 +55,7 @@ describe('TagInput', () => {
 
     it('adds a tag on blur', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('influenza');
         await userEvent.tab();
@@ -65,7 +65,7 @@ describe('TagInput', () => {
 
     it('lowercases tags', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('Influenza');
         await userEvent.keyboard('{Enter}');
@@ -75,7 +75,7 @@ describe('TagInput', () => {
 
     it('does not add duplicate tags', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={['flu']} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={['flu']} onChange={onChange} />);
 
         await getByPlaceholder('').fill('flu');
         await userEvent.keyboard('{Enter}');
@@ -85,7 +85,7 @@ describe('TagInput', () => {
 
     it('removes a tag when the remove button is clicked', async () => {
         const onChange = vi.fn();
-        const { getByRole } = render(<TagInputWithProvider tags={['flu', 'covid']} onChange={onChange} />);
+        const { getByRole } = await render(<TagInputWithProvider tags={['flu', 'covid']} onChange={onChange} />);
 
         await getByRole('button', { name: 'Remove tag flu' }).click();
 
@@ -94,7 +94,7 @@ describe('TagInput', () => {
 
     it('removes the last tag on Backspace when the input is empty', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={['flu', 'covid']} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={['flu', 'covid']} onChange={onChange} />);
 
         await userEvent.click(getByPlaceholder(''));
         await userEvent.keyboard('{Backspace}');
@@ -104,7 +104,7 @@ describe('TagInput', () => {
 
     it('adds multiple tags from a comma-separated fill', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('a,b,c');
 
@@ -113,7 +113,7 @@ describe('TagInput', () => {
 
     it('deduplicates tags within a single fill', async () => {
         const onChange = vi.fn();
-        const { getByPlaceholder } = render(<TagInputWithProvider tags={[]} onChange={onChange} />);
+        const { getByPlaceholder } = await render(<TagInputWithProvider tags={[]} onChange={onChange} />);
 
         await getByPlaceholder(PLACEHOLDER).fill('flu flu');
 
@@ -126,7 +126,7 @@ describe('TagInput', () => {
             return <TagInputWithProvider tags={tags} onChange={setTags} />;
         }
 
-        const { getByPlaceholder, getByRole } = render(<StatefulTagInput />);
+        const { getByPlaceholder, getByRole } = await render(<StatefulTagInput />);
 
         await getByPlaceholder(PLACEHOLDER).fill('foo');
         await userEvent.keyboard('{Enter}');
@@ -147,7 +147,7 @@ describe('TagInput', () => {
             return <TagInputWithProvider tags={tags} onChange={setTags} />;
         }
 
-        const { getByPlaceholder, getByRole } = render(<StatefulTagInput />);
+        const { getByPlaceholder, getByRole } = await render(<StatefulTagInput />);
 
         await getByPlaceholder(PLACEHOLDER).fill('flu');
         await getByRole('option', { name: 'flu' }).click();

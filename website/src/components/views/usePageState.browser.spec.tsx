@@ -1,4 +1,3 @@
-import { act } from '@testing-library/react';
 import { describe, expect } from 'vitest';
 import { renderHook } from 'vitest-browser-react';
 
@@ -6,7 +5,7 @@ import { usePageState } from './usePageState';
 import { it } from '../../../test-extend';
 
 describe('usePageState', () => {
-    it('should update pageState when URL changes via browser navigation', () => {
+    it('should update pageState when URL changes via browser navigation', async () => {
         window.history.pushState({}, '', '/?value=initial');
 
         const mockPageStateHandler = {
@@ -21,11 +20,11 @@ describe('usePageState', () => {
             },
         };
 
-        const { result } = renderHook(() => usePageState(mockPageStateHandler));
+        const { result, act } = await renderHook(() => usePageState(mockPageStateHandler));
 
         expect(result.current.pageState.value).equals('initial');
 
-        act(() => {
+        await act(() => {
             window.history.pushState({}, '', '/?value=updated');
             window.dispatchEvent(new PopStateEvent('popstate'));
         });

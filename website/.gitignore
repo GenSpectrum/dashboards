@@ -21,3 +21,4 @@ logs/
 /blob-report/
 /playwright/.cache/
 **/__screenshots__/
+.vitest/

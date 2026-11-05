@@ -33,9 +33,9 @@ describe('ApplyFilterButton', () => {
     it('should render enabled link for short URL', async () => {
         const shortState: DummyPageState = { data: 'short' };
 
-        const { result: state } = renderHook(() => useState({ data: 'initial' }));
+        const { result: state } = await renderHook(() => useState({ data: 'initial' }));
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={shortState} setPageState={state.current[1]} />,
         );
 
@@ -48,9 +48,9 @@ describe('ApplyFilterButton', () => {
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
 
-        const { result: state } = renderHook(() => useState({ data: 'initial' }));
+        const { result: state } = await renderHook(() => useState({ data: 'initial' }));
 
-        const { getByRole, container } = render(
+        const { getByRole, container } = await render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={longState} setPageState={state.current[1]} />,
         );
 
@@ -64,9 +64,9 @@ describe('ApplyFilterButton', () => {
     it('should update when state changes from short to long', async () => {
         const shortState: DummyPageState = { data: 'short' };
 
-        const { result: state } = renderHook(() => useState({ data: 'initial' }));
+        const { result: state } = await renderHook(() => useState({ data: 'initial' }));
 
-        const { getByRole, container, rerender } = render(
+        const { getByRole, container, rerender } = await render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={shortState} setPageState={state.current[1]} />,
         );
 
@@ -76,7 +76,7 @@ describe('ApplyFilterButton', () => {
 
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
-        rerender(
+        await rerender(
             <ApplyFilterButton pageStateHandler={handler} newPageState={longState} setPageState={state.current[1]} />,
         );
 
@@ -91,9 +91,9 @@ describe('ApplyFilterButton', () => {
         const longData = 'x'.repeat(2000);
         const longState: DummyPageState = { data: longData };
 
-        const { result: state } = renderHook(() => useState({ data: 'initial' }));
+        const { result: state } = await renderHook(() => useState({ data: 'initial' }));
 
-        const { getByRole, container, rerender } = render(
+        const { getByRole, container, rerender } = await render(
             <ApplyFilterButton pageStateHandler={handler} newPageState={longState} setPageState={state.current[1]} />,
         );
 
@@ -103,7 +103,7 @@ describe('ApplyFilterButton', () => {
         expect(state.current[0].data).toEqual('initial');
 
         const shortState: DummyPageState = { data: 'short' };
-        rerender(
+        await rerender(
             <ApplyFilterButton pageStateHandler={handler} newPageState={shortState} setPageState={state.current[1]} />,
         );
 

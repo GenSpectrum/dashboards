@@ -1,5 +1,5 @@
-import { userEvent } from '@vitest/browser/context';
 import { beforeEach, describe, expect, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { CollectionForm } from './CollectionForm.tsx';
@@ -46,7 +46,7 @@ describe('CollectionForm', () => {
     it('shows "New collection" heading when no initialValues are provided', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
+        const { getByRole } = await render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
 
         await expect.element(getByRole('heading', { level: 1 })).toHaveTextContent('New collection');
     });
@@ -54,7 +54,9 @@ describe('CollectionForm', () => {
     it('shows "Edit collection" heading when initialValues are provided', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
+        const { getByRole } = await render(
+            <CollectionFormWithProvider {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />,
+        );
 
         await expect.element(getByRole('heading', { level: 1 })).toHaveTextContent('Edit collection');
     });
@@ -62,7 +64,7 @@ describe('CollectionForm', () => {
     it('"Add variant" button adds a new variant row', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
+        const { getByRole } = await render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
 
         await getByRole('button', { name: 'Add variant' }).click();
 
@@ -73,7 +75,7 @@ describe('CollectionForm', () => {
     it('default variant has "Use advanced query" unchecked', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByRole } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
+        const { getByRole } = await render(<CollectionFormWithProvider {...DEFAULT_PROPS} />);
 
         await expect.element(getByRole('checkbox', { name: 'Use advanced query instead' })).not.toBeChecked();
     });
@@ -81,10 +83,12 @@ describe('CollectionForm', () => {
     it('shows existing tags as chips when initialValues has tags', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByText } = render(<CollectionFormWithProvider {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />);
+        const { getByText } = await render(
+            <CollectionFormWithProvider {...DEFAULT_PROPS} initialValues={INITIAL_VALUES} />,
+        );
 
-        await expect.element(getByText('flu')).toBeVisible();
-        await expect.element(getByText('europe')).toBeVisible();
+        await expect.element(getByText('flu', { exact: false })).toBeVisible();
+        await expect.element(getByText('europe', { exact: false })).toBeVisible();
     });
 
     it('adds a tag on Enter and includes it in onSubmit', async ({ routeMockers: { lapis } }) => {
@@ -92,7 +96,7 @@ describe('CollectionForm', () => {
 
         const onSubmit = vi.fn();
 
-        const { getByRole, getByPlaceholder } = render(
+        const { getByRole, getByPlaceholder } = await render(
             <CollectionFormWithProvider {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
         );
 
@@ -113,7 +117,7 @@ describe('CollectionForm', () => {
 
         const onSubmit = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <CollectionFormWithProvider {...DEFAULT_PROPS} onSubmit={onSubmit} initialValues={INITIAL_VALUES} />,
         );
 
@@ -133,7 +137,7 @@ describe('CollectionForm', () => {
             { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
         );
 
-        const { getByRole, getByPlaceholder } = render(
+        const { getByRole, getByPlaceholder } = await render(
             <CollectionFormWithProvider {...DEFAULT_PROPS} submitLabel='Create collection' />,
         );
 
@@ -153,7 +157,7 @@ describe('CollectionForm', () => {
     }) => {
         lapis.mockLapisDown();
 
-        const { getByRole, getByPlaceholder } = render(
+        const { getByRole, getByPlaceholder } = await render(
             <CollectionFormWithProvider {...DEFAULT_PROPS} submitLabel='Create collection' />,
         );
 
@@ -175,7 +179,7 @@ describe('CollectionForm', () => {
             { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
         );
 
-        const { getByRole, getByPlaceholder } = render(
+        const { getByRole, getByPlaceholder } = await render(
             <CollectionFormWithProvider {...DEFAULT_PROPS} submitLabel='Create collection' />,
         );
 
@@ -198,7 +202,7 @@ describe('CollectionForm', () => {
 
         const onSubmit = vi.fn();
 
-        const { getByRole, getByPlaceholder } = render(
+        const { getByRole, getByPlaceholder } = await render(
             <CollectionFormWithProvider {...DEFAULT_PROPS} onSubmit={onSubmit} submitLabel='Create collection' />,
         );
 

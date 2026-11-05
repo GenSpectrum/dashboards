@@ -13,7 +13,7 @@ describe('DynamicDateFilter', () => {
     it('has multiple options', async ({ routeMockers: { lapis } }) => {
         setupLapisMocks(lapis);
 
-        const { getByRole, getByText } = render(
+        const { getByRole, getByText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <WrappedDynamicDateFilter
                     label='Sampling date'
@@ -36,7 +36,7 @@ describe('DynamicDateFilter', () => {
     it('has recent days options with correct labels', async ({ routeMockers: { lapis } }) => {
         setupLapisMocks(lapis);
 
-        const { getByRole, getByText } = render(
+        const { getByRole, getByText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <WrappedDynamicDateFilter
                     label='Sampling date'
@@ -69,7 +69,7 @@ describe('DynamicDateFilter', () => {
     it('has an "All times" option', async ({ routeMockers: { lapis } }) => {
         setupLapisMocks(lapis);
 
-        const { getByRole, getByText } = render(
+        const { getByRole, getByText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <WrappedDynamicDateFilter
                     label='Sampling date'

@@ -21,7 +21,7 @@ describe('SingleVariantPageStateSelector', () => {
         });
         routeMockers.lapis.mockLineageDefinition('nextcladePangoLineage', {});
 
-        const { result } = renderHook(() =>
+        const { result } = await renderHook(() =>
             useState<CovidVariantData>({
                 datasetFilter: {
                     locationFilters: {},
@@ -34,7 +34,7 @@ describe('SingleVariantPageStateSelector', () => {
             }),
         );
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <SingleVariantPageStateSelectorWithProvider
                     view={new Routing(testOrganismsConfig).getOrganismView('covid.singleVariantView')}

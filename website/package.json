@@ -67,7 +67,8 @@
         "@types/topojson-specification": "^1.0.5",
         "@typescript-eslint/eslint-plugin": "^8.72.1",
         "@typescript-eslint/parser": "^8.72.1",
-        "@vitest/browser": "^5.0.5",
+        "@vitest/browser": "^5.1.0",
+        "@vitest/browser-playwright": "^5.1.0",
         "astro-eslint-parser": "^1.4.0",
         "daisyui": "^5.7.50",
         "dotenv": "^16.5.0",
@@ -84,8 +85,13 @@
         "tailwindcss": "^4.0.9",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.72.1",
-        "vitest": "^3.2.4",
-        "vitest-browser-react": "^1.0.1",
+        "vitest": "^5.1.0",
+        "vitest-browser-react": "^2.3.0",
         "zod": "^3.25.74"
+    },
+    "msw": {
+        "workerDirectory": [
+            "tests/mocks"
+        ]
     }
 }
