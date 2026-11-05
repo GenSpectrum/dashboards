@@ -35,7 +35,7 @@
         "downshift": "^9.3.3",
         "gridjs": "^6.2.0",
         "gridjs-react": "^6.1.1",
-        "katex": "^0.17.0",
+        "katex": "^0.18.2",
         "patch-package": "^8.0.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.7",
