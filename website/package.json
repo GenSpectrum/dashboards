@@ -24,10 +24,10 @@
         "e2e:chromium": "playwright test --project=chromium"
     },
     "dependencies": {
-        "@astrojs/node": "^10.1.4",
+        "@astrojs/node": "^11.1.9",
         "@genspectrum/dashboard-components": "^1.19.0",
         "@tanstack/react-query": "^5.101.0",
-        "astro": "^6.4.8",
+        "astro": "^7.4.5",
         "axios": "^1.20.0",
         "better-auth": "^1.6.14",
         "cookie": "^1.1.1",
@@ -48,7 +48,7 @@
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.9",
-        "@astrojs/react": "^5.0.7",
+        "@astrojs/react": "^7.1.2",
         "@eslint/js": "^9.39.2",
         "@iconify-json/mdi": "^1.2.3",
         "@iconify-json/mdi-light": "^1.2.2",
