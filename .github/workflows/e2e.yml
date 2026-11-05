@@ -52,7 +52,16 @@ jobs:
         wait-interval: 5
 
     - name: Start Docker Containers
-      run: docker compose -f ../docker-compose.yml up -d --wait
+      run: docker compose -f ../docker-compose.yml up -d --wait website backend database
+      env:
+        WEBSITE_TAG: ${{ steps.branchTag.outputs.branchTag }}
+        BACKEND_TAG: ${{ steps.branchTag.outputs.branchTag }}
+        SEEDER_TAG: ${{ steps.branchTag.outputs.branchTag }}
+
+    - name: Seed example data (wait for completion before running tests)
+      # Run the seeder as a one-shot job and block until it finishes.
+      # Avoids race conditions with the tests that also create collections.
+      run: docker compose -f ../docker-compose.yml run --rm --no-deps example-data-seeder
       env:
         WEBSITE_TAG: ${{ steps.branchTag.outputs.branchTag }}
         BACKEND_TAG: ${{ steps.branchTag.outputs.branchTag }}
