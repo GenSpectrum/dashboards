@@ -1,11 +1,5 @@
-import { copyFile, mkdir } from 'node:fs/promises';
-
 import { playwright } from '@vitest/browser-playwright';
 import { configDefaults, defineConfig } from 'vitest/config';
-
-const mswDirectory = new URL('./tests/mocks/', import.meta.url);
-await mkdir(mswDirectory, { recursive: true });
-await copyFile(new URL(import.meta.resolve('msw/mockServiceWorker.js')), new URL('mockServiceWorker.js', mswDirectory));
 
 export default defineConfig({
     test: {
