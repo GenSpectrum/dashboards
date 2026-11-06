@@ -2,8 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "2.3.21"
-    kotlin("plugin.spring") version "2.3.21"
+    kotlin("jvm") version "2.4.21"
+    kotlin("plugin.spring") version "2.4.21"
     id("org.springframework.boot") version "3.5.13"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
@@ -30,11 +30,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
-    implementation("org.postgresql:postgresql:42.7.11")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.3.0")
-    implementation("org.jetbrains.exposed:exposed-json:1.3.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.3.0")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.3.0")
+    implementation("org.postgresql:postgresql:42.7.14")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.6.0")
+    implementation("org.jetbrains.exposed:exposed-json:1.6.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.6.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
