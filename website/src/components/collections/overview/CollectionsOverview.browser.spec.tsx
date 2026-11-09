@@ -1,5 +1,5 @@
-import { userEvent } from '@vitest/browser/context';
 import { beforeEach, describe, expect } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { CollectionsOverview } from './CollectionsOverview';
@@ -97,7 +97,7 @@ describe('CollectionsOverview', () => {
     it('shows the headline and community collections by default', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
-        const { getByText, getByRole } = renderOverview();
+        const { getByText, getByRole } = await renderOverview();
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('Community collection')).toBeVisible();
@@ -107,7 +107,7 @@ describe('CollectionsOverview', () => {
     it('hides official collections by default', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
-        const { getByText } = renderOverview();
+        const { getByText } = await renderOverview();
 
         await expect.element(getByText('Community collection')).toBeVisible();
         await expect.element(getByText('Official collection')).not.toBeInTheDocument();
@@ -116,7 +116,7 @@ describe('CollectionsOverview', () => {
     it('shows only official collections when Official is selected', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
-        const { getByText } = renderOverview();
+        const { getByText } = await renderOverview();
 
         await getByText('Official').click();
 
@@ -127,7 +127,7 @@ describe('CollectionsOverview', () => {
     it('shows all collections when All is selected', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries(allCollections, ORGANISM, 200);
 
-        const { getByText } = renderOverview();
+        const { getByText } = await renderOverview();
 
         await getByText('All').click();
 
@@ -138,7 +138,7 @@ describe('CollectionsOverview', () => {
     it('shows the headline and empty message when there are no collections', async ({ routeMockers: { astro } }) => {
         astro.mockGetCollectionSummaries([], ORGANISM, 200);
 
-        const { getByText } = renderOverview();
+        const { getByText } = await renderOverview();
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('No collections yet.')).toBeVisible();
@@ -148,7 +148,7 @@ describe('CollectionsOverview', () => {
         astro.mockGetCollectionSummaries([], ORGANISM, 500);
         astro.mockLog();
 
-        const { getByText } = renderOverview();
+        const { getByText } = await renderOverview();
 
         await expect.element(getByText(HEADLINE)).toBeVisible();
         await expect.element(getByText('Failed to load collections. Please try reloading the page.')).toBeVisible();
@@ -157,7 +157,7 @@ describe('CollectionsOverview', () => {
     describe('tag filter', () => {
         it('filters by a single tag in All mode', async ({ routeMockers: { astro } }) => {
             astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
-            const { getByText, getByPlaceholder } = renderOverview();
+            const { getByText, getByPlaceholder } = await renderOverview();
 
             await getByText('All').click();
             await getByPlaceholder(TAG_INPUT_PLACEHOLDER).fill('europe');
@@ -172,7 +172,7 @@ describe('CollectionsOverview', () => {
 
         it('filters by multiple tags in All mode', async ({ routeMockers: { astro } }) => {
             astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
-            const { getByText, getByPlaceholder } = renderOverview();
+            const { getByText, getByPlaceholder } = await renderOverview();
 
             await getByText('All').click();
             await getByPlaceholder(TAG_INPUT_PLACEHOLDER).fill('europe');
@@ -189,7 +189,7 @@ describe('CollectionsOverview', () => {
 
         it('applies tag filter within Community mode', async ({ routeMockers: { astro } }) => {
             astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
-            const { getByText, getByPlaceholder } = renderOverview();
+            const { getByText, getByPlaceholder } = await renderOverview();
 
             await getByPlaceholder(TAG_INPUT_PLACEHOLDER).fill('europe');
             await userEvent.keyboard('{Enter}');
@@ -205,7 +205,7 @@ describe('CollectionsOverview', () => {
             routeMockers: { astro },
         }) => {
             astro.mockGetCollectionSummaries(taggedCollections, ORGANISM, 200);
-            const { getByText, getByPlaceholder } = renderOverview();
+            const { getByText, getByPlaceholder } = await renderOverview();
 
             await getByText('All').click();
             await getByPlaceholder(TAG_INPUT_PLACEHOLDER).fill('nonexistent');
@@ -219,7 +219,7 @@ describe('CollectionsOverview', () => {
             routeMockers: { astro },
         }) => {
             astro.mockGetCollectionSummaries([communityCollection], ORGANISM, 200);
-            const { getByText } = renderOverview();
+            const { getByText } = await renderOverview();
 
             await getByText('Official').click();
 

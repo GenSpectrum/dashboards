@@ -1,6 +1,6 @@
 import { type UseQueryResult } from '@tanstack/react-query';
-import { page, userEvent } from '@vitest/browser/context';
 import { describe, expect, vi } from 'vitest';
+import { page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { VariantExplorerFilter } from './VariantExplorerFilter';
@@ -38,7 +38,7 @@ describe('VariantExplorerFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <VariantExplorerFilter
                     pageState={defaultPageState}
@@ -62,7 +62,7 @@ describe('VariantExplorerFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <VariantExplorerFilter
                     pageState={defaultPageState}
@@ -93,7 +93,7 @@ describe('VariantExplorerFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <VariantExplorerFilter
                     pageState={defaultPageState}
@@ -117,7 +117,7 @@ describe('VariantExplorerFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        render(
+        await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <VariantExplorerFilter
                     pageState={defaultPageState}
@@ -142,7 +142,7 @@ describe('VariantExplorerFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <VariantExplorerFilter
                     pageState={predefinedPageState}
@@ -173,7 +173,7 @@ describe('VariantExplorerFilter', () => {
         setupLapisMocks(lapis);
         const mockSetPageState = vi.fn();
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <VariantExplorerFilter
                     pageState={predefinedPageState}

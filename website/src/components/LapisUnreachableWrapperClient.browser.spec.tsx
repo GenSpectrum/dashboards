@@ -14,7 +14,7 @@ describe('LapisUnreachableWrapperClient', () => {
 
         const content = 'Content is visible';
 
-        const { getByText } = renderWithContent(content);
+        const { getByText } = await renderWithContent(content);
 
         await expect.element(getByText(content)).toBeVisible();
     });
@@ -22,10 +22,10 @@ describe('LapisUnreachableWrapperClient', () => {
     it('displays error message when LAPIS is unreachable', async ({ routeMockers: { lapis } }) => {
         lapis.mockLapisDown();
 
-        const { getByText } = renderWithContent('Content is visible');
+        const { getByText } = await renderWithContent('Content is visible');
 
         await expect.element(getByText('Data Source Unreachable')).toBeVisible();
-        await expect.element(getByText('Unable to connect to the data source')).toBeVisible();
+        await expect.element(getByText('Unable to connect to the data source', { exact: false })).toBeVisible();
     });
 
     it('does not display children when LAPIS is unreachable', async ({ routeMockers: { lapis } }) => {
@@ -33,7 +33,7 @@ describe('LapisUnreachableWrapperClient', () => {
 
         const content = 'Content is visible';
 
-        const { getByText } = renderWithContent(content);
+        const { getByText } = await renderWithContent(content);
 
         await expect.poll(() => getByText(content).query()).not.toBeInTheDocument();
     });
@@ -41,7 +41,7 @@ describe('LapisUnreachableWrapperClient', () => {
     it('displays error when LAPIS returns invalid response', async ({ routeMockers: { lapis } }) => {
         lapis.mockPostAggregated({}, { data: [] }, 200);
 
-        const { getByText } = renderWithContent('Content is visible');
+        const { getByText } = await renderWithContent('Content is visible');
 
         await expect.element(getByText('Data Source Unreachable')).toBeVisible();
     });
@@ -49,7 +49,7 @@ describe('LapisUnreachableWrapperClient', () => {
     it('displays error when LAPIS returns 500', async ({ routeMockers: { lapis } }) => {
         lapis.mockPostAggregated({}, { data: [{ count: 100 }] }, 500);
 
-        const { getByText } = renderWithContent('Content is visible');
+        const { getByText } = await renderWithContent('Content is visible');
 
         await expect.element(getByText('Data Source Unreachable')).toBeVisible();
     });
