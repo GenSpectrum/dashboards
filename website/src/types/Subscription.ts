@@ -5,6 +5,7 @@ import { evaluationIntervalSchema } from './EvaluationInterval.ts';
 import { organismSchema } from './Organism.ts';
 
 export const lapisFilterSchema = z.record(
+    z.string(),
     z.union([z.string(), z.number(), z.null(), z.undefined(), z.boolean(), z.array(z.string())]),
 );
 

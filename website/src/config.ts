@@ -11,7 +11,7 @@ const lapisConfigSchema = z.object({
     url: z.string(),
     mainDateField: z.string(),
     lineageFields: z.optional(z.array(z.string())),
-    additionalFilters: z.optional(z.record(z.string())),
+    additionalFilters: z.optional(z.record(z.string(), z.string())),
 });
 
 const externalNavigationLinkSchema = z.object({
@@ -129,7 +129,7 @@ function processEnvOrMetaEnv<T>(key: string, schema: z.ZodType<T>) {
     );
 }
 
-function readTypedConfigFile<T>(fileName: string, schema: z.ZodType<T, z.ZodTypeDef, unknown>) {
+function readTypedConfigFile<T>(fileName: string, schema: z.ZodType<T>) {
     const configFilePath = path.join(getConfigDir(), fileName);
     const yaml = YAML.parse(fs.readFileSync(configFilePath, 'utf8'));
     try {
