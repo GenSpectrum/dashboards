@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { z, type ZodError } from 'astro/zod';
 import YAML from 'yaml';
-import { z, type ZodError } from 'zod';
 
 import { menuIconTypeSchema } from './components/iconCss.ts';
 import { allOrganisms, type Organism } from './types/Organism.ts';
@@ -54,7 +54,7 @@ const dashboardsConfigSchema = z.object({
                  */
                 clientId: z.string(),
             }),
-            trustedOrigins: z.array(z.string().url()),
+            trustedOrigins: z.array(z.url()),
         }),
     }),
 });

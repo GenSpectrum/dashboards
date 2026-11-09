@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'astro/zod';
 
 const baseResponseValueSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 const aggregatedItem = z.object({ count: z.number() }).catchall(baseResponseValueSchema);

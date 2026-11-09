@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'astro/zod';
 
 import { dateWindowSchema } from './DateWindow.ts';
 import { evaluationIntervalSchema } from './EvaluationInterval.ts';

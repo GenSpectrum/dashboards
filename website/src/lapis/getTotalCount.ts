@@ -1,6 +1,6 @@
 import type { LapisFilter } from '@genspectrum/dashboard-components/util';
+import { z } from 'astro/zod';
 import axios from 'axios';
-import { z } from 'zod';
 
 import { getClientLogger } from '../clientLogger.ts';
 

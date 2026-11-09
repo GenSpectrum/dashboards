@@ -1,5 +1,5 @@
+import { z } from 'astro/zod';
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import { z, type ZodSchema } from 'zod';
 
 import { UserFacingError } from '../components/ErrorReportInstruction.tsx';
 import { apiKeyMetadataSchema, generatedApiKeySchema } from '../types/ApiKey.ts';
@@ -23,7 +23,7 @@ const X_REQUEST_ID_HEADER = 'x-request-id';
 type EndpointParameters<Response> = {
     url: string;
     requestParams?: Record<string, string | string[] | boolean | undefined>;
-    schema: ZodSchema<Response>;
+    schema: z.ZodType<Response>;
 };
 
 type EndpointParametersWithBody<Request, Response> = EndpointParameters<Response> & { data: Request };
@@ -61,7 +61,7 @@ class ApiService {
         return this.handleRequest({ url, method: 'delete', params: requestParams }, schema);
     }
 
-    private async handleRequest<Request, Response>(request: AxiosRequestConfig<Request>, schema: ZodSchema<Response>) {
+    private async handleRequest<Request, Response>(request: AxiosRequestConfig<Request>, schema: z.ZodType<Response>) {
         try {
             const response = await this.axiosInstance.request(request);
             return schema.parse(response.data);
