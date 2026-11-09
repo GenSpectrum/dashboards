@@ -55,6 +55,16 @@ ktlint {
     version.set("1.4.1")
 }
 
+configurations.configureEach {
+    if (name.startsWith("ktlint")) {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin") {
+                useVersion("2.0.21")
+            }
+        }
+    }
+}
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
