@@ -25,10 +25,10 @@
         "e2e:chromium": "playwright test --project=chromium"
     },
     "dependencies": {
-        "@astrojs/node": "^10.1.4",
+        "@astrojs/node": "^11.1.9",
         "@genspectrum/dashboard-components": "^1.19.0",
         "@tanstack/react-query": "^5.105.0",
-        "astro": "^6.4.8",
+        "astro": "^7.4.5",
         "axios": "^1.21.0",
         "better-auth": "^1.7.14",
         "cookie": "^1.1.1",
@@ -49,7 +49,7 @@
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.12",
-        "@astrojs/react": "^5.0.7",
+        "@astrojs/react": "^7.1.2",
         "@eslint/js": "^9.39.2",
         "@iconify-json/mdi": "^1.2.3",
         "@iconify-json/mdi-light": "^1.2.2",
@@ -72,7 +72,7 @@
         "@vitest/browser-playwright": "^5.1.0",
         "astro-eslint-parser": "^1.4.0",
         "daisyui": "^5.7.50",
-        "dotenv": "^16.5.0",
+        "dotenv": "^18.0.9",
         "eslint": "^9.39.2",
         "eslint-plugin-astro": "^1.7.0",
         "eslint-plugin-import": "^2.32.0",
