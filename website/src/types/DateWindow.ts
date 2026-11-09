@@ -1,5 +1,5 @@
+import { z } from 'astro/zod';
 import dayjs, { type Dayjs } from 'dayjs';
-import { z } from 'zod';
 
 export const DateWindows = {
     last6Months: 'last6Months' as const,

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { z } from 'astro/zod';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import { z } from 'zod';
 
 import { getClientLogger } from '../../../clientLogger.ts';
 import { getCollections } from '../../../covspectrum/getCollections.ts';

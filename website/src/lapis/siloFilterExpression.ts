@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'astro/zod';
 
 const stringEqualsSchema = z.object({
     type: z.literal('StringEquals'),
