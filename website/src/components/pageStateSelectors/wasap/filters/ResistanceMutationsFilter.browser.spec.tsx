@@ -17,7 +17,7 @@ describe('ResistanceMutationsFilter', () => {
     it('renders with initial resistance set', async () => {
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <ResistanceMutationsFilter
                 pageState={defaultPageState}
                 setPageState={mockSetPageState}
@@ -32,7 +32,7 @@ describe('ResistanceMutationsFilter', () => {
     it('calls setPageState when selecting a different resistance set', async () => {
         const mockSetPageState = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <ResistanceMutationsFilter
                 pageState={defaultPageState}
                 setPageState={mockSetPageState}

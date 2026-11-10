@@ -32,10 +32,10 @@ function mockDateRange(lapisRouteMocker: LapisRouteMocker) {
 }
 
 describe('useResolvedSamplingDate', () => {
-    it('returns an already-resolved samplingDate immediately, without any network request', () => {
+    it('returns an already-resolved samplingDate immediately, without any network request', async () => {
         const samplingDate = { label: 'Custom', dateFrom: '2024-01-01', dateTo: '2024-12-31' };
 
-        const { result } = renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
+        const { result } = await renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
 
         expect(result.current.isPending).toBe(false);
         expect(result.current.samplingDate).toEqual(samplingDate);
@@ -45,7 +45,7 @@ describe('useResolvedSamplingDate', () => {
         mockDateRange(lapis);
         const samplingDate = { label: 'Most recent 14 days' };
 
-        const { result } = renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
+        const { result } = await renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
 
         expect(result.current.isPending).toBe(true);
 
@@ -63,7 +63,7 @@ describe('useResolvedSamplingDate', () => {
         mockDateRange(lapis);
         const samplingDate = { label: 'Some stale preset that no longer exists' };
 
-        const { result } = renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
+        const { result } = await renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
 
         await expect.poll(() => result.current.isPending).toBe(false);
 
@@ -76,7 +76,7 @@ describe('useResolvedSamplingDate', () => {
         lapis.mockPostAggregated({ fields: ['sampling_date'], orderBy: ['sampling_date'] }, { data: [] }, 500);
         const samplingDate = { label: 'Most recent 30 days' };
 
-        const { result } = renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
+        const { result } = await renderHook(() => useResolvedSamplingDate(config, samplingDate), { wrapper: Wrapper });
 
         await expect.poll(() => result.current.isPending).toBe(false);
 

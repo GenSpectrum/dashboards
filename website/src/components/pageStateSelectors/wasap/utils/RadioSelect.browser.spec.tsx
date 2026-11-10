@@ -14,7 +14,7 @@ describe('RadioSelect', () => {
     it('renders all options', async () => {
         const mockOnChange = vi.fn();
 
-        const { getByText } = render(
+        const { getByText } = await render(
             <RadioSelect label='Test Radio' value='option1' options={options} onChange={mockOnChange} />,
         );
 
@@ -26,7 +26,7 @@ describe('RadioSelect', () => {
     it('marks the correct option as checked', async () => {
         const mockOnChange = vi.fn();
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <RadioSelect label='Test Radio' value='option2' options={options} onChange={mockOnChange} />,
         );
 
@@ -37,7 +37,7 @@ describe('RadioSelect', () => {
     it('calls onChange when clicking an option', async () => {
         const mockOnChange = vi.fn();
 
-        const { getByLabelText } = render(
+        const { getByLabelText } = await render(
             <RadioSelect label='Test Radio' value='option1' options={options} onChange={mockOnChange} />,
         );
 

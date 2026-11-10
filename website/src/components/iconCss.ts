@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'astro/zod';
 
 export const externalLinkIconCss = 'after:iconify after:align-middle after:mdi--external-link';
 

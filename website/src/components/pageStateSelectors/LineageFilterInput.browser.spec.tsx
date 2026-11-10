@@ -44,7 +44,7 @@ describe('LineageFilterInput', () => {
             filterType: 'lineage',
         };
 
-        const screen = render(
+        const screen = await render(
             <gs-app lapis={DUMMY_LAPIS_URL}>
                 <LineageFilterInput
                     lineageFilterConfig={config}

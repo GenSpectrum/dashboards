@@ -1,3 +1,4 @@
+import { playwright } from '@vitest/browser-playwright';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -11,11 +12,15 @@ export default defineConfig({
                 },
             },
             {
+                publicDir: './tests/mocks',
+                optimizeDeps: {
+                    include: ['yaml'],
+                },
                 test: {
                     name: 'browser',
                     include: ['src/**/*.browser.{test,spec}.tsx'],
                     browser: {
-                        provider: 'playwright',
+                        provider: playwright(),
                         enabled: true,
                         headless: true,
                         instances: [{ browser: 'chromium' }],

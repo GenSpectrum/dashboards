@@ -27,9 +27,9 @@ const COOKIE_BASE = {
 export async function createAuthCookies(
     accountPayload: Record<string, unknown>,
     sessionPayload: Record<string, unknown>,
+    sessionToken: string,
 ): Promise<Cookie[]> {
-    const token = crypto.randomUUID();
-    const signedToken = `${token}.${await makeSignature(token, SECRET)}`;
+    const signedToken = `${sessionToken}.${await makeSignature(sessionToken, SECRET)}`;
     const accountData = await symmetricEncodeJWT(accountPayload, SECRET, 'better-auth-account');
     const sessionData = await symmetricEncodeJWT(sessionPayload, SECRET, 'better-auth-session');
 
@@ -81,6 +81,7 @@ export async function setupAuthCookie(page: Page, name: string, gsUserId: number
             updatedAt: now.getTime(),
             version: '1',
         },
+        sessionToken,
     );
 
     await page.context().addCookies(cookies);

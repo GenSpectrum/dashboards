@@ -1,6 +1,6 @@
-import { userEvent } from '@vitest/browser/context';
 import { delay, http } from 'msw';
 import { describe, expect, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 
 import { AdvancedQueryFilter } from './AdvancedQueryFilter.tsx';
@@ -12,13 +12,15 @@ const AdvancedQueryFilterWithProvider = withQueryProvider(AdvancedQueryFilter);
 
 describe('AdvancedQueryFilter', () => {
     it('does not render when disabled', async () => {
-        const { getByRole } = render(<AdvancedQueryFilterWithProvider enabled={false} lapisUrl={DUMMY_LAPIS_URL} />);
+        const { getByRole } = await render(
+            <AdvancedQueryFilterWithProvider enabled={false} lapisUrl={DUMMY_LAPIS_URL} />,
+        );
 
         await expect.element(getByRole('textbox')).not.toBeInTheDocument();
     });
 
     it('shows input when enabled', async () => {
-        const { getByRole } = render(<AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />);
+        const { getByRole } = await render(<AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />);
 
         await expect.element(getByRole('textbox')).toBeVisible();
     });
@@ -26,7 +28,7 @@ describe('AdvancedQueryFilter', () => {
     it('calls onInput with undefined when input is cleared', async () => {
         const onInput = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <AdvancedQueryFilterWithProvider value='A123T' onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -37,7 +39,7 @@ describe('AdvancedQueryFilter', () => {
     });
 
     it('isRequired - shows an error and reports invalid for an empty query', async () => {
-        const { getByLabelText, getByText } = render(
+        const { getByLabelText, getByText } = await render(
             <AdvancedQueryFilterWithProvider enabled isRequired lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -53,7 +55,7 @@ describe('AdvancedQueryFilter', () => {
 
         const onInput = vi.fn();
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled isRequired lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -73,7 +75,7 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
         );
 
-        const { getByRole } = render(
+        const { getByRole } = await render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -90,7 +92,7 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'x', value: 'y' } }] },
         );
 
-        const { getByRole, getByTitle } = render(
+        const { getByRole, getByTitle } = await render(
             <AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -107,7 +109,7 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'failure', error: 'Unexpected token at position 7' }] },
         );
 
-        const { getByRole, getByLabelText, getByText } = render(
+        const { getByRole, getByLabelText, getByText } = await render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -125,7 +127,7 @@ describe('AdvancedQueryFilter', () => {
             }),
         );
 
-        const { getByRole, getByTitle } = render(
+        const { getByRole, getByTitle } = await render(
             <AdvancedQueryFilterWithProvider enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
@@ -142,7 +144,7 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'success', filter: { type: 'StringEquals', column: 'host', value: 'Human' } }] },
         );
 
-        const { getByRole, getByLabelText, getByText } = render(
+        const { getByRole, getByLabelText, getByText } = await render(
             <AdvancedQueryFilterWithProvider
                 onInput={onInput}
                 enabled
@@ -181,7 +183,7 @@ describe('AdvancedQueryFilter', () => {
             },
         );
 
-        const { getByRole, getByTitle } = render(
+        const { getByRole, getByTitle } = await render(
             <AdvancedQueryFilterWithProvider
                 onInput={onInput}
                 enabled
@@ -204,7 +206,7 @@ describe('AdvancedQueryFilter', () => {
             { data: [{ type: 'success', filter: { type: 'NucleotideEquals', position: 123, symbol: 'A' } }] },
         );
 
-        const { getByRole, getByTitle } = render(
+        const { getByRole, getByTitle } = await render(
             <AdvancedQueryFilterWithProvider
                 enabled
                 lapisUrl={DUMMY_LAPIS_URL}
@@ -222,7 +224,7 @@ describe('AdvancedQueryFilter', () => {
 
         const onInput = vi.fn();
 
-        const { getByRole, getByLabelText, getByText } = render(
+        const { getByRole, getByLabelText, getByText } = await render(
             <AdvancedQueryFilterWithProvider onInput={onInput} enabled lapisUrl={DUMMY_LAPIS_URL} />,
         );
 
