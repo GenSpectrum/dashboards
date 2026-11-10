@@ -1,12 +1,12 @@
 package org.genspectrum.dashboardsbackend.model.subscription
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.json.jsonb
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.module.kotlin.readValue
 
-val jacksonObjectMapper: ObjectMapper = jacksonObjectMapper().findAndRegisterModules()
+val jacksonObjectMapper: ObjectMapper = jacksonObjectMapper()
 inline fun <reified T : Any> Table.jacksonSerializableJsonb(columnName: String) = jsonb<T>(
     columnName,
     ::serialize,
