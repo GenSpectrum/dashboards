@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
@@ -15,8 +13,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.readValue
 
-class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
+class CollectionsClient(private val mockMvc: MockMvc, private val objectMapper: JsonMapper) {
     fun postCollectionRaw(collection: CollectionRequest, userId: Long): ResultActions = mockMvc.perform(
         post("/collections?userId=$userId")
             .content(objectMapper.writeValueAsString(collection))

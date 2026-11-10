@@ -24,28 +24,36 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.flywaydb:flyway-database-postgresql:11.0.0")
     implementation("org.postgresql:postgresql:42.7.14")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:1.6.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot4-starter:1.6.0")
     implementation("org.jetbrains.exposed:exposed-json:1.6.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:1.6.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("tools.jackson.module:jackson-module-kotlin")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.mockito")
     }
-    testImplementation("com.ninja-squad:springmockk:4.0.2")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("tools.jackson.dataformat:jackson-dataformat-yaml")
+    testImplementation("com.ninja-squad:springmockk:5.0.1")
     testImplementation("org.testcontainers:testcontainers:2.0.5")
     testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
-    testImplementation("org.mock-server:mockserver-netty:5.15.0")
-    testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0")
+    testImplementation("org.mock-server:mockserver-netty:5.15.0") {
+        exclude(group = "io.swagger.core.v3", module = "swagger-core")
+        exclude(group = "io.swagger.core.v3", module = "swagger-models")
+    }
+    testImplementation("org.mock-server:mockserver-spring-test-listener:5.15.0") {
+        exclude(group = "io.swagger.core.v3", module = "swagger-core")
+        exclude(group = "io.swagger.core.v3", module = "swagger-models")
+    }
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
