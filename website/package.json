@@ -31,7 +31,7 @@
         "astro": "^7.4.5",
         "axios": "^1.21.0",
         "better-auth": "^1.7.14",
-        "cookie": "^1.1.1",
+        "cookie": "^2.0.2",
         "dayjs": "^1.11.23",
         "downshift": "^9.4.0",
         "gridjs": "^6.2.0",
