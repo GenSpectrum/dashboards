@@ -23,7 +23,7 @@ export async function getCollections(covSpectrumApiBaseUrl: string, titleFilter?
     } catch (error) {
         const message = `Failed to fetch collections: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = collectionsRawResponseSchema.safeParse(response.data);

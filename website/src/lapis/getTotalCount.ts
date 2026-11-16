@@ -17,7 +17,7 @@ export async function getTotalCount(lapisUrl: string, lapisFilter: LapisFilter) 
     } catch (error) {
         const message = `Failed to fetch lapis aggregated data: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = lapisTotalCountSchema.safeParse(response.data);

@@ -122,7 +122,7 @@ async function getMutationsInternal(
     } catch (error) {
         const message = `Failed to fetch mutations: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = mutationsSchema.safeParse(response.data);

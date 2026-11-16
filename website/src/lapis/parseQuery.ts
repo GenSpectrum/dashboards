@@ -51,7 +51,7 @@ export async function parseQuery(lapisUrl: string, request: ParseQueryRequest): 
     } catch (error) {
         const message = `Failed to make parse queries API request: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = queryParseResponseSchema.safeParse(response.data);

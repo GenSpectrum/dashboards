@@ -28,7 +28,7 @@ export async function getCladeLineages(
     } catch (error) {
         const message = `Failed to fetch clade lineages: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = aggregatedResponse.safeParse(response.data);

@@ -136,6 +136,6 @@ function readTypedConfigFile<T>(fileName: string, schema: z.ZodType<T>) {
         return schema.parse(yaml);
     } catch (e) {
         const zodError = e as ZodError;
-        throw new Error(`Type error reading ${configFilePath}: ${zodError.message}`);
+        throw new Error(`Type error reading ${configFilePath}: ${zodError.message}`, { cause: e });
     }
 }
