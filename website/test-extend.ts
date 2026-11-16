@@ -19,11 +19,11 @@ const workerFixture = itBase.extend<{ mswWorker: never }>({
     mswWorker: [
         // eslint-disable-next-line no-empty-pattern -- vitest needs the 1st arg to be an object destructor
         async ({}, use) => {
-            await worker.start({ onUnhandledRequest: 'error' });
+            await worker.start({ onUnhandledFrame: 'error' });
             try {
                 await use(undefined as never);
             } finally {
-                worker.stop();
+                await worker.stop();
             }
         },
         { scope: 'file', auto: true },
