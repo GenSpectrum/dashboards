@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -29,6 +30,7 @@ enum class EvaluationInterval {
     include = JsonTypeInfo.As.PROPERTY,
     property = "type",
 )
+@JsonIgnoreProperties(value = ["type"], allowGetters = true)
 @JsonSubTypes(
     JsonSubTypes.Type(value = CountTrigger::class, name = "count"),
     JsonSubTypes.Type(value = ProportionTrigger::class, name = "proportion"),

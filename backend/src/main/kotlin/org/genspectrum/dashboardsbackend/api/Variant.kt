@@ -1,6 +1,7 @@
 package org.genspectrum.dashboardsbackend.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -24,6 +25,7 @@ enum class FilterObjectVariantType {
     include = JsonTypeInfo.As.PROPERTY,
     property = "type",
 )
+@JsonIgnoreProperties(value = ["type"], allowGetters = true)
 @JsonSubTypes(
     JsonSubTypes.Type(value = QueryVariant::class, name = "query"),
     JsonSubTypes.Type(value = FilterObjectVariant::class, name = "filterObject"),
@@ -99,6 +101,7 @@ sealed interface Variant {
     include = JsonTypeInfo.As.PROPERTY,
     property = "type",
 )
+@JsonIgnoreProperties(value = ["type"], allowGetters = true)
 @JsonSubTypes(
     JsonSubTypes.Type(value = VariantRequest.QueryVariantRequest::class, name = "query"),
     JsonSubTypes.Type(value = VariantRequest.FilterObjectVariantRequest::class, name = "filterObject"),
@@ -155,6 +158,7 @@ sealed interface VariantRequest {
     include = JsonTypeInfo.As.PROPERTY,
     property = "type",
 )
+@JsonIgnoreProperties(value = ["type"], allowGetters = true)
 @JsonSubTypes(
     JsonSubTypes.Type(value = VariantUpdate.QueryVariantUpdate::class, name = "query"),
     JsonSubTypes.Type(value = VariantUpdate.FilterObjectVariantUpdate::class, name = "filterObject"),

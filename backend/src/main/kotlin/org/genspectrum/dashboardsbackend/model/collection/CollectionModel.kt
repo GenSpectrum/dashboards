@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.model.collection
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Collection
 import org.genspectrum.dashboardsbackend.api.CollectionRequest
 import org.genspectrum.dashboardsbackend.api.CollectionTagsResponse
@@ -30,6 +28,8 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.select
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.readValue
 import java.util.Locale
 import kotlin.time.Instant
 
@@ -38,7 +38,7 @@ import kotlin.time.Instant
 class CollectionModel(
     private val dashboardsConfig: DashboardsConfig,
     private val userModel: UserModel,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: JsonMapper,
 ) {
     /**
      * The core function to fetch collections. Also fetches associated variants and tags (if desired).

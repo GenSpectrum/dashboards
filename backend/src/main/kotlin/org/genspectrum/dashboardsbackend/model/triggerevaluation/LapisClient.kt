@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.model.triggerevaluation
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.LapisFilter
 import org.genspectrum.dashboardsbackend.config.DashboardsConfig
 import org.genspectrum.dashboardsbackend.log
@@ -13,6 +11,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.readValue
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -23,7 +23,7 @@ import java.net.http.HttpResponse.BodyHandlers
 @Component
 class LapisClientProvider(
     dashboardsConfig: DashboardsConfig,
-    objectMapper: ObjectMapper,
+    objectMapper: JsonMapper,
     requestIdContext: RequestIdContext,
 ) {
     private val clients = dashboardsConfig.organisms.mapValues {
@@ -40,7 +40,7 @@ class LapisClientProvider(
 
 class LapisClient(
     baseUrl: String,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: JsonMapper,
     private val requestIdContext: RequestIdContext,
 ) {
     private val aggregatedUrl = URI("$baseUrl/sample/aggregated")

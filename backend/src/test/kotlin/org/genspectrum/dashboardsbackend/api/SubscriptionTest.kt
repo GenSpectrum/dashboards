@@ -1,6 +1,5 @@
 package org.genspectrum.dashboardsbackend.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.genspectrum.dashboardsbackend.api.Trigger.CountTrigger
 import org.genspectrum.dashboardsbackend.api.Trigger.ProportionTrigger
 import org.hamcrest.MatcherAssert.assertThat
@@ -8,11 +7,12 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import tools.jackson.databind.json.JsonMapper
 
 @SpringBootTest
 class SubscriptionTest {
     @Autowired
-    private lateinit var objectMapper: ObjectMapper
+    private lateinit var objectMapper: JsonMapper
 
     @Test
     fun `Subscription is correctly serialized to JSON`() {

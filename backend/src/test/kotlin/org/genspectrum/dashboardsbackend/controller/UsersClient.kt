@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.PublicUser
 import org.genspectrum.dashboardsbackend.api.User
 import org.genspectrum.dashboardsbackend.api.UserSyncRequest
@@ -12,9 +10,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
-class UsersClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
+class UsersClient(private val mockMvc: MockMvc, private val objectMapper: JsonMapper) {
     fun syncUserRaw(request: UserSyncRequest): ResultActions = mockMvc.perform(
         post("/users/sync")
             .content(objectMapper.writeValueAsString(request))

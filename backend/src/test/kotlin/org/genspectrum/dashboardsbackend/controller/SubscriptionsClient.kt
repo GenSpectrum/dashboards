@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.Subscription
 import org.genspectrum.dashboardsbackend.api.SubscriptionRequest
 import org.genspectrum.dashboardsbackend.api.SubscriptionUpdate
@@ -14,8 +12,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.readValue
 
-class SubscriptionsClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
+class SubscriptionsClient(private val mockMvc: MockMvc, private val objectMapper: JsonMapper) {
     fun getSubscriptionRaw(id: String, userId: Long) = mockMvc.perform(get("/subscriptions/$id?userId=$userId"))
 
     fun getSubscription(id: String, userId: Long): Subscription = deserializeJsonResponse(

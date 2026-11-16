@@ -1,7 +1,5 @@
 package org.genspectrum.dashboardsbackend.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.genspectrum.dashboardsbackend.api.ApiKeyMetadata
 import org.genspectrum.dashboardsbackend.api.GeneratedApiKey
 import org.genspectrum.dashboardsbackend.api.ValidateApiKeyRequest
@@ -14,8 +12,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.readValue
 
-class ApiKeyClient(private val mockMvc: MockMvc, private val objectMapper: ObjectMapper) {
+class ApiKeyClient(private val mockMvc: MockMvc, private val objectMapper: JsonMapper) {
     fun getApiKeyRaw(userId: Long): ResultActions = mockMvc.perform(get("/api-keys?userId=$userId"))
 
     fun getApiKey(userId: Long): ApiKeyMetadata = deserializeJsonResponse(
