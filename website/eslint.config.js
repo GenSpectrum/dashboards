@@ -1,30 +1,31 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import react from 'eslint-plugin-react';
+import eslintReact from '@eslint-react/eslint-plugin';
 import parser from '@typescript-eslint/parser';
 import eslintPluginAstro from 'eslint-plugin-astro';
 import astroParser from 'astro-eslint-parser';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 const importRules = {
-    'import/no-cycle': 'error',
-    'import/no-deprecated': 'error',
-    'import/no-extraneous-dependencies': 'error',
-    'import/no-internal-modules': 'off',
-    'import/order': [
+    'import-x/no-cycle': 'error',
+    'import-x/no-deprecated': 'error',
+    'import-x/no-extraneous-dependencies': 'error',
+    'import-x/no-internal-modules': 'off',
+    'import-x/order': [
         'error',
         {
-            'groups': ['builtin', 'external', 'internal'],
+            'groups': ['builtin', 'external', ['internal', 'unknown', 'parent', 'sibling', 'index']],
             'newlines-between': 'always',
-            'alphabetize': { order: 'asc' },
+            'alphabetize': { order: 'ignore' },
+            'distinctGroup': false,
         },
     ],
 };
 
 const importRulesAstro = {
     ...importRules,
-    'import/no-deprecated': 'off',
+    'import-x/no-deprecated': 'off',
 };
 
 const enableFromEslint = {
@@ -98,12 +99,6 @@ const restrictTemplateExpressions = {
     ],
 };
 
-const disableFromReact = {
-    'react/no-unescaped-entities': 'off',
-    'react/display-name': 'off',
-    'react/react-in-jsx-scope': 'off',
-};
-
 export default tseslint.config(
     {
         ignores: ['**/.astro/content.d.ts', 'dist/**', 'node_modules/**', '.vitest/**', 'tests/mocks/mockServiceWorker.js'],
@@ -114,6 +109,8 @@ export default tseslint.config(
             eslint.configs.recommended,
             ...tseslint.configs.strictTypeChecked,
             ...tseslint.configs.stylisticTypeChecked,
+            eslintReact.configs['recommended-typescript'],
+            eslintReact.configs['disable-conflict-eslint-plugin-react-hooks'],
         ],
         languageOptions: {
             parser: parser,
@@ -126,17 +123,17 @@ export default tseslint.config(
             },
         },
         plugins: {
-            react,
-            import: importPlugin,
+            'import-x': importPlugin,
         },
         rules: {
-            ...react.configs.flat.recommended.rules,
             ...importRules,
             ...namingConvention,
             ...restrictTemplateExpressions,
             ...typescriptEsLintOverwrites,
-            ...disableFromReact,
             ...enableFromEslint,
+            '@eslint-react/rules-of-hooks': 'off',
+            '@eslint-react/refs': 'off',
+            '@eslint-react/set-state-in-effect': 'off',
         },
         settings: {
             react: {
@@ -162,8 +159,18 @@ export default tseslint.config(
             parser: astroParser,
         },
         plugins: {
-            import: importPlugin,
+            'import-x': importPlugin,
         },
     },
-    { ...reactHooks.configs['recommended-latest'], ignores: ['**/*.fixture.ts'] },
+    {
+        files: ['**/*.ts', '**/*.tsx'],
+        ignores: ['**/*.fixture.ts', 'test-extend.ts'],
+        plugins: {
+            'react-hooks': reactHooks,
+        },
+        rules: {
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
+        },
+    },
 );

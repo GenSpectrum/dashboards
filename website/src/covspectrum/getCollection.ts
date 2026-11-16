@@ -22,7 +22,7 @@ export async function getCollection(covSpectrumApiBaseUrl: string, id: number): 
     } catch (error) {
         const message = `Failed to fetch collection ${id}: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = collectionRawSchema.safeParse(response.data);
@@ -43,7 +43,7 @@ export async function getCollection(covSpectrumApiBaseUrl: string, id: number): 
         } catch (error) {
             const message = `Failed to parse query JSON for variant "${variant.name}" in collection ${id}: ${error}`;
             logger.error(message);
-            throw new Error(message);
+            throw new Error(message, { cause: error });
         }
 
         // Add type discriminator based on the shape of the parsed query

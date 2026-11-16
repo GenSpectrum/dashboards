@@ -15,7 +15,7 @@ export async function getDateRange(baseUrl: string, fieldName: string): Promise<
     } catch (error) {
         const message = `Failed to fetch date range: ${JSON.stringify(error)}`;
         logger.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: error });
     }
 
     const parsedResponse = aggregatedResponse.safeParse(response.data);
