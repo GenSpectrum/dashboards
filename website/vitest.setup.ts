@@ -16,7 +16,7 @@ export const backendRouteMocker = new BackendRouteMocker(testServer);
 
 export const covSpectrumRouteMocker = new CovSpectrumRouteMocker(testServer);
 
-beforeAll(() => testServer.listen({ onUnhandledRequest: 'warn' }));
+beforeAll(() => testServer.listen({ onUnhandledFrame: 'warn' }));
 
 afterAll(() => testServer.close());
 
