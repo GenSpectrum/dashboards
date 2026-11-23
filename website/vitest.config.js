@@ -7,7 +7,12 @@ export default defineConfig({
             {
                 test: {
                     name: 'node',
-                    exclude: [...configDefaults.exclude, './tests/**', 'src/**/*.browser.{test,spec}.tsx'],
+                    exclude: [
+                        ...configDefaults.exclude,
+                        './tests/**',
+                        'src/**/*.browser.{test,spec}.tsx',
+                        'src/**/*.live.spec.ts',
+                    ],
                     setupFiles: 'vitest.setup.ts',
                 },
             },

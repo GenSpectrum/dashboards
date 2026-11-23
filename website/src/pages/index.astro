@@ -1,12 +1,16 @@
 ---
 import Link from '../components/Link.astro';
 import MainMenu from '../components/MainMenu.astro';
+import PathoplexusExplorerSection from '../components/pathoplexusExplorer/PathoplexusExplorerSection.astro';
+import { getPathoplexusExplorerConfig } from '../config';
 import BaseLayout from '../layouts/base/BaseLayout.astro';
 import { DataInfo } from '../layouts/base/footer/DataInfo.tsx';
 import { BrandName } from '../layouts/base/header/Brand';
 import { getPathogenMegaMenuSections } from '../layouts/base/header/getPathogenMegaMenuSections';
 import { dataOrigins } from '../types/dataOrigins';
 import { Page } from '../types/pages';
+
+const explorer = getPathoplexusExplorerConfig();
 ---
 
 <BaseLayout title='GenSpectrum Dashboards'>
@@ -73,6 +77,8 @@ import { Page } from '../types/pages';
             </span>
         </div>
     </div>
+
+    {explorer && <PathoplexusExplorerSection rhydbUrl={explorer.rhydbUrl} />}
 
     <div class='mx-auto mt-8 mb-8 flex max-w-[1200px] items-center justify-center'>
         <div class='iconify mdi--virus-outline size-7'></div>

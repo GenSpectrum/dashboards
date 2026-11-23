@@ -1,0 +1,63 @@
+---
+import { LastUpdated } from './LastUpdated';
+import { MatrixThumbnail } from './MatrixThumbnail';
+import { ReportsThumbnail } from './ReportsThumbnail';
+import { MATRIX_LABEL, MATRIX_PATH } from '../../pathoplexusExplorer/matrix/address';
+import { REPORTS_BASE_PATH, REPORTS_LABEL } from '../../pathoplexusExplorer/reports/kinds';
+import Link from '../Link.astro';
+
+type Props = {
+    rhydbUrl: string;
+};
+
+const { rhydbUrl } = Astro.props;
+
+const tools = [
+    {
+        name: REPORTS_LABEL,
+        href: REPORTS_BASE_PATH,
+        description: 'Printable reports about the genomic sequencing from a location, pathogen, lineage or mutation',
+        thumbnail: ReportsThumbnail,
+    },
+    {
+        name: MATRIX_LABEL,
+        href: MATRIX_PATH,
+        description: 'Analyze the data in a large table',
+        thumbnail: MatrixThumbnail,
+    },
+];
+---
+
+<section class='border-primary/20 bg-primary/5 border-y py-7'>
+    <div class='mx-auto max-w-[1200px] px-8'>
+        <div class='mb-3 flex items-center justify-center'>
+            <div class='iconify mdi--virus-outline size-7'></div>
+            <h2 class='ml-2 text-3xl text-slate-600'>Pathoplexus Explorer</h2>
+        </div>
+        <p class='mx-auto mb-2 max-w-[80ch] text-center text-sm text-balance text-slate-700'>
+            Analyses of sequences on <Link external href='https://pathoplexus.org'>Pathoplexus</Link> across viruses. Note
+            that there may be a delay of up to a few days until newly released data appear on this dashboard.
+        </p>
+        <LastUpdated rhydbUrl={rhydbUrl} client:load />
+        <ul class='mx-auto grid max-w-[620px] gap-4 lg:max-w-[1100px] lg:grid-cols-2'>
+            {
+                tools.map((tool) => (
+                    <li class='flex min-w-0'>
+                        <a
+                            href={tool.href}
+                            class='group flex w-full overflow-hidden rounded-md border border-gray-200 bg-white transition-colors hover:border-slate-400'
+                        >
+                            <div class='hidden w-[170px] shrink-0 overflow-hidden border-r border-stone-200 bg-stone-50 sm:block'>
+                                <tool.thumbnail />
+                            </div>
+                            <div class='flex flex-1 flex-col justify-center gap-1.5 px-5 py-4'>
+                                <span class='text-xl font-bold text-slate-800 group-hover:underline'>{tool.name}</span>
+                                <span class='text-sm leading-relaxed text-slate-700'>{tool.description}</span>
+                            </div>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+</section>

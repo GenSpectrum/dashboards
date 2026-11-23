@@ -1,0 +1,9 @@
+services:
+  website:
+    volumes:
+      - type: bind
+        source: ./website/tests/.config/application-dashboards-prod.yaml
+        target: /config/application-dashboards-prod.yaml
+        read_only: true
+        bind:
+          create_host_path: false

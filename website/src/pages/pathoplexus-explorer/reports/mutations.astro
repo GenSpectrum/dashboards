@@ -1,0 +1,18 @@
+---
+import { ReportPage } from '../../../components/pathoplexusExplorer/report/ReportPage';
+import { getPathoplexusExplorerConfig } from '../../../config';
+import ReportLayout from '../../../layouts/pathoplexusExplorer/ReportLayout.astro';
+import { REPORT_KIND, reportPageTitle } from '../../../pathoplexusExplorer/reports/kinds';
+
+const kind = REPORT_KIND.mutations;
+
+const explorer = getPathoplexusExplorerConfig();
+
+if (explorer === undefined) {
+    return Astro.redirect('/404');
+}
+---
+
+<ReportLayout title={reportPageTitle(kind)}>
+    <ReportPage client:only='react' kind={kind} rhydbUrl={explorer.rhydbUrl} />
+</ReportLayout>

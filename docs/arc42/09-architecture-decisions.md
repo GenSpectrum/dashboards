@@ -51,3 +51,13 @@ The alternative would have been to use JavaScript, since we already have that. B
 researchers to reuse or copy the code, Python is better suited.
 Kotlin was not considered — it is heavier than both Python and JavaScript and even less familiar
 to the target audience.
+
+## Querying Pathoplexus across pathogens
+
+### Context
+
+The Pathoplexus Explorer needs to group and count sequences across pathogens in a single query. Each LAPIS instance serves one organism.
+
+### Decision
+
+The browser queries RhyDB, which stores one table per pathogen and supports queries across tables. The Explorer builds RhyQL queries with the typed helpers in `website/src/pathoplexusExplorer/rhydb/`.

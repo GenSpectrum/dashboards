@@ -1,0 +1,131 @@
+.sheet {
+    width: 100%;
+    max-width: 210mm;
+}
+
+/** Print sizes are in points. Chart labels use the same scale. */
+.report-body {
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.report-small {
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.report-note {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.report-label {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.chart-label {
+    font-size: 11px;
+}
+
+/* Keep figures intact and keep headings with the content that follows. */
+.report-figure {
+    break-inside: avoid-page;
+}
+
+.report-section h2,
+.report-section h3 {
+    break-after: avoid-page;
+}
+
+/* Repeat table headers on each page and keep individual rows intact. */
+.report-table,
+.report-table table {
+    break-inside: auto;
+}
+
+.report-table thead {
+    display: table-header-group;
+}
+
+.report-table tr {
+    break-inside: avoid;
+}
+
+.report-table tbody tr:nth-child(-n + 2) {
+    break-after: avoid;
+}
+
+.report-table tbody tr:nth-last-child(-n + 2) {
+    break-before: avoid;
+}
+
+.report-table > p {
+    break-before: avoid;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 16mm 14mm 18mm;
+    }
+
+    /* Remove the scroll container when printing so the report can span pages. */
+    body {
+        display: block !important;
+        height: auto !important;
+        background: #ffffff !important;
+    }
+
+    body > header,
+    body > footer,
+    .no-print {
+        display: none !important;
+    }
+
+    /* Print chart colors, which distinguish data series. */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .sheet {
+        max-width: none;
+        box-shadow: none !important;
+        border: 0 !important;
+        padding: 0 !important;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a[data-href]::after {
+        content: ' (' attr(data-href) ')';
+        font-size: 8pt;
+        color: #57534d;
+        word-break: break-all;
+    }
+
+    .report-body {
+        font-size: 11pt;
+        line-height: 1.5;
+    }
+
+    .report-small {
+        font-size: 9.5pt;
+        line-height: 1.4;
+    }
+
+    .report-note,
+    .chart-label {
+        font-size: 8.5pt;
+        line-height: 1.35;
+    }
+
+    .report-label {
+        font-size: 8pt;
+    }
+}

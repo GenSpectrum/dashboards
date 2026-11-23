@@ -1,0 +1,16 @@
+---
+import { MatrixPage } from '../../components/pathoplexusExplorer/matrix/MatrixPage';
+import { getPathoplexusExplorerConfig } from '../../config';
+import ReportLayout from '../../layouts/pathoplexusExplorer/ReportLayout.astro';
+import { matrixPageTitle } from '../../pathoplexusExplorer/matrix/address';
+
+const explorer = getPathoplexusExplorerConfig();
+
+if (explorer === undefined) {
+    return Astro.redirect('/404');
+}
+---
+
+<ReportLayout title={matrixPageTitle()}>
+    <MatrixPage client:only='react' rhydbUrl={explorer.rhydbUrl} />
+</ReportLayout>

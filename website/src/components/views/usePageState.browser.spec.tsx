@@ -1,4 +1,5 @@
-import { describe, expect } from 'vitest';
+import { StrictMode } from 'react';
+import { describe, expect, vi } from 'vitest';
 import { renderHook } from 'vitest-browser-react';
 
 import { usePageState } from './usePageState';
@@ -30,5 +31,35 @@ describe('usePageState', () => {
         });
 
         expect(result.current.pageState.value).toBe('updated');
+    });
+
+    it('writes one history entry per update, and composes updates made before a render', async () => {
+        window.history.pushState({}, '', '/?value=0');
+        const handler = {
+            parsePageStateFromUrl(url: URL) {
+                return { value: Number(url.searchParams.get('value') ?? 0) };
+            },
+            toUrl(pageState: { value: number }) {
+                return `/?value=${pageState.value}`;
+            },
+            getDefaultPageUrl() {
+                return '/?value=0';
+            },
+        };
+        const pushState = vi.spyOn(window.history, 'pushState');
+        const replaceState = vi.spyOn(window.history, 'replaceState');
+
+        const { result, act } = await renderHook(() => usePageState(handler), { wrapper: StrictMode });
+        await act(() => {
+            result.current.setPageState((previous) => ({ value: previous.value + 1 }));
+            result.current.setPageState((previous) => ({ value: previous.value + 1 }), { replace: true });
+        });
+
+        expect(result.current.pageState.value).toBe(2);
+        expect(window.location.search).toBe('?value=2');
+        expect(pushState).toHaveBeenCalledTimes(1);
+        expect(replaceState).toHaveBeenCalledTimes(1);
+        pushState.mockRestore();
+        replaceState.mockRestore();
     });
 });

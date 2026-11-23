@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../base/BaseLayout.astro';
+
+import '../../styles/pathoplexusExplorerReport.css';
+
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<BaseLayout title={title}>
+    <slot />
+</BaseLayout>
