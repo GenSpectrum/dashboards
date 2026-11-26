@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { CATALOG } from './catalog.ts';
 import { nomenclatureOf } from './nomenclature.ts';
 import { allPathogens, parseSubject, withStep, type Subject } from './subject.ts';
-import { defined } from '../defined.fixture.ts';
+import { defined } from '../test/defined.fixture.ts';
 
 const nodeOf = (table: string): Subject =>
     defined(parseSubject(`pathogen:${table}`, CATALOG), `'${table}' in the catalog`);

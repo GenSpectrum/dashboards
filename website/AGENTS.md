@@ -52,7 +52,7 @@ Before invoking Vitest directly, run `npm run pretest`.
 The Explorer queries RhyDB from the browser. See [the Explorer README](src/pathoplexusExplorer/README.md) for its query, report, and matrix conventions.
 
 - Configure the endpoint in `dashboards.pathoplexusExplorer.rhydbUrl` in the environment YAML.
-- Build RhyQL queries with the helpers under `src/pathoplexusExplorer/rhydb/`, and group and aggregate in RhyDB.
+- Build RhyQL queries with the helpers under `src/pathoplexusExplorer/dataLayer/`, and group and aggregate in RhyDB.
 - Update the [data interpretation rules](../docs/pathoplexus-explorer-domain-decisions.md) when counting or classification changes.
 - Use `npm run test:live -- --run` to check report counts against staging data.
 

@@ -11,8 +11,8 @@ import {
     type GeneBlock,
     type LaidLabel,
 } from './GenomePosition.tsx';
-import type { GeneLocation, GenomeMap } from '../../../pathoplexusExplorer/reports/genes.ts';
-import type { Genome } from '../../../pathoplexusExplorer/reports/useGenome.ts';
+import type { Genome } from '../../../pathoplexusExplorer/dataLayer/hooks/useGenome.ts';
+import type { GeneLocation, GenomeMap } from '../../../pathoplexusExplorer/domain/genes.ts';
 
 const WIDTH = 680;
 

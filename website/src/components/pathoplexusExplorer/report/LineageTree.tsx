@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 
 import { Bar, ReportLink, restLabel, sumOf, Table } from './Layout.tsx';
+import { exactName, type BreakdownSpec, type Part } from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
 import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import type { Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
-import { exactName, type BreakdownSpec, type Part } from '../../../pathoplexusExplorer/rhydb/breakdown.ts';
 import { OTHER_COLOR } from '../charts/colors.ts';
 
 export type TreeEntry = { label: string; href?: string };

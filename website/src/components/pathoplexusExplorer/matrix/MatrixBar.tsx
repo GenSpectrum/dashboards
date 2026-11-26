@@ -1,12 +1,18 @@
 import { useEffect, useState, type FC, type ReactNode } from 'react';
 
+import {
+    MEASURES,
+    MOST_SHOWN,
+    withinLimit,
+    type Measure,
+} from '../../../pathoplexusExplorer/dataLayer/queries/crossTab.ts';
+import { labelOf, type Dimension } from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
+import type { Selection } from '../../../pathoplexusExplorer/dataLayer/queries/selection.ts';
 import { formatDate } from '../../../pathoplexusExplorer/domain/dates.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import type { MatrixParams } from '../../../pathoplexusExplorer/matrix/address.ts';
-import { MEASURES, MOST_SHOWN, withinLimit, type Measure } from '../../../pathoplexusExplorer/matrix/crossTab.ts';
-import { labelOf, type Dimension } from '../../../pathoplexusExplorer/matrix/dimensions.ts';
-import { constrainedCount, type Selection } from '../../../pathoplexusExplorer/matrix/selection.ts';
-import type { Period } from '../../../pathoplexusExplorer/reports/kinds.ts';
+import type { MatrixParams } from '../../../pathoplexusExplorer/pageState/matrixAddress.ts';
+import { constrainedCount } from '../../../pathoplexusExplorer/pageState/matrixSelection.ts';
 import { Picker } from '../ui/Picker.tsx';
 
 type MatrixBarProps = {

@@ -1,15 +1,15 @@
 import { type FC, useEffect, useMemo } from 'react';
 
 import { MutationBox } from './MutationBox.tsx';
+import { useReferenceSequences } from '../../../pathoplexusExplorer/dataLayer/hooks/useGenome.ts';
+import { impliedAbove, useCountryMenu, useLevelMenus } from '../../../pathoplexusExplorer/dataLayer/hooks/useMenus.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { parsePlace, placeKey, placeLabel, WORLD } from '../../../pathoplexusExplorer/domain/geography.ts';
+import type { ReportKind } from '../../../pathoplexusExplorer/domain/reports.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { ALL, isPathogenNode, parseSubject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
-import { isChosenSubject, type ReportParams } from '../../../pathoplexusExplorer/reports/address.ts';
-import type { ReportKind } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import { useReferenceSequences } from '../../../pathoplexusExplorer/reports/useGenome.ts';
-import { impliedAbove, useCountryMenu, useLevelMenus } from '../../../pathoplexusExplorer/reports/useMenus.ts';
+import { isChosenSubject, type ReportParams } from '../../../pathoplexusExplorer/pageState/reportAddress.ts';
 import { PeriodControl } from '../ui/PeriodControl.tsx';
 import { Picker } from '../ui/Picker.tsx';
 import { placeOptions, subjectOptions, subjectValue, withAbove, withLevel } from '../ui/subjectOptions.ts';

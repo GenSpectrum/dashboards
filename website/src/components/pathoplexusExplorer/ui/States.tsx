@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 
+import { RhydbError } from '../../../pathoplexusExplorer/dataLayer/transport/query.ts';
 import { UNEXPECTED_ERROR } from '../../../pathoplexusExplorer/domain/text.ts';
-import { RhydbError } from '../../../pathoplexusExplorer/rhydb/transport/query.ts';
 
 type LoadingProps = { height?: string };
 

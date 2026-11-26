@@ -1,8 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
 import { CATALOG } from './catalog.ts';
-import { defined } from '../defined.fixture.ts';
-import { HIERARCHY } from '../hierarchy.fixture.ts';
 import {
     ALL,
     parseSubject,
@@ -14,6 +12,8 @@ import {
     withStep,
     type Subject,
 } from './subject.ts';
+import { defined } from '../test/defined.fixture.ts';
+import { HIERARCHY } from '../test/hierarchy.fixture.ts';
 
 const nodeOf = (key: string): Subject => defined(parseSubject(key, CATALOG), `'${key}' in the catalog`);
 

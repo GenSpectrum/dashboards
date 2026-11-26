@@ -1,12 +1,8 @@
 import type { FC } from 'react';
 
 import { KindIcon } from './KindIcon.tsx';
-import {
-    KIND_DESCRIPTIONS,
-    KIND_LABELS,
-    KIND_PATHS,
-    REPORT_KINDS,
-} from '../../../pathoplexusExplorer/reports/kinds.ts';
+import { REPORT_KINDS } from '../../../pathoplexusExplorer/domain/reports.ts';
+import { KIND_DESCRIPTIONS, KIND_LABELS, KIND_PATHS } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 
 export const ReportsLandingPage: FC = () => {
     return (

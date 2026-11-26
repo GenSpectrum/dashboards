@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState, type FC } from 'react';
 
 import { saveFile } from './saveFile.ts';
-import { accessionListFilename, accessionListOf } from '../../../pathoplexusExplorer/accessionList.ts';
+import { logReadFailure, useConnection } from '../../../pathoplexusExplorer/dataLayer/hooks/connection.tsx';
+import {
+    accessionListFilename,
+    accessionListOf,
+} from '../../../pathoplexusExplorer/dataLayer/queries/accessionList.ts';
+import { RhydbError } from '../../../pathoplexusExplorer/dataLayer/transport/query.ts';
+import type { Queryable } from '../../../pathoplexusExplorer/dataLayer/transport/relation.ts';
 import { UNEXPECTED_ERROR } from '../../../pathoplexusExplorer/domain/text.ts';
-import { logReadFailure, readRowsWithVersion } from '../../../pathoplexusExplorer/rhydb/hooks/rhydb.ts';
-import { RhydbError } from '../../../pathoplexusExplorer/rhydb/transport/query.ts';
-import type { Queryable } from '../../../pathoplexusExplorer/rhydb/transport/relation.ts';
 
 type DownloadAccessionsProps = {
     query: Queryable | undefined;
 };
 
 export const DownloadAccessions: FC<DownloadAccessionsProps> = ({ query }) => {
+    const connection = useConnection();
     const [state, setState] = useState<'ready' | 'working'>('ready');
     const [error, setError] = useState<string | undefined>(undefined);
     // Cancel a pending accession download when the page is left.
@@ -27,7 +31,9 @@ export const DownloadAccessions: FC<DownloadAccessionsProps> = ({ query }) => {
         const controller = new AbortController();
         pending.current = controller;
         try {
-            const { rows, dataVersion } = await readRowsWithVersion(query, 'Accession list', controller.signal);
+            const { rows, dataVersion } = await connection.query(query, 'Accession list', {
+                signal: controller.signal,
+            });
             saveFile(
                 accessionListOf(rows),
                 accessionListFilename(new Date(), dataVersion),

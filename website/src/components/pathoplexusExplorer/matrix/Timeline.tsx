@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState, type FC } from 'react';
 
+import { bucketAxisOf, countsPerBucket } from '../../../pathoplexusExplorer/dataLayer/queries/timeSeries.ts';
+import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { bucketLabel, bucketRange } from '../../../pathoplexusExplorer/domain/dates.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import type { Period } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import { bucketAxisOf, countsPerBucket } from '../../../pathoplexusExplorer/rhydb/timeSeries.ts';
-import type { RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
 import { SEQUENTIAL } from '../charts/colors.ts';
 
 const HEIGHT = 72;

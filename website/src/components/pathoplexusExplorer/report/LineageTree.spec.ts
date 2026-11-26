@@ -1,13 +1,17 @@
 import { describe, expect, test } from 'vitest';
 
 import { classificationRows } from './LineageTree.tsx';
-import { defined } from '../../../pathoplexusExplorer/defined.fixture.ts';
+import {
+    partsOf,
+    resolveBreakdown,
+    type InstanceShape,
+} from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
+import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { WORLD } from '../../../pathoplexusExplorer/domain/geography.ts';
 import { parseSubject, subjectLabel, type Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
-import { HIERARCHY } from '../../../pathoplexusExplorer/hierarchy.fixture.ts';
-import { partsOf, resolveBreakdown, type InstanceShape } from '../../../pathoplexusExplorer/rhydb/breakdown.ts';
-import type { RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
+import { defined } from '../../../pathoplexusExplorer/test/defined.fixture.ts';
+import { HIERARCHY } from '../../../pathoplexusExplorer/test/hierarchy.fixture.ts';
 
 /* eslint-disable @typescript-eslint/naming-convention -- the keys are lineage names */
 

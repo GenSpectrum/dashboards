@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react';
 
 import { Masthead, SourceNote } from './Layout.tsx';
 import { formatLongDate } from '../../../pathoplexusExplorer/domain/dates.ts';
+import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
 import {
     hrefOf,
@@ -9,8 +10,7 @@ import {
     KIND_LABELS,
     scopeLine,
     titleOf,
-    type ReportRef,
-} from '../../../pathoplexusExplorer/reports/kinds.ts';
+} from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 
 type ReportShellProps = { reference: ReportRef; children: ReactNode };
 

@@ -1,13 +1,12 @@
 import type { FC } from 'react';
 
+import type { Queryable } from '../../../pathoplexusExplorer/dataLayer/transport/relation.ts';
+import { REPORT_KINDS, type ReportKind } from '../../../pathoplexusExplorer/domain/reports.ts';
 import {
     KIND_DESCRIPTIONS,
     KIND_LABELS,
     REPORTS_BASE_PATH,
-    REPORT_KINDS,
-    type ReportKind,
-} from '../../../pathoplexusExplorer/reports/kinds.ts';
-import type { Queryable } from '../../../pathoplexusExplorer/rhydb/transport/relation.ts';
+} from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 import { DownloadAccessions } from '../ui/DownloadAccessions.tsx';
 import { Popover } from '../ui/Picker.tsx';
 

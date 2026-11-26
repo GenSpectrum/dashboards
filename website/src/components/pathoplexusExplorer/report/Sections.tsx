@@ -13,6 +13,21 @@ import {
     withRest,
 } from './Layout.tsx';
 import { type AreaCount, type AreaScale } from './areaScale.ts';
+import type { Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import type { ProportionRows } from '../../../pathoplexusExplorer/dataLayer/hooks/genomics.ts';
+import {
+    availabilityKey,
+    CREDITS_SHOWN,
+    type RankedValues,
+} from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
+import type { Part } from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
+import {
+    bucketAxisOf,
+    countsPerBucket,
+    trimEmptyBuckets,
+} from '../../../pathoplexusExplorer/dataLayer/queries/timeSeries.ts';
+import { readOptionalText, type RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import {
     DATE_PRECISION,
     precisionOf,
@@ -26,17 +41,11 @@ import {
     hostGroupOf,
     type HostGroup,
 } from '../../../pathoplexusExplorer/domain/hosts.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount, formatProportion, LOW_COUNT } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
 import { METADATA_FIELDS } from '../../../pathoplexusExplorer/mappingData/metadataFields.ts';
-import { hrefOf, type Period } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import { availabilityKey, CREDITS_SHOWN, type RankedValues } from '../../../pathoplexusExplorer/reports/useReports.ts';
-import type { Part } from '../../../pathoplexusExplorer/rhydb/breakdown.ts';
-import type { Loadable } from '../../../pathoplexusExplorer/rhydb/hooks/analyses.ts';
-import type { ProportionRows } from '../../../pathoplexusExplorer/rhydb/hooks/genomics.ts';
-import { COLUMNS } from '../../../pathoplexusExplorer/rhydb/queries/scope.ts';
-import { bucketAxisOf, countsPerBucket, trimEmptyBuckets } from '../../../pathoplexusExplorer/rhydb/timeSeries.ts';
-import { readOptionalText, type RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
+import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 import { AvailabilityBars, type AvailabilityRow } from '../charts/AvailabilityBars.tsx';
 import { ProportionOverTime } from '../charts/ProportionOverTime.tsx';
 import { BAR_SCALE, StackedBars, type BarScale, type StackedSeries } from '../charts/StackedBars.tsx';

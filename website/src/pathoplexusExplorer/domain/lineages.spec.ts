@@ -8,8 +8,8 @@ import {
     UNASSIGNED,
     type LineageDefinition,
 } from './lineages.ts';
-import { defined } from '../defined.fixture.ts';
-import { HIERARCHY } from '../hierarchy.fixture.ts';
+import { defined } from '../test/defined.fixture.ts';
+import { HIERARCHY } from '../test/hierarchy.fixture.ts';
 
 /* eslint-disable @typescript-eslint/naming-convention -- the keys are lineage names */
 

@@ -22,6 +22,34 @@ const importRules = {
     ],
 };
 
+const explorer = (folder) => `./src/pathoplexusExplorer/${folder}`;
+
+/** Imports in the Pathoplexus Explorer only go downwards: components → pageState → dataLayer → domain + mappingData. */
+const pathoplexusExplorerLayers = {
+    'import/no-restricted-paths': [
+        'error',
+        {
+            zones: [
+                {
+                    target: [explorer('pageState'), explorer('dataLayer'), explorer('domain'), explorer('mappingData')],
+                    from: './src/components/pathoplexusExplorer',
+                    message: 'Only components import components.',
+                },
+                {
+                    target: [explorer('dataLayer'), explorer('domain'), explorer('mappingData')],
+                    from: explorer('pageState'),
+                    message: 'The page state is above the data layer.',
+                },
+                {
+                    target: [explorer('domain'), explorer('mappingData')],
+                    from: explorer('dataLayer'),
+                    message: 'domain/ and mappingData/ only import from domain/ and mappingData/.',
+                },
+            ],
+        },
+    ],
+};
+
 const importRulesAstro = {
     ...importRules,
     'import/no-deprecated': 'off',
@@ -106,7 +134,13 @@ const disableFromReact = {
 
 export default tseslint.config(
     {
-        ignores: ['**/.astro/content.d.ts', 'dist/**', 'node_modules/**', '.vitest/**', 'tests/mocks/mockServiceWorker.js'],
+        ignores: [
+            '**/.astro/content.d.ts',
+            'dist/**',
+            'node_modules/**',
+            '.vitest/**',
+            'tests/mocks/mockServiceWorker.js',
+        ],
     },
     {
         files: ['**/*.ts', '**/*.tsx'],
@@ -132,6 +166,7 @@ export default tseslint.config(
         rules: {
             ...react.configs.flat.recommended.rules,
             ...importRules,
+            ...pathoplexusExplorerLayers,
             ...namingConvention,
             ...restrictTemplateExpressions,
             ...typescriptEsLintOverwrites,
@@ -163,6 +198,25 @@ export default tseslint.config(
         },
         plugins: {
             import: importPlugin,
+        },
+    },
+    {
+        // RhyDB reads go on the RhyDB query client (`dataLayer/hooks/rhydbQuery.ts`), which does not retry.
+        files: ['src/pathoplexusExplorer/dataLayer/hooks/**/*.{ts,tsx}'],
+        ignores: ['src/pathoplexusExplorer/dataLayer/hooks/rhydbQuery.ts', '**/*.spec.{ts,tsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    paths: [
+                        {
+                            name: '@tanstack/react-query',
+                            importNames: ['useQuery', 'useQueries', 'useSuspenseQuery', 'useSuspenseQueries'],
+                            message: 'Use useRhydbQuery / useRhydbQueries from ./rhydbQuery.ts for RhyDB reads.',
+                        },
+                    ],
+                },
+            ],
         },
     },
     { ...reactHooks.configs['recommended-latest'], ignores: ['**/*.fixture.ts'] },

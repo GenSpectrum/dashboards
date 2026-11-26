@@ -1,7 +1,7 @@
 import { useEffect, useState, type FC } from 'react';
 
-import { formatDataVersion } from '../../pathoplexusExplorer/lastUpdated.ts';
-import { connect } from '../../pathoplexusExplorer/rhydb/transport/connection.ts';
+import { connect } from '../../pathoplexusExplorer/dataLayer/transport/connection.ts';
+import { formatDataVersion } from '../../pathoplexusExplorer/domain/dataVersion.ts';
 
 type LastUpdatedProps = {
     rhydbUrl: string;
@@ -12,7 +12,7 @@ export const LastUpdated: FC<LastUpdatedProps> = ({ rhydbUrl }) => {
 
     useEffect(() => {
         const controller = new AbortController();
-        void connect(rhydbUrl)
+        void connect({ url: rhydbUrl })
             .dataVersion({ signal: controller.signal })
             .then((version) => {
                 setUpdated(formatDataVersion(version) ?? 'Unavailable');

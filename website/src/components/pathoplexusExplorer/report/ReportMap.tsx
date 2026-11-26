@@ -1,6 +1,9 @@
 import { type FC, useMemo } from 'react';
 
 import { Figure } from './Layout.tsx';
+import type { Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
+import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import {
     admin1AreaOf,
     canonicalCountryOf,
@@ -11,9 +14,6 @@ import {
 import { WORLD_MAP_NAME } from '../../../pathoplexusExplorer/domain/mapGeometry.ts';
 import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { DOT_LOCATIONS } from '../../../pathoplexusExplorer/mappingData/dotLocations.ts';
-import type { Loadable } from '../../../pathoplexusExplorer/rhydb/hooks/analyses.ts';
-import { COLUMNS } from '../../../pathoplexusExplorer/rhydb/queries/scope.ts';
-import type { RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
 import { ChoroplethMap, MapLegend, type MapDot, type MapValue } from '../charts/ChoroplethMap.tsx';
 import { focusLabelOf, focusOf, hasProvinceMap, projectionFor, scaleFor, useGeoFeatures } from '../charts/geo.ts';
 import { Async } from '../ui/States.tsx';

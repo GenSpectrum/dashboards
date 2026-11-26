@@ -5,6 +5,7 @@ import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 
 import { PROJECTION, type MapFeature, type Projection } from './ChoroplethMap.tsx';
+import { useRhydbQueryClient } from '../../../pathoplexusExplorer/dataLayer/hooks/connection.tsx';
 import {
     canonicalCountryOf,
     countriesOfContinent,
@@ -15,7 +16,6 @@ import {
 } from '../../../pathoplexusExplorer/domain/geography.ts';
 import { getMapGeometry, WORLD_MAP_NAME } from '../../../pathoplexusExplorer/domain/mapGeometry.ts';
 import { PROVINCE_MAP_COUNTRIES } from '../../../pathoplexusExplorer/mappingData/provinceMaps.ts';
-import { rhydbQueryClient } from '../../../pathoplexusExplorer/rhydb/hooks/rhydb.ts';
 
 const PROVINCE_MAPS = new Set(PROVINCE_MAP_COUNTRIES);
 
@@ -32,6 +32,7 @@ export function projectionFor(country: string | undefined, { zoomed }: { zoomed:
 }
 
 export function useGeoFeatures(mapName: string | undefined) {
+    const queryClient = useRhydbQueryClient();
     return useQuery(
         {
             queryKey: ['pathoplexusExplorerMap', mapName],
@@ -49,7 +50,7 @@ export function useGeoFeatures(mapName: string | undefined) {
                 return mapFeaturesOf(topology, mapName);
             },
         },
-        rhydbQueryClient,
+        queryClient,
     );
 }
 

@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 
 import { Figure } from './Layout.tsx';
+import type { Genome } from '../../../pathoplexusExplorer/dataLayer/hooks/useGenome.ts';
+import type { PositionReading } from '../../../pathoplexusExplorer/dataLayer/hooks/useMutation.ts';
+import { codonOf, type GeneLocation, type GenomeMap } from '../../../pathoplexusExplorer/domain/genes.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { UNEXPECTED_ERROR } from '../../../pathoplexusExplorer/domain/text.ts';
 import { MUTATION_KIND, mutationLabel } from '../../../pathoplexusExplorer/domain/variant.ts';
-import { codonOf, type GeneLocation, type GenomeMap } from '../../../pathoplexusExplorer/reports/genes.ts';
-import type { Genome } from '../../../pathoplexusExplorer/reports/useGenome.ts';
-import type { PositionReading } from '../../../pathoplexusExplorer/reports/useMutation.ts';
 import { useWidth } from '../charts/useWidth.ts';
 
 const LABEL_LINE = 13;

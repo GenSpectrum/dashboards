@@ -1,4 +1,3 @@
-import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useMemo, type FC } from 'react';
 
 import { CrossTable } from './CrossTable.tsx';
@@ -6,19 +5,7 @@ import { DownloadTable } from './DownloadTable.tsx';
 import { FilterRail } from './FilterRail.tsx';
 import { MatrixBar } from './MatrixBar.tsx';
 import { Timeline } from './Timeline.tsx';
-import { useMatrixParams } from './useMatrixParams.ts';
-import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
-import { matrixPageTitle } from '../../../pathoplexusExplorer/matrix/address.ts';
-import { crossTabOf } from '../../../pathoplexusExplorer/matrix/crossTab.ts';
-import { dimensionById, dimensionsFor, tableDimensions } from '../../../pathoplexusExplorer/matrix/dimensions.ts';
-import {
-    tablesInScope,
-    withDimensionCleared,
-    withDimensionInverted,
-    withoutStrandedChoices,
-    withValueToggled,
-    type Constraints,
-} from '../../../pathoplexusExplorer/matrix/selection.ts';
+import { ConnectionProvider } from '../../../pathoplexusExplorer/dataLayer/hooks/connection.tsx';
 import {
     accessionListQuery,
     everyTable,
@@ -29,8 +16,23 @@ import {
     useFilters,
     useTimelineRows,
     useValuesLookup,
-} from '../../../pathoplexusExplorer/matrix/useMatrix.ts';
-import { initRhydb, rhydbQueryClient } from '../../../pathoplexusExplorer/rhydb/hooks/rhydb.ts';
+} from '../../../pathoplexusExplorer/dataLayer/hooks/useMatrix.ts';
+import { crossTabOf } from '../../../pathoplexusExplorer/dataLayer/queries/crossTab.ts';
+import {
+    dimensionById,
+    dimensionsFor,
+    tableDimensions,
+} from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
+import { tablesInScope, type Constraints } from '../../../pathoplexusExplorer/dataLayer/queries/selection.ts';
+import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
+import { matrixPageTitle } from '../../../pathoplexusExplorer/pageState/matrixAddress.ts';
+import {
+    withDimensionCleared,
+    withDimensionInverted,
+    withoutStrandedChoices,
+    withValueToggled,
+} from '../../../pathoplexusExplorer/pageState/matrixSelection.ts';
+import { useMatrixParams } from '../../../pathoplexusExplorer/pageState/useMatrixParams.ts';
 import { DownloadAccessions } from '../ui/DownloadAccessions.tsx';
 import { ErrorMessage } from '../ui/States.tsx';
 
@@ -39,11 +41,10 @@ type MatrixPageProps = {
 };
 
 export const MatrixPage: FC<MatrixPageProps> = ({ rhydbUrl }) => {
-    initRhydb(rhydbUrl);
     return (
-        <QueryClientProvider client={rhydbQueryClient}>
+        <ConnectionProvider url={rhydbUrl}>
             <Matrix />
-        </QueryClientProvider>
+        </ConnectionProvider>
     );
 };
 

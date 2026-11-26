@@ -1,12 +1,12 @@
 import { getPathoplexusExplorerConfig } from '../../../config.ts';
-import { MATRIX_LABEL, MATRIX_PATH } from '../../../pathoplexusExplorer/matrix/address.ts';
+import { REPORT_KINDS } from '../../../pathoplexusExplorer/domain/reports.ts';
+import { MATRIX_LABEL, MATRIX_PATH } from '../../../pathoplexusExplorer/pageState/matrixAddress.ts';
 import {
     KIND_LABELS,
     KIND_PATHS,
-    REPORT_KINDS,
     REPORTS_BASE_PATH,
     REPORTS_LABEL,
-} from '../../../pathoplexusExplorer/reports/kinds.ts';
+} from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 
 export const PATHOPLEXUS_EXPLORER_LABEL = 'Pathoplexus Explorer';
 

@@ -1,3 +1,5 @@
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
+import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import {
     admin1AreaOf,
     canonicalCountryOf,
@@ -9,8 +11,6 @@ import {
     type Place,
 } from '../../../pathoplexusExplorer/domain/geography.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { COLUMNS } from '../../../pathoplexusExplorer/rhydb/queries/scope.ts';
-import type { RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
 
 export type AreaScale = {
     singular: string;

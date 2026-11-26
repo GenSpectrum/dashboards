@@ -1,13 +1,13 @@
 import { type FC, useMemo, useRef, useState } from 'react';
 
+import { looksNucleotide, useMutationSuggestions } from '../../../pathoplexusExplorer/dataLayer/hooks/suggestions.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import type { Place } from '../../../pathoplexusExplorer/domain/geography.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import type { Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { isReadable, termsOf, withoutTerm, withTerm } from '../../../pathoplexusExplorer/domain/terms.ts';
 import type { ReferenceSequences } from '../../../pathoplexusExplorer/domain/variant.ts';
-import type { Period } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import { looksNucleotide, useMutationSuggestions } from '../../../pathoplexusExplorer/rhydb/hooks/suggestions.ts';
 import { useClickOutside } from '../ui/useClickOutside.ts';
 
 const LISTED = 10;

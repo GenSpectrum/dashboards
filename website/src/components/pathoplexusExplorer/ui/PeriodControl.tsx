@@ -2,7 +2,7 @@ import type { FC } from 'react';
 
 import { Popover } from './Picker.tsx';
 import { formatDate } from '../../../pathoplexusExplorer/domain/dates.ts';
-import type { Period } from '../../../pathoplexusExplorer/rhydb/queries/scope.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 
 const QUICK: readonly { label: string; period: Period }[] = [
     { label: 'All dates', period: {} },

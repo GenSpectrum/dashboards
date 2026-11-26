@@ -3,7 +3,7 @@ import { expect, test } from 'vitest';
 import { CATALOG } from './catalog.ts';
 import { referenceName, referenceOf, referenceSequencesOf, type ReferenceRow } from './reference.ts';
 import { pathogenOf, parseSubject, type Pathogen, type Subject } from './subject.ts';
-import { defined } from '../defined.fixture.ts';
+import { defined } from '../test/defined.fixture.ts';
 
 const nodeOf = (key: string): Subject => defined(parseSubject(key, CATALOG), `'${key}' in the catalog`);
 const pathogenFor = (key: string): Pathogen => defined(pathogenOf(nodeOf(key)), `the pathogen of '${key}'`);

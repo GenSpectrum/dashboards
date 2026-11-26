@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest';
 
-import { defined } from '../defined.fixture.ts';
 import {
     admin1AreaOf,
     canonicalCountryOf,
@@ -13,6 +12,7 @@ import {
     placeKey,
     subregionOf,
 } from './geography.ts';
+import { defined } from '../test/defined.fixture.ts';
 
 /** Fixture of recorded country names, excluding non-location values. */
 const RECORDED = [

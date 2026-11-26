@@ -1,9 +1,9 @@
 import { type FC } from 'react';
 
-import { crossTabOf, type Measure } from '../../../pathoplexusExplorer/matrix/crossTab.ts';
-import type { Dimension } from '../../../pathoplexusExplorer/matrix/dimensions.ts';
-import { tableFileOf, tableFilename } from '../../../pathoplexusExplorer/matrix/tableFile.ts';
-import type { RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
+import { tableFileOf, tableFilename } from './tableFile.ts';
+import { crossTabOf, type Measure } from '../../../pathoplexusExplorer/dataLayer/queries/crossTab.ts';
+import type { Dimension } from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
+import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { saveFile } from '../ui/saveFile.ts';
 
 type DownloadTableProps = {

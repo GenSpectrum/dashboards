@@ -1,9 +1,9 @@
 import { useState, type FC } from 'react';
 
+import type { Filter } from '../../../pathoplexusExplorer/dataLayer/hooks/useMatrix.ts';
+import { NOTHING } from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
+import type { Constraint, Constraints } from '../../../pathoplexusExplorer/dataLayer/queries/selection.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { NOTHING } from '../../../pathoplexusExplorer/matrix/dimensions.ts';
-import type { Constraint, Constraints } from '../../../pathoplexusExplorer/matrix/selection.ts';
-import type { Filter } from '../../../pathoplexusExplorer/matrix/useMatrix.ts';
 import { SEQUENTIAL } from '../charts/colors.ts';
 
 const SHOWN = 10;

@@ -1,4 +1,3 @@
-import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, type FC } from 'react';
 
 import { LineageReport } from './LineageReport.tsx';
@@ -8,21 +7,19 @@ import { ReportBar } from './ReportBar.tsx';
 import { ReportKindBar } from './ReportKindBar.tsx';
 import { ReportShell } from './ReportShell.tsx';
 import { VirusReport } from './VirusReport.tsx';
-import { useReportParams } from './useReportParams.ts';
+import { ConnectionProvider } from '../../../pathoplexusExplorer/dataLayer/hooks/connection.tsx';
+import { useReportEntries, type ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
+import { useMutationCheck, type MutationCheck } from '../../../pathoplexusExplorer/dataLayer/hooks/useMutation.ts';
+import { REPORT_KIND, type ReportKind, type ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
 import { isPathogenNode } from '../../../pathoplexusExplorer/domain/subject.ts';
 import {
     KIND_DESCRIPTIONS,
     impossibleScope,
     KIND_LABELS,
-    REPORT_KIND,
     reportPageTitle,
     searchOf,
-    type ReportKind,
-    type ReportRef,
-} from '../../../pathoplexusExplorer/reports/kinds.ts';
-import { useReportEntries, type ReportEntries } from '../../../pathoplexusExplorer/reports/useEntries.ts';
-import { useMutationCheck, type MutationCheck } from '../../../pathoplexusExplorer/reports/useMutation.ts';
-import { initRhydb, rhydbQueryClient } from '../../../pathoplexusExplorer/rhydb/hooks/rhydb.ts';
+} from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
+import { useReportParams } from '../../../pathoplexusExplorer/pageState/useReportParams.ts';
 
 type ReportPageProps = {
     kind: ReportKind;
@@ -30,11 +27,10 @@ type ReportPageProps = {
 };
 
 export const ReportPage: FC<ReportPageProps> = ({ kind, rhydbUrl }) => {
-    initRhydb(rhydbUrl);
     return (
-        <QueryClientProvider client={rhydbQueryClient}>
+        <ConnectionProvider url={rhydbUrl}>
             <Report kind={kind} />
-        </QueryClientProvider>
+        </ConnectionProvider>
     );
 };
 

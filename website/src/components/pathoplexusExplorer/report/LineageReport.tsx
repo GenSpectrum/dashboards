@@ -26,11 +26,24 @@ import {
     spreadPhrase,
     unplacedIn,
 } from './areaScale.ts';
+import { useLineageHierarchy, type Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
+import {
+    proportionBaseOf,
+    useLineageMutations,
+    useLineageProportion,
+    DEFINING,
+    PARENT_MAX,
+    type LineageMutations,
+} from '../../../pathoplexusExplorer/dataLayer/hooks/useLineage.ts';
+import { firstError, useReportBasics } from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { collectionBoundPhrase } from '../../../pathoplexusExplorer/domain/dates.ts';
 import type { Place } from '../../../pathoplexusExplorer/domain/geography.ts';
 import { NO_HIERARCHY, type Hierarchy } from '../../../pathoplexusExplorer/domain/lineages.ts';
 import { comparableParentOf } from '../../../pathoplexusExplorer/domain/reference.ts';
+import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount, formatIndex, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import {
     effectiveSteps,
@@ -42,18 +55,7 @@ import {
     type Subject,
 } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { mutationLabel } from '../../../pathoplexusExplorer/domain/variant.ts';
-import { hrefOf, type Period, type ReportRef } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import type { ReportEntries } from '../../../pathoplexusExplorer/reports/useEntries.ts';
-import {
-    proportionBaseOf,
-    useLineageMutations,
-    useLineageProportion,
-    DEFINING,
-    PARENT_MAX,
-    type LineageMutations,
-} from '../../../pathoplexusExplorer/reports/useLineage.ts';
-import { firstError, useReportBasics } from '../../../pathoplexusExplorer/reports/useReports.ts';
-import { useLineageHierarchy, type Loadable } from '../../../pathoplexusExplorer/rhydb/hooks/analyses.ts';
+import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 import { Async, Empty, ErrorMessage } from '../ui/States.tsx';
 
 const SHOWN_MUTATIONS = 10;

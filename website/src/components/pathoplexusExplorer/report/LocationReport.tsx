@@ -14,14 +14,19 @@ import {
     unplacedNote,
 } from './Sections.tsx';
 import { areaScale, counted, hasPlacesBelow, plural, rankAreas, spreadFigure, unplacedIn } from './areaScale.ts';
+import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
+import {
+    firstError,
+    pathogenBreakdown,
+    useReportBasics,
+} from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
+import { valueParts } from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { placePhrase } from '../../../pathoplexusExplorer/domain/geography.ts';
+import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
 import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { ALL } from '../../../pathoplexusExplorer/domain/subject.ts';
-import { hrefOf, type ReportRef } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import type { ReportEntries } from '../../../pathoplexusExplorer/reports/useEntries.ts';
-import { firstError, pathogenBreakdown, useReportBasics } from '../../../pathoplexusExplorer/reports/useReports.ts';
-import { valueParts } from '../../../pathoplexusExplorer/rhydb/breakdown.ts';
+import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 import { BAR_SCALE } from '../charts/StackedBars.tsx';
 import { ErrorMessage } from '../ui/States.tsx';
 

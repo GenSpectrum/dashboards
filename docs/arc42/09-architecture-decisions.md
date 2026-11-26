@@ -60,4 +60,4 @@ The Pathoplexus Explorer needs to group and count sequences across pathogens in 
 
 ### Decision
 
-The browser queries RhyDB, which stores one table per pathogen and supports queries across tables. The Explorer builds RhyQL queries with the typed helpers in `website/src/pathoplexusExplorer/rhydb/`.
+The browser queries RhyDB, which stores one table per pathogen and supports queries across tables. The Explorer builds RhyQL queries with the typed helpers in `website/src/pathoplexusExplorer/dataLayer/`.

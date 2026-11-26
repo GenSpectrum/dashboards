@@ -32,4 +32,4 @@ The genome figure places genes using unique, exact matches between reference pro
 
 ## Accession lists
 
-The accession list covers the entries that the analysis uses, including the sequences used for comparison. When adding a report panel that uses a new group of sequences, make sure that the scope in [`entryScopes.ts`](../website/src/pathoplexusExplorer/reports/entryScopes.ts) still includes it. The matrix accession list covers the full selection, including entries grouped under “Other.”
+The accession list covers the entries that the analysis uses, including the sequences used for comparison. When adding a report panel that uses a new group of sequences, make sure that the scope in [`entryScopes.ts`](../website/src/pathoplexusExplorer/domain/entryScopes.ts) still includes it. The matrix accession list covers the full selection, including entries grouped under “Other.”

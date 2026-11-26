@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 
+import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
+import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { hrefOf, type ReportRef } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import type { ReportEntries } from '../../../pathoplexusExplorer/reports/useEntries.ts';
+import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 
 type CitationProps = { reference: ReportRef; entries: ReportEntries };
 

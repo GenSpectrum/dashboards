@@ -4,9 +4,18 @@ The Explorer provides printable reports and a matrix for Pathoplexus sequence en
 
 ## Code structure
 
-- `domain/` and `mappingData/` define the classifications used in reports and filters.
-- `rhydb/` builds and runs RhyQL queries. Group and aggregate in RhyDB before rendering the results.
-- `reports/` and `matrix/` define the queries and results for each view. Their components are in `../components/pathoplexusExplorer/`.
+The Explorer's code has the same layers as the [W-ASAP dashboard](https://github.com/GenSpectrum/wasap-dashboard), and its RhyDB transport is kept close to W-ASAP's `src/dataLayer/transport/`:
+
+```
+pathoplexusExplorer/
+  pageState/    report and matrix state, kept in the URL search params
+  dataLayer/    RhyDB: HTTP client (transport/), RhyQL queries and how their rows are interpreted (queries/), React Query hooks (hooks/)
+  domain/       subjects, places, periods, lineages, variants and the other notions that reports and filters are built from
+  mappingData/  static tables that the domain rules use
+  test/         fixtures for the specs
+```
+
+Components are in `../components/pathoplexusExplorer/`, and the Astro pages in `../pages/pathoplexus-explorer/` take the place of routes. Each page renders its content inside a `ConnectionProvider` (`dataLayer/hooks/connection.tsx`), which gives the hooks the RhyDB instance and the query client of the RhyDB reads. Imports only go downwards: components → `pageState/` → `dataLayer/` → `domain/` + `mappingData/`. ESLint enforces it (`import/no-restricted-paths`). Group and aggregate in RhyDB before rendering the results.
 
 See [data interpretation](../../../docs/pathoplexus-explorer-domain-decisions.md) for the rules used to count and compare sequences. Keep grouping and filtering consistent when changing a classification.
 

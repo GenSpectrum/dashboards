@@ -18,9 +18,37 @@ import {
     type AreaCount,
     type AreaScale,
 } from './areaScale.ts';
+import {
+    firstErrorOf,
+    useHostCounts,
+    useMapCounts,
+    useSubtypeColumns,
+    type Loadable,
+} from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import type { ProportionRows } from '../../../pathoplexusExplorer/dataLayer/hooks/genomics.ts';
+import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
+import type { Genome } from '../../../pathoplexusExplorer/dataLayer/hooks/useGenome.ts';
+import {
+    useMutationReads,
+    useSymbolGroups,
+    type MutationCheck,
+    type MutationSubject,
+    type PositionReading,
+    type SymbolGroup,
+} from '../../../pathoplexusExplorer/dataLayer/hooks/useMutation.ts';
+import {
+    useAffiliations,
+    useAuthors,
+    useMetadataAvailability,
+    useSubmittingGroups,
+} from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
+import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import type { Place } from '../../../pathoplexusExplorer/domain/geography.ts';
 import { normalizeSubtype, UNASSIGNED } from '../../../pathoplexusExplorer/domain/lineages.ts';
+import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
+import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount, formatProportion, LOW_COUNT } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import {
     isPathogenNode,
@@ -30,33 +58,7 @@ import {
     type Subject,
 } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { singleMutationOf } from '../../../pathoplexusExplorer/domain/variant.ts';
-import { hrefOf, type ReportRef } from '../../../pathoplexusExplorer/reports/kinds.ts';
-import type { ReportEntries } from '../../../pathoplexusExplorer/reports/useEntries.ts';
-import type { Genome } from '../../../pathoplexusExplorer/reports/useGenome.ts';
-import {
-    useMutationReads,
-    useSymbolGroups,
-    type MutationCheck,
-    type MutationSubject,
-    type PositionReading,
-    type SymbolGroup,
-} from '../../../pathoplexusExplorer/reports/useMutation.ts';
-import {
-    useAffiliations,
-    useAuthors,
-    useMetadataAvailability,
-    useSubmittingGroups,
-} from '../../../pathoplexusExplorer/reports/useReports.ts';
-import {
-    firstErrorOf,
-    useHostCounts,
-    useMapCounts,
-    useSubtypeColumns,
-    type Loadable,
-} from '../../../pathoplexusExplorer/rhydb/hooks/analyses.ts';
-import type { ProportionRows } from '../../../pathoplexusExplorer/rhydb/hooks/genomics.ts';
-import { COLUMNS, type Period } from '../../../pathoplexusExplorer/rhydb/queries/scope.ts';
-import type { RhydbRow } from '../../../pathoplexusExplorer/rhydb/transport/row.ts';
+import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 import { OTHER_COLOR } from '../charts/colors.ts';
 import { Async, ErrorMessage, Loading } from '../ui/States.tsx';
 

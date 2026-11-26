@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { subjectOptions, subjectValue, withAbove, withLevel } from './subjectOptions.ts';
-import { defined } from '../../../pathoplexusExplorer/defined.fixture.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { isPathogenNode, parseSubject, subjectKey } from '../../../pathoplexusExplorer/domain/subject.ts';
+import { defined } from '../../../pathoplexusExplorer/test/defined.fixture.ts';
 
 const parsed = parseSubject('pathogen:dengue', CATALOG);
 const dengue = defined(isPathogenNode(parsed) ? parsed : undefined, 'dengue in the catalog');
