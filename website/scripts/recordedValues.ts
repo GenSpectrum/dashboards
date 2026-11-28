@@ -10,6 +10,10 @@ export function argumentOf(name: string): string | undefined {
     return index < 0 ? undefined : process.argv[index + 1];
 }
 
+/**
+ * Groups the union-all across all pathogens by the `columns` and count the combinations.
+ * Queries the staging RhyDB instance unless `--instance <url>` is passed.
+ */
 export async function recordedValues(columns: readonly string[]): Promise<RhydbRow[]> {
     const url = argumentOf('instance') ?? (await getStagingRhydbUrl());
     const tables = allPathogens(CATALOG).map((pathogen) => pathogen.table);
