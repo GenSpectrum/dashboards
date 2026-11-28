@@ -47,6 +47,24 @@ jobs:
         run: npx playwright install --with-deps
       - run: npm run test
 
+  liveTests:
+    name: Live checks against staging RhyDB
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: lts/*
+      - uses: actions/cache@v6
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run test:live -- --run
+
   dockerImage:
     name: Build Website Docker Image
     runs-on: ubuntu-latest

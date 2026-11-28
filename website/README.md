@@ -26,7 +26,7 @@ Unit testing is done with vitest, and split into two vitest 'projects': `node` a
 and browser based unit tests using the vitest [Browser mode](https://vitest.dev/guide/browser/). By default, tests are
 run headless, but you can also run them headed. Have a look at the `test:*` commands in the `package.json`.
 
-Run `npm run test:live -- --run` to check the Explorer against staging RhyDB.
+The live tests (`npm run test:live -- --run`) check that the numbers the Explorer's reports and matrix show match independent counts from the staging RhyDB instance. CI runs them on every push.
 
 For the Explorer's Playwright tests, generate the test configuration from `website/`:
 
