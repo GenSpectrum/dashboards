@@ -4,8 +4,6 @@ The Explorer provides printable reports and a matrix for Pathoplexus sequence en
 
 ## Code structure
 
-The Explorer's code has the same layers as the [W-ASAP dashboard](https://github.com/GenSpectrum/wasap-dashboard), and its RhyDB transport is kept close to W-ASAP's `src/dataLayer/transport/`:
-
 ```
 pathoplexusExplorer/
   pageState/    report and matrix state, kept in the URL search params
@@ -20,6 +18,8 @@ Components are in `../components/pathoplexusExplorer/`, and the Astro pages in `
 Report panels, Matrix filters, and accession downloads share one RhyDB snapshot per page. Each response identifies its snapshot with the `data-version` header. A change discards the page’s query cache and reruns the active reads. The page also checks the version on returning to a tab and once a minute while visible.
 
 See [data interpretation](../../../docs/pathoplexus-explorer-domain-decisions.md) for the rules used to count and compare sequences. Keep grouping and filtering consistent when changing a classification.
+
+_The Explorer's code has the same layers as the [W-ASAP dashboard](https://github.com/GenSpectrum/wasap-dashboard), and its RhyDB transport is kept close to W-ASAP's `src/dataLayer/transport/`._
 
 ## Variant queries
 

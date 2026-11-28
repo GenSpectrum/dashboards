@@ -12,10 +12,10 @@ import {
 } from '../../../pathoplexusExplorer/dataLayer/queries/timeSeries.ts';
 import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { ProportionOverTime } from '../charts/ProportionOverTime.tsx';
-import { BAR_SCALE, StackedBars, type StackedSeries } from '../charts/StackedBars.tsx';
-import { colorMap, OTHER_COLOR, SERIES_COLORS } from '../charts/colors.ts';
+import { ProportionOverTime } from '../reportCharts/ProportionOverTime.tsx';
+import { BAR_SCALE, StackedBars, type StackedSeries } from '../reportCharts/StackedBars.tsx';
 import { Async } from '../ui/States.tsx';
+import { colorMap, OTHER_COLOR, SERIES_COLORS } from '../ui/colors.ts';
 
 function nothingToPlot(rows: readonly RhydbRow[]): string {
     const total = rows.reduce((sum, row) => sum + Number(row.n ?? 0), 0);

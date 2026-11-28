@@ -5,7 +5,7 @@ import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/
 import { bucketLabel, bucketRange } from '../../../pathoplexusExplorer/domain/dates.ts';
 import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { SEQUENTIAL } from '../charts/colors.ts';
+import { SEQUENTIAL } from '../ui/colors.ts';
 
 const HEIGHT = 72;
 

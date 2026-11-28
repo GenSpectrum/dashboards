@@ -14,7 +14,7 @@ import {
 } from '../../../pathoplexusExplorer/dataLayer/queries/crossTab.ts';
 import type { Dimension } from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
 import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { SEQUENTIAL } from '../charts/colors.ts';
+import { SEQUENTIAL } from '../ui/colors.ts';
 
 /** Scale proportions linearly and counts logarithmically against the largest cell. */
 function colorOf(value: number, largest: number, measure: Measure): string | undefined {

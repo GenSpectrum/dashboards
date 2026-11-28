@@ -13,8 +13,8 @@ import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import { type FC, type MouseEvent, type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { Tooltip } from './Tooltip.tsx';
-import { MAP_BORDER, MAP_GROUND, NO_DATA_COLOR, OUTSIDE_STROKE, SEQUENTIAL } from './colors.ts';
 import { useWidth } from './useWidth.ts';
+import { MAP_BORDER, MAP_GROUND, NO_DATA_COLOR, OUTSIDE_STROKE, SEQUENTIAL } from '../ui/colors.ts';
 
 export type MapFeature = Feature<Geometry, { name: string }>;
 

@@ -7,7 +7,7 @@ import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
 import { formatCount, formatProportion, LOW_COUNT, sumOf } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
 import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
-import { OTHER_COLOR } from '../charts/colors.ts';
+import { OTHER_COLOR } from '../ui/colors.ts';
 
 type AreasTableProps = {
     scale: AreaScale;

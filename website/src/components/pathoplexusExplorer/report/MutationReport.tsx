@@ -40,8 +40,8 @@ import { formatCount, formatProportion, LOW_COUNT, sumOf } from '../../../pathop
 import { subjectLabel, subjectTitle, type Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { singleMutationOf } from '../../../pathoplexusExplorer/domain/variant.ts';
 import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
-import { OTHER_COLOR } from '../charts/colors.ts';
 import { Async, ErrorMessage, Loading } from '../ui/States.tsx';
+import { OTHER_COLOR } from '../ui/colors.ts';
 
 const SHOWN = 12;
 

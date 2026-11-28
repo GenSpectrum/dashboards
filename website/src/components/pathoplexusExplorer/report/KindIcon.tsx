@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 
 import { REPORT_KIND, type ReportKind } from '../../../pathoplexusExplorer/domain/reports.ts';
-import { SERIES_COLORS } from '../charts/colors.ts';
+import { SERIES_COLORS } from '../ui/colors.ts';
 
 const INK = '#57534e';
 const HIGHLIGHT = SERIES_COLORS[0];

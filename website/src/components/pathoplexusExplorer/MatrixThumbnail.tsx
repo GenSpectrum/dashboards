@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import { SEQUENTIAL } from './charts/colors.ts';
+import { SEQUENTIAL } from './ui/colors.ts';
 
 const RULE = '#d7d3cd';
 const PAPER = '#ffffff';

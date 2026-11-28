@@ -14,8 +14,8 @@ import {
 import { WORLD_MAP_NAME } from '../../../pathoplexusExplorer/domain/mapGeometry.ts';
 import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { DOT_LOCATIONS } from '../../../pathoplexusExplorer/mappingData/dotLocations.ts';
-import { ChoroplethMap, MapLegend, type MapDot, type MapValue } from '../charts/ChoroplethMap.tsx';
-import { focusLabelOf, focusOf, hasProvinceMap, projectionFor, scaleFor, useGeoFeatures } from '../charts/geo.ts';
+import { ChoroplethMap, MapLegend, type MapDot, type MapValue } from '../reportCharts/ChoroplethMap.tsx';
+import { focusLabelOf, focusOf, hasProvinceMap, projectionFor, scaleFor, useGeoFeatures } from '../reportCharts/geo.ts';
 import { Async } from '../ui/States.tsx';
 
 export function mapTitleOf(where: Place): string {

@@ -6,8 +6,8 @@ import { CREDITS_SHOWN, type RankedValues } from '../../../pathoplexusExplorer/d
 import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/columns.ts';
 import { readOptionalText, type RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { sumOf } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { OTHER_COLOR } from '../charts/colors.ts';
 import { Async } from '../ui/States.tsx';
+import { OTHER_COLOR } from '../ui/colors.ts';
 
 type SubmittersProps = {
     groups: Loadable<RhydbRow[]>;

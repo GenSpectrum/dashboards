@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
-import { NO_DATA_COLOR } from './colors.ts';
 import { formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
+import { NO_DATA_COLOR } from '../ui/colors.ts';
 
 export type AvailabilitySegment = { key: string; n: number; color: string };
 

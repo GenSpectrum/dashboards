@@ -4,7 +4,7 @@ import type { Filter } from '../../../pathoplexusExplorer/dataLayer/hooks/useMat
 import { NOTHING } from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
 import type { Constraint, Constraints } from '../../../pathoplexusExplorer/dataLayer/queries/selection.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import { SEQUENTIAL } from '../charts/colors.ts';
+import { SEQUENTIAL } from '../ui/colors.ts';
 
 const SHOWN = 10;
 

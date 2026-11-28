@@ -5,8 +5,8 @@ import { exactName, type BreakdownSpec, type Part } from '../../../pathoplexusEx
 import { formatCount, formatProportion, sumOf } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import type { Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
-import { OTHER_COLOR } from '../charts/colors.ts';
 import { Loading } from '../ui/States.tsx';
+import { OTHER_COLOR } from '../ui/colors.ts';
 
 export type TreeEntry = { label: string; href?: string };
 

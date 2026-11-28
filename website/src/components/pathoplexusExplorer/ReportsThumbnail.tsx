@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import { SERIES_COLORS } from './charts/colors.ts';
+import { SERIES_COLORS } from './ui/colors.ts';
 
 const INK = '#44403b';
 const PAPER = '#ffffff';

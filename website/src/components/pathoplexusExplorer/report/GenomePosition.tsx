@@ -7,7 +7,7 @@ import { codonOf, type GeneLocation, type GenomeMap } from '../../../pathoplexus
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { UNEXPECTED_ERROR } from '../../../pathoplexusExplorer/domain/text.ts';
 import { MUTATION_KIND, mutationLabel } from '../../../pathoplexusExplorer/domain/variant.ts';
-import { useWidth } from '../charts/useWidth.ts';
+import { useWidth } from '../reportCharts/useWidth.ts';
 
 const LABEL_LINE = 13;
 const TOP_PAD = 8;

@@ -7,9 +7,9 @@ import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/columns.
 import { readOptionalText, type RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { DATE_PRECISION, precisionOf, type DatePrecision } from '../../../pathoplexusExplorer/domain/dates.ts';
 import { METADATA_FIELDS } from '../../../pathoplexusExplorer/mappingData/metadataFields.ts';
-import { AvailabilityBars, type AvailabilityRow } from '../charts/AvailabilityBars.tsx';
-import { NO_DATA_COLOR, SEQUENTIAL } from '../charts/colors.ts';
+import { AvailabilityBars, type AvailabilityRow } from '../reportCharts/AvailabilityBars.tsx';
 import { Async } from '../ui/States.tsx';
+import { NO_DATA_COLOR, SEQUENTIAL } from '../ui/colors.ts';
 
 type MetadataAvailabilityProps = {
     availability: Loadable<RhydbRow[]>;

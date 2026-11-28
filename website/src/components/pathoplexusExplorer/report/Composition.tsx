@@ -4,8 +4,8 @@ import { Bar, frequencyColumns, ReportLink, restLabel, Table, withRest } from '.
 import type { Part } from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
 import { sumOf } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
-import { OTHER_COLOR } from '../charts/colors.ts';
 import { Loading } from '../ui/States.tsx';
+import { OTHER_COLOR } from '../ui/colors.ts';
 
 const SHOWN = 10;
 
