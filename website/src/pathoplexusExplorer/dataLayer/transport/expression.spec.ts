@@ -12,9 +12,7 @@ import {
     isNotNull,
     isNull,
     max,
-    maybe,
     min,
-    nOf,
     nucleotideEquals,
     sum,
 } from './functions.ts';
@@ -52,7 +50,7 @@ describe('parentheses', () => {
     });
 
     test('an argument list needs none, since a comma delimits it', () => {
-        expect(maybe(or(a, b)).render()).toBe("maybe(a = '1' || b = '2')");
+        expect(isNull(or(a, b)).render()).toBe("isNull(a = '1' || b = '2')");
     });
 });
 
@@ -141,16 +139,5 @@ describe('the named functions', () => {
     test('refuse a position that no reference has', () => {
         expect(() => nucleotideEquals({ position: 0, symbol: 'A', sequenceName: 'main' })).toThrow();
         expect(() => hasMutation({ position: 1.5, sequenceName: 'main' })).toThrow();
-    });
-
-    test('nOf takes a count, a set of matchers and an optional flag', () => {
-        const matchers = [
-            hasMutation({ position: 1, sequenceName: 'main' }),
-            hasMutation({ position: 2, sequenceName: 'main' }),
-        ];
-        const listed =
-            "{hasMutation(position := 1, sequenceName := 'main'), hasMutation(position := 2, sequenceName := 'main')}";
-        expect(nOf(1, matchers).render()).toBe(`nOf(1, ${listed})`);
-        expect(nOf(2, matchers, { matchExactly: true }).render()).toBe(`nOf(2, ${listed}, matchExactly := true)`);
     });
 });

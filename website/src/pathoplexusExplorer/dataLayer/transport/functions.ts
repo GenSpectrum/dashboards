@@ -5,7 +5,7 @@
  * how each argument is escaped are written down once.
  */
 
-import { bool, Expr, field, fn, int, PRECEDENCE, set, str } from './expression.ts';
+import { Expr, field, fn, int, str } from './expression.ts';
 
 /** Rows in the group. */
 export function count(): Expr {
@@ -68,14 +68,6 @@ export function hasAAMutation(options: { position: number; sequenceName: string 
 }
 
 /**
- * Relax a sequence predicate to also admit reads that *could* match given their
- * ambiguous calls: `maybe(nucleotideEquals(…))`.
- */
-export function maybe(child: Expr): Expr {
-    return fn('maybe', [child]);
-}
-
-/**
  * Whether a read's insertion at a position contains `value` (a regex).
  * `aminoAcidInsertionContains` is the gene form.
  */
@@ -85,23 +77,6 @@ export function insertionContains(options: { position: number; value: string; se
 
 export function aminoAcidInsertionContains(options: { position: number; value: string; sequenceName: string }): Expr {
     return insertionContainsAt('aminoAcidInsertionContains', options);
-}
-
-/**
- * `nOf(count, {a, b, c}[, matchExactly := bool])` — a read matches when at least
- * (or, with `matchExactly`, exactly) `count` of the matchers hold. Rendered by
- * hand: the call mixes a positional count, a set literal, and a named flag,
- * which `fn()`'s all-positional / all-named forms don't cover.
- */
-export function nOf(count: number, matchers: readonly Expr[], options?: { matchExactly?: boolean }): Expr {
-    if (!Number.isInteger(count) || count < 0) {
-        throw new Error(`Not a valid n-of count: ${count}`);
-    }
-    const args = [String(count), set(matchers).render()];
-    if (options?.matchExactly !== undefined) {
-        args.push(`matchExactly := ${bool(options.matchExactly).render()}`);
-    }
-    return new Expr(PRECEDENCE.atomic, `nOf(${args.join(', ')})`);
 }
 
 function symbolEquals(name: string, options: { position: number; symbol: string; sequenceName: string }): Expr {

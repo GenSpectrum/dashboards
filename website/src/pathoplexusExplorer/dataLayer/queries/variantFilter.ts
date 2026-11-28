@@ -1,4 +1,4 @@
-/** Compile resolved CoV-Spectrum variant expressions into RhyQL predicates. */
+/** Compile resolved variant expressions into RhyQL predicates. */
 
 import { definitionRelationsOf } from './definitions.ts';
 import type { Hierarchy } from '../../domain/lineages.ts';
@@ -10,8 +10,6 @@ import {
     hasAAMutation,
     hasMutation,
     insertionContains,
-    maybe,
-    nOf,
     nucleotideEquals,
 } from '../transport/functions.ts';
 
@@ -28,10 +26,6 @@ export function compileVariant(node: ResolvedNode, tableName: string, hierarchy:
         }
         case 'not':
             return not(compile(node.child));
-        case 'maybe':
-            return maybe(compile(node.child));
-        case 'nOf':
-            return nOf(node.n, node.children.map(compile), node.exactly ? { matchExactly: true } : undefined);
         case 'mutation': {
             const nucleotide = node.kind === MUTATION_KIND.nucleotide;
             const at = { position: node.position, sequenceName: node.sequence };

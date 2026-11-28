@@ -37,10 +37,6 @@ test('the operators of the language', () => {
     expect(compile('F:68 | F:69')).toBe(
         "hasAAMutation(position := 68, sequenceName := 'F') || hasAAMutation(position := 69, sequenceName := 'F')",
     );
-    expect(compile('maybe(F:K68N)')).toBe("maybe(aminoAcidEquals(position := 68, symbol := 'N', sequenceName := 'F'))");
-    expect(compile('[exactly-1-of: F:68, F:69]')).toBe(
-        "nOf(1, {hasAAMutation(position := 68, sequenceName := 'F'), hasAAMutation(position := 69, sequenceName := 'F')}, matchExactly := true)",
-    );
 });
 
 test('an insertion, whose ? stands for any symbols', () => {

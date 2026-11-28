@@ -17,11 +17,7 @@ test('a disjunction keeps its grouping when a term is added', () => {
 
 test('each operand of a conjunction is a term of its own, grouped or not', () => {
     expect(termsOf('(A12C | G34T) & C56G')).toEqual(['(A12C | G34T)', 'C56G']);
-    expect(termsOf('!A12C & [2-of: C1T & G2A, T3C] & maybe(A4G)')).toEqual([
-        '!A12C',
-        '[2-of: C1T & G2A, T3C]',
-        'maybe(A4G)',
-    ]);
+    expect(termsOf('!A12C & !(C1T & G2A) & T3C')).toEqual(['!A12C', '!(C1T & G2A)', 'T3C']);
     expect(withoutTerm('(A12C | G34T) & C56G', 0)).toBe('C56G');
     expect(withoutTerm('(A12C | G34T) & C56G', 1)).toBe('(A12C | G34T)');
 });

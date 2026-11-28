@@ -25,4 +25,4 @@ _The Explorer's code has the same layers as the [W-ASAP dashboard](https://githu
 
 The mutation filter uses CoV-Spectrum and LAPIS notation. Examples include `C466T` for a nucleotide change, `L:C1234T` for a change on segment L, `F:K68N` for an amino acid change, and `ins_1234:ACG` for an insertion.
 
-Use `lineage:A.D.5*` to include descendants when a lineage definition is available. Terms can be combined with `&`, `|`, `!`, parentheses, `[2-of: a, b, c]`, `[exactly-2-of: a, b, c]`, and `maybe(a)`. The grammar is in `domain/variant.ts`.
+Use `lineage:A.D.5*` to include descendants when a lineage definition is available. Terms can be combined with `&`, `|`, `!` and parentheses. The grammar is in `domain/variant.ts`.

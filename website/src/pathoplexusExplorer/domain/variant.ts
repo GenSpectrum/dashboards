@@ -1,4 +1,4 @@
-/** Parse the CoV-Spectrum variant notation used by the report's mutation filter. */
+/** Parse the variant notation used by the report's mutation filter: terms combined with `&`, `|`, `!` and parentheses. */
 
 import { UNEXPECTED_ERROR } from './text.ts';
 
@@ -27,9 +27,7 @@ export type VariantNode =
     | LineageTerm
     | { type: 'and'; children: VariantNode[] }
     | { type: 'or'; children: VariantNode[] }
-    | { type: 'not'; child: VariantNode }
-    | { type: 'nOf'; n: number; exactly: boolean; children: VariantNode[] }
-    | { type: 'maybe'; child: VariantNode };
+    | { type: 'not'; child: VariantNode };
 
 export type ParseResult = { ok: true; node: VariantNode } | { ok: false };
 
@@ -37,13 +35,9 @@ const NUCLEOTIDE = /^([A-Z.*-]?)(\d+)([A-Z.*-]?)$/;
 
 class ParseError extends Error {}
 
-type Token =
-    | { kind: '&' | '|' | '!' | '(' | ')' | ']' | ',' }
-    | { kind: 'nof'; n: number; exactly: boolean }
-    | { kind: 'maybe' }
-    | { kind: 'word'; text: string };
+type Token = { kind: '&' | '|' | '!' | '(' | ')' } | { kind: 'word'; text: string };
 
-const PUNCTUATION = new Set(['&', '|', '!', '(', ')', ']', ',']);
+const PUNCTUATION = new Set(['&', '|', '!', '(', ')']);
 const WORD_END = /[\s&|!()[\],]/;
 
 function tokenize(text: string): Token[] {
@@ -60,33 +54,14 @@ function tokenize(text: string): Token[] {
             index++;
             continue;
         }
-        if (char === '[') {
-            const close = text.indexOf(':', index);
-            const header =
-                close < 0
-                    ? ''
-                    : text
-                          .slice(index + 1, close)
-                          .trim()
-                          .toLowerCase();
-            const match = /^(exactly-)?(\d+)-of$/.exec(header);
-            if (match === null) {
-                throw new ParseError();
-            }
-            tokens.push({ kind: 'nof', n: Number(match[2]), exactly: header.startsWith('exactly-') });
-            index = close + 1;
-            continue;
-        }
         let end = index;
         while (end < text.length && !WORD_END.test(text[end])) {
             end++;
         }
-        const word = text.slice(index, end);
-        if (word.toLowerCase() === 'maybe' && text.slice(end).trimStart().startsWith('(')) {
-            tokens.push({ kind: 'maybe' });
-        } else {
-            tokens.push({ kind: 'word', text: word });
+        if (end === index) {
+            throw new ParseError();
         }
+        tokens.push({ kind: 'word', text: text.slice(index, end) });
         index = end;
     }
     return tokens;
@@ -149,24 +124,6 @@ class Parser {
                 this.expect(')');
                 return inner;
             }
-            case 'maybe': {
-                this.expect('(');
-                const inner = this.expression();
-                this.expect(')');
-                return { type: 'maybe', child: inner };
-            }
-            case 'nof': {
-                const children = [this.expression()];
-                while (this.peek()?.kind === ',') {
-                    this.index++;
-                    children.push(this.expression());
-                }
-                this.expect(']');
-                if (token.n < 1 || token.n > children.length) {
-                    throw new ParseError();
-                }
-                return { type: 'nOf', n: token.n, exactly: token.exactly, children };
-            }
             case 'word':
                 return termOf(token.text);
             default:
@@ -185,7 +142,7 @@ class Parser {
         return this.tokens[this.index++];
     }
 
-    private expect(kind: ')' | '(' | ']') {
+    private expect(kind: ')') {
         if (this.next().kind !== kind) {
             throw new ParseError();
         }
@@ -280,9 +237,7 @@ export type ResolvedNode =
     | LineageTerm
     | { type: 'and'; children: ResolvedNode[] }
     | { type: 'or'; children: ResolvedNode[] }
-    | { type: 'not'; child: ResolvedNode }
-    | { type: 'nOf'; n: number; exactly: boolean; children: ResolvedNode[] }
-    | { type: 'maybe'; child: ResolvedNode };
+    | { type: 'not'; child: ResolvedNode };
 
 export type ResolveResult = { ok: true; node: ResolvedNode } | { ok: false; error: string };
 
@@ -304,10 +259,7 @@ function resolveNode(node: VariantNode, context: VariantContext): ResolvedNode {
         case 'and':
         case 'or':
             return { type: node.type, children: node.children.map((child) => resolveNode(child, context)) };
-        case 'nOf':
-            return { ...node, children: node.children.map((child) => resolveNode(child, context)) };
         case 'not':
-        case 'maybe':
             return { type: node.type, child: resolveNode(node.child, context) };
         case 'lineage':
             return resolveLineage(node, context);
@@ -396,10 +348,8 @@ export function insertionsOf(node: ResolvedNode): ResolvedInsertion[] {
     switch (node.type) {
         case 'and':
         case 'or':
-        case 'nOf':
             return node.children.flatMap(insertionsOf);
         case 'not':
-        case 'maybe':
             return insertionsOf(node.child);
         case 'insertion':
             return [node];
@@ -412,10 +362,8 @@ export function mutationsOf(node: ResolvedNode): ResolvedMutation[] {
     switch (node.type) {
         case 'and':
         case 'or':
-        case 'nOf':
             return node.children.flatMap(mutationsOf);
         case 'not':
-        case 'maybe':
             return mutationsOf(node.child);
         case 'mutation':
             return [node];

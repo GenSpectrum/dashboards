@@ -16,16 +16,16 @@ export function termsOf(query: string): string[] {
     return parts.length > 1 && parts.every((part) => parseVariant(part).ok) ? parts : [trimmed];
 }
 
-/** Split at each separator outside parentheses and brackets. */
+/** Split at each separator outside parentheses. */
 function topLevelParts(query: string, separator: '&' | '|'): string[] {
     const parts: string[] = [];
     let depth = 0;
     let start = 0;
     for (let index = 0; index < query.length; index++) {
         const char = query[index];
-        if (char === '(' || char === '[') {
+        if (char === '(') {
             depth++;
-        } else if (char === ')' || char === ']') {
+        } else if (char === ')') {
             depth--;
         } else if (char === separator && depth === 0) {
             parts.push(query.slice(start, index).trim());

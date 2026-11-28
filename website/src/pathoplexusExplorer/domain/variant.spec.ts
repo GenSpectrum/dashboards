@@ -73,10 +73,7 @@ describe('parseVariant', () => {
         expect(parsed('(A1T | C2G) & 3')).toMatchObject({ type: 'and', children: [{ type: 'or' }, {}] });
     });
 
-    it('parses n-of, maybe, insertions and lineages', () => {
-        expect(parsed('[2-of: A1T, C2G, 3]')).toMatchObject({ type: 'nOf', n: 2, exactly: false });
-        expect(parsed('[exactly-1-of: A1T, C2G]')).toMatchObject({ type: 'nOf', n: 1, exactly: true });
-        expect(parsed('maybe(F:K68N)')).toMatchObject({ type: 'maybe', child: { type: 'mutation' } });
+    it('parses insertions and lineages', () => {
         expect(parsed('ins_F:214:EPE')).toEqual({ type: 'insertion', prefix: 'F', position: 214, value: 'EPE' });
         expect(parsed('ins_22204:gag')).toEqual({
             type: 'insertion',
@@ -97,7 +94,13 @@ describe('parseVariant', () => {
         expect(parseVariant('F:K68N ) ')).toEqual({ ok: false });
         expect(parseVariant('hello')).toEqual({ ok: false });
         expect(parseVariant('')).toEqual({ ok: false });
-        expect(parseVariant('[3-of: A1T, C2G]')).toEqual({ ok: false });
+        expect(parseVariant('A1T, C2G')).toEqual({ ok: false });
+    });
+
+    it('refuses n-of and maybe', () => {
+        expect(parseVariant('[2-of: A1T, C2G, 3]')).toEqual({ ok: false });
+        expect(parseVariant('[exactly-1-of: A1T, C2G]')).toEqual({ ok: false });
+        expect(parseVariant('maybe(F:K68N)')).toEqual({ ok: false });
     });
 });
 
