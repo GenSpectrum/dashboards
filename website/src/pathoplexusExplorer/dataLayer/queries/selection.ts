@@ -1,6 +1,9 @@
-import { NOTHING, type Dimension, type ValuesLookup } from './dimensions.ts';
+import type { ColumnCheck } from './columns.ts';
+import { dimensionsFor, tableDimensions, NOTHING, type Dimension, type ValuesLookup } from './dimensions.ts';
 import { dateFilter, type TableFilter } from './scope.ts';
+import { CATALOG } from '../../domain/catalog.ts';
 import type { Period } from '../../domain/scope.ts';
+import { allPathogens } from '../../domain/subject.ts';
 import { canQuote } from '../transport/escape.ts';
 import { and, not } from '../transport/expression.ts';
 
@@ -9,6 +12,22 @@ export type Constraint = { values: readonly string[]; exclude?: boolean };
 export type Constraints = Readonly<Record<string, Constraint | undefined>>;
 
 export type Selection = { dimensions: Constraints; period: Period };
+
+const pathogens = allPathogens(CATALOG);
+export const PATHOGEN_TABLES = pathogens.map((pathogen) => pathogen.table);
+const tableFilters = tableDimensions(CATALOG);
+
+/** Province and subtype filters require one included country or one pathogen in scope, respectively. */
+export function matrixScope(constraints: Constraints, hasColumn?: ColumnCheck) {
+    const tables = tablesInScope({ constraints, dimensions: tableFilters, tables: PATHOGEN_TABLES });
+    const pathogen = tables.length === 1 ? pathogens.find((candidate) => candidate.table === tables[0]) : undefined;
+    const selected = constraints.country;
+    const country =
+        selected?.values.length === 1 && selected.exclude !== true && selected.values[0] !== NOTHING
+            ? selected.values[0]
+            : undefined;
+    return { pathogen, country, dimensions: dimensionsFor({ catalog: CATALOG, tables, country, hasColumn }) };
+}
 
 /** A value must be one that the dimension accepts, and one that a query can name. */
 export function acceptedValues(dimension: Dimension, values: readonly string[]): readonly string[] {

@@ -3,11 +3,11 @@
 import { searchOf } from './reportKinds.ts';
 import { canQuote } from '../dataLayer/transport/escape.ts';
 import { CATALOG } from '../domain/catalog.ts';
-import { parsePeriodKey } from '../domain/dates.ts';
-import { parsePlace, WORLD, type Place } from '../domain/geography.ts';
+import { isPeriodKey, parsePeriodKey } from '../domain/dates.ts';
+import { isAdmin1Of, parsePlace, placedCountryOf, WORLD, type Place } from '../domain/geography.ts';
 import type { ReportKind, ReportRef } from '../domain/reports.ts';
 import type { Period } from '../domain/scope.ts';
-import { isPathogenNode, keepSteps, menuSubjectOf, parseSubject, type Subject } from '../domain/subject.ts';
+import { isPathogenNode, keepSteps, menuSubjectOf, parseSubject, subjectKey, type Subject } from '../domain/subject.ts';
 
 export { searchOf };
 
@@ -23,6 +23,31 @@ export type ReportParams = {
     query: string;
     period: Period;
 };
+
+/** Validate shared filters before normalizing the address for a particular report. */
+export function isReportAddress(kind: ReportKind, params: URLSearchParams): boolean {
+    const where = parsePlace(params.get('where'));
+    if (
+        ['where', 'what', 'when', 'q'].some(
+            (key) => params.getAll(key).length > 1 || !canQuote(params.get(key) ?? ''),
+        ) ||
+        where === undefined ||
+        (where.level === 'admin1' && !isAdmin1Of(where.country, where.admin1)) ||
+        ((where.level === 'country' || where.level === 'admin1') && placedCountryOf(where.country) === undefined) ||
+        !isPeriodKey(params.get('when')) ||
+        (kind !== 'mutations' && (params.get('q') ?? '') !== '')
+    ) {
+        return false;
+    }
+    const what = parseSubject(params.get('what'), CATALOG);
+    if (what === undefined || (what.kind === 'subtype' && what.steps.some((step) => !canQuote(step.value)))) {
+        return false;
+    }
+    if (what.kind === 'all') {
+        return true;
+    }
+    return kind !== 'location' && (kind !== 'virus' || subjectKey(menuSubjectOf(what)) === subjectKey(what));
+}
 
 /** A value that a RhyQL string literal cannot hold is taken as absent, so that no query is built from it. */
 function quotable(params: URLSearchParams, name: string): string | null {
@@ -40,8 +65,7 @@ export function parseParams(params: URLSearchParams): ReportParams {
     };
 }
 
-export function referenceOf(kind: ReportKind, params: URLSearchParams): ReportRef | undefined {
-    const parsed = parseParams(params);
+export function referenceOf(kind: ReportKind, parsed: ReportParams): ReportRef | undefined {
     const period = parsed.period;
     if (kind === 'location') {
         return { kind, where: parsed.where, period };

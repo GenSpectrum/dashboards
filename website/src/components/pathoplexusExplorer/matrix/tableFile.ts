@@ -6,6 +6,7 @@ import {
     type CrossTab,
     type Measure,
 } from '../../../pathoplexusExplorer/dataLayer/queries/crossTab.ts';
+import { formatTsvRow } from '../../../util/formatTsvRow.ts';
 
 const TOTAL_LABEL = 'Total sequences';
 
@@ -25,32 +26,23 @@ const MEASURE_SLUGS: Readonly<Record<Measure, string>> = {
     [MEASURE.all]: 'table-proportions',
 };
 
-function cell(text: string): string {
-    return text.replace(/[\t\r\n]+/g, ' ');
-}
-
-/** Export proportions as fractions to retain precision. */
-function amount(value: number, measure: Measure): string {
-    return measure === MEASURE.count ? String(value) : String(Number(value.toFixed(6)));
-}
-
 export function tableFileOf(
     table: CrossTab,
     options: { rowLabel: string; columnLabel: string; measure: Measure },
 ): string {
     const { rowLabel, columnLabel, measure } = options;
     const header = [
-        cell(`${rowLabel} / ${columnLabel} — ${MEASURE_NAMES[measure]}`),
-        ...table.columns.map((column) => cell(column.label)),
+        `${rowLabel} / ${columnLabel} — ${MEASURE_NAMES[measure]}`,
+        ...table.columns.map((column) => column.label),
     ];
     const lines = table.rows.map((row) => [
-        cell(row.label),
-        ...table.columns.map((column) => amount(cellValue(table, row, column, measure).value, measure)),
+        row.label,
+        ...table.columns.map((column) => cellValue(table, row, column, measure).value),
         // Totals remain sequence counts regardless of the selected measure.
-        String(row.total),
+        row.total,
     ]);
-    const totals = [TOTAL_LABEL, ...table.columns.map((column) => String(column.total)), String(table.total)];
-    return [[...header, TOTAL_LABEL], ...lines, totals].map((row) => row.join('\t')).join('\n') + '\n';
+    const totals = [TOTAL_LABEL, ...table.columns.map((column) => column.total), table.total];
+    return [[...header, TOTAL_LABEL], ...lines, totals].map(formatTsvRow).join('\n') + '\n';
 }
 
 export function tableFilename(measure: Measure, today: Date): string {

@@ -3,6 +3,8 @@ import isoWeek from 'dayjs/plugin/isoWeek.js';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear.js';
 import utc from 'dayjs/plugin/utc.js';
 
+import type { Period } from './scope.ts';
+
 dayjs.extend(utc);
 dayjs.extend(isoWeek);
 dayjs.extend(quarterOfYear);
@@ -18,6 +20,15 @@ export type Granularity = (typeof GRANULARITY)[keyof typeof GRANULARITY];
 const GRANULARITIES: readonly Granularity[] = Object.values(GRANULARITY);
 
 export type IsoDate = string;
+
+export function todayUtc(): IsoDate {
+    return new Date().toISOString().slice(0, 10);
+}
+
+/** A report with only a start date runs through the date it was written. */
+export function reportPeriod(period: Period, writtenOn?: IsoDate): Period {
+    return period.from !== undefined && period.to === undefined ? { ...period, to: writtenOn ?? todayUtc() } : period;
+}
 
 /** Validate calendar dates by round-tripping them, since parsing can normalize invalid dates. */
 export function isIsoDate(value: string): boolean {
@@ -37,6 +48,18 @@ export function periodKey(period: { from?: IsoDate; to?: IsoDate }): string | un
     return `${period.from ?? OPEN_END}/${period.to ?? OPEN_END}`;
 }
 
+export function isPeriodKey(value: string | null): boolean {
+    if (value === null || value === '') {
+        return true;
+    }
+    const ends = value.split('/');
+    return ends.length === 2 && ends.every((end) => end === OPEN_END || end === '' || isIsoDate(end));
+}
+
+export function hasReversedDates({ from, to }: Period): boolean {
+    return from !== undefined && to !== undefined && from > to;
+}
+
 /** Reads an interval that `periodKey` wrote. An end that is not a valid date is left open. */
 export function parsePeriodKey(text: string | null): { from?: IsoDate; to?: IsoDate } {
     const ends = (text ?? '').split('/');
@@ -48,17 +71,17 @@ export function parsePeriodKey(text: string | null): { from?: IsoDate; to?: IsoD
 }
 
 export function bucketOf(date: IsoDate, granularity: Granularity): string {
-    const day = dayjs.utc(date);
     switch (granularity) {
         case 'year':
-            return day.format('YYYY');
-        case 'quarter':
-            return `${day.format('YYYY')}-Q${day.quarter()}`;
+            return date.slice(0, 4);
         case 'month':
-            return day.format('YYYY-MM');
-        case 'week':
-            // ISO weeks belong to the calendar year of their Thursday.
+            return date.slice(0, 7);
+        case 'quarter':
+            return `${date.slice(0, 4)}-Q${Math.ceil(Number(date.slice(5, 7)) / 3)}`;
+        case 'week': {
+            const day = dayjs.utc(date);
             return `${day.isoWeekYear()}-W${String(day.isoWeek()).padStart(2, '0')}`;
+        }
     }
 }
 
@@ -96,7 +119,7 @@ export function bucketOfRange(lower: IsoDate | null, upper: IsoDate | null, gran
         return undefined;
     }
     const bucket = bucketOf(lower, granularity);
-    return bucket === bucketOf(upper, granularity) ? bucket : undefined;
+    return lower === upper || bucket === bucketOf(upper, granularity) ? bucket : undefined;
 }
 
 export function bucketRange(bucket: string): { from: IsoDate; to: IsoDate } {
@@ -201,20 +224,19 @@ export function formatLongDate(value: IsoDate | null | undefined): string {
  * Says when a bound of the collection dates lies, given as the range that it is known to: on a day, in a whole
  * calendar month or year, and otherwise between two days.
  */
-export function collectionBoundPhrase(lower: IsoDate, upper: IsoDate | null | undefined): string {
-    if (upper === null || upper === undefined || upper === lower) {
+export function collectionBoundPhrase(lower: IsoDate, upper: IsoDate): string {
+    if (upper === lower) {
         return `on ${formatLongDate(lower)}`;
     }
+    const precision = precisionOf(lower, upper);
     const from = dayjs.utc(lower);
-    const to = dayjs.utc(upper);
-    const isWhole = (unit: 'month' | 'year') =>
-        from.isSame(from.startOf(unit), 'day') && to.isSame(from.endOf(unit), 'day');
-    if (isWhole('year')) {
+    if (precision === DATE_PRECISION.year) {
         return `in ${from.format('YYYY')}`;
     }
-    if (isWhole('month')) {
+    if (precision === DATE_PRECISION.month) {
         return `in ${from.format('MMMM YYYY')}`;
     }
+    const to = dayjs.utc(upper);
     const start = from.year() === to.year() ? from.format('D MMMM') : from.format('D MMMM YYYY');
     return `between ${start} and ${to.format('D MMMM YYYY')}`;
 }

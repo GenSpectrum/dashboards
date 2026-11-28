@@ -14,23 +14,17 @@ export const Citation: FC<CitationProps> = ({ reference, entries }) => {
     return (
         <>
             {' '}
-            {terms !== undefined && <Terms records={terms.total} restricted={terms.restricted} />}
+            {terms !== undefined && (
+                <>
+                    {formatCount(terms.open)} of {formatCount(terms.total)} sequences are under the Open Use Terms,{' '}
+                    {formatCount(terms.restricted)} are under the Restricted-Use Terms.{' '}
+                </>
+            )}
             The list of accessions can be downloaded from{' '}
             <a href={href} className='break-all underline underline-offset-2'>
                 {href}
             </a>
             .
-        </>
-    );
-};
-
-type TermsProps = { records: number; restricted: number };
-
-const Terms: FC<TermsProps> = ({ records, restricted }) => {
-    return (
-        <>
-            {formatCount(records - restricted)} of {formatCount(records)} sequences are under the Open Use Terms,{' '}
-            {formatCount(restricted)} are under the Restricted-Use Terms.{' '}
         </>
     );
 };

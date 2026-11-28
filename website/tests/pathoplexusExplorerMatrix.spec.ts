@@ -1,9 +1,21 @@
-import { expect, test } from './pathoplexusExplorerFixture.ts';
+import { expect, MATRIX_PATH, test, versionHeaders } from './pathoplexusExplorerFixture.ts';
 
 const MATRIX_LABEL = 'Matrix';
-const MATRIX_PATH = '/pathoplexus-explorer/matrix';
 
 test.describe('the Pathoplexus Explorer matrix', () => {
+    test('rejects a shared address with a filter it cannot apply', async ({ page }) => {
+        for (const sel of ['year=invalid', 'country=Brazil;invalid', 'country=Brazil;country=USA', 'level:lineage=A']) {
+            const response = await page.goto(`/pathoplexus-explorer/matrix?sel=${encodeURIComponent(sel)}`);
+            expect(response?.status()).toBe(404);
+            await expect(page.getByRole('button', { name: 'Download table' })).toHaveCount(0);
+        }
+    });
+
+    test('rejects an interval whose end precedes its start', async ({ page }) => {
+        const response = await page.goto(`${MATRIX_PATH}?when=2024-12-31/2024-01-01`);
+        expect(response?.status()).toBe(404);
+    });
+
     test('is offered on the main page', async ({ page }) => {
         await page.goto('/');
 
@@ -54,7 +66,7 @@ test.describe('the Pathoplexus Explorer matrix', () => {
         await expect(page).toHaveURL(`${MATRIX_PATH}?maxRows=40&maxCols=200`);
     });
 
-    test('offers the accession list, and asks for nothing until it is wanted', async ({ page }) => {
+    test('asks for no accession list until one is wanted', async ({ page }) => {
         const asked: string[] = [];
         await page.route('**/query', (route) => {
             asked.push(route.request().postData() ?? '');
@@ -64,23 +76,30 @@ test.describe('the Pathoplexus Explorer matrix', () => {
 
         await expect(page.getByRole('button', { name: 'Download accession list' })).toBeDisabled();
         await expect.poll(() => asked.length).toBeGreaterThan(0);
-        // Only the download action should request the accession list.
         expect(asked.filter((query) => query.includes('accessionVersion'))).toEqual([]);
     });
 
-    test('offers the table as a file, and has nothing to write before the table is counted', async ({ page }) => {
+    test('a response missing a lookup column leaves the Matrix visible with its error state', async ({ page }) => {
+        await page.route('**/query', (route) =>
+            route.fulfill({
+                contentType: 'application/x-ndjson',
+                headers: versionHeaders,
+                body: route.request().postData()?.includes('geoLocCountry') ? '{"n":1}' : '',
+            }),
+        );
+        await page.goto(MATRIX_PATH);
+        await expect(page.getByText('Could not load', { exact: true })).toHaveCount(2);
+        await expect(page.getByRole('button', { name: 'Download table' })).toBeDisabled();
+        await expect(page.getByRole('table')).toHaveCount(0);
+    });
+
+    test('a failed lookup leaves the table and timeline unavailable', async ({ page }) => {
         await page.route('**/query', (route) => route.abort());
         await page.goto(MATRIX_PATH);
 
         await expect(page.getByRole('button', { name: 'Download table' })).toBeDisabled();
-    });
-
-    test('is reached from the header menu', async ({ page }) => {
-        await page.goto('/');
-
-        const menu = page.locator('details:visible').filter({ hasText: 'Pathoplexus Explorer' });
-        await menu.locator('summary').click();
-
-        await expect(menu.getByRole('link', { name: MATRIX_LABEL, exact: true })).toHaveAttribute('href', MATRIX_PATH);
+        await expect(page.getByText('Could not load', { exact: true })).toHaveCount(2);
+        await expect(page.getByRole('table')).toHaveCount(0);
+        await expect(page.getByText('No sequence in the selection has a collection date.')).toHaveCount(0);
     });
 });

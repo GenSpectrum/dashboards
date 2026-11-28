@@ -1,11 +1,15 @@
 import { StrictMode } from 'react';
-import { describe, expect, vi } from 'vitest';
+import { afterEach, describe, expect, vi } from 'vitest';
 import { renderHook } from 'vitest-browser-react';
 
 import { usePageState } from './usePageState';
 import { it } from '../../../test-extend';
 
 describe('usePageState', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('should update pageState when URL changes via browser navigation', async () => {
         window.history.pushState({}, '', '/?value=initial');
 
@@ -59,7 +63,5 @@ describe('usePageState', () => {
         expect(window.location.search).toBe('?value=2');
         expect(pushState).toHaveBeenCalledTimes(1);
         expect(replaceState).toHaveBeenCalledTimes(1);
-        pushState.mockRestore();
-        replaceState.mockRestore();
     });
 });

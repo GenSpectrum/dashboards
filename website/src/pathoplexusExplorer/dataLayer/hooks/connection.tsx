@@ -1,43 +1,81 @@
-/**
- * The RhyDB instance of a page, in React context.
- *
- * A `ConnectionProvider` creates one `Connection` (`dataLayer/transport/connection.ts`) for its `url`, and every
- * component below it shares that connection and the query client of the RhyDB reads. Every RhyDB read in
- * `dataLayer/hooks/**` goes through them, so the CORS rules, the retry and the failure logging apply to all of them.
- */
-
-import { QueryCache, QueryClient } from '@tanstack/react-query';
-import { createContext, useContext, useMemo, useState, type FC, type ReactNode } from 'react';
+import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { createContext, useContext, useState, type FC, type ReactNode } from 'react';
 
 import { getClientLogger } from '../../../clientLogger.ts';
+import { UNEXPECTED_ERROR } from '../../domain/text.ts';
 import { connect, type Connection } from '../transport/connection.ts';
 import { RhydbError } from '../transport/query.ts';
 
-type RhydbInstance = { connection: Connection; queryClient: QueryClient };
+const ConnectionContext = createContext<Connection | undefined>(undefined);
 
-const RhydbInstanceContext = createContext<RhydbInstance | undefined>(undefined);
+type ConnectionProviderProps = { url: string; children: ReactNode };
 
-type ConnectionProviderProps = {
-    url: string;
-    /**
-     * The query client of the RhyDB reads (`createRhydbQueryClient`). Without one, the provider has its own, with a
-     * cache that goes when it unmounts, as for a test.
-     */
-    queryClient?: QueryClient;
-    children: ReactNode;
+export const ConnectionProvider: FC<ConnectionProviderProps> = ({ url, children }) => {
+    const [generation, setGeneration] = useState(0);
+    return (
+        <SnapshotProvider key={`${url}:${generation}`} url={url} refresh={() => setGeneration((value) => value + 1)}>
+            {children}
+        </SnapshotProvider>
+    );
 };
 
-export const ConnectionProvider: FC<ConnectionProviderProps> = ({ url, queryClient: givenQueryClient, children }) => {
-    const [ownQueryClient] = useState(() => givenQueryClient ?? createRhydbQueryClient());
-    const queryClient = givenQueryClient ?? ownQueryClient;
-    const value = useMemo<RhydbInstance>(() => ({ connection: connect({ url }), queryClient }), [url, queryClient]);
-    return <RhydbInstanceContext.Provider value={value}>{children}</RhydbInstanceContext.Provider>;
+/** A report and its downloads share one cache for the lifetime of one database snapshot. */
+const SnapshotProvider: FC<ConnectionProviderProps & { refresh: () => void }> = ({ url, children, refresh }) => {
+    const [queryClient] = useState(() => createRhydbQueryClient(refresh));
+    const [connection] = useState(() => {
+        let snapshot: string | undefined;
+        let retired = false;
+        return connect({
+            url,
+            checkVersion(version) {
+                if (version === null || !/^\d+$/.test(version)) {
+                    logger.error('Missing or invalid RhyDB data version');
+                    throw new Error(UNEXPECTED_ERROR);
+                }
+                snapshot ??= version;
+                if (snapshot !== version && !retired) {
+                    retired = true;
+                    refresh();
+                }
+                if (retired) {
+                    throw new DOMException('RhyDB snapshot changed', 'AbortError');
+                }
+            },
+        });
+    });
+    useQuery(
+        {
+            queryKey: ['snapshot', url],
+            queryFn: ({ signal }) => connection.dataVersion({ signal }),
+            initialData: null,
+            refetchOnMount: false,
+            refetchOnWindowFocus: 'always',
+            refetchInterval: 60_000,
+            networkMode: 'always',
+        },
+        queryClient,
+    );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <ConnectionContext.Provider value={connection}>{children}</ConnectionContext.Provider>
+        </QueryClientProvider>
+    );
 };
 
 /** The query client of the RhyDB reads, which logs every failure that a read ends in. */
-export function createRhydbQueryClient(): QueryClient {
+function createRhydbQueryClient(refresh: () => void): QueryClient {
     return new QueryClient({
-        queryCache: new QueryCache({ onError: logReadFailure }),
+        queryCache: new QueryCache({
+            onError(error, query) {
+                logReadFailure(error);
+                if (
+                    query.queryKey[0] === 'snapshot' &&
+                    !(error instanceof DOMException && error.name === 'AbortError')
+                ) {
+                    refresh();
+                }
+            },
+        }),
         defaultOptions: {
             queries: {
                 // The data changes a few times a day at most, so a read is reused for a while before it is sent again.
@@ -45,39 +83,27 @@ export function createRhydbQueryClient(): QueryClient {
                 gcTime: 30 * 60 * 1000,
                 // The transport already retries transient failures.
                 retry: false,
-                refetchOnWindowFocus: false,
+                refetchOnWindowFocus: (query) => query.state.status === 'error',
             },
         },
     });
 }
 
-function useRhydbInstance(): RhydbInstance {
-    const instance = useContext(RhydbInstanceContext);
-    if (instance === undefined) {
-        throw new Error('useConnection / useRhydbQueryClient must be used inside a ConnectionProvider');
-    }
-    return instance;
-}
-
-/**
- * The RhyDB instance to send queries to.
- *
- * Stable while the instance is, so it can be a dependency of a memo, an effect or a TanStack query key (spread
- * `connection.key`).
- */
 export function useConnection(): Connection {
-    return useRhydbInstance().connection;
-}
-
-/** The query client of the RhyDB reads; see `rhydbQuery.ts`. */
-export function useRhydbQueryClient(): QueryClient {
-    return useRhydbInstance().queryClient;
+    const connection = useContext(ConnectionContext);
+    if (connection === undefined) {
+        throw new Error('useConnection must be used inside a ConnectionProvider');
+    }
+    return connection;
 }
 
 const logger = getClientLogger('pathoplexusExplorer');
 
 /** Log query failures with their panel label and HTTP status. */
 export function logReadFailure(error: unknown): void {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+    }
     if (!(error instanceof RhydbError)) {
         logger.error(`Pathoplexus Explorer: ${error instanceof Error ? error.message : String(error)}`);
         return;

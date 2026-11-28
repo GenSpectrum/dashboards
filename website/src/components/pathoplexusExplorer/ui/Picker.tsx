@@ -34,32 +34,20 @@ export const Picker: FC<PickerProps> = ({
 }) => {
     const chosen = options.find((option) => option.value === value);
     const shown = value === undefined ? undefined : (chosen?.label ?? valueLabel ?? value);
-    const [filter, setFilter] = useState('');
-    const matches = useMemo(() => {
-        const wanted = filter.trim().toLowerCase();
-        const matching =
-            wanted === '' ? options : options.filter((option) => option.label.toLowerCase().includes(wanted));
-        return { shown: matching.slice(0, LISTED), total: matching.length };
-    }, [options, filter]);
-
     return (
         <Popover
             label={label}
             value={shown ?? (isLoading && options.length === 0 ? 'loading…' : undefined)}
             placeholder={placeholder}
-            onClose={() => setFilter('')}
         >
             {(close) => (
                 <PickerList
                     label={label}
                     value={value}
                     placeholder={placeholder}
-                    filter={filter}
-                    matches={matches}
-                    onFilter={setFilter}
+                    options={options}
                     onPick={(next) => {
                         onSelect(next);
-                        setFilter('');
                         close();
                     }}
                 />
@@ -72,14 +60,20 @@ type PickerListProps = {
     label: string;
     value: string | undefined;
     placeholder: string;
-    filter: string;
-    matches: { shown: readonly Option[]; total: number };
-    onFilter: (filter: string) => void;
+    options: readonly Option[];
     onPick: (value: string | undefined) => void;
 };
 
 /** A filter box that controls a list box: the arrow keys move through the options and Enter picks the active one. */
-const PickerList: FC<PickerListProps> = ({ label, value, placeholder, filter, matches, onFilter, onPick }) => {
+const PickerList: FC<PickerListProps> = ({ label, value, placeholder, options, onPick }) => {
+    const [filter, setFilter] = useState('');
+    const matches = useMemo(() => {
+        const wanted = filter.trim().toLowerCase();
+        const matching =
+            wanted === '' ? options : options.filter((option) => option.label.toLowerCase().includes(wanted));
+        return { shown: matching.slice(0, LISTED), total: matching.length };
+    }, [options, filter]);
+
     const listId = useId();
     const optionId = (index: number) => `${listId}-${index}`;
     // Offer clearing the choice first, then the matching options.
@@ -123,7 +117,7 @@ const PickerList: FC<PickerListProps> = ({ label, value, placeholder, filter, ma
                 placeholder='Filter…'
                 aria-label={`Narrow ${label}`}
                 className='border-b border-stone-200 px-2 py-1.5 text-sm outline-none'
-                onChange={(event) => onFilter(event.target.value)}
+                onChange={(event) => setFilter(event.target.value)}
                 onKeyDown={(event) => {
                     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
                         event.preventDefault();
@@ -192,23 +186,15 @@ type PopoverProps = {
     value: string | undefined;
     placeholder: string;
     width?: string;
-    onClose?: () => void;
     children: (close: () => void) => ReactNode;
 };
 
-export const Popover: FC<PopoverProps> = ({ label, value, placeholder, width = 'w-72', onClose, children }) => {
+export const Popover: FC<PopoverProps> = ({ label, value, placeholder, width = 'w-72', children }) => {
     const [open, setOpen] = useState(false);
     const container = useRef<HTMLDivElement>(null);
     const button = useRef<HTMLButtonElement>(null);
     const buttonId = useId();
-    // Keep the callback current without reinstalling the listener.
-    const closed = useRef(onClose);
-    closed.current = onClose;
-
-    useClickOutside(container, open, () => {
-        setOpen(false);
-        closed.current?.();
-    });
+    useClickOutside(container, open, () => setOpen(false));
 
     useEffect(() => {
         if (!open) {
@@ -217,7 +203,6 @@ export const Popover: FC<PopoverProps> = ({ label, value, placeholder, width = '
         const escape = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 setOpen(false);
-                closed.current?.();
                 button.current?.focus();
             }
         };
@@ -252,7 +237,6 @@ export const Popover: FC<PopoverProps> = ({ label, value, placeholder, width = '
                 >
                     {children(() => {
                         setOpen(false);
-                        onClose?.();
                         // Hand the focus back to the trigger, since the control that had it is gone.
                         button.current?.focus();
                     })}

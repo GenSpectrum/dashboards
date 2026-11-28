@@ -1,32 +1,18 @@
 import { type FC, useMemo } from 'react';
 
 import { Citation } from './Citation.tsx';
+import { Composition } from './Composition.tsx';
+import { DistributionOverTime } from './DistributionOverTime.tsx';
+import { GeographicDistribution } from './GeographicDistribution.tsx';
 import { KeyFigures, ReportLink, Section } from './Layout.tsx';
 import { classificationRows, LineageTree } from './LineageTree.tsx';
 import { nomenclatureNote } from './Nomenclature.tsx';
-import { mapTitleOf, ReportMap } from './ReportMap.tsx';
+import { mapTitleOf } from './ReportMap.tsx';
+import { ReportMetadataSections } from './ReportMetadataSections.tsx';
 import { ReportShell } from './ReportShell.tsx';
-import {
-    AreasTable,
-    Composition,
-    Hosts,
-    MetadataAvailability,
-    OverTime,
-    Submitters,
-    unplacedNote,
-} from './Sections.tsx';
-import {
-    areaScale,
-    counted,
-    hasPlacesBelow,
-    plural,
-    rankAreas,
-    spreadFigure,
-    spreadPhrase,
-    unplacedIn,
-} from './areaScale.ts';
+import { plural, spreadFigure, spreadPhrase } from './areaScale.ts';
 import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
-import { firstError, useReportBasics } from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
+import { firstError, useReportData } from '../../../pathoplexusExplorer/dataLayer/hooks/useReportData.ts';
 import { valueParts, type SeriesTarget } from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import type { Place } from '../../../pathoplexusExplorer/domain/geography.ts';
@@ -40,22 +26,20 @@ import {
     type Subject,
 } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
-import { BAR_SCALE } from '../charts/StackedBars.tsx';
 import { ErrorMessage } from '../ui/States.tsx';
 
-type VirusReportProps = { reference: ReportRef & { kind: 'virus' | 'lineage' }; entries: ReportEntries };
+type VirusReportProps = { reference: ReportRef & { kind: 'virus' }; entries: ReportEntries };
 
 export const VirusReport: FC<VirusReportProps> = ({ reference, entries }) => {
-    const period = reference.period;
-    const where = reference.where;
+    const { period, where } = reference;
     const scope = useMemo(() => ({ what: reference.what, where, period }), [reference.what, where, period]);
-    const basics = useReportBasics(scope, CATALOG);
-    const error = firstError(basics);
-    const summary = basics.summary.data;
-    const grouped = basics.breakdown.data;
+    const report = useReportData(scope, CATALOG);
+    const error = firstError(report);
+    const summary = report.summary.data;
+    const grouped = report.breakdown.data;
     const parts = useMemo(() => grouped ?? [], [grouped]);
     const total = summary?.n ?? 0;
-    const spec = basics.spec.data;
+    const spec = report.spec.data;
     const level = spec?.title ?? 'Subtype';
     const href = useMemo(() => (node: Subject) => partHref({ what: node }, where, period), [where, period]);
     const rows = useMemo(
@@ -64,16 +48,13 @@ export const VirusReport: FC<VirusReportProps> = ({ reference, entries }) => {
                 subject: { label: subjectTitle(reference.what) },
                 spec,
                 parts,
-                total,
+                total: summary?.n,
                 href,
                 what: level.toLowerCase(),
             }),
-        [reference.what, spec, parts, total, href, level],
+        [reference.what, spec, parts, summary?.n, href, level],
     );
-    const scale = useMemo(() => areaScale(where), [where]);
-    const mapRows = basics.map.data?.rows;
-    const areas = useMemo(() => rankAreas(scale, counted(mapRows ?? [])), [scale, mapRows]);
-    const unplaced = useMemo(() => unplacedIn(where, mapRows ?? [], areas), [where, mapRows, areas]);
+    const mapRows = report.map.data?.rows;
 
     return (
         <ReportShell reference={reference}>
@@ -112,7 +93,7 @@ export const VirusReport: FC<VirusReportProps> = ({ reference, entries }) => {
                             : [
                                   {
                                       label: plural(level),
-                                      value: summary === undefined ? '…' : formatCount(valueParts(parts).length),
+                                      value: grouped === undefined ? '…' : formatCount(valueParts(parts).length),
                                   },
                               ]),
                     ]}
@@ -125,11 +106,11 @@ export const VirusReport: FC<VirusReportProps> = ({ reference, entries }) => {
                 lead={spec?.of === 'classification' ? nomenclatureNote(reference.what) : undefined}
             >
                 {spec?.of === 'classification' ? (
-                    <LineageTree rows={rows} total={total} title={level} />
+                    <LineageTree rows={grouped === undefined ? undefined : rows} total={summary?.n} title={level} />
                 ) : (
                     <Composition
-                        parts={parts}
-                        total={total}
+                        parts={grouped}
+                        total={summary?.n}
                         what={level.toLowerCase()}
                         linkOf={(part) => (
                             <ReportLink href={partHref(part.target, where, period)}>{part.label}</ReportLink>
@@ -139,56 +120,17 @@ export const VirusReport: FC<VirusReportProps> = ({ reference, entries }) => {
             </Section>
 
             <Section number={3} title='Distribution over time'>
-                <OverTime
-                    rows={basics.overTime}
-                    parts={parts}
-                    classify={(row) => basics.spec.data?.classify(row) ?? ''}
-                    title={`Sequences by ${level.toLowerCase()}`}
-                />
-                <OverTime
-                    rows={basics.overTime}
-                    parts={parts}
-                    classify={(row) => basics.spec.data?.classify(row) ?? ''}
-                    scale={BAR_SCALE.proportion}
-                    title='Composition per period'
-                />
+                <DistributionOverTime report={report} title={`Sequences by ${level.toLowerCase()}`} showComposition />
             </Section>
 
-            <Section number={4} title='Geographic distribution'>
-                <ReportMap
-                    where={where}
-                    counts={basics.map}
-                    legend={`${subjectPhrase(reference.what)}: ${mapTitleOf(where).toLowerCase()}`}
-                />
-                {hasPlacesBelow(where) && areas.length > 0 && (
-                    <AreasTable
-                        scale={scale}
-                        areas={areas}
-                        period={period}
-                        countHeader='Sequences'
-                        total={total}
-                        footnote={unplacedNote(unplaced, total)}
-                        linkTo={(place) => hrefOf({ kind: 'virus', what: reference.what, where: place, period })}
-                    />
-                )}
-            </Section>
+            <GeographicDistribution
+                number={4}
+                reference={reference}
+                counts={report.map}
+                legend={`${subjectPhrase(reference.what)}: ${mapTitleOf(where).toLowerCase()}`}
+            />
 
-            <Section number={5} title='Hosts'>
-                <Hosts rows={basics.hosts} total={total} />
-            </Section>
-
-            <Section number={6} title='Metadata availability'>
-                <MetadataAvailability availability={basics.availability} dates={basics.overTime} />
-            </Section>
-
-            <Section number={7} title='Submitters'>
-                <Submitters
-                    groups={basics.groups}
-                    authors={basics.authors}
-                    affiliations={basics.affiliations}
-                    total={total}
-                />
-            </Section>
+            <ReportMetadataSections first={5} metadata={report} dates={report.overTime} />
         </ReportShell>
     );
 };

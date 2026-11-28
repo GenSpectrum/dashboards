@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 
 import { Masthead, SourceNote } from './Layout.tsx';
-import { formatLongDate } from '../../../pathoplexusExplorer/domain/dates.ts';
+import { formatLongDate, todayUtc } from '../../../pathoplexusExplorer/domain/dates.ts';
 import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
 import {
@@ -16,7 +16,7 @@ type ReportShellProps = { reference: ReportRef; children: ReactNode };
 
 /** Use the A4 page width on screen to match the printed layout. */
 export const ReportShell: FC<ReportShellProps> = ({ reference, children }) => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayUtc();
     const impossible = impossibleScope(reference);
     return (
         <article className='sheet mx-auto flex flex-col gap-6 border border-stone-300 bg-white p-6 shadow-sm sm:p-10'>

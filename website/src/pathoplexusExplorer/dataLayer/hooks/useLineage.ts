@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-import { merged, useLineageHierarchy, useScopeFilters, type Loadable } from './analyses.ts';
-import { useMutationProfiles, useProportionOverTime, type ProportionRows } from './genomics.ts';
+import { useLineageHierarchy, useScopeFilters } from './analyses.ts';
+import { useMutationProfiles, useProportionOverTime } from './genomics.ts';
+import { combineQueryResults, type Loadable } from './queryResult.ts';
 import { useManyRows } from './rhydbQuery.ts';
 import { useReferenceSequences } from './useGenome.ts';
 import type { Place } from '../../domain/geography.ts';
@@ -10,6 +11,7 @@ import type { Period } from '../../domain/scope.ts';
 import { isPathogenNode, menuSubjectOf, sameSubject, type Catalog, type Subject } from '../../domain/subject.ts';
 import { MUTATION_KIND, type ReferenceSequences } from '../../domain/variant.ts';
 import { groupAcross } from '../queries/builders.ts';
+import type { ProportionRows } from '../queries/genomics.ts';
 import { REPORT_FLOOR } from '../queries/genomics.ts';
 import {
     MUTATION_ROLE,
@@ -144,7 +146,7 @@ export function useLineageMutations(options: {
             defining: rows.filter((row) => roleOf(row, thresholds) === MUTATION_ROLE.defining),
         };
     }, [unavailable, sequences, profiles.data, baseline.data, nucleotides.data, total, parentIndex, baseIndex]);
-    return merged(data, [hierarchy, resolved, references, profiles, baseline, nucleotides, counted]);
+    return combineQueryResults(data, [hierarchy, resolved, references, profiles, baseline, nucleotides, counted]);
 }
 
 /** Leave a margin below the computed minimum to account for rounding. */
@@ -223,10 +225,5 @@ export function useLineageProportion(options: {
     const base = proportionBaseOf(what);
     const scopes = [{ what, where, period }, ...(base === undefined ? [] : [{ what: base, where, period }])];
     const resolved = useScopeFilters(scopes, catalog);
-    const proportions = useProportionOverTime(
-        resolved,
-        base === undefined ? [] : [{ own: 0, all: 1 }],
-        base !== undefined,
-    );
-    return merged(proportions.data?.[0], [resolved, proportions]);
+    return useProportionOverTime(resolved, base !== undefined);
 }

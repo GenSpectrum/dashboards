@@ -5,22 +5,19 @@ import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 
 import { PROJECTION, type MapFeature, type Projection } from './ChoroplethMap.tsx';
-import { useRhydbQueryClient } from '../../../pathoplexusExplorer/dataLayer/hooks/connection.tsx';
+import { hasAdmin1Names } from '../../../pathoplexusExplorer/domain/divisions.ts';
 import {
     canonicalCountryOf,
-    countriesOfContinent,
-    countriesOfSubregion,
+    placesOfContinent,
+    placesOfSubregion,
     mapNameOf,
     placeLabel,
     type Place,
 } from '../../../pathoplexusExplorer/domain/geography.ts';
 import { getMapGeometry, WORLD_MAP_NAME } from '../../../pathoplexusExplorer/domain/mapGeometry.ts';
-import { PROVINCE_MAP_COUNTRIES } from '../../../pathoplexusExplorer/mappingData/provinceMaps.ts';
-
-const PROVINCE_MAPS = new Set(PROVINCE_MAP_COUNTRIES);
 
 export function hasProvinceMap(country: string): boolean {
-    return PROVINCE_MAPS.has(country);
+    return hasAdmin1Names(country);
 }
 
 /** Use the Albers USA projection to include Alaska and Hawaii. */
@@ -32,26 +29,22 @@ export function projectionFor(country: string | undefined, { zoomed }: { zoomed:
 }
 
 export function useGeoFeatures(mapName: string | undefined) {
-    const queryClient = useRhydbQueryClient();
-    return useQuery(
-        {
-            queryKey: ['pathoplexusExplorerMap', mapName],
-            enabled: mapName !== undefined,
-            staleTime: Infinity,
-            queryFn: async (): Promise<MapFeature[]> => {
-                if (mapName === undefined || (mapName !== WORLD_MAP_NAME && !hasProvinceMap(mapName))) {
-                    throw new Error(`There is no map of ${mapName ?? 'that place'}.`);
-                }
-                const response = await fetch(`/mapData/${encodeURIComponent(mapName)}.topo.json`);
-                if (!response.ok) {
-                    throw new Error(`Could not load the map of ${mapName} (HTTP ${response.status}).`);
-                }
-                const topology = (await response.json()) as Topology;
-                return mapFeaturesOf(topology, mapName);
-            },
+    return useQuery({
+        queryKey: ['pathoplexusExplorerMap', mapName],
+        enabled: mapName !== undefined,
+        staleTime: Infinity,
+        queryFn: async (): Promise<MapFeature[]> => {
+            if (mapName === undefined || (mapName !== WORLD_MAP_NAME && !hasProvinceMap(mapName))) {
+                throw new Error(`There is no map of ${mapName ?? 'that place'}.`);
+            }
+            const response = await fetch(`/mapData/${encodeURIComponent(mapName)}.topo.json`);
+            if (!response.ok) {
+                throw new Error(`Could not load the map of ${mapName} (HTTP ${response.status}).`);
+            }
+            const topology = (await response.json()) as Topology;
+            return mapFeaturesOf(topology, mapName);
         },
-        queryClient,
-    );
+    });
 }
 
 export function mapFeaturesOf(topology: Topology, mapName: string): MapFeature[] {
@@ -93,9 +86,9 @@ export function focusOf(where: Place, provinces = false): string[] | undefined {
         case 'world':
             return undefined;
         case 'continent':
-            return countriesOfContinent(where.continent).map(mapNameOf);
+            return placesOfContinent(where.continent).map(mapNameOf);
         case 'subregion':
-            return countriesOfSubregion(where.subregion).map(mapNameOf);
+            return placesOfSubregion(where.subregion).map(mapNameOf);
         case 'country':
         case 'admin1':
             return [mapNameOf(canonicalCountryOf(where.country))];

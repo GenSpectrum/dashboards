@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { ReportPageStateHandler } from './handlers/ReportPageStateHandler.ts';
-import type { ReportParams } from './reportAddress.ts';
+import { referenceOf, type ReportParams } from './reportAddress.ts';
 import { usePageState } from '../../components/views/usePageState.ts';
 import type { ReportKind, ReportRef } from '../domain/reports.ts';
 
@@ -31,7 +31,7 @@ export function useReportParams(kind: ReportKind): ReportParamsState {
         [handler, pageState],
     );
 
-    const reference = useMemo(() => handler.referenceOf(pageState), [handler, pageState]);
+    const reference = useMemo(() => referenceOf(kind, pageState), [kind, pageState]);
 
     return useMemo(
         () => ({ params: pageState, reference, update, switchTo }),

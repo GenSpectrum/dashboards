@@ -151,6 +151,9 @@ export function parseSubject(key: string | null | undefined, catalog: Catalog): 
     const separator = head.indexOf(':');
     const kind = head.slice(0, separator);
     const id = head.slice(separator + 1);
+    if (rest.length > 0 && kind !== 'pathogen') {
+        return undefined;
+    }
     if (kind === 'group') {
         const group = catalog.groups.find((candidate) => candidate.id === id);
         return group === undefined ? undefined : groupNode(group);
@@ -182,7 +185,7 @@ export function parseSubject(key: string | null | undefined, catalog: Catalog): 
         const equals = part.indexOf('=');
         const column = part.slice(0, equals);
         const level = columns.indexOf(column);
-        if (equals <= 0 || level < 0) {
+        if (equals <= 0 || equals === part.length - 1 || level < 0) {
             return undefined;
         }
         given.push({ column, value: decodedValue(part.slice(equals + 1)), level });

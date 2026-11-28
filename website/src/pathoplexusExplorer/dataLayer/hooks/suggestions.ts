@@ -1,4 +1,5 @@
-import { merged, useScopeFilter, type Loadable } from './analyses.ts';
+import { useScopeFilter } from './analyses.ts';
+import { combineQueryResults, type Loadable } from './queryResult.ts';
 import { useRows } from './rhydbQuery.ts';
 import type { Place } from '../../domain/geography.ts';
 import type { Period } from '../../domain/scope.ts';
@@ -43,7 +44,7 @@ export function useMutationSuggestions(options: {
                   ...suggestionsOf(aminoAcid.data, sequences, MUTATION_KIND.aminoAcid),
                   ...suggestionsOf(nucleotide.data ?? [], sequences, MUTATION_KIND.nucleotide),
               ].sort((a, b) => b.proportion - a.proportion);
-    return merged(data, [resolved, aminoAcid, nucleotide]);
+    return combineQueryResults(data, [resolved, aminoAcid, nucleotide]);
 }
 
 function suggestionsOf(rows: readonly RhydbRow[], sequences: ReferenceSequences, kind: MutationKind): Suggestion[] {

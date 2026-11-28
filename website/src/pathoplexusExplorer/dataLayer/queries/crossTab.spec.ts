@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest';
 
+import { COLUMNS } from './columns.ts';
 import { cellValue, crossTabOf, MEASURE, nextSort, OTHER, ROW_NAMES, TOTAL } from './crossTab.ts';
 import { dimensionById, dimensionsFor, NOTHING } from './dimensions.ts';
-import { COLUMNS } from './scope.ts';
 import { CATALOG } from '../../domain/catalog.ts';
 import { defined } from '../../test/defined.fixture.ts';
 import type { RhydbRow } from '../transport/row.ts';
@@ -60,6 +60,23 @@ describe('a cross-tab', () => {
         expect(cellValue(table, brazil, human, MEASURE.column)).toMatchObject({ value: 10 / 16, of: 16 });
         expect(cellValue(table, brazil, human, MEASURE.all)).toMatchObject({ value: 10 / 22, of: 22 });
     });
+});
+
+test('keeps distinct cells when a recorded dimension value contains a separator', () => {
+    const first = 'A\u001fB';
+    const second = 'B\u001fC';
+    const rows = [
+        { row: first, column: 'C', n: 3 },
+        { row: 'A', column: second, n: 5 },
+    ];
+    const table = crossTabOf({
+        rows,
+        rowDimension: { ...country, valueOf: (row) => String(row.row) },
+        columnDimension: { ...country, valueOf: (row) => String(row.column) },
+    });
+    expect(table.cells.get(first)?.get('C')).toBe(3);
+    expect(table.cells.get('A')?.get(second)).toBe(5);
+    expect(table.cells.get('A')?.get('C')).toBeUndefined();
 });
 
 describe('a cross-tab larger than the table can show', () => {

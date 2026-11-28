@@ -1,8 +1,10 @@
+import { COLUMNS } from './columns.ts';
 import { compileVariant, lineageFilter } from './variantFilter.ts';
+import { reportPeriod } from '../../domain/dates.ts';
 import {
     admin1AreaOf,
-    countriesOfContinent,
-    countriesOfSubregion,
+    placesOfContinent,
+    placesOfSubregion,
     countryNamesOf,
     type Place,
 } from '../../domain/geography.ts';
@@ -17,34 +19,8 @@ import {
     type Subject,
 } from '../../domain/subject.ts';
 import { parseVariant, resolveVariant, type ReferenceSequences, type ResolvedNode } from '../../domain/variant.ts';
-import { and, bool, dateLiteral, field, not, or, str, type Expr } from '../transport/expression.ts';
+import { and, dateLiteral, field, not, or, str, type Expr } from '../transport/expression.ts';
 import { isNotNull, isNull } from '../transport/functions.ts';
-
-export const COLUMNS = {
-    accessionVersion: 'accessionVersion',
-    dataUseTerms: 'dataUseTerms',
-    restrictedUntil: 'dataUseTermsRestrictedUntil',
-    termsUrl: 'dataUseTermsUrl',
-    country: 'geoLocCountry',
-    admin1: 'geoLocAdmin1',
-    lower: 'sampleCollectionDateRangeLower',
-    upper: 'sampleCollectionDateRangeUpper',
-    released: 'earliestReleaseDate',
-    host: 'hostNameScientific',
-    hostTaxon: 'hostTaxonId',
-    group: 'groupId',
-    groupName: 'groupName',
-    authors: 'authors',
-    affiliations: 'authorAffiliations',
-    versionStatus: 'versionStatus',
-    revocation: 'isRevocation',
-} as const;
-
-/** Include current versions only, excluding revocations. */
-export const CURRENT_VERSION: Expr = and(
-    field(COLUMNS.versionStatus).eq(str('LATEST_VERSION')),
-    field(COLUMNS.revocation).eq(bool(false)),
-);
 
 export class VariantError extends Error {}
 
@@ -59,7 +35,7 @@ export type TableFilter = (table: string) => Expr | undefined;
 
 export function scopeFilter(scope: Scope, lookups: ScopeLookups): TableFilter {
     const where = placeFilter(scope.where, lookups.admin1Names);
-    const when = dateFilter(scope.period);
+    const when = dateFilter(reportPeriod(scope.period));
     const variant = variantFilter(scope, lookups);
     return (table) =>
         and(
@@ -133,13 +109,16 @@ function stepFilter(what: Subject & { kind: 'subtype' }, step: SubtypeStep, look
             ? isNull(field(step.column))
             : or(isNull(field(step.column)), field(step.column).isIn(spellings.map(str)));
     }
-    return lineageFilter({
-        table: what.pathogen.table,
-        column: step.column,
-        value: step.value,
-        sublineages: true,
-        hierarchy: lookups.hierarchy,
-    });
+    return and(
+        isNotNull(field(step.column)),
+        lineageFilter({
+            table: what.pathogen.table,
+            column: step.column,
+            value: step.value,
+            sublineages: true,
+            hierarchy: lookups.hierarchy,
+        }),
+    );
 }
 
 /** Expand mapped divisions to the recorded spellings that resolve to them. */
@@ -149,9 +128,9 @@ function placeFilter(place: Place, admin1Names?: readonly (string | null)[]): Ex
         case 'world':
             return undefined;
         case 'continent':
-            return country.isIn(countriesOfContinent(place.continent).map(str));
+            return country.isIn([...new Set(placesOfContinent(place.continent).flatMap(countryNamesOf))].map(str));
         case 'subregion':
-            return country.isIn(countriesOfSubregion(place.subregion).map(str));
+            return country.isIn([...new Set(placesOfSubregion(place.subregion).flatMap(countryNamesOf))].map(str));
         case 'country':
             return countryFilter(place.country);
         case 'admin1': {

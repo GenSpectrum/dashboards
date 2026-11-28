@@ -1,5 +1,6 @@
 import { ORGANISM } from './builders.ts';
-import { COLUMNS } from './scope.ts';
+import { COLUMNS, type ColumnCheck } from './columns.ts';
+import type { ProportionRows } from './genomics.ts';
 import {
     childPlaceLevel,
     childPlaceOf,
@@ -21,6 +22,7 @@ import {
     childContaining,
     effectiveSteps,
     isPathogenNode,
+    locate,
     parseSubject,
     staticChildren,
     subjectKey,
@@ -44,7 +46,7 @@ export type BreakdownSpec = {
     self?: string;
     columns: readonly string[];
     perTable: boolean;
-    classify(row: RhydbRow): string;
+    classify: (row: RhydbRow) => string;
     label(key: string): string;
     target(key: string): SeriesTarget | undefined;
 };
@@ -52,6 +54,7 @@ export type BreakdownSpec = {
 type ColumnNeed = { table: string; column: string } | undefined;
 
 const UNKNOWN_PLACE = '(not recorded)';
+const OTHER_PLACE = 'Other';
 const SELF_PREFIX = '=';
 
 const PLACE_LEVEL_TITLES = {
@@ -60,9 +63,6 @@ const PLACE_LEVEL_TITLES = {
     country: 'Country',
     admin1: 'Province or state',
 } as const;
-
-/** Check declared subtype columns against the actual table schema. */
-export type ColumnCheck = (table: string, column: string) => boolean;
 
 export type InstanceShape = {
     has: ColumnCheck;
@@ -247,11 +247,14 @@ function placeBreakdown(where: Place): BreakdownSpec {
         classify: (row) => {
             const country = recordedPlaceOf(row[COLUMNS.country]);
             const admin1 = withAdmin1 ? recordedPlaceOf(row[COLUMNS.admin1]) : null;
-            const child = childPlaceOf(where, country, admin1);
             if (where.level === 'admin1') {
-                return admin1 ?? UNKNOWN_PLACE;
+                return placeKey(where);
             }
-            return child === undefined ? UNKNOWN_PLACE : placeKey(child);
+            const child = childPlaceOf(where, country, admin1);
+            if (child !== undefined) {
+                return placeKey(child);
+            }
+            return admin1 !== null ? OTHER_PLACE : UNKNOWN_PLACE;
         },
         label: (key) => {
             if (key === UNKNOWN_PLACE) {
@@ -261,7 +264,7 @@ function placeBreakdown(where: Place): BreakdownSpec {
             return place === undefined ? key : placeLabel(place);
         },
         target: (key) => {
-            if (key === UNKNOWN_PLACE || where.level === 'admin1') {
+            if (key === UNKNOWN_PLACE || key === OTHER_PLACE || where.level === 'admin1') {
                 return undefined;
             }
             const place = parsePlace(key);
@@ -286,7 +289,11 @@ export function partsOf(rows: readonly RhydbRow[], spec: BreakdownSpec): Part[] 
         const key = spec.classify(row);
         totals.set(key, (totals.get(key) ?? 0) + Number(row.n ?? 0));
     }
-    const isResidual = (key: string) => key === UNASSIGNED || key === UNKNOWN_PLACE || key === 'unknown';
+    const isResidual = (key: string) =>
+        key === UNASSIGNED ||
+        key === UNKNOWN_PLACE ||
+        (spec.of === 'place' && key === OTHER_PLACE) ||
+        key === 'unknown';
     return [...totals.entries()]
         .map(([key, n]) => ({
             key,
@@ -301,4 +308,73 @@ export function partsOf(rows: readonly RhydbRow[], spec: BreakdownSpec): Part[] 
 
 export function valueParts(parts: readonly Part[]): Part[] {
     return parts.filter((part) => !part.residual && !part.exact);
+}
+
+/** Location reports group by individual pathogen. */
+export function pathogenBreakdown(catalog: Catalog): BreakdownSpec {
+    const found = (table: string) => locate(catalog, table);
+    return {
+        of: 'pathogen',
+        title: 'Pathogen',
+        through: [],
+        columns: [],
+        perTable: true,
+        classify: (row) => String(row[ORGANISM] ?? ''),
+        label: (key) => found(key)?.pathogen.label ?? key,
+        target: (key) => {
+            const place = found(key);
+            return place === undefined
+                ? undefined
+                : { what: { kind: 'pathogen', pathogen: place.pathogen, family: place.family, group: place.group } };
+        },
+    };
+}
+
+/** Break down by the first catalog level that the pathogen's table has and the report has not fixed. */
+export function mutationBreakdownLevel(
+    what: Subject,
+    hasColumn: ColumnCheck,
+): { column: string; label: string } | undefined {
+    if (!isPathogenNode(what)) {
+        return undefined;
+    }
+    const fixed = new Set(what.kind === 'subtype' ? what.steps.map((step) => step.column) : []);
+    const level = what.pathogen.levels.find(
+        (candidate) => !fixed.has(candidate.column) && hasColumn(what.pathogen.table, candidate.column),
+    );
+    return level === undefined ? undefined : { column: level.column, label: level.label };
+}
+
+export type LineageCount = {
+    value: string;
+    own: number;
+    all: number;
+    what?: Subject;
+};
+
+export function lineageCounts(
+    carriers: ProportionRows | undefined,
+    column: string | undefined,
+    what: Subject,
+): LineageCount[] | undefined {
+    if (carriers === undefined || column === undefined) {
+        return undefined;
+    }
+    const sum = (rows: readonly RhydbRow[]) => {
+        const counts = new Map<string, number>();
+        for (const row of rows) {
+            const value = normalizeSubtype((row[column] ?? null) as string | null);
+            counts.set(value, (counts.get(value) ?? 0) + Number(row.n ?? 0));
+        }
+        return counts;
+    };
+    const own = sum(carriers.own);
+    return [...sum(carriers.all)]
+        .map(([value, all]) => ({
+            value,
+            own: own.get(value) ?? 0,
+            all,
+            what: value === UNASSIGNED ? undefined : withStep(what, { column, value }),
+        }))
+        .sort((a, b) => b.own - a.own || b.all - a.all);
 }

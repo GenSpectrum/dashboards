@@ -22,7 +22,9 @@ export const ErrorMessage: FC<ErrorMessageProps> = ({ error }) => {
         <div role='alert' className='border border-red-200 bg-red-50 p-3 text-sm text-red-800'>
             <div className='font-semibold'>Could not load</div>
             <div className='mt-1 break-words'>{message}</div>
-            {(rhydb === undefined || rhydb.unexpected) && <div className='mt-1'>{UNEXPECTED_ERROR}</div>}
+            {message !== UNEXPECTED_ERROR && (rhydb === undefined || rhydb.unexpected) && (
+                <div className='mt-1'>{UNEXPECTED_ERROR}</div>
+            )}
         </div>
     );
 };

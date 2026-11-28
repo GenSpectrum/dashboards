@@ -1,6 +1,6 @@
 /** Group by each recorded date range before assigning it to a chart bucket. */
 
-import { COLUMNS } from './scope.ts';
+import { COLUMNS } from './columns.ts';
 import {
     autoGranularity,
     bucketOfRange,
@@ -13,31 +13,23 @@ import type { RhydbRow } from '../transport/row.ts';
 const EARLY_OUTLIER_SHARE = 0.005;
 
 /** Ignore the earliest fraction of dated entries when choosing the start of an open-ended axis. */
-function robustStart(rows: readonly RhydbRow[]): string | undefined {
-    const dated = rows
-        .map((row) => ({ lower: (row[COLUMNS.lower] ?? null) as string | null, n: Number(row.n ?? 0) }))
-        .filter((entry): entry is { lower: string; n: number } => entry.lower !== null)
-        .sort((a, b) => a.lower.localeCompare(b.lower));
-    const total = dated.reduce((sum, entry) => sum + entry.n, 0);
-    let seen = 0;
-    for (const entry of dated) {
-        seen += entry.n;
-        if (seen > total * EARLY_OUTLIER_SHARE) {
-            return entry.lower;
-        }
-    }
-    return dated.at(-1)?.lower;
-}
-
-function dateExtent(rows: readonly RhydbRow[]): { from?: string; to?: string } {
+function dateExtent(rows: readonly RhydbRow[]) {
+    const dated = rows.filter(
+        (row) => typeof row[COLUMNS.lower] === 'string' && typeof row[COLUMNS.upper] === 'string' && Number(row.n) > 0,
+    );
+    dated.sort((a, b) => String(a[COLUMNS.lower]).localeCompare(String(b[COLUMNS.lower])));
+    const threshold = dated.reduce((total, row) => total + Number(row.n), 0) * EARLY_OUTLIER_SHARE;
+    let counted = 0;
     let from: string | undefined;
     let to: string | undefined;
-    for (const row of rows) {
-        const lower = (row[COLUMNS.lower] ?? null) as string | null;
-        const upper = (row[COLUMNS.upper] ?? null) as string | null;
-        if (lower !== null && upper !== null) {
-            from = from === undefined || lower < from ? lower : from;
-            to = to === undefined || upper > to ? upper : to;
+    for (const row of dated) {
+        counted += Number(row.n);
+        if (counted > threshold) {
+            from ??= String(row[COLUMNS.lower]);
+        }
+        const upper = String(row[COLUMNS.upper]);
+        if (to === undefined || upper > to) {
+            to = upper;
         }
     }
     return { from, to };
@@ -56,7 +48,7 @@ function placeableProportion(rows: readonly RhydbRow[], granularity: Granularity
         }
         const n = Number(row.n ?? 0);
         dated += n;
-        if (bucketOfRange(lower, upper, granularity) !== undefined) {
+        if (lower === upper || bucketOfRange(lower, upper, granularity) !== undefined) {
             placed += n;
         }
     }
@@ -85,9 +77,7 @@ export function bucketAxisOf(options: {
     granularity?: Granularity;
 }): { buckets: string[]; granularity: Granularity } | undefined {
     const { rows, granularity } = options;
-    const extent = dateExtent(rows);
-    const start = robustStart(rows) ?? extent.from;
-    const end = extent.to;
+    const { from: start, to: end } = dateExtent(rows);
     if (start === undefined || end === undefined || start > end) {
         return undefined;
     }
@@ -137,18 +127,12 @@ export function countsPerBucket(
     return { counts, undated, imprecise, offAxis };
 }
 
-export function trimEmptyBuckets(
-    rows: readonly RhydbRow[],
-    axis: { buckets: string[]; granularity: Granularity },
-): { buckets: string[]; granularity: Granularity } {
-    const { counts } = countsPerBucket(rows, axis.buckets, axis.granularity);
-    const first = counts.findIndex((count) => count > 0);
+export function trimEmptyBuckets(rows: readonly RhydbRow[], axis: { buckets: string[]; granularity: Granularity }) {
+    const totals = countsPerBucket(rows, axis.buckets, axis.granularity);
+    const first = totals.counts.findIndex((n) => n > 0);
     if (first < 0) {
-        return axis;
+        return { ...axis, ...totals };
     }
-    let last = counts.length - 1;
-    while (last > first && counts[last] === 0) {
-        last--;
-    }
-    return { buckets: axis.buckets.slice(first, last + 1), granularity: axis.granularity };
+    const end = totals.counts.findLastIndex((n) => n > 0) + 1;
+    return { ...axis, ...totals, buckets: axis.buckets.slice(first, end), counts: totals.counts.slice(first, end) };
 }

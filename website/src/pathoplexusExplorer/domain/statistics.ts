@@ -38,3 +38,7 @@ export function formatProportion(value: number): string {
 export function formatIndex(value: number): string {
     return value.toFixed(2);
 }
+
+export function sumOf<Row>(rows: readonly Row[], value: (row: Row) => number): number {
+    return rows.reduce((total, row) => total + value(row), 0);
+}

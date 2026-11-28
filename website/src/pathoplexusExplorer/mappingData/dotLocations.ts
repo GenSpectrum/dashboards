@@ -26,7 +26,6 @@ export const DOT_LOCATIONS: Readonly<Record<string, readonly [number, number]>> 
     'Aruba': [-69.97, 12.52],
     'Anguilla': [-63.07, 18.22],
     'Montserrat': [-62.19, 16.74],
-    'Netherlands Antilles': [-68.9, 12.17],
     'Kiribati': [-157.36, 1.87],
     'Palau': [134.58, 7.51],
     'Tonga': [-175.2, -21.18],

@@ -66,11 +66,6 @@ describe('subjectOptions', () => {
         expect(options.some((option) => option.value === 'pathogen:ebola_zaire')).toBe(true);
     });
 
-    it('shows a lineage as its pathogen, the level below naming the lineage', () => {
-        const serotype = withLevel(dengue, 'serotype', 'DENV-1');
-        expect(subjectValue(serotype)).toBe('pathogen:dengue');
-    });
-
     it('offers the subtypes that stand as pathogens under the pathogen they are of', () => {
         const options = subjectOptions({ subtypes: true });
         const pathogen = defined(
@@ -86,11 +81,16 @@ describe('subjectOptions', () => {
         expect(serotype.depth).toBe((pathogen.depth ?? 0) + 1);
         expect(options.some((option) => option.value.includes('lineage='))).toBe(false);
     });
+});
 
-    it('shows one of them as itself, and a lineage of it as the subtype it lies in', () => {
+describe('subjectValue', () => {
+    it('shows a subtype as its pathogen, the level below naming the subtype', () => {
+        expect(subjectValue(withLevel(dengue, 'serotype', 'DENV-1'))).toBe('pathogen:dengue');
+    });
+
+    it('shows a subtype offered as a pathogen as itself, and a lineage of it as the pathogen it lies in', () => {
         const serotype = withLevel(dengue, 'serotype', 'DENV-2');
         expect(subjectValue(serotype, { subtypes: true })).toBe('pathogen:dengue/serotype=DENV-2');
-        const lineage = withLevel(serotype, 'lineage', '2II');
-        expect(subjectValue(lineage, { subtypes: true })).toBe('pathogen:dengue');
+        expect(subjectValue(withLevel(serotype, 'lineage', '2II'), { subtypes: true })).toBe('pathogen:dengue');
     });
 });

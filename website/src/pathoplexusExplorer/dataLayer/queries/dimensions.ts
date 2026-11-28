@@ -1,33 +1,30 @@
 /** A dimension defines both its grouped values and the filters that select them. */
 
 import { ORGANISM } from './builders.ts';
-import { COLUMNS, dateFilter } from './scope.ts';
+import { COLUMNS, type ColumnCheck } from './columns.ts';
+import { dateFilter } from './scope.ts';
 import { bucketOfRange, isIsoDate } from '../../domain/dates.ts';
 import {
     admin1AreaOf,
     canonicalCountryOf,
     continentOf,
-    CONTINENTS,
-    countriesOfContinent,
-    countriesOfSubregion,
-    countryNamesOf,
     hasAdmin1Names,
+    isAdmin1Of,
     recordedPlaceOf,
-    SUBREGION_NAMES,
     subregionOf,
-    type Continent,
 } from '../../domain/geography.ts';
 import { HOST_GROUP, HOST_GROUP_LABELS, hostGroupOf, type HostGroup } from '../../domain/hosts.ts';
 import { isUnassignedValue } from '../../domain/lineages.ts';
 import { allPathogens, type Catalog, type Pathogen, type SubtypeLevel } from '../../domain/subject.ts';
 import { and, bool, field, int, not, or, str, type Expr } from '../transport/expression.ts';
-import { isNull } from '../transport/functions.ts';
+import { isNotNull, isNull } from '../transport/functions.ts';
 import { readOptionalText, readText, type RhydbRow } from '../transport/row.ts';
 
 /** Use a sentinel outside the range of recorded values. */
 export const NOTHING = '\u0000';
 
 export type ValuesLookup = {
+    years?: readonly string[];
     countries?: readonly (string | null)[];
     hosts?: readonly { name: string | null; taxon: string | null }[];
     subtypes?: Readonly<Record<string, readonly (string | null)[] | undefined>>;
@@ -57,23 +54,51 @@ export type Dimension = {
     fromTheEnd?: boolean;
 };
 
-function matching(column: string, values: readonly string[]): Expr | undefined {
-    if (values.length === 0) {
-        return undefined;
-    }
+/** Membership must be false for an unselected null, even when the caller negates it. */
+function inValues(column: string, values: readonly string[], literal: (value: string) => Expr = str): Expr {
     const target = field(column);
-    return values.length === 1 ? target.eq(str(values[0])) : target.isIn(values.map(str));
+    const known = values.filter((value) => value !== NOTHING);
+    const missing = known.length !== values.length;
+    if (known.length === 0) {
+        return missing ? isNull(target) : bool(false);
+    }
+    const match = known.length === 1 ? target.eq(literal(known[0])) : target.isIn(known.map(literal));
+    return missing ? or(isNull(target), match) : and(isNotNull(target), match);
 }
 
-function inValues(column: string, values: readonly string[], literal: (value: string) => Expr): Expr | undefined {
-    const known = values.filter((value) => value !== NOTHING);
-    const nothing = values.length > known.length ? isNull(field(column)) : undefined;
-    if (known.length === 0) {
-        return nothing;
-    }
-    const target = field(column);
-    const match = known.length === 1 ? target.eq(literal(known[0])) : target.isIn(known.map(literal));
-    return or(match, nothing);
+/** Group and filter with the same classification of the recorded column values. */
+function recordedDimension(
+    id: string,
+    label: string,
+    column: string,
+    recorded: (lookup: ValuesLookup) => readonly (string | null)[] | undefined,
+    classify: (value: string | null) => string,
+    group: (name: string) => string = (name) => name,
+): Dimension {
+    return {
+        id,
+        label,
+        columns: [column],
+        valueOf: (row) => group(classify(readOptionalText(row, column))),
+        filterOf: (values, lookup) => {
+            const chosen = new Set(values);
+            // Bookmarks can select an individual recorded name even when its axis groups it as unassigned.
+            const includes = (value: string | null) => {
+                const name = classify(value);
+                return chosen.has(name) || chosen.has(group(name));
+            };
+            const names = new Set<string>();
+            for (const value of recorded(lookup) ?? []) {
+                if (value !== null && includes(value)) {
+                    names.add(value);
+                }
+            }
+            if (includes(null)) {
+                names.add(NOTHING);
+            }
+            return inValues(column, [...names]);
+        },
+    };
 }
 
 function pathogenDimension(catalog: Catalog): Dimension {
@@ -89,156 +114,72 @@ function pathogenDimension(catalog: Catalog): Dimension {
     };
 }
 
-function unrecordedCountry(lookup: ValuesLookup): Expr | undefined {
-    const unrecorded = (lookup.countries ?? []).filter(
-        (value): value is string => value !== null && recordedPlaceOf(value) === null,
-    );
-    return or(isNull(field(COLUMNS.country)), matching(COLUMNS.country, unrecorded));
-}
-
-function outsideKnownCountries(known: readonly string[]): Expr {
-    return or(isNull(field(COLUMNS.country)), not(field(COLUMNS.country).isIn(known.map(str))));
-}
-
-const countryDimension: Dimension = {
-    id: 'country',
-    label: 'Country',
-    columns: [COLUMNS.country],
-    valueOf: (row) => {
-        const recorded = recordedPlaceOf(row[COLUMNS.country]);
-        return recorded === null ? NOTHING : canonicalCountryOf(recorded);
-    },
-    filterOf: (values, lookup) => {
-        const names = values.filter((value) => value !== NOTHING).flatMap(countryNamesOf);
-        const nothing = values.includes(NOTHING) ? unrecordedCountry(lookup) : undefined;
-        return or(matching(COLUMNS.country, names), nothing);
-    },
-};
-
-function placeGrouping(options: {
-    id: string;
-    label: string;
-    groupOf: (country: string) => string | undefined;
-    countriesOf: (value: string) => readonly string[];
-    everyGrouped: readonly string[];
-}): Dimension {
-    const { id, label, groupOf, countriesOf, everyGrouped } = options;
-    return {
+function geographicDimension(id: string, label: string, group: (country: string) => string | undefined): Dimension {
+    return recordedDimension(
         id,
         label,
-        columns: [COLUMNS.country],
-        valueOf: (row) => {
-            const recorded = recordedPlaceOf(row[COLUMNS.country]);
-            return recorded === null ? NOTHING : (groupOf(canonicalCountryOf(recorded)) ?? NOTHING);
+        COLUMNS.country,
+        (lookup) => lookup.countries,
+        (value) => {
+            const recorded = recordedPlaceOf(value);
+            return recorded === null ? NOTHING : (group(canonicalCountryOf(recorded)) ?? NOTHING);
         },
-        filterOf: (values) => {
-            const names = values
-                .filter((value) => value !== NOTHING)
-                .flatMap((value) => countriesOf(value))
-                .flatMap(countryNamesOf);
-            const nothing = values.includes(NOTHING)
-                ? outsideKnownCountries(everyGrouped.flatMap(countriesOf).flatMap(countryNamesOf))
-                : undefined;
-            return or(matching(COLUMNS.country, names), nothing);
-        },
-    };
+    );
 }
 
-const region = placeGrouping({
-    id: 'region',
-    label: 'Region',
-    groupOf: subregionOf,
-    countriesOf: countriesOfSubregion,
-    everyGrouped: SUBREGION_NAMES,
-});
-
-const continent = placeGrouping({
-    id: 'continent',
-    label: 'Continent',
-    groupOf: continentOf,
-    countriesOf: (value) => (CONTINENTS.includes(value as Continent) ? countriesOfContinent(value as Continent) : []),
-    everyGrouped: CONTINENTS,
-});
+const countryDimension = geographicDimension('country', 'Country', (country) => country);
+const region = geographicDimension('region', 'Region', subregionOf);
+const continent = geographicDimension('continent', 'Continent', continentOf);
 
 const host: Dimension = {
     id: 'host',
     label: 'Host group',
     columns: [COLUMNS.host, COLUMNS.hostTaxon],
     valueOf: (row) => hostGroupOf(readOptionalText(row, COLUMNS.host), readOptionalText(row, COLUMNS.hostTaxon)),
-    labelOf: (value) => (value in HOST_GROUP_LABELS ? HOST_GROUP_LABELS[value as HostGroup] : value),
+    labelOf: (value) => (Object.hasOwn(HOST_GROUP_LABELS, value) ? HOST_GROUP_LABELS[value as HostGroup] : value),
     filterOf: (values, lookup) => {
         const chosen = new Set(values);
-        const byName = new Map<string, Set<string>>();
-        let anyUnrecorded = false;
-        for (const entry of lookup.hosts ?? []) {
-            const group = hostGroupOf(entry.name, entry.taxon);
-            if (!chosen.has(group)) {
+        const byName = new Map<string, { selected: string[]; allSelected: boolean }>();
+        for (const { name, taxon } of lookup.hosts ?? []) {
+            if (name === null) {
                 continue;
             }
-            if (entry.name === null) {
-                anyUnrecorded = true;
-                continue;
-            }
-            const taxa = byName.get(entry.name) ?? new Set<string>();
-            taxa.add(entry.taxon ?? '');
-            byName.set(entry.name, taxa);
-        }
-        // Filter by name only if all taxa with that name match. Otherwise match the selected taxon IDs.
-        const names: string[] = [];
-        const pairs: Expr[] = [];
-        for (const [name, taxa] of byName) {
-            const every = (lookup.hosts ?? []).filter((entry) => entry.name === name);
-            if (every.every((entry) => taxa.has(entry.taxon ?? ''))) {
-                names.push(name);
+            const group = byName.get(name) ?? { selected: [], allSelected: true };
+            if (chosen.has(hostGroupOf(name, taxon))) {
+                group.selected.push(taxon ?? NOTHING);
             } else {
-                for (const taxon of taxa) {
-                    pairs.push(
-                        and(
-                            field(COLUMNS.host).eq(str(name)),
-                            taxon === '' ? isNull(field(COLUMNS.hostTaxon)) : field(COLUMNS.hostTaxon).eq(str(taxon)),
-                        ),
-                    );
-                }
+                group.allSelected = false;
+            }
+            byName.set(name, group);
+        }
+        const names = chosen.has(HOST_GROUP.unknown) ? [NOTHING] : [];
+        const pairs: Expr[] = [];
+        for (const [name, { selected, allSelected }] of byName) {
+            if (allSelected) {
+                names.push(name);
+            } else if (selected.length > 0) {
+                pairs.push(and(inValues(COLUMNS.host, [name]), inValues(COLUMNS.hostTaxon, selected)));
             }
         }
-        const unrecorded = anyUnrecorded || chosen.has(HOST_GROUP.unknown) ? isNull(field(COLUMNS.host)) : undefined;
-        // An empty host group must match no rows.
-        return or(matching(COLUMNS.host, names), ...pairs, unrecorded) ?? bool(false);
+        return or(inValues(COLUMNS.host, names), ...pairs);
     },
     order: hostGroupOrder,
 };
 
 const hostName: Dimension = {
-    id: 'hostName',
-    label: 'Host',
-    columns: [COLUMNS.host],
-    valueOf: (row) => {
-        const name = readOptionalText(row, COLUMNS.host);
-        return name === null || name.trim() === '' ? NOTHING : name;
-    },
+    ...recordedDimension(
+        'hostName',
+        'Host',
+        COLUMNS.host,
+        (lookup) => lookup.hosts?.map(({ name }) => name),
+        (name) => (name === null || name.trim() === '' ? NOTHING : name),
+    ),
     labelOf: (value) => (value === NOTHING ? HOST_GROUP_LABELS[HOST_GROUP.unknown] : value),
-    filterOf: (values, lookup) => {
-        const names = values.filter((value) => value !== NOTHING);
-        const blank = (lookup.hosts ?? [])
-            .map((entry) => entry.name)
-            .filter((name): name is string => name !== null && name.trim() === '');
-        const nothing = values.includes(NOTHING)
-            ? or(isNull(field(COLUMNS.host)), matching(COLUMNS.host, blank))
-            : undefined;
-        return or(matching(COLUMNS.host, names), nothing);
-    },
 };
 
 function hostGroupOrder(a: string, b: string): number {
     const order = Object.values(HOST_GROUP) as string[];
     return order.indexOf(a) - order.indexOf(b);
-}
-
-const FIRST_YEAR = 1900;
-
-function everyYear(): string[] {
-    const last = new Date().getUTCFullYear() + 1;
-    return Array.from({ length: last - FIRST_YEAR + 1 }, (_, index) => String(FIRST_YEAR + index));
 }
 
 function yearFilter(year: string): Expr | undefined {
@@ -254,22 +195,22 @@ const year: Dimension = {
         bucketOfRange(readOptionalText(row, COLUMNS.lower), readOptionalText(row, COLUMNS.upper), 'year') ?? NOTHING,
     labelOf: (value) => (value === NOTHING ? 'No collection year' : value),
     accepts: (value) => value === NOTHING || (/^\d{4}$/.test(value) && isIsoDate(`${value}-01-01`)),
-    filterOf: (values) => {
+    filterOf: (values, lookup) => {
         const years = values.filter((value) => value !== NOTHING);
-        const nothing = values.length > years.length ? withoutAYear() : undefined;
-        return or(or(...years.map(yearFilter)), nothing);
+        const fits = (choices: readonly string[]) =>
+            and(
+                isNotNull(field(COLUMNS.lower)),
+                isNotNull(field(COLUMNS.upper)),
+                or(...choices.map(yearFilter)) ?? bool(false),
+            );
+        if (years.length === values.length) {
+            return fits(years);
+        }
+        return not(fits((lookup.years ?? []).filter((value) => !years.includes(value))));
     },
     order: (a, b) => b.localeCompare(a),
     fromTheEnd: true,
 };
-
-function withoutAYear(): Expr {
-    return or(
-        isNull(field(COLUMNS.lower)),
-        isNull(field(COLUMNS.upper)),
-        not(or(...everyYear().map(yearFilter)) ?? bool(false)),
-    );
-}
 
 /** Use the submitting group ID as its identity. The display name need not be unique. */
 const submitter: Dimension = {
@@ -287,23 +228,17 @@ const submitter: Dimension = {
 
 /** Expand a division to the recorded spellings that resolve to it within this country. */
 function admin1Dimension(country: string): Dimension {
-    const areaOf = (value: unknown) => {
-        const recorded = recordedPlaceOf(value);
-        return recorded === null ? NOTHING : admin1AreaOf(country, recorded);
-    };
-    return {
-        id: 'admin1',
-        label: 'Province or state',
-        columns: [COLUMNS.admin1],
-        valueOf: (row) => areaOf(row[COLUMNS.admin1]),
-        filterOf: (values, lookup) => {
-            const chosen = new Set(values);
-            const recorded = lookup.admin1Names ?? [];
-            const spellings = recorded.filter((value): value is string => value !== null && chosen.has(areaOf(value)));
-            const nothing = chosen.has(NOTHING) ? isNull(field(COLUMNS.admin1)) : undefined;
-            return or(matching(COLUMNS.admin1, spellings), nothing) ?? bool(false);
+    return recordedDimension(
+        'admin1',
+        'Province or state',
+        COLUMNS.admin1,
+        (lookup) => lookup.admin1Names,
+        (value) => {
+            const recorded = recordedPlaceOf(value);
+            return recorded === null ? NOTHING : admin1AreaOf(country, recorded);
         },
-    };
+        (name) => (name === NOTHING || isAdmin1Of(country, name) ? name : 'Unassigned'),
+    );
 }
 
 function pathogenGroupDimension(catalog: Catalog): Dimension {
@@ -358,29 +293,16 @@ function pathogenGroupDimension(catalog: Catalog): Dimension {
 
 function levelDimension(pathogen: Pathogen, level: SubtypeLevel): Dimension {
     return {
-        id: `level:${level.column}`,
-        label: `${pathogen.label} ${level.label.toLowerCase()}`,
-        columns: [level.column],
-        valueOf: (row) => {
-            const value = readOptionalText(row, level.column);
-            return value === null || isUnassignedValue(value) ? NOTHING : value;
-        },
+        ...recordedDimension(
+            `level:${level.column}`,
+            `${pathogen.label} ${level.label.toLowerCase()}`,
+            level.column,
+            (lookup) => lookup.subtypes?.[level.column],
+            (value) => (value === null || isUnassignedValue(value) ? NOTHING : value),
+        ),
         labelOf: (value) => (value === NOTHING ? 'Unassigned' : value),
-        filterOf: (values, lookup) => {
-            const known = values.filter((value) => value !== NOTHING);
-            const recorded = lookup.subtypes?.[level.column] ?? [];
-            const unassigned = values.length > known.length ? unassignedIn(level.column, recorded) : undefined;
-            return or(matching(level.column, known), unassigned);
-        },
     };
 }
-
-function unassignedIn(column: string, recorded: readonly (string | null)[]): Expr {
-    const spellings = recorded.filter((value): value is string => value !== null && isUnassignedValue(value));
-    return or(isNull(field(column)), matching(column, spellings));
-}
-
-export type ColumnCheck = (table: string, column: string) => boolean;
 
 /** The pathogen's catalog levels whose columns its table has. Without a check, every catalog level is kept. */
 export function levelsOf(pathogen: Pathogen, hasColumn: ColumnCheck | undefined): SubtypeLevel[] {

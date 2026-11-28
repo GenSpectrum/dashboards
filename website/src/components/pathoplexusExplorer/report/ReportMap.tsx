@@ -1,8 +1,8 @@
 import { type FC, useMemo } from 'react';
 
 import { Figure } from './Layout.tsx';
-import type { Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
-import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
+import type { Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/queryResult.ts';
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/columns.ts';
 import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import {
     admin1AreaOf,
@@ -37,14 +37,15 @@ export const ReportMap: FC<ReportMapProps> = ({ where, counts, legend = 'Sequenc
     const world = useGeoFeatures(WORLD_MAP_NAME);
     const admin1 = useGeoFeatures(admin1Level ? country : undefined);
 
+    const rows = counts.data?.rows;
     const model = useMemo(() => {
         const features = admin1Level ? admin1.data : world.data;
-        if (counts.data === undefined || features === undefined) {
+        if (rows === undefined || features === undefined) {
             return undefined;
         }
         const totals = new Map<string, number>();
         let unplaced = 0;
-        for (const row of counts.data.rows) {
+        for (const row of rows) {
             const n = Number(row.n ?? 0);
             const recorded = recordedPlaceOf(row[COLUMNS.country]);
             if (recorded === null) {
@@ -95,7 +96,7 @@ export const ReportMap: FC<ReportMapProps> = ({ where, counts, legend = 'Sequenc
             total,
             thresholds: scaleFor(totals.values()),
         };
-    }, [counts.data, world.data, admin1.data, admin1Level, country, where]);
+    }, [rows, world.data, admin1.data, admin1Level, country, where]);
 
     return (
         <Figure

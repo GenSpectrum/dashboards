@@ -41,6 +41,14 @@ const pathoplexusExplorerLayers = {
                     message: 'The page state is above the data layer.',
                 },
                 {
+                    target: [explorer('dataLayer/transport'), explorer('dataLayer/queries')],
+                    from: explorer('dataLayer/hooks'),
+                },
+                {
+                    target: explorer('dataLayer/transport'),
+                    from: [explorer('dataLayer/queries'), explorer('domain'), explorer('mappingData')],
+                },
+                {
                     target: [explorer('domain'), explorer('mappingData')],
                     from: explorer('dataLayer'),
                     message: 'domain/ and mappingData/ only import from domain/ and mappingData/.',
@@ -198,25 +206,6 @@ export default tseslint.config(
         },
         plugins: {
             import: importPlugin,
-        },
-    },
-    {
-        // RhyDB reads go on the RhyDB query client (`dataLayer/hooks/rhydbQuery.ts`), which does not retry.
-        files: ['src/pathoplexusExplorer/dataLayer/hooks/**/*.{ts,tsx}'],
-        ignores: ['src/pathoplexusExplorer/dataLayer/hooks/rhydbQuery.ts', '**/*.spec.{ts,tsx}'],
-        rules: {
-            'no-restricted-imports': [
-                'error',
-                {
-                    paths: [
-                        {
-                            name: '@tanstack/react-query',
-                            importNames: ['useQuery', 'useQueries', 'useSuspenseQuery', 'useSuspenseQueries'],
-                            message: 'Use useRhydbQuery / useRhydbQueries from ./rhydbQuery.ts for RhyDB reads.',
-                        },
-                    ],
-                },
-            ],
         },
     },
     { ...reactHooks.configs['recommended-latest'], ignores: ['**/*.fixture.ts'] },

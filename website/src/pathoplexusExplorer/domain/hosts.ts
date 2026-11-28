@@ -1,8 +1,6 @@
 /** Look up host groups by NCBI taxon ID, with a genus fallback for new taxa. */
 
-import { HOST_GROUP_BY_GENUS, HOST_TAXA, HUMAN_HOST } from '../mappingData/hostTaxa.ts';
-
-export { HUMAN_HOST };
+import hostTaxa from '../mappingData/hostTaxa.json' with { type: 'json' };
 
 export const HOST_GROUP = {
     human: 'human',
@@ -21,14 +19,25 @@ export const HOST_GROUP_LABELS: Readonly<Record<HostGroup, string>> = {
     unknown: 'Host not recorded',
 };
 
+const byGenus = new Map<string, HostGroup>();
+const byTaxon = new Map<string, HostGroup>();
+for (const group of [HOST_GROUP.human, HOST_GROUP.vector, HOST_GROUP.animal]) {
+    for (const [genus, taxa] of Object.entries(hostTaxa[group])) {
+        byGenus.set(genus, group);
+        for (const taxon of taxa) {
+            byTaxon.set(String(taxon), group);
+        }
+    }
+}
+
 export function hostGroupOf(scientificName: string | null, taxonId: string | null): HostGroup {
     if (scientificName === null || scientificName.trim() === '') {
         return HOST_GROUP.unknown;
     }
-    const taxon = taxonId === null ? undefined : HOST_TAXA[taxonId];
+    const taxon = taxonId === null ? undefined : byTaxon.get(taxonId);
     if (taxon !== undefined) {
-        return taxon.group;
+        return taxon;
     }
     const genus = scientificName.trim().split(/\s+/)[0];
-    return HOST_GROUP_BY_GENUS[genus] ?? HOST_GROUP.unclassified;
+    return byGenus.get(genus) ?? HOST_GROUP.unclassified;
 }

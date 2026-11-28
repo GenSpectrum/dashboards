@@ -30,10 +30,13 @@ export type Args = readonly Expr[] | Readonly<Record<string, Expr>>;
 
 export class Expr {
     /** Rendered on construction, so an unescapable value throws where it is written. */
-    constructor(
-        readonly precedence: Precedence,
-        private readonly text: string,
-    ) {}
+    readonly precedence: Precedence;
+    private readonly text: string;
+
+    constructor(precedence: Precedence, text: string) {
+        this.precedence = precedence;
+        this.text = text;
+    }
 
     /** The expression on its own, as it would be sent. */
     render(): string {
@@ -58,20 +61,8 @@ export class Expr {
         return this.compare('=', other);
     }
 
-    neq(other: Expr): Expr {
-        return this.compare('<>', other);
-    }
-
-    lt(other: Expr): Expr {
-        return this.compare('<', other);
-    }
-
     lte(other: Expr): Expr {
         return this.compare('<=', other);
-    }
-
-    gt(other: Expr): Expr {
-        return this.compare('>', other);
     }
 
     gte(other: Expr): Expr {
@@ -85,33 +76,15 @@ export class Expr {
         return this.postfix(`in(${set(values).render()})`);
     }
 
-    isNull(): Expr {
-        return this.postfix('isNull()');
-    }
-
-    isNotNull(): Expr {
-        return this.postfix('isNotNull()');
-    }
-
     /** An ordering key: `n.desc()`. */
     desc(): Expr {
         return this.postfix('desc()');
     }
 
-    asc(): Expr {
-        return this.postfix('asc()');
-    }
-
     /** Whether this lineage column holds the value, or with `sublineages` one of its descendants, by the table's lineage relations. */
     lineageFromTables(options: { value: Expr; definitions: Expr; aliases: Expr; sublineages: boolean }): Expr {
-        const args = [options.value, options.definitions, options.aliases];
-        const named: Record<string, Expr> = options.sublineages ? { includeSublineages: bool(true) } : {};
-        return this.postfix(callWith('lineageFromTables', args, named).render());
-    }
-
-    /** Any other postfix call the language offers. */
-    call(name: string, args?: Args): Expr {
-        return this.postfix(`${name}(${renderArgs(args)})`);
+        const args = renderArgs([options.value, options.definitions, options.aliases]);
+        return this.postfix(`lineageFromTables(${args}${options.sublineages ? ', includeSublineages := true' : ''})`);
     }
 
     private postfix(suffix: string): Expr {
@@ -170,10 +143,6 @@ export function bool(value: boolean): Expr {
     return new Expr(PRECEDENCE.atomic, String(value));
 }
 
-export function nullLiteral(): Expr {
-    return new Expr(PRECEDENCE.atomic, 'null');
-}
-
 /** `{a, b}`. Empty throws, for the reason on `isIn`. */
 export function set(values: readonly Expr[]): Expr {
     if (values.length === 0) {
@@ -201,12 +170,6 @@ export function record(entries: Readonly<Record<string, Expr>>): Expr {
 /** A named function: `count()`, `nucleotideEquals(position := 1, …)`. */
 export function fn(name: string, args?: Args): Expr {
     return new Expr(PRECEDENCE.atomic, `${name}(${renderArgs(args)})`);
-}
-
-/** A named function that takes positional arguments followed by named ones. */
-export function callWith(name: string, positional: readonly Expr[], named: Readonly<Record<string, Expr>>): Expr {
-    const parts = [renderArgs(positional), renderArgs(named)].filter((part) => part !== '');
-    return new Expr(PRECEDENCE.atomic, `${name}(${parts.join(', ')})`);
 }
 
 /**

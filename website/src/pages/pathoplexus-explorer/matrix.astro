@@ -2,7 +2,11 @@
 import { MatrixPage } from '../../components/pathoplexusExplorer/matrix/MatrixPage';
 import { getPathoplexusExplorerConfig } from '../../config';
 import ReportLayout from '../../layouts/pathoplexusExplorer/ReportLayout.astro';
-import { matrixPageTitle } from '../../pathoplexusExplorer/pageState/matrixAddress';
+import { isMatrixAddress, matrixPageTitle } from '../../pathoplexusExplorer/pageState/matrixAddress';
+
+if (!isMatrixAddress(Astro.url.searchParams)) {
+    return Astro.rewrite('/404');
+}
 
 const explorer = getPathoplexusExplorerConfig();
 

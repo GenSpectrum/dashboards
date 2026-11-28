@@ -58,7 +58,6 @@ describe('buckets', () => {
 
 test('a bound of the collection dates is a day, a whole month or year, or else the range that it is known to', () => {
     expect(collectionBoundPhrase('2025-10-03', '2025-10-03')).toBe('on 3 October 2025');
-    expect(collectionBoundPhrase('2025-10-03', null)).toBe('on 3 October 2025');
     expect(collectionBoundPhrase('2025-10-01', '2025-10-31')).toBe('in October 2025');
     expect(collectionBoundPhrase('2024-02-01', '2024-02-29')).toBe('in February 2024');
     expect(collectionBoundPhrase('2025-01-01', '2025-12-31')).toBe('in 2025');

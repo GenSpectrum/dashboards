@@ -1,11 +1,12 @@
 import type { FC } from 'react';
 
-import { Bar, ReportLink, restLabel, sumOf, Table } from './Layout.tsx';
+import { Bar, ReportLink, restLabel, Table } from './Layout.tsx';
 import { exactName, type BreakdownSpec, type Part } from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
-import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
+import { formatCount, formatProportion, sumOf } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import type { Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { capitalized } from '../../../pathoplexusExplorer/domain/text.ts';
 import { OTHER_COLOR } from '../charts/colors.ts';
+import { Loading } from '../ui/States.tsx';
 
 export type TreeEntry = { label: string; href?: string };
 
@@ -24,12 +25,15 @@ export type TreeRow = {
 const SHOWN_BRANCHES = 10;
 
 type LineageTreeProps = {
-    rows: readonly TreeRow[];
-    total: number;
+    rows: readonly TreeRow[] | undefined;
+    total: number | undefined;
     title: string;
 };
 
 export const LineageTree: FC<LineageTreeProps> = ({ rows, total, title }) => {
+    if (rows === undefined || total === undefined) {
+        return <Loading height='h-32' />;
+    }
     const top = Math.max(1, ...rows.map((row) => row.n ?? 0));
     const nested = rows.some((row) => row.nested === true);
     return (
@@ -86,7 +90,7 @@ type RowsOptions = {
     subject: TreeEntry;
     spec: BreakdownSpec | undefined;
     parts: readonly Part[];
-    total: number;
+    total: number | undefined;
     href: (what: Subject) => string | undefined;
     what: string;
     shown?: number;

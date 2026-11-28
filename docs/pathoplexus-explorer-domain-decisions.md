@@ -6,11 +6,15 @@ The reports and matrix use the following rules to count and compare Pathoplexus 
 
 The Explorer counts one row per sequence entry, using its latest version and excluding revocations. A sample may have more than one sequence entry.
 
-Pathoplexus represents collection dates as ranges. An entry belongs to a selected period or a chart interval only if its entire collection date range fits. An entry with no collection date may still have an upper bound taken from its release date. A filter with only an end date therefore also checks that the lower bound is present.
+Pathoplexus represents collection dates as ranges. An entry belongs to a selected period or a chart interval only if its entire collection date range fits. An entry with no collection date may still have an upper bound taken from its release date. A report with only a start date uses its written date as the upper bound. A filter with only an end date therefore also checks that the lower bound is present. In the matrix, “No collection year” includes entries with a missing bound or a date range spanning calendar years.
+
+Lineage reports give the earliest and latest collection dates as ranges. They omit those dates when a recorded lower bound has no valid upper bound.
 
 ## Geography and hosts
 
-The Explorer uses UN M49 for continents and subregions. Country and division names are normalized to match the areas drawn on the maps, which can use historical boundaries or combine several divisions. Within the selected scope, entries without a mappable location still contribute to the totals. A count of countries includes only places that M49 assigns to a continent, so recorded oceans are not counted as countries. Filters use the same normalization as the breakdowns, so selecting a displayed area retrieves the entries counted for it.
+Inverting a Matrix filter keeps every sequence outside the selected categories, including sequences with a missing value when the missing category is outside the selection.
+
+The Explorer uses UN M49 for continents and subregions. The Explorer uses current administrative divisions for all collection periods. A former division can contribute to a present-day area when its location identifies a single successor. Reports count a province or state only when the country’s lookup identifies the division. An entry with a city, free-text note, or ambiguous location still contributes to its country's total and accession list. A count of countries includes only places that M49 assigns to a continent, so recorded oceans are not counted as countries. Regional counts include records such as Borneo, Korea, and Yugoslavia when the region is known. Country totals require a location attributable to one country or area. Historical names follow the [INSDC geographic vocabulary](https://www.insdc.org/submitting-standards/geo_loc_name-qualifier-vocabulary/) and [M49 territorial changes](https://unstats.un.org/unsd/methodology/m49/). Filters use the same normalization as the breakdowns, so selecting a displayed area retrieves the entries counted for it.
 
 Host groups come from the NCBI taxonomy. A host shown as an arthropod is classified by taxonomy. Its role in transmission cannot be inferred from that group. Unclassified hosts and entries without a recorded host are counted separately.
 

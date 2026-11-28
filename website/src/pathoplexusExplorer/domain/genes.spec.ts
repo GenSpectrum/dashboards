@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 
 import { reverseComplement } from './codons.ts';
-import { codonOf, locateGenes, residueAt, type GeneLocation } from './genes.ts';
+import { codonOf, locateGenes, type GeneLocation } from './genes.ts';
 import { defined } from '../test/defined.fixture.ts';
 
 const protein = 'MSNK';
@@ -44,21 +44,11 @@ test('a protein no reading frame holds is reported as not located rather than pl
     expect(edited.repeated.has('V')).toBe(false);
 });
 
-test('a residue names the three bases that write it, and a base names the residue it writes', () => {
-    const f = geneOf('F');
-    const second = defined(codonOf(f, 2, forward), 'the second codon of F');
+test('a residue names the three bases that write it', () => {
+    const second = defined(codonOf(geneOf('F'), 2, forward), 'the second codon of F');
     expect(second.positions).toEqual([10, 11, 12]);
     expect(second.bases).toBe('AGC');
     expect(second.residue).toBe('S');
-
-    const found = residueAt([f], 'main', 11);
-    expect(found).toHaveLength(1);
-    expect(found[0].residue).toBe(2);
-    expect(found[0].offset).toBe(2);
-});
-
-test('a base outside every located gene belongs to none of them', () => {
-    expect(residueAt([geneOf('F')], 'main', 1)).toEqual([]);
 });
 
 test('a protein that the genome writes twice is not placed at either copy', () => {

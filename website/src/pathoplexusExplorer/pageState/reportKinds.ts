@@ -1,5 +1,5 @@
-import { formatLongDate, periodKey } from '../domain/dates.ts';
-import { placeKey, placeLabel, subregionOf, type Place } from '../domain/geography.ts';
+import { formatLongDate, hasReversedDates, periodKey, reportPeriod, todayUtc } from '../domain/dates.ts';
+import { placeKey, placeLabel, placedCountryOf, type Place } from '../domain/geography.ts';
 import type { ReportKind, ReportRef } from '../domain/reports.ts';
 import type { Period } from '../domain/scope.ts';
 import { subjectKey, subjectPhrase, subjectTitle, type Subject } from '../domain/subject.ts';
@@ -89,35 +89,26 @@ export function titleOf(reference: ReportRef): string {
     }
 }
 
-export function scopeLine(reference: ReportRef, today: string = currentDate()): string {
-    const period = periodLabel(reference.period, today);
+export function scopeLine(reference: ReportRef, today: string = todayUtc()): string {
+    const period = periodLabel(reportPeriod(reference.period, today));
     if (reference.kind === 'location' || reference.where.level === 'world') {
         return reference.kind === 'location' ? period : `Worldwide · ${period}`;
     }
     return `${placeLabel(reference.where)} · ${period}`;
 }
 
-function periodLabel(period: Period, today: string): string {
-    if (period.from === undefined && period.to === undefined) {
+function periodLabel({ from, to }: Period): string {
+    if (to === undefined) {
         return 'all collection dates';
     }
-    if (period.from !== undefined && period.to !== undefined) {
-        return `collected between ${formatLongDate(period.from)} and ${formatLongDate(period.to)}`;
-    }
-    // Use the report date as the display end of an open collection period.
-    return period.from !== undefined
-        ? `collected between ${formatLongDate(period.from)} and ${formatLongDate(today)}`
-        : `collected up to ${formatLongDate(period.to)}`;
-}
-
-function currentDate(): string {
-    return new Date().toISOString().slice(0, 10);
+    return from === undefined
+        ? `collected up to ${formatLongDate(to)}`
+        : `collected between ${formatLongDate(from)} and ${formatLongDate(to)}`;
 }
 
 /** Why no sequences can match a report's scope, if none can. */
 export function impossibleScope(reference: ReportRef): string | undefined {
-    const { from, to } = reference.period;
-    if (from !== undefined && to !== undefined && from > to) {
+    if (hasReversedDates(reportPeriod(reference.period))) {
         return 'Error: The selected start date is after the end date.';
     }
     const country = unknownCountryOf(reference.where);
@@ -128,5 +119,5 @@ function unknownCountryOf(where: Place): string | undefined {
     if (where.level !== 'country' && where.level !== 'admin1') {
         return undefined;
     }
-    return subregionOf(where.country) === undefined ? where.country : undefined;
+    return placedCountryOf(where.country) === undefined ? where.country : undefined;
 }

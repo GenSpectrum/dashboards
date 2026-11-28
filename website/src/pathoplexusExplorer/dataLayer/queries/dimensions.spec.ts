@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
+import { COLUMNS } from './columns.ts';
 import { dimensionById, dimensionsFor, labelOf, NOTHING, type Dimension, type ValuesLookup } from './dimensions.ts';
-import { COLUMNS } from './scope.ts';
 import { CATALOG } from '../../domain/catalog.ts';
 import { allPathogens } from '../../domain/subject.ts';
 import { defined } from '../../test/defined.fixture.ts';
@@ -63,8 +63,10 @@ describe('the host group dimension', () => {
         expect(host.valueOf(row(null, null))).toBe('unknown');
     });
 
-    test('keeps exactly the hosts that reading places in the chosen group', () => {
-        expect(host.filterOf?.(['vector'], LOOKUP)?.render()).toBe("hostNameScientific = 'Aedes aegypti'");
+    test('keeps exactly the hosts that it places in the chosen group', () => {
+        expect(host.filterOf?.(['vector'], LOOKUP)?.render()).toBe(
+            "isNotNull(hostNameScientific) && hostNameScientific = 'Aedes aegypti'",
+        );
     });
 
     test('selects the rows recording no host at all for the group they are counted in', () => {
@@ -98,14 +100,17 @@ describe('the collection year dimension', () => {
 
     test('asks for the whole range to lie inside the year chosen', () => {
         expect(year.filterOf?.(['2024'], LOOKUP)?.render()).toBe(
-            "sampleCollectionDateRangeLower >= '2024-01-01'::date && sampleCollectionDateRangeUpper <= '2024-12-31'::date",
+            'isNotNull(sampleCollectionDateRangeLower) && isNotNull(sampleCollectionDateRangeUpper) && ' +
+                "sampleCollectionDateRangeLower >= '2024-01-01'::date && sampleCollectionDateRangeUpper <= '2024-12-31'::date",
         );
     });
 
     test('keeps the sequences with no collection date among those with no year', () => {
-        const filter = year.filterOf?.([NOTHING], LOOKUP)?.render() ?? '';
-        expect(filter).toContain('isNull(sampleCollectionDateRangeLower)');
-        expect(filter).toContain('isNull(sampleCollectionDateRangeUpper)');
+        const filter = year.filterOf?.([NOTHING], { ...LOOKUP, years: ['1899', '2100'] })?.render() ?? '';
+        expect(filter).toContain("'1899-01-01'::date");
+        expect(filter).toContain("'2100-12-31'::date");
+        expect(filter).toContain('isNotNull(sampleCollectionDateRangeLower)');
+        expect(filter).toContain('isNotNull(sampleCollectionDateRangeUpper)');
     });
 
     test('offers the most recent year first', () => {
@@ -184,20 +189,25 @@ describe('the province or state dimension', () => {
         const usa = defined(provinces('USA'), 'the USA province dimension');
         expect(usa.valueOf({ [COLUMNS.admin1]: 'not applicable' })).toBe(NOTHING);
         expect(usa.filterOf?.([NOTHING], illinois)?.render()).toBe(
-            "geoLocAdmin1 = 'not applicable' || isNull(geoLocAdmin1)",
+            "isNull(geoLocAdmin1) || geoLocAdmin1 = 'not applicable'",
+        );
+    });
+
+    test('unresolved locations stay filterable by their recorded name and group separately from missing divisions', () => {
+        const usa = defined(provinces('USA'), 'the USA province dimension');
+        const lookup = { admin1Names: ['imported', 'unspecified town', 'Texas', null] };
+        expect(usa.valueOf({ [COLUMNS.admin1]: 'imported' })).toBe('Unassigned');
+        expect(usa.filterOf?.(['Unassigned'], lookup)?.render()).toBe(
+            "isNotNull(geoLocAdmin1) && geoLocAdmin1.in({'imported', 'unspecified town'})",
+        );
+        expect(usa.filterOf?.(['imported'], lookup)?.render()).toBe(
+            "isNotNull(geoLocAdmin1) && geoLocAdmin1 = 'imported'",
         );
     });
 
     test('a division that nothing in the country is recorded under keeps nothing', () => {
         const usa = defined(provinces('USA'), 'the USA province dimension');
         expect(usa.filterOf?.(['Nowhere'], illinois)?.render()).toBe('false');
-    });
-
-    test('the rows recording nothing are the ones no division places', () => {
-        const usa = defined(provinces('USA'), 'the USA province dimension');
-        const filter = usa.filterOf?.([NOTHING], illinois)?.render();
-        expect(filter).toContain('isNull(geoLocAdmin1)');
-        expect(filter).toContain("'not applicable'");
     });
 });
 
@@ -212,7 +222,9 @@ describe('the host dimension, by name', () => {
     });
 
     test('keeps the rows it counted, the blank names among them', () => {
-        expect(hostName.filterOf?.(['Aedes aegypti'], LOOKUP)?.render()).toBe("hostNameScientific = 'Aedes aegypti'");
+        expect(hostName.filterOf?.(['Aedes aegypti'], LOOKUP)?.render()).toBe(
+            "isNotNull(hostNameScientific) && hostNameScientific = 'Aedes aegypti'",
+        );
         const nothing = hostName.filterOf?.([NOTHING], { hosts: [{ name: ' ', taxon: null }] })?.render();
         expect(nothing).toBe("isNull(hostNameScientific) || hostNameScientific = ' '");
     });

@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 
-import { merged, useLineageHierarchy, useScopeFilters, type Loadable } from './analyses.ts';
-import { useCarriers, useProportionOverTime, type Carriers, type ProportionRows } from './genomics.ts';
+import { useLineageHierarchy, useScopeFilters } from './analyses.ts';
+import { useComparisonRows, useProportionOverTime } from './genomics.ts';
+import { combineQueryResults, type Loadable } from './queryResult.ts';
 import { useManyRows, useRows } from './rhydbQuery.ts';
 import { useGenome, useReferenceSequences, type Genome, type ReferenceSymbols } from './useGenome.ts';
 import { CATALOG } from '../../domain/catalog.ts';
 import type { Place } from '../../domain/geography.ts';
 import type { Hierarchy } from '../../domain/lineages.ts';
-import { displayNameOf } from '../../domain/reference.ts';
 import type { Period } from '../../domain/scope.ts';
 import { formatCount } from '../../domain/statistics.ts';
 import { pathogenOf, type Catalog, type Subject } from '../../domain/subject.ts';
@@ -20,17 +20,13 @@ import {
     type ReferenceSequences,
     type ResolvedInsertion,
     type ResolvedMutation,
-    type MutationKind,
     type ResolvedNode,
 } from '../../domain/variant.ts';
-import { AMBIGUOUS_AMINO_ACIDS, AMBIGUOUS_NUCLEOTIDES } from '../../mappingData/ambiguousSymbols.ts';
+import type { ProportionRows } from '../queries/genomics.ts';
+import { positionReadingOf, coverageRowsOf, type PositionReading } from '../queries/positions.ts';
 import type { ResolvedScope } from '../queries/resolve.ts';
 import { columnsOf } from '../queries/scope.ts';
 import { symbolCountsQuery } from '../queries/sequences.ts';
-import { readOptionalText, type RhydbRow } from '../transport/row.ts';
-
-/** In a mutation query, a dot matches the reference symbol. */
-const REFERENCE_SYMBOL = '.';
 
 /** Position summaries use the mutations. Insertions take part in the filter only. */
 export type MutationSubject = {
@@ -86,7 +82,7 @@ export function useSubject(what: Subject | undefined, query: string, catalog: Ca
             : sequences === undefined
               ? { error: `Choose a ${column} first: this pathogen has one reference genome per ${column}.` }
               : resolve(query, sequences, what, trees);
-    return merged(data, [references, hierarchy]);
+    return combineQueryResults(data, [references, hierarchy]);
 }
 
 function resolve(query: string, sequences: ReferenceSequences, what: Subject, hierarchy: Hierarchy): SubjectResult {
@@ -106,32 +102,6 @@ function resolve(query: string, sequences: ReferenceSequences, what: Subject, hi
         return { error: 'This query does not define a mutation.' };
     }
     return { subject: { node: resolved.node, mutations: found, insertions, sequences } };
-}
-
-export type PositionReading = {
-    mutation: ResolvedMutation;
-    /** Remove the serotype suffix for the displayed gene name. */
-    display: string;
-    /** Sequences with a called symbol at this position. */
-    read: number;
-    carriers: number;
-    ambiguous: number;
-    absent: number;
-    reference: string | undefined;
-};
-
-/** Use distinct ambiguity codes for nucleotides and amino acids. */
-const AMBIGUOUS = {
-    nucleotide: new Set(AMBIGUOUS_NUCLEOTIDES),
-    aminoAcid: new Set(AMBIGUOUS_AMINO_ACIDS),
-};
-
-function isAmbiguous(symbol: string | null, kind: MutationKind): boolean {
-    if (symbol === null) {
-        return false;
-    }
-    const upper = symbol.toUpperCase();
-    return kind === MUTATION_KIND.nucleotide ? AMBIGUOUS.nucleotide.has(upper) : AMBIGUOUS.aminoAcid.has(upper);
 }
 
 export function usePositions(
@@ -156,9 +126,14 @@ export function usePositions(
         rows.data === undefined || subject === undefined
             ? undefined
             : mutations.map((mutation, index) =>
-                  readingOf(mutation, subject, rows.data?.[index] ?? [], referenceSymbol(reference, mutation)),
+                  positionReadingOf(
+                      mutation,
+                      subject.sequences,
+                      rows.data?.[index] ?? [],
+                      referenceSymbol(reference, mutation),
+                  ),
               );
-    return merged(data, [parent, rows]);
+    return combineQueryResults(data, [parent, rows]);
 }
 
 /** Use the actual reference symbol for the position, regardless of the prefix in the query. */
@@ -176,43 +151,14 @@ function referenceSymbol(
     return source?.[mutation.position - 1];
 }
 
-function readingOf(
-    mutation: ResolvedMutation,
-    subject: MutationSubject,
-    rows: readonly RhydbRow[],
-    from: string | undefined,
-): PositionReading {
-    const group = groupsOf(rows, mutation, [], from).reduce(
-        (sum, entry) => ({ covered: sum.covered + entry.covered, carriers: sum.carriers + entry.carriers }),
-        { covered: 0, carriers: 0 },
-    );
-    const sumWhere = (keep: (symbol: string | null) => boolean) =>
-        rows.reduce((sum, row) => (keep(readOptionalText(row, 'symbol')) ? sum + Number(row.n ?? 0) : sum), 0);
-    return {
-        mutation,
-        display: displayNameOf(subject.sequences, mutation.sequence),
-        read: group.covered,
-        carriers: group.carriers,
-        ambiguous: sumWhere((symbol) => isAmbiguous(symbol, mutation.kind)),
-        absent: sumWhere((symbol) => symbol === null),
-        reference: from,
-    };
-}
-
-export type SymbolGroup = {
-    values: (string | null)[];
-    covered: number;
-    carriers: number;
-};
-
 /** Compute coverage-adjusted proportions only for a query consisting of one mutation. */
-export function useSymbolGroups(
+export function useCoverageByGroup(
     parent: Loadable<ResolvedScope>,
     subject: MutationSubject | undefined,
     reference: ReferenceSymbols | undefined,
     by: readonly string[],
     enabled = true,
-): Loadable<SymbolGroup[]> {
+): Loadable<ProportionRows> {
     const scope = parent.data;
     const mutation = subject?.mutations.length === 1 ? subject.mutations[0] : undefined;
     const query =
@@ -228,52 +174,20 @@ export function useSymbolGroups(
     const rows = useRows(query, 'Carriers by group');
     const from = referenceSymbol(reference, mutation);
     const data = useMemo(
-        () => (rows.data === undefined || mutation === undefined ? undefined : groupsOf(rows.data, mutation, by, from)),
+        () =>
+            rows.data === undefined || mutation === undefined
+                ? undefined
+                : coverageRowsOf(rows.data, mutation, by, from),
         // eslint-disable-next-line react-hooks/exhaustive-deps -- `rows` was read for this mutation and scope
         [rows.data, mutation?.sequence, mutation?.position, mutation?.to, from, by.join('|')],
     );
-    return merged(data, [parent, rows]);
-}
-
-function groupsOf(
-    rows: readonly RhydbRow[],
-    mutation: ResolvedMutation,
-    by: readonly string[],
-    from: string | undefined,
-): SymbolGroup[] {
-    const groups = new Map<string, SymbolGroup>();
-    for (const row of rows) {
-        const values = by.map((column) => readOptionalText(row, column));
-        const key = values.map((value) => value ?? '\u0000').join('\u0001');
-        const group = groups.get(key) ?? { values, covered: 0, carriers: 0 };
-        const symbol = readOptionalText(row, 'symbol');
-        const n = Number(row.n ?? 0);
-        if (symbol !== null && !isAmbiguous(symbol, mutation.kind)) {
-            group.covered += n;
-            if (carries(symbol, mutation, from)) {
-                group.carriers += n;
-            }
-        }
-        groups.set(key, group);
-    }
-    return [...groups.values()];
-}
-
-function carries(symbol: string, mutation: ResolvedMutation, from: string | undefined): boolean {
-    const upper = symbol.toUpperCase();
-    if (mutation.to === undefined) {
-        return from !== undefined && upper !== from.toUpperCase();
-    }
-    if (mutation.to === REFERENCE_SYMBOL) {
-        return upper === from?.toUpperCase();
-    }
-    return upper === mutation.to.toUpperCase();
+    return combineQueryResults(data, [parent, rows]);
 }
 
 export type MutationReads = {
     resolved: Loadable<ResolvedScope[]>;
-    carriers: Loadable<Carriers>;
-    proportion: Loadable<ProportionRows[]>;
+    carriers: Loadable<ProportionRows>;
+    proportion: Loadable<ProportionRows>;
     positions: Loadable<PositionReading[]>;
 };
 
@@ -290,10 +204,9 @@ export function useMutationReads(options: {
     const { what, where, query, period, subject, column, reference, catalog } = options;
     const base = { what, where, period };
     const resolved = useScopeFilters([{ ...base, variant: query }, base], catalog);
-    const own: Loadable<ResolvedScope> = { ...resolved, data: resolved.data?.[0] };
     const all: Loadable<ResolvedScope> = { ...resolved, data: resolved.data?.[1] };
-    const carriers = useCarriers(own, all, column, column !== undefined);
-    const proportion = useProportionOverTime(resolved, [{ own: 0, all: 1 }], true);
+    const carriers = useComparisonRows(resolved, column === undefined ? undefined : [column], 'Carriers');
+    const proportion = useProportionOverTime(resolved, true);
     const positions = usePositions(all, subject, reference);
     return { resolved, carriers, proportion, positions };
 }

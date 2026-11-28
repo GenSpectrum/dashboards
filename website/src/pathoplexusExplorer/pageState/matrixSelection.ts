@@ -1,38 +1,51 @@
 import { NOTHING, type Dimension } from '../dataLayer/queries/dimensions.ts';
 import { acceptedValues, type Constraint, type Constraints } from '../dataLayer/queries/selection.ts';
+import { canQuote } from '../dataLayer/transport/escape.ts';
 import { decodedValue } from '../domain/text.ts';
 
 const NOTHING_TOKEN = '(none)';
 
-export function parseConstraints(text: string | null): Constraints {
-    // Use a prototype-free object for keys read from the URL.
-    const dimensions = Object.create(null) as Record<string, Constraint>;
-    for (const part of (text ?? '').split(';')) {
+export function parseConstraints(text: string | null): Constraints | undefined {
+    const dimensions: Record<string, Constraint> = Object.create(null);
+    if (text === null || text === '') {
+        return dimensions;
+    }
+    for (const part of text.split(';')) {
         const equals = part.indexOf('=');
-        if (equals <= 0) {
-            continue;
-        }
         const id = decodedValue(part.slice(0, equals));
         const body = part.slice(equals + 1);
         const exclude = body.startsWith('!');
-        const values = (exclude ? body.slice(1) : body)
-            .split(',')
-            .filter((value) => value !== '')
-            .map((value) => (value === NOTHING_TOKEN ? NOTHING : decodedValue(value)));
-        if (values.length > 0) {
-            dimensions[id] = exclude ? { values, exclude } : { values };
+        if (equals <= 0 || Object.hasOwn(dimensions, id)) {
+            return undefined;
         }
+        const values = [];
+        for (const token of (exclude ? body.slice(1) : body).split(',')) {
+            const value = decodedValue(token);
+            if (value === '' || !canQuote(value)) {
+                return undefined;
+            }
+            values.push(token === NOTHING_TOKEN ? NOTHING : value);
+        }
+        dimensions[id] = exclude ? { values, exclude } : { values };
     }
     return dimensions;
+}
+
+function encodeFilterValue(value: string): string {
+    if (value === NOTHING) {
+        return NOTHING_TOKEN;
+    }
+    if (value === NOTHING_TOKEN) {
+        return '%28none%29';
+    }
+    return encodeURIComponent(value).replace(/^!/, '%21');
 }
 
 export function formatConstraints(dimensions: Constraints): string {
     return Object.entries(dimensions)
         .filter((entry): entry is [string, Constraint] => (entry[1]?.values.length ?? 0) > 0)
         .map(([id, constraint]) => {
-            const values = constraint.values
-                .map((value) => (value === NOTHING ? NOTHING_TOKEN : encodeURIComponent(value)))
-                .join(',');
+            const values = constraint.values.map(encodeFilterValue).join(',');
             return `${encodeURIComponent(id)}=${constraint.exclude === true ? '!' : ''}${values}`;
         })
         .join(';');

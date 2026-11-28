@@ -1,12 +1,12 @@
 import { readdirSync, readFileSync } from 'node:fs';
 
-import { geoArea } from 'd3-geo';
+import { geoArea, geoContains } from 'd3-geo';
 import type { Topology } from 'topojson-specification';
 import { describe, expect, test } from 'vitest';
 
 import { mapFeaturesOf, scaleFor } from './geo.ts';
+import { mappedCountries } from '../../../pathoplexusExplorer/domain/divisions.ts';
 import { WORLD_MAP_NAME } from '../../../pathoplexusExplorer/domain/mapGeometry.ts';
-import { PROVINCE_MAP_COUNTRIES } from '../../../pathoplexusExplorer/mappingData/provinceMaps.ts';
 
 const HALF_SPHERE = 2 * Math.PI;
 
@@ -16,7 +16,23 @@ const MAPS = readdirSync('public/mapData')
 
 describe('mapFeaturesOf', () => {
     test('every map file is used by the Explorer', () => {
-        expect([...MAPS].sort()).toEqual([...PROVINCE_MAP_COUNTRIES, WORLD_MAP_NAME].sort());
+        expect([...MAPS].sort()).toEqual([...mappedCountries, WORLD_MAP_NAME].sort());
+    });
+
+    test.each([
+        ['Argentina', -58.45, -34.61, 'Ciudad de Buenos Aires'],
+        ['Argentina', -57.95, -34.92, 'Provincia de Buenos Aires'],
+        ['Russia', 37.62, 55.75, 'Moscow City'],
+        ['Russia', 38.67, 55.15, 'Moscow Oblast'],
+        ['Russia', 85.95, 51.95, 'Altai Republic'],
+        ['Russia', 83.78, 53.35, 'Altai Krai'],
+        ['Laos', 102.65, 18.12, 'Vientiane Capital'],
+        ['Laos', 102.22, 18.61, 'Vientiane Province'],
+        ['Laos', 103.04, 18.87, 'Xaisomboon'],
+    ] as const)('places %s at (%s, %s) in %s alone', (country, longitude, latitude, expected) => {
+        const topology = JSON.parse(readFileSync(`public/mapData/${country}.topo.json`, 'utf8')) as Topology;
+        const areas = mapFeaturesOf(topology, country).filter((shape) => geoContains(shape, [longitude, latitude]));
+        expect(areas.map((shape) => shape.properties.name)).toEqual([expected]);
     });
 
     test.each(MAPS)('draws every area of %s on its own side of the globe', (map) => {

@@ -1,55 +1,50 @@
 /** Count each filter's options with its own constraint omitted. */
 
-import { useMemo } from 'react';
-
-import { merged, useSubtypeColumns, type Loadable } from './analyses.ts';
+import { combineQueryResults, readQueryData, type Loadable } from './queryResult.ts';
 import { useManyRows, useRows } from './rhydbQuery.ts';
-import { CATALOG } from '../../domain/catalog.ts';
-import { countryNamesOf } from '../../domain/geography.ts';
-import { allPathogens, type Pathogen } from '../../domain/subject.ts';
-import { dataUseTermsAcross, groupAcross, valuesQuery } from '../queries/builders.ts';
-import {
-    labelOf,
-    levelsOf,
-    NOTHING,
-    type ColumnCheck,
-    type Dimension,
-    type ValuesLookup,
-} from '../queries/dimensions.ts';
-import { COLUMNS } from '../queries/scope.ts';
-import { compileSelection, PERIOD, type Constraints, type Selection } from '../queries/selection.ts';
-import { field, str } from '../transport/expression.ts';
+import type { Pathogen } from '../../domain/subject.ts';
+import { accessionListQuery } from '../queries/accessionList.ts';
+import { admin1ValuesQuery, groupAcross, valuesQuery } from '../queries/builders.ts';
+import { COLUMNS, type ColumnCheck } from '../queries/columns.ts';
+import { labelOf, levelsOf, type Dimension, type ValuesLookup } from '../queries/dimensions.ts';
+import { compileSelection, PATHOGEN_TABLES, PERIOD, type Selection } from '../queries/selection.ts';
 import type { Queryable } from '../transport/relation.ts';
 import { readOptionalText, type RhydbRow } from '../transport/row.ts';
-
-export function everyTable(): string[] {
-    return allPathogens(CATALOG).map((pathogen) => pathogen.table);
-}
-
-export function singlePathogenOf(tables: readonly string[]): Pathogen | undefined {
-    return tables.length === 1 ? allPathogens(CATALOG).find((entry) => entry.table === tables[0]) : undefined;
-}
-
-/** Province filters require one included country. An inverted selection does not qualify. */
-export function singleCountryOf(dimensions: Constraints): string | undefined {
-    const chosen = dimensions.country;
-    if (chosen === undefined || chosen.exclude === true || chosen.values.length !== 1) {
-        return undefined;
-    }
-    return chosen.values[0] === NOTHING ? undefined : chosen.values[0];
-}
 
 export type FilterValue = { value: string; label: string; n: number; depth: number };
 
 export type Filter = { dimension: Dimension; values: FilterValue[]; total: number };
+
+const collectionYearRangeQuery = groupAcross({
+    tables: PATHOGEN_TABLES,
+    filter: () => undefined,
+    columns: [],
+    aggregates: { first: { op: 'min', column: COLUMNS.lower }, last: { op: 'max', column: COLUMNS.lower } },
+});
+
+function collectionYears(rows: RhydbRow[]): string[] {
+    const range = rows.at(0);
+    if (range === undefined) {
+        return [];
+    }
+    const first = readOptionalText(range, 'first');
+    const last = readOptionalText(range, 'last');
+    if (first === null || last === null) {
+        return [];
+    }
+    const start = Number(first.slice(0, 4));
+    const end = Number(last.slice(0, 4));
+    return Array.from({ length: end - start + 1 }, (_, index) => String(start + index).padStart(4, '0'));
+}
 
 /** Wait for the column check so that the lookup asks only for subtype columns that the table has. */
 export function useValuesLookup(
     pathogen: Pathogen | undefined,
     country: string | undefined,
     available: Loadable<ColumnCheck>,
+    needsYearRange: boolean,
 ): Loadable<ValuesLookup> {
-    const tables = everyTable();
+    const tables = PATHOGEN_TABLES;
     const countries = useRows(valuesQuery(tables, COLUMNS.country), 'Recorded countries');
     const hosts = useRows(
         groupAcross({ tables, filter: () => undefined, columns: [COLUMNS.host, COLUMNS.hostTaxon] }),
@@ -63,24 +58,21 @@ export function useValuesLookup(
         'Recorded subtypes',
     );
     // Read division spellings only for the selected country.
-    const provinces = useManyRows(
-        country === undefined
-            ? []
-            : [
-                  valuesQuery(tables, COLUMNS.admin1, () =>
-                      field(COLUMNS.country).isIn(countryNamesOf(country).map(str)),
-                  ),
-              ],
+    const provinces = useRows(
+        country === undefined ? undefined : admin1ValuesQuery(tables, country),
         'Recorded provinces',
     );
-    const data: ValuesLookup | undefined =
+    const years = useRows(needsYearRange ? collectionYearRangeQuery : undefined, 'Filters', collectionYears);
+    const lookup = readQueryData<ValuesLookup>(() =>
         hasColumn === undefined ||
         countries.data === undefined ||
         hosts.data === undefined ||
         subtypes.data === undefined ||
-        provinces.data === undefined
+        (country !== undefined && provinces.data === undefined) ||
+        (needsYearRange && years.data === undefined)
             ? undefined
             : {
+                  years: years.data,
                   countries: countries.data.map((row) => readOptionalText(row, COLUMNS.country)),
                   hosts: hosts.data.map((row) => ({
                       name: readOptionalText(row, COLUMNS.host),
@@ -92,19 +84,10 @@ export function useValuesLookup(
                           (subtypes.data?.[index] ?? []).map((row) => readOptionalText(row, level.column)),
                       ]),
                   ),
-                  admin1Names: (provinces.data[0] ?? []).map((row) => readOptionalText(row, COLUMNS.admin1)),
-              };
-    return merged(data, [available, countries, hosts, subtypes, provinces]);
-}
-
-export function useAvailableColumns(): Loadable<ColumnCheck> {
-    const available = useSubtypeColumns(CATALOG);
-    const names = available.data;
-    const check = useMemo(
-        () => (names === undefined ? undefined : (table: string, column: string) => names.has(`${table}|${column}`)),
-        [names],
+                  admin1Names: (provinces.data ?? []).map((row) => readOptionalText(row, COLUMNS.admin1)),
+              },
     );
-    return merged(check, [available]);
+    return combineQueryResults(lookup.data, [available, countries, hosts, subtypes, provinces, years, lookup]);
 }
 
 type Reads = {
@@ -129,7 +112,7 @@ function queryFor(
     return compiled.tables.length === 0
         ? NO_TABLES
         : // The timeline groups by the collection date range, which is tens of thousands of distinct values,
-          // Use short aliases to keep large grouped responses compact.
+          // so short aliases keep large grouped responses compact.
           groupAcross({ tables: compiled.tables, filter: compiled.filter, columns, perTable, compact: true });
 }
 
@@ -146,7 +129,7 @@ export function useFilters(reads: Reads): Loadable<Filter[]> {
         result.data === undefined || queries.some((query) => query === undefined)
             ? undefined
             : dimensions.map((dimension, index) => filterFrom(dimension, result.data?.[index] ?? NO_ROWS));
-    return merged(data, [result]);
+    return combineQueryResults(data, [result]);
 }
 
 function filterFrom(dimension: Dimension, rows: readonly RhydbRow[]): Filter {
@@ -194,19 +177,17 @@ export function useCrossRows(
 
 function useRowsOf(query: Queryable | typeof NO_TABLES | undefined, label: string): Loadable<RhydbRow[]> {
     const result = useRows(query === NO_TABLES ? undefined : query, label);
-    return merged(query === NO_TABLES ? NO_ROWS : result.data, [result]);
+    return combineQueryResults(query === NO_TABLES ? NO_ROWS : result.data, [result]);
 }
 
 /** Read accessions on demand because the query can return the entire selection. */
-export function accessionListQuery(reads: Reads): Queryable | undefined {
+export function matrixAccessionListQuery(reads: Reads): Queryable | undefined {
     const { selection, dimensions, tables, lookup } = reads;
     if (lookup === undefined) {
         return undefined;
     }
     const compiled = compileSelection({ selection, dimensions, tables, lookup });
-    return compiled.tables.length === 0
-        ? undefined
-        : dataUseTermsAcross({ tables: compiled.tables, filter: compiled.filter });
+    return compiled.tables.length === 0 ? undefined : accessionListQuery(compiled.tables, compiled.filter);
 }
 
 export function useTimelineRows(reads: Reads): Loadable<RhydbRow[]> {

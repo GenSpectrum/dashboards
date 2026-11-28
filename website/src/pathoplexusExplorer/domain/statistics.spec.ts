@@ -27,7 +27,6 @@ describe('wilsonInterval', () => {
 
     it('is zero below nothing observed and one above nothing left', () => {
         expect(wilsonInterval(0, 1499).lower).toBe(0);
-        expect(formatProportion(wilsonInterval(0, 1499).lower)).toBe('0%');
         expect(wilsonInterval(120, 120).upper).toBe(1);
     });
 

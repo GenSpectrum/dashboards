@@ -3,7 +3,7 @@ import { expect, test } from 'vitest';
 /* eslint-disable @typescript-eslint/naming-convention -- the keys are lineage names */
 
 import { DEFINITION_COLUMN, DEFINITION_JSON } from './definitions.ts';
-import { hierarchyOf, resolveScopes, scopePlan } from './resolve.ts';
+import { hierarchyOf, scopePlan } from './resolve.ts';
 import { CATALOG } from '../../domain/catalog.ts';
 import { WORLD } from '../../domain/geography.ts';
 import type { Scope } from '../../domain/scope.ts';
@@ -37,7 +37,8 @@ test('a province is resolved against the spellings the country records', () => {
     const plan = scopePlan([scope], CATALOG);
     const rows = [[{ geoLocAdmin1: 'Illinois' }, { geoLocAdmin1: 'IL' }, { geoLocAdmin1: 'Texas' }]];
 
-    const [resolved] = resolveScopes(plan, rows, HIERARCHY);
+    expect(() => plan.resolve([[{ wrongColumn: 'IL' }]], HIERARCHY)).toThrow('geoLocAdmin1');
+    const [resolved] = plan.resolve(rows, HIERARCHY);
 
     expect(resolved.filter('rsv_a')?.render()).toBe("geoLocCountry = 'USA' && geoLocAdmin1.in({'Illinois', 'IL'})");
 });

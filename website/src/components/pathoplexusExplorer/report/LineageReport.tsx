@@ -1,32 +1,19 @@
 import { type FC, useMemo } from 'react';
 
 import { Citation } from './Citation.tsx';
+import { Composition } from './Composition.tsx';
+import { DistributionOverTime } from './DistributionOverTime.tsx';
+import { ProportionFigure } from './DistributionOverTime.tsx';
+import { GeographicDistribution } from './GeographicDistribution.tsx';
 import { KeyFigures, Prose, ReportLink, Section, Table } from './Layout.tsx';
 import { classificationRows, LineageTree, type TreeEntry } from './LineageTree.tsx';
 import { nomenclatureNote } from './Nomenclature.tsx';
-import { mapTitleOf, ReportMap } from './ReportMap.tsx';
+import { mapTitleOf } from './ReportMap.tsx';
+import { ReportMetadataSections } from './ReportMetadataSections.tsx';
 import { ReportShell } from './ReportShell.tsx';
-import {
-    AreasTable,
-    Composition,
-    Hosts,
-    MetadataAvailability,
-    OverTime,
-    ProportionFigure,
-    Submitters,
-    unplacedNote,
-} from './Sections.tsx';
-import {
-    areaScale,
-    counted,
-    hasPlacesBelow,
-    plural,
-    rankAreas,
-    spreadFigure,
-    spreadPhrase,
-    unplacedIn,
-} from './areaScale.ts';
-import { useLineageHierarchy, type Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import { plural, spreadFigure, spreadPhrase } from './areaScale.ts';
+import { useLineageHierarchy } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import { type Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/queryResult.ts';
 import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
 import {
     proportionBaseOf,
@@ -36,7 +23,8 @@ import {
     PARENT_MAX,
     type LineageMutations,
 } from '../../../pathoplexusExplorer/dataLayer/hooks/useLineage.ts';
-import { firstError, useReportBasics } from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
+import { firstError, useReportData } from '../../../pathoplexusExplorer/dataLayer/hooks/useReportData.ts';
+import { collectionBoundsOf } from '../../../pathoplexusExplorer/dataLayer/queries/summary.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { collectionBoundPhrase } from '../../../pathoplexusExplorer/domain/dates.ts';
 import type { Place } from '../../../pathoplexusExplorer/domain/geography.ts';
@@ -63,11 +51,9 @@ const SHOWN_MUTATIONS = 10;
 type LineageReportProps = { reference: ReportRef & { kind: 'lineage' }; entries: ReportEntries };
 
 export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) => {
-    const period = reference.period;
-    const where = reference.where;
-    const what = reference.what;
+    const { period, where, what } = reference;
     const scope = useMemo(() => ({ what, where, period }), [what, where, period]);
-    const basics = useReportBasics(scope, CATALOG);
+    const report = useReportData(scope, CATALOG);
     const hierarchy = useLineageHierarchy(CATALOG).data ?? NO_HIERARCHY;
     const parent = parentSubject(what, hierarchy);
     // Compare mutations only across scopes that share the same reference.
@@ -75,12 +61,14 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
     const mutations = useLineageMutations({ what, where, period, catalog: CATALOG });
     const proportion = useLineageProportion({ what, where, period, catalog: CATALOG });
     const base = useMemo(() => proportionBaseOf(what), [what]);
-    const error = firstError(basics);
-    const summary = basics.summary.data;
+    const error = firstError(report);
+    const summary = report.summary.data;
+    const dateRows = report.overTime.data;
+    const dates = useMemo(() => (dateRows === undefined ? undefined : collectionBoundsOf(dateRows)), [dateRows]);
     const total = summary?.n ?? 0;
-    const grouped = basics.breakdown.data;
+    const grouped = report.breakdown.data;
     const children = useMemo(() => grouped ?? [], [grouped]);
-    const spec = basics.spec.data;
+    const spec = report.spec.data;
     const level = spec?.title ?? 'Sublineage';
     // Fall back to geography when the lineage has no finer classification.
     const classification = spec?.of === 'classification';
@@ -101,16 +89,12 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
                 subject: { label: subjectLabel(what) },
                 spec,
                 parts: children,
-                total,
+                total: summary?.n,
                 href: lineageHref,
                 what: level.toLowerCase(),
             }),
-        [ancestors, what, spec, children, total, lineageHref, level],
+        [ancestors, what, spec, children, summary?.n, lineageHref, level],
     );
-    const scale = useMemo(() => areaScale(where), [where]);
-    const mapRows = basics.map.data?.rows;
-    const areas = useMemo(() => rankAreas(scale, counted(mapRows ?? [])), [scale, mapRows]);
-    const unplaced = useMemo(() => unplacedIn(where, mapRows ?? [], areas), [where, mapRows, areas]);
 
     return (
         <ReportShell reference={reference}>
@@ -120,15 +104,14 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
                 number={1}
                 title='Dataset'
                 lead={
-                    summary === undefined ? (
+                    summary === undefined || dates === undefined ? (
                         'Counting the sequences…'
                     ) : (
                         <>
                             <strong>Pathoplexus</strong> holds <strong>{formatCount(total)}</strong> sequences assigned
-                            to {subjectLabel(what)}, {spreadPhrase(where, basics.map.data?.rows, summary.countries)}
-                            {summary.firstCollectedFrom !== null &&
-                                summary.lastCollected !== null &&
-                                `, the first collected ${collectionBoundPhrase(summary.firstCollectedFrom, summary.firstCollected)} and the last collected ${collectionBoundPhrase(summary.lastCollected, summary.lastCollectedTo)}`}
+                            to {subjectLabel(what)}, {spreadPhrase(where, report.map.data?.rows, summary.countries)}
+                            {dates !== null &&
+                                `, the first collected ${collectionBoundPhrase(dates.firstFrom, dates.firstTo)} and the last collected ${collectionBoundPhrase(dates.lastFrom, dates.lastTo)}`}
                             .{parent !== undefined && ` It lies within ${subjectLabel(parent)}.`}
                             <Citation reference={reference} entries={entries} />
                         </>
@@ -138,7 +121,7 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
                 <KeyFigures
                     figures={[
                         { label: 'Sequences', value: summary === undefined ? '…' : formatCount(total) },
-                        spreadFigure(where, basics.map.data?.rows, summary?.countries),
+                        spreadFigure(where, report.map.data?.rows, summary?.countries),
                         {
                             label: 'Submitting groups',
                             value: summary === undefined ? '…' : formatCount(summary.groups),
@@ -148,7 +131,11 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
             </Section>
 
             <Section number={2} title='Lineage hierarchy' lead={nomenclatureNote(what)}>
-                <LineageTree rows={rows} total={total} title={classification ? level : (levelOf(what) ?? level)} />
+                <LineageTree
+                    rows={grouped === undefined ? undefined : rows}
+                    total={summary?.n}
+                    title={classification ? level : (levelOf(what) ?? level)}
+                />
             </Section>
 
             <MutationsSection state={mutations} what={what} where={where} period={period} comparedWith={comparedWith} />
@@ -157,7 +144,7 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
                 <Section number={4} title={plural(level)}>
                     <Composition
                         parts={children}
-                        total={total}
+                        total={summary?.n}
                         what={level.toLowerCase()}
                         linkOf={(part) => (
                             <ReportLink
@@ -175,10 +162,8 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
             )}
 
             <Section number={4 + below} title='Distribution over time'>
-                <OverTime
-                    rows={basics.overTime}
-                    parts={children}
-                    classify={(row) => spec?.classify(row) ?? ''}
+                <DistributionOverTime
+                    report={report}
                     title={`Sequences${children.length > 0 ? ` by ${level.toLowerCase()}` : ''}`}
                 />
                 {base !== undefined && (
@@ -191,41 +176,14 @@ export const LineageReport: FC<LineageReportProps> = ({ reference, entries }) =>
                 )}
             </Section>
 
-            <Section number={5 + below} title='Geographic distribution'>
-                <ReportMap
-                    where={where}
-                    counts={basics.map}
-                    legend={`${subjectLabel(what)} sequences ${mapTitleOf(where).toLowerCase().replace('sequences per ', 'per ')}`}
-                />
-                {hasPlacesBelow(where) && areas.length > 0 && (
-                    <AreasTable
-                        scale={scale}
-                        areas={areas}
-                        period={period}
-                        countHeader='Sequences'
-                        total={total}
-                        footnote={unplacedNote(unplaced, total)}
-                        linkTo={(place) => hrefOf({ kind: 'lineage', what, where: place, period })}
-                    />
-                )}
-            </Section>
+            <GeographicDistribution
+                number={5 + below}
+                reference={reference}
+                counts={report.map}
+                legend={`${subjectLabel(what)} sequences ${mapTitleOf(where).toLowerCase().replace('sequences per ', 'per ')}`}
+            />
 
-            <Section number={6 + below} title='Hosts'>
-                <Hosts rows={basics.hosts} total={total} />
-            </Section>
-
-            <Section number={7 + below} title='Metadata availability'>
-                <MetadataAvailability availability={basics.availability} dates={basics.overTime} />
-            </Section>
-
-            <Section number={8 + below} title='Submitters'>
-                <Submitters
-                    groups={basics.groups}
-                    authors={basics.authors}
-                    affiliations={basics.affiliations}
-                    total={total}
-                />
-            </Section>
+            <ReportMetadataSections first={6 + below} metadata={report} dates={report.overTime} />
         </ReportShell>
     );
 };

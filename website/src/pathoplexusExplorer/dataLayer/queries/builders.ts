@@ -1,9 +1,11 @@
-import { COLUMNS, CURRENT_VERSION, type TableFilter } from './scope.ts';
+import { COLUMNS, CURRENT_VERSION } from './columns.ts';
+import type { TableFilter } from './scope.ts';
+import { countryNamesOf } from '../../domain/countries.ts';
 import { allPathogens, subtypeColumns, type Catalog } from '../../domain/subject.ts';
 import { field, str, type Expr } from '../transport/expression.ts';
 import { count, countOf, max, min, sum } from '../transport/functions.ts';
 import { table, unionall, type Limited, type Relation } from '../transport/relation.ts';
-import type { RhydbRow } from '../transport/row.ts';
+import { RhydbRowError, type RhydbRow } from '../transport/row.ts';
 
 export const ORGANISM = 'organism';
 
@@ -13,42 +15,20 @@ export type Aggregates = Readonly<Record<string, Aggregate>>;
 
 const COUNT: Aggregates = { n: { op: 'count' } };
 
+const aggregateFunctions = { countOf, min, max, sum };
+
 function aggregateExpr(aggregate: Aggregate): Expr {
-    switch (aggregate.op) {
-        case 'count':
-            return count();
-        case 'countOf':
-            return countOf(aggregate.column);
-        case 'min':
-            return min(aggregate.column);
-        case 'max':
-            return max(aggregate.column);
-        case 'sum':
-            return sum(aggregate.column);
-    }
+    return aggregate.op === 'count' ? count() : aggregateFunctions[aggregate.op](aggregate.column);
 }
 
-/** Combine per-table counts and sums by summing. Combine extremes with the same aggregate. */
-function combineExpr(name: string, aggregate: Aggregate): Expr {
-    switch (aggregate.op) {
-        case 'count':
-        case 'countOf':
-        case 'sum':
-            return sum(name);
-        case 'min':
-            return min(name);
-        case 'max':
-            return max(name);
-    }
+/** Per-table counts and sums add up. Date bounds keep the original minimum or maximum. */
+function combineExpr(name: string, { op }: Aggregate): Expr {
+    return op === 'min' || op === 'max' ? aggregateFunctions[op](name) : sum(name);
 }
 
 /** Apply the current-version filter to every table read. */
-export function sequences(tableName: string): Relation {
-    return table(tableName).filter(CURRENT_VERSION);
-}
-
-export function scoped(tableName: string, filter: TableFilter): Relation {
-    return sequences(tableName).filter(filter(tableName));
+export function sequences(tableName: string, filter?: TableFilter): Relation {
+    return table(tableName).filter(CURRENT_VERSION).filter(filter?.(tableName));
 }
 
 export function groupAcross(options: {
@@ -65,81 +45,51 @@ export function groupAcross(options: {
     const aggregateExprs = Object.fromEntries(
         Object.entries(aggregates).map(([name, aggregate]) => [name, aggregateExpr(aggregate)]),
     );
-    const named = compact ? columns.map((_, index) => `${COLUMN_ALIAS}${index}`) : [...columns];
-    const organism = compact ? TABLE_ALIAS : ORGANISM;
-    const shorten = (name: string): Readonly<Record<string, Expr>> =>
-        compact
-            ? {
-                  ...Object.fromEntries(columns.map((column, index) => [named[index], field(column)])),
-                  [organism]: str(name),
-              }
-            : { [organism]: str(name) };
-    const decode = compact ? decoder(columns, named, organism) : undefined;
-    if (tables.length === 1 && !perTable) {
-        const grouped = scoped(tables[0], filter).group(aggregateExprs, columns);
-        return withDecoder(
-            compact && columns.length > 0
-                ? grouped
-                      .map(Object.fromEntries(columns.map((column, index) => [named[index], field(column)])))
-                      .project([...named, ...aggregateNames])
-                : grouped,
-            decode,
+    const parts = tables.map((name) => {
+        const grouped = sequences(name, filter).group(aggregateExprs, columns);
+        return perTable ? grouped.map({ [ORGANISM]: str(name) }) : grouped;
+    });
+    let grouped = unionall(parts);
+    if (tables.length > 1 && !perTable) {
+        const totals = Object.fromEntries(
+            Object.entries(aggregates).map(([name, aggregate]) => [name, combineExpr(name, aggregate)]),
         );
+        grouped = grouped.group(totals, columns);
     }
-    const parts = tables.map((name) =>
-        scoped(name, filter)
-            .group(aggregateExprs, columns)
-            .map(shorten(name))
-            .project([...named, ...aggregateNames, organism]),
-    );
-    const union = unionall(parts);
-    if (perTable) {
-        return withDecoder(union, decode);
-    }
-    return withDecoder(
-        union.group(
-            Object.fromEntries(
-                Object.entries(aggregates).map(([name, aggregate]) => [name, combineExpr(name, aggregate)]),
-            ),
-            named,
-        ),
-        decode,
-    );
+    return compact
+        ? compactly(grouped, { rename: perTable ? [...columns, ORGANISM] : columns, keep: aggregateNames })
+        : grouped;
 }
 
-const COLUMN_ALIAS = 'c';
-const TABLE_ALIAS = 'o';
-
+/** Shorten names only in the response sent over HTTP. Aggregation uses the schema's column names. */
 export function compactly(
     relation: Relation,
-    options: { rename: readonly string[]; keep: readonly string[] },
+    { rename, keep }: { rename: readonly string[]; keep: readonly string[] },
 ): Relation {
-    const { rename, keep } = options;
     if (rename.length === 0) {
         return relation;
     }
-    const named = rename.map((_, index) => `${COLUMN_ALIAS}${index}`);
-    return withDecoder(
-        relation
-            .map(Object.fromEntries(rename.map((column, index) => [named[index], field(column)])))
-            .project([...named, ...keep]),
-        decoder(rename, named, TABLE_ALIAS),
-    );
-}
-
-function withDecoder(relation: Relation, decode: Decoder | undefined): Relation {
-    return decode === undefined ? relation : { ...relation, decode };
-}
-
-type Decoder = (rows: readonly RhydbRow[]) => RhydbRow[];
-
-function decoder(columns: readonly string[], named: readonly string[], organism: string): Decoder {
-    const names = new Map<string, string>(named.map((alias, index) => [alias, columns[index]]));
-    names.set(organism, ORGANISM);
-    return (rows) =>
-        rows.map((row) =>
-            Object.fromEntries(Object.entries(row).map(([key, value]) => [names.get(key) ?? key, value])),
-        );
+    const columns = Object.fromEntries(rename.map((name, index) => [name === ORGANISM ? 'o' : `c${index}`, name]));
+    const aliases = Object.fromEntries(Object.entries(columns).map(([alias, name]) => [alias, field(name)]));
+    const fields = [...Object.entries(columns), ...keep.map((name) => [name, name])];
+    return {
+        ...relation.map(aliases).project([...Object.keys(aliases), ...keep]),
+        decode: (rows) =>
+            rows.map((row) => {
+                const decoded: RhydbRow = {};
+                for (const [alias, name] of fields) {
+                    const value = row[alias];
+                    if (value === undefined) {
+                        throw new RhydbRowError(name, 'missing from the response');
+                    }
+                    if (name === 'n' && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0)) {
+                        throw new RhydbRowError(name, 'expected a nonnegative sequence count');
+                    }
+                    decoded[name] = value;
+                }
+                return decoded;
+            }),
+    };
 }
 
 /** Rank and limit grouped values in RhyDB. */
@@ -164,36 +114,6 @@ export function valueTotalsQuery(options: {
         total: sum('n'),
     });
 }
-
-export function dataUseTermsAcross(options: { tables: readonly string[]; filter: TableFilter }): Relation {
-    return entriesAcross(options, [
-        COLUMNS.accessionVersion,
-        COLUMNS.dataUseTerms,
-        COLUMNS.restrictedUntil,
-        COLUMNS.termsUrl,
-    ]);
-}
-
-function entriesAcross(
-    options: { tables: readonly string[]; filter: TableFilter },
-    columns: readonly string[],
-): Relation {
-    const parts = options.tables.map((name) => scoped(name, options.filter).project(columns));
-    return unionall(parts);
-}
-
-export const SUMMARY: Aggregates = {
-    n: { op: 'count' },
-    lastReleased: { op: 'max', column: COLUMNS.released },
-};
-
-/** Exclude entries without collection dates because their upper bound can be the release date. */
-export const COLLECTION_DATES: Aggregates = {
-    firstCollectedFrom: { op: 'min', column: COLUMNS.lower },
-    firstCollected: { op: 'min', column: COLUMNS.upper },
-    lastCollected: { op: 'max', column: COLUMNS.lower },
-    lastCollectedTo: { op: 'max', column: COLUMNS.upper },
-};
 
 export const MUTATION_FIELDS = [
     'mutationFrom',
@@ -227,5 +147,6 @@ export function valuesQuery(tables: readonly string[], column: string, filter: T
 }
 
 export function admin1ValuesQuery(tables: readonly string[], country: string): Relation {
-    return valuesQuery(tables, COLUMNS.admin1, () => field(COLUMNS.country).eq(str(country)));
+    const names = countryNamesOf(country);
+    return valuesQuery(tables, COLUMNS.admin1, () => field(COLUMNS.country).isIn(names.map(str)));
 }

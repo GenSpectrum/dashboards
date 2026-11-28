@@ -1,19 +1,12 @@
-import { useMemo } from 'react';
-
-import { merged, type Loadable } from './analyses.ts';
+import { combineQueryResults, type Loadable } from './queryResult.ts';
 import { useManyRows } from './rhydbQuery.ts';
-import type { Scope } from '../../domain/scope.ts';
 import { pathogenOf } from '../../domain/subject.ts';
 import { groupAcross } from '../queries/builders.ts';
-import { mutationProfileQuery, type MutationRequest } from '../queries/genomics.ts';
+import { COLUMNS } from '../queries/columns.ts';
+import { mutationProfileQuery, type MutationRequest, type ProportionRows } from '../queries/genomics.ts';
 import type { ResolvedScope } from '../queries/resolve.ts';
-import { COLUMNS } from '../queries/scope.ts';
 import type { Relation } from '../transport/relation.ts';
 import type { RhydbRow } from '../transport/row.ts';
-
-function tableOf(scope: Scope): string | undefined {
-    return pathogenOf(scope.what)?.table;
-}
 
 /** Returns profiles in scope order. A scope without comparable mutations has no profile. */
 export function useMutationProfiles(
@@ -23,78 +16,31 @@ export function useMutationProfiles(
     comparable: readonly boolean[] = [],
 ): Loadable<(RhydbRow[] | undefined)[]> {
     const queries = (enabled ? (resolved.data ?? []) : []).map((entry, index): Relation | undefined => {
-        const tableName = tableOf(entry.scope);
+        const tableName = pathogenOf(entry.scope.what)?.table;
         return tableName === undefined || !comparable[index]
             ? undefined
             : mutationProfileQuery({ tableName, filter: entry.filter(tableName), request });
     });
     const result = useManyRows(queries, 'Mutation profile');
-    const data = useMemo(() => {
-        if (!enabled || resolved.data === undefined || result.data === undefined) {
-            return undefined;
-        }
-        const rows = result.data;
-        return queries.map((query, index) => (query === undefined ? undefined : rows[index]));
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by the query texts
-    }, [result.data, enabled, queries.map((query) => query?.render() ?? '').join('|')]);
-    return merged(data, [resolved, result]);
+    return combineQueryResults(enabled && resolved.data !== undefined ? result.data : undefined, [resolved, result]);
 }
 
-export type Carriers = {
-    own: readonly RhydbRow[];
-    all: readonly RhydbRow[];
-};
-
-export function useCarriers(
-    resolved: Loadable<ResolvedScope>,
-    parent: Loadable<ResolvedScope>,
-    column: string | undefined,
-    enabled: boolean,
-): Loadable<Carriers> {
-    const columns = column === undefined ? undefined : [column];
-    const queryFor = (entry: ResolvedScope | undefined): Relation | undefined =>
-        entry === undefined || columns === undefined
-            ? undefined
-            : groupAcross({ tables: entry.tables, filter: entry.filter, columns });
-    const own = queryFor(enabled ? resolved.data : undefined);
-    const all = queryFor(enabled ? parent.data : undefined);
-    const result = useManyRows([own, all], 'Carriers');
-    const data =
-        result.data?.[0] === undefined || result.data[1] === undefined
-            ? undefined
-            : { own: result.data[0], all: result.data[1] };
-    return merged(data, [resolved, parent, result]);
-}
-
-export type ProportionRows = { own: readonly RhydbRow[]; all: readonly RhydbRow[] };
-
-export function useProportionOverTime(
+/** Group the numerator and denominator of a proportion by the same columns. */
+export function useComparisonRows(
     scopes: Loadable<ResolvedScope[]>,
-    /** Indices of the numerator and denominator scopes. */
-    pairs: readonly { own: number; all: number }[],
-    enabled: boolean,
-): Loadable<ProportionRows[]> {
-    const entries = enabled ? (scopes.data ?? []) : [];
-    const queries = entries.map((entry) =>
-        groupAcross({
-            tables: entry.tables,
-            filter: entry.filter,
-            columns: [COLUMNS.lower, COLUMNS.upper],
-            compact: true,
-        }),
-    );
-    const result = useManyRows(queries, 'Share over time');
-    const data = useMemo(() => {
-        if (result.data === undefined) {
-            return undefined;
-        }
-        const rows = result.data;
-        return pairs.flatMap((pair) => {
-            const own = rows[pair.own];
-            const all = rows[pair.all];
-            return own === undefined || all === undefined ? [] : [{ own, all }];
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by the query texts and the pairs
-    }, [result.data, JSON.stringify(pairs)]);
-    return merged(data, [scopes, result]);
+    columns: readonly string[] | undefined,
+    label: string,
+    compact = false,
+): Loadable<ProportionRows> {
+    const queries =
+        columns === undefined
+            ? []
+            : (scopes.data?.map(({ tables, filter }) => groupAcross({ tables, filter, columns, compact })) ?? []);
+    const result = useManyRows(queries, label);
+    const [own, all] = result.data ?? [];
+    return combineQueryResults(own === undefined || all === undefined ? undefined : { own, all }, [scopes, result]);
+}
+
+export function useProportionOverTime(scopes: Loadable<ResolvedScope[]>, enabled: boolean): Loadable<ProportionRows> {
+    return useComparisonRows(scopes, enabled ? [COLUMNS.lower, COLUMNS.upper] : undefined, 'Share over time', true);
 }

@@ -19,16 +19,9 @@ export type Axis = {
 export type CrossTab = {
     rows: Axis[];
     columns: Axis[];
-    cells: Map<string, number>;
+    cells: Map<string, Map<string, number>>;
     total: number;
 };
-
-/** Use a separator that cannot appear in either dimension value. */
-const SEPARATOR = '\u001f';
-
-function cellKey(row: string, column: string): string {
-    return `${row}${SEPARATOR}${column}`;
-}
 
 export const SHOWN_ROWS = 18;
 export const SHOWN_COLUMNS = 14;
@@ -39,69 +32,63 @@ export function withinLimit(value: number): number {
     return Math.min(MOST_SHOWN, Math.max(1, Math.floor(value)));
 }
 
-function labelsOf(dimension: Dimension, rows: readonly RhydbRow[]): Map<string, string> {
+type CompareAxis = (a: Axis, b: Axis) => number;
+
+function axisOf(
+    totals: Map<string, number>,
+    dimension: Dimension,
+    rows: readonly RhydbRow[],
+    limit: number,
+    compare?: CompareAxis,
+): Axis[] {
     const labels = new Map<string, string>();
-    if (dimension.labelFromRow === undefined) {
-        return labels;
-    }
-    for (const row of rows) {
-        const label = dimension.labelFromRow(row);
-        if (label !== undefined) {
-            labels.set(dimension.valueOf(row), label);
+    if (dimension.labelFromRow !== undefined) {
+        for (const row of rows) {
+            const label = dimension.labelFromRow(row);
+            if (label !== undefined) {
+                labels.set(dimension.valueOf(row), label);
+            }
         }
     }
-    return labels;
-}
-
-function axisOf(options: {
-    totals: Map<string, number>;
-    dimension: Dimension;
-    labels: Map<string, string>;
-    limit: number;
-    by?: Ordering;
-}): Axis[] {
-    const { totals, dimension, labels, limit, by } = options;
+    const values = Array.from(totals, ([key, total]) => ({
+        key,
+        total,
+        label: labels.get(key) ?? labelOf(dimension, key),
+    }));
     const order = dimension.order;
-    const labelFor = (key: string) => labels.get(key) ?? labelOf(dimension, key);
-    const entries = [...totals.entries()].sort(
-        by !== undefined
-            ? (a, b) => {
-                  const first = by.keyOf(a[0], labelFor(a[0]));
-                  const second = by.keyOf(b[0], labelFor(b[0]));
-                  const difference =
-                      typeof first === 'string' && typeof second === 'string'
-                          ? first.localeCompare(second)
-                          : Number(first) - Number(second);
-                  return by.descending ? -difference : difference;
-              }
-            : order === undefined
-              ? (a, b) => b[1] - a[1]
-              : (a, b) => order(a[0], b[0]),
-    );
-    const kept = entries.slice(0, limit);
-    const rest = entries.slice(limit);
-    // Keep the most recent values when truncating an axis ordered by year.
-    const axis = (dimension.fromTheEnd === true && by === undefined ? [...kept].reverse() : kept).map(
-        ([key, total]) => ({
-            key,
-            label: labels.get(key) ?? labelOf(dimension, key),
-            total,
-        }),
-    );
+    values.sort(compare ?? (order === undefined ? (a, b) => b.total - a.total : (a, b) => order(a.key, b.key)));
+    const kept = values.slice(0, limit);
+    if (dimension.fromTheEnd === true && compare === undefined) {
+        kept.reverse();
+    }
+    const rest = values.slice(limit);
     if (rest.length > 0) {
         const other = {
             key: OTHER,
             label: 'Other',
-            total: rest.reduce((sum, [, total]) => sum + total, 0),
+            total: rest.reduce((sum, entry) => sum + entry.total, 0),
             gathered: rest.length,
         };
         if (dimension.fromTheEnd === true) {
-            axis.unshift(other);
+            kept.unshift(other);
         } else {
-            axis.push(other);
+            kept.push(other);
         }
     }
-    return axis;
+    return kept;
+}
+
+function increment(counts: Map<string, number>, key: string, n: number) {
+    counts.set(key, (counts.get(key) ?? 0) + n);
+}
+
+function addCell(cells: CrossTab['cells'], row: string, column: string, n: number) {
+    let counts = cells.get(row);
+    if (counts === undefined) {
+        counts = new Map();
+        cells.set(row, counts);
+    }
+    increment(counts, column, n);
 }
 
 export function crossTabOf(options: {
@@ -115,7 +102,7 @@ export function crossTabOf(options: {
     const { rows, rowDimension, columnDimension, shownRows = SHOWN_ROWS, shownColumns = SHOWN_COLUMNS, sort } = options;
     const rowTotals = new Map<string, number>();
     const columnTotals = new Map<string, number>();
-    const counted = new Map<string, number>();
+    const cells: CrossTab['cells'] = new Map();
     let total = 0;
     for (const row of rows) {
         const n = Number(row.n ?? 0);
@@ -124,68 +111,59 @@ export function crossTabOf(options: {
         }
         const rowKey = rowDimension.valueOf(row);
         const columnKey = columnDimension.valueOf(row);
-        rowTotals.set(rowKey, (rowTotals.get(rowKey) ?? 0) + n);
-        columnTotals.set(columnKey, (columnTotals.get(columnKey) ?? 0) + n);
-        const key = cellKey(rowKey, columnKey);
-        counted.set(key, (counted.get(key) ?? 0) + n);
+        increment(rowTotals, rowKey, n);
+        increment(columnTotals, columnKey, n);
+        addCell(cells, rowKey, columnKey, n);
         total += n;
     }
-    // Lay out the columns first so sorting by the Other column uses the same values shown in the table.
-    const axisColumns = axisOf({
-        totals: columnTotals,
-        dimension: columnDimension,
-        labels: labelsOf(columnDimension, rows),
-        limit: shownColumns,
-    });
-    const columnKeys = new Set(axisColumns.map((entry) => entry.key));
-    const axisRows = axisOf({
-        totals: rowTotals,
-        dimension: rowDimension,
-        labels: labelsOf(rowDimension, rows),
-        limit: shownRows,
-        by: orderBy(sort, { counted, columnKeys, rowTotals }),
-    });
-    const rowKeys = new Set(axisRows.map((entry) => entry.key));
-    const cells = new Map<string, number>();
-    for (const [key, n] of counted) {
-        const [rowKey, columnKey] = key.split(SEPARATOR);
-        const target = cellKey(rowKeys.has(rowKey) ? rowKey : OTHER, columnKeys.has(columnKey) ? columnKey : OTHER);
-        cells.set(target, (cells.get(target) ?? 0) + n);
+    const columns = axisOf(columnTotals, columnDimension, rows, shownColumns);
+    const columnKeys = new Set(columns.map((entry) => entry.key));
+    // Fold hidden columns before sorting, so a sort by Other uses its displayed count.
+    if (columnTotals.size > shownColumns) {
+        for (const counts of cells.values()) {
+            for (const [column, n] of counts) {
+                if (!columnKeys.has(column)) {
+                    increment(counts, OTHER, n);
+                    counts.delete(column);
+                }
+            }
+        }
     }
-    return { rows: axisRows, columns: axisColumns, cells, total };
+    const visibleRows = axisOf(rowTotals, rowDimension, rows, shownRows, compareRows(sort, columnKeys, cells));
+    const rowKeys = new Set(visibleRows.map((row) => row.key));
+    for (const [key, counts] of cells) {
+        if (!rowKeys.has(key)) {
+            for (const [column, n] of counts) {
+                addCell(cells, OTHER, column, n);
+            }
+            cells.delete(key);
+        }
+    }
+    return { rows: visibleRows, columns, cells, total };
 }
 
-type Ordering = { keyOf: (key: string, label: string) => number | string; descending: boolean };
-
-/** Sort by sequence counts regardless of the selected cell measure. */
-function orderBy(
+/** Sort by sequence counts regardless of the selected measure. */
+function compareRows(
     sort: Sort | undefined,
-    table: { counted: Map<string, number>; columnKeys: Set<string>; rowTotals: Map<string, number> },
-): Ordering | undefined {
+    columnKeys: Set<string>,
+    cells: CrossTab['cells'],
+): CompareAxis | undefined {
     if (sort === undefined) {
         return undefined;
     }
-    const { counted, columnKeys, rowTotals } = table;
-    if (sort.column === ROW_NAMES) {
-        return { keyOf: (_key, label) => label, descending: sort.descending };
+    const { column, descending } = sort;
+    const direction = descending ? -1 : 1;
+    if (column === ROW_NAMES) {
+        return (a, b) => direction * a.label.localeCompare(b.label);
     }
-    if (sort.column === TOTAL) {
-        return { keyOf: (key) => rowTotals.get(key) ?? 0, descending: sort.descending };
+    if (column === TOTAL) {
+        return (a, b) => direction * (a.total - b.total);
     }
-    if (sort.column === OTHER) {
-        const others = new Map<string, number>();
-        for (const [cell, n] of counted) {
-            const [rowKey, columnKey] = cell.split(SEPARATOR);
-            if (!columnKeys.has(columnKey)) {
-                others.set(rowKey, (others.get(rowKey) ?? 0) + n);
-            }
-        }
-        return { keyOf: (key) => others.get(key) ?? 0, descending: sort.descending };
-    }
-    if (!columnKeys.has(sort.column)) {
+    if (!columnKeys.has(column) && column !== OTHER) {
         return undefined;
     }
-    return { keyOf: (key) => counted.get(cellKey(key, sort.column)) ?? 0, descending: sort.descending };
+    const count = (row: Axis) => cells.get(row.key)?.get(column) ?? 0;
+    return (a, b) => direction * (count(a) - count(b));
 }
 
 export function nextSort(sort: Sort | undefined, column: string): Sort | undefined {
@@ -217,7 +195,7 @@ export function cellValue(
     column: Axis,
     measure: Measure,
 ): { value: number; count: number; of: number } {
-    const count = table.cells.get(cellKey(row.key, column.key)) ?? 0;
+    const count = table.cells.get(row.key)?.get(column.key) ?? 0;
     const of = measure === MEASURE.row ? row.total : measure === MEASURE.column ? column.total : table.total;
     if (measure === MEASURE.count) {
         return { value: count, count, of: table.total };

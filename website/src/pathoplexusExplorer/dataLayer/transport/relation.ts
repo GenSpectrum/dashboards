@@ -2,11 +2,8 @@
  * The RhyQL relation pipeline: a table, and the operations applied to it.
  *
  * Each step returns a new relation, so a query is built by naming what happens
- * to the rows. Two rules that the instance imposes are expressed in the types,
- * so breaking them does not compile:
- *
- * - `limit()` ends the pipeline, so `offset` after it does not typecheck.
- * - `offset(0)` is the relation unchanged.
+ * to the rows. `limit()` ends the pipeline: what it returns can be sent but not
+ * piped further.
  */
 
 import { Expr, field, int, num, PRECEDENCE, record, renderArgs, set, type Args } from './expression.ts';
@@ -28,8 +25,6 @@ export type GroupColumns = readonly string[];
 
 export type MutationOptions = {
     minProportion?: number;
-    /** Sequence columns to report; omit for all of them. */
-    sequenceNames?: readonly string[];
     /** Result fields to keep. Trimming these is what keeps a mutation payload small. */
     fields?: readonly string[];
 };
@@ -45,18 +40,12 @@ export type Relation = Queryable & {
     /** Aggregates per group of `columns`; without columns, over the whole relation. */
     group(aggregates: Readonly<Record<string, Expr>>, columns?: GroupColumns): Relation;
     order(...keys: readonly Expr[]): Relation;
-    /** Rows to skip. Zero appends nothing, and must precede any limit. */
-    offset(count: number): Relation;
     /** Rows to keep. Ends the pipeline. */
     limit(count: number): Limited;
     mutations(options?: MutationOptions): Relation;
     aminoAcidMutations(options?: MutationOptions): Relation;
-    insertions(options?: { sequenceNames?: readonly string[] }): Relation;
-    aminoAcidInsertions(options?: { sequenceNames?: readonly string[] }): Relation;
     /** The columns that the instance holds, and their types. */
     schema(): Relation;
-    /** Any other operation that the language offers. */
-    pipe(name: string, args?: Args): Relation;
 };
 
 /** The root of every query: the table, by name. */
@@ -80,7 +69,6 @@ function relation(text: string): Relation {
 
     return {
         render: () => text,
-        pipe,
         filter: (predicate) => (predicate === undefined ? relation(text) : pipe('filter', [predicate])),
         map: (assignments) => pipe('map', [record(assignments)]),
         project: (columns) => pipe('project', [set(columns.map(asExpr))]),
@@ -90,12 +78,6 @@ function relation(text: string): Relation {
                 aggs: record(aggregates),
             }),
         order: (...keys) => pipe('order', { by: set(keys) }),
-        offset: (count) => {
-            if (!Number.isInteger(count) || count < 0) {
-                throw new Error(`Not a row offset: ${count}`);
-            }
-            return count === 0 ? relation(text) : pipe('offset', [int(count)]);
-        },
         limit: (count) => {
             if (!Number.isInteger(count) || count < 1) {
                 throw new Error(`Not a row limit: ${count}`);
@@ -104,8 +86,6 @@ function relation(text: string): Relation {
         },
         mutations: (options) => pipe('mutations', mutationArgs(options)),
         aminoAcidMutations: (options) => pipe('aminoAcidMutations', mutationArgs(options)),
-        insertions: (options) => pipe('insertions', sequenceArgs(options?.sequenceNames)),
-        aminoAcidInsertions: (options) => pipe('aminoAcidInsertions', sequenceArgs(options?.sequenceNames)),
         schema: () => pipe('schema'),
     };
 }
@@ -126,17 +106,10 @@ function mutationArgs(options: MutationOptions = {}): Args {
     if (options.minProportion !== undefined) {
         args.minProportion = proportion(options.minProportion);
     }
-    if (options.sequenceNames !== undefined) {
-        args.sequenceNames = set(options.sequenceNames.map((name) => field(name)));
-    }
     if (options.fields !== undefined) {
         args.fields = set(options.fields.map((name) => field(name)));
     }
     return args;
-}
-
-function sequenceArgs(sequenceNames?: readonly string[]): Args {
-    return sequenceNames === undefined ? {} : { sequenceNames: set(sequenceNames.map((name) => field(name))) };
 }
 
 /** A share of the reads, which the operation requires to be in [0, 1]. */

@@ -6,7 +6,9 @@ export const CONTINENTS = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania'] as
 
 export type Continent = (typeof CONTINENTS)[number];
 
-export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countries: readonly string[] }>> = {
+export const SUBREGIONS: Readonly<
+    Record<string, { continent: Continent; countries: readonly string[]; otherPlaces?: readonly string[] }>
+> = {
     'Northern Africa': {
         continent: 'Africa',
         countries: ['Algeria', 'Egypt', 'Libya', 'Morocco', 'Sudan', 'Tunisia', 'Western Sahara'],
@@ -44,7 +46,6 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
             'Central African Republic',
             'Chad',
             'Democratic Republic of the Congo',
-            'Zaire',
             'Equatorial Guinea',
             'Gabon',
             'Republic of the Congo',
@@ -53,7 +54,7 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
     },
     'Southern Africa': {
         continent: 'Africa',
-        countries: ['Botswana', 'Eswatini', 'Swaziland', 'Lesotho', 'Namibia', 'South Africa'],
+        countries: ['Botswana', 'Eswatini', 'Lesotho', 'Namibia', 'South Africa'],
     },
     'Western Africa': {
         continent: 'Africa',
@@ -79,6 +80,7 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
     },
     'Caribbean': {
         continent: 'Americas',
+        otherPlaces: ['Netherlands Antilles'],
         countries: [
             'Anguilla',
             'Antigua and Barbuda',
@@ -97,7 +99,6 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
             'Jamaica',
             'Martinique',
             'Montserrat',
-            'Netherlands Antilles',
             'Puerto Rico',
             'Saint Barthelemy',
             'Saint Kitts and Nevis',
@@ -143,25 +144,15 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
     },
     'Eastern Asia': {
         continent: 'Asia',
-        countries: [
-            'China',
-            'Hong Kong',
-            'Japan',
-            'Korea',
-            'Macau',
-            'Mongolia',
-            'North Korea',
-            'South Korea',
-            'Taiwan',
-        ],
+        otherPlaces: ['Korea'],
+        countries: ['China', 'Hong Kong', 'Japan', 'Macau', 'Mongolia', 'North Korea', 'South Korea', 'Taiwan'],
     },
     'South-eastern Asia': {
         continent: 'Asia',
+        otherPlaces: ['Borneo'],
         countries: [
-            'Borneo',
             'Brunei',
             'Cambodia',
-            'East Timor',
             'Indonesia',
             'Laos',
             'Malaysia',
@@ -180,7 +171,6 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
             'Bangladesh',
             'Bhutan',
             'India',
-            'New Delhi',
             'Iran',
             'Maldives',
             'Nepal',
@@ -217,7 +207,6 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
             'Belarus',
             'Bulgaria',
             'Czech Republic',
-            'Czechia',
             'Hungary',
             'Moldova',
             'Poland',
@@ -245,6 +234,7 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
     },
     'Southern Europe': {
         continent: 'Europe',
+        otherPlaces: ['Serbia and Montenegro', 'Yugoslavia'],
         countries: [
             'Albania',
             'Andorra',
@@ -254,17 +244,14 @@ export const SUBREGIONS: Readonly<Record<string, { continent: Continent; countri
             'Greece',
             'Italy',
             'Kosovo',
-            'Macedonia',
             'North Macedonia',
             'Malta',
             'Montenegro',
             'Portugal',
             'San Marino',
             'Serbia',
-            'Serbia and Montenegro',
             'Slovenia',
             'Spain',
-            'Yugoslavia',
         ],
     },
     'Western Europe': {

@@ -1,8 +1,9 @@
 /** Count menus under the current period and constraints from levels above the one being offered. */
 
-import { merged, useLineageHierarchy, useScopeFilters, useSubtypeColumns, type Loadable } from './analyses.ts';
+import { useLineageHierarchy, useScopeFilters, useSubtypeColumns } from './analyses.ts';
+import { combineQueryResults, type Loadable } from './queryResult.ts';
 import { useManyRows, useRows } from './rhydbQuery.ts';
-import { canonicalCountryOf, WORLD, type Place } from '../../domain/geography.ts';
+import { WORLD, type Place } from '../../domain/geography.ts';
 import { compareSubtypes, isUnassignedValue, type LineageTree } from '../../domain/lineages.ts';
 import type { Period } from '../../domain/scope.ts';
 import {
@@ -15,7 +16,8 @@ import {
     type Subject,
 } from '../../domain/subject.ts';
 import { groupAcross } from '../queries/builders.ts';
-import { COLUMNS } from '../queries/scope.ts';
+import { COLUMNS } from '../queries/columns.ts';
+import { countryCounts } from '../queries/summary.ts';
 import { readOptionalText, type RhydbRow } from '../transport/row.ts';
 
 export type MenuValue = {
@@ -36,7 +38,7 @@ export function useCountryMenu(catalog: Catalog, what: Subject = ALL, period: Pe
             : groupAcross({ tables: entry.tables, filter: entry.filter, columns: [COLUMNS.country] });
     const rows = useRows(query, 'Report bar');
     const data = rows.data === undefined ? undefined : countriesOf(rows.data);
-    return merged(data, [scoped, rows]);
+    return combineQueryResults(data, [scoped, rows]);
 }
 
 export function useLevelMenus(
@@ -51,7 +53,7 @@ export function useLevelMenus(
     const levels =
         pathogen === undefined
             ? []
-            : pathogen.levels.filter((level) => available.data?.has(`${pathogen.table}|${level.column}`) ?? false);
+            : pathogen.levels.filter((level) => available.data?.(pathogen.table, level.column) ?? false);
     const chosen = new Map(
         (what?.kind === 'subtype' ? what.steps : []).map((step) => [step.column, step.value] as const),
     );
@@ -90,7 +92,7 @@ export function useLevelMenus(
                       trees(pathogen.table, level.column),
                   ),
               }));
-    return merged(data, [available, hierarchy, resolved, rows]);
+    return combineQueryResults(data, [available, hierarchy, resolved, rows]);
 }
 
 /** Infer a reference level only when the selected subtype has a single value for it. */
@@ -160,17 +162,7 @@ function aboveStep(column: string | undefined, values: Set<string | null> | unde
 }
 
 function countriesOf(rows: readonly RhydbRow[]): MenuValue[] {
-    const counts = new Map<string, number>();
-    for (const row of rows) {
-        const recorded = readOptionalText(row, COLUMNS.country);
-        if (recorded === null) {
-            continue;
-        }
-        const country = canonicalCountryOf(recorded);
-        counts.set(country, (counts.get(country) ?? 0) + Number(row.n ?? 0));
-    }
-    return [...counts.entries()]
-        .filter(([, n]) => n > 0)
+    return [...countryCounts(rows)]
         .map(([value, n]) => ({ value, label: value, n }))
         .sort((a, b) => b.n - a.n || a.value.localeCompare(b.value));
 }

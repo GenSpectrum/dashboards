@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest';
 
 import { tableFilename, tableFileOf } from './tableFile.ts';
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/columns.ts';
 import { crossTabOf, MEASURE, type Measure } from '../../../pathoplexusExplorer/dataLayer/queries/crossTab.ts';
 import { dimensionById, dimensionsFor } from '../../../pathoplexusExplorer/dataLayer/queries/dimensions.ts';
-import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import { defined } from '../../../pathoplexusExplorer/test/defined.fixture.ts';
 
@@ -37,7 +37,7 @@ test('the file is the table: a corner, the columns, every row, and the totals', 
 test('a proportion is written as a fraction, and the totals stay counts', () => {
     expect(fileOf(MEASURE.row)).toEqual([
         ['Country / Host group — proportion of row', 'Human', 'Arthropod', 'Total sequences'],
-        ['Brazil', '0.833333', '0.166667', '12'],
+        ['Brazil', String(10 / 12), String(2 / 12), '12'],
         ['India', '1', '0', '6'],
         ['Total sequences', '16', '2', '18'],
     ]);

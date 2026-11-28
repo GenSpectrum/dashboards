@@ -2,10 +2,14 @@
 import { ReportPage } from '../../../components/pathoplexusExplorer/report/ReportPage';
 import { getPathoplexusExplorerConfig } from '../../../config';
 import ReportLayout from '../../../layouts/pathoplexusExplorer/ReportLayout.astro';
-import { REPORT_KIND } from '../../../pathoplexusExplorer/domain/reports';
+import { REPORT_KINDS } from '../../../pathoplexusExplorer/domain/reports';
+import { isReportAddress } from '../../../pathoplexusExplorer/pageState/reportAddress';
 import { reportPageTitle } from '../../../pathoplexusExplorer/pageState/reportKinds';
 
-const kind = REPORT_KIND.virus;
+const kind = REPORT_KINDS.find((kind) => kind === Astro.params.kind);
+if (kind === undefined || !isReportAddress(kind, Astro.url.searchParams)) {
+    return Astro.rewrite('/404');
+}
 
 const explorer = getPathoplexusExplorerConfig();
 

@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 
-import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
+import { formatCount, formatProportion } from '../../../pathoplexusExplorer/domain/statistics.ts';
 
 type MastheadProps = {
     title: string;
@@ -146,6 +146,18 @@ export type Column<Row> = {
     cell: (row: Row) => ReactNode;
 };
 
+export function frequencyColumns<Row extends { n: number }>(total: number): Column<Row>[] {
+    return [
+        { header: 'Sequences', align: 'right', width: 'w-24', cell: (row) => formatCount(row.n) },
+        {
+            header: 'Proportion',
+            align: 'right',
+            width: 'w-20',
+            cell: (row) => (total === 0 ? '—' : formatProportion(row.n / total)),
+        },
+    ];
+}
+
 type TableProps<Row> = {
     columns: readonly Column<Row>[];
     rows: readonly Row[];
@@ -250,10 +262,6 @@ export function withRest<Row>(rows: readonly Row[], limit: number, rest: (left: 
         return [...rows];
     }
     return [...rows.slice(0, limit), rest(rows.slice(limit))];
-}
-
-export function sumOf<Row>(rows: readonly Row[], value: (row: Row) => number): number {
-    return rows.reduce((total, row) => total + value(row), 0);
 }
 
 export function restLabel(count: number, singular: string, plural: string): string {

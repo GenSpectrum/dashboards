@@ -14,241 +14,8 @@ import {
 } from './geography.ts';
 import { defined } from '../test/defined.fixture.ts';
 
-/** Fixture of recorded country names, excluding non-location values. */
-const RECORDED = [
-    'Afghanistan',
-    'Albania',
-    'Algeria',
-    'American Samoa',
-    'Angola',
-    'Anguilla',
-    'Antigua and Barbuda',
-    'Argentina',
-    'Armenia',
-    'Aruba',
-    'Australia',
-    'Austria',
-    'Azerbaijan',
-    'Bahamas',
-    'Bahrain',
-    'Bangladesh',
-    'Barbados',
-    'Belarus',
-    'Belgium',
-    'Belize',
-    'Benin',
-    'Bhutan',
-    'Bolivia',
-    'Borneo',
-    'Bosnia and Herzegovina',
-    'Botswana',
-    'Brazil',
-    'British Virgin Islands',
-    'Brunei',
-    'Bulgaria',
-    'Burkina Faso',
-    'Burundi',
-    'Cambodia',
-    'Cameroon',
-    'Canada',
-    'Cape Verde',
-    'Cayman Islands',
-    'Central African Republic',
-    'Chad',
-    'Chile',
-    'China',
-    'Colombia',
-    'Comoros',
-    'Cook Islands',
-    'Costa Rica',
-    "Cote d'Ivoire",
-    'Croatia',
-    'Cuba',
-    'Curacao',
-    'Cyprus',
-    'Czech Republic',
-    'Czechia',
-    'Democratic Republic of the Congo',
-    'Denmark',
-    'Djibouti',
-    'Dominica',
-    'Dominican Republic',
-    'East Timor',
-    'Ecuador',
-    'Egypt',
-    'El Salvador',
-    'Equatorial Guinea',
-    'Eritrea',
-    'Estonia',
-    'Ethiopia',
-    'Fiji',
-    'Finland',
-    'France',
-    'French Guiana',
-    'French Polynesia',
-    'Gabon',
-    'Gambia',
-    'Georgia',
-    'Germany',
-    'Ghana',
-    'Gibraltar',
-    'Greece',
-    'Grenada',
-    'Guadeloupe',
-    'Guam',
-    'Guatemala',
-    'Guinea',
-    'Guinea-Bissau',
-    'Guyana',
-    'Haiti',
-    'Honduras',
-    'Hong Kong',
-    'Hungary',
-    'Iceland',
-    'India',
-    'Indonesia',
-    'Iran',
-    'Iraq',
-    'Ireland',
-    'Israel',
-    'Italy',
-    'Jamaica',
-    'Japan',
-    'Jordan',
-    'Kazakhstan',
-    'Kenya',
-    'Kiribati',
-    'Korea',
-    'Kosovo',
-    'Kuwait',
-    'Kyrgyzstan',
-    'Laos',
-    'Latvia',
-    'Lebanon',
-    'Lesotho',
-    'Liberia',
-    'Libya',
-    'Lithuania',
-    'Luxembourg',
-    'Macedonia',
-    'Madagascar',
-    'Malawi',
-    'Malaysia',
-    'Maldives',
-    'Mali',
-    'Marshall Islands',
-    'Martinique',
-    'Mauritania',
-    'Mauritius',
-    'Mayotte',
-    'Mexico',
-    'Micronesia',
-    'Moldova',
-    'Mongolia',
-    'Montserrat',
-    'Morocco',
-    'Mozambique',
-    'Myanmar',
-    'Namibia',
-    'Nauru',
-    'Nepal',
-    'Netherlands',
-    'Netherlands Antilles',
-    'New Caledonia',
-    'New Delhi',
-    'New Zealand',
-    'Nicaragua',
-    'Niger',
-    'Nigeria',
-    'Niue',
-    'North Macedonia',
-    'Norway',
-    'Oman',
-    'Pakistan',
-    'Palau',
-    'Panama',
-    'Papua New Guinea',
-    'Paraguay',
-    'Peru',
-    'Philippines',
-    'Poland',
-    'Portugal',
-    'Puerto Rico',
-    'Qatar',
-    'Republic of the Congo',
-    'Reunion',
-    'Romania',
-    'Russia',
-    'Rwanda',
-    'Saint Barthelemy',
-    'Saint Helena',
-    'Saint Kitts and Nevis',
-    'Saint Lucia',
-    'Saint Martin',
-    'Saint Vincent and the Grenadines',
-    'Samoa',
-    'Sao Tome and Principe',
-    'Saudi Arabia',
-    'Senegal',
-    'Serbia',
-    'Serbia and Montenegro',
-    'Seychelles',
-    'Sierra Leone',
-    'Singapore',
-    'Slovakia',
-    'Slovenia',
-    'Solomon Islands',
-    'Somalia',
-    'South Africa',
-    'South Korea',
-    'South Sudan',
-    'Spain',
-    'Sri Lanka',
-    'Sudan',
-    'Suriname',
-    'Swaziland',
-    'Sweden',
-    'Switzerland',
-    'Syria',
-    'Taiwan',
-    'Tajikistan',
-    'Tanzania',
-    'Thailand',
-    'Timor-Leste',
-    'Togo',
-    'Tokelau',
-    'Tonga',
-    'Trinidad and Tobago',
-    'Tunisia',
-    'Turkey',
-    'Turkmenistan',
-    'Turks and Caicos Islands',
-    'Tuvalu',
-    'USA',
-    'Uganda',
-    'Ukraine',
-    'United Arab Emirates',
-    'United Kingdom',
-    'Uruguay',
-    'Uzbekistan',
-    'Vanuatu',
-    'Venezuela',
-    'Viet Nam',
-    'Virgin Islands',
-    'Wallis and Futuna',
-    'Yemen',
-    'Yugoslavia',
-    'Zaire',
-    'Zambia',
-    'Zimbabwe',
-];
-
-test('every recorded country belongs to a region', () => {
-    expect(RECORDED.filter((country) => subregionOf(country) === undefined)).toEqual([]);
-});
-
 test('a country is counted under its current name, and an ocean is not a country', () => {
-    expect(placedCountryOf('Zaire')).toBe(canonicalCountryOf('Zaire'));
+    expect(placedCountryOf('Zaire')).toBe('Democratic Republic of the Congo');
     expect(placedCountryOf('Pacific Ocean')).toBeUndefined();
     expect(placedCountryOf('not provided')).toBeUndefined();
     expect(placedCountryOf(null)).toBeUndefined();
@@ -266,95 +33,135 @@ test('a country sits in its region and continent', () => {
     expect(subregionOf('Democratic Republic of the Congo')).toBe('Middle Africa');
 });
 
-test('a province is found in whichever part of the recorded value names it', () => {
-    expect(admin1AreaOf('USA', 'Illinois, Cook County')).toBe('Illinois');
-    expect(admin1AreaOf('USA', 'Sacramento, California')).toBe('California');
-    expect(admin1AreaOf('USA', 'Suffolk Co., NY')).toBe('New York');
-    expect(admin1AreaOf('USA', 'Texas/Houston')).toBe('Texas');
-    expect(admin1AreaOf('USA', 'NewYork')).toBe('New York');
-    expect(admin1AreaOf('USA', 'Nebrsaka')).toBe('Nebrsaka');
-    expect(admin1AreaOf('Switzerland', 'ZH')).toBe('Zürich');
-    expect(admin1AreaOf('Switzerland', 'Basel-Landschaft')).toBe('Basel-Land');
-    expect(admin1AreaOf('Venezuela', 'DF/Caracas')).toBe('Distrito Capital');
-    expect(admin1AreaOf('Nigeria', 'FCT')).toBe('Federal Capital Territory');
-    expect(admin1AreaOf('Ghana', 'Ashanti, Kumasi')).toBe('Ashanti');
+test.each([
+    ['Argentina', 'Buenos Aires province', 'Provincia de Buenos Aires'],
+    ['Argentina', 'Buenos Aires', 'Buenos Aires'],
+    ['Argentina', 'Buenos Aires, La Plata', 'Provincia de Buenos Aires'],
+    ['Argentina', 'DF, Buenos Aires', 'Ciudad de Buenos Aires'],
+    ['Argentina', 'Capital Federal', 'Ciudad de Buenos Aires'],
+    ['Argentina', 'Ciudad Autonoma de Buenos Aires', 'Ciudad de Buenos Aires'],
+    ['USA', 'Illinois, Cook County', 'Illinois'],
+    ['USA', 'Sacramento, California', 'California'],
+    ['USA', 'Suffolk Co., NY', 'New York'],
+    ['USA', 'Texas/Houston', 'Texas'],
+    ['USA', 'NewYork', 'New York'],
+    ['USA', 'Nebrsaka', 'Nebrsaka'],
+    ['Switzerland', 'ZH', 'Zürich'],
+    ['Switzerland', 'Basel-Landschaft', 'Basel-Land'],
+    ['Venezuela', 'DF/Caracas', 'Distrito Capital'],
+    ['Nigeria', 'FCT', 'Federal Capital Territory'],
+    ['Ghana', 'Ashanti, Kumasi', 'Ashanti, Kumasi'],
+])('a province is found in whichever part of the recorded value names it: %s, %s', (country, recorded, division) => {
+    expect(admin1AreaOf(country, recorded)).toBe(division);
 });
 
-test('a division is found under the name the country records it by', () => {
-    expect(admin1AreaOf('Indonesia', 'Jawa Barat')).toBe('West Java');
-    expect(admin1AreaOf('Italy', 'EmiliaRomagna')).toBe('Emilia-Romagna');
-    expect(admin1AreaOf('Thailand', 'Kampheang-Phet')).toBe('Kamphaeng Phet');
-    expect(admin1AreaOf('South Africa', 'Kwa-Zulu Natal')).toBe('KwaZulu-Natal');
-    expect(admin1AreaOf('Pakistan', 'Peshawer')).toBe('Khyber Pakhtunkhwa');
-    expect(admin1AreaOf('Kenya', 'Kilifi District')).toBe('Kilifi');
-    expect(admin1AreaOf('Germany', 'Bayern')).toBe('Bavaria');
-    expect(admin1AreaOf('Democratic Republic of the Congo', 'province Kasai Oriental')).toBe('Kasaï-Oriental');
-    expect(admin1AreaOf('Democratic Republic of the Congo', 'Sud-Kivu,Kamituga')).toBe('Sud-Kivu');
-    expect(admin1AreaOf('Austria', 'Kärnten')).toBe('Carinthia');
-    expect(admin1AreaOf('Mexico', 'CDMX.')).toBe('Mexico City');
-    expect(admin1AreaOf('Mexico', 'Amatepec, Estado de Mexico')).toBe('State of Mexico');
-    expect(admin1AreaOf('Chile', "Region del Libertador General Bernardo O'Higgins")).toBe("O'Higgins");
-    expect(admin1AreaOf('Russia', 'Kalmikia')).toBe('Republic of Kalmykia');
+test.each([
+    ['Indonesia', 'Jawa Barat', 'West Java'],
+    ['Italy', 'EmiliaRomagna', 'Emilia-Romagna'],
+    ['Thailand', 'Kampheang-Phet', 'Kamphaeng Phet'],
+    ['South Africa', 'Kwa-Zulu Natal', 'KwaZulu-Natal'],
+    ['Pakistan', 'Peshawer', 'Khyber Pakhtunkhwa'],
+    ['Kenya', 'Kilifi District', 'Kilifi'],
+    ['Germany', 'Bayern', 'Bavaria'],
+    ['Democratic Republic of the Congo', 'province Kasai Oriental', 'Kasaï-Oriental'],
+    ['Democratic Republic of the Congo', 'Sud-Kivu,Kamituga', 'Sud-Kivu'],
+    ['Austria', 'Kärnten', 'Carinthia'],
+    ['Mexico', 'CDMX.', 'Mexico City'],
+    ['Mexico', 'Amatepec, Estado de Mexico', 'State of Mexico'],
+    ['Chile', "Region del Libertador General Bernardo O'Higgins", "O'Higgins"],
+    ['Russia', 'Kalmikia', 'Republic of Kalmykia'],
+    ['Laos', 'Vientiane Capital, Saythany', 'Vientiane Capital'],
+    ['Laos', 'Vientiane Province', 'Vientiane Province'],
+    ['Laos', 'Xaysomboune', 'Xaisomboon'],
+    ['Russia', 'Moscow region', 'Moscow Oblast'],
+    ['Russia', 'MOW', 'Moscow City'],
+    ['Russia', 'MOS', 'Moscow Oblast'],
+    ['Russia', 'ALT', 'Altai Krai'],
+    ['USA', 'Washington County, NY', 'New York'],
+    ['USA', 'Washington, DC', 'District of Columbia'],
+    ['USA', 'La_Jolla,California', 'California'],
+    ['USA', 'Washington, Minnesota', 'Washington, Minnesota'],
+    ['Brazil', 'RioBranco, AC', 'Acre'],
+    ['USA', 'Washington County', 'Washington County'],
+])('a division is found under the name the country records it by: %s, %s', (country, recorded, division) => {
+    expect(admin1AreaOf(country, recorded)).toBe(division);
 });
 
-test('a division below the one that a map draws is counted under the one it belongs to', () => {
-    expect(admin1AreaOf('Italy', 'Ancona')).toBe('Marche');
-    expect(admin1AreaOf('Spain', 'Barcelona')).toBe('Catalonia');
-    expect(admin1AreaOf('United Kingdom', 'Liverpool')).toBe('England');
-    expect(admin1AreaOf('Sierra Leone', 'Port Loko')).toBe('Northern');
-    expect(admin1AreaOf('Bangladesh', 'Char Fasson, Bhola')).toBe('Barisal');
-    expect(admin1AreaOf('Madagascar', 'Antsirabe I')).toBe('Vakinankaratra');
-    expect(admin1AreaOf('Hungary', 'Szeged')).toBe('Csongrád-Csanád');
+test.each([
+    ['Italy', 'Ancona', 'Marche'],
+    ['Spain', 'Barcelona', 'Catalonia'],
+    ['United Kingdom', 'Liverpool', 'England'],
+    ['Sierra Leone', 'Port Loko', 'North Western'],
+    ['Bangladesh', 'Char Fasson, Bhola', 'Barisal'],
+    ['Madagascar', 'Antsirabe I', 'Vakinankaratra'],
+    ['Hungary', 'Szeged', 'Csongrád-Csanád'],
+])(
+    'a division below the one that a map draws is counted under the one it belongs to: %s, %s',
+    (country, recorded, division) => {
+        expect(admin1AreaOf(country, recorded)).toBe(division);
+    },
+);
+
+test.each([
+    ['Uganda', 'Kikuube district', 'Kikuube'],
+    ['Uganda', 'Rubanda', 'Rubanda'],
+    ['Uganda', 'Hoima City', 'Hoima City'],
+    ['Uganda', 'Hoima District', 'Hoima District'],
+    ['Indonesia', 'Tarakan', 'North Kalimantan'],
+    ['Philippines', 'Sulu', 'Zamboanga Peninsula'],
+    ['Philippines', 'Negros Oriental', 'Negros Island Region'],
+    ['Nepal', 'Sarlahi', 'Madhesh'],
+    ['Nepal', 'Birgunj, Parsa', 'Madhesh'],
+])('records are assigned to their present-day division: %s, %s', (country, recorded, division) => {
+    expect(admin1AreaOf(country, recorded)).toBe(division);
 });
 
-test('a division drawn as the country stood is where its later splits are counted', () => {
-    // These fixtures use older map boundaries.
-    expect(admin1AreaOf('Uganda', 'Kikuube district')).toBe('Hoima');
-    expect(admin1AreaOf('Uganda', 'Rubanda')).toBe('Kabale');
-    expect(admin1AreaOf('Nepal', 'Sarlahi')).toBe('Janakpur Zone');
-    expect(admin1AreaOf('Nepal', 'Birgunj, Parsa')).toBe('Narayani Zone');
+test.each([
+    ['China', 'Guangzhou', 'Guangdong'],
+    ['Japan', 'Osaka City', 'Ōsaka'],
+    ['Brazil', 'Ribeirao Preto', 'São Paulo'],
+    ['Brazil', 'Tocantins state (Palmas)', 'Tocantins'],
+    ['Brazil', 'Valenca-RJ', 'Rio de Janeiro'],
+    ['USA', 'Kansas City MO', 'Missouri'],
+    ['USA', 'Kansas, Dodge City', 'Kansas'],
+    ['Germany', 'Wuerzburg', 'Bavaria'],
+    ['Colombia', 'Barranquilla', 'Atlántico'],
+    ['Paraguay', 'Coronel Oviedo', 'Caaguazú'],
+    ['Oman', 'Al Seeb', 'Muscat'],
+    ['Saudi Arabia', 'Al-Sharafyia, Jeddah', 'Makkah'],
+])(
+    'a place inside a division is counted under it, but a division named beside it wins: %s, %s',
+    (country, recorded, division) => {
+        expect(admin1AreaOf(country, recorded)).toBe(division);
+    },
+);
+
+test.each([
+    ['Viet Nam', 'South', 'South'],
+    ['Malaysia', 'Klang valley', 'Klang valley'],
+    ['China', 'Suzhou', 'Suzhou'],
+    ['United Kingdom', 'Great Britain', 'Great Britain'],
+    ['France', 'Reunion', 'Reunion'],
+    ['Chile', 'Easter Island', 'Easter Island'],
+    // A village, or a lake shared by several counties.
+    ['Hungary', 'Balaton', 'Balaton'],
+    ['Myanmar', 'Burma', 'Burma'],
+    ['Laos', 'Vientiane', 'Vientiane'],
+    ['Paraguay', 'Bella Vista', 'Bella Vista'],
+])('a value that names no one division is kept as it is written: %s, %s', (country, recorded, division) => {
+    expect(admin1AreaOf(country, recorded)).toBe(division);
 });
 
-test('a capital drawn together with the province around it gathers both names', () => {
-    expect(admin1AreaOf('Laos', 'Vientiane Capital, Saythany')).toBe('Vientiane');
-    expect(admin1AreaOf('Laos', 'Vientiane Province')).toBe('Vientiane');
-    expect(admin1AreaOf('Russia', 'Moscow region')).toBe('Moscow');
-});
-
-test('a place inside a division is counted under it, but a division named beside it wins', () => {
-    expect(admin1AreaOf('China', 'Guangzhou')).toBe('Guangdong');
-    expect(admin1AreaOf('Japan', 'Osaka City')).toBe('Ōsaka');
-    expect(admin1AreaOf('Brazil', 'Ribeirao Preto')).toBe('São Paulo');
-    expect(admin1AreaOf('Brazil', 'Tocantins state (Palmas)')).toBe('Tocantins');
-    expect(admin1AreaOf('Brazil', 'Valenca-RJ')).toBe('Rio de Janeiro');
-    expect(admin1AreaOf('USA', 'Kansas City MO')).toBe('Missouri');
-    expect(admin1AreaOf('USA', 'Kansas, Dodge City')).toBe('Kansas');
-    expect(admin1AreaOf('Germany', 'Wuerzburg')).toBe('Bavaria');
-    expect(admin1AreaOf('Colombia', 'Barranquilla')).toBe('Atlántico');
-    expect(admin1AreaOf('Paraguay', 'Coronel Oviedo')).toBe('Caaguazú');
-    expect(admin1AreaOf('Oman', 'Al Seeb')).toBe('Muscat');
-    expect(admin1AreaOf('Saudi Arabia', 'Al-Sharafyia, Jeddah')).toBe('Makkah');
-});
-
-test('a value that names no one division is kept as it is written', () => {
-    expect(admin1AreaOf('Viet Nam', 'South')).toBe('South');
-    expect(admin1AreaOf('Malaysia', 'Klang valley')).toBe('Klang valley');
-    expect(admin1AreaOf('China', 'Suzhou')).toBe('Suzhou');
-    expect(admin1AreaOf('United Kingdom', 'Great Britain')).toBe('Great Britain');
-    expect(admin1AreaOf('France', 'Reunion')).toBe('Reunion');
-    expect(admin1AreaOf('Chile', 'Easter Island')).toBe('Easter Island');
-    // Balaton can refer to a village or to a lake shared by several counties.
-    expect(admin1AreaOf('Hungary', 'Balaton')).toBe('Balaton');
-    expect(admin1AreaOf('Myanmar', 'Burma')).toBe('Burma');
-    expect(admin1AreaOf('Laos', 'Xaysomboune')).toBe('Xaysomboune');
-    expect(admin1AreaOf('Paraguay', 'Bella Vista')).toBe('Bella Vista');
-});
-
-test('a postal code beside a town names the state, a county abbreviation does not', () => {
-    expect(admin1AreaOf('USA', 'Dallas Co. TX')).toBe('Texas');
-    expect(admin1AreaOf('USA', 'Albuquerque NM')).toBe('New Mexico');
-    expect(admin1AreaOf('USA', 'Washington Co')).toBe('Washington Co');
-});
+test.each([
+    ['USA', 'Dallas Co. TX', 'Texas'],
+    ['USA', 'Albuquerque NM', 'New Mexico'],
+    ['USA', 'Washington Co', 'Washington Co'],
+])(
+    'a postal code beside a town names the state, a county abbreviation does not: %s, %s',
+    (country, recorded, division) => {
+        expect(admin1AreaOf(country, recorded)).toBe(division);
+    },
+);
 
 test('a country keeps every name it is recorded under', () => {
     expect(canonicalCountryOf('Zaire')).toBe('Democratic Republic of the Congo');
@@ -362,7 +169,12 @@ test('a country keeps every name it is recorded under', () => {
     expect(canonicalCountryOf('Viet Nam')).toBe('Viet Nam');
     expect(countryNamesOf('Timor-Leste')).toEqual(['Timor-Leste', 'East Timor']);
     expect(countryNamesOf('East Timor')).toEqual(['Timor-Leste', 'East Timor']);
-    expect(countryNamesOf('Serbia').sort()).toEqual(['Serbia', 'Serbia and Montenegro', 'Yugoslavia']);
+    expect(countryNamesOf('Serbia').sort()).toEqual(['Serbia']);
+    expect(countryNamesOf('South Korea')).toEqual(['South Korea']);
+    for (const place of ['Korea', 'Borneo', 'Serbia and Montenegro', 'Yugoslavia', 'Netherlands Antilles']) {
+        expect(placedCountryOf(place)).toBeUndefined();
+        expect(continentOf(place)).toBeDefined();
+    }
     expect(countryNamesOf('Nigeria')).toEqual(['Nigeria']);
 });
 
@@ -374,6 +186,17 @@ test('a division of a country is told apart from a value kept as it was recorded
     expect(isAdmin1Of('Viet Nam', admin1AreaOf('Viet Nam', 'South'))).toBe(false);
     expect(isAdmin1Of('Chile', admin1AreaOf('Chile', 'Easter Island'))).toBe(false);
     expect(isAdmin1Of('Uganda', admin1AreaOf('Uganda', 'Mulago'))).toBe(true);
+    for (const [country, recorded] of [
+        ['Uganda', 'Hoima'],
+        ['Nepal', 'Janakpur Zone'],
+        ['Madagascar', 'Vatovavy-Fitovinany'],
+        ['Viet Nam', 'Red River Delta'],
+        ['Brazil', 'Manaus, Bahia'],
+        ['USA', 'Somewhere in the Midwest'],
+    ]) {
+        expect(isAdmin1Of(country, admin1AreaOf(country, recorded))).toBe(false);
+    }
+    expect(isAdmin1Of('Argentina', admin1AreaOf('Argentina', 'Buenos Aires'))).toBe(false);
     expect(hasAdmin1Names('Ghana')).toBe(false);
     expect(isAdmin1Of('Ghana', 'Ashanti')).toBe(false);
     expect(hasAdmin1Names('Brazil')).toBe(true);

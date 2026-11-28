@@ -1,13 +1,14 @@
 import { admin1ValuesQuery, referenceGenomesQuery, valuesQuery } from './builders.ts';
+import { COLUMNS } from './columns.ts';
 import { DEFINITION_COLUMN, DEFINITION_JSON, definitionNameOf } from './definitions.ts';
-import { COLUMNS, lookupsNeeded, scopeFilter, type ScopeLookups, type TableFilter } from './scope.ts';
+import { lookupsNeeded, scopeFilter, type ScopeLookups, type TableFilter } from './scope.ts';
 import { lineageTreeOf, type Hierarchy, type LineageDefinition, type LineageTree } from '../../domain/lineages.ts';
 import { referenceOf, referenceSequencesOf, type ReferenceRow } from '../../domain/reference.ts';
 import type { Scope } from '../../domain/scope.ts';
 import { isPathogenNode, pathogensOf, type Catalog, type Subject } from '../../domain/subject.ts';
 import type { ReferenceSequences } from '../../domain/variant.ts';
 import type { Relation } from '../transport/relation.ts';
-import type { RhydbRow } from '../transport/row.ts';
+import { readOptionalText, readText, type RhydbRow } from '../transport/row.ts';
 
 export type ResolvedScope = {
     scope: Scope;
@@ -16,78 +17,56 @@ export type ResolvedScope = {
     lookups: ScopeLookups;
 };
 
-type Need = {
-    scope: Scope;
-    tables: string[];
-    references: boolean;
-    admin1Country: string | undefined;
-};
+/** Register each distinct lookup once and retain its result position with the scope that needs it. */
+export function scopePlan(scopes: readonly Scope[], catalog: Catalog) {
+    const queries: Relation[] = [];
+    const indices = new Map<string, number>();
+    function register(query: Relation) {
+        const key = query.render();
+        const index = indices.get(key);
+        if (index !== undefined) {
+            return index;
+        }
+        const position = queries.push(query) - 1;
+        indices.set(key, position);
+        return position;
+    }
 
-/** Share lookups across scopes before building their table filters. */
-type ScopePlan = {
-    needs: Need[];
-    columnNeeds: { table: string; column: string }[];
-    admin1Needs: { tables: string[]; country: string }[];
-    wantsReferences: boolean;
-    queries: Relation[];
-};
-
-export function scopePlan(scopes: readonly Scope[], catalog: Catalog): ScopePlan {
-    const needs = scopes.map((scope) => ({
-        scope,
-        tables: pathogensOf(scope.what, catalog).map((pathogen) => pathogen.table),
-        ...lookupsNeeded(scope),
-    }));
-    const columnNeeds = uniqueBy(
-        needs.flatMap((need) => need.columns),
-        (need) => `${need.table}|${need.column}`,
-    );
-    const admin1Needs = uniqueBy(
-        needs.flatMap((need) =>
-            need.admin1Country === undefined ? [] : [{ tables: need.tables, country: need.admin1Country }],
-        ),
-        (need) => `${need.tables.join(',')}|${need.country}`,
-    );
-    const wantsReferences = needs.some((need) => need.references);
-    const queries = [
-        ...columnNeeds.map((need) => valuesQuery([need.table], need.column)),
-        ...admin1Needs.map((need) => admin1ValuesQuery(need.tables, need.country)),
-        ...(wantsReferences ? [referenceGenomesQuery()] : []),
-    ];
-    return { needs, columnNeeds, admin1Needs, wantsReferences, queries };
-}
-
-/** Rows follow the order of the queries in the plan. */
-export function resolveScopes(
-    plan: ScopePlan,
-    rows: readonly (readonly RhydbRow[])[],
-    hierarchy: Hierarchy,
-): ResolvedScope[] {
-    const { needs, columnNeeds, admin1Needs, wantsReferences } = plan;
-    const columnValues = new Map(
-        columnNeeds.map((need, index) => [`${need.table}|${need.column}`, valuesOf(rows[index], need.column)]),
-    );
-    const admin1Names = new Map(
-        admin1Needs.map((need, index) => [
-            `${need.tables.join(',')}|${need.country}`,
-            valuesOf(rows[columnNeeds.length + index], COLUMNS.admin1),
-        ]),
-    );
-    const referenceRows = wantsReferences ? referenceRowsOf(rows[rows.length - 1]) : [];
-    return needs.map(({ scope, tables, references, admin1Country }): ResolvedScope => {
-        const lookups: ScopeLookups = {
-            hierarchy,
-            columnValues: (table, column) => columnValues.get(`${table}|${column}`),
-            admin1Names:
-                admin1Country === undefined ? undefined : admin1Names.get(`${tables.join(',')}|${admin1Country}`),
-            references: references ? referenceSequencesFor(scope.what, referenceRows) : undefined,
-        };
-        return { scope, tables, filter: scopeFilter(scope, lookups), lookups };
+    const pending = scopes.map((scope) => {
+        const tables = pathogensOf(scope.what, catalog).map((pathogen) => pathogen.table);
+        const needs = lookupsNeeded(scope);
+        const columns = needs.columns.map(({ table, column }) => ({
+            table,
+            column,
+            index: register(valuesQuery([table], column)),
+        }));
+        const divisions =
+            needs.admin1Country === undefined ? undefined : register(admin1ValuesQuery(tables, needs.admin1Country));
+        const references = needs.references ? register(referenceGenomesQuery()) : undefined;
+        return { scope, tables, columns, divisions, references };
     });
+    function resolve(rows: readonly (readonly RhydbRow[])[], hierarchy: Hierarchy): ResolvedScope[] {
+        return pending.map(({ scope, tables, columns, divisions, references }) => {
+            const lookups: ScopeLookups = {
+                hierarchy,
+                columnValues: (table, column) => {
+                    const need = columns.find((entry) => entry.table === table && entry.column === column);
+                    return need === undefined ? undefined : valuesOf(rows[need.index], column);
+                },
+                admin1Names: divisions === undefined ? undefined : valuesOf(rows[divisions], COLUMNS.admin1),
+                references:
+                    references === undefined
+                        ? undefined
+                        : referenceSequencesFor(scope.what, referenceRowsOf(rows[references])),
+            };
+            return { scope, tables, filter: scopeFilter(scope, lookups), lookups };
+        });
+    }
+    return { queries, resolve };
 }
 
 export function referenceRowsOf(rows: readonly RhydbRow[]): ReferenceRow[] {
-    return rows.map((row) => ({ name: String(row.name), type: String(row.type) }));
+    return rows.map((row) => ({ name: readText(row, 'name'), type: readText(row, 'type') }));
 }
 
 export function referenceSequencesFor(what: Subject, rows: readonly ReferenceRow[]): ReferenceSequences | undefined {
@@ -102,7 +81,7 @@ export function referenceSequencesFor(what: Subject, rows: readonly ReferenceRow
 export function hierarchyOf(rows: readonly RhydbRow[]): Hierarchy {
     const trees = new Map<string, LineageTree>();
     for (const row of rows) {
-        const name = String(row[DEFINITION_COLUMN]);
+        const name = readText(row, DEFINITION_COLUMN);
         const written = row[DEFINITION_JSON];
         if (typeof written !== 'string') {
             throw new Error(`The lineage definition of ${name} is not written as text.`);
@@ -119,15 +98,5 @@ export function hierarchyOf(rows: readonly RhydbRow[]): Hierarchy {
 }
 
 export function valuesOf(rows: readonly RhydbRow[], column: string): (string | null)[] {
-    return rows.map((row) => (row[column] ?? null) as string | null);
-}
-
-function uniqueBy<T>(items: readonly T[], keyOf: (item: T) => string): T[] {
-    const seen = new Map<string, T>();
-    for (const item of items) {
-        if (!seen.has(keyOf(item))) {
-            seen.set(keyOf(item), item);
-        }
-    }
-    return [...seen.values()];
+    return rows.map((row) => readOptionalText(row, column));
 }

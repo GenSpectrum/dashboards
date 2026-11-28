@@ -2,6 +2,7 @@ import { MUTATION_FIELDS, sequences } from './builders.ts';
 import { MUTATION_KIND, type MutationKind } from '../../domain/variant.ts';
 import type { Expr } from '../transport/expression.ts';
 import type { Relation } from '../transport/relation.ts';
+import type { RhydbRow } from '../transport/row.ts';
 
 /** Use a fixed query floor below the cutoffs used in the reports. */
 export const REPORT_FLOOR = 0.05;
@@ -22,3 +23,5 @@ export function mutationProfileQuery(options: {
         ? relation.aminoAcidMutations(args)
         : relation.mutations(args);
 }
+
+export type ProportionRows = { own: readonly RhydbRow[]; all: readonly RhydbRow[] };

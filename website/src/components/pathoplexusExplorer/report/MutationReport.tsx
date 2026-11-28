@@ -1,62 +1,43 @@
 import { type FC, useMemo } from 'react';
 
+import { AreasTable, unplacedNote } from './AreasTable.tsx';
 import { Citation } from './Citation.tsx';
+import { ProportionFigure } from './DistributionOverTime.tsx';
 import { GenomePosition } from './GenomePosition.tsx';
-import { Bar, KeyFigures, Prose, ReportLink, restLabel, Section, sumOf, Table, withRest } from './Layout.tsx';
+import { Bar, KeyFigures, Prose, ReportLink, restLabel, Section, Table, withRest } from './Layout.tsx';
 import { nomenclatureNote } from './Nomenclature.tsx';
 import { ReportMap } from './ReportMap.tsx';
+import { ReportMetadataSections } from './ReportMetadataSections.tsx';
 import { ReportShell } from './ReportShell.tsx';
-import { AreasTable, Hosts, MetadataAvailability, ProportionFigure, Submitters } from './Sections.tsx';
-import {
-    areaScale,
-    countriesIn,
-    groupsIn,
-    hasPlacesBelow,
-    plural,
-    rankAreas,
-    spreadFigure,
-    type AreaCount,
-    type AreaScale,
-} from './areaScale.ts';
-import {
-    firstErrorOf,
-    useHostCounts,
-    useMapCounts,
-    useSubtypeColumns,
-    type Loadable,
-} from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
-import type { ProportionRows } from '../../../pathoplexusExplorer/dataLayer/hooks/genomics.ts';
+import { plural, spreadFigure } from './areaScale.ts';
+import { useMapCounts, useSubtypeColumns } from '../../../pathoplexusExplorer/dataLayer/hooks/analyses.ts';
+import { firstErrorOf, type Loadable } from '../../../pathoplexusExplorer/dataLayer/hooks/queryResult.ts';
 import type { ReportEntries } from '../../../pathoplexusExplorer/dataLayer/hooks/useEntries.ts';
 import type { Genome } from '../../../pathoplexusExplorer/dataLayer/hooks/useGenome.ts';
 import {
     useMutationReads,
-    useSymbolGroups,
+    useCoverageByGroup,
     type MutationCheck,
     type MutationSubject,
-    type PositionReading,
-    type SymbolGroup,
 } from '../../../pathoplexusExplorer/dataLayer/hooks/useMutation.ts';
+import { useReportMetadata } from '../../../pathoplexusExplorer/dataLayer/hooks/useReportData.ts';
+import { areaScale, hasPlacesBelow, areaCounts } from '../../../pathoplexusExplorer/dataLayer/queries/areas.ts';
 import {
-    useAffiliations,
-    useAuthors,
-    useMetadataAvailability,
-    useSubmittingGroups,
-} from '../../../pathoplexusExplorer/dataLayer/hooks/useReports.ts';
-import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/scope.ts';
+    mutationBreakdownLevel,
+    lineageCounts,
+    type LineageCount,
+} from '../../../pathoplexusExplorer/dataLayer/queries/breakdown.ts';
+import { COLUMNS } from '../../../pathoplexusExplorer/dataLayer/queries/columns.ts';
+import type { PositionReading } from '../../../pathoplexusExplorer/dataLayer/queries/positions.ts';
+import { countryCounts, groupsIn } from '../../../pathoplexusExplorer/dataLayer/queries/summary.ts';
 import type { RhydbRow } from '../../../pathoplexusExplorer/dataLayer/transport/row.ts';
 import { CATALOG } from '../../../pathoplexusExplorer/domain/catalog.ts';
 import type { Place } from '../../../pathoplexusExplorer/domain/geography.ts';
-import { normalizeSubtype, UNASSIGNED } from '../../../pathoplexusExplorer/domain/lineages.ts';
+import { UNASSIGNED } from '../../../pathoplexusExplorer/domain/lineages.ts';
 import type { ReportRef } from '../../../pathoplexusExplorer/domain/reports.ts';
 import type { Period } from '../../../pathoplexusExplorer/domain/scope.ts';
-import { formatCount, formatProportion, LOW_COUNT } from '../../../pathoplexusExplorer/domain/statistics.ts';
-import {
-    isPathogenNode,
-    subjectLabel,
-    subjectTitle,
-    withStep,
-    type Subject,
-} from '../../../pathoplexusExplorer/domain/subject.ts';
+import { formatCount, formatProportion, LOW_COUNT, sumOf } from '../../../pathoplexusExplorer/domain/statistics.ts';
+import { subjectLabel, subjectTitle, type Subject } from '../../../pathoplexusExplorer/domain/subject.ts';
 import { singleMutationOf } from '../../../pathoplexusExplorer/domain/variant.ts';
 import { hrefOf } from '../../../pathoplexusExplorer/pageState/reportKinds.ts';
 import { OTHER_COLOR } from '../charts/colors.ts';
@@ -74,10 +55,6 @@ const PERIOD_BY = [COLUMNS.lower, COLUMNS.upper];
 const NO_LEVEL: string[] = [];
 const LINEAGE_BY = (column: string | undefined) => (column === undefined ? NO_LEVEL : [column]);
 const AREA_BY = (where: Place) => (where.level === 'country' ? COUNTRY_AND_AREA : COUNTRY_ONLY);
-
-function rowOfGroup(group: SymbolGroup): RhydbRow {
-    return { [COLUMNS.country]: group.values[0] ?? null, [COLUMNS.admin1]: group.values[1] ?? null };
-}
 
 type MutationReportProps = {
     reference: ReportRef & { kind: 'mutations' };
@@ -115,11 +92,14 @@ type MutationReportBodyProps = {
     genome: Genome;
 };
 
-function useMutationReport({ reference, subject, genome }: MutationReportBodyProps) {
+const MutationReportBody: FC<MutationReportBodyProps> = ({ reference, entries, subject, genome }) => {
     const { where, period, what } = reference;
     const available = useSubtypeColumns(CATALOG);
     const columns = available.data;
-    const level = useMemo(() => (columns === undefined ? undefined : breakdownLevel(what, columns)), [what, columns]);
+    const level = useMemo(
+        () => (columns === undefined ? undefined : mutationBreakdownLevel(what, columns)),
+        [what, columns],
+    );
     const reads = useMutationReads({
         what,
         where,
@@ -130,117 +110,48 @@ function useMutationReport({ reference, subject, genome }: MutationReportBodyPro
         reference: genome,
         catalog: CATALOG,
     });
-    const scope = useMemo(() => ({ what, where, period }), [what, where, period]);
-    const variantScope = useMemo(() => ({ ...scope, variant: reference.query }), [scope, reference.query]);
     const own = { ...reads.resolved, data: reads.resolved.data?.[0] };
     const all = { ...reads.resolved, data: reads.resolved.data?.[1] };
-    const map = useMapCounts(variantScope, own, all);
-    // Hosts and submitting groups are counted among sequences matching the mutation query.
-    const hosts = useHostCounts(own);
-    const groups = useSubmittingGroups(own);
-    const authors = useAuthors(own);
-    const affiliations = useAffiliations(own);
-    const availability = useMetadataAvailability(own);
-    const datedRows = { ...reads.proportion, data: reads.proportion.data?.[0]?.own };
+    const map = useMapCounts(where, own, all);
+    const metadata = useReportMetadata(own);
+    const datedRows = { ...reads.proportion, data: reads.proportion.data?.own };
 
     const positions = reads.positions.data ?? [];
     const single = singleMutationOf(subject.node) !== undefined && positions.length === 1 ? positions[0] : undefined;
     // Use the coverage denominator only for a single mutation.
-    const byLineage = useSymbolGroups(all, subject, genome, LINEAGE_BY(level?.column), single !== undefined);
-    const byArea = useSymbolGroups(all, subject, genome, AREA_BY(where), single !== undefined);
-    const byPeriod = useSymbolGroups(all, subject, genome, PERIOD_BY, single !== undefined);
+    const byLineage = useCoverageByGroup(all, subject, genome, LINEAGE_BY(level?.column), single !== undefined);
+    const byArea = useCoverageByGroup(all, subject, genome, AREA_BY(where), single !== undefined);
+    const byPeriod = useCoverageByGroup(all, subject, genome, PERIOD_BY, single !== undefined);
     const covered = single !== undefined;
-    const proportionOverTime: Loadable<ProportionRows[]> = covered
-        ? {
-              ...byPeriod,
-              data:
-                  byPeriod.data === undefined
-                      ? undefined
-                      : [
-                            {
-                                own: periodRows(byPeriod.data, (group) => group.carriers),
-                                all: periodRows(byPeriod.data, (group) => group.covered),
-                            },
-                        ],
-          }
-        : reads.proportion;
-    const carriers = reads.proportion.data?.[0];
-    const carrierTotal = (carriers?.own ?? []).reduce((sum, row) => sum + Number(row.n ?? 0), 0);
-    const baseTotal = (carriers?.all ?? []).reduce((sum, row) => sum + Number(row.n ?? 0), 0);
+    const proportionOverTime = covered ? byPeriod : reads.proportion;
+    const carriers = reads.proportion.data;
+    const carrierTotal = sumOf(carriers?.own ?? [], (row) => Number(row.n ?? 0));
+    const baseTotal = sumOf(carriers?.all ?? [], (row) => Number(row.n ?? 0));
 
+    const classification = covered ? byLineage : reads.carriers;
     const lineages = useMemo(
-        () =>
-            covered
-                ? lineagesFromSymbols(byLineage.data, level?.column, what)
-                : lineagesOf(reads.carriers.data, level?.column, what),
-        [covered, byLineage.data, reads.carriers.data, level, what],
+        () => lineageCounts(classification.data, level?.column, what),
+        [classification.data, level, what],
     );
     const scale = useMemo(() => areaScale(where), [where]);
-    const areas = useMemo(
-        () => (covered ? areasFromSymbols(scale, byArea.data) : areasOf(scale, map.data)),
-        [covered, scale, byArea.data, map.data],
-    );
+    const geographicRows = useMemo(() => {
+        if (covered) {
+            return byArea.data;
+        }
+        return map.data === undefined ? undefined : { own: map.data.rows, all: map.data.parentRows ?? map.data.rows };
+    }, [covered, byArea.data, map.data]);
+    const areas = useMemo(() => areaCounts(scale, geographicRows, covered), [scale, geographicRows, covered]);
+    const geographicCarriers = sumOf(geographicRows?.own ?? [], (row) => Number(row.n ?? 0));
 
-    return {
-        available,
-        level,
-        reads,
-        map,
-        hosts,
-        groups,
-        authors,
-        affiliations,
-        availability,
-        datedRows,
-        positions,
-        single,
-        covered,
-        proportionOverTime,
-        carriers,
-        carrierTotal,
-        baseTotal,
-        lineages,
-        scale,
-        areas,
-    };
-}
+    const error = firstErrorOf([reads.resolved, reads.carriers, reads.proportion, ...Object.values(metadata)]);
 
-const MutationReportBody: FC<MutationReportBodyProps> = (props) => {
-    const { reference, entries, genome } = props;
-    const { where, period, what } = reference;
-    const {
-        available,
-        level,
-        reads,
-        map,
-        hosts,
-        groups,
-        authors,
-        affiliations,
-        availability,
-        datedRows,
-        positions,
-        single,
-        covered,
-        proportionOverTime,
-        carriers,
-        carrierTotal,
-        baseTotal,
-        lineages,
-        scale,
-        areas,
-    } = useMutationReport(props);
-
-    const error = firstErrorOf([
-        reads.resolved,
-        reads.carriers,
-        reads.proportion,
-        hosts,
-        groups,
-        authors,
-        affiliations,
-        availability,
-    ]);
+    if (reads.positions.data === undefined) {
+        return (
+            <ReportShell reference={reference}>
+                {reads.positions.error === null ? <Loading /> : <ErrorMessage error={reads.positions.error} />}
+            </ReportShell>
+        );
+    }
 
     return (
         <ReportShell reference={reference}>
@@ -255,7 +166,7 @@ const MutationReportBody: FC<MutationReportBodyProps> = (props) => {
                 positionCount={positions.length}
                 single={single}
                 map={map.data}
-                groups={groups.data}
+                groups={metadata.groups.data}
             />
 
             <Section number={2} title='Position on the genome'>
@@ -268,15 +179,14 @@ const MutationReportBody: FC<MutationReportBodyProps> = (props) => {
                 what={what}
                 where={where}
                 period={period}
-                state={reads.carriers}
-                lineages={lineages}
+                state={{ ...classification, data: lineages }}
                 covered={covered}
             />
 
             <Section number={4} title='Distribution over time'>
                 <ProportionFigure
                     title='Proportion over time'
-                    state={{ ...proportionOverTime, data: proportionOverTime.data?.[0] }}
+                    state={proportionOverTime}
                     label={reference.query}
                     legend={`${reference.query}, proportion of ${subjectTitle(what)} sequences${covered ? ' with coverage' : ''}`}
                     yTitle={covered ? 'Proportion with coverage' : `Proportion of ${subjectTitle(what)}`}
@@ -286,30 +196,28 @@ const MutationReportBody: FC<MutationReportBodyProps> = (props) => {
             <Section number={5} title='Geographic distribution'>
                 <ReportMap where={where} counts={map} legend={`Sequences with ${reference.query}`} />
                 {hasPlacesBelow(where) && (
-                    <AreasTable
-                        scale={scale}
-                        linkTo={(place) =>
-                            hrefOf({ kind: 'mutations', what, where: place, query: reference.query, period })
-                        }
-                        areas={areas}
-                        period={period}
-                        countHeader='Count'
-                        ofHeader={covered ? 'Coverage' : 'Sequences'}
-                    />
+                    <Async state={{ data: areas, error: covered ? byArea.error : map.error }} height='h-32'>
+                        {(data) => (
+                            <AreasTable
+                                scale={scale}
+                                linkTo={(place) =>
+                                    hrefOf({ kind: 'mutations', what, where: place, query: reference.query, period })
+                                }
+                                areas={data}
+                                footnote={unplacedNote(
+                                    geographicCarriers - sumOf(data, (area) => area.own),
+                                    geographicCarriers,
+                                )}
+                                period={period}
+                                countHeader='Count'
+                                ofHeader={covered ? 'Coverage' : 'Sequences'}
+                            />
+                        )}
+                    </Async>
                 )}
             </Section>
 
-            <Section number={6} title='Hosts'>
-                <Hosts rows={hosts} total={carrierTotal} />
-            </Section>
-
-            <Section number={7} title='Metadata availability'>
-                <MetadataAvailability availability={availability} dates={datedRows} />
-            </Section>
-
-            <Section number={8} title='Submitters'>
-                <Submitters groups={groups} authors={authors} affiliations={affiliations} total={carrierTotal} />
-            </Section>
+            <ReportMetadataSections first={6} metadata={metadata} dates={datedRows} />
         </ReportShell>
     );
 };
@@ -381,8 +289,15 @@ const DatasetSection: FC<DatasetSectionProps> = ({
                                           : `of ${formatCount(single.read)} sequences`,
                               },
                           ]),
-                    spreadFigure(reference.where, map?.rows, countriesIn(map?.rows)),
-                    { label: 'Submitting groups', value: formatOrWait(groupsIn(groups)) },
+                    spreadFigure(
+                        reference.where,
+                        map?.rows,
+                        map === undefined ? undefined : countryCounts(map.rows).size,
+                    ),
+                    {
+                        label: 'Submitting groups',
+                        value: formatOrWait(groups === undefined ? undefined : groupsIn(groups)),
+                    },
                 ]}
             />
         </Section>
@@ -395,8 +310,7 @@ type ClassificationSectionProps = {
     what: Subject;
     where: Place;
     period: Period;
-    state: Loadable<unknown>;
-    lineages: LineageRow[] | undefined;
+    state: Loadable<(LineageCount & { rest?: boolean })[]>;
     covered: boolean;
 };
 
@@ -407,7 +321,6 @@ const ClassificationSection: FC<ClassificationSectionProps> = ({
     where,
     period,
     state,
-    lineages,
     covered,
 }) => (
     <Section
@@ -427,7 +340,7 @@ const ClassificationSection: FC<ClassificationSectionProps> = ({
             </Prose>
         ) : (
             <Async state={state} height='h-32'>
-                {() => (
+                {(lineages) => (
                     <Table
                         columns={[
                             {
@@ -470,7 +383,7 @@ const ClassificationSection: FC<ClassificationSectionProps> = ({
                                 ),
                             },
                         ]}
-                        rows={withRest(lineages ?? [], SHOWN, (left) => ({
+                        rows={withRest(lineages, SHOWN, (left) => ({
                             value: restLabel(left.length, level.label.toLowerCase(), `${level.label.toLowerCase()}s`),
                             own: sumOf(left, (entry) => entry.own),
                             all: sumOf(left, (entry) => entry.all),
@@ -484,105 +397,6 @@ const ClassificationSection: FC<ClassificationSectionProps> = ({
     </Section>
 );
 
-/** Break down by the first catalog level that the pathogen's table has and the report has not fixed. */
-function breakdownLevel(what: Subject, columns: ReadonlySet<string>): { column: string; label: string } | undefined {
-    if (!isPathogenNode(what)) {
-        return undefined;
-    }
-    const fixed = new Set(what.kind === 'subtype' ? what.steps.map((step) => step.column) : []);
-    const level = what.pathogen.levels.find(
-        (candidate) => !fixed.has(candidate.column) && columns.has(`${what.pathogen.table}|${candidate.column}`),
-    );
-    return level === undefined ? undefined : { column: level.column, label: level.label };
-}
-
-type LineageRow = {
-    value: string;
-    own: number;
-    all: number;
-    what?: Subject;
-    rest?: boolean;
-};
-
-function lineageRows(totals: ReadonlyMap<string, { own: number; all: number }>, column: string, what: Subject) {
-    return [...totals.entries()]
-        .map(([value, counts]) => ({
-            value,
-            ...counts,
-            what: value === UNASSIGNED ? undefined : withStep(what, { column, value }),
-        }))
-        .sort((a, b) => b.own - a.own || b.all - a.all);
-}
-
-function lineagesFromSymbols(
-    groups: SymbolGroup[] | undefined,
-    column: string | undefined,
-    what: Subject,
-): LineageRow[] | undefined {
-    if (groups === undefined || column === undefined) {
-        return undefined;
-    }
-    const totals = new Map<string, { own: number; all: number }>();
-    for (const group of groups) {
-        const value = normalizeSubtype(group.values[0]);
-        const entry = totals.get(value) ?? { own: 0, all: 0 };
-        entry.own += group.carriers;
-        entry.all += group.covered;
-        totals.set(value, entry);
-    }
-    return lineageRows(totals, column, what);
-}
-
-function areasFromSymbols(scale: AreaScale, groups: SymbolGroup[] | undefined): AreaCount[] {
-    return rankAreas(
-        scale,
-        (groups ?? []).map((group) => ({ row: rowOfGroup(group), own: group.carriers, all: group.covered })),
-    );
-}
-
-function periodRows(groups: SymbolGroup[] | undefined, count: (group: SymbolGroup) => number): RhydbRow[] {
-    return (groups ?? []).map((group) => ({
-        [COLUMNS.lower]: group.values[0],
-        [COLUMNS.upper]: group.values[1],
-        n: count(group),
-    }));
-}
-
-function lineagesOf(
-    carriers: { own: readonly RhydbRow[]; all: readonly RhydbRow[] } | undefined,
-    column: string | undefined,
-    what: Subject,
-): LineageRow[] | undefined {
-    if (carriers === undefined || column === undefined) {
-        return undefined;
-    }
-    const sum = (rows: readonly RhydbRow[]) => {
-        const counts = new Map<string, number>();
-        for (const row of rows) {
-            const value = normalizeSubtype((row[column] ?? null) as string | null);
-            counts.set(value, (counts.get(value) ?? 0) + Number(row.n ?? 0));
-        }
-        return counts;
-    };
-    const own = sum(carriers.own);
-    const totals = new Map([...sum(carriers.all)].map(([value, all]) => [value, { own: own.get(value) ?? 0, all }]));
-    return lineageRows(totals, column, what);
-}
-
 function labelOfValue(value: string): string {
     return value === UNASSIGNED ? 'Unassigned' : value;
-}
-
-function areasOf(
-    scale: AreaScale,
-    map: { rows: RhydbRow[]; parentRows: RhydbRow[] | undefined } | undefined,
-): AreaCount[] {
-    if (map === undefined) {
-        return [];
-    }
-    const n = (row: RhydbRow) => Number(row.n ?? 0);
-    return rankAreas(scale, [
-        ...map.rows.map((row) => ({ row, own: n(row), all: 0 })),
-        ...(map.parentRows ?? map.rows).map((row) => ({ row, own: 0, all: n(row) })),
-    ]).filter((area) => area.own > 0);
 }

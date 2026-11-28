@@ -1,29 +1,25 @@
 /**
- * One RhyDB instance: send a query to it, or print the equivalent curl command.
+ * One RhyDB instance to send queries to.
  *
  * Every request that the application makes is sent by `query` here, which is
  * what makes the CORS rules, the retry and the concurrency limit apply to all
- * of them. `key` and `id` are the instance's identity, for code that caches per
- * instance.
+ * of them. `key` is the instance's identity, for code that caches per instance.
  *
  * The Explorer's instance holds one table per pathogen, so a connection is not
  * bound to a table: each query names the tables that it combines.
  */
 
-import { curlFor, query as send, type QueryResult } from './query.ts';
+import { query as send, type QueryResult } from './query.ts';
 import { table, type Queryable } from './relation.ts';
-import { PRIORITY, withRequestLimit } from './requestLimit.ts';
+import { withRequestLimit } from './requestLimit.ts';
 import type { RhydbRow } from './row.ts';
 
 export type Connection = {
-    readonly url: string;
     /**
      * The instance's identity as a cache-key prefix. Spread it, so the key
      * stays a structurally hashable array: `['rows', ...connection.key, 1]`.
      */
     readonly key: readonly [url: string];
-    /** The same identity as one string, for caches that key on text. */
-    readonly id: string;
     /**
      * Sends a query and returns its typed rows, under the column names that the
      * query asked for.
@@ -35,34 +31,26 @@ export type Connection = {
         query: Queryable | string,
         /** What asked for it, as the user sees that part of the page named. */
         label: string,
-        options?: {
-            signal?: AbortSignal;
-            /** Which requests this one yields to; see `PRIORITY`. */
-            priority?: number;
-        },
+        options?: { signal?: AbortSignal },
     ): Promise<QueryResult<Row>>;
     /** The download timestamp of the current data, in Unix seconds. */
     dataVersion(options?: { signal?: AbortSignal }): Promise<string | null>;
-    /** The curl command that reproduces a query, with the headers actually sent. */
-    curl(query: Queryable | string): string;
 };
 
-export function connect(options: { url: string }): Connection {
+export function connect(options: { url: string; checkVersion?: (version: string | null) => void }): Connection {
     const { url } = options;
     const connection: Connection = {
-        url,
         key: [url],
-        id: url,
         query: async <Row extends RhydbRow = RhydbRow>(
             query: Queryable | string,
             label: string,
-            queryOptions?: { signal?: AbortSignal; priority?: number },
+            queryOptions?: { signal?: AbortSignal },
         ) => {
-            const result = await withRequestLimit(
-                queryOptions?.signal,
-                () => send<Row>(url, textOf(query), label, queryOptions?.signal),
-                queryOptions?.priority ?? PRIORITY.window,
+            const result = await withRequestLimit(queryOptions?.signal, () =>
+                send<Row>(url, textOf(query), label, queryOptions?.signal),
             );
+            queryOptions?.signal?.throwIfAborted();
+            options.checkVersion?.(result.dataVersion);
             const decode = typeof query === 'string' ? undefined : query.decode;
             return decode === undefined ? result : { ...result, rows: decode(result.rows) as Row[] };
         },
@@ -74,7 +62,6 @@ export function connect(options: { url: string }): Connection {
             );
             return dataVersion;
         },
-        curl: (query) => curlFor(url, textOf(query)),
     };
     return connection;
 }

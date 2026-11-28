@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { merged, useReferenceGenomes, type Loadable } from './analyses.ts';
+import { useReferenceGenomes } from './analyses.ts';
+import { combineQueryResults, type Loadable } from './queryResult.ts';
 import { useRows } from './rhydbQuery.ts';
 import { genomeMapOf, locateGenes, type GeneLocation, type GenomeMap } from '../../domain/genes.ts';
 import { ownReferenceName, referenceName } from '../../domain/reference.ts';
@@ -42,7 +43,7 @@ export function useGenome(what: Subject | undefined, enabled: boolean): Loadable
                 : build(sequences, pathogen, rows),
         [sequences, pathogen, rows, empty],
     );
-    return merged(data, [references, symbols]);
+    return combineQueryResults(data, [references, symbols]);
 }
 
 function build(sequences: ReferenceSequences, pathogen: Pathogen, rows: readonly { [key: string]: unknown }[]): Genome {
@@ -74,5 +75,5 @@ export function useReferenceSequences(what: Subject | undefined): Loadable<Refer
         // eslint-disable-next-line react-hooks/exhaustive-deps -- a node is identified by its key
         [rows.data, what === undefined ? '' : subjectKey(what)],
     );
-    return merged(sequences, [rows]);
+    return combineQueryResults(sequences, [rows]);
 }

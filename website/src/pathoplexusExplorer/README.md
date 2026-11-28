@@ -17,6 +17,8 @@ pathoplexusExplorer/
 
 Components are in `../components/pathoplexusExplorer/`, and the Astro pages in `../pages/pathoplexus-explorer/` take the place of routes. Each page renders its content inside a `ConnectionProvider` (`dataLayer/hooks/connection.tsx`), which gives the hooks the RhyDB instance and the query client of the RhyDB reads. Imports only go downwards: components → `pageState/` → `dataLayer/` → `domain/` + `mappingData/`. ESLint enforces it (`import/no-restricted-paths`). Group and aggregate in RhyDB before rendering the results.
 
+Report panels, Matrix filters, and accession downloads share one RhyDB snapshot per page. Each response identifies its snapshot with the `data-version` header. A change discards the page’s query cache and reruns the active reads. The page also checks the version on returning to a tab and once a minute while visible.
+
 See [data interpretation](../../../docs/pathoplexus-explorer-domain-decisions.md) for the rules used to count and compare sequences. Keep grouping and filtering consistent when changing a classification.
 
 ## Variant queries

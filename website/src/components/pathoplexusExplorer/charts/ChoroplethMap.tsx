@@ -5,6 +5,7 @@ import {
     geoEqualEarth,
     geoMercator,
     geoPath,
+    geoTransform,
     type GeoProjection,
     type GeoSphere,
 } from 'd3-geo';
@@ -91,7 +92,14 @@ export const ChoroplethMap: FC<ChoroplethMapProps> = ({
             ],
             extent,
         );
-        return { path: pathDrawing(fitted), project: fitted, drawHeight };
+        if (focus !== undefined && projection === PROJECTION.mercator && width > 0) {
+            // Clip outside the frame so the stroke of a clipped polygon stays outside the printed map.
+            fitted.clipExtent([
+                [-1, -1],
+                [width + 1, drawHeight + 1],
+            ]);
+        }
+        return { path: polygonPath(fitted), project: fitted, drawHeight };
     }, [features, focus, dots, width, height, projection]);
 
     /** Fall back to the full map when none of the named areas are drawn. */
@@ -120,7 +128,7 @@ export const ChoroplethMap: FC<ChoroplethMapProps> = ({
                 ? []
                 : features
                       .map((shape) => ({ name: shape.properties.name, d: path(shape) }))
-                      .filter((shape): shape is { name: string; d: string } => shape.d !== undefined),
+                      .filter((shape): shape is { name: string; d: string } => shape.d !== null),
         [features, path, width],
     );
 
@@ -282,59 +290,25 @@ function seaAround(collection: FeatureCollection): FeatureCollection {
     };
 }
 
-const TOLERANCE = 0.25;
-
-/** Skip projected points that do not visibly change the path. */
-function pathDrawing(projection: GeoProjection): (shape: MapFeature) => string | undefined {
-    const line = new ThinnedLine();
-    const draw = geoPath(projection, line);
-    return (shape) => {
-        draw(shape);
-        return line.take();
-    };
-}
-
-class ThinnedLine {
-    private parts: (string | number)[] = [];
-    private x = Number.NaN;
-    private y = Number.NaN;
-
-    beginPath(): void {
-        this.parts.length = 0;
-    }
-
-    moveTo(x: number, y: number): void {
-        this.x = x;
-        this.y = y;
-        this.parts.push('M', round(x), ',', round(y));
-    }
-
-    lineTo(x: number, y: number): void {
-        if (Math.abs(x - this.x) < TOLERANCE && Math.abs(y - this.y) < TOLERANCE) {
-            return;
-        }
-        this.x = x;
-        this.y = y;
-        this.parts.push('L', round(x), ',', round(y));
-    }
-
-    arc(): void {}
-
-    closePath(): void {
-        this.parts.push('Z');
-    }
-
-    take(): string | undefined {
-        const drawn = this.parts.join('');
-        this.parts.length = 0;
-        this.x = Number.NaN;
-        this.y = Number.NaN;
-        return drawn === '' ? undefined : drawn;
-    }
-}
-
-function round(value: number): number {
-    return Math.round(value * 10) / 10;
+/** Skip subpixel vertices after projection to keep detailed maps small enough to print and interact with. */
+function polygonPath(projection: GeoProjection) {
+    let lastX = Infinity;
+    let lastY = Infinity;
+    const simplify = geoTransform({
+        lineStart() {
+            lastX = Infinity;
+            lastY = Infinity;
+            this.stream.lineStart();
+        },
+        point(x, y) {
+            if (Math.abs(x - lastX) >= 0.25 || Math.abs(y - lastY) >= 0.25) {
+                this.stream.point(x, y);
+                lastX = x;
+                lastY = y;
+            }
+        },
+    });
+    return geoPath({ stream: (output) => projection.stream(simplify.stream(output)) }).digits(1);
 }
 
 /** Fit to the largest part so distant territories do not distort the extent. */

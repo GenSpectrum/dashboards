@@ -89,29 +89,6 @@ function basesAt(segment: string, position: number, strand: '+' | '-'): string {
     return strand === '+' ? base.toUpperCase() : reverseComplement(base) || 'N';
 }
 
-export function residueAt(
-    locations: Iterable<GeneLocation>,
-    segment: string,
-    position: number,
-): { location: GeneLocation; residue: number; offset: 1 | 2 | 3 }[] {
-    const found: { location: GeneLocation; residue: number; offset: 1 | 2 | 3 }[] = [];
-    for (const location of locations) {
-        if (location.segment !== segment) {
-            continue;
-        }
-        const distance = location.strand === '+' ? position - location.start : location.start - position;
-        if (distance < 0 || distance >= location.length * 3) {
-            continue;
-        }
-        found.push({
-            location,
-            residue: Math.floor(distance / 3) + 1,
-            offset: ((distance % 3) + 1) as 1 | 2 | 3,
-        });
-    }
-    return found;
-}
-
 export type GenomeMap = { segments: { name: string; length: number; offset: number }[]; length: number };
 
 export function genomeMapOf(segments: ReadonlyMap<string, string>): GenomeMap {

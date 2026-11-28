@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useMemo, useState, type FC } from 'react';
 
 import {
     cellValue,
@@ -47,15 +47,15 @@ type CrossTableProps = {
 
 export const CrossTable: FC<CrossTableProps> = ({ table, rowDimension, columnDimension, measure, sort, onSort }) => {
     const [hover, setHover] = useState<{ row: Axis; column: Axis } | undefined>(undefined);
-    const largest =
-        measure === MEASURE.count
-            ? Math.max(1, ...table.cells.values())
-            : Math.max(
-                  0.01,
-                  ...table.rows.flatMap((row) =>
-                      table.columns.map((column) => cellValue(table, row, column, measure).value),
-                  ),
-              );
+    const largest = useMemo(() => {
+        let max = measure === MEASURE.count ? 1 : 0.01;
+        for (const row of table.rows) {
+            for (const column of table.columns) {
+                max = Math.max(max, cellValue(table, row, column, measure).value);
+            }
+        }
+        return max;
+    }, [measure, table]);
     const hovered = hover === undefined ? undefined : cellValue(table, hover.row, hover.column, measure);
     return (
         <figure className='report-figure flex min-w-0 flex-col gap-2'>

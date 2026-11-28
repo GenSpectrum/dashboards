@@ -54,33 +54,16 @@ export class RhydbError extends Error {
     }
 }
 
-/**
- * The only headers that a RhyDB request may carry.
- *
- * Exported so the curl line offered to the user carries the same headers.
- */
-export const REQUEST_HEADERS: Readonly<Record<string, string>> = {
+/** The only headers that a RhyDB request may carry. */
+const REQUEST_HEADERS: Readonly<Record<string, string>> = {
     // eslint-disable-next-line @typescript-eslint/naming-convention -- HTTP header names
     'Content-Type': 'text/plain',
     // eslint-disable-next-line @typescript-eslint/naming-convention -- HTTP header names
     'Accept': 'application/x-ndjson',
 };
 
-/** Where a query is sent. */
-export function queryEndpoint(instanceUrl: string): string {
+function queryEndpoint(instanceUrl: string): string {
     return `${instanceUrl.replace(/\/+$/, '')}/query`;
-}
-
-/** The curl command that reproduces a query, with the headers above. */
-export function curlFor(instanceUrl: string, queryText: string): string {
-    const quote = (value: string) => `'${value.replace(/'/g, "'\\''")}'`;
-    return [
-        'curl',
-        '-X POST',
-        quote(queryEndpoint(instanceUrl)),
-        ...Object.entries(REQUEST_HEADERS).map(([name, value]) => `-H ${quote(`${name}: ${value}`)}`),
-        `--data-binary ${quote(queryText)}`,
-    ].join(' \\\n  ');
 }
 
 export type QueryResult<Row> = {
@@ -188,7 +171,11 @@ async function send<Row>(instanceUrl: string, queryText: string, signal?: AbortS
     try {
         for (const line of text.split('\n')) {
             if (line.trim() !== '') {
-                rows.push(JSON.parse(line) as Row);
+                const row: unknown = JSON.parse(line);
+                if (row === null || typeof row !== 'object' || Array.isArray(row)) {
+                    throw new Error();
+                }
+                rows.push(row as Row);
             }
         }
     } catch {

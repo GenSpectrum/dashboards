@@ -35,6 +35,11 @@ test('the axis spans the dates the rows hold, in the granularity asked for', () 
     expect(axis).toEqual({ buckets: ['2024-01', '2024-02', '2024-03'], granularity: 'month' });
 });
 
+test('a partial date cannot hide a bucket with a complete collection date', () => {
+    const rows = [row('2020-01-01', '2020-01-01', 1), row('2024-01-01', null, 500)];
+    expect(bucketAxisOf({ rows, granularity: 'year' })?.buckets).toEqual(['2020']);
+});
+
 test('an axis of rows without a usable date is no axis at all', () => {
     expect(bucketAxisOf({ rows: [row(null, null, 9)], granularity: 'month' })).toBeUndefined();
 });
@@ -65,5 +70,5 @@ test('the empty periods at the ends of an axis are dropped, and the gaps between
 test('an axis no sequence falls in is left as it is, rather than trimmed away', () => {
     const axis = { buckets: ['2024-01', '2024-02'], granularity: 'month' as const };
 
-    expect(trimEmptyBuckets([row(null, null, 3)], axis)).toEqual(axis);
+    expect(trimEmptyBuckets([row(null, null, 3)], axis)).toMatchObject({ ...axis, undated: 3 });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { activeRequestCount, MAX_CONCURRENT_REQUESTS, PRIORITY, withRequestLimit } from './requestLimit.ts';
+import { MAX_CONCURRENT_REQUESTS, withRequestLimit } from './requestLimit.ts';
 
 function deferred() {
     let resolve!: () => void;
@@ -10,12 +10,24 @@ function deferred() {
     return { promise, resolve };
 }
 
+/** Fills every place with a task that runs until it is released. */
+async function fillEveryPlace() {
+    const blockers = Array.from({ length: MAX_CONCURRENT_REQUESTS }, () => deferred());
+    const holders = blockers.map((blocker) => withRequestLimit(undefined, () => blocker.promise));
+    await Promise.resolve();
+    return {
+        release: async () => {
+            blockers.forEach((blocker) => blocker.resolve());
+            await Promise.all(holders);
+        },
+    };
+}
+
 describe('withRequestLimit', () => {
-    test('never lets more than the cap run at once', async () => {
+    test('never lets more than the cap run at once, and runs every task in the end', async () => {
         const blockers = Array.from({ length: 40 }, () => deferred());
         let running = 0;
         let peak = 0;
-
         const tasks = blockers.map((blocker) =>
             withRequestLimit(undefined, async () => {
                 running++;
@@ -25,9 +37,8 @@ describe('withRequestLimit', () => {
             }),
         );
 
-        // Released one at a time, so each place is handed over.
         await Promise.resolve();
-        expect(peak).toBe(MAX_CONCURRENT_REQUESTS);
+        expect(running).toBe(MAX_CONCURRENT_REQUESTS);
         for (const blocker of blockers) {
             blocker.resolve();
             await Promise.resolve();
@@ -35,93 +46,58 @@ describe('withRequestLimit', () => {
         await Promise.all(tasks);
 
         expect(peak).toBe(MAX_CONCURRENT_REQUESTS);
-        expect(activeRequestCount()).toBe(0);
+        expect(running).toBe(0);
     });
 
-    test('every queued task eventually runs', async () => {
-        const done: number[] = [];
-        await Promise.all(
-            Array.from({ length: 50 }, (_, index) =>
-                withRequestLimit(undefined, () => {
-                    done.push(index);
-                    return Promise.resolve();
-                }),
-            ),
+    test('runs the waiting tasks in the order they came', async () => {
+        const places = await fillEveryPlace();
+        const order: number[] = [];
+        const queued = [1, 2, 3].map((index) =>
+            withRequestLimit(undefined, () => Promise.resolve(void order.push(index))),
         );
-        expect(done).toHaveLength(50);
-        expect(activeRequestCount()).toBe(0);
+
+        await places.release();
+        await Promise.all(queued);
+
+        expect(order).toEqual([1, 2, 3]);
     });
 
     test('a task aborted before it starts never issues its request', async () => {
-        const controller = new AbortController();
-        controller.abort();
         let ran = false;
+
         await expect(
-            withRequestLimit(controller.signal, () => {
+            withRequestLimit(AbortSignal.abort(), () => {
                 ran = true;
                 return Promise.resolve();
             }),
         ).rejects.toThrow();
+
         expect(ran).toBe(false);
     });
 
-    test('a task aborted while queued never issues either, and gives its place back', async () => {
-        const blockers = Array.from({ length: MAX_CONCURRENT_REQUESTS }, () => deferred());
-        const holders = blockers.map((blocker) => withRequestLimit(undefined, () => blocker.promise));
-        await Promise.resolve();
-
+    test('a task aborted while it waits never issues its request, and passes its place on', async () => {
+        const places = await fillEveryPlace();
         const controller = new AbortController();
         let ran = false;
-        const queued = withRequestLimit(controller.signal, () => {
+        const aborted = withRequestLimit(controller.signal, () => {
             ran = true;
             return Promise.resolve();
         });
+        const next = withRequestLimit(undefined, () => Promise.resolve('next'));
         controller.abort();
 
-        for (const blocker of blockers) {
-            blocker.resolve();
-        }
-        await Promise.all(holders);
-        await expect(queued).rejects.toThrow();
+        await expect(aborted).rejects.toThrow();
+        await places.release();
+        await expect(next).resolves.toBe('next');
         expect(ran).toBe(false);
-        expect(activeRequestCount()).toBe(0);
     });
 
-    test('the window jumps the queue ahead of the map', async () => {
-        // A large background sweep must not hold the limit against a small
-        // one someone is waiting on.
-        const blockers = Array.from({ length: MAX_CONCURRENT_REQUESTS }, () => deferred());
-        const holders = blockers.map((blocker) => withRequestLimit(undefined, () => blocker.promise, PRIORITY.map));
-        await Promise.resolve();
-
-        const order: string[] = [];
-        const queued = [
-            withRequestLimit(undefined, () => Promise.resolve(void order.push('map-1')), PRIORITY.map),
-            withRequestLimit(undefined, () => Promise.resolve(void order.push('map-2')), PRIORITY.map),
-            withRequestLimit(undefined, () => Promise.resolve(void order.push('window')), PRIORITY.window),
-        ];
-
-        for (const blocker of blockers) {
-            blocker.resolve();
-        }
-        await Promise.all([...holders, ...queued]);
-
-        expect(order[0]).toBe('window');
-        expect(activeRequestCount()).toBe(0);
-    });
-
-    test('a failing task releases its place', async () => {
-        await expect(withRequestLimit(undefined, () => Promise.reject(new Error('instance said no')))).rejects.toThrow(
-            'instance said no',
+    test('a failing task gives its place back', async () => {
+        const failures = Array.from({ length: MAX_CONCURRENT_REQUESTS }, () =>
+            withRequestLimit(undefined, () => Promise.reject(new Error('instance said no'))),
         );
-        expect(activeRequestCount()).toBe(0);
-    });
-});
+        await Promise.allSettled(failures);
 
-describe('the priority ladder', () => {
-    test('runs startup before a window, and a window before the map', () => {
-        // Priority decides, not arrival order.
-        expect(PRIORITY.interactive).toBeLessThan(PRIORITY.window);
-        expect(PRIORITY.window).toBeLessThan(PRIORITY.map);
+        await expect(withRequestLimit(undefined, () => Promise.resolve('ran'))).resolves.toBe('ran');
     });
 });

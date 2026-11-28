@@ -1,4 +1,4 @@
-import { formatConstraints, parseConstraints } from './matrixSelection.ts';
+import { formatConstraints, parseConstraints, withoutStrandedChoices } from './matrixSelection.ts';
 import {
     MEASURE,
     MEASURES,
@@ -11,8 +11,8 @@ import {
     type Measure,
     type Sort,
 } from '../dataLayer/queries/crossTab.ts';
-import type { Selection } from '../dataLayer/queries/selection.ts';
-import { parsePeriodKey, periodKey } from '../domain/dates.ts';
+import { matrixScope, type Selection } from '../dataLayer/queries/selection.ts';
+import { hasReversedDates, isPeriodKey, parsePeriodKey, periodKey } from '../domain/dates.ts';
 
 export const MATRIX_PATH = '/pathoplexus-explorer/matrix';
 
@@ -64,10 +64,27 @@ function limitOf(params: URLSearchParams, name: string, fallback: number): numbe
     return Number.isFinite(value) && value >= 1 ? withinLimit(value) : fallback;
 }
 
+/** Only open a shared selection if every filter in the address can be applied. */
+export function isMatrixAddress(params: URLSearchParams): boolean {
+    const constraints = parseConstraints(params.get('sel'));
+    const when = params.get('when');
+    return (
+        params.getAll('sel').length <= 1 &&
+        params.getAll('when').length <= 1 &&
+        isPeriodKey(when) &&
+        !hasReversedDates(parsePeriodKey(when)) &&
+        constraints !== undefined &&
+        withoutStrandedChoices(constraints, matrixScope(constraints).dimensions) === undefined
+    );
+}
+
 export function parseParams(params: URLSearchParams): MatrixParams {
     const measure = params.get('cell');
     return {
-        selection: { dimensions: parseConstraints(params.get('sel')), period: parsePeriodKey(params.get('when')) },
+        selection: {
+            dimensions: parseConstraints(params.get('sel')) ?? {},
+            period: parsePeriodKey(params.get('when')),
+        },
         rows: params.get('rows') ?? DEFAULT_ROWS,
         columns: params.get('cols') ?? DEFAULT_COLUMNS,
         measure: MEASURES.some((entry) => entry.id === measure) ? (measure as Measure) : MEASURE.count,

@@ -15,10 +15,13 @@ type DownloadAccessionsProps = {
 };
 
 export const DownloadAccessions: FC<DownloadAccessionsProps> = ({ query }) => {
+    return <AccessionListButton key={query?.render()} query={query} />;
+};
+
+const AccessionListButton: FC<DownloadAccessionsProps> = ({ query }) => {
     const connection = useConnection();
     const [state, setState] = useState<'ready' | 'working'>('ready');
     const [error, setError] = useState<string | undefined>(undefined);
-    // Cancel a pending accession download when the page is left.
     const pending = useRef<AbortController | undefined>(undefined);
     useEffect(() => () => pending.current?.abort(), []);
 
@@ -34,6 +37,7 @@ export const DownloadAccessions: FC<DownloadAccessionsProps> = ({ query }) => {
             const { rows, dataVersion } = await connection.query(query, 'Accession list', {
                 signal: controller.signal,
             });
+            controller.signal.throwIfAborted();
             saveFile(
                 accessionListOf(rows),
                 accessionListFilename(new Date(), dataVersion),

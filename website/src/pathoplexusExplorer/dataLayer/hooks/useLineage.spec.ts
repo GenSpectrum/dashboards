@@ -15,18 +15,18 @@ function profileRow(count: number, coverage: number): RhydbRow {
     };
 }
 
-describe('the floor the pathogen-wide mutation read is asked from', () => {
-    test('is the rarest of the lineage own changes, over every sequence that the pathogen has', () => {
+describe('the floor that the pathogen-wide mutation query asks from', () => {
+    test("is the rarest of the lineage's own changes, over every sequence that the pathogen has", () => {
         const rows = [profileRow(900, 1000), profileRow(67, 100), profileRow(400, 500)];
         expect(baselineFloor(rows, 15580)).toBeCloseTo((67 / 15580) * 0.99, 10);
     });
 
-    test('ignores the changes that are not the lineage own', () => {
+    test("ignores the changes that are not the lineage's own", () => {
         const rows = [profileRow(900, 1000), profileRow(5, 100)];
         expect(baselineFloor(rows, 10000)).toBeCloseTo((900 / 10000) * 0.99, 10);
     });
 
-    test('asks for almost nothing where the lineage has no change of its own', () => {
+    test('asks only for what every sequence carries where the lineage has no change of its own', () => {
         expect(baselineFloor([profileRow(10, 100)], 10000)).toBe(1);
     });
 
@@ -35,7 +35,7 @@ describe('the floor the pathogen-wide mutation read is asked from', () => {
         expect(baselineFloor([profileRow(900, 1000)], undefined)).toBeUndefined();
     });
 
-    test('never asks for more than every sequence', () => {
+    test('is never above every sequence', () => {
         expect(baselineFloor([profileRow(900, 1000)], 100)).toBe(1);
     });
 });

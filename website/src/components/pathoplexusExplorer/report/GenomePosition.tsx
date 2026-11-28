@@ -2,7 +2,7 @@ import type { FC } from 'react';
 
 import { Figure } from './Layout.tsx';
 import type { Genome } from '../../../pathoplexusExplorer/dataLayer/hooks/useGenome.ts';
-import type { PositionReading } from '../../../pathoplexusExplorer/dataLayer/hooks/useMutation.ts';
+import type { PositionReading } from '../../../pathoplexusExplorer/dataLayer/queries/positions.ts';
 import { codonOf, type GeneLocation, type GenomeMap } from '../../../pathoplexusExplorer/domain/genes.ts';
 import { formatCount } from '../../../pathoplexusExplorer/domain/statistics.ts';
 import { UNEXPECTED_ERROR } from '../../../pathoplexusExplorer/domain/text.ts';
@@ -253,7 +253,9 @@ export function rulerLabels(
             ? single
             : [single, labelLayout(placed, width, 2)].reduce((a, b) => (longestLead(b) < longestLead(a) ? b : a));
     return { labels, rows: Math.max(1, ...labels.map((entry) => entry.row + 1)) };
-} /** A gene as it is drawn: where its block stands, and whether the block can hold its name. */
+}
+
+/** A gene as it is drawn: where its block stands, and whether the block can hold its name. */
 type PlacedGene = GeneBlock & { x: number; width: number; row: number; named: boolean };
 
 function placeGenes(genes: readonly GeneBlock[], scale: (offset: number) => number): PlacedGene[] {

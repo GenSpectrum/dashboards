@@ -12,7 +12,7 @@ const textOf = (node: Subject): string =>
     (nomenclatureOf(node) ?? []).map((part) => (typeof part === 'string' ? part : part.label)).join('');
 
 describe('where a classification comes from', () => {
-    test('every classified pathogen names the nomenclature it follows', () => {
+    test('every classified pathogen but the Ebola viruses names the nomenclature it follows', () => {
         const unsourced = allPathogens(CATALOG)
             .filter((pathogen) => pathogen.levels.length > 0 || pathogen.alternatives.length > 0)
             .filter((pathogen) => nomenclatureOf(nodeOf(pathogen.table)) === undefined)
@@ -27,7 +27,7 @@ describe('where a classification comes from', () => {
         expect(textOf(lineage)).toBe(textOf(dengue));
     });
 
-    test('every sentence is one sentence, and every source is a link out', () => {
+    test('every nomenclature is a sentence, and every source in it a link out', () => {
         const named = allPathogens(CATALOG).filter((pathogen) => nomenclatureOf(nodeOf(pathogen.table)) !== undefined);
         expect(named.length).toBeGreaterThan(0);
 

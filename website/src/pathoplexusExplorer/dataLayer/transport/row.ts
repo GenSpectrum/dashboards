@@ -48,29 +48,6 @@ export function readOptionalText(row: RhydbRow, column: string): string | null {
     throw new RhydbRowError(column, `expected text or null, got ${describe(value)}`);
 }
 
-/** A count of rows or reads: a non-negative integer. */
-export function readCount(row: RhydbRow, column: string): number {
-    const value = readNumber(row, column);
-    if (!Number.isInteger(value) || value < 0) {
-        throw new RhydbRowError(column, `expected a count, got ${value}`);
-    }
-    return value;
-}
-
-/** Any finite number. */
-export function readNumber(row: RhydbRow, column: string): number {
-    const value = row[column];
-    if (typeof value === 'number' && Number.isFinite(value)) {
-        return value;
-    }
-    // Numbers big enough to lose precision arrive as strings from some
-    // encoders, and a read count can exceed 2^53 across a whole instance.
-    if (typeof value === 'string' && value !== '' && Number.isFinite(Number(value))) {
-        return Number(value);
-    }
-    throw new RhydbRowError(column, `expected a number, got ${describe(value)}`);
-}
-
 function describe(value: RhydbValue | undefined): string {
     return value === undefined ? 'no such column' : `${typeof value} ${JSON.stringify(value)}`;
 }
