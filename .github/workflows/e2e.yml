@@ -54,7 +54,7 @@ jobs:
         wait-interval: 5
 
     - name: Prepare test dashboard configuration
-      run: node tests/prepareConfig.mjs
+      run: node tests/prepareConfig.ts
 
     - name: Start Docker Containers
       run: docker compose up -d --wait website backend database

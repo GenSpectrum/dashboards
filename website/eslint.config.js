@@ -208,5 +208,11 @@ export default tseslint.config(
             import: importPlugin,
         },
     },
+    {
+        files: ['scripts/**/*.ts'],
+        rules: {
+            'no-console': 'off',
+        },
+    },
     { ...reactHooks.configs['recommended-latest'], ignores: ['**/*.fixture.ts'] },
 );

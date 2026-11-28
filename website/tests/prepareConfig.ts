@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 import { parseDocument } from 'yaml';
 
-import { RHYDB_FIXTURE_PATH } from './rhydbFixture.mjs';
+import { RHYDB_FIXTURE_PATH } from './rhydbFixture.ts';
 
 const filename = 'application-dashboards-prod.yaml';
 const source = new URL(`../../backend/src/main/resources/${filename}`, import.meta.url);

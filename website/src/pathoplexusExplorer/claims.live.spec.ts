@@ -20,7 +20,7 @@ import type { Scope } from './domain/scope.ts';
 import { ALL, allPathogens, parseSubject, subjectLabel } from './domain/subject.ts';
 import { MUTATION_KIND } from './domain/variant.ts';
 import { defined } from './test/defined.fixture.ts';
-import { getStagingRhydbUrl } from '../../scripts/pathoplexusExplorerConfig.mjs';
+import { getStagingRhydbUrl } from '../../scripts/pathoplexusExplorerConfig.ts';
 
 /** Compare report claims with independent counts from the staging RhyDB instance. */
 

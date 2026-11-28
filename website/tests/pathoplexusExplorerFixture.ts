@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
 
-import { RHYDB_FIXTURE_PATH } from './rhydbFixture.mjs';
+import { RHYDB_FIXTURE_PATH } from './rhydbFixture.ts';
 
 export { expect } from '@playwright/test';
 

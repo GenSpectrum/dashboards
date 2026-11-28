@@ -31,7 +31,7 @@ Run `npm run test:live -- --run` to check the Explorer against staging RhyDB.
 For the Explorer's Playwright tests, generate the test configuration from `website/`:
 
 ```bash
-node tests/prepareConfig.mjs
+node tests/prepareConfig.ts
 ```
 
 Start the test stack from the repository root with your image tags set:

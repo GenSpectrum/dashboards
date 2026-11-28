@@ -6,24 +6,29 @@ import { fileURLToPath } from 'node:url';
 
 import { feature } from 'topojson-client';
 
+import { readText } from '../../src/pathoplexusExplorer/dataLayer/transport/row.ts';
 import { canonicalCountryOf } from '../../src/pathoplexusExplorer/domain/countries.ts';
 import { admin1AreaOf, mappedCountries } from '../../src/pathoplexusExplorer/domain/divisions.ts';
 import { getMapGeometry } from '../../src/pathoplexusExplorer/domain/mapGeometry.ts';
-import { recordedValues } from '../recordedValues.mjs';
+import { recordedValues } from '../recordedValues.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const WEBSITE = resolve(HERE, '../..');
 
-async function drawnDivisionsOf(country) {
+async function drawnDivisionsOf(country: string): Promise<Set<string>> {
     const topology = JSON.parse(await readFile(resolve(WEBSITE, `public/mapData/${country}.topo.json`), 'utf8'));
     return new Set(feature(topology, getMapGeometry(topology, country)).features.map((shape) => shape.properties.name));
 }
 
 const recorded = (await recordedValues(['geoLocCountry', 'geoLocAdmin1']))
     .filter((row) => row.geoLocCountry !== null && row.geoLocAdmin1 !== null)
-    .map((row) => ({ country: row.geoLocCountry, value: row.geoLocAdmin1, n: row.n }));
+    .map((row) => ({
+        country: readText(row, 'geoLocCountry'),
+        value: readText(row, 'geoLocAdmin1'),
+        n: Number(row.n ?? 0),
+    }));
 
-const drawn = new Map();
+const drawn = new Map<string, Set<string>>();
 for (const country of mappedCountries) {
     drawn.set(country, await drawnDivisionsOf(country));
 }
@@ -32,7 +37,7 @@ const inScope = recorded
     .map((row) => ({ ...row, country: canonicalCountryOf(row.country) }))
     .filter((row) => drawn.has(row.country));
 const uncovered = inScope
-    .filter((row) => !drawn.get(row.country).has(admin1AreaOf(row.country, row.value)))
+    .filter((row) => !drawn.get(row.country)?.has(admin1AreaOf(row.country, row.value)))
     .sort((a, b) => b.n - a.n);
 const entries = inScope.reduce((sum, row) => sum + row.n, 0);
 const missed = uncovered.reduce((sum, row) => sum + row.n, 0);

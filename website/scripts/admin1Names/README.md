@@ -3,7 +3,7 @@
 Run from `website/`:
 
 ```bash
-node scripts/admin1Names/check.mjs
+node scripts/admin1Names/check.ts
 ```
 
 The script reports which recorded divisions can be mapped and lists unmapped country and division pairs by frequency. It uses the staging RhyDB instance by default. To check another instance, pass `--instance <url>`.
