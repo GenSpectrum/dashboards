@@ -1,0 +1,75 @@
+import { useEffect, useRef, useState, type FC } from 'react';
+
+import { saveFile } from './saveFile.ts';
+import { logReadFailure, useConnection } from '../../../pathoplexusExplorer/dataLayer/hooks/connection.tsx';
+import {
+    accessionListFilename,
+    accessionListOf,
+} from '../../../pathoplexusExplorer/dataLayer/queries/accessionList.ts';
+import { RhydbError } from '../../../pathoplexusExplorer/dataLayer/transport/query.ts';
+import type { Queryable } from '../../../pathoplexusExplorer/dataLayer/transport/relation.ts';
+import { UNEXPECTED_ERROR } from '../../../pathoplexusExplorer/domain/text.ts';
+
+type DownloadAccessionsProps = {
+    query: Queryable | undefined;
+};
+
+export const DownloadAccessions: FC<DownloadAccessionsProps> = ({ query }) => {
+    return <AccessionListButton key={query?.render()} query={query} />;
+};
+
+const AccessionListButton: FC<DownloadAccessionsProps> = ({ query }) => {
+    const connection = useConnection();
+    const [state, setState] = useState<'ready' | 'working'>('ready');
+    const [error, setError] = useState<string | undefined>(undefined);
+    const pending = useRef<AbortController | undefined>(undefined);
+    useEffect(() => () => pending.current?.abort(), []);
+
+    const download = async () => {
+        if (query === undefined || state === 'working') {
+            return;
+        }
+        setState('working');
+        setError(undefined);
+        const controller = new AbortController();
+        pending.current = controller;
+        try {
+            const { rows, dataVersion } = await connection.query(query, 'Accession list', {
+                signal: controller.signal,
+            });
+            controller.signal.throwIfAborted();
+            saveFile(
+                accessionListOf(rows),
+                accessionListFilename(new Date(), dataVersion),
+                'text/tab-separated-values',
+            );
+        } catch (failure) {
+            if (controller.signal.aborted) {
+                return;
+            }
+            logReadFailure(failure);
+            setError(failure instanceof RhydbError ? failure.userMessage : UNEXPECTED_ERROR);
+        } finally {
+            pending.current = undefined;
+            setState('ready');
+        }
+    };
+
+    return (
+        <span className='flex items-center gap-2'>
+            <button
+                type='button'
+                className='border border-stone-300 bg-white px-2 py-1 text-[13px] hover:border-stone-500 disabled:text-stone-400'
+                disabled={query === undefined || state === 'working'}
+                onClick={() => void download()}
+            >
+                {state === 'working' ? 'Preparing…' : 'Download accession list'}
+            </button>
+            {error !== undefined && (
+                <span role='alert' className='text-[11px] text-red-800'>
+                    Failed: {error}
+                </span>
+            )}
+        </span>
+    );
+};

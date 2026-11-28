@@ -46,6 +46,11 @@ const environmentSchema = z.union([z.literal('dashboards-staging'), z.literal('d
 const dashboardsConfigSchema = z.object({
     dashboards: z.object({
         organisms: organismsConfigSchema,
+        pathoplexusExplorer: z
+            .object({
+                rhydbUrl: z.url({ protocol: /^https?$/ }),
+            })
+            .optional(),
         auth: z.object({
             github: z.object({
                 /**
@@ -76,6 +81,10 @@ export function getOrganismConfig(organism: Organism): OrganismConfig {
 
 export function getLapisUrl(organism: Organism): string {
     return getOrganismConfig(organism).lapis.url;
+}
+
+export function getPathoplexusExplorerConfig() {
+    return getDashboardsConfig().dashboards.pathoplexusExplorer;
 }
 
 let backendHost: string | null = null;

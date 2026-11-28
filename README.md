@@ -27,6 +27,8 @@ Currently, we support the following organisms:
 The dashboards also allow users to create subscriptions to receive notifications
 when there is new data above a configurable threshold for certain variant of an organism.
 
+The **Pathoplexus Explorer** provides printable reports and an interactive matrix for analyzing [Pathoplexus](https://pathoplexus.org) sequences across pathogens.
+
 ## Contents
 
 This monorepo contains the following packages:

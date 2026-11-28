@@ -2,6 +2,7 @@
 import HamburgerMenuItem from './HamburgerMenuItem.astro';
 import HamburgerMenuSection from './HamburgerMenuSection.astro';
 import { getPathogenMegaMenuSections } from './getPathogenMegaMenuSections';
+import { getPathoplexusExplorerMenuSections, PATHOPLEXUS_EXPLORER_LABEL } from './getPathoplexusExplorerMenuSections';
 import { LoginButton } from '../../../components/auth/LoginButton';
 import { isStaging } from '../../../config';
 import { Page } from '../../../types/pages';
@@ -13,6 +14,7 @@ type Props = {
 const { forceLoggedOutState } = Astro.props;
 
 const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
+const pathoplexusExplorerSections = getPathoplexusExplorerMenuSections();
 
 const showLoggedInState = !forceLoggedOutState && Astro.locals.user !== undefined;
 const showSubscriptions = isStaging();
@@ -29,6 +31,18 @@ const showSubscriptions = isStaging();
     <ul
         class='fixed top-0 left-full mt-16 h-[calc(100dvh-4rem)] w-full overflow-scroll border border-gray-200 bg-white pl-4 duration-200 peer-checked:left-0'
     >
+        {
+            pathoplexusExplorerSections.length > 0 && (
+                <HamburgerMenuSection
+                    navigationEntries={pathoplexusExplorerSections.flatMap((section) => [
+                        { label: section.headline, href: section.href },
+                        ...section.navigationEntries,
+                    ])}
+                >
+                    {PATHOPLEXUS_EXPLORER_LABEL}
+                </HamburgerMenuSection>
+            )
+        }
         {
             pathogenMegaMenuSections.map((section) => (
                 <HamburgerMenuSection navigationEntries={section.navigationEntries}>

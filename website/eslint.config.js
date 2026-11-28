@@ -22,6 +22,42 @@ const importRules = {
     ],
 };
 
+const explorer = (folder) => `./src/pathoplexusExplorer/${folder}`;
+
+/** Imports in the Pathoplexus Explorer only go downwards: components → pageState → dataLayer → domain + mappingData. */
+const pathoplexusExplorerLayers = {
+    'import/no-restricted-paths': [
+        'error',
+        {
+            zones: [
+                {
+                    target: [explorer('pageState'), explorer('dataLayer'), explorer('domain'), explorer('mappingData')],
+                    from: './src/components/pathoplexusExplorer',
+                    message: 'Only components import components.',
+                },
+                {
+                    target: [explorer('dataLayer'), explorer('domain'), explorer('mappingData')],
+                    from: explorer('pageState'),
+                    message: 'The page state is above the data layer.',
+                },
+                {
+                    target: [explorer('dataLayer/transport'), explorer('dataLayer/queries')],
+                    from: explorer('dataLayer/hooks'),
+                },
+                {
+                    target: explorer('dataLayer/transport'),
+                    from: [explorer('dataLayer/queries'), explorer('domain'), explorer('mappingData')],
+                },
+                {
+                    target: [explorer('domain'), explorer('mappingData')],
+                    from: explorer('dataLayer'),
+                    message: 'domain/ and mappingData/ only import from domain/ and mappingData/.',
+                },
+            ],
+        },
+    ],
+};
+
 const importRulesAstro = {
     ...importRules,
     'import/no-deprecated': 'off',
@@ -106,7 +142,13 @@ const disableFromReact = {
 
 export default tseslint.config(
     {
-        ignores: ['**/.astro/content.d.ts', 'dist/**', 'node_modules/**', '.vitest/**', 'tests/mocks/mockServiceWorker.js'],
+        ignores: [
+            '**/.astro/content.d.ts',
+            'dist/**',
+            'node_modules/**',
+            '.vitest/**',
+            'tests/mocks/mockServiceWorker.js',
+        ],
     },
     {
         files: ['**/*.ts', '**/*.tsx'],
@@ -132,6 +174,7 @@ export default tseslint.config(
         rules: {
             ...react.configs.flat.recommended.rules,
             ...importRules,
+            ...pathoplexusExplorerLayers,
             ...namingConvention,
             ...restrictTemplateExpressions,
             ...typescriptEsLintOverwrites,
@@ -163,6 +206,12 @@ export default tseslint.config(
         },
         plugins: {
             import: importPlugin,
+        },
+    },
+    {
+        files: ['scripts/**/*.ts'],
+        rules: {
+            'no-console': 'off',
         },
     },
     { ...reactHooks.configs['recommended-latest'], ignores: ['**/*.fixture.ts'] },

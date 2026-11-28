@@ -43,6 +43,6 @@ chore: update dependencies
 ## Architecture Notes
 
 - **State in URL**: View state (filters, selected variants) is stored as query parameters so pages are bookmarkable and shareable.
-- **LAPIS**: All genomic data queries go directly from the browser to LAPIS instances — they do not go through the backend.
+- **Genomic data**: Organism dashboards query LAPIS and the Pathoplexus Explorer queries RhyDB directly from the browser.
 - **Backend**: Only handles subscriptions and collections features; authentication is handled in the frontend (Astro middleware) and proxied to the backend.
 - **Organisms**: Adding a new organism requires entries in `website/src/types/Organism.ts`, `website/src/views/`, and corresponding Astro pages.

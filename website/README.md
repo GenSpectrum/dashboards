@@ -22,9 +22,25 @@ npm run dev
 
 ### Testing
 
-Unit testing is done with vitest, and split into two vitest 'projects': `unit` and `browser`, for node based unit tests
+Unit testing is done with vitest, and split into two vitest 'projects': `node` and `browser`, for node based unit tests
 and browser based unit tests using the vitest [Browser mode](https://vitest.dev/guide/browser/). By default, tests are
 run headless, but you can also run them headed. Have a look at the `test:*` commands in the `package.json`.
+
+The live tests (`npm run test:live -- --run`) check that the numbers the Explorer's reports and matrix show match independent counts from the staging RhyDB instance. CI runs them on every push.
+
+For the Explorer's Playwright tests, generate the test configuration from `website/`:
+
+```bash
+node tests/prepareConfig.ts
+```
+
+Start the test stack from the repository root with your image tags set:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.e2e.yml up -d
+```
+
+Run `npm run e2e:chromium` from `website/`.
 
 ### Setting up a GitHub App for Authentication
 
@@ -60,6 +76,8 @@ The website needs the following environment variables:
 
 The GitHub app client id can be overwritten via the `GITHUB_CLIENT_ID` environment variable for easier local testing.
 This should not be necessary in real deployments, as the configuration yaml files should contain the correct values.
+
+Set `dashboards.pathoplexusExplorer.rhydbUrl` in the configuration YAML to enable the Explorer. Use a URL that the browser can reach.
 
 ### Using icons
 

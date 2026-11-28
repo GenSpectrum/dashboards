@@ -1,36 +1,57 @@
 import type { PropsWithChildren } from 'react';
 
-import { MegaMenu, MegaMenuListEntry, MegaMenuSection } from './MegaMenu.tsx';
+import { MegaMenu, MegaMenuListEntry, MegaMenuSection, type MegaMenuSectionProps } from './MegaMenu.tsx';
 import { getPathogenMegaMenuSections } from './getPathogenMegaMenuSections.ts';
+import {
+    getPathoplexusExplorerMenuSections,
+    PATHOPLEXUS_EXPLORER_LABEL,
+} from './getPathoplexusExplorerMenuSections.ts';
 import { headerHeight } from './headerConstants.ts';
 import { Page } from '../../../types/pages.ts';
 
+type NavigationMenuSection = MegaMenuSectionProps & {
+    navigationEntries: {
+        label: string;
+        href: string;
+        underlineColor: string;
+        externalLink?: boolean;
+        hasSeparatorAbove?: boolean;
+    }[];
+};
+
 export function Navigation() {
-    const pathogenMegaMenuSections = Object.values(getPathogenMegaMenuSections());
+    const menus: { label: string; sections: NavigationMenuSection[] }[] = [
+        { label: PATHOPLEXUS_EXPLORER_LABEL, sections: getPathoplexusExplorerMenuSections() },
+        { label: 'Pathogens', sections: Object.values(getPathogenMegaMenuSections()) },
+    ];
 
     return (
         <nav>
             <ul className='flex space-x-8'>
-                <li>
-                    <MegaMenuNavigationEntry label='Pathogens'>
-                        <MegaMenu>
-                            {pathogenMegaMenuSections.map((section) => (
-                                <MegaMenuSection key={section.headline} {...section}>
-                                    {section.navigationEntries.map((entry) => (
-                                        <MegaMenuListEntry
-                                            key={entry.label}
-                                            label={entry.label}
-                                            externalLink={entry.externalLink}
-                                            href={entry.href}
-                                            className={entry.underlineColor}
-                                            hasSeparatorAbove={entry.hasSeparatorAbove}
-                                        />
+                {menus
+                    .filter(({ sections }) => sections.length > 0)
+                    .map(({ label, sections }) => (
+                        <li key={label}>
+                            <MegaMenuNavigationEntry label={label}>
+                                <MegaMenu>
+                                    {sections.map((section) => (
+                                        <MegaMenuSection key={section.headline} {...section}>
+                                            {section.navigationEntries.map((entry) => (
+                                                <MegaMenuListEntry
+                                                    key={entry.label}
+                                                    label={entry.label}
+                                                    externalLink={entry.externalLink}
+                                                    href={entry.href}
+                                                    className={entry.underlineColor}
+                                                    hasSeparatorAbove={entry.hasSeparatorAbove}
+                                                />
+                                            ))}
+                                        </MegaMenuSection>
                                     ))}
-                                </MegaMenuSection>
-                            ))}
-                        </MegaMenu>
-                    </MegaMenuNavigationEntry>
-                </li>
+                                </MegaMenu>
+                            </MegaMenuNavigationEntry>
+                        </li>
+                    ))}
                 <li className='h-full'>
                     <SimpleNavigationEntry href={Page.dataSources}>Data sources</SimpleNavigationEntry>
                 </li>

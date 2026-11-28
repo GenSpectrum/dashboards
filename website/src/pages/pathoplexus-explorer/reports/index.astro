@@ -1,0 +1,14 @@
+---
+import { ReportsLandingPage } from '../../../components/pathoplexusExplorer/report/ReportsLandingPage';
+import { getPathoplexusExplorerConfig } from '../../../config';
+import ReportLayout from '../../../layouts/pathoplexusExplorer/ReportLayout.astro';
+import { reportsPageTitle } from '../../../pathoplexusExplorer/pageState/reportKinds';
+
+if (getPathoplexusExplorerConfig() === undefined) {
+    return Astro.redirect('/404');
+}
+---
+
+<ReportLayout title={reportsPageTitle()}>
+    <ReportsLandingPage />
+</ReportLayout>
